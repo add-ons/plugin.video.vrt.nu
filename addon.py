@@ -3,6 +3,7 @@ import xbmcgui
 import xbmcplugin
 import requests
 import urlparse
+from urlparse import parse_qsl
 from urllib2 import urlopen
 from bs4 import BeautifulSoup
 
@@ -86,21 +87,28 @@ def list_categories():
 	
 	
 def list_videos():
-	li = xbmcgui.ListItem('title')
-	xbmcplugin.addDirectoryItem(_handle, listitem=li)
+	response = urlopen('https://www.vrt.be/vrtnu/a-z/')
+	soup = BeautifulSoup(response)
+	for tile in soup.find_all(class_="tile"):
+		rawThumbnail = thumbnailImage=tile.find("img")['srcset'].split('1x,')[0]
+		thumbnail =  rawThumbnail.replace("//", "https://")
+		li = xbmcgui.ListItem(tile.find(class_="tile__title").contents[0])
+		li.setArt({'thumb':thumbnail})
+		xbmcplugin.addDirectoryItem(handle=_handle, url='http://vod.stream.vrt.be/mediazone_vrt/_definst_/smil:vid/2017/01/28/vid-dis-51dd6b3d-b659-4491-8677-c84bf8ed8018-2/video.smil/chunklist_w873303264_b2096000_slnl.m3u8', listitem=li)
+
 	xbmcplugin.endOfDirectory(_handle)
 	
 	
 def router(paramstring):
     # Parse a URL-encoded paramstring to the dictionary of
     # {<parameter>: <value>} elements
-    params = parse_qs(urlparse(paramstring).query)
+    params = dict(parse_qsl(paramstring))
     # Check the parameters passed to the plugin
     if params:
-        if params['action'][0] == 'listing':
+        if params['action'] == 'listing':
             # Display the list of videos in a provided category.
             list_videos()
-        elif params['action'][0] == 'play':
+        elif params['action'] == 'play':
             # Play a video from a provided URL.
             print("playvid")
     else:
@@ -123,16 +131,7 @@ if __name__ == '__main__':
  
 #https://userbase.be/forum/viewtopic.php?f=23&t=46630&start=80
 #http://stackoverflow.com/questions/37616797/correct-way-to-implement-multi-folder-menus
-#response = urlopen('https://www.vrt.be/vrtnu/a-z/')
-#soup = BeautifulSoup(response)
-#for tile in soup.find_all(class_="tile"):
-	#rawThumbnail = thumbnailImage=tile.find("img")['srcset'].split('1x,')[0]
-	#thumbnail =  rawThumbnail.replace("//", "https://")
-	#li = xbmcgui.ListItem(tile.find(class_="tile__title").contents[0])
-	#li.setArt({'thumb':thumbnail})
-	#xbmcplugin.addDirectoryItem(handle=_handle, url='http://vod.stream.vrt.be/mediazone_vrt/_definst_/smil:vid/2017/01/28/vid-dis-51dd6b3d-b659-4491-8677-c84bf8ed8018-2/video.smil/chunklist_w873303264_b2096000_slnl.m3u8', listitem=li)
 
-#xbmcplugin.endOfDirectory(_handle)
 
 
 
