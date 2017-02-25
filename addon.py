@@ -28,28 +28,32 @@ def get_stream_from_url(url, login_id, password):
                {'loginID': login_id, 'password': password, 'APIKey': API_Key})
 
     logon_json = r.json()
-    uid = logon_json['UID']
-    sig = logon_json['UIDSignature']
-    ts = logon_json['signatureTimestamp']
+    if logon_json['errorCode'] == 0:
+        uid = logon_json['UID']
+        sig = logon_json['UIDSignature']
+        ts = logon_json['signatureTimestamp']
 
-    headers = {'Content-Type': 'application/json', 'Referer': _VRTNU_BASE_URL}
-    data = '{"uid": "%s", ' \
-           '"uidsig": "%s", ' \
-           '"ts": "%s", ' \
-           '"email": "%s"}' % (uid, sig, ts, login_id)
+        headers = {'Content-Type': 'application/json', 'Referer': _VRTNU_BASE_URL}
+        data = '{"uid": "%s", ' \
+               '"uidsig": "%s", ' \
+               '"ts": "%s", ' \
+               '"email": "%s"}' % (uid, sig, ts, login_id)
 
-    response = s.post("https://token.vrt.be", data=data, headers=headers)
-    securevideo_url = "{0}.securevideo.json".format(cut_slash_if_present(url))
-    securevideo_response = s.get(securevideo_url, cookies=response.cookies)
-    json = securevideo_response.json()
+        response = s.post("https://token.vrt.be", data=data, headers=headers)
+        securevideo_url = "{0}.securevideo.json".format(cut_slash_if_present(url))
+        securevideo_response = s.get(securevideo_url, cookies=response.cookies)
+        json = securevideo_response.json()
 
-    mzid = list(json
-                .values())[0]['mzid']
-    final_url = urlparse.urljoin(BASE_GET_STREAM_URL_PATH,
-                                 mzid)
+        mzid = list(json
+                    .values())[0]['mzid']
+        final_url = urlparse.urljoin(BASE_GET_STREAM_URL_PATH,
+                                     mzid)
 
-    stream_response = s.get(final_url)
-    return get_hls(stream_response.json()['targetUrls'])
+        stream_response = s.get(final_url)
+        return get_hls(stream_response.json()['targetUrls'])
+    else:
+        xbmcgui.Dialog().ok(_addonname_, _addon_.getLocalizedString(32051), _addon_.getLocalizedString(32052))
+
 
 
 def get_hls(dictionary):
@@ -105,12 +109,12 @@ def play_video(path):
     username = _addon_.getSetting("username")
     password = _addon_.getSetting("password")
     if username is None or password is None or username == "" or password == "":
-        # xbmcgui.Dialog().ok(_addonname_, _addon_.getLocalizedString(32051), _addon_.getLocalizedString(32052))
         _addon_.openSettings()
     else:
         stream = get_stream_from_url(path, username, password)
-        play_item = xbmcgui.ListItem(path=stream)
-        xbmcplugin.setResolvedUrl(_handle, True, listitem= play_item)
+        if stream is not None:
+            play_item = xbmcgui.ListItem(path=stream)
+            xbmcplugin.setResolvedUrl(_handle, True, listitem= play_item)
 
 
 def router(paramstring):

@@ -23,3 +23,11 @@ msgstr "Username"
 msgctxt "#32012"
 msgid "Password"
 msgstr "Password"
+
+msgctxt "#32051"
+msgid "Could not login!"
+msgstr "could not login"
+
+msgctxt "#32052"
+msgid "Only VRT logins are supported no Google or Facebook login!"
+msgstr "Only VRT logins are supported no Google or Facebook login "
