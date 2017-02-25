@@ -90,7 +90,7 @@ def list_videos():
 		li = xbmcgui.ListItem(tile.find(class_="tile__title").contents[0])
 		li.setArt({'thumb':thumbnail})
 		url = '{0}?action=play&video={1}'.format(_url, 'video')
-		listing.append((url, li, false))
+		listing.append((url, li, False))
 		
 	xbmcplugin.addDirectoryItems(_handle, listing, len(listing))
 	xbmcplugin.endOfDirectory(_handle)
