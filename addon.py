@@ -10,6 +10,8 @@ from bs4 import BeautifulSoup
 _url = sys.argv[0]
 _handle = int(sys.argv[1])
 
+_VRT_BASE_URL = "https://www.vrt.be/vrtnu/"
+
 
 
 def get_stream_from_url(url, login_id, password):
@@ -25,7 +27,7 @@ def get_stream_from_url(url, login_id, password):
     sig = logon_json['UIDSignature']
     ts = logon_json['signatureTimestamp']
 
-    headers = {'Content-Type': 'application/json', 'Referer': 'https://www.vrt.be/vrtnu/'}
+    headers = {'Content-Type': 'application/json', 'Referer': _VRT_BASE_URL}
     data = '{"uid": "%s", ' \
            '"uidsig": "%s", ' \
            '"ts": "%s", ' \
@@ -63,39 +65,34 @@ def get_titles():
 	
 
 def list_categories():
-    # Get video categories
     titles = get_titles()
-    # Create a list for our items.
     listing = []
-    # Iterate through categories
     for title in titles:
-        # Create a list item with a text label and a thumbnail image.
         list_item = xbmcgui.ListItem(label=title)
         # Create a URL for the plugin recursive callback.
         # Example: plugin://plugin.video.example/?action=listing&category=Animals
         url = '{0}?action=listing&title={1}'.format(_url, title)
-        # Add our item to the listing as a 3-element tuple.
         listing.append((url, list_item, True))
-    # Add our listing to Kodi.
-    # Large lists and/or slower systems benefit from adding all items at once via addDirectoryItems
-    # instead of adding one by ove via addDirectoryItem.
+		
     xbmcplugin.addDirectoryItems(_handle, listing, len(listing))
-    # Add a sort method for the virtual folder items (alphabetically, ignore articles)
     xbmcplugin.addSortMethod(_handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
-    # Finish creating a virtual folder.
     xbmcplugin.endOfDirectory(_handle)
 	
 	
 def list_videos():
-	response = urlopen('https://www.vrt.be/vrtnu/a-z/')
+	joined_url = urlparse.urljoin(_VRT_BASE_URL, "a-z/")
+	response = urlopen(joined_url)
 	soup = BeautifulSoup(response)
+	listing = []
 	for tile in soup.find_all(class_="tile"):
 		rawThumbnail = thumbnailImage=tile.find("img")['srcset'].split('1x,')[0]
 		thumbnail =  rawThumbnail.replace("//", "https://")
 		li = xbmcgui.ListItem(tile.find(class_="tile__title").contents[0])
 		li.setArt({'thumb':thumbnail})
-		xbmcplugin.addDirectoryItem(handle=_handle, url='http://vod.stream.vrt.be/mediazone_vrt/_definst_/smil:vid/2017/01/28/vid-dis-51dd6b3d-b659-4491-8677-c84bf8ed8018-2/video.smil/chunklist_w873303264_b2096000_slnl.m3u8', listitem=li)
-
+		url = '{0}?action=play&video={1}'.format(_url, 'video')
+		listing.append((url, li, false))
+		
+	xbmcplugin.addDirectoryItems(_handle, listing, len(listing))
 	xbmcplugin.endOfDirectory(_handle)
 	
 	
