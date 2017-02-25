@@ -93,28 +93,47 @@ def list_videos():
     listing = []
     for tile in soup.find_all(class_="tile"):
         link_to_video = tile["href"]
-        rawThumbnail = tile.find("img")['srcset'].split('1x,')[0]
-        thumbnail = rawThumbnail.replace("//", "https://")
-        li = xbmcgui.ListItem(tile.find(class_="tile__title").contents[0])
-        li.setProperty('IsPlayable', 'true')
-        li.setArt({'thumb': thumbnail})
-        url = '{0}?action=play&video={1}'.format(_url, link_to_video)
+        get_item(tile, "false")
+        url = '{0}?action=getepisodes&video={1}'.format(_url, link_to_video)
         listing.append((url, li, False))
 
     xbmcplugin.addDirectoryItems(_handle, listing, len(listing))
     xbmcplugin.endOfDirectory(_handle)
 
 
-def play_video(path):
-    username = _addon_.getSetting("username")
-    password = _addon_.getSetting("password")
-    if username is None or password is None or username == "" or password == "":
-        _addon_.openSettings()
-    else:
-        stream = get_stream_from_url(path, username, password)
-        if stream is not None:
-            play_item = xbmcgui.ListItem(path=stream)
-            xbmcplugin.setResolvedUrl(_handle, True, listitem= play_item)
+def get_item(element, is_playable):
+    rawThumbnail = element.find("img")['srcset'].split('1x,')[0]
+    thumbnail = rawThumbnail.replace("//", "https://")
+    li = xbmcgui.ListItem(tile.find(class_="tile__title").contents[0])
+    li.setProperty('IsPlayable', is_playable)
+    li.setArt({'thumb': thumbnail})
+    return li
+
+
+
+def get_video_episodes(path):
+    url = urlparse.urljoin(_VRT_BASE, url)
+    s = requests.session()
+    # go to url.relevant gets redirected and go on with this url
+    response = urlopen(s.get(url).url)
+    soup = BeautifulSoup(response, "html.parser")
+    listing = []
+    episodes = soup.find_all(class_="vrtlist__item")
+    if(len(episodes) != 0):
+        for tile in soup.find_all(class_="vrtlist__item"):
+            get_item(tile, "true")
+            url = '{0}?action=getepisodes&video={1}'.format(_url, link_to_video)
+            listing.append((url, li, False))
+
+    #username = _addon_.getSetting("username")
+    #password = _addon_.getSetting("password")
+    #if username is None or password is None or username == "" or password == "":
+    #    _addon_.openSettings()
+    #else:
+    #    stream = get_stream_from_url(path, username, password)
+    #    if stream is not None:
+    #        play_item = xbmcgui.ListItem(path=stream)
+    #        xbmcplugin.setResolvedUrl(_handle, True, listitem= play_item)#
 
 
 def router(paramstring):
@@ -122,8 +141,8 @@ def router(paramstring):
     if params:
         if params['action'] == 'listing':
             list_videos()
-        elif params['action'] == 'play':
-            play_video(params['video'])
+        elif params['action'] == 'getepisodes':
+            get_video_episodes(params['video'])
     else:
         list_categories()
 
