@@ -11,8 +11,8 @@ from bs4 import BeautifulSoup
 _url = sys.argv[0]
 _handle = int(sys.argv[1])
 
-_VRT_BASE = "https://www.vrt.be/"
-_VRTNU_BASE_URL = _VRT_BASE + "vrtnu/"
+_VRT_BASE = "https://www.vrt.be"
+_VRTNU_BASE_URL = _VRT_BASE + "/vrtnu"
 _addon_ = xbmcaddon.Addon()
 _addonname_ = _addon_.getAddonInfo('name')
 
@@ -87,43 +87,49 @@ def list_categories():
 
 
 def list_videos():
-    joined_url = urlparse.urljoin(_VRTNU_BASE_URL, "a-z/")
+    print(_VRTNU_BASE_URL)
+    joined_url = _VRTNU_BASE_URL + "/a-z/"
+    print(joined_url)
     response = urlopen(joined_url)
     soup = BeautifulSoup(response, "html.parser")
     listing = []
     for tile in soup.find_all(class_="tile"):
         link_to_video = tile["href"]
-        get_item(tile, "false")
+        li = get_item(tile, "false")
         url = '{0}?action=getepisodes&video={1}'.format(_url, link_to_video)
-        listing.append((url, li, False))
+        listing.append((url, li, True))
 
     xbmcplugin.addDirectoryItems(_handle, listing, len(listing))
     xbmcplugin.endOfDirectory(_handle)
 
 
 def get_item(element, is_playable):
-    rawThumbnail = element.find("img")['srcset'].split('1x,')[0]
-    thumbnail = rawThumbnail.replace("//", "https://")
-    li = xbmcgui.ListItem(tile.find(class_="tile__title").contents[0])
+    raw_thumbnail = element.find("img")['srcset'].split('1x,')[0]
+    thumbnail = raw_thumbnail.replace("//", "https://")
+    li = xbmcgui.ListItem(element.find(class_="tile__title").contents[0])
     li.setProperty('IsPlayable', is_playable)
     li.setArt({'thumb': thumbnail})
     return li
 
 
-
 def get_video_episodes(path):
-    url = urlparse.urljoin(_VRT_BASE, url)
+    print("Martijger")
+    print(path)
+    url = _VRT_BASE + path
     s = requests.session()
     # go to url.relevant gets redirected and go on with this url
     response = urlopen(s.get(url).url)
     soup = BeautifulSoup(response, "html.parser")
     listing = []
-    episodes = soup.find_all(class_="vrtlist__item")
-    if(len(episodes) != 0):
-        for tile in soup.find_all(class_="vrtlist__item"):
-            get_item(tile, "true")
-            url = '{0}?action=getepisodes&video={1}'.format(_url, link_to_video)
-            listing.append((url, li, False))
+    episodes = soup.find_all(class_="tile")
+    if len(episodes) != 0:
+        for tile in soup.find_all(class_="tile"):
+            link_to_video = tile["href"]
+            li = get_item(tile, "true")
+            url = '{0}?action=play&video={1}'.format(_url, link_to_video)
+            listing.append((url, li, True))
+    xbmcplugin.addDirectoryItems(_handle, listing, len(listing))
+    xbmcplugin.endOfDirectory(_handle)
 
     #username = _addon_.getSetting("username")
     #password = _addon_.getSetting("password")
@@ -136,12 +142,14 @@ def get_video_episodes(path):
     #        xbmcplugin.setResolvedUrl(_handle, True, listitem= play_item)#
 
 
-def router(paramstring):
-    params = dict(parse_qsl(paramstring))
+def router(params_string):
+    params = dict(parse_qsl(params_string))
     if params:
         if params['action'] == 'listing':
             list_videos()
         elif params['action'] == 'getepisodes':
+            get_video_episodes(params['video'])
+        elif params['action'] == 'play':
             get_video_episodes(params['video'])
     else:
         list_categories()
