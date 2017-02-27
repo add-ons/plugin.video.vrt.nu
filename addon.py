@@ -1,4 +1,5 @@
 import sys
+import xbmc
 import xbmcgui
 import xbmcplugin
 import xbmcaddon
@@ -11,10 +12,20 @@ from bs4 import BeautifulSoup
 _url = sys.argv[0]
 _handle = int(sys.argv[1])
 
+_VRT_LIVESTREAM_URL = "http://live.stream.vrt.be/vrt_video1_live/smil:vrt_video1_live.smil/playlist.m3u8"
+
 _VRT_BASE = "https://www.vrt.be"
 _VRTNU_BASE_URL = _VRT_BASE + "/vrtnu"
 _addon_ = xbmcaddon.Addon()
 _addonname_ = _addon_.getAddonInfo('name')
+
+
+class TitleItem:
+
+    def __init__(self, title, url, is_playable):
+        self.title = title
+        self.url = url
+        self.is_playable = is_playable
 
 
 def get_stream_from_url(url, login_id, password):
@@ -28,6 +39,7 @@ def get_stream_from_url(url, login_id, password):
                {'loginID': login_id, 'password': password, 'APIKey': API_Key})
 
     logon_json = r.json()
+    #xbmc.log(r.text, xbmc.LOGWARNING)
     if logon_json['errorCode'] == 0:
         uid = logon_json['UID']
         sig = logon_json['UIDSignature']
@@ -68,27 +80,23 @@ def cut_slash_if_present(url):
         return url
 
 
-def get_titles():
-    return {'A-Z'}
+def get_title_items():
+    return {TitleItem(_addon_.getLocalizedString(32091), '{0}?action=listingaz', False), TitleItem(_addon_.getLocalizedString(32092), _VRT_LIVESTREAM_URL, True)}
 
 
 def list_categories():
-    titles = get_titles()
     listing = []
-    for title in titles:
-        list_item = xbmcgui.ListItem(label=title)
-        url = '{0}?action=listing&title={1}'.format(_url, title)
-        listing.append((url, list_item, True))
-    live_stream = xbmcgui.ListItem(label="Live srteam")
-    live_stream.setProperty('IsPlayable', 'true')
-    listing.append(("http://live.stream.vrt.be/vrt_video1_live/smil:vrt_video1_live.smil/playlist.m3u8", live_stream
-                    , False))
+    for title_item in get_title_items():
+        list_item = xbmcgui.ListItem(label=title_item.title)
+        url = title_item.url.format(_url, title_item.title)
+        list_item.setProperty('IsPlayable', str(title_item.is_playable))
+        listing.append((url, list_item, not title_item.is_playable))
     xbmcplugin.addDirectoryItems(_handle, listing, len(listing))
     xbmcplugin.addSortMethod(_handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     xbmcplugin.endOfDirectory(_handle)
 
 
-def list_videos():
+def list_videos_az():
     print(_VRTNU_BASE_URL)
     joined_url = _VRTNU_BASE_URL + "/a-z/"
     print(joined_url)
@@ -107,10 +115,13 @@ def list_videos():
 
 def get_item(element, is_playable):
     thumbnail = format_image_url(element)
-    li = xbmcgui.ListItem(element.find(class_="tile__title").contents[0]
-                          .replace("\n", "").strip())
-    li.setProperty('IsPlayable', is_playable)
-    li.setArt({'thumb': thumbnail})
+    found_element = element.find(class_="tile__title")
+    li = None
+    if found_element is not None:
+        li = xbmcgui.ListItem(found_element.contents[0]
+                              .replace("\n", "").strip())
+        li.setProperty('IsPlayable', is_playable)
+        li.setArt({'thumb': thumbnail})
     return li
 
 
@@ -129,10 +140,11 @@ def get_video_episodes(path):
     episodes = soup.find_all(class_="tile")
     if len(episodes) != 0:
         for tile in soup.find_all(class_="tile"):
-            link_to_video = tile["href"]
             li = get_item(tile, "true")
-            url = '{0}?action=play&video={1}'.format(_url, link_to_video)
-            listing.append((url, li, False))
+            if li is not None:
+                link_to_video = tile["href"]
+                url = '{0}?action=play&video={1}'.format(_url, link_to_video)
+                listing.append((url, li, False))
     else:
         vrt_video = soup.find(class_="vrtvideo")
         thumbnail = format_image_url(vrt_video)
@@ -143,6 +155,7 @@ def get_video_episodes(path):
         listing.append((url, li, False))
 
     xbmcplugin.addDirectoryItems(_handle, listing, len(listing))
+    xbmcplugin.addSortMethod(_handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
     xbmcplugin.endOfDirectory(_handle)
 
 
@@ -161,8 +174,8 @@ def play_video(path):
 def router(params_string):
     params = dict(parse_qsl(params_string))
     if params:
-        if params['action'] == 'listing':
-            list_videos()
+        if params['action'] == 'listingaz':
+            list_videos_az()
         elif params['action'] == 'getepisodes':
             get_video_episodes(params['video'])
         elif params['action'] == 'play':
@@ -173,8 +186,4 @@ def router(params_string):
 
 if __name__ == '__main__':
     router(sys.argv[2][1:])
-
-
-
-
 

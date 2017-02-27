@@ -31,3 +31,11 @@ msgstr "could not login"
 msgctxt "#32052"
 msgid "Only VRT logins are supported no Google or Facebook login!"
 msgstr "Only VRT logins are supported no Google or Facebook login "
+
+msgctxt "#32091"
+msgid "A-Z"
+msgstr "A-Z"
+
+msgctxt "#32092"
+msgid "Livestream"
+msgstr "Livestream"
