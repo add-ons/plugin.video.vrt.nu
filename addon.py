@@ -28,6 +28,20 @@ class TitleItem:
         self.is_playable = is_playable
 
 
+class Credentials:
+
+    def __init__(self):
+        self.reload()
+
+    def are_filled_in(self):
+        return not (self.username is None or self.password is None or self.username == "" or self.password == "")
+
+    def reload(self):
+        self.username = _addon_.getSetting("username")
+        self.password = _addon_.getSetting("password")
+
+
+
 def get_stream_from_url(url, login_id, password):
     API_Key = "3_qhEcPa5JGFROVwu5SWKqJ4mVOIkwlFNMSKwzPDAh8QZOtHqu6L4nD5Q7lk0eXOOG"
     BASE_GET_STREAM_URL_PATH = "https://mediazone.vrt.be/api/v1/vrtvideo/assets/"
@@ -160,15 +174,15 @@ def get_video_episodes(path):
 
 
 def play_video(path):
-    username = _addon_.getSetting("username")
-    password = _addon_.getSetting("password")
-    if username is None or password is None or username == "" or password == "":
+    credentials = Credentials()
+    if not credentials.are_filled_in():
         _addon_.openSettings()
-    else:
-        stream = get_stream_from_url(path, username, password)
-        if stream is not None:
-            play_item = xbmcgui.ListItem(path=stream)
-            xbmcplugin.setResolvedUrl(_handle, True, listitem= play_item)#
+        credentials.reload()
+
+    stream = get_stream_from_url(path, credentials.username, credentials.password)
+    if stream is not None:
+        play_item = xbmcgui.ListItem(path=stream)
+        xbmcplugin.setResolvedUrl(_handle, True, listitem= play_item)
 
 
 def router(params_string):
