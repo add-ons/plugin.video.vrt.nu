@@ -2,16 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2a215c88-0e6c-405c-ad70-0a8218de0921" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/__init__.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/lib/__init__.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/lib/helperobjects/__init__.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/lib/helperobjects/helperobjects.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/lib/urltostreamservice/__init__.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/resources/lib/urltostreamservice/urltostreamservice.py" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/fanart.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/icon.png" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/addon.py" afterPath="$PROJECT_DIR$/addon.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/addon.xml" afterPath="$PROJECT_DIR$/addon.xml" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -29,8 +20,8 @@
       <file leaf-file-name="addon.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/addon.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="612">
-              <caret line="69" column="27" lean-forward="false" selection-start-line="69" selection-start-column="27" selection-end-line="69" selection-end-column="27" />
+            <state relative-caret-position="325">
+              <caret line="73" column="23" lean-forward="false" selection-start-line="73" selection-start-column="23" selection-end-line="73" selection-end-column="23" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -124,6 +115,7 @@
       <find>urljoin</find>
       <find>+</find>
       <find>__get_vid</find>
+      <find>log</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -505,8 +497,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/addon.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="612">
-          <caret line="69" column="27" lean-forward="false" selection-start-line="69" selection-start-column="27" selection-end-line="69" selection-end-column="27" />
+        <state relative-caret-position="325">
+          <caret line="73" column="23" lean-forward="false" selection-start-line="73" selection-start-column="23" selection-end-line="73" selection-end-column="23" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>

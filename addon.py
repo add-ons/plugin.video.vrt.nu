@@ -37,11 +37,7 @@ class VRTPlayer:
         xbmcplugin.endOfDirectory(_handle)
 
     def __list_videos_az(self):
-        xbmc.log("vrtnubase", xbmc.LOGWARNING)
-        xbmc.log(self._VRTNU_BASE_URL, xbmc.LOGWARNING)
         joined_url = urljoin(self._VRTNU_BASE_URL, "./a-z/")
-        xbmc.log("joined", xbmc.LOGWARNING)
-        xbmc.log(joined_url, xbmc.LOGWARNING)
         response = urlopen(joined_url)
         soup = BeautifulSoup(response, "html.parser")
         listing = []
@@ -73,8 +69,6 @@ class VRTPlayer:
 
     def __get_video_episodes(self, path):
         url = urljoin(self._VRT_BASE, path)
-        xbmc.log("url", xbmc.LOGWARNING)
-        xbmc.log(url, xbmc.LOGWARNING)
         s = requests.session()
         # go to url.relevant gets redirected and go on with this url
         response = urlopen(s.get(url).url)
