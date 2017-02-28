@@ -22,5 +22,10 @@
         <license>GNU General Public License, v3</license>
         <news>v0.0.1  (2017-2-27)
 		- Initial working release</news>
+		<assets>
+			<icon>resources/icon.png</icon>
+			<fanart>resources/fanart.jpg</fanart>
+			<!--<screenshot>resources/screenshot-01.jpg</screenshot>-->
+		</assets>
     </extension>
 </addon>
