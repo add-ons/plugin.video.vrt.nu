@@ -4,6 +4,7 @@ import xbmcgui
 import xbmcplugin
 import xbmcaddon
 import requests
+import  time
 from urlparse import parse_qsl
 from urlparse import  urljoin
 from urllib2 import urlopen
@@ -99,8 +100,11 @@ class VRTPlayer:
         stream_service = urltostreamservice.UrlToStreamService(self._VRT_BASE, self._VRTNU_BASE_URL, self._addon_)
         stream = stream_service.get_stream_from_url(path)
         if stream is not None:
-            play_item = xbmcgui.ListItem(path=stream)
+            play_item = xbmcgui.ListItem(path=stream.streamURL)
+            if(stream.subtitleURL is not None):
+                play_item.setSubtitles([stream.subtitleURL])
             xbmcplugin.setResolvedUrl(_handle, True, listitem= play_item)
+
 
     def router(self, params_string):
         params = dict(parse_qsl(params_string))

@@ -1,5 +1,7 @@
 import xbmcgui
 import requests
+import xbmc
+import json
 import urlparse
 from resources.lib.helperobjects import helperobjects
 
@@ -49,9 +51,14 @@ class UrlToStreamService:
             final_url = urlparse.urljoin(self._BASE_GET_STREAM_URL_PATH, mzid)
 
             stream_response = s.get(final_url)
-            return self.__get_hls(stream_response.json()['targetUrls'])
+            hls = self.__get_hls(stream_response.json()['targetUrls'])
+            subtitle = None
+            if self.addon.getSetting("showsubtitles") == "true":
+                subtitle = self.__get_subtitle(stream_response.json()['subtitleUrls'])
+
+            return helperobjects.StreamURLS(hls, subtitle)
         else:
-            xbmcgui.Dialog().ok(self.addon_.getAddonInfo('name'),
+            xbmcgui.Dialog().ok(self.addon.getAddonInfo('name'),
                                 self.addon.getLocalizedString(32051),
                                 self.addon.getLocalizedString(32052))
 
@@ -59,6 +66,15 @@ class UrlToStreamService:
     def __get_hls(dictionary):
         for item in dictionary:
             if item['type'] == 'HLS':
+                return item['url']
+
+    @staticmethod
+    def __get_subtitle(dictionary):
+        xbmc.log(json.dumps(dictionary), xbmc.LOGWARNING)
+        for item in dictionary:
+            xbmc.log(json.dumps(item), xbmc.LOGWARNING)
+            if item['type'] == 'CLOSED':
+                xbmc.log(item['url'], xbmc.LOGWARNING)
                 return item['url']
 
     @staticmethod

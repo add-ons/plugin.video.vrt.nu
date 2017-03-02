@@ -6,6 +6,13 @@ class TitleItem:
         self.is_playable = is_playable
 
 
+class StreamURLS:
+
+    def __init__(self, streamURL, subtitleURL):
+        self.streamURL = streamURL
+        self.subtitleURL = subtitleURL
+
+
 class Credentials:
 
     def __init__(self, addon):

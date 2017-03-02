@@ -12,17 +12,25 @@ msgstr ""
 "Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgctxt "#32001"
+msgctxt "#32000"
 msgid "Credentials"
 msgstr "Username"
 
-msgctxt "#32011"
+msgctxt "#32001"
 msgid "Username"
 msgstr "Username"
 
-msgctxt "#32012"
+msgctxt "#32002"
 msgid "Password"
 msgstr "Password"
+
+msgctxt "#32010"
+msgid "Subtitles"
+msgstr "Subtitles"
+
+msgctxt "#32011"
+msgid "Show subtitles if available"
+msgstr "Show subtitles if available"
 
 msgctxt "#32051"
 msgid "Could not login!"
