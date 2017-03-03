@@ -7,6 +7,7 @@ import requests
 from urlparse import parse_qsl
 from urlparse import  urljoin
 from urllib2 import urlopen
+import time
 from bs4 import BeautifulSoup
 from resources.lib.urltostreamservice import urltostreamservice
 from resources.lib.helperobjects import helperobjects
@@ -39,7 +40,11 @@ class VRTPlayer:
     def __list_videos_az(self):
         joined_url = urljoin(self._VRTNU_BASE_URL, "./a-z/")
         response = urlopen(joined_url)
+        start = time.time()
         soup = BeautifulSoup(response, "html.parser")
+        end = time.time()
+        xbmc.log("end parsing total time", xbmc.LOGWARNING)
+        xbmc.log(str(end - start), xbmc.LOGWARNING)
         listing = []
         for tile in soup.find_all(class_="tile"):
             link_to_video = tile["href"]
@@ -47,6 +52,9 @@ class VRTPlayer:
             url = '{0}?action=getepisodes&video={1}'.format(_url, link_to_video)
             listing.append((url, li, True))
 
+        end2 = time.time()
+        xbmc.log("end After for total time", xbmc.LOGWARNING)
+        xbmc.log(str(end2 - start), xbmc.LOGWARNING)
         xbmcplugin.addDirectoryItems(_handle, listing, len(listing))
         xbmcplugin.addSortMethod(_handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
         xbmcplugin.endOfDirectory(_handle)
