@@ -9,6 +9,7 @@ from urlparse import parse_qsl
 from urlparse import  urljoin
 from urllib2 import urlopen
 from bs4 import BeautifulSoup
+from bs4 import SoupStrainer
 from resources.lib.urltostreamservice import urltostreamservice
 from resources.lib.helperobjects import helperobjects
 
@@ -40,7 +41,9 @@ class VRTPlayer:
     def __list_videos_az(self):
         joined_url = urljoin(self._VRTNU_BASE_URL, "./a-z/")
         response = urlopen(joined_url)
-        soup = BeautifulSoup(response, "html.parser")
+        tiles = SoupStrainer('a', {"class": "tile"})
+        #xbmc.log(BeautifulSoup(response, "html.parser", parse_only=tiles).prettify(), xbmc.LOGWARNING)
+        soup = BeautifulSoup(response, "html.parser", parse_only=tiles)
         listing = []
         for tile in soup.find_all(class_="tile"):
             link_to_video = tile["href"]
@@ -73,7 +76,9 @@ class VRTPlayer:
         s = requests.session()
         # go to url.relevant gets redirected and go on with this url
         response = urlopen(s.get(url).url)
-        soup = BeautifulSoup(response, "html.parser")
+        tiles = SoupStrainer('a', {"class": "tile"})
+        xbmc.log(BeautifulSoup(response, "html.parser", parse_only=tiles).prettify(), xbmc.LOGWARNING)
+        soup = BeautifulSoup(response, "html.parser", parse_only=tiles)
         listing = []
         episodes = soup.find_all(class_="tile")
         if len(episodes) != 0:
@@ -101,7 +106,7 @@ class VRTPlayer:
         stream = stream_service.get_stream_from_url(path)
         if stream is not None:
             play_item = xbmcgui.ListItem(path=stream.streamURL)
-            if(stream.subtitleURL is not None):
+            if stream.subtitleURL is not None:
                 play_item.setSubtitles([stream.subtitleURL])
             xbmcplugin.setResolvedUrl(_handle, True, listitem= play_item)
 
