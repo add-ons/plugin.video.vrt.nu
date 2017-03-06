@@ -76,9 +76,7 @@ class VRTPlayer:
         s = requests.session()
         # go to url.relevant gets redirected and go on with this url
         response = urlopen(s.get(url).url)
-        tiles = SoupStrainer('a', {"class": "tile"})
-        xbmc.log(BeautifulSoup(response, "html.parser", parse_only=tiles).prettify(), xbmc.LOGWARNING)
-        soup = BeautifulSoup(response, "html.parser", parse_only=tiles)
+        soup = BeautifulSoup(response, "html.parser")
         listing = []
         episodes = soup.find_all(class_="tile")
         if len(episodes) != 0:
@@ -98,7 +96,6 @@ class VRTPlayer:
             listing.append((url, li, False))
 
         xbmcplugin.addDirectoryItems(_handle, listing, len(listing))
-        xbmcplugin.addSortMethod(_handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
         xbmcplugin.endOfDirectory(_handle)
 
     def __play_video(self, path):
