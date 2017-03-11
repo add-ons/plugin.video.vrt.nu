@@ -44,6 +44,18 @@ msgctxt "#32091"
 msgid "A-Z"
 msgstr "A-Z"
 
-msgctxt "#32092"
+msgctxt "#32100"
 msgid "Livestream"
 msgstr "Livestream"
+
+msgctxt "#32101"
+msgid "één"
+msgstr "één"
+
+msgctxt "#32102"
+msgid "Canvas"
+msgstr "Canvas"
+
+msgctxt "#32103"
+msgid "Ketnet"
+msgstr "Ketnet"

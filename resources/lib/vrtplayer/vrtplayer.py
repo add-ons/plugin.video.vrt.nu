@@ -15,7 +15,7 @@ from resources.lib.vrtplayer import urltostreamservice
 from resources.lib.helperobjects import helperobjects
 
 class VRTPlayer:
-    _VRT_LIVESTREAM_URL = "http://live.stream.vrt.be/vrt_video1_live/smil:vrt_video1_live.smil/playlist.m3u8"
+
     _VRT_BASE = "https://www.vrt.be/"
     _VRTNU_BASE_URL = urljoin(_VRT_BASE, "/vrtnu/")
     _addon_ = xbmcaddon.Addon()
@@ -25,13 +25,9 @@ class VRTPlayer:
         self._handle = handle
         self._url = url
 
-    def __get_title_items(self):
-        return {helperobjects.TitleItem(self._addon_.getLocalizedString(32091), '{0}?action=listingaz', False),
-                helperobjects.TitleItem(self._addon_.getLocalizedString(32092), self._VRT_LIVESTREAM_URL, True)}
-
-    def list_categories(self):
+    def list_categories(self, listitems):
         listing = []
-        for title_item in self.__get_title_items():
+        for title_item in listitems:
             list_item = xbmcgui.ListItem(label=title_item.title)
             url = title_item.url.format(self._url, title_item.title)
             list_item.setProperty('IsPlayable', str(title_item.is_playable))
@@ -50,11 +46,6 @@ class VRTPlayer:
         regex = re.compile(r'<a.*href="(?P<link>.*)".*class="tile">'
                            r'(\n*\s*.*){0,5}<source.*srcset="(?P<image>.*)"(\n*\s*.*){0,8}<h3.*>(?P<title>.*)<span.*"'
                            , re.MULTILINE)
-        start3 = time.time()
-        dictionary = [m.groupdict() for m in regex.finditer(response.content)]
-        end3 = time.time()
-        xbmc.log('dictionarymakentijd: ' + str(end3 - start3), xbmc.LOGWARNING)
-
         listing = []
         for group in regex.finditer(response.content):
             start2 = time.time()
@@ -134,4 +125,8 @@ class VRTPlayer:
             play_item = xbmcgui.ListItem(path=stream.streamURL)
             if stream.subtitleURL is not None:
                 play_item.setSubtitles([stream.subtitleURL])
-            xbmcplugin.setResolvedUrl(self._handle, True, listitem= play_item)
+            xbmcplugin.setResolvedUrl(self._handle, True, listitem=play_item)
+
+    def play_livestream(self, path):
+        play_item = xbmcgui.ListItem(path=path)
+        xbmcplugin.setResolvedUrl(self._handle, True, listitem=play_item)
