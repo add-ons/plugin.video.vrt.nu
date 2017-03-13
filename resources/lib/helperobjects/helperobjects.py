@@ -1,16 +1,17 @@
 class TitleItem:
 
-    def __init__(self, title, url, is_playable):
+    def __init__(self, title, url, is_playable, logo):
         self.title = title
         self.url = url
         self.is_playable = is_playable
+        self.logo = logo
 
 
 class StreamURLS:
 
-    def __init__(self, streamURL, subtitleURL):
-        self.streamURL = streamURL
-        self.subtitleURL = subtitleURL
+    def __init__(self, stream_url, subtitle_url):
+        self.stream_url = stream_url
+        self.subtitle_url = subtitle_url
 
 
 class Credentials:

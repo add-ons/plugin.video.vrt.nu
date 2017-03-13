@@ -25,12 +25,13 @@ class VRTPlayer:
         self._handle = handle
         self._url = url
 
-    def list_categories(self, listitems):
+    def list_categories(self, list_items):
         listing = []
-        for title_item in listitems:
+        for title_item in list_items:
             list_item = xbmcgui.ListItem(label=title_item.title)
             url = title_item.url.format(self._url, title_item.title)
             list_item.setProperty('IsPlayable', str(title_item.is_playable))
+            list_item.setArt({'thumb': title_item.logo})
             listing.append((url, list_item, not title_item.is_playable))
         xbmcplugin.addDirectoryItems(self._handle, listing, len(listing))
         xbmcplugin.addSortMethod(self._handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
@@ -38,37 +39,19 @@ class VRTPlayer:
 
     def list_videos_az(self):
         joined_url = urljoin(self._VRTNU_BASE_URL, "./a-z/")
-        start = time.time()
-        response = requests.get(joined_url)
-        end = time.time()
-        xbmc.log('requesttijd: ' + str(end-start), xbmc.LOGWARNING)
-
-        regex = re.compile(r'<a.*href="(?P<link>.*)".*class="tile">'
-                           r'(\n*\s*.*){0,5}<source.*srcset="(?P<image>.*)"(\n*\s*.*){0,8}<h3.*>(?P<title>.*)<span.*"'
-                           , re.MULTILINE)
+        response = urlopen(joined_url)
+        tiles = SoupStrainer('a', {"class": "tile"})
+        soup = BeautifulSoup(response, "html.parser", parse_only=tiles)
         listing = []
-        for group in regex.finditer(response.content):
-            start2 = time.time()
-            item = group.groupdict()
-            end4 = time.time()
-            xbmc.log('omzettenTijd: ' + str(end4 - start2), xbmc.LOGWARNING)
-            link_to_video = item['link']
-            li = self.__get_item_with_args(item['title'], item['image'], "false")
+        for tile in soup.find_all(class_="tile"):
+            link_to_video = tile["href"]
+            li = self.__get_item(tile, "false")
             url = '{0}?action=getepisodes&video={1}'.format(self._url, link_to_video)
             listing.append((url, li, True))
-            end2 = time.time()
-            xbmc.log('itemTijd: ' + str(end2 - start2), xbmc.LOGWARNING)
 
         xbmcplugin.addDirectoryItems(self._handle, listing, len(listing))
         xbmcplugin.addSortMethod(self._handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
-        xbmcplugin.endOfDirectory(self._handle)
-
-    def __get_item_with_args(self, title, image_url, is_playable):
-        thumbnail = self.__format_image_url_from_string(image_url)
-        li = xbmcgui.ListItem(title.replace("\n", "").strip())
-        li.setProperty('IsPlayable', is_playable)
-        li.setArt({'thumb': thumbnail})
-        return li
+        xbmcplugin.endOfDirectory(self._handle,)
 
     def __get_item(self, element, is_playable):
         thumbnail = self.__format_image_url(element)
@@ -80,11 +63,6 @@ class VRTPlayer:
             li.setProperty('IsPlayable', is_playable)
             li.setArt({'thumb': thumbnail})
         return li
-
-    @staticmethod
-    def __format_image_url_from_string(image_url):
-        raw_thumbnail = image_url.split('1x,')[0]
-        return raw_thumbnail.replace("//", "https://")
 
     @staticmethod
     def __format_image_url(element):
@@ -122,9 +100,9 @@ class VRTPlayer:
         stream_service = urltostreamservice.UrlToStreamService(self._VRT_BASE, self._VRTNU_BASE_URL, self._addon_)
         stream = stream_service.get_stream_from_url(path)
         if stream is not None:
-            play_item = xbmcgui.ListItem(path=stream.streamURL)
-            if stream.subtitleURL is not None:
-                play_item.setSubtitles([stream.subtitleURL])
+            play_item = xbmcgui.ListItem(path=stream.stream_url)
+            if stream.subtitle_url is not None:
+                play_item.setSubtitles([stream.subtitle_url])
             xbmcplugin.setResolvedUrl(self._handle, True, listitem=play_item)
 
     def play_livestream(self, path):
