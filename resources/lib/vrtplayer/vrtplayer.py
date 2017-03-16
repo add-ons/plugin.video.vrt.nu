@@ -9,6 +9,7 @@ import  time
 from urlparse import parse_qsl
 from urlparse import urljoin
 from urllib2 import urlopen
+from urllib import  urlencode
 from bs4 import BeautifulSoup
 from bs4 import SoupStrainer
 from resources.lib.vrtplayer import urltostreamservice
@@ -29,7 +30,7 @@ class VRTPlayer:
         listing = []
         for title_item in list_items:
             list_item = xbmcgui.ListItem(label=title_item.title)
-            url = title_item.url.format(self._url, title_item.title)
+            url = self._url + '?' + urlencode(title_item.url_dictionary)
             list_item.setProperty('IsPlayable', str(title_item.is_playable))
             list_item.setArt({'thumb': title_item.logo})
             listing.append((url, list_item, not title_item.is_playable))

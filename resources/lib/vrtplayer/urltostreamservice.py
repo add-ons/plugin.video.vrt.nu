@@ -6,6 +6,7 @@ import urlparse
 from resources.lib.helperobjects import helperobjects
 
 
+
 class UrlToStreamService:
 
     _API_KEY ="3_qhEcPa5JGFROVwu5SWKqJ4mVOIkwlFNMSKwzPDAh8QZOtHqu6L4nD5Q7lk0eXOOG"
@@ -29,7 +30,6 @@ class UrlToStreamService:
                    {'loginID': cred.username, 'password': cred.password, 'APIKey': self._API_KEY})
 
         logon_json = r.json()
-        #xbmc.log(r.text, xbmc.LOGWARNING)
         if logon_json['errorCode'] == 0:
             uid = logon_json['UID']
             sig = logon_json['UIDSignature']
@@ -54,6 +54,7 @@ class UrlToStreamService:
             hls = self.__get_hls(stream_response.json()['targetUrls'])
             subtitle = None
             if self.addon.getSetting("showsubtitles") == "true":
+                xbmc.log("got subtitle", xbmc.LOGWARNING)
                 subtitle = self.__get_subtitle(stream_response.json()['subtitleUrls'])
 
             return helperobjects.StreamURLS(hls, subtitle)
@@ -65,7 +66,7 @@ class UrlToStreamService:
     @staticmethod
     def __get_hls(dictionary):
         for item in dictionary:
-            if item['type'] == 'HLS':
+            if item['type'] == 'RTMP':
                 return item['url']
 
     @staticmethod

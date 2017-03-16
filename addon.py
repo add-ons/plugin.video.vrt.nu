@@ -20,19 +20,19 @@ def __get_media(file_name):
 
 
 def __get_title_items():
-    return {helperobjects.TitleItem(_addon_.getLocalizedString(32091), '{0}?action=listingaz', False, None),
-            helperobjects.TitleItem(_addon_.getLocalizedString(32100), '{0}?action=listinglive', False, None)}
+    return {helperobjects.TitleItem(_addon_.getLocalizedString(32091), {'action': 'listingaz'}, False, None),
+            helperobjects.TitleItem(_addon_.getLocalizedString(32100), {'action': 'listinglive'}, False, None)}
 
 
 def __get_livestream_items():
     return {helperobjects.TitleItem(_addon_.getLocalizedString(32101),
-                                    '{0}?action=playlive&video={1}'.format(_url, _VRT_LIVESTREAM_URL),
+                                    {'action': 'playlive', 'video': _VRT_LIVESTREAM_URL},
                                     True, __get_media("een.png")),
             helperobjects.TitleItem(_addon_.getLocalizedString(32102),
-                                    '{0}?action=playlive&video={1}'.format(_url, _CANVAS_LIVESTREAM_),
+                                    {'action': 'playlive', 'video': _CANVAS_LIVESTREAM_},
                                     True, __get_media("canvas.png")),
             helperobjects.TitleItem(_addon_.getLocalizedString(32103),
-                                    '{0}?action=playlive&video={1}'.format(_url, _KETNET_VRT),
+                                    {'action': 'playlive', 'video': _KETNET_VRT},
                                     True, __get_media("ketnet.png"))}
 
 

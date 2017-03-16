@@ -1,8 +1,8 @@
 class TitleItem:
 
-    def __init__(self, title, url, is_playable, logo):
+    def __init__(self, title, url_dictionary, is_playable, logo):
         self.title = title
-        self.url = url
+        self.url_dictionary = url_dictionary
         self.is_playable = is_playable
         self.logo = logo
 
