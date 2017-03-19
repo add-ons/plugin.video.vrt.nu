@@ -51,7 +51,7 @@ class UrlToStreamService:
             final_url = urlparse.urljoin(self._BASE_GET_STREAM_URL_PATH, mzid)
 
             stream_response = s.get(final_url)
-            hls = self.__get_hls(stream_response.json()['targetUrls'])
+            hls = self.rtmp(stream_response.json()['targetUrls'])
             subtitle = None
             if self.addon.getSetting("showsubtitles") == "true":
                 xbmc.log("got subtitle", xbmc.LOGWARNING)
@@ -64,18 +64,15 @@ class UrlToStreamService:
                                 self.addon.getLocalizedString(32052))
 
     @staticmethod
-    def __get_hls(dictionary):
+    def rtmp(dictionary):
         for item in dictionary:
             if item['type'] == 'RTMP':
                 return item['url']
 
     @staticmethod
     def __get_subtitle(dictionary):
-        xbmc.log(json.dumps(dictionary), xbmc.LOGWARNING)
         for item in dictionary:
-            xbmc.log(json.dumps(item), xbmc.LOGWARNING)
             if item['type'] == 'CLOSED':
-                xbmc.log(item['url'], xbmc.LOGWARNING)
                 return item['url']
 
     @staticmethod

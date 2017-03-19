@@ -72,6 +72,7 @@ class VRTPlayer:
 
     def get_video_episodes(self, path):
         url = urljoin(self._VRT_BASE, path)
+        #xbmc.log(url, xbmc.LOGWARNING)
         s = requests.session()
         # go to url.relevant gets redirected and go on with this url
         response = urlopen(s.get(url).url)
