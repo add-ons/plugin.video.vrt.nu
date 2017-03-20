@@ -15,6 +15,7 @@ from bs4 import SoupStrainer
 from resources.lib.vrtplayer import urltostreamservice
 from resources.lib.helperobjects import helperobjects
 
+
 class VRTPlayer:
 
     _VRT_BASE = "https://www.vrt.be/"
@@ -25,6 +26,16 @@ class VRTPlayer:
     def __init__(self, handle, url):
         self._handle = handle
         self._url = url
+
+    @staticmethod
+    def __format_image_url(element):
+        raw_thumbnail = element.find("img")['srcset'].split('1x,')[0]
+        return raw_thumbnail.replace("//", "https://")
+
+    @staticmethod
+    def __set_plot(li, description):
+        li.setInfo('video', {'plot': description.strip()})
+        return li
 
     def list_categories(self, list_items):
         listing = []
@@ -38,6 +49,16 @@ class VRTPlayer:
         xbmcplugin.addSortMethod(self._handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
         xbmcplugin.endOfDirectory(self._handle)
 
+    @staticmethod
+    def __get_AZ_description(tile):
+        description = ""
+        description_item = tile.find(class_="tile__description")
+        if description_item is not None:
+            p_item = description_item.find("p")
+            if p_item is not None:
+                description = p_item.text
+        return description
+
     def list_videos_az(self):
         joined_url = urljoin(self._VRTNU_BASE_URL, "./a-z/")
         response = urlopen(joined_url)
@@ -46,8 +67,9 @@ class VRTPlayer:
         listing = []
         for tile in soup.find_all(class_="tile"):
             link_to_video = tile["href"]
-            info = tile.find(class_="tile__description").find("p").text
+            description = self.__get_AZ_description(tile)
             li = self.__get_item(tile, "false")
+            li = self.__set_plot(li, description)
             url = '{0}?action=getepisodes&video={1}'.format(self._url, link_to_video)
             listing.append((url, li, True))
 
@@ -67,9 +89,12 @@ class VRTPlayer:
         return li
 
     @staticmethod
-    def __format_image_url(element):
-        raw_thumbnail = element.find("img")['srcset'].split('1x,')[0]
-        return raw_thumbnail.replace("//", "https://")
+    def __get_episode_description(soup):
+        description = ""
+        description_item = soup.find(class_="content__shortdescription")
+        if description_item is not None:
+            description = description_item.text
+        return description
 
     def get_video_episodes(self, path):
         url = urljoin(self._VRT_BASE, path)
@@ -81,23 +106,34 @@ class VRTPlayer:
         listing = []
         episodes = soup.find_all(class_="tile")
         if len(episodes) != 0:
-            for tile in soup.find_all(class_="tile"):
-                li = self.__get_item(tile, "true")
-                if li is not None:
-                    link_to_video = tile["href"]
-                    url = '{0}?action=play&video={1}'.format(self._url, link_to_video)
-                    listing.append((url, li, False))
+            listing.extend(self.get_multiple_videos(soup))
         else:
-            vrt_video = soup.find(class_="vrtvideo")
-            thumbnail = self.__format_image_url(vrt_video)
-            li = xbmcgui.ListItem(soup.find(class_="content__title").text)
-            li.setProperty('IsPlayable', 'true')
-            li.setArt({'thumb': thumbnail})
-            url = '{0}?action=play&video={1}'.format(self._url, path)
+            li, url = self.get_single_video(path, soup)
             listing.append((url, li, False))
 
         xbmcplugin.addDirectoryItems(self._handle, listing, len(listing))
         xbmcplugin.endOfDirectory(self._handle)
+
+    def get_multiple_videos(self, soup):
+        items = []
+        for tile in soup.find_all(class_="tile"):
+            li = self.__get_item(tile, "true")
+            if li is not None:
+                link_to_video = tile["href"]
+                url = '{0}?action=play&video={1}'.format(self._url, link_to_video)
+                items.append((url, li, False))
+        return items
+
+    def get_single_video(self, path, soup):
+        vrt_video = soup.find(class_="vrtvideo")
+        thumbnail = self.__format_image_url(vrt_video)
+        description = self.__get_episode_description(soup)
+        li = xbmcgui.ListItem(soup.find(class_="content__title").text)
+        li.setProperty('IsPlayable', 'true')
+        li = self.__set_plot(li, description)
+        li.setArt({'thumb': thumbnail})
+        url = '{0}?action=play&video={1}'.format(self._url, path)
+        return li, url
 
     def play_video(self, path):
         stream_service = urltostreamservice.UrlToStreamService(self._VRT_BASE, self._VRTNU_BASE_URL, self._addon_)
