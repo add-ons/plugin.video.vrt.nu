@@ -46,6 +46,7 @@ class VRTPlayer:
         listing = []
         for tile in soup.find_all(class_="tile"):
             link_to_video = tile["href"]
+            info = tile.find(class_="tile__description").find("p").text
             li = self.__get_item(tile, "false")
             url = '{0}?action=getepisodes&video={1}'.format(self._url, link_to_video)
             listing.append((url, li, True))
