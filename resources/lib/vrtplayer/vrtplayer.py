@@ -69,7 +69,7 @@ class VRTPlayer:
             link_to_video = tile["href"]
             description = self.__get_AZ_description(tile)
             li = self.__get_item(tile, "false")
-            li = self.__set_plot(li, description)
+            li.setInfo('video', {'plot': description.strip()})
             url = '{0}?action=getepisodes&video={1}'.format(self._url, link_to_video)
             listing.append((url, li, True))
 
@@ -96,6 +96,16 @@ class VRTPlayer:
             description = description_item.text
         return description
 
+    @staticmethod
+    def __get_episode_duration(soup):
+        duration = None
+        duration_item = soup.find(class_="content__duration")
+        if duration_item is not None:
+            minutes = re.findall("\d+", duration_item.text)
+            if len(minutes) != 0:
+                duration = VRTPlayer.__minutes_string_to_seconds_int(minutes[0])
+        return duration
+
     def get_video_episodes(self, path):
         url = urljoin(self._VRT_BASE, path)
         #xbmc.log(url, xbmc.LOGWARNING)
@@ -120,9 +130,41 @@ class VRTPlayer:
             li = self.__get_item(tile, "true")
             if li is not None:
                 link_to_video = tile["href"]
+                duration = self.__get_multiple_episodes_duration(tile)
+                video_dictionary = dict()
+                self.__add_duration_to_video(video_dictionary, duration)
+                li.setInfo('video', video_dictionary)
                 url = '{0}?action=play&video={1}'.format(self._url, link_to_video)
                 items.append((url, li, False))
         return items
+
+    @staticmethod
+    def __add_duration_to_video(dictionary, duration):
+        if duration is not None:
+            dictionary["duration"] = duration
+        return duration
+
+    @staticmethod
+    def __add_plot_to_video(dictionary, plot):
+        if plot is not None:
+            dictionary["plot"] = plot.strip()
+        return plot
+
+    @staticmethod
+    def __get_multiple_episodes_duration(tile):
+        seconds = None
+        minutes_element = tile.find("abbr", {"title": "minuten"})
+        if minutes_element is not None and minutes_element.parent is not None:
+            minutes = minutes_element.parent.next_element
+            seconds = VRTPlayer.__minutes_string_to_seconds_int(minutes)
+        return seconds
+
+    @staticmethod
+    def __minutes_string_to_seconds_int(minutes):
+        try:
+            return int(minutes) * 60
+        except ValueError:
+            return None
 
     def get_single_video(self, path, soup):
         vrt_video = soup.find(class_="vrtvideo")
@@ -130,7 +172,10 @@ class VRTPlayer:
         description = self.__get_episode_description(soup)
         li = xbmcgui.ListItem(soup.find(class_="content__title").text)
         li.setProperty('IsPlayable', 'true')
-        li = self.__set_plot(li, description)
+        video_dictionary = dict()
+        self.__add_duration_to_video(video_dictionary, self.__get_episode_duration(soup))
+        self.__add_plot_to_video(video_dictionary, description)
+        li.setInfo('video', video_dictionary)
         li.setArt({'thumb': thumbnail})
         url = '{0}?action=play&video={1}'.format(self._url, path)
         return li, url
