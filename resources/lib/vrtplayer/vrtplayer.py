@@ -8,7 +8,6 @@ import re
 import  time
 from urlparse import parse_qsl
 from urlparse import urljoin
-from urllib2 import urlopen
 from urllib import  urlencode
 from bs4 import BeautifulSoup
 from bs4 import SoupStrainer
@@ -61,9 +60,9 @@ class VRTPlayer:
 
     def list_videos_az(self):
         joined_url = urljoin(self._VRTNU_BASE_URL, "./a-z/")
-        response = urlopen(joined_url)
+        response = requests.get(joined_url)
         tiles = SoupStrainer('a', {"class": "tile"})
-        soup = BeautifulSoup(response, "html.parser", parse_only=tiles)
+        soup = BeautifulSoup(response.content, "html.parser", parse_only=tiles)
         listing = []
         for tile in soup.find_all(class_="tile"):
             link_to_video = tile["href"]
@@ -109,16 +108,16 @@ class VRTPlayer:
     def get_video_episodes(self, path):
         url = urljoin(self._VRT_BASE, path)
         #xbmc.log(url, xbmc.LOGWARNING)
-        s = requests.session()
         # go to url.relevant gets redirected and go on with this url
-        response = urlopen(s.get(url).url)
-        soup = BeautifulSoup(response, "html.parser")
+        relevant_path = requests.get(url)
+        response = requests.get(relevant_path.url)
+        soup = BeautifulSoup(response.content, "html.parser")
         listing = []
         episodes = soup.find_all(class_="tile")
         if len(episodes) != 0:
             listing.extend(self.get_multiple_videos(soup))
         else:
-            li, url = self.get_single_video(path, soup)
+            li, url = self.get_single_video(relevant_path.url, soup)
             listing.append((url, li, False))
 
         xbmcplugin.addDirectoryItems(self._handle, listing, len(listing))

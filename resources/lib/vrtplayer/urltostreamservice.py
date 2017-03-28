@@ -24,8 +24,7 @@ class UrlToStreamService:
             cred.reload()
         url = urlparse.urljoin(self.vrt_base, url)
         s = requests.session()
-        # go to url.relevant gets redirected and go on with this url
-        url = s.get(url).url
+
         r = s.post("https://accounts.eu1.gigya.com/accounts.login",
                    {'loginID': cred.username, 'password': cred.password, 'APIKey': self._API_KEY})
 
@@ -51,20 +50,20 @@ class UrlToStreamService:
             final_url = urlparse.urljoin(self._BASE_GET_STREAM_URL_PATH, mzid)
 
             stream_response = s.get(final_url)
-            hls = self.rtmp(stream_response.json()['targetUrls'])
+            rtmp = self.__get_rtmp(stream_response.json()['targetUrls'])
             subtitle = None
             if self.addon.getSetting("showsubtitles") == "true":
                 xbmc.log("got subtitle", xbmc.LOGWARNING)
                 subtitle = self.__get_subtitle(stream_response.json()['subtitleUrls'])
 
-            return helperobjects.StreamURLS(hls, subtitle)
+            return helperobjects.StreamURLS(rtmp, subtitle)
         else:
             xbmcgui.Dialog().ok(self.addon.getAddonInfo('name'),
                                 self.addon.getLocalizedString(32051),
                                 self.addon.getLocalizedString(32052))
 
     @staticmethod
-    def rtmp(dictionary):
+    def __get_rtmp(dictionary):
         for item in dictionary:
             if item['type'] == 'RTMP':
                 return item['url']
