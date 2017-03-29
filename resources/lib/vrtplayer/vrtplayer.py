@@ -125,7 +125,9 @@ class VRTPlayer:
 
     def get_multiple_videos(self, soup):
         items = []
-        for tile in soup.find_all(class_="tile"):
+        episode_list = soup.find("div", {"id": "episodelist__slider"})
+
+        for tile in episode_list.find_all(class_="tile"):
             li = self.__get_item(tile, "true")
             if li is not None:
                 link_to_video = tile["href"]
@@ -184,6 +186,7 @@ class VRTPlayer:
         stream = stream_service.get_stream_from_url(path)
         if stream is not None:
             play_item = xbmcgui.ListItem(path=stream.stream_url)
+            play_item.setMimeType('video/mp4')
             if stream.subtitle_url is not None:
                 play_item.setSubtitles([stream.subtitle_url])
             xbmcplugin.setResolvedUrl(self._handle, True, listitem=play_item)
