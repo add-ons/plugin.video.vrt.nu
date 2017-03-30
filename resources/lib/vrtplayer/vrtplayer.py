@@ -22,9 +22,10 @@ class VRTPlayer:
     _addon_ = xbmcaddon.Addon()
     _addonname_ = _addon_.getAddonInfo('name')
 
-    def __init__(self, handle, url):
+    def __init__(self, handle, url, session):
         self._handle = handle
         self._url = url
+        self._session = session
 
     @staticmethod
     def __format_image_url(element):
@@ -182,7 +183,10 @@ class VRTPlayer:
         return li, url
 
     def play_video(self, path):
-        stream_service = urltostreamservice.UrlToStreamService(self._VRT_BASE, self._VRTNU_BASE_URL, self._addon_)
+        stream_service = urltostreamservice.UrlToStreamService(self._VRT_BASE,
+                                                               self._VRTNU_BASE_URL,
+                                                               self._addon_,
+                                                               self._session)
         stream = stream_service.get_stream_from_url(path)
         if stream is not None:
             play_item = xbmcgui.ListItem(path=stream.stream_url)
