@@ -14,7 +14,6 @@ _handle = int(sys.argv[1])
 _VRT_LIVESTREAM_URL = "http://live.stream.vrt.be/vrt_video1_live/smil:vrt_video1_live.smil/playlist.m3u8"
 _CANVAS_LIVESTREAM_ = "http://live.stream.vrt.be/vrt_video2_live/smil:vrt_video2_live.smil/playlist.m3u8"
 _KETNET_VRT = "http://live.stream.vrt.be/vrt_events3_live/smil:vrt_events3_live.smil/playlist.m3u8"
-_session = requests.session()
 
 
 def __get_media(file_name):
@@ -40,7 +39,7 @@ def __get_livestream_items():
 
 def router( params_string):
 
-    vrt_player = vrtplayer.VRTPlayer(_handle, _url, _session)
+    vrt_player = vrtplayer.VRTPlayer(_handle, _url)
     params = dict(parse_qsl(params_string))
     if params:
         if params['action'] == 'listingaz':
