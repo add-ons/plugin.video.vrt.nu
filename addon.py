@@ -16,7 +16,7 @@ def router(params_string):
     params = dict(parse_qsl(params_string))
     if params:
         if params['action'] == 'listingaz':
-            vrt_player.list_videos_az()
+            vrt_player.show_listing(vrt_player.get_az_menu_items())
         elif params['action'] == 'getepisodes':
             vrt_player.get_video_episodes(params['video'])
         elif params['action'] == 'play':

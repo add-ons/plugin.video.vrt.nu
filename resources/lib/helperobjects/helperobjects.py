@@ -1,10 +1,13 @@
 class TitleItem:
 
-    def __init__(self, title, url_dictionary, is_playable, logo):
+
+
+    def __init__(self, title, url_dictionary, is_playable, logo, video_dictionary = None):
         self.title = title
         self.url_dictionary = url_dictionary
         self.is_playable = is_playable
         self.logo = logo
+        self.video_dictionary = video_dictionary
 
 
 class StreamURLS:

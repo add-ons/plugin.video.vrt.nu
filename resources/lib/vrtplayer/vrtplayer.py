@@ -42,12 +42,13 @@ class VRTPlayer:
             url = self._url + '?' + urlencode(title_item.url_dictionary)
             list_item.setProperty('IsPlayable', str(title_item.is_playable))
             list_item.setArt({'thumb': title_item.logo})
+            list_item.setInfo('video', title_item.video_dictionary)
             listing.append((url, list_item, not title_item.is_playable))
         xbmcplugin.addDirectoryItems(self._handle, listing, len(listing))
         xbmcplugin.addSortMethod(self._handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
         xbmcplugin.endOfDirectory(self._handle)
 
-    def list_videos_az(self):
+    def get_az_menu_items(self):
         joined_url = urljoin(self._VRTNU_BASE_URL, "./a-z/")
         response = requests.get(joined_url)
         tiles = SoupStrainer('a', {"class": "tile"})
@@ -56,14 +57,11 @@ class VRTPlayer:
         for tile in soup.find_all(class_="tile"):
             link_to_video = tile["href"]
             video_dictionary = self.metadata_collector.get_az_metadata(tile)
-            li = self.__get_item(tile, "false")
-            li.setInfo('video', video_dictionary)
-            url = '{0}?action=getepisodes&video={1}'.format(self._url, link_to_video)
-            listing.append((url, li, True))
-
-        xbmcplugin.addDirectoryItems(self._handle, listing, len(listing))
-        xbmcplugin.addSortMethod(self._handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
-        xbmcplugin.endOfDirectory(self._handle)
+            thumbnail, title = self.__get_thumbnail_and_title(tile)
+            item = helperobjects.TitleItem(title, {'action': 'getepisodes', 'video': link_to_video}, False, thumbnail,
+                                           video_dictionary)
+            listing.append(item)
+        return listing
 
     def get_main_menu_items(self):
         return {helperobjects.TitleItem(self._addon.getLocalizedString(32091), {'action': 'listingaz'}, False, None),
@@ -79,6 +77,15 @@ class VRTPlayer:
                 helperobjects.TitleItem(self._addon.getLocalizedString(32103),
                                         {'action': 'playlive', 'video': self._KETNET_VRT},
                                         True, self.__get_media("ketnet.png"))}
+
+    @staticmethod
+    def __get_thumbnail_and_title(element):
+        thumbnail = statichelper.StaticHelper.format_image_url(element)
+        found_element = element.find(class_="tile__title")
+        title = ""
+        if found_element is not None:
+            title = found_element.contents[0].replace("\n", "").strip()
+        return thumbnail, title
 
     @staticmethod
     def __get_item(element, is_playable):
