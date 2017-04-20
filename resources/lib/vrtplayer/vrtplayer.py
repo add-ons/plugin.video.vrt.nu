@@ -1,5 +1,6 @@
 import sys
 import xbmc
+import os
 import xbmcgui
 import xbmcplugin
 import xbmcaddon
@@ -8,14 +9,20 @@ import re
 import  time
 from urlparse import parse_qsl
 from urlparse import urljoin
-from urllib import  urlencode
+from urllib import urlencode
 from bs4 import BeautifulSoup
 from bs4 import SoupStrainer
 from resources.lib.vrtplayer import urltostreamservice
 from resources.lib.helperobjects import helperobjects
+from resources.lib.vrtplayer import metadatacollector
+from resources.lib.vrtplayer import statichelper
 
 
 class VRTPlayer:
+
+    _VRT_LIVESTREAM_URL = "http://live.stream.vrt.be/vrt_video1_live/smil:vrt_video1_live.smil/playlist.m3u8"
+    _CANVAS_LIVESTREAM_ = "http://live.stream.vrt.be/vrt_video2_live/smil:vrt_video2_live.smil/playlist.m3u8"
+    _KETNET_VRT = "http://live.stream.vrt.be/vrt_events3_live/smil:vrt_events3_live.smil/playlist.m3u8"
 
     _VRT_BASE = "https://www.vrt.be/"
     _VRTNU_BASE_URL = urljoin(_VRT_BASE, "/vrtnu/")
@@ -25,18 +32,9 @@ class VRTPlayer:
     def __init__(self, handle, url):
         self._handle = handle
         self._url = url
+        self.metadata_collector = metadatacollector.MetadataCollector()
 
-    @staticmethod
-    def __format_image_url(element):
-        raw_thumbnail = element.find("img")['srcset'].split('1x,')[0]
-        return raw_thumbnail.replace("//", "https://")
-
-    @staticmethod
-    def __set_plot(li, description):
-        li.setInfo('video', {'plot': description.strip()})
-        return li
-
-    def list_categories(self, list_items):
+    def show_listing(self, list_items):
         listing = []
         for title_item in list_items:
             list_item = xbmcgui.ListItem(label=title_item.title)
@@ -48,16 +46,6 @@ class VRTPlayer:
         xbmcplugin.addSortMethod(self._handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
         xbmcplugin.endOfDirectory(self._handle)
 
-    @staticmethod
-    def __get_AZ_description(tile):
-        description = ""
-        description_item = tile.find(class_="tile__description")
-        if description_item is not None:
-            p_item = description_item.find("p")
-            if p_item is not None:
-                description = p_item.text
-        return description
-
     def list_videos_az(self):
         joined_url = urljoin(self._VRTNU_BASE_URL, "./a-z/")
         response = requests.get(joined_url)
@@ -66,18 +54,34 @@ class VRTPlayer:
         listing = []
         for tile in soup.find_all(class_="tile"):
             link_to_video = tile["href"]
-            description = self.__get_AZ_description(tile)
+            video_dictionary = self.metadata_collector.get_az_metadata(tile)
             li = self.__get_item(tile, "false")
-            li.setInfo('video', {'plot': description.strip()})
+            li.setInfo('video', video_dictionary)
             url = '{0}?action=getepisodes&video={1}'.format(self._url, link_to_video)
             listing.append((url, li, True))
 
         xbmcplugin.addDirectoryItems(self._handle, listing, len(listing))
         xbmcplugin.addSortMethod(self._handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
-        xbmcplugin.endOfDirectory(self._handle,)
+        xbmcplugin.endOfDirectory(self._handle)
 
-    def __get_item(self, element, is_playable):
-        thumbnail = self.__format_image_url(element)
+    def get_main_menu_items(self):
+        return {helperobjects.TitleItem(self._addon_.getLocalizedString(32091), {'action': 'listingaz'}, False, None),
+                helperobjects.TitleItem(self._addon_.getLocalizedString(32100), {'action': 'listinglive'}, False, None)}
+
+    def get_livestream_items(self):
+        return {helperobjects.TitleItem(self._addon_.getLocalizedString(32101),
+                                        {'action': 'playlive', 'video': self._VRT_LIVESTREAM_URL},
+                                        True, self.__get_media("een.png")),
+                helperobjects.TitleItem(self._addon_.getLocalizedString(32102),
+                                        {'action': 'playlive', 'video': self._CANVAS_LIVESTREAM_},
+                                        True, self.__get_media("canvas.png")),
+                helperobjects.TitleItem(self._addon_.getLocalizedString(32103),
+                                        {'action': 'playlive', 'video': self._KETNET_VRT},
+                                        True, self.__get_media("ketnet.png"))}
+
+    @staticmethod
+    def __get_item(element, is_playable):
+        thumbnail = statichelper.StaticHelper.format_image_url(element)
         found_element = element.find(class_="tile__title")
         li = None
         if found_element is not None:
@@ -86,24 +90,6 @@ class VRTPlayer:
             li.setProperty('IsPlayable', is_playable)
             li.setArt({'thumb': thumbnail})
         return li
-
-    @staticmethod
-    def __get_episode_description(soup):
-        description = ""
-        description_item = soup.find(class_="content__shortdescription")
-        if description_item is not None:
-            description = description_item.text
-        return description
-
-    @staticmethod
-    def __get_episode_duration(soup):
-        duration = None
-        duration_item = soup.find(class_="content__duration")
-        if duration_item is not None:
-            minutes = re.findall("\d+", duration_item.text)
-            if len(minutes) != 0:
-                duration = VRTPlayer.__minutes_string_to_seconds_int(minutes[0])
-        return duration
 
     def get_video_episodes(self, path):
         url = urljoin(self._VRT_BASE, path)
@@ -131,51 +117,20 @@ class VRTPlayer:
             li = self.__get_item(tile, "true")
             if li is not None:
                 link_to_video = tile["href"]
-                duration = self.__get_multiple_episodes_duration(tile)
-                video_dictionary = dict()
-                self.__add_duration_to_video(video_dictionary, duration)
+                video_dictionary = self.metadata_collector.get_multiple_layout_episode_metadata(tile)
                 li.setInfo('video', video_dictionary)
                 url = '{0}?action=play&video={1}'.format(self._url, link_to_video)
                 items.append((url, li, False))
         return items
 
-    @staticmethod
-    def __add_duration_to_video(dictionary, duration):
-        if duration is not None:
-            dictionary["duration"] = duration
-        return duration
-
-    @staticmethod
-    def __add_plot_to_video(dictionary, plot):
-        if plot is not None:
-            dictionary["plot"] = plot.strip()
-        return plot
-
-    @staticmethod
-    def __get_multiple_episodes_duration(tile):
-        seconds = None
-        minutes_element = tile.find("abbr", {"title": "minuten"})
-        if minutes_element is not None and minutes_element.parent is not None:
-            minutes = minutes_element.parent.next_element
-            seconds = VRTPlayer.__minutes_string_to_seconds_int(minutes)
-        return seconds
-
-    @staticmethod
-    def __minutes_string_to_seconds_int(minutes):
-        try:
-            return int(minutes) * 60
-        except ValueError:
-            return None
-
     def get_single_video(self, path, soup):
         vrt_video = soup.find(class_="vrtvideo")
-        thumbnail = self.__format_image_url(vrt_video)
-        description = self.__get_episode_description(soup)
+        thumbnail = statichelper.StaticHelper.format_image_url(vrt_video)
         li = xbmcgui.ListItem(soup.find(class_="content__title").text)
         li.setProperty('IsPlayable', 'true')
-        video_dictionary = dict()
-        self.__add_duration_to_video(video_dictionary, self.__get_episode_duration(soup))
-        self.__add_plot_to_video(video_dictionary, description)
+
+        video_dictionary = self.metadata_collector.get_single_layout_episode_metadata(soup)
+
         li.setInfo('video', video_dictionary)
         li.setArt({'thumb': thumbnail})
         url = '{0}?action=play&video={1}'.format(self._url, path)
@@ -184,11 +139,11 @@ class VRTPlayer:
     def play_video(self, path):
         stream_service = urltostreamservice.UrlToStreamService(self._VRT_BASE,
                                                                self._VRTNU_BASE_URL,
-                                                               self._addon_ )
+                                                               self._addon_)
         stream = stream_service.get_stream_from_url(path)
         if stream is not None:
             play_item = xbmcgui.ListItem(path=stream.stream_url)
-            play_item.setMimeType('video/mp4')
+            play_item.setMimeType('application/x-mpegURL')
             if stream.subtitle_url is not None:
                 play_item.setSubtitles([stream.subtitle_url])
             xbmcplugin.setResolvedUrl(self._handle, True, listitem=play_item)
@@ -196,3 +151,6 @@ class VRTPlayer:
     def play_livestream(self, path):
         play_item = xbmcgui.ListItem(path=path)
         xbmcplugin.setResolvedUrl(self._handle, True, listitem=play_item)
+
+    def __get_media(self, file_name):
+        return os.path.join(self._addon_path, 'resources', 'media', file_name)

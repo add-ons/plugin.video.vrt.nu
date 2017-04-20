@@ -8,31 +8,16 @@ import os
 from resources.lib.helperobjects import helperobjects
 
 
-
 class UrlToStreamService:
 
     _API_KEY ="3_qhEcPa5JGFROVwu5SWKqJ4mVOIkwlFNMSKwzPDAh8QZOtHqu6L4nD5Q7lk0eXOOG"
     _BASE_GET_STREAM_URL_PATH = "https://mediazone.vrt.be/api/v1/vrtvideo/assets/"
-
 
     def __init__(self, vrt_base, vrtnu_base_url, addon):
         self._vrt_base = vrt_base
         self._vrtnu_base_url = vrtnu_base_url
         self._addon = addon
         self._session = requests.session()
-        ''' full_path = os.path.join(self._addon.getAddonInfo("path"), "cookie.dat")
-        self._cookieJar = cookielib.MozillaCookieJar(full_path)
-        if not os.path.isfile(full_path):
-            # noinspection PyUnresolvedReferences
-            xbmc.log("Cookiejar created", xbmc.LOGWARNING)
-            self._cookieJar.save()
-        else:
-            xbmc.log("Cookiejar loaded", xbmc.LOGWARNING)
-            self._cookieJar.load()
-        xbmc.log("printing cookies", xbmc.LOGWARNING)
-        for cookie in self._cookieJar:
-            xbmc.log( cookie.name + " " + cookie.value + " " + cookie.domain, xbmc.LOGWARNING)
-        '''
 
     def get_stream_from_url(self, url):
         cred = helperobjects.Credentials(self._addon)
@@ -40,10 +25,6 @@ class UrlToStreamService:
             self._addon.openSettings()
             cred.reload()
         url = urlparse.urljoin(self._vrt_base, url)
-        #self._session.cookies = self._cookieJar
-
-
-
         r = self._session.post("https://accounts.eu1.gigya.com/accounts.login",
                                {'loginID': cred.username, 'password': cred.password, 'APIKey': self._API_KEY,
                                 'targetEnv': 'jssdk',
@@ -72,21 +53,20 @@ class UrlToStreamService:
             final_url = urlparse.urljoin(self._BASE_GET_STREAM_URL_PATH, mzid)
 
             stream_response = self._session.get(final_url)
-            rtmp = self.__get_rtmp(stream_response.json()['targetUrls']).replace("https", "http")
+            hls = self.__get_hls(stream_response.json()['targetUrls']).replace("https", "http")
             subtitle = None
             if self._addon.getSetting("showsubtitles") == "true":
                 subtitle = self.__get_subtitle(stream_response.json()['subtitleUrls'])
-            #self._cookieJar.save()
-            return helperobjects.StreamURLS(rtmp, subtitle)
+            return helperobjects.StreamURLS(hls, subtitle)
         else:
             xbmcgui.Dialog().ok(self._addon.getAddonInfo('name'),
                                 self._addon.getLocalizedString(32051),
                                 self._addon.getLocalizedString(32052))
 
     @staticmethod
-    def __get_rtmp(dictionary):
+    def __get_hls(dictionary):
         for item in dictionary:
-            if item['type'] == 'RTMP':
+            if item['type'] == 'HLS':
                 return item['url']
 
     @staticmethod
