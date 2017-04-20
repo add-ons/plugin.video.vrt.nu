@@ -26,13 +26,14 @@ class VRTPlayer:
 
     _VRT_BASE = "https://www.vrt.be/"
     _VRTNU_BASE_URL = urljoin(_VRT_BASE, "/vrtnu/")
-    _addon_ = xbmcaddon.Addon()
-    _addonname_ = _addon_.getAddonInfo('name')
+
 
     def __init__(self, handle, url):
         self._handle = handle
         self._url = url
         self.metadata_collector = metadatacollector.MetadataCollector()
+        self._addon = xbmcaddon.Addon()
+        self._addon_path = self._addon.getAddonInfo("path")
 
     def show_listing(self, list_items):
         listing = []
@@ -65,17 +66,17 @@ class VRTPlayer:
         xbmcplugin.endOfDirectory(self._handle)
 
     def get_main_menu_items(self):
-        return {helperobjects.TitleItem(self._addon_.getLocalizedString(32091), {'action': 'listingaz'}, False, None),
-                helperobjects.TitleItem(self._addon_.getLocalizedString(32100), {'action': 'listinglive'}, False, None)}
+        return {helperobjects.TitleItem(self._addon.getLocalizedString(32091), {'action': 'listingaz'}, False, None),
+                helperobjects.TitleItem(self._addon.getLocalizedString(32100), {'action': 'listinglive'}, False, None)}
 
     def get_livestream_items(self):
-        return {helperobjects.TitleItem(self._addon_.getLocalizedString(32101),
+        return {helperobjects.TitleItem(self._addon.getLocalizedString(32101),
                                         {'action': 'playlive', 'video': self._VRT_LIVESTREAM_URL},
                                         True, self.__get_media("een.png")),
-                helperobjects.TitleItem(self._addon_.getLocalizedString(32102),
+                helperobjects.TitleItem(self._addon.getLocalizedString(32102),
                                         {'action': 'playlive', 'video': self._CANVAS_LIVESTREAM_},
                                         True, self.__get_media("canvas.png")),
-                helperobjects.TitleItem(self._addon_.getLocalizedString(32103),
+                helperobjects.TitleItem(self._addon.getLocalizedString(32103),
                                         {'action': 'playlive', 'video': self._KETNET_VRT},
                                         True, self.__get_media("ketnet.png"))}
 
@@ -139,7 +140,7 @@ class VRTPlayer:
     def play_video(self, path):
         stream_service = urltostreamservice.UrlToStreamService(self._VRT_BASE,
                                                                self._VRTNU_BASE_URL,
-                                                               self._addon_)
+                                                               self._addon)
         stream = stream_service.get_stream_from_url(path)
         if stream is not None:
             play_item = xbmcgui.ListItem(path=stream.stream_url)

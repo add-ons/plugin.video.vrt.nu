@@ -7,7 +7,6 @@ from resources.lib.vrtplayer import vrtplayer
 from resources.lib.helperobjects import helperobjects
 
 _addon_ = xbmcaddon.Addon()
-_addon_path = xbmcaddon.Addon().getAddonInfo("path")
 _url = sys.argv[0]
 _handle = int(sys.argv[1])
 
