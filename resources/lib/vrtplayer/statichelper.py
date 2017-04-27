@@ -1,13 +1,13 @@
-class StaticHelper:
+def minutes_string_to_seconds_int(minutes):
+    try:
+        return int(minutes) * 60
+    except ValueError:
+        return None
 
-    @staticmethod
-    def format_image_url(element):
-        raw_thumbnail = element.find("img")['srcset'].split('1x,')[0]
-        return raw_thumbnail.replace("//", "https://")
 
-    @staticmethod
-    def minutes_string_to_seconds_int(minutes):
-        try:
-            return int(minutes) * 60
-        except ValueError:
-            return None
+def replace_newlines_and_strip(text):
+    return text.replace("\n", "").strip()
+
+
+def replace_double_slashes_with_https(url):
+    return url.replace("//", "https://")

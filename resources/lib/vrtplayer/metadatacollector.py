@@ -26,7 +26,7 @@ class MetadataCollector:
         if duration_item is not None:
             minutes = re.findall("\d+", duration_item.text)
             if len(minutes) != 0:
-                duration = statichelper.StaticHelper.minutes_string_to_seconds_int(minutes[0])
+                duration = statichelper.minutes_string_to_seconds_int(minutes[0])
         return duration
 
     @staticmethod
@@ -55,5 +55,5 @@ class MetadataCollector:
         minutes_element = soup.find("abbr", {"title": "minuten"})
         if minutes_element is not None and minutes_element.parent is not None:
             minutes = minutes_element.parent.next_element
-            seconds = statichelper.StaticHelper.minutes_string_to_seconds_int(minutes)
+            seconds = statichelper.minutes_string_to_seconds_int(minutes)
         return seconds

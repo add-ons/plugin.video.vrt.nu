@@ -16,6 +16,8 @@ from resources.lib.vrtplayer import urltostreamservice
 from resources.lib.helperobjects import helperobjects
 from resources.lib.vrtplayer import metadatacollector
 from resources.lib.vrtplayer import statichelper
+from resources.lib.vrtplayer import actions
+from resources.lib.vrtplayer import metadatacreator
 
 
 class VRTPlayer:
@@ -26,7 +28,7 @@ class VRTPlayer:
 
     _VRT_BASE = "https://www.vrt.be/"
     _VRTNU_BASE_URL = urljoin(_VRT_BASE, "/vrtnu/")
-
+    _VRTNU_SEARCH_URL = "https://search.vrt.be/suggest?facets[categories]="
 
     def __init__(self, handle, url):
         self._handle = handle
@@ -49,8 +51,8 @@ class VRTPlayer:
         xbmcplugin.endOfDirectory(self._handle)
 
     def get_az_menu_items(self):
-        joined_url = urljoin(self._VRTNU_BASE_URL, "./a-z/")
-        response = requests.get(joined_url)
+        url = urljoin(self._VRTNU_BASE_URL, "./a-z/")
+        response = requests.get(url)
         tiles = SoupStrainer('a', {"class": "tile"})
         soup = BeautifulSoup(response.content, "html.parser", parse_only=tiles)
         listing = []
@@ -58,46 +60,68 @@ class VRTPlayer:
             link_to_video = tile["href"]
             video_dictionary = self.metadata_collector.get_az_metadata(tile)
             thumbnail, title = self.__get_thumbnail_and_title(tile)
-            item = helperobjects.TitleItem(title, {'action': 'getepisodes', 'video': link_to_video}, False, thumbnail,
+            item = helperobjects.TitleItem(title, {'action': actions.GET_EPISODES, 'video': link_to_video}, False
+                                           , thumbnail,
                                            video_dictionary)
             listing.append(item)
         return listing
 
+    def get_category_menu_items(self):
+        joined_url = urljoin(self._VRTNU_BASE_URL, "./categorieen/")
+        response = requests.get(joined_url)
+        tiles = SoupStrainer('a', {"class": "tile tile--category"})
+        soup = BeautifulSoup(response.content, "html.parser", parse_only=tiles)
+        listing = []
+        for tile in soup.find_all(class_="tile"):
+            link_to_video = tile["href"]
+            thumbnail, title = self.__get_thumbnail_and_title(tile)
+            item = helperobjects.TitleItem(title, {'action': actions.GET_CATEGORY_EPISODES, 'video': link_to_video},
+            False, thumbnail)
+            listing.append(item)
+        return listing
+
+    def get_video_category_episodes(self, path):
+        category = path.split('/')[-2]
+        joined_url = self._VRTNU_SEARCH_URL + category
+        response = requests.get(joined_url)
+        programs = response.json()
+        listing = []
+        for program in programs:
+            title = program["title"]
+            plot = BeautifulSoup(program["description"], "html.parser").text
+            thumbnail = statichelper.replace_double_slashes_with_https(program["thumbnail"])
+
+            metadata_creator = metadatacreator.MetadataCreator()
+            metadata_creator.plot = plot
+            video_dictionary = metadata_creator.get_video_dictionary()
+            #cut vrtbase url off since it will be added again when searching for episodes (with a-z we dont have the
+            #  full url)
+            link_to_video = statichelper.replace_double_slashes_with_https(program["targetUrl"]).replace(self._VRT_BASE,
+                                                                                                         "")
+            item = helperobjects.TitleItem(title, {'action': actions.GET_EPISODES, 'video': link_to_video},
+            False, thumbnail, video_dictionary)
+            listing.append(item)
+        return listing
+    
+
     def get_main_menu_items(self):
-        return {helperobjects.TitleItem(self._addon.getLocalizedString(32091), {'action': 'listingaz'}, False, None),
-                helperobjects.TitleItem(self._addon.getLocalizedString(32100), {'action': 'listinglive'}, False, None)}
+        return {helperobjects.TitleItem(self._addon.getLocalizedString(32091), {'action': actions.LISTING_AZ}, False,
+                                        None),
+                helperobjects.TitleItem(self._addon.getLocalizedString(32092), {'action': actions.LISTING_CATEGORIES},
+                                        False, None),
+                helperobjects.TitleItem(self._addon.getLocalizedString(32100), {'action': actions.LISTING_LIVE}, False,
+                                        None)}
 
     def get_livestream_items(self):
         return {helperobjects.TitleItem(self._addon.getLocalizedString(32101),
-                                        {'action': 'playlive', 'video': self._VRT_LIVESTREAM_URL},
+                                        {'action': actions.PLAY_LIVE, 'video': self._VRT_LIVESTREAM_URL},
                                         True, self.__get_media("een.png")),
                 helperobjects.TitleItem(self._addon.getLocalizedString(32102),
-                                        {'action': 'playlive', 'video': self._CANVAS_LIVESTREAM_},
+                                        {'action': actions.PLAY_LIVE, 'video': self._CANVAS_LIVESTREAM_},
                                         True, self.__get_media("canvas.png")),
                 helperobjects.TitleItem(self._addon.getLocalizedString(32103),
-                                        {'action': 'playlive', 'video': self._KETNET_VRT},
+                                        {'action': actions.PLAY_LIVE, 'video': self._KETNET_VRT},
                                         True, self.__get_media("ketnet.png"))}
-
-    @staticmethod
-    def __get_thumbnail_and_title(element):
-        thumbnail = statichelper.StaticHelper.format_image_url(element)
-        found_element = element.find(class_="tile__title")
-        title = ""
-        if found_element is not None:
-            title = found_element.contents[0].replace("\n", "").strip()
-        return thumbnail, title
-
-    @staticmethod
-    def __get_item(element, is_playable):
-        thumbnail = statichelper.StaticHelper.format_image_url(element)
-        found_element = element.find(class_="tile__title")
-        li = None
-        if found_element is not None:
-            li = xbmcgui.ListItem(found_element.contents[0]
-                                  .replace("\n", "").strip())
-            li.setProperty('IsPlayable', is_playable)
-            li.setArt({'thumb': thumbnail})
-        return li
 
     def get_video_episodes(self, path):
         url = urljoin(self._VRT_BASE, path)
@@ -133,7 +157,7 @@ class VRTPlayer:
 
     def get_single_video(self, path, soup):
         vrt_video = soup.find(class_="vrtvideo")
-        thumbnail = statichelper.StaticHelper.format_image_url(vrt_video)
+        thumbnail = VRTPlayer.format_image_url(vrt_video)
         li = xbmcgui.ListItem(soup.find(class_="content__title").text)
         li.setProperty('IsPlayable', 'true')
 
@@ -162,3 +186,31 @@ class VRTPlayer:
 
     def __get_media(self, file_name):
         return os.path.join(self._addon_path, 'resources', 'media', file_name)
+
+    @staticmethod
+    def format_image_url(element):
+        raw_thumbnail = element.find("img")['srcset'].split('1x,')[0]
+        return statichelper.replace_double_slashes_with_https(raw_thumbnail)
+
+    @staticmethod
+    def __get_thumbnail_and_title(element):
+        thumbnail = VRTPlayer.format_image_url(element)
+        found_element = element.find(class_="tile__title")
+        title = ""
+        if found_element is not None:
+            title = statichelper.replace_newlines_and_strip(found_element.contents[0])
+        return thumbnail, title
+
+    @staticmethod
+    def __get_item(element, is_playable):
+        thumbnail = VRTPlayer.format_image_url(element)
+        found_element = element.find(class_="tile__title")
+        li = None
+        if found_element is not None:
+            stripped = statichelper.replace_newlines_and_strip(found_element.contents[0])
+            li = xbmcgui.ListItem(stripped)
+            li.setProperty('IsPlayable', is_playable)
+            li.setArt({'thumb': thumbnail})
+        return li
+
+
