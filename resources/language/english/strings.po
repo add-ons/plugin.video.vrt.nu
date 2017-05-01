@@ -45,8 +45,8 @@ msgid "A-Z"
 msgstr "A-Z"
 
 msgctxt "#32092"
-msgid "Categorieën"
-msgstr "Categorieën"
+msgid "Categories"
+msgstr "Categories"
 
 msgctxt "#32100"
 msgid "Livestreams"
