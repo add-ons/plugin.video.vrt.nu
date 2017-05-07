@@ -22,8 +22,11 @@
         <language>nl</language>
         <platform>all</platform>
         <license>GNU General Public License, v3</license>
-        <news>v0.0.1  (2017-5-01)
-- Initial working release</news>
+        <news>
+v0.0.1  (2017-5-01)
+- Initial working release
+v0.0.2 (2017-5-07)
+- Fixed installation issue</news>
         <source>https://github.com/pietje666/plugin.video.vrt.nu</source>
 		<assets>
 			<icon>resources/icon.png</icon>
