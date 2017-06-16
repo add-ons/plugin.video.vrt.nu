@@ -22,9 +22,11 @@ from resources.lib.vrtplayer import metadatacreator
 
 class VRTPlayer:
 
-    _VRT_LIVESTREAM_URL = "https://live-w.lwc.vrtcdn.be/groupc/live/d05012c2-6a5d-49ff-a711-79b32684615b/live.isml/.m3u8"
+    #Url met de urls https://services.vrt.be/videoplayer/r/live.json
+    _EEN_LIVESTREAM = "https://live-w.lwc.vrtcdn.be/groupc/live/d05012c2-6a5d-49ff-a711-79b32684615b/live.isml/.m3u8"
     _CANVAS_LIVESTREAM_ = "https://live-w.lwc.vrtcdn.be/groupc/live/905b0602-9719-4d14-ae2a-a9b459630653/live.isml/.m3u8"
-    _KETNET_VRT = "https://live-w.lwc.vrtcdn.be/groupc/live/8b898c7d-adf7-4d44-ab82-b5bb3a069989/live.isml/.m3u8"
+    _KETNET_LIVESTREAM = "https://live-w.lwc.vrtcdn.be/groupc/live/8b898c7d-adf7-4d44-ab82-b5bb3a069989/live.isml/.m3u8"
+    _SPORZA_LIVESTREAM = "https://live-w.lwc.vrtcdn.be/groupa/live/bf2f7c79-1d77-4cdc-80e8-47ae024f30ba/live.isml/.m3u8"
 
     _VRT_BASE = "https://www.vrt.be/"
     _VRTNU_BASE_URL = urljoin(_VRT_BASE, "/vrtnu/")
@@ -114,13 +116,13 @@ class VRTPlayer:
 
     def get_livestream_items(self):
         return {helperobjects.TitleItem(self._addon.getLocalizedString(32101),
-                                        {'action': actions.PLAY_LIVE, 'video': self._VRT_LIVESTREAM_URL},
+                                        {'action': actions.PLAY_LIVE, 'video': self._EEN_LIVESTREAM},
                                         True, self.__get_media("een.png")),
                 helperobjects.TitleItem(self._addon.getLocalizedString(32102),
                                         {'action': actions.PLAY_LIVE, 'video': self._CANVAS_LIVESTREAM_},
                                         True, self.__get_media("canvas.png")),
                 helperobjects.TitleItem(self._addon.getLocalizedString(32103),
-                                        {'action': actions.PLAY_LIVE, 'video': self._KETNET_VRT},
+                                        {'action': actions.PLAY_LIVE, 'video': self._KETNET_LIVESTREAM},
                                         True, self.__get_media("ketnet.png"))}
 
     def get_video_episodes(self, path):
