@@ -123,7 +123,11 @@ class VRTPlayer:
                                         True, self.__get_media("canvas.png")),
                 helperobjects.TitleItem(self._addon.getLocalizedString(32103),
                                         {'action': actions.PLAY_LIVE, 'video': self._KETNET_LIVESTREAM},
-                                        True, self.__get_media("ketnet.png"))}
+                                        True, self.__get_media("ketnet.png")),
+                helperobjects.TitleItem(self._addon.getLocalizedString(32104),
+                                        {'action': actions.PLAY_LIVE, 'video': self._SPORZA_LIVESTREAM},
+                                        True, self.__get_media("sporza.png"))
+                }
 
     def get_video_episodes(self, path):
         url = urljoin(self._VRT_BASE, path)

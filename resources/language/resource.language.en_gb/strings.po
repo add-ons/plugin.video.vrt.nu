@@ -63,3 +63,8 @@ msgstr "Canvas"
 msgctxt "#32103"
 msgid "Ketnet"
 msgstr "Ketnet"
+
+msgctxt "#32104"
+msgid "Sporza"
+msgstr "Sporza"
+
