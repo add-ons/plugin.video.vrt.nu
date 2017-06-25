@@ -13,7 +13,7 @@ class MetadataCollector:
         metadata_creator = metadatacreator.MetadataCreator()
         metadata_creator.duration = self.__get_episode_duration(soup)
         metadata_creator.plot = self.get_plot(soup)
-		metadata_creator.date = self.get_broadcast_date(soup)
+        metadata_creator.date = self.get_broadcast_date(soup)
         return metadata_creator.get_video_dictionary()
 
     def get_multiple_layout_episode_metadata(self, soup):
@@ -51,21 +51,21 @@ class MetadataCollector:
             description = description_item.text
         return description
 
-	@staticmethod
-	def get_broadcast_date(soup):
-		broadcast_date_tag = soup.find(class_="content__broadcastdate")
-		
-		if broadcast_date_tag is None:
-			return ""
+    @staticmethod
+    def get_broadcast_date(soup):
+        broadcast_date_tag = soup.find(class_="content__broadcastdate")
+        
+        if broadcast_date_tag is None:
+            return ""
 
-		time_tag = broadcast_date_tag.find("time")
+        time_tag = broadcast_date_tag.find("time")
 
-		if time_tag is None:
-			return ""
-		
-		datetime_string = time_tag["datetime"]
-		datetime = time.strptime(datetime_string[:18], "%Y-%m-%dT%H:%M:%S")
-		return time.strftime(("%d.%m.%Y"), datetime)
+        if time_tag is None:
+            return ""
+        
+        datetime_string = time_tag["datetime"]
+        datetime = time.strptime(datetime_string[:18], "%Y-%m-%dT%H:%M:%S")
+        return time.strftime(("%d.%m.%Y"), datetime)
 
     @staticmethod
     def __get_multiple_layout_episode_duration(soup):
