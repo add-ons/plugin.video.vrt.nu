@@ -104,7 +104,6 @@ class VRTPlayer:
             False, thumbnail, video_dictionary)
             listing.append(item)
         return listing
-    
 
     def get_main_menu_items(self):
         return {helperobjects.TitleItem(self._addon.getLocalizedString(32091), {'action': actions.LISTING_AZ}, False,
@@ -165,8 +164,8 @@ class VRTPlayer:
         video_dictionary = self.metadata_collector.get_single_layout_episode_metadata(soup)
         list_item_title = soup.find(class_="content__title").text
 
-        if video_dictionary.date is not None:
-            list_item_title = video_dictionary.date + " " + list_item_title
+        if "shortdate" in video_dictionary:
+            list_item_title = video_dictionary["shortdate"] + " " + list_item_title
 
         vrt_video = soup.find(class_="vrtvideo")
         thumbnail = VRTPlayer.format_image_url(vrt_video)
