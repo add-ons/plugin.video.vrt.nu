@@ -104,7 +104,6 @@ class VRTPlayer:
             False, thumbnail, video_dictionary)
             listing.append(item)
         return listing
-    
 
     def get_main_menu_items(self):
         return {helperobjects.TitleItem(self._addon.getLocalizedString(32091), {'action': actions.LISTING_AZ}, False,
@@ -162,13 +161,17 @@ class VRTPlayer:
         return items
 
     def get_single_video(self, path, soup):
+        video_dictionary = self.metadata_collector.get_single_layout_episode_metadata(soup)
+        list_item_title = soup.find(class_="content__title").text
+
+        if "shortdate" in video_dictionary:
+            list_item_title = video_dictionary["shortdate"] + " " + list_item_title
+
         vrt_video = soup.find(class_="vrtvideo")
         thumbnail = VRTPlayer.format_image_url(vrt_video)
-        li = xbmcgui.ListItem(soup.find(class_="content__title").text)
+
+        li = xbmcgui.ListItem(list_item_title)
         li.setProperty('IsPlayable', 'true')
-
-        video_dictionary = self.metadata_collector.get_single_layout_episode_metadata(soup)
-
         li.setInfo('video', video_dictionary)
         li.setArt({'thumb': thumbnail})
         url = '{0}?action=play&video={1}'.format(self._url, path)
@@ -211,12 +214,16 @@ class VRTPlayer:
     def __get_item(element, is_playable):
         thumbnail = VRTPlayer.format_image_url(element)
         found_element = element.find(class_="tile__title")
+
         li = None
         if found_element is not None:
-            stripped = statichelper.replace_newlines_and_strip(found_element.contents[0])
-            li = xbmcgui.ListItem(stripped)
+            title = statichelper.replace_newlines_and_strip(found_element.contents[0])
+            broadcast_date_tag = element.find(class_="tile__broadcastdate--mobile")
+
+            if broadcast_date_tag is not None:
+                title = broadcast_date_tag.text + " " + title
+
+            li = xbmcgui.ListItem(title)
             li.setProperty('IsPlayable', is_playable)
             li.setArt({'thumb': thumbnail})
         return li
-
-
