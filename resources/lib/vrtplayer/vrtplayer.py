@@ -39,48 +39,38 @@ class VRTPlayer:
         self._addon = xbmcaddon.Addon()
         self._addon_path = self._addon.getAddonInfo("path")
 
-    def show_listing(self, list_items):
-        listing = []
-        for title_item in list_items:
-            list_item = xbmcgui.ListItem(label=title_item.title)
-            url = self._url + '?' + urlencode(title_item.url_dictionary)
-            list_item.setProperty('IsPlayable', str(title_item.is_playable))
-            list_item.setArt({'thumb': title_item.logo})
-            list_item.setInfo('video', title_item.video_dictionary)
-            listing.append((url, list_item, not title_item.is_playable))
-        xbmcplugin.addDirectoryItems(self._handle, listing, len(listing))
-        xbmcplugin.addSortMethod(self._handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)
-        xbmcplugin.endOfDirectory(self._handle)
+    def get_main_menu_items(self):
+        return {helperobjects.TitleItem(self._addon.getLocalizedString(32091), {'action': actions.LISTING_AZ}, False,
+                                        None),
+                helperobjects.TitleItem(self._addon.getLocalizedString(32092), {'action': actions.LISTING_CATEGORIES},
+                                        False, None),
+                helperobjects.TitleItem(self._addon.getLocalizedString(32100), {'action': actions.LISTING_LIVE}, False,
+                                        None)}
 
-    def get_az_menu_items(self):
-        url = urljoin(self._VRTNU_BASE_URL, "./a-z/")
+    def get_listing(self, url, soupstrainer_parser_selector, routing_action, video_dictionary_action=None):
         response = requests.get(url)
-        tiles = SoupStrainer('a', {"class": "tile"})
+        tiles = SoupStrainer('a', soupstrainer_parser_selector)
         soup = BeautifulSoup(response.content, "html.parser", parse_only=tiles)
         listing = []
         for tile in soup.find_all(class_="tile"):
             link_to_video = tile["href"]
-            video_dictionary = self.metadata_collector.get_az_metadata(tile)
             thumbnail, title = self.__get_thumbnail_and_title(tile)
-            item = helperobjects.TitleItem(title, {'action': actions.GET_EPISODES, 'video': link_to_video}, False
-                                           , thumbnail,
-                                           video_dictionary)
+            video_dictionary = None
+            if video_dictionary_action is not None:
+                video_dictionary = video_dictionary_action(tile)
+
+            item = helperobjects.TitleItem(title, {'action': routing_action, 'video': link_to_video},
+                                           False, thumbnail, video_dictionary)
             listing.append(item)
         return listing
+
+    def get_az_menu_items(self):
+        joined_url = urljoin(self._VRTNU_BASE_URL, "./a-z/")
+        return self.get_listing(joined_url, {"class": "tile"}, actions.GET_EPISODES,self.metadata_collector.get_az_metadata)
 
     def get_category_menu_items(self):
         joined_url = urljoin(self._VRTNU_BASE_URL, "./categorieen/")
-        response = requests.get(joined_url)
-        tiles = SoupStrainer('a', {"class": "tile tile--category"})
-        soup = BeautifulSoup(response.content, "html.parser", parse_only=tiles)
-        listing = []
-        for tile in soup.find_all(class_="tile"):
-            link_to_video = tile["href"]
-            thumbnail, title = self.__get_thumbnail_and_title(tile)
-            item = helperobjects.TitleItem(title, {'action': actions.GET_CATEGORY_EPISODES, 'video': link_to_video},
-            False, thumbnail)
-            listing.append(item)
-        return listing
+        return self.get_listing(joined_url, {"class": "tile tile--category"}, actions.GET_CATEGORY_EPISODES)
 
     def get_video_category_episodes(self, path):
         category = path.split('/')[-2]
@@ -104,14 +94,6 @@ class VRTPlayer:
             False, thumbnail, video_dictionary)
             listing.append(item)
         return listing
-
-    def get_main_menu_items(self):
-        return {helperobjects.TitleItem(self._addon.getLocalizedString(32091), {'action': actions.LISTING_AZ}, False,
-                                        None),
-                helperobjects.TitleItem(self._addon.getLocalizedString(32092), {'action': actions.LISTING_CATEGORIES},
-                                        False, None),
-                helperobjects.TitleItem(self._addon.getLocalizedString(32100), {'action': actions.LISTING_LIVE}, False,
-                                        None)}
 
     def get_livestream_items(self):
         return {helperobjects.TitleItem(self._addon.getLocalizedString(32101),
