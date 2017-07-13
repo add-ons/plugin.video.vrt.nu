@@ -13,9 +13,9 @@ _url = sys.argv[0]
 _handle = int(sys.argv[1])
 
 def router(params_string):
-
-    kodi_wrapper = kodiwrapper.KodiWrapper(_handle, _url)
-    vrt_player = vrtplayer.VRTPlayer(_handle, _url)
+    addon = xbmcaddon.Addon()
+    kodi_wrapper = kodiwrapper.KodiWrapper(_handle, _url, addon)
+    vrt_player = vrtplayer.VRTPlayer(addon, addon.getAddonInfo("path"))
     params = dict(parse_qsl(params_string))
     if params:
         if params['action'] == actions.LISTING_AZ:
@@ -25,7 +25,7 @@ def router(params_string):
         elif params['action'] == actions.LISTING_LIVE:
             kodi_wrapper.show_listing(vrt_player.get_livestream_items())
         elif params['action'] == actions.GET_EPISODES:
-            kodi_wrapper.get_video_episodes(params['video'])
+            kodi_wrapper.show_listing(vrt_player.get_video_episodes(params['video']))
         elif params['action'] == actions.GET_CATEGORY_EPISODES:
             kodi_wrapper.show_listing(vrt_player.get_video_category_episodes(params['video']))
         elif params['action'] == actions.PLAY:
