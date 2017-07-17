@@ -18,8 +18,12 @@ class KodiWrapper:
             list_item = xbmcgui.ListItem(label=title_item.title)
             url = self._url + '?' + urlencode(title_item.url_dictionary)
             list_item.setProperty('IsPlayable', str(title_item.is_playable))
-            list_item.setArt({'thumb': title_item.thumbnail})
+
+            if title_item.thumbnail is not None:
+                list_item.setArt({'thumb': title_item.thumbnail})
+
             list_item.setInfo('video', title_item.video_dictionary)
+
             listing.append((url, list_item, not title_item.is_playable))
         xbmcplugin.addDirectoryItems(self._handle, listing, len(listing))
         xbmcplugin.addSortMethod(self._handle, xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE)

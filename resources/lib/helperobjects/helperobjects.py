@@ -1,6 +1,6 @@
 class TitleItem:
 
-    def __init__(self, title, url_dictionary, is_playable, thumbnail, video_dictionary=None):
+    def __init__(self, title, url_dictionary, is_playable, thumbnail = None, video_dictionary=None):
         self.title = title
         self.url_dictionary = url_dictionary
         self.is_playable = is_playable

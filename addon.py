@@ -24,9 +24,9 @@ def router(params_string):
             kodi_wrapper.show_listing(vrt_player.get_category_menu_items())
         elif params['action'] == actions.LISTING_LIVE:
             kodi_wrapper.show_listing(vrt_player.get_livestream_items())
-        elif params['action'] == actions.GET_EPISODES:
-            kodi_wrapper.show_listing(vrt_player.get_video_episodes(params['video']))
-        elif params['action'] == actions.GET_CATEGORY_EPISODES:
+        elif params['action'] == actions.LISTING_VIDEOS:
+            kodi_wrapper.show_listing(vrt_player.get_videos(params['video']))
+        elif params['action'] == actions.LISTING_CATEGORY_VIDEOS:
             kodi_wrapper.show_listing(vrt_player.get_video_category_episodes(params['video']))
         elif params['action'] == actions.PLAY:
             kodi_wrapper.play_video(params['video'])

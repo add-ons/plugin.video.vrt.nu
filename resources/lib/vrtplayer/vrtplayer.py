@@ -36,11 +36,11 @@ class VRTPlayer:
 
     def get_az_menu_items(self):
         joined_url = urljoin(self._VRTNU_BASE_URL, "./a-z/")
-        return self.__get_menu_items(joined_url, {"class": "tile"}, actions.GET_EPISODES, self.metadata_collector.get_az_metadata)
+        return self.__get_menu_items(joined_url, {"class": "tile"}, actions.LISTING_VIDEOS, self.metadata_collector.get_az_metadata)
 
     def get_category_menu_items(self):
         joined_url = urljoin(self._VRTNU_BASE_URL, "./categorieen/")
-        return self.__get_menu_items(joined_url, {"class": "tile tile--category"}, actions.GET_CATEGORY_EPISODES)
+        return self.__get_menu_items(joined_url, {"class": "tile tile--category"}, actions.LISTING_CATEGORY_VIDEOS)
 
     def get_video_category_episodes(self, path):
         category = path.split('/')[-2]
@@ -60,8 +60,8 @@ class VRTPlayer:
             #  full url)
             link_to_video = statichelper.replace_double_slashes_with_https(program["targetUrl"]).replace(self._VRT_BASE,
                                                                                                          "")
-            item = helperobjects.TitleItem(title, {'action': actions.GET_EPISODES, 'video': link_to_video},
-            False, thumbnail, video_dictionary)
+            item = helperobjects.TitleItem(title, {'action': actions.LISTING_VIDEOS, 'video': link_to_video},
+                                           False, thumbnail, video_dictionary)
             listing.append(item)
         return listing
 
@@ -80,7 +80,7 @@ class VRTPlayer:
                                         True, self.__get_media("sporza.png"))
                 }
 
-    def get_video_episodes(self, path):
+    def get_videos(self, path):
         url = urljoin(self._VRT_BASE, path)
         #xbmc.log(url, xbmc.LOGWARNING)
         # go to url.relevant gets redirected and go on with this url
@@ -88,19 +88,37 @@ class VRTPlayer:
         response = requests.get(relevant_path.url)
         soup = BeautifulSoup(response.content, "html.parser")
         title_items = []
-        episodes = soup.find_all(class_="tile")
-        if len(episodes) != 0:
-            title_items.extend(self.get_multiple_videos(soup))
+        episodes_list = soup.find(class_="episodeslist")
+        option_tags = []
+
+        if episodes_list is not None:
+            option_tags.extend(episodes_list.find_all("option"))
+
+        if len(option_tags) != 0:
+            title_items.extend(self.__get_episodes(option_tags))
         else:
-            title_items.extend(self.get_single_video(relevant_path.url, soup))
+            episodes = soup.find_all(class_="tile")
+            if len(episodes) != 0:
+                title_items.extend(self.__get_multiple_videos(soup))
+            else:
+                title_items.extend(self.__get_single_video(relevant_path.url, soup))
         return title_items
 
-    def get_multiple_videos(self, soup):
+    def __get_episodes(self, option_tags):
         title_items = []
-        episode_list = soup.find("div", {"id": "episodelist__slider"})
+        for option_tag in option_tags:
+            title = statichelper.replace_newlines_and_strip(option_tag.text)
+            path = option_tag['data-href']
+            title_items.append(helperobjects.TitleItem(title, {"action" : actions.LISTING_VIDEOS, 'video':path}, False))
+        return title_items
+
+
+    def __get_multiple_videos(self, tiles):
+        title_items = []
+        episode_list = tiles.find("div", {"id": "episodelist__slider"})
 
         for tile in episode_list.find_all(class_="tile"):
-            thumbnail = VRTPlayer.format_image_url(tile)
+            thumbnail = VRTPlayer.__format_image_url(tile)
             found_element = tile.find(class_="tile__title")
 
             if found_element is not None:
@@ -115,7 +133,7 @@ class VRTPlayer:
                 title_items.append(helperobjects.TitleItem(title, {"action": "play", "video": path}, True, thumbnail, video_dictionary))
         return title_items
 
-    def get_single_video(self, path, soup):
+    def __get_single_video(self, path, soup):
         title_items = []
         video_dictionary = self.metadata_collector.get_single_layout_episode_metadata(soup)
         list_item_title = soup.find(class_="content__title").text
@@ -124,7 +142,7 @@ class VRTPlayer:
             video_dictionary["shortdate"] + " " + list_item_title
 
         vrt_video = soup.find(class_="vrtvideo")
-        thumbnail = VRTPlayer.format_image_url(vrt_video)
+        thumbnail = VRTPlayer.__format_image_url(vrt_video)
         title_items.append(helperobjects.TitleItem(list_item_title, {"action": "play", "video": path}, True, thumbnail, video_dictionary))
         return title_items
 
@@ -149,13 +167,13 @@ class VRTPlayer:
         return listing
 
     @staticmethod
-    def format_image_url(element):
+    def __format_image_url(element):
         raw_thumbnail = element.find("img")['srcset'].split('1x,')[0]
         return statichelper.replace_double_slashes_with_https(raw_thumbnail)
 
     @staticmethod
     def __get_thumbnail_and_title(element):
-        thumbnail = VRTPlayer.format_image_url(element)
+        thumbnail = VRTPlayer.__format_image_url(element)
         found_element = element.find(class_="tile__title")
         title = ""
         if found_element is not None:
