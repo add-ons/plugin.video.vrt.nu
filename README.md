@@ -28,6 +28,10 @@ You'll receive an email that allows you to set a password. Use that password to 
 prompted.
 
 ## Releases
+#### v0.0.4 (July 20, 2017)
+- Added Sporza livestream
+- Added dates to videos (Thanks stevenv)
+- Fixed bug where seasons did not get listed
 
 #### v0.0.3 (May 22, 2017)
 
