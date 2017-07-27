@@ -28,8 +28,12 @@ You'll receive an email that allows you to set a password. Use that password to 
 prompted.
 
 ## Releases
+#### v0.0.6 (July 27, 2017)
+- Fixed ordering bug for videos
+
 #### v0.0.5 (July 24, 2017)
 - Fixed broken Sporza logo 
+
 #### v0.0.4 (July 20, 2017)
 - Added Sporza livestream
 - Added dates to videos (Thanks stevenv)
