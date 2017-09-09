@@ -27,7 +27,13 @@ have a VRT NU account and sign in with another method, it's easy to get a passwo
 You'll receive an email that allows you to set a password. Use that password to enter in the plugin when
 prompted.
 
+## Reporting issues
+you can report issues here at github or you can send a message to the facebook page https://www.facebook.com/kodivrtnu/
+
 ## Releases
+#### v0.0.7 (September 09, 2017)
+- - Fixed bug where dates were not always shown
+
 #### v0.0.6 (August 06, 2017)
 - Fixed ordering bug for videos
 
