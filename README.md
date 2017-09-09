@@ -32,7 +32,7 @@ you can report issues here at github or you can send a message to the facebook p
 
 ## Releases
 #### v0.0.7 (September 09, 2017)
-- - Fixed bug where dates were not always shown
+- Fixed bug where dates were not always shown
 
 #### v0.0.6 (August 06, 2017)
 - Fixed ordering bug for videos
