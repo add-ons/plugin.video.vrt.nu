@@ -31,6 +31,11 @@ prompted.
 you can report issues here at github or you can send a message to the facebook page https://www.facebook.com/kodivrtnu/
 
 ## Releases
+
+#### Komende versie
+- Fixed bug where a single video would not be listed when there is also a part "ANDEREN BEKEKEN OOK" present
+
+
 #### v0.0.7 (September 09, 2017)
 - Fixed bug where dates were not always shown
 
