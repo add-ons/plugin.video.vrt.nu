@@ -32,7 +32,7 @@ you can report issues here at github or you can send a message to the facebook p
 
 ## Releases
 
-#### Komende versie
+#### Next version
 - Fixed bug where a single video would not be listed when there is also a part "ANDEREN BEKEKEN OOK" present
 
 
