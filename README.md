@@ -32,7 +32,7 @@ you can report issues here at github or you can send a message to the facebook p
 
 ## Releases
 
-#### V1.0.0
+#### V1.0.0 (October 1, 2017)
 - Fixed issue where all the videos would not be able to play, implemented new way of getting the streaming urls
 - Fixed bug where a single video would not be listed when there is also a part "ANDEREN BEKEKEN OOK" present
 - New versioning system now starting from 1.0.0
