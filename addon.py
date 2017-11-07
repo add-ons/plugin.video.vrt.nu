@@ -18,7 +18,7 @@ def router(params_string):
     stream_service = urltostreamservice.UrlToStreamService(vrtplayer.VRTPlayer._VRT_BASE,
                                                            vrtplayer.VRTPlayer._VRTNU_BASE_URL,
                                                            kodi_wrapper)
-    vrt_player = vrtplayer.VRTPlayer(addon, addon.getAddonInfo("path"), kodi_wrapper, stream_service)
+    vrt_player = vrtplayer.VRTPlayer(addon.getAddonInfo("path"), kodi_wrapper, stream_service)
     params = dict(parse_qsl(params_string))
     if params:
         if params['action'] == actions.LISTING_AZ:

@@ -23,19 +23,18 @@ class VRTPlayer:
     _VRTNU_BASE_URL = urljoin(_VRT_BASE, "/vrtnu/")
     _VRTNU_SEARCH_URL = "https://search.vrt.be/suggest?facets[categories]="
 
-    def __init__(self, addon, addon_path, kodi_wrapper, url_to_stream_service):
+    def __init__(self, addon_path, kodi_wrapper, url_to_stream_service):
         self.metadata_collector = metadatacollector.MetadataCollector()
-        self._addon = addon
         self._addon_path = addon_path
         self._kodi_wrapper = kodi_wrapper
         self._url_toStream_service = url_to_stream_service
 
     def show_main_menu_items(self):
-        menu_items = {helperobjects.TitleItem(self._addon.getLocalizedString(32091), {'action': actions.LISTING_AZ}, False,
+        menu_items = {helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32091), {'action': actions.LISTING_AZ}, False,
                                         None),
-                helperobjects.TitleItem(self._addon.getLocalizedString(32092), {'action': actions.LISTING_CATEGORIES},
+                helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32092), {'action': actions.LISTING_CATEGORIES},
                                         False, None),
-                helperobjects.TitleItem(self._addon.getLocalizedString(32100), {'action': actions.LISTING_LIVE}, False,
+                helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32100), {'action': actions.LISTING_LIVE}, False,
                                         None)}
         self._kodi_wrapper.show_listing(menu_items, sortmethod.ALPHABET)
 
@@ -83,16 +82,16 @@ class VRTPlayer:
 
 
     def get_livestream_items(self):
-        livestream_items = {helperobjects.TitleItem(self._addon.getLocalizedString(32101),
+        livestream_items = {helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32101),
                                         {'action': actions.PLAY_LIVE, 'video': self._EEN_LIVESTREAM},
                                         True, self.__get_media("een.png")),
-                helperobjects.TitleItem(self._addon.getLocalizedString(32102),
+                helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32102),
                                         {'action': actions.PLAY_LIVE, 'video': self._CANVAS_LIVESTREAM_},
                                         True, self.__get_media("canvas.png")),
-                helperobjects.TitleItem(self._addon.getLocalizedString(32103),
+                helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32103),
                                         {'action': actions.PLAY_LIVE, 'video': self._KETNET_LIVESTREAM},
                                         True, self.__get_media("ketnet.png")),
-                helperobjects.TitleItem(self._addon.getLocalizedString(32104),
+                helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32104),
                                         {'action': actions.PLAY_LIVE, 'video': self._SPORZA_LIVESTREAM},
                                         True, self.__get_media("sporza.png"))
                 }

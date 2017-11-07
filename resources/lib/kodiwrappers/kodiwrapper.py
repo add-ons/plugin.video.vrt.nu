@@ -48,11 +48,11 @@ class KodiWrapper:
     def show_ok_dialog(self, title, message):
         xbmcgui.Dialog().ok(self._addon.getAddonInfo('name'), title, message)
 
-    def get_localized_string(self, id):
-        self._addon.getLocalizedString(id)
+    def get_localized_string(self, string_id):
+        return self._addon.getLocalizedString(string_id)
 
-    def get_setting(self, settingId ):
-        return self._addon.getSetting(settingId)
+    def get_setting(self, setting_id ):
+        return self._addon.getSetting(setting_id)
 
     def open_settings(self):
         self._addon.openSettings()
