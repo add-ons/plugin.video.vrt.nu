@@ -7,7 +7,6 @@ from resources.lib.vrtplayer import actions
 from resources.lib.kodiwrappers import sortmethod
 from resources.lib.vrtplayer import urltostreamservice
 
-_addon_ = xbmcaddon.Addon()
 _url = sys.argv[0]
 _handle = int(sys.argv[1])
 

@@ -153,7 +153,7 @@ class VRTPlayer:
 
                 path = tile["href"]
                 video_dictionary = self.metadata_collector.get_multiple_layout_episode_metadata(tile)
-                title_items.append(helperobjects.TitleItem(title, {"action": "play", "video": path}, True, thumbnail, video_dictionary))
+                title_items.append(helperobjects.TitleItem(title, {"action": actions.PLAY, "video": path}, True, thumbnail, video_dictionary))
         return title_items
 
     def __get_single_video(self, path, soup):
@@ -166,7 +166,7 @@ class VRTPlayer:
 
         vrt_video = soup.find(class_="vrtvideo")
         thumbnail = VRTPlayer.__format_image_url(vrt_video)
-        title_items.append(helperobjects.TitleItem(list_item_title, {"action": "play", "video": path}, True, thumbnail, video_dictionary))
+        title_items.append(helperobjects.TitleItem(list_item_title, {"action": actions.PLAY, "video": path}, True, thumbnail, video_dictionary))
         return title_items
 
     def __get_media(self, file_name):
