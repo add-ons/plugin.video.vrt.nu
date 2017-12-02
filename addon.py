@@ -25,11 +25,11 @@ def router(params_string):
         elif params['action'] == actions.LISTING_CATEGORIES:
             vrt_player.show_category_menu_items()
         elif params['action'] == actions.LISTING_LIVE:
-            vrt_player.get_livestream_items()
+            vrt_player.show_livestream_items()
         elif params['action'] == actions.LISTING_VIDEOS:
-            vrt_player.get_videos(params['video'])
+            vrt_player.show_videos(params['video'])
         elif params['action'] == actions.LISTING_CATEGORY_VIDEOS:
-            vrt_player.get_video_category_episodes(params['video'])
+            vrt_player.show_video_category_episodes(params['video'])
         elif params['action'] == actions.PLAY:
             vrt_player.play_vrtnu_video(params['video'])
         elif params['action'] == actions.PLAY_LIVE:

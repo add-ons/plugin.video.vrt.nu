@@ -38,3 +38,5 @@ fabric.properties
 
 # Visual Studio cache/options directory
 .vs/
+
+*.pyc

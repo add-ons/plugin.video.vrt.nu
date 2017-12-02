@@ -49,8 +49,7 @@ class VRTPlayer:
         menu_items = self.__get_menu_items(joined_url, {"class": "tile tile--category"}, actions.LISTING_CATEGORY_VIDEOS)
         self._kodi_wrapper.show_listing(menu_items, sortmethod.ALPHABET)
 
-
-    def get_video_category_episodes(self, path):
+    def show_video_category_episodes(self, path):
         category = path.split('/')[-2]
         joined_url = self._VRTNU_SEARCH_URL + category
         response = requests.get(joined_url)
@@ -80,8 +79,7 @@ class VRTPlayer:
     def play_livestream(self, url):
         self._kodi_wrapper.play_livestream(url)
 
-
-    def get_livestream_items(self):
+    def show_livestream_items(self):
         livestream_items = {helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32101),
                                         {'action': actions.PLAY_LIVE, 'video': self._EEN_LIVESTREAM},
                                         True, self.__get_media("een.png")),
@@ -97,7 +95,7 @@ class VRTPlayer:
                 }
         self._kodi_wrapper.show_listing(livestream_items, sortmethod.ALPHABET)
 
-    def get_videos(self, path):
+    def show_videos(self, path):
         url = urljoin(self._VRT_BASE, path)
         #xbmc.log(url, xbmc.LOGWARNING)
         # go to url.relevant gets redirected and go on with this url
@@ -134,7 +132,6 @@ class VRTPlayer:
             path = option_tag['data-href']
             title_items.append(helperobjects.TitleItem(title, {"action" : actions.LISTING_VIDEOS, 'video':path}, False))
         return title_items
-
 
     def __get_multiple_videos(self, tiles):
         title_items = []
