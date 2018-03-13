@@ -32,6 +32,9 @@ you can report issues here at github or you can send a message to the facebook p
 
 ## Releases
 
+#### v1.1.1 (March 13, 2018)
+- Fixed bug where seasons do not show when there is one malfunctioning
+
 #### v1.1.0 (December 15, 2017)
 - Refactored internal code
 
