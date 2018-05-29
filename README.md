@@ -31,6 +31,8 @@ prompted.
 you can report issues here at github or you can send a message to the facebook page https://www.facebook.com/kodivrtnu/
 
 ## Releases
+#### next version
+- new stream links for live streaming (Thanks yorickps)
 
 #### v1.1.1 (March 13, 2018)
 - Fixed bug where seasons do not show when there is one malfunctioning
