@@ -31,6 +31,9 @@ prompted.
 you can report issues here at github or you can send a message to the facebook page https://www.facebook.com/kodivrtnu/
 
 ## Releases
+#### v1.2.0 (June 17, 2018)
+- New stream links for live streaming (Thanks yorickps)
+- Changed live streaming mechanism
 #### v1.1.2 (June 14, 2018)
 - New stream links for live streaming (Thanks yorickps)
 
