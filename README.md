@@ -31,8 +31,14 @@ prompted.
 you can report issues here at github or you can send a message to the facebook page https://www.facebook.com/kodivrtnu/
 
 ## Releases
-#### next version
-- new stream links for live streaming (Thanks yorickps)
+#### v1.3.0 (July 14, 2018)
+- Adapted code to new vrtnu website layout, this fixes a bug where only the first episode would be shown while multiple episodes are present.
+
+#### v1.2.0 (June 17, 2018)
+- Changed live streaming mechanism
+
+#### v1.1.2 (June 14, 2018)
+- New stream links for live streaming (Thanks yorickps)
 
 #### v1.1.1 (March 13, 2018)
 - Fixed bug where seasons do not show when there is one malfunctioning
