@@ -31,8 +31,10 @@ prompted.
 you can report issues here at github or you can send a message to the facebook page https://www.facebook.com/kodivrtnu/
 
 ## Releases
+#### v1.3.1 (July 20, 2018)
+- Changed way of selecting item title for single video's
 #### v1.3.0 (July 14, 2018)
-- Adapted code to new vrtnu website layout, this fixes a bug where only the first episode would be shown while multiple episodes are present.
+- Adapted code to new vrtnu website layout, this fixes a bug where only the first episode would be shown while multiple episodes are present
 
 #### v1.2.0 (June 17, 2018)
 - Changed live streaming mechanism
