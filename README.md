@@ -31,7 +31,7 @@ prompted.
 you can report issues here at github or you can send a message to the facebook page https://www.facebook.com/kodivrtnu/
 
 ## Releases
-### v1.3.2 (August 3, 2018)
+#### v1.3.2 (August 3, 2018)
 - Changed way of selecting multiple episodes, this fixes a bug where the "active" episodes would not be shown
 
 #### v1.3.1 (July 20, 2018)
