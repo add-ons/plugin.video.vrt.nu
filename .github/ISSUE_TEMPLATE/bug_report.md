@@ -17,7 +17,7 @@ Steps to reproduce the behavior:
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
-**Desktop (please complete the following information):**
+**(please complete the following information):**
  - Operating system:
  - Kodi Version:
 
