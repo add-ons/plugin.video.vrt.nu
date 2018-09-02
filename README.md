@@ -31,6 +31,11 @@ prompted.
 you can report issues here at github or you can send a message to the facebook page https://www.facebook.com/kodivrtnu/
 
 ## Releases
+#### v1.3.3 (September 2, 2018)
+- Fixed bug where some items would not want to play
+- Fixed bug where some videos would only show one episodes while multiple episodes are present
+- Updated Requests and Beautifulsoup modules
+
 #### v1.3.2 (August 3, 2018)
 - Changed way of selecting multiple episodes, this fixes a bug where the "active" episodes would not be shown
 
