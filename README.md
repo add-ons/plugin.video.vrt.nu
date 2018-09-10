@@ -31,6 +31,9 @@ prompted.
 you can report issues here at github or you can send a message to the facebook page https://www.facebook.com/kodivrtnu/
 
 ## Releases
+#### v1.3.4 (September 10, 2018)
+- Fixed A-Z menu to parse the new vrtnu layout
+
 #### v1.3.3 (September 2, 2018)
 - Fixed bug where some items would not want to play
 - Fixed bug where some videos would only show one episodes while multiple episodes are present
