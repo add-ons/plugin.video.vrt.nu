@@ -67,10 +67,10 @@ class UrlToStreamService:
         hls_aes_url = None
         for item in dictionary:
             if item['type'] == 'HLS_AES':
-                hls_aes_url = item['url']
+                hls_aes_url = item['url'].replace('remix.aka', 'remix-aka')
                 break
             if item['type'] == 'HLS':
-                hls_url = item['url']
+                hls_url = item['url'].replace('remix.aka', 'remix-aka')
         return hls_aes_url or hls_url
 
     @staticmethod
