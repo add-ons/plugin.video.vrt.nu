@@ -92,7 +92,7 @@ class UrlToStreamService:
                 break
             if item['type'] == 'hls':
                 hls_url = item['url']
-        return hls_aes_url or hls_url
+        return hls_aes_url or hls_url.replace('remix.aka', 'remix-aka')
 
     @staticmethod
     def __get_subtitle(dictionary):
