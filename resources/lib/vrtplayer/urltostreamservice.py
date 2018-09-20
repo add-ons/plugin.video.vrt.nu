@@ -26,7 +26,7 @@ class UrlToStreamService:
         if not cred.are_filled_in():
             self._kodi_wrapper.open_settings()
             cred.reload()
-
+        url = urlparse.urljoin(self._vrt_base, url)
         r = session.post("https://accounts.vrt.be/accounts.login",
                                {'loginID': cred.username, 'password': cred.password, 'APIKey': self._API_KEY,
                                 "sessionExpiration": "-1",
@@ -74,8 +74,8 @@ class UrlToStreamService:
             stream_response = session.get(final_url)
             hls = self.__get_hls(stream_response.json()['targetUrls'])
             subtitle = None
-            if self._kodi_wrapper.get_setting("showsubtitles") == "true":
-                subtitle = self.__get_subtitle(stream_response.json()['subtitleUrls'])
+            #if self._kodi_wrapper.get_setting("showsubtitles") == "true":
+            #    subtitle = self.__get_subtitle(stream_response.json()['subtitleUrls'])
             return helperobjects.StreamURLS(hls, subtitle)
         else:
             title = self._kodi_wrapper.get_localized_string(32051)
@@ -92,7 +92,7 @@ class UrlToStreamService:
                 break
             if item['type'] == 'hls':
                 hls_url = item['url']
-        return hls_aes_url or hls_url.replace('remix.aka', 'remix-aka')
+        return (hls_aes_url or hls_url).replace('remix.aka', 'remix-aka')
 
     @staticmethod
     def __get_subtitle(dictionary):
