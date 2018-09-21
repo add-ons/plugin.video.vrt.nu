@@ -31,6 +31,10 @@ prompted.
 you can report issues here at github or you can send a message to the facebook page https://www.facebook.com/kodivrtnu/
 
 ## Releases
+#### v1.4.0 (September 20, 2018)
+- Using the new vrtnu login method and video services
+- Fixed bug where some videos would not be able to play (Thanks dagwieers)
+
 #### v1.3.4 (September 10, 2018)
 - Fixed A-Z menu to parse the new vrtnu layout
 
