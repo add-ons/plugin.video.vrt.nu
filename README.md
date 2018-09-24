@@ -31,6 +31,9 @@ prompted.
 you can report issues here at github or you can send a message to the facebook page https://www.facebook.com/kodivrtnu/
 
 ## Releases
+#### v1.4.1 (September 24, 2018)
+- Adapted plugin to new vrtnu layout for showing multiple seasons
+
 #### v1.4.0 (September 20, 2018)
 - Using the new vrtnu login method and video services
 - Fixed bug where some videos would not be able to play (Thanks dagwieers)
