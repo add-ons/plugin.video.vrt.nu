@@ -4,6 +4,8 @@ about: Create a report to help us improve
 
 ---
 
+Please use this template, it really helps me to tackle bugs more easily when everything is filled in a structural manner
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 
@@ -24,3 +26,5 @@ A clear and concise description of what you expected to happen.
 **Additional context**
 - Using a VPN:
 - Country you are using the addon from:
+
+**Log (if available)**
