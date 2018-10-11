@@ -31,70 +31,72 @@ prompted.
 you can report issues here at github or you can send a message to the facebook page https://www.facebook.com/kodivrtnu/
 
 ## Releases
-#### v1.4.1 (September 24, 2018)
+#### v1.4.2 (11-10-2018)
+ - Changed way of working with urls when a season is refering to href="#"
+#### v1.4.1 (24-09-2018)
 - Adapted plugin to new vrtnu layout for showing multiple seasons
 
-#### v1.4.0 (September 20, 2018)
+#### v1.4.0 (20-09-2018)
 - Using the new vrtnu login method and video services
 - Fixed bug where some videos would not be able to play (Thanks dagwieers)
 
-#### v1.3.4 (September 10, 2018)
+#### v1.3.4 (10-09-2018)
 - Fixed A-Z menu to parse the new vrtnu layout
 
-#### v1.3.3 (September 2, 2018)
+#### v1.3.3 (02-09-2018)
 - Fixed bug where some items would not want to play
 - Fixed bug where some videos would only show one episodes while multiple episodes are present
 - Updated Requests and Beautifulsoup modules
 
-#### v1.3.2 (August 3, 2018)
+#### v1.3.2 (03-08-2018)
 - Changed way of selecting multiple episodes, this fixes a bug where the "active" episodes would not be shown
 
-#### v1.3.1 (July 20, 2018)
+#### v1.3.1 (20-07-2018)
 - Changed way of selecting item title for single video's
 
-#### v1.3.0 (July 14, 2018)
+#### v1.3.0 (14-07-2018)
 - Adapted code to new vrtnu website layout, this fixes a bug where only the first episode would be shown while multiple episodes are present
 
-#### v1.2.0 (June 17, 2018)
+#### v1.2.0 (17-06-2018)
 - Changed live streaming mechanism
 
-#### v1.1.2 (June 14, 2018)
+#### v1.1.2 (14-06-2018)
 - New stream links for live streaming (Thanks yorickps)
 
-#### v1.1.1 (March 13, 2018)
+#### v1.1.1 (13-03-2018)
 - Fixed bug where seasons do not show when there is one malfunctioning
 
-#### v1.1.0 (December 15, 2017)
+#### v1.1.0 (15-12-2017)
 - Refactored internal code
 
-#### v1.0.0 (October 1, 2017)
+#### v1.0.0 (01-10-2017)
 - Fixed issue where all the videos would not be able to play, implemented new way of getting the streaming urls
 - Fixed bug where a single video would not be listed when there is also a part "ANDEREN BEKEKEN OOK" present
 - New versioning system now starting from 1.0.0
 
-#### v0.0.7 (September 09, 2017)
+#### v0.0.7 (09-09-2017)
 - Fixed bug where dates were not always shown
 
-#### v0.0.6 (August 06, 2017)
+#### v0.0.6 (06-08-2017)
 - Fixed ordering bug for videos
 
-#### v0.0.5 (July 24, 2017)
+#### v0.0.5 (24-07-2017)
 - Fixed broken Sporza logo 
 
-#### v0.0.4 (July 20, 2017)
+#### v0.0.4 (20-07-2017)
 - Added Sporza livestream
 - Added dates to videos (Thanks stevenv)
 - Fixed bug where seasons did not get listed
 
-#### v0.0.3 (May 22, 2017)
+#### v0.0.3 (22-05-2017)
 
 - Fixed broken livestreams
 
-#### v0.0.2 (May 7, 2017)
+#### v0.0.2 (07-05-2017)
 
 - Fixed installation issue
 
-#### v0.0.1 (May 1, 2017)
+#### v0.0.1 (01-05-2017)
 
 - Initial working release
 
