@@ -29,13 +29,28 @@
     <Compile Include="resources\lib\vrtplayer\metadatacollector.py" />
     <Compile Include="resources\lib\vrtplayer\metadatacreator.py" />
     <Compile Include="resources\lib\vrtplayer\statichelper.py" />
+    <Compile Include="resources\lib\vrtplayer\streamservice.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="resources\lib\vrtplayer\urltolivestreamservice.py" />
     <Compile Include="resources\lib\vrtplayer\urltostreamservice.py" />
     <Compile Include="resources\lib\vrtplayer\vrtplayer.py" />
     <Compile Include="resources\lib\vrtplayer\__init__.py" />
     <Compile Include="resources\lib\__init__.py" />
     <Compile Include="resources\__init__.py" />
+    <Compile Include="tests\mockkodiwrapper.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="tests\urlToLiveStreamServiceTests.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="tests\urlToStreamServiceTests.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="tests\vrtPlayerTests.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="tests\__init__.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

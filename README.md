@@ -31,8 +31,12 @@ prompted.
 you can report issues here at github or you can send a message to the facebook page https://www.facebook.com/kodivrtnu/
 
 ## Releases
+#### v1.4.3 (07-11-2018)
+ - Livestreams working again
+
 #### v1.4.2 (11-10-2018)
  - Changed way of working with urls when a season is refering to href="#"
+
 #### v1.4.1 (24-09-2018)
 - Adapted plugin to new vrtnu layout for showing multiple seasons
 
