@@ -3,7 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2041
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "plugin.video.vrt.nu", "plugin.video.vrt.nu.pyproj", "{C9805436-4A6F-4778-90E4-9748983D158D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "plugin.video.vrt.nu.packagemaker", "plugin.video.vrt.nu.packagemaker\plugin.video.vrt.nu.packagemaker.csproj", "{8EF94F4E-9AB2-4CB0-9137-7CBD3154D039}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BF5547FA-9EE7-49D1-939B-16875A027CE6}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		.github\ISSUE_TEMPLATE\bug_report.md = .github\ISSUE_TEMPLATE\bug_report.md
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "plugin.video.vrt.nu", "plugin.video.vrt.nu\plugin.video.vrt.nu.pyproj", "{0360D216-8FEA-4853-AEF8-EBD17CD8B763}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,8 +21,12 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C9805436-4A6F-4778-90E4-9748983D158D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C9805436-4A6F-4778-90E4-9748983D158D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EF94F4E-9AB2-4CB0-9137-7CBD3154D039}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EF94F4E-9AB2-4CB0-9137-7CBD3154D039}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EF94F4E-9AB2-4CB0-9137-7CBD3154D039}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EF94F4E-9AB2-4CB0-9137-7CBD3154D039}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0360D216-8FEA-4853-AEF8-EBD17CD8B763}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0360D216-8FEA-4853-AEF8-EBD17CD8B763}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

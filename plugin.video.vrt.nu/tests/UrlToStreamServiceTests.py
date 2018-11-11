@@ -1,6 +1,5 @@
 import unittest
-from resources.lib.vrtplayer import urltostreamservice
-from resources.lib.vrtplayer import vrtplayer
+from resources.lib.vrtplayer import vrtplayer, urltostreamservice
 from tests import mockkodiwrapper
 
 class UrlToStreamServiceTests(unittest.TestCase):
