@@ -13,6 +13,10 @@ class StreamService:
     def __init__(self, kodi_wrapper):
         self._kodi_wrapper = kodi_wrapper
 
+    def _get_token_from_(self):
+        token = requests.post(self._TOKEN_URL, headers={'Content-Type': 'application/json'}).json()['vrtPlayerToken']
+        return token
+
     def _get_session_and_token_from_(self):
         session = requests.session()
         token = None

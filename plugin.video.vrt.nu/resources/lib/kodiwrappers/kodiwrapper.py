@@ -41,8 +41,15 @@ class KodiWrapper:
                 play_item.setSubtitles([stream.subtitle_url])
             xbmcplugin.setResolvedUrl(self._handle, True, listitem=play_item)
 
-    def play_livestream(self, path):
+    def play_livestream(self, path,  license_key):
         play_item = xbmcgui.ListItem(path=path)
+        if license_key is not None:            
+            play_item.setProperty('inputstreamaddon', 'inputstream.adaptive')
+            play_item.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')
+            play_item.setProperty('inputstream.adaptive.manifest_type', 'mpd')
+            play_item.setProperty('inputstream.adaptive.license_key', license_key)
+            play_item.setMimeType('application/dash+xml')
+            play_item.setContentLookup(False)
         xbmcplugin.setResolvedUrl(self._handle, True, listitem=play_item)
 
     def show_ok_dialog(self, title, message):
