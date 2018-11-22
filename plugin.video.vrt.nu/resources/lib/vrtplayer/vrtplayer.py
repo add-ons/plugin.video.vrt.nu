@@ -80,8 +80,8 @@ class VRTPlayer:
         self._kodi_wrapper.play_video(stream)
 
     def play_livestream(self, url):
-        stream = self.url_to_livestream_service.get_stream_from_url(url)
-        self._kodi_wrapper.play_livestream(stream)
+        stream, license_key = self.url_to_livestream_service.get_stream_from_url(url)
+        self._kodi_wrapper.play_livestream(stream, license_key)
 
     def show_livestream_items(self):
         livestream_items = {helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32101),
