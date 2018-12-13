@@ -7,7 +7,10 @@ class MockKodiWrapper:
         
         if self.index == 0:
             self.index += 1
-            return '******@gmail.com'
+            return '$$$$@gmail.com'
         else:
             self.index += 1
-            return '*****'
+            return '$$$$$'
+
+    def get_userdata_path(self):
+        return "vrttest"
