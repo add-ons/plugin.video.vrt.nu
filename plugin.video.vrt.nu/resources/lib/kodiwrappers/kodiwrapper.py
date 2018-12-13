@@ -34,22 +34,19 @@ class KodiWrapper:
 
         xbmcplugin.endOfDirectory(self._handle)
 
-    def play_video(self, stream):
-        if stream is not None:
-            play_item = xbmcgui.ListItem(path=stream.stream_url)
-            if stream.subtitle_url is not None:
-                play_item.setSubtitles([stream.subtitle_url])
-            xbmcplugin.setResolvedUrl(self._handle, True, listitem=play_item)
-
-    def play_livestream(self, path,  license_key):
+    def play(self, path, license_key):
         play_item = xbmcgui.ListItem(path=path)
-        if license_key is not None:            
+
+        if path is not None and '/.mpd' in path:
             play_item.setProperty('inputstreamaddon', 'inputstream.adaptive')
-            play_item.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')
             play_item.setProperty('inputstream.adaptive.manifest_type', 'mpd')
-            play_item.setProperty('inputstream.adaptive.license_key', license_key)
             play_item.setMimeType('application/dash+xml')
             play_item.setContentLookup(False)
+
+        if license_key is not None:
+            play_item.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')
+            play_item.setProperty('inputstream.adaptive.license_key', license_key)
+
         xbmcplugin.setResolvedUrl(self._handle, True, listitem=play_item)
 
     def show_ok_dialog(self, title, message):
@@ -64,3 +61,8 @@ class KodiWrapper:
     def open_settings(self):
         self._addon.openSettings()
 
+    def get_userdata_path(self):
+        return xbmc.translatePath(self._addon.getAddonInfo('profile')).decode('utf-8')
+
+    def log(self, message):
+        xbmc.log(message, xbmc.LOGNOTICE)
