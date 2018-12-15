@@ -74,8 +74,9 @@ class VRTPlayer:
         self._kodi_wrapper.show_listing(menu_items, sortmethod.ALPHABET)
 
     def play(self, url):
-        stream, license_key = self._url_toStream_service.get_stream_from_url(url)
-        self._kodi_wrapper.play(stream, license_key)
+        video = self._url_toStream_service.get_stream_from_url(url)
+        if video is not None:
+            self._kodi_wrapper.play(video)
 
     def show_livestream_items(self):
         livestream_items = {helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32101),

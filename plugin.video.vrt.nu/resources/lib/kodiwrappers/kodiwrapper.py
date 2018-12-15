@@ -1,6 +1,7 @@
 import xbmc
 import xbmcgui
 import xbmcplugin
+import xbmcvfs
 from urllib import urlencode
 from resources.lib.vrtplayer import vrtplayer
 from resources.lib.kodiwrappers import sortmethod
@@ -34,18 +35,25 @@ class KodiWrapper:
 
         xbmcplugin.endOfDirectory(self._handle)
 
-    def play(self, path, license_key):
-        play_item = xbmcgui.ListItem(path=path)
+    def play(self, video):
+        play_item = xbmcgui.ListItem(path=video.stream_url)
 
-        if path is not None and '/.mpd' in path:
+        if video.stream_url is not None and '/.mpd' in video.stream_url:
             play_item.setProperty('inputstreamaddon', 'inputstream.adaptive')
             play_item.setProperty('inputstream.adaptive.manifest_type', 'mpd')
             play_item.setMimeType('application/dash+xml')
             play_item.setContentLookup(False)
 
-        if license_key is not None:
+        if video.license_key is not None:
             play_item.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')
-            play_item.setProperty('inputstream.adaptive.license_key', license_key)
+            play_item.setProperty('inputstream.adaptive.license_key', video.license_key)
+
+        if self.get_setting('showsubtitles') == 'true':
+            xbmc.Player().showSubtitles(True)
+            if video.subtitle_url is not None:
+                play_item.setSubtitles([video.subtitle_url])
+        else:
+            xbmc.Player().showSubtitles(False)
 
         xbmcplugin.setResolvedUrl(self._handle, True, listitem=play_item)
 
@@ -61,8 +69,27 @@ class KodiWrapper:
     def open_settings(self):
         self._addon.openSettings()
 
+    def check_inputstream_adaptive(self):
+        return xbmc.getCondVisibility('System.HasAddon("{0}")'.format('inputstream.adaptive')) == 1
+
+    def check_widevine(self):
+        dirs, files = xbmcvfs.listdir(xbmc.translatePath('special://home/cdm'))
+        if any('widevine' in s for s in files):
+            return True
+        else:
+            return False 
+
     def get_userdata_path(self):
         return xbmc.translatePath(self._addon.getAddonInfo('profile')).decode('utf-8')
+
+    def make_dir(self, path):
+        xbmcvfs.mkdir(path)
+
+    def check_path(self, path):
+        return xbmcvfs.exists(path)
+
+    def delete_path(self, path):
+        return xbmcvfs.delete(path)
 
     def log(self, message):
         xbmc.log(message, xbmc.LOGNOTICE)
