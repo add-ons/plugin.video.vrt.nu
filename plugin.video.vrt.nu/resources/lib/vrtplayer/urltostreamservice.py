@@ -3,8 +3,8 @@ import urlparse
 import datetime
 import time
 import _strptime
-import os
 import json
+import re
 from bs4 import BeautifulSoup
 from bs4 import SoupStrainer
 from resources.lib.helperobjects import helperobjects
@@ -14,19 +14,27 @@ class UrlToStreamService:
     _BASE_MEDIA_SERVICE_URL = 'https://media-services-public.vrt.be/vualto-video-aggregator-web/rest/external/v1'
     _TOKEN_URL = _BASE_MEDIA_SERVICE_URL + '/tokens'
     _API_KEY = '3_qhEcPa5JGFROVwu5SWKqJ4mVOIkwlFNMSKwzPDAh8QZOtHqu6L4nD5Q7lk0eXOOG'
+    _VUALTO_API_URL = 'https://api.vuplay.co.uk'
 
     def __init__(self, vrt_base, vrtnu_base_url, kodi_wrapper):
         self._kodi_wrapper = kodi_wrapper
-        self._settingsdir()
         self._vrt_base = vrt_base
         self._vrtnu_base_url = vrtnu_base_url
-        self._STREAM_URL_PATH = self._BASE_MEDIA_SERVICE_URL + '/videos/{}%24{}?vrtPlayerToken={}'
+        self._settingsdir()
+        self._has_drm = self._check_drm()
+        self._license_url = self._get_license_url()
+
+    def _check_drm(self):
+        return self._kodi_wrapper.check_inputstream_adaptive() and self._kodi_wrapper.check_widevine()
+
+    def _get_license_url(self):
+        return requests.get(self._VUALTO_API_URL).json()['drm_providers']['widevine']['la_url']
 
     def _settingsdir(self):
         settingsdir = self._kodi_wrapper.get_userdata_path()
-        if not os.path.exists(settingsdir):
-            os.makedirs(settingsdir)
-
+        if not self._kodi_wrapper.check_path(settingsdir):
+            self._kodi_wrapper.make_dir(settingsdir)
+ 
     def _get_token_from_(self):
         token = self._get_playertoken()
         return token
@@ -51,7 +59,7 @@ class UrlToStreamService:
         if exp > now:
             return token[token.keys()[0]]
         else:
-            os.remove(path)
+            self._kodi_wrapper.delete_path(path)
             if 'XVRTToken' in path:
                 return self._get_xvrttoken()
             else:
@@ -60,13 +68,13 @@ class UrlToStreamService:
     def _get_playertoken(self, xvrttoken=None):
         #on demand cache
         tokenfile = self._kodi_wrapper.get_userdata_path() + 'ondemand_vrtPlayerToken'
-        if os.path.isfile(tokenfile):
+        if self._kodi_wrapper.check_path(tokenfile):
             playertoken = self._get_cached_token(tokenfile, xvrttoken)
             return playertoken
         #live cache
         elif xvrttoken is None:
             tokenfile = self._kodi_wrapper.get_userdata_path() + 'live_vrtPlayerToken'
-            if os.path.isfile(tokenfile):
+            if self._kodi_wrapper.check_path(tokenfile):
                 playertoken = self._get_cached_token(tokenfile, xvrttoken)
                 return playertoken
             #renew live 
@@ -110,13 +118,13 @@ class UrlToStreamService:
 
     def _get_xvrttoken(self):
         tokenfile = self._kodi_wrapper.get_userdata_path() + 'XVRTToken'
-        if os.path.isfile(tokenfile):
+        if self._kodi_wrapper.check_path(tokenfile):
             xvrttoken = self._get_cached_token(tokenfile)
             return xvrttoken
         else:
             return self._get_new_xvrttoken(tokenfile)
 
-    def get_license_key(self, keyUrl, keyType='R', keyHeaders=None, keyValue=None):
+    def _get_license_key(self, key_url, key_type='R', key_headers=None, key_value=None):
             """ Generates a propery license key value
 
             # A{SSM} -> not implemented
@@ -129,33 +137,33 @@ class UrlToStreamService:
 
             The Widevine Decryption Key Identifier (KID) can be inserted via the placeholder {KID}
 
-            @type keyUrl: str
-            @param keyUrl: the URL where the license key can be obtained
+            @type key_url: str
+            @param key_url: the URL where the license key can be obtained
 
-            @type keyType: str
-            @param keyType: the key type (A, R, B or D)
+            @type key_type: str
+            @param key_type: the key type (A, R, B or D)
 
-            @type keyHeaders: dict
-            @param keyHeaders: A dictionary that contains the HTTP headers to pass
+            @type key_headers: dict
+            @param key_headers: A dictionary that contains the HTTP headers to pass
 
-            @type keyValue: str
-            @param keyValue: i
+            @type key_value: str
+            @param key_value: i
             @return:
             """
 
             header = ''
-            if keyHeaders:
-                for k, v in list(keyHeaders.items()):
+            if key_headers:
+                for k, v in list(key_headers.items()):
                     header = '{0}&{1}={2}'.format(header, k, requests.utils.quote(v))
 
-            if keyType in ('A', 'R', 'B'):
-                keyValue = '{0}{{SSM}}'.format(keyType)
-            elif keyType == 'D':
-                if 'D{SSM}' not in keyValue:
+            if key_type in ('A', 'R', 'B'):
+                key_value = '{0}{{SSM}}'.format(key_type)
+            elif key_type == 'D':
+                if 'D{SSM}' not in key_value:
                     raise ValueError('Missing D{SSM} placeholder')
-                keyValue = requests.utils.quote(keyValue)
+                key_value = requests.utils.quote(key_value)
 
-            return '{0}|{1}|{2}|'.format(keyUrl, header.strip('&'), keyValue)
+            return '{0}|{1}|{2}|'.format(key_url, header.strip('&'), key_value)
 
     def get_stream_from_url(self, url):
         if 'vrtnu/kanalen' in url:
@@ -182,7 +190,7 @@ class UrlToStreamService:
                 pubId = video_data['publicationid'] + requests.utils.quote('$')
             else:
                 pubId = ''
-            url = host + '/videos/' + pubId + videoId + '?vrtPlayerToken=' + token + '&client=' + clientId;
+            url = host + '/videos/' + pubId + videoId + '?vrtPlayerToken=' + token + '&client=' + clientId
             videojson = requests.get(url).json() 
             try: 
                 target_urls = videojson['targetUrls']
@@ -192,39 +200,39 @@ class UrlToStreamService:
             for stream in target_urls:
                 stream_dict[stream['type']] = stream['url']
             vudrm_token = videojson['drm']
-            if self._kodi_wrapper.get_setting('usedrm') == 'true' and vudrm_token is not None:
-                license_url = requests.get('https://api.vuplay.co.uk').json()['drm_providers']['widevine']['la_url']
-                encryption_json = '{{"token":"{0}","drm_info":[D{{SSM}}],"kid":"{{KID}}"}}'.format(vudrm_token)
-                license_key = self.get_license_key(keyUrl=license_url, keyType='D', keyValue=encryption_json, keyHeaders={'Content-Type': 'text/plain;charset=UTF-8'})
-                return stream_dict['mpeg_dash'], license_key
-            elif vudrm_token is not None:
-                return (stream_dict['hls_aes'], None)
+            return self._select_stream(stream_dict, vudrm_token)
+        else:
+            return None
+
+    def _select_stream(self, stream_dict, vudrm_token):
+        if self._has_drm and self._kodi_wrapper.get_setting('usedrm') == 'true' and vudrm_token is not None:
+            encryption_json = '{{"token":"{0}","drm_info":[D{{SSM}}],"kid":"{{KID}}"}}'.format(vudrm_token)
+            license_key = self._get_license_key(key_url=self._license_url, key_type='D', key_value=encryption_json, key_headers={'Content-Type': 'text/plain;charset=UTF-8'})
+            return helperobjects.StreamURLS(stream_dict['mpeg_dash'], license_key=license_key)
+
+        elif vudrm_token is not None:
+            if self._kodi_wrapper.get_setting('showsubtitles') == 'true':
+                subtitle_url = self._get_subtitle(stream_dict['hls_aes'])
             else:
-                return (stream_dict['mpeg_dash'], None)
+                subtitle_url = None
+            return helperobjects.StreamURLS(stream_dict['hls_aes'], subtitle_url=subtitle_url)
+
         else:
-            return (None, None)
+            if self._kodi_wrapper.check_inputstream_adaptive():
+                return helperobjects.StreamURLS(stream_dict['mpeg_dash'])
+            else:
+                if self._kodi_wrapper.get_setting('showsubtitles') == 'true':
+                    subtitle_url = self._get_subtitle(stream_dict['hls'])
+                else:
+                    subtitle_url = None
+                return helperobjects.StreamURLS(stream_dict['hls'], subtitle_url=subtitle_url)
 
-    @staticmethod
-    def __get_hls(dictionary):
-        hls_url = None
-        hls_aes_url = None
-        for item in dictionary:
-            if item['type'] == 'hls_aes':
-                hls_aes_url = item['url']
-                break
-            if item['type'] == 'hls':
-                hls_url = item['url']
-        return (hls_aes_url or hls_url).replace('remix.aka', 'remix-aka')
-
-    @staticmethod
-    def __get_subtitle(dictionary):
-        for item in dictionary:
-            if item['type'] == 'CLOSED':
-                return item['url']
-
-    @staticmethod
-    def __cut_slash_if_present(url):
-        if url.endswith('/'):
-            return url[:-1]
+    def _get_subtitle(self, stream_url):
+        r = requests.get(stream_url)
+        subtitle_regex = re.compile(r'#EXT-X-MEDIA:TYPE=SUBTITLES,[a-zA-Z-,/\"=]+,URI=\"([a-zA-Z0-9-_=]+)\.m3u8\"')
+        match = re.search(subtitle_regex, r.text)
+        if match is not None and '/live/' not in stream_url:
+            subtitle_url = match.group(1) + '.webvtt'
+            return stream_url.split('.m3u8')[0] + subtitle_url
         else:
-            return url
+            return None
