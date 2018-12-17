@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{0360d216-8fea-4853-aef8-ebd17cd8b763}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile>addon.py</StartupFile>
+    <SearchPath />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <InterpreterId>Global|PythonCore|2.7-32</InterpreterId>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="addon.py" />
+    <Compile Include="resources\lib\helperobjects\helperobjects.py" />
+    <Compile Include="resources\lib\helperobjects\__init__.py" />
+    <Compile Include="resources\lib\kodiwrappers\kodiwrapper.py" />
+    <Compile Include="resources\lib\kodiwrappers\sortmethod.py" />
+    <Compile Include="resources\lib\kodiwrappers\__init__.py" />
+    <Compile Include="resources\lib\vrtplayer\actions.py" />
+    <Compile Include="resources\lib\vrtplayer\metadatacollector.py" />
+    <Compile Include="resources\lib\vrtplayer\metadatacreator.py" />
+    <Compile Include="resources\lib\vrtplayer\statichelper.py" />
+    <Compile Include="resources\lib\vrtplayer\urltostreamservice.py" />
+    <Compile Include="resources\lib\vrtplayer\vrtplayer.py" />
+    <Compile Include="resources\lib\vrtplayer\__init__.py" />
+    <Compile Include="resources\lib\__init__.py" />
+    <Compile Include="resources\__init__.py" />
+    <Compile Include="vrtnutests\mockkodiwrapper.py" />
+    <Compile Include="vrtnutests\urltostreamservicetests.py" />
+    <Compile Include="vrtnutests\vrtplayertests.py" />
+    <Compile Include="vrtnutests\__init__.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="resources\fanart.jpg" />
+    <Content Include="resources\icon.png" />
+    <Content Include="resources\media\canvas.png" />
+    <Content Include="resources\media\een.png" />
+    <Content Include="resources\media\ketnet.png" />
+    <Content Include="resources\media\sporza.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="resources" />
+    <Folder Include="resources\lib" />
+    <Folder Include="resources\lib\helperobjects" />
+    <Folder Include="resources\lib\kodiwrappers" />
+    <Folder Include="resources\lib\vrtplayer" />
+    <Folder Include="resources\media" />
+    <Folder Include="vrtnutests\" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|PythonCore|2.7-32" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+</Project>

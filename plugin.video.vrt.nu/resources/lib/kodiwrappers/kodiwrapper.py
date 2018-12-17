@@ -33,6 +33,7 @@ class KodiWrapper:
             kodi_sortmethod = kodi_sorts.get(sort)
             xbmcplugin.addSortMethod(self._handle, kodi_sortmethod)
 
+        xbmcplugin.setContent(int(self._handle), "episodes")
         xbmcplugin.endOfDirectory(self._handle)
 
     def play(self, video):
