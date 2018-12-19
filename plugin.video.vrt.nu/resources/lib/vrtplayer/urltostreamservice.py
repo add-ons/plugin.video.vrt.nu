@@ -20,7 +20,7 @@ class UrlToStreamService:
         self._kodi_wrapper = kodi_wrapper
         self._vrt_base = vrt_base
         self._vrtnu_base_url = vrtnu_base_url
-        self._settingsdir()
+        self._create_settings_dir()
         self._has_drm = self._check_drm()
         self._license_url = self._get_license_url()
 
@@ -30,9 +30,9 @@ class UrlToStreamService:
     def _get_license_url(self):
         return requests.get(self._VUALTO_API_URL).json()['drm_providers']['widevine']['la_url']
 
-    def _settingsdir(self):
+    def _create_settings_dir(self):
         settingsdir = self._kodi_wrapper.get_userdata_path()
-        if not self._kodi_wrapper.check_path(settingsdir):
+        if not self._kodi_wrapper.check_if_path_exists(settingsdir):
             self._kodi_wrapper.make_dir(settingsdir)
  
     def _get_token_from_(self):
@@ -68,13 +68,13 @@ class UrlToStreamService:
     def _get_playertoken(self, xvrttoken=None):
         #on demand cache
         tokenfile = self._kodi_wrapper.get_userdata_path() + 'ondemand_vrtPlayerToken'
-        if self._kodi_wrapper.check_path(tokenfile):
+        if self._kodi_wrapper.check_if_path_exists(tokenfile):
             playertoken = self._get_cached_token(tokenfile, xvrttoken)
             return playertoken
         #live cache
         elif xvrttoken is None:
             tokenfile = self._kodi_wrapper.get_userdata_path() + 'live_vrtPlayerToken'
-            if self._kodi_wrapper.check_path(tokenfile):
+            if self._kodi_wrapper.check_if_path_exists(tokenfile):
                 playertoken = self._get_cached_token(tokenfile, xvrttoken)
                 return playertoken
             #renew live 
@@ -118,7 +118,7 @@ class UrlToStreamService:
 
     def _get_xvrttoken(self):
         tokenfile = self._kodi_wrapper.get_userdata_path() + 'XVRTToken'
-        if self._kodi_wrapper.check_path(tokenfile):
+        if self._kodi_wrapper.check_if_path_exists(tokenfile):
             xvrttoken = self._get_cached_token(tokenfile)
             return xvrttoken
         else:
@@ -165,6 +165,8 @@ class UrlToStreamService:
 
             return '{0}|{1}|{2}|'.format(key_url, header.strip('&'), key_value)
 
+
+
     def get_stream_from_url(self, url):
         if 'vrtnu/kanalen' in url:
             token = self._get_token_from_()
@@ -176,10 +178,7 @@ class UrlToStreamService:
             strainer = SoupStrainer('div', {'class': 'cq-dd-vrtvideo'})
             soup = BeautifulSoup(htmlpage, 'html.parser', parse_only=strainer)
             vrt_video = soup.find(lambda tag: tag.name == 'div' and tag.get('class') == ['vrtvideo'])
-            video_data = {}
-            for attr in vrt_video.attrs:
-                if attr.startswith('data-'):
-                    video_data[attr.split('data-')[1]] = vrt_video.attrs[attr]
+            video_data = self._get_video_data(vrt_video)
             clientId = video_data['client']
             host = video_data['mediaapiurl']
             if 'videoid' in video_data.keys():
@@ -203,6 +202,13 @@ class UrlToStreamService:
             return self._select_stream(stream_dict, vudrm_token)
         else:
             return None
+
+    def _get_video_data(self, vrt_video):
+        video_data = {}
+        for attr in vrt_video.attrs:
+            if attr.startswith('data-'):
+                video_data[attr.split('data-')[1]] = vrt_video.attrs[attr]
+        return video_data
 
     def _select_stream(self, stream_dict, vudrm_token):
         if self._has_drm and self._kodi_wrapper.get_setting('usedrm') == 'true' and vudrm_token is not None:

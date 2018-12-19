@@ -40,12 +40,14 @@
     <Compile Include="vrtnutests\__init__.py" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="addon.xml" />
     <Content Include="resources\fanart.jpg" />
     <Content Include="resources\icon.png" />
     <Content Include="resources\media\canvas.png" />
     <Content Include="resources\media\een.png" />
     <Content Include="resources\media\ketnet.png" />
     <Content Include="resources\media\sporza.png" />
+    <Content Include="resources\settings.xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="resources" />

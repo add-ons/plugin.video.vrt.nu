@@ -75,10 +75,7 @@ class KodiWrapper:
 
     def check_widevine(self):
         dirs, files = xbmcvfs.listdir(xbmc.translatePath('special://home/cdm'))
-        if any('widevine' in s for s in files):
-            return True
-        else:
-            return False 
+        return any('widevine' in s for s in files)
 
     def get_userdata_path(self):
         return xbmc.translatePath(self._addon.getAddonInfo('profile')).decode('utf-8')
@@ -86,7 +83,7 @@ class KodiWrapper:
     def make_dir(self, path):
         xbmcvfs.mkdir(path)
 
-    def check_path(self, path):
+    def check_if_path_exists(self, path):
         return xbmcvfs.exists(path)
 
     def delete_path(self, path):
