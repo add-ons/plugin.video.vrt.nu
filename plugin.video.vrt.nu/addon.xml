@@ -6,8 +6,9 @@
 
     <requires>
         <import addon="xbmc.python" version="2.25.0"/>
-    <import addon="script.module.requests" version="2.19.1"/>
-    <import addon="script.module.beautifulsoup4" version="4.5.3"/>
+        <import addon="script.module.requests" version="2.19.1"/>
+        <import addon="script.module.beautifulsoup4" version="4.5.3"/>
+        <import addon="inputstream.adaptive" version="2.0.19" />
     </requires>
 
     <extension point="xbmc.python.pluginsource" library="addon.py">
