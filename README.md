@@ -31,6 +31,10 @@ prompted.
 you can report issues here at github or you can send a message to the facebook page https://www.facebook.com/kodivrtnu/
 
 ## Releases
+#### v1.5.0 (27-12-2018)
+ - 720p Livestreams when enabling in settings + having kodi 18 + having widevine.dll present (Thanks mediaminister)
+ - Fixed bug where watched icon was not showing in Kodi 18
+
 #### v1.4.3 (07-11-2018)
  - Livestreams working again
 

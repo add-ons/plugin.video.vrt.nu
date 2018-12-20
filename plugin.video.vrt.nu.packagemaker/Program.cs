@@ -39,7 +39,7 @@ namespace plugin.video.vrt.nu.packagemaker
 
         private static void DeleteUnecesaryFiles(string destination, IEnumerable<string> copiedFiles)
         {
-            foreach (var itemToDelete in copiedFiles.Where(x => x.EndsWith("pyc") || x.EndsWith("pyproj")))
+            foreach (var itemToDelete in copiedFiles.Where(x => x.EndsWith("pyc") || x.EndsWith("pyproj") || x.EndsWith("user")))
             {
                 Console.WriteLine($"Deleting {itemToDelete}");
                 File.Delete(itemToDelete);
