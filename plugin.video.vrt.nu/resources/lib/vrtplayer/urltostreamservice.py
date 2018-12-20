@@ -182,7 +182,7 @@ class UrlToStreamService:
         except KeyError as error:
             self._kodi_wrapper.show_ok_dialog('', video_json['message'])
 
-    def _select_stream(self, stream_dict, vudrm_token):
+    def _select_stream(self, stream_dict, vudrm_token):        
         if vudrm_token:
             if self._has_drm and self._kodi_wrapper.get_setting('usedrm') == 'true':
                 encryption_json = '{{"token":"{0}","drm_info":[D{{SSM}}],"kid":"{{KID}}"}}'.format(vudrm_token)

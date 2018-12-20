@@ -2,6 +2,7 @@ import xbmc
 import xbmcgui
 import xbmcplugin
 import xbmcvfs
+import json
 from urllib import urlencode
 from resources.lib.vrtplayer import vrtplayer
 from resources.lib.kodiwrappers import sortmethod
@@ -85,6 +86,9 @@ class KodiWrapper:
 
     def check_if_path_exists(self, path):
         return xbmcvfs.exists(path)
+
+    def open_path(self, path):
+        return json.loads(open(path, 'r').read())
 
     def delete_path(self, path):
         return xbmcvfs.delete(path)
