@@ -75,8 +75,12 @@ class KodiWrapper:
         return xbmc.getCondVisibility('System.HasAddon("{0}")'.format('inputstream.adaptive')) == 1
 
     def check_widevine(self):
-        dirs, files = xbmcvfs.listdir(xbmc.translatePath('special://home/cdm'))
-        return any('widevine' in s for s in files)
+        cdm_path = xbmc.translatePath('special://home/cdm/')
+        if self.check_if_path_exists(cdm_path):
+            dirs, files = xbmcvfs.listdir(cdm_path)
+            return any('widevine' in s for s in files)
+        else:
+            return False
 
     def get_userdata_path(self):
         return xbmc.translatePath(self._addon.getAddonInfo('profile')).decode('utf-8')
