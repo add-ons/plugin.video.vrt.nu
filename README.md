@@ -12,6 +12,10 @@ In Kodi, simply search for `VRT NU`, and install the add-on.
 Alternatively, you can download a ZIP archive from the [Kodi plugin page][3] and install it directly in Kodi
 using the **Install via Zip** option.
 
+#### Installing V1.5.0 on Kodi 17.x
+If you get errors while installing V1.5.0 on Kodi 17.x make sure the inputstream.adaptive addon is enabled.
+To check on this go to addons -> video player inputstream -> inputstream adaptive and enable the addon.
+
 ## Using the plugin
 
 The [VRT NU][2] platform requires users to sign in before gaining access to video-on-demand content. Users can
