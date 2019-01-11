@@ -88,16 +88,14 @@ class UrlToStreamService:
         r = requests.get(url, headers=headers, allow_redirects=False)
         url = r.headers.get('Location')
         headers = {'Cookie': login_cookie }
+        roaming_xvrttoken = None
         if url is not None:
             cookie_jar = requests.get(url, headers=headers).cookies
             if 'X-VRT-Token' in cookie_jar:
                 xvrttoken_cookie = cookie_jar._cookies['.vrt.be']['/']['X-VRT-Token']
-                xvrttoken = { xvrttoken_cookie.name : xvrttoken_cookie.value, 'expirationDate' : datetime.datetime.fromtimestamp(xvrttoken_cookie.expires).strftime('%Y-%m-%dT%H:%M:%S.%fZ')}
-            return xvrttoken
-        else:
-            return None
+                roaming_xvrttoken = { xvrttoken_cookie.name : xvrttoken_cookie.value, 'expirationDate' : datetime.datetime.fromtimestamp(xvrttoken_cookie.expires).strftime('%Y-%m-%dT%H:%M:%S.%fZ')}
+            return roaming_xvrttoken
         
-
     def _get_new_xvrttoken(self, path):
         cred = helperobjects.Credentials(self._kodi_wrapper)
         if not cred.are_filled_in():
@@ -116,12 +114,11 @@ class UrlToStreamService:
                 xvrttoken_cookie = cookie_jar._cookies['.vrt.be']['/']['X-VRT-Token']
                 xvrttoken = { xvrttoken_cookie.name : xvrttoken_cookie.value, 'expirationDate' : datetime.datetime.fromtimestamp(xvrttoken_cookie.expires).strftime('%Y-%m-%dT%H:%M:%S.%fZ')}
                 if 'roaming_XVRTToken' in path:
-                    xvrttoken = self._get_roaming_xvrttoken(login_cookie, xvrttoken)
-                    if xvrttoken is not None:
-                        json.dump(xvrttoken, open(path,'w'))
-                        return xvrttoken['X-VRT-Token']
-                    else:
-                        return None
+                    roaming_xvrttoken = self._get_roaming_xvrttoken(login_cookie, xvrttoken)
+                    if roaming_xvrttoken is not None:
+                        json.dump(roaming_xvrttoken, open(path,'w'))
+                        roaming_xvrttoken = roaming_xvrttoken['X-VRT-Token']
+                    return roaming_xvrttoken
                 else:
                     json.dump(xvrttoken, open(path,'w'))
                     return xvrttoken['X-VRT-Token']
@@ -133,10 +130,7 @@ class UrlToStreamService:
             self._kodi_wrapper.show_ok_dialog(title, message)
 
     def _get_xvrttoken(self, tokenfile=None):
-        if tokenfile is None:
-            tokenfile = self._kodi_wrapper.get_userdata_path() + 'XVRTToken'
-        else:
-            tokenfile = self._kodi_wrapper.get_userdata_path() + tokenfile
+        tokenfile = self._kodi_wrapper.get_userdata_path() + (tokenfile or 'XVRTToken')
         if self._kodi_wrapper.check_if_path_exists(tokenfile):
             xvrttoken = self._get_cached_token(tokenfile)
             return xvrttoken
@@ -184,53 +178,69 @@ class UrlToStreamService:
 
             return ''.join((key_url, '|', header.strip('&'), '|', key_value, '|'))
 
+    def _get_api_vars(self, video_url):
 
-    def get_stream_from_url(self, url, xvrttoken=None):
-        video_url = urljoin(self._vrt_base, url)
+        #get vrtvideo data attributes from html page
+        video_url = urljoin(self._vrt_base, video_url)
         html_page = requests.get(video_url).text
         strainer = SoupStrainer('div', {'class': 'cq-dd-vrtvideo'})
         soup = BeautifulSoup(html_page, 'html.parser', parse_only=strainer)
         video_data = soup.find(lambda tag: tag.name == 'div' and tag.get('class') == ['vrtvideo']).attrs
+
+        #store required data attributes
         client = video_data['data-client']
         media_api_url = video_data['data-mediaapiurl']
         if 'data-videoid' in video_data.keys():
             video_id = video_data['data-videoid']
-            if xvrttoken is None:
-                self._kodi_wrapper.log('xvrttoken is none')
-                xvrttoken = self._get_xvrttoken()
+            xvrttoken = self._get_xvrttoken()
         else:
+            xvrttoken = None
             video_id = video_data['data-livestream']
         if 'data-publicationid' in video_data.keys():
             publication_id = video_data['data-publicationid'] + requests.utils.quote('$')
         else:
             publication_id = ''
+        return (client, media_api_url, video_id, publication_id, xvrttoken)
+
+    def _get_video_json(self, client, media_api_url, video_id, publication_id, xvrttoken):
         token_url = media_api_url + '/tokens'
         playertoken = self._get_playertoken(token_url, xvrttoken)
+
+        #construct api_url and get video json
         api_url = ''.join((media_api_url, '/videos/', publication_id, video_id, '?vrtPlayerToken=', playertoken, '&client=', client))
         video_json = requests.get(api_url).json()
-        if 'drm' in video_json:
-            vudrm_token = video_json['drm']
-            target_urls = video_json['targetUrls']
-            stream_dict = {}
-            for stream in target_urls:
-                stream_dict[stream['type']] = stream['url']
-            return self._select_stream(stream_dict, vudrm_token)
-        elif video_json['code'] == 'INVALID_LOCATION':
-            self._kodi_wrapper.log(video_json['message'])
-            xvrttoken = self._get_xvrttoken('roaming_XVRTToken')
-            return self.get_stream_from_url(url, xvrttoken)
-        elif video_json['code'] == 'INCOMPLETE_ROAMING_CONFIG':
-            self._kodi_wrapper.log(video_json['message'])
-            xvrttoken = self._get_xvrttoken('roaming_XVRTToken')
-            if xvrttoken is not None:
-                #delete cached ondemand_vrtPlayerToken
-                self._kodi_wrapper.delete_path(self._kodi_wrapper.get_userdata_path() + 'ondemand_vrtPlayerToken')
-                return self.get_stream_from_url(url, xvrttoken)
+            
+        return video_json
+
+    def get_stream_from_url(self, video_url):
+        stream_dict = {}
+        vudrm_token = None        
+        client, media_api_url, video_id, publication_id, xvrttoken = self._get_api_vars(video_url)
+        video_json = self._get_video_json(client, media_api_url, video_id, publication_id, xvrttoken)
+
+        while True:
+            if 'drm' in video_json:
+                vudrm_token = video_json['drm']
+                target_urls = video_json['targetUrls']
+                for stream in target_urls:
+                    stream_dict[stream['type']] = stream['url']
+                return self._select_stream(stream_dict, vudrm_token)
+
+            elif video_json['code'] == 'INVALID_LOCATION' or video_json['code'] == 'INCOMPLETE_ROAMING_CONFIG':
+                self._kodi_wrapper.log(video_json['message'])
+                roaming_xvrttoken = self._get_xvrttoken('roaming_XVRTToken')
+                if roaming_xvrttoken is not None:
+                    if video_json['code'] == 'INCOMPLETE_ROAMING_CONFIG':
+                        #delete cached ondemand_vrtPlayerToken
+                        self._kodi_wrapper.delete_path(self._kodi_wrapper.get_userdata_path() + 'ondemand_vrtPlayerToken')
+                    video_json = self._get_video_json(client, media_api_url, video_id, publication_id, roaming_xvrttoken)
+                else:
+                     message = self._kodi_wrapper.get_localized_string(32053)
+                     self._kodi_wrapper.show_ok_dialog('', message)
+                     break
             else:
-                 message = self._kodi_wrapper.get_localized_string(32053)
-                 self._kodi_wrapper.show_ok_dialog('', message)
-        else:
-            self._kodi_wrapper.show_ok_dialog('', video_json['message'])
+                self._kodi_wrapper.show_ok_dialog('', video_json['message'])
+                break
 
     def _select_stream(self, stream_dict, vudrm_token):
         if vudrm_token:
