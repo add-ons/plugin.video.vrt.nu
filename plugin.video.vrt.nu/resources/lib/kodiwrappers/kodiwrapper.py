@@ -97,5 +97,8 @@ class KodiWrapper:
     def delete_path(self, path):
         return xbmcvfs.delete(path)
 
-    def log(self, message):
+    def log_notice(self, message):
         xbmc.log(message, xbmc.LOGNOTICE)
+
+    def log_error(self, message):
+        xbmc.log(message, xbmc.LOGERROR)
