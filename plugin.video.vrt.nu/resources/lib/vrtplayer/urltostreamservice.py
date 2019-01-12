@@ -236,7 +236,9 @@ class UrlToStreamService:
                 if video_json['code'] == 'INCOMPLETE_ROAMING_CONFIG':
                     #delete cached ondemand_vrtPlayerToken
                     self._kodi_wrapper.delete_path(self._kodi_wrapper.get_userdata_path() + 'ondemand_vrtPlayerToken')
-                return self.get_stream_from_url(self, video_url, true, api_data)
+                #update api_data with roaming_xvrttoken
+                api_data.xvrttoken = roaming_xvrttoken
+                return self.get_stream_from_url(video_url, True, api_data)
             else:
                 message = self._kodi_wrapper.get_localized_string(32053)
                 self._kodi_wrapper.show_ok_dialog('', message)
