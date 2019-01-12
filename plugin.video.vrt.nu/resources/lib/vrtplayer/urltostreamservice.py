@@ -217,16 +217,14 @@ class UrlToStreamService:
         self._kodi_wrapper.show_ok_dialog('', message)
 
     def get_stream_from_url(self, video_url, retry = False, api_data = None):
-        stream_dict = {}
-        vudrm_token = None        
+        vudrm_token = None
         api_data = api_data or self._get_api_data(video_url)
         video_json = self._get_video_json(api_data.client, api_data.media_api_url, api_data.video_id, api_data.publication_id, api_data.xvrttoken)
 
         if 'drm' in video_json:
             vudrm_token = video_json['drm']
             target_urls = video_json['targetUrls']
-            for stream in target_urls:
-                stream_dict[stream['type']] = stream['url']
+            stream_dict = dict(list(map(lambda x: (x['type'] , x['url']), target_urls)))
             return self._select_stream(stream_dict, vudrm_token)
 
         elif video_json['code'] == 'INVALID_LOCATION' or video_json['code'] == 'INCOMPLETE_ROAMING_CONFIG':

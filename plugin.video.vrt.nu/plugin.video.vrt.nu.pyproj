@@ -40,7 +40,6 @@
     <Compile Include="resources\lib\vrtplayer\__init__.py" />
     <Compile Include="resources\lib\__init__.py" />
     <Compile Include="resources\__init__.py" />
-    <Compile Include="vrtnutests\mockkodiwrapper.py" />
     <Compile Include="vrtnutests\urltostreamservicetests.py" />
     <Compile Include="vrtnutests\vrtplayertests.py" />
     <Compile Include="vrtnutests\__init__.py" />
