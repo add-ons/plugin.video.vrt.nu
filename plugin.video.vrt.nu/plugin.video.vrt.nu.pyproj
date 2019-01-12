@@ -21,6 +21,12 @@
   <ItemGroup>
     <Compile Include="addon.py" />
     <Compile Include="resources\lib\helperobjects\helperobjects.py" />
+    <Compile Include="resources\lib\helperobjects\apidata.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="resources\lib\helperobjects\streamurls.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="resources\lib\helperobjects\__init__.py" />
     <Compile Include="resources\lib\kodiwrappers\kodiwrapper.py" />
     <Compile Include="resources\lib\kodiwrappers\sortmethod.py" />
@@ -34,7 +40,6 @@
     <Compile Include="resources\lib\vrtplayer\__init__.py" />
     <Compile Include="resources\lib\__init__.py" />
     <Compile Include="resources\__init__.py" />
-    <Compile Include="vrtnutests\mockkodiwrapper.py" />
     <Compile Include="vrtnutests\urltostreamservicetests.py" />
     <Compile Include="vrtnutests\vrtplayertests.py" />
     <Compile Include="vrtnutests\__init__.py" />
@@ -43,6 +48,7 @@
     <Content Include="addon.xml" />
     <Content Include="resources\fanart.jpg" />
     <Content Include="resources\icon.png" />
+    <Content Include="resources\language\resource.language.en_gb\strings.po" />
     <Content Include="resources\media\canvas.png" />
     <Content Include="resources\media\een.png" />
     <Content Include="resources\media\ketnet.png" />
@@ -51,6 +57,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="resources" />
+    <Folder Include="resources\language\" />
+    <Folder Include="resources\language\resource.language.en_gb\" />
     <Folder Include="resources\lib" />
     <Folder Include="resources\lib\helperobjects" />
     <Folder Include="resources\lib\kodiwrappers" />
