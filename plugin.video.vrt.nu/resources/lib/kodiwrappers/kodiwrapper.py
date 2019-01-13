@@ -75,6 +75,9 @@ class KodiWrapper:
         return xbmc.getCondVisibility('System.HasAddon("{0}")'.format('inputstream.adaptive')) == 1
 
     def check_widevine(self):
+        kodi_version = int(xbmc.getInfoLabel('System.BuildVersion').split('.')[0])
+        if xbmc.getCondVisibility('system.platform.android') and kodi_version > 17:
+            return True
         cdm_path = xbmc.translatePath('special://home/cdm/')
         if self.check_if_path_exists(cdm_path):
             dirs, files = xbmcvfs.listdir(cdm_path)
