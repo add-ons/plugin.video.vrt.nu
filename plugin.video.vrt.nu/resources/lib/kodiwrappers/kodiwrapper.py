@@ -51,13 +51,16 @@ class KodiWrapper:
             play_item.setProperty('inputstream.adaptive.license_key', video.license_key)
 
         if self.get_setting('showsubtitles') == 'true':
-            xbmc.Player().showSubtitles(True)
+            subtitles_visible = True
             if video.subtitle_url is not None:
                 play_item.setSubtitles([video.subtitle_url])
         else:
-            xbmc.Player().showSubtitles(False)
+            subtitles_visible = False
 
         xbmcplugin.setResolvedUrl(self._handle, True, listitem=play_item)
+        while not xbmc.Player().isPlaying():
+            xbmc.sleep(10)
+        xbmc.Player().showSubtitles(subtitles_visible)
 
     def show_ok_dialog(self, title, message):
         xbmcgui.Dialog().ok(self._addon.getAddonInfo('name'), title, message)
