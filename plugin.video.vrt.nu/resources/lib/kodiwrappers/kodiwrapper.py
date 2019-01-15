@@ -71,19 +71,16 @@ class KodiWrapper:
     def open_settings(self):
         self._addon.openSettings()
 
-    def check_inputstream_adaptive(self):
-        return xbmc.getCondVisibility('System.HasAddon("{0}")'.format('inputstream.adaptive')) == 1
-
-    def check_widevine(self):
+    def has_widevine_installed(self):
         kodi_version = int(xbmc.getInfoLabel('System.BuildVersion').split('.')[0])
         if xbmc.getCondVisibility('system.platform.android') and kodi_version > 17:
             return True
         cdm_path = xbmc.translatePath('special://home/cdm/')
+        has_widevine_installed = False
         if self.check_if_path_exists(cdm_path):
             dirs, files = xbmcvfs.listdir(cdm_path)
-            return any('widevine' in s for s in files)
-        else:
-            return False
+            has_widevine_installed = any('widevine' in s for s in files)
+        return has_widevine_installed
 
     def get_userdata_path(self):
         return xbmc.translatePath(self._addon.getAddonInfo('profile')).decode('utf-8')

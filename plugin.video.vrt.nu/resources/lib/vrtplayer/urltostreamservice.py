@@ -22,11 +22,8 @@ class UrlToStreamService:
         self._vrt_base = vrt_base
         self._vrtnu_base_url = vrtnu_base_url
         self._create_settings_dir()
-        self._has_drm = self._check_drm()
+        self._can_play_drm = self._kodi_wrapper.has_widevine_installed()
         self._license_url = self._get_license_url()
-
-    def _check_drm(self):
-        return self._kodi_wrapper.check_inputstream_adaptive() and self._kodi_wrapper.check_widevine()
 
     def _get_license_url(self):
         return requests.get(self._VUPLAY_API_URL).json()['drm_providers']['widevine']['la_url']
@@ -179,8 +176,6 @@ class UrlToStreamService:
             return ''.join((key_url, '|', header.strip('&'), '|', key_value, '|'))
 
     def _get_api_data(self, video_url):
-
-        #get vrtvideo data attributes from html page
         video_url = urljoin(self._vrt_base, video_url)
         html_page = requests.get(video_url).text
         strainer = SoupStrainer('div', {'class': 'cq-dd-vrtvideo'})
@@ -245,24 +240,17 @@ class UrlToStreamService:
 
 
     def _try_get_drm_stream(self, stream_dict, vudrm_token):
-        if self._has_drm and self._kodi_wrapper.get_setting('usedrm') == 'true':
-            encryption_json = '{{"token":"{0}","drm_info":[D{{SSM}}],"kid":"{{KID}}"}}'.format(vudrm_token)
-            license_key = self._get_license_key(key_url=self._license_url, key_type='D', key_value=encryption_json, key_headers={'Content-Type': 'text/plain;charset=UTF-8'})
-            return streamurls.StreamURLS(stream_dict['mpeg_dash'], license_key=license_key)
-        else:
-            return streamurls.StreamURLS(*self._select_hls_substreams(stream_dict['hls_aes']))
-
-    def _get_non_drm_stream(self, stream_dict):
-        if self._kodi_wrapper.check_inputstream_adaptive():
-            return streamurls.StreamURLS(stream_dict['mpeg_dash'])
-        else:
-            return streamurls.StreamURLS(*self._select_hls_substreams(stream_dict['hls']))
-
+        encryption_json = '{{"token":"{0}","drm_info":[D{{SSM}}],"kid":"{{KID}}"}}'.format(vudrm_token)
+        license_key = self._get_license_key(key_url=self._license_url, key_type='D', key_value=encryption_json, key_headers={'Content-Type': 'text/plain;charset=UTF-8'})
+        return streamurls.StreamURLS(stream_dict['mpeg_dash'], license_key=license_key)
+        
     def _select_stream(self, stream_dict, vudrm_token):
-        if vudrm_token:
+        if vudrm_token and self._can_play_drm and self._kodi_wrapper.get_setting('usedrm') == 'true':
             return self._try_get_drm_stream(stream_dict, vudrm_token)
+        elif vudrm_token:
+            return streamurls.StreamURLS(*self._select_hls_substreams(stream_dict['hls_aes']))
         else:
-            return self._get_non_drm_stream(stream_dict)
+            return streamurls.StreamURLS(stream_dict['mpeg_dash']) #non drm stream
 
     #speed up hls selection, workaround for slower kodi selection
     def _select_hls_substreams(self, master_hls_url):

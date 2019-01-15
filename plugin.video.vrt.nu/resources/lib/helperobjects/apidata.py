@@ -46,3 +46,7 @@ class ApiData:
     @xvrttoken.setter
     def xvrttoken(self, value):
         self._xvrttoken = value
+
+    @property
+    def is_live_stream(self):
+        return self._xvrttoken == None

@@ -5,7 +5,7 @@ from mock import MagicMock
 class UrlToStreamServiceTests(unittest.TestCase):
 
     def _side_effect(self, arg):
-        vals = {'username': '*****@gmail.com', 'password': '****', 'showsubtitles': 'true'}
+        vals = {'username': '*****@gmail.com', 'password': '****', 'showsubtitles': 'true' , 'usedrm':False}
         return vals[arg]
 
     def test_get_stream_from_url_gets_stream_does_not_crash(self):
@@ -20,7 +20,7 @@ class UrlToStreamServiceTests(unittest.TestCase):
                                                            vrtplayer.VRTPlayer._VRTNU_BASE_URL,
                                                            mock)
         stream = service.get_stream_from_url('/vrtnu/a-z/22-3-1-jaar-later---het-onderzoek/2017/22-3-1-jaar-later---het-onderzoek-s2017/')
-        print stream
+        self.assertTrue(stream != None)
 
 
     def test_get_live_stream_from_url_does_not_crash(self):
@@ -34,5 +34,5 @@ class UrlToStreamServiceTests(unittest.TestCase):
         service = urltostreamservice.UrlToStreamService(vrtplayer.VRTPlayer._VRT_BASE,
         vrtplayer.VRTPlayer._VRTNU_BASE_URL, mock)
         stream = service.get_stream_from_url(vrtplayer.VRTPlayer._CANVAS_LIVESTREAM_)
-        print stream
+        self.assertTrue(stream != None)
 
