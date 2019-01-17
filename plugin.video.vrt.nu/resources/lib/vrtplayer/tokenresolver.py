@@ -1,3 +1,9 @@
+from resources.lib.helperobjects import helperobjects
+import requests
+import json
+import datetime
+import time
+
 class TokenResolver:
 
     _API_KEY = '3_qhEcPa5JGFROVwu5SWKqJ4mVOIkwlFNMSKwzPDAh8QZOtHqu6L4nD5Q7lk0eXOOG'
@@ -7,27 +13,28 @@ class TokenResolver:
     def __init__(self, kodi_wrapper):
         self._kodi_wrapper = kodi_wrapper
 
-    def get_playertoken(self, token_url, xvrttoken=None):
-        #on demand cache
+    def get_playertoken(self, token_url, xvrttoken):
         tokenfile = self._kodi_wrapper.get_userdata_path() + 'ondemand_vrtPlayerToken'
+        token = None
         if self._kodi_wrapper.check_if_path_exists(tokenfile):
-            playertoken = self._get_cached_token(tokenfile, token_url, xvrttoken)
-            return playertoken
-        #live cache
-        elif xvrttoken is None:
-            tokenfile = self._kodi_wrapper.get_userdata_path() + 'live_vrtPlayerToken'
-            if self._kodi_wrapper.check_if_path_exists(tokenfile):
-                playertoken = self._get_cached_token(tokenfile, token_url, xvrttoken)
-                return playertoken
-            #renew live 
-            else:
-                headers = {'Content-Type': 'application/json'}
-                return self._get_new_playertoken(tokenfile, token_url, headers)
-        #renew on demand
-        else:
+            token = self._get_cached_token(tokenfile, token_url, xvrttoken)
+
+        if token == None:
             cookie_value = 'X-VRT-Token=' + xvrttoken
             headers = {'Content-Type': 'application/json', 'Cookie' : cookie_value}
-            return self._get_new_playertoken(tokenfile, token_url, headers)
+            token = self._get_new_playertoken(tokenfile, token_url, headers)
+        return token
+
+    def get_live_playertoken(self, token_url):
+        tokenfile = self._kodi_wrapper.get_userdata_path() + 'live_vrtPlayerToken'
+        token = None
+        if self._kodi_wrapper.check_if_path_exists(tokenfile):
+            token = self._get_cached_token(tokenfile, token_url, xvrttoken)
+         
+        if token == None:
+            headers = {'Content-Type': 'application/json'}
+            token = self._get_new_playertoken(tokenfile, token_url, headers)
+        return token
 
     def _get_new_playertoken(self, path, token_url, headers):
         playertoken = requests.post(token_url, headers=headers).json()
@@ -47,8 +54,7 @@ class TokenResolver:
                 return self._get_xvrttoken()
             elif path.split('/')[-1] == 'roaming_XVRTToken':
                  return self._get_xvrttoken('roaming_XVRTToken')
-            else:
-                return self._get_playertoken(token_url, xvrttoken)
+            
 
     def get_xvrttoken(self, tokenfile=None):
         tokenfile = self._kodi_wrapper.get_userdata_path() + (tokenfile or 'XVRTToken')

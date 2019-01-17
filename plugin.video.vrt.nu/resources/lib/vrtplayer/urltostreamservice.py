@@ -79,6 +79,8 @@ class UrlToStreamService:
         strainer = SoupStrainer('div', {'class': 'cq-dd-vrtvideo'})
         soup = BeautifulSoup(html_page, 'html.parser', parse_only=strainer)
         video_data = soup.find(lambda tag: tag.name == 'div' and tag.get('class') == ['vrtvideo']).attrs
+        is_live_stream = False
+        xvrttoken = None
 
         #store required data attributes
         client = video_data['data-client']
@@ -87,19 +89,22 @@ class UrlToStreamService:
             video_id = video_data['data-videoid']
             xvrttoken = self.token_resolver.get_xvrttoken()
         else:
-            xvrttoken = None
             video_id = video_data['data-livestream']
+            is_live_stream = True
         publication_id = ''
         if 'data-publicationid' in video_data.keys():
             publication_id = video_data['data-publicationid'] + requests.utils.quote('$')
-        return apidata.ApiData(client, media_api_url, video_id, publication_id, xvrttoken)
+        return apidata.ApiData(client, media_api_url, video_id, publication_id, xvrttoken, is_live_stream)
 
-    def _get_video_json(self, client, media_api_url, video_id, publication_id, xvrttoken):
-        token_url = media_api_url + '/tokens'
-        playertoken = self.token_resolver.get_playertoken(token_url, xvrttoken)
+    def _get_video_json(self, api_data):
+        token_url = api_data.media_api_url + '/tokens'
+        if api_data.is_live_stream :
+            playertoken = self.token_resolver.get_live_playertoken(token_url)
+        else:
+            playertoken = self.token_resolver.get_playertoken(token_url, api_data.xvrttoken)
 
         #construct api_url and get video json
-        api_url = ''.join((media_api_url, '/videos/', publication_id, video_id, '?vrtPlayerToken=', playertoken, '&client=', client))
+        api_url = ''.join((api_data.media_api_url, '/videos/', api_data.publication_id, api_data.video_id, '?vrtPlayerToken=', playertoken, '&client=', api_data.client))
         video_json = requests.get(api_url).json()
             
         return video_json
@@ -112,7 +117,7 @@ class UrlToStreamService:
     def get_stream_from_url(self, video_url, retry = False, api_data = None):
         vudrm_token = None
         api_data = api_data or self._get_api_data(video_url)
-        video_json = self._get_video_json(api_data.client, api_data.media_api_url, api_data.video_id, api_data.publication_id, api_data.xvrttoken)
+        video_json = self._get_video_json(api_data)
 
         if 'drm' in video_json:
             vudrm_token = video_json['drm']

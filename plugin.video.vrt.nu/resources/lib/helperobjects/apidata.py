@@ -1,11 +1,12 @@
 class ApiData:
 
-    def __init__(self, client, media_api_url, video_id, publication_id, xvrttoken ):
+    def __init__(self, client, media_api_url, video_id, publication_id, xvrttoken, is_live_stream ):
         self._client = client
         self._media_api_url = media_api_url
         self._video_id = video_id
         self._publication_id = publication_id
         self._xvrttoken = xvrttoken
+        self.is_live_stream = is_live_stream
 
     @property
     def client(self):
@@ -49,4 +50,8 @@ class ApiData:
 
     @property
     def is_live_stream(self):
-        return self._xvrttoken == None
+        return self.is_live_stream
+
+    @is_live_stream.setter
+    def is_live_stream(self, value):
+        self.is_live_stream = value
