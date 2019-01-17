@@ -35,6 +35,9 @@
     <Compile Include="resources\lib\vrtplayer\metadatacollector.py" />
     <Compile Include="resources\lib\vrtplayer\metadatacreator.py" />
     <Compile Include="resources\lib\vrtplayer\statichelper.py" />
+    <Compile Include="resources\lib\vrtplayer\tokenresolver.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="resources\lib\vrtplayer\urltostreamservice.py" />
     <Compile Include="resources\lib\vrtplayer\vrtplayer.py" />
     <Compile Include="resources\lib\vrtplayer\__init__.py" />
