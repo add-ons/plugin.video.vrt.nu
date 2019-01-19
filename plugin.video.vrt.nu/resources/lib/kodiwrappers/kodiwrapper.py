@@ -49,13 +49,11 @@ class KodiWrapper:
         if video.license_key is not None:
             play_item.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')
             play_item.setProperty('inputstream.adaptive.license_key', video.license_key)
-
-        if self.get_setting('showsubtitles') == 'true':
+        
+        subtitles_visible = False
+        if self.get_setting('showsubtitles') == 'true' and video.subtitle_url is not None:
             subtitles_visible = True
-            if video.subtitle_url is not None:
-                play_item.setSubtitles([video.subtitle_url])
-        else:
-            subtitles_visible = False
+            play_item.setSubtitles([video.subtitle_url])
 
         xbmcplugin.setResolvedUrl(self._handle, True, listitem=play_item)
         while not xbmc.Player().isPlaying():

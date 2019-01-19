@@ -101,7 +101,7 @@ class UrlToStreamService:
         if api_data.is_live_stream :
             playertoken = self.token_resolver.get_live_playertoken(token_url)
         else:
-            playertoken = self.token_resolver.get_playertoken(token_url, api_data.xvrttoken)
+            playertoken = self.token_resolver.get_ondemand_playertoken(token_url, api_data.xvrttoken)
 
         #construct api_url and get video json
         api_url = ''.join((api_data.media_api_url, '/videos/', api_data.publication_id, api_data.video_id, '?vrtPlayerToken=', playertoken, '&client=', api_data.client))
