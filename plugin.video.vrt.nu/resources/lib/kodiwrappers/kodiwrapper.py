@@ -74,6 +74,9 @@ class KodiWrapper:
     def open_settings(self):
         self._addon.openSettings()
 
+    def has_inputstream_adaptive_installed(self):
+        return xbmc.getCondVisibility('System.HasAddon("{0}")'.format('inputstream.adaptive')) == 1
+
     def has_widevine_installed(self):
         kodi_version = int(xbmc.getInfoLabel('System.BuildVersion').split('.')[0])
         if xbmc.getCondVisibility('system.platform.android') and kodi_version > 17:
