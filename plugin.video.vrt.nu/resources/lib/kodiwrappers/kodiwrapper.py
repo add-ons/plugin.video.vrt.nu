@@ -51,9 +51,11 @@ class KodiWrapper:
             play_item.setProperty('inputstream.adaptive.license_key', video.license_key)
         
         subtitles_visible = False
-        if self.get_setting('showsubtitles') == 'true' and video.subtitle_url is not None:
+        if self.get_setting('showsubtitles') == 'true':
             subtitles_visible = True
-            play_item.setSubtitles([video.subtitle_url])
+            #separate subtitle url for hls-streams
+            if video.subtitle_url is not None:
+                play_item.setSubtitles([video.subtitle_url])
 
         xbmcplugin.setResolvedUrl(self._handle, True, listitem=play_item)
         while not xbmc.Player().isPlaying():
@@ -71,6 +73,9 @@ class KodiWrapper:
 
     def open_settings(self):
         self._addon.openSettings()
+
+    def has_inputstream_adaptive_installed(self):
+        return xbmc.getCondVisibility('System.HasAddon("{0}")'.format('inputstream.adaptive')) == 1
 
     def has_widevine_installed(self):
         kodi_version = int(xbmc.getInfoLabel('System.BuildVersion').split('.')[0])

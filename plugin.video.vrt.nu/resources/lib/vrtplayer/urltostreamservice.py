@@ -21,7 +21,7 @@ class UrlToStreamService:
         self._vrt_base = vrt_base
         self._vrtnu_base_url = vrtnu_base_url
         self._create_settings_dir()
-        self._can_play_drm = self._kodi_wrapper.has_widevine_installed()
+        self._can_play_drm = self._kodi_wrapper.has_widevine_installed() and self._kodi_wrapper.has_inputstream_adaptive_installed()
         self._license_url = self._get_license_url()
 
     def _get_license_url(self):
@@ -152,8 +152,10 @@ class UrlToStreamService:
             return self._try_get_drm_stream(stream_dict, vudrm_token)
         elif vudrm_token:
             return streamurls.StreamURLS(*self._select_hls_substreams(stream_dict['hls_aes']))
-        else:
+        elif self._kodi_wrapper.has_inputstream_adaptive_installed():
             return streamurls.StreamURLS(stream_dict['mpeg_dash']) #non drm stream
+        else:
+            return streamurls.StreamURLS(*self._select_hls_substreams(stream_dict['hls'])) #last resort, non drm hls stream 
 
     #speed up hls selection, workaround for slower kodi selection
     def _select_hls_substreams(self, master_hls_url):
