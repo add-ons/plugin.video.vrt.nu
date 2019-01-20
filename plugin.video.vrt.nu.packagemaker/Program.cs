@@ -1,5 +1,6 @@
 ﻿    using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -27,8 +28,7 @@ namespace plugin.video.vrt.nu.packagemaker
 
             CreateZipFile(Path.Combine(dllLocation,zipfileName), destination);
 
-            Console.WriteLine("Press any key to exit");
-            Console.ReadLine();
+            Process.Start("explorer.exe", dllLocation);
         }
 
         private static void CreateZipFile(string zipfileName, string destination)

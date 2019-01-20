@@ -127,12 +127,12 @@ class UrlToStreamService:
 
         elif video_json['code'] == 'INVALID_LOCATION' or video_json['code'] == 'INCOMPLETE_ROAMING_CONFIG':
             self._kodi_wrapper.log_notice(video_json['message'])
-            roaming_xvrttoken = self.get_xvrttoken('roaming_XVRTToken')
+            roaming_xvrttoken = self.get_xvrttoken(True)
             if not retry and roaming_xvrttoken is not None:
                 if video_json['code'] == 'INCOMPLETE_ROAMING_CONFIG':
                     #delete cached ondemand_vrtPlayerToken
                     self._kodi_wrapper.delete_path(self._kodi_wrapper.get_userdata_path() + 'ondemand_vrtPlayerToken')
-                #update api_data with roaming_xvrttoken
+                #update api_data with roaming_xvrttoken and try again
                 api_data.xvrttoken = roaming_xvrttoken
                 return self.get_stream_from_url(video_url, True, api_data)
             else:
@@ -155,7 +155,7 @@ class UrlToStreamService:
         elif self._kodi_wrapper.has_inputstream_adaptive_installed():
             return streamurls.StreamURLS(stream_dict['mpeg_dash']) #non drm stream
         else:
-            return streamurls.StreamURLS(*self._select_hls_substreams(stream_dict['hls'])) #last resort, non drm hls stream 
+            return streamurls.StreamURLS(*self._select_hls_substreams(stream_dict['hls'])) #last resort, non drm hls stream, only applies if people uninstalled inputstream adaptive while vrt nu addon was disabled
 
     #speed up hls selection, workaround for slower kodi selection
     def _select_hls_substreams(self, master_hls_url):

@@ -74,7 +74,7 @@ class KodiWrapper:
     def open_settings(self):
         self._addon.openSettings()
 
-    def has_inputstream_adaptive_installed(self):
+    def has_inputstream_adaptive_installed(self): #note normally inputstream adaptive will always be installed, this only applies for people uninstalling inputstream adaptive while this addon is disabled
         return xbmc.getCondVisibility('System.HasAddon("{0}")'.format('inputstream.adaptive')) == 1
 
     def has_widevine_installed(self):
