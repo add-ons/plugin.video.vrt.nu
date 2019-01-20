@@ -12,7 +12,7 @@ In Kodi, simply search for `VRT NU`, and install the add-on.
 Alternatively, you can download a ZIP archive from the [Kodi plugin page][3] and install it directly in Kodi
 using the **Install via Zip** option.
 
-#### Installing V1.5.0 on Kodi 17.x
+#### Installing V1.5.x on Kodi 17.x
 If you get errors while installing V1.5.0 on Kodi 17.x make sure the inputstream.adaptive addon is enabled.
 To check on this go to addons -> video player inputstream -> inputstream adaptive and enable the addon.
 
@@ -34,8 +34,12 @@ prompted.
 ## Reporting issues
 you can report issues here at github or you can send a message to the facebook page https://www.facebook.com/kodivrtnu/
 
-## Releases
-#### v1.5.0 (27-12-2018) | when not installing see the installing section above
+## Releases | when not installing see the installing section above
+#### v1.5.1 (20-01-2019)
+- Fixed subtitle issue where subtitles would always be visible (Thanks mediaminister)
+- Fixed categories (Thanks mediaminister)
+- Roaming support added (Thanks mediaminister)
+#### v1.5.0 (27-12-2018)
  - 720p Livestreams when enabling in settings + having kodi 18 + having widevine.dll present (Thanks mediaminister)
  - Fixed bug where watched icon was not showing in Kodi 18
  - Implemented different way of working with subtitles (Thanks mediaminister)
