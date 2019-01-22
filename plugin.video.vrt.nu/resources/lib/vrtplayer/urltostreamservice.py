@@ -145,7 +145,7 @@ class UrlToStreamService:
     def _try_get_drm_stream(self, stream_dict, vudrm_token):
         encryption_json = '{{"token":"{0}","drm_info":[D{{SSM}}],"kid":"{{KID}}"}}'.format(vudrm_token)
         license_key = self._get_license_key(key_url=self._license_url, key_type='D', key_value=encryption_json, key_headers={'Content-Type': 'text/plain;charset=UTF-8'})
-        return streamurls.StreamURLS(stream_dict['mpeg_dash'], license_key=license_key)
+        return streamurls.StreamURLS(stream_dict['mpeg_dash'], license_key, True)
         
     def _select_stream(self, stream_dict, vudrm_token):
         if vudrm_token and self._can_play_drm and self._kodi_wrapper.get_setting('usedrm') == 'true':
@@ -153,9 +153,7 @@ class UrlToStreamService:
         elif vudrm_token:
             return streamurls.StreamURLS(*self._select_hls_substreams(stream_dict['hls_aes']))
         elif self._kodi_wrapper.has_inputstream_adaptive_installed():
-            return streamurls.StreamURLS(stream_dict['mpeg_dash']) #non drm stream
-        else:
-            return streamurls.StreamURLS(*self._select_hls_substreams(stream_dict['hls'])) #last resort, non drm hls stream, only applies if people uninstalled inputstream adaptive while vrt nu addon was disabled
+            return streamurls.StreamURLS(stream_dict['mpeg_dash'], True) #non drm stream
 
     #speed up hls selection, workaround for slower kodi selection
     def _select_hls_substreams(self, master_hls_url):

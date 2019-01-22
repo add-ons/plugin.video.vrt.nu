@@ -6,6 +6,7 @@ import json
 from urllib import urlencode
 from resources.lib.vrtplayer import vrtplayer
 from resources.lib.kodiwrappers import sortmethod
+#import inputstreamhelper
 
 class KodiWrapper:
 
@@ -40,22 +41,19 @@ class KodiWrapper:
     def play(self, video):
         play_item = xbmcgui.ListItem(path=video.stream_url)
 
-        if video.stream_url is not None and '/.mpd' in video.stream_url:
+        if video.stream_url is not None and video.stream_url._use_inputstream_adaptive:
             play_item.setProperty('inputstreamaddon', 'inputstream.adaptive')
             play_item.setProperty('inputstream.adaptive.manifest_type', 'mpd')
             play_item.setMimeType('application/dash+xml')
             play_item.setContentLookup(False)
-
-        if video.license_key is not None:
-            play_item.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')
-            play_item.setProperty('inputstream.adaptive.license_key', video.license_key)
+            if video.license_key is not None:
+                play_item.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')
+                play_item.setProperty('inputstream.adaptive.license_key', video.license_key)
         
-        subtitles_visible = False
-        if self.get_setting('showsubtitles') == 'true':
-            subtitles_visible = True
-            #separate subtitle url for hls-streams
-            if video.subtitle_url is not None:
-                play_item.setSubtitles([video.subtitle_url])
+        subtitles_visible = self.get_setting('showsubtitles') == 'true'
+        #separate subtitle url for hls-streams
+        if subtitles_visible and video.subtitle_url is not None:
+            play_item.setSubtitles([video.subtitle_url])
 
         xbmcplugin.setResolvedUrl(self._handle, True, listitem=play_item)
         while not xbmc.Player().isPlaying() and not xbmc.Monitor().abortRequested():
