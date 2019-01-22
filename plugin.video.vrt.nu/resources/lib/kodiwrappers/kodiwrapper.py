@@ -58,8 +58,8 @@ class KodiWrapper:
                 play_item.setSubtitles([video.subtitle_url])
 
         xbmcplugin.setResolvedUrl(self._handle, True, listitem=play_item)
-        while not xbmc.Player().isPlaying():
-            xbmc.sleep(10)
+        while not xbmc.Player().isPlaying() and not xbmc.Monitor().abortRequested():
+            xbmc.sleep(100)
         xbmc.Player().showSubtitles(subtitles_visible)
 
     def show_ok_dialog(self, title, message):
