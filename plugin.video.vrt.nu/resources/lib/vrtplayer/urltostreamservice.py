@@ -154,6 +154,8 @@ class UrlToStreamService:
             return streamurls.StreamURLS(*self._select_hls_substreams(stream_dict['hls_aes']))
         elif self._kodi_wrapper.has_inputstream_adaptive_installed():
             return streamurls.StreamURLS(stream_dict['mpeg_dash'], True) #non drm stream
+        else:	
+            return streamurls.StreamURLS(*self._select_hls_substreams(stream_dict['hls'])) #last resort, non drm hls stream, only applies if people uninstalled inputstream adaptive while vrt nu addon was disabled
 
     #speed up hls selection, workaround for slower kodi selection
     def _select_hls_substreams(self, master_hls_url):
