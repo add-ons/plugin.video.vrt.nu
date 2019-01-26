@@ -17,7 +17,7 @@ def router(params_string):
                                                            kodi_wrapper, token_resolver)
     vrt_player = vrtplayer.VRTPlayer(addon.getAddonInfo('path'), kodi_wrapper, stream_service)
     params = dict(parse_qsl(params_string))
-    if params:
+    if params and params['action'] != actions.CREDENTIALS:
         if params['action'] == actions.LISTING_AZ:
             vrt_player.show_az_menu_items()
         elif params['action'] == actions.LISTING_CATEGORIES:
@@ -31,6 +31,8 @@ def router(params_string):
         elif params['action'] == actions.PLAY:
             vrt_player.play(params['video'])
     else:
+        if params and params['action']== actions.CREDENTIALS:
+            token_resolver.reset_cookies()
         vrt_player.show_main_menu_items()
 
 if __name__ == '__main__':
