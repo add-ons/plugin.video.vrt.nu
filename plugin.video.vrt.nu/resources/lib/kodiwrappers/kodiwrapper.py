@@ -79,16 +79,9 @@ class KodiWrapper:
     def has_inputstream_adaptive_installed(self): #note normally inputstream adaptive will always be installed, this only applies for people uninstalling inputstream adaptive while this addon is disabled
         return xbmc.getCondVisibility('System.HasAddon("{0}")'.format('inputstream.adaptive')) == 1
 
-    def has_widevine_installed(self):
+    def can_play_widevine(self):
         kodi_version = int(xbmc.getInfoLabel('System.BuildVersion').split('.')[0])
-        if xbmc.getCondVisibility('system.platform.android') and kodi_version > 17:
-            return True
-        cdm_path = xbmc.translatePath('special://home/cdm/')
-        has_widevine_installed = False
-        if self.check_if_path_exists(cdm_path):
-            dirs, files = xbmcvfs.listdir(cdm_path)
-            has_widevine_installed = any('widevine' in s for s in files)
-        return has_widevine_installed
+        return kodi_version > 17
 
     def get_userdata_path(self):
         return xbmc.translatePath(self._addon.getAddonInfo('profile')).decode('utf-8')

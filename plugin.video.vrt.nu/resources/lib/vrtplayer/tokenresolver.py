@@ -83,9 +83,9 @@ class TokenResolver:
             xvrttoken = TokenResolver._create_token_dictionary(cookie_jar)
             token =  xvrttoken['X-VRT-Token']
             if get_roaming_token: 
-                roaming_xvrttoken = TokenResolver._get_roaming_xvrttoken(login_cookie, xvrttoken)
-                token = roaming_xvrttoken['X-VRT-Token'] if roaming_xvrttoken is not None else None
-            json.dump(token, open(path,'w'))
+                xvrttoken = TokenResolver._get_roaming_xvrttoken(login_cookie, xvrttoken)
+                token = xvrttoken['X-VRT-Token'] if xvrttoken is not None else None
+            json.dump(xvrttoken, open(path,'w'))
         else:
             title = self._kodi_wrapper.get_localized_string(32051)
             message = self._kodi_wrapper.get_localized_string(32052)

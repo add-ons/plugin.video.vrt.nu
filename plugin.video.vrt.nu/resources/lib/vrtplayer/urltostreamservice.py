@@ -21,7 +21,7 @@ class UrlToStreamService:
         self._vrt_base = vrt_base
         self._vrtnu_base_url = vrtnu_base_url
         self._create_settings_dir()
-        self._can_play_drm = self._kodi_wrapper.has_widevine_installed() and self._kodi_wrapper.has_inputstream_adaptive_installed()
+        self._can_play_drm = self._kodi_wrapper.can_play_widevine() and self._kodi_wrapper.has_inputstream_adaptive_installed()
         self._license_url = self._get_license_url()
 
     def _get_license_url(self):
@@ -149,12 +149,16 @@ class UrlToStreamService:
         
     def _select_stream(self, stream_dict, vudrm_token):
         if vudrm_token and self._can_play_drm and self._kodi_wrapper.get_setting('usedrm') == 'true':
+            self._kodi_wrapper.log_notice('protocol: usedrm')
             return self._try_get_drm_stream(stream_dict, vudrm_token)
         elif vudrm_token:
+            self._kodi_wrapper.log_notice('protocol: hls_aes')
             return streamurls.StreamURLS(*self._select_hls_substreams(stream_dict['hls_aes']))
         elif self._kodi_wrapper.has_inputstream_adaptive_installed():
+            self._kodi_wrapper.log_notice('protocol: mpeg_dash')
             return streamurls.StreamURLS(stream_dict['mpeg_dash'], use_inputstream_adaptive=True) #non drm stream
-        else:	
+        else:
+            self._kodi_wrapper.log_notice('protocol: hls')
             return streamurls.StreamURLS(*self._select_hls_substreams(stream_dict['hls'])) #last resort, non drm hls stream, only applies if people uninstalled inputstream adaptive while vrt nu addon was disabled
 
     #speed up hls selection, workaround for slower kodi selection
