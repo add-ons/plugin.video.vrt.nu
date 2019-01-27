@@ -10,7 +10,7 @@ _handle = int(sys.argv[1])
 
 def router(params_string):
     addon = xbmcaddon.Addon()
-    kodi_wrapper = kodiwrapper.KodiWrapper(_handle, _url, addon)
+    kodi_wrapper = kodiwrapper.KodiWrapper(addon, _handle, _url)
     token_resolver = tokenresolver.TokenResolver(kodi_wrapper)
     stream_service = urltostreamservice.UrlToStreamService(vrtplayer.VRTPlayer._VRT_BASE,
                                                            vrtplayer.VRTPlayer._VRTNU_BASE_URL,

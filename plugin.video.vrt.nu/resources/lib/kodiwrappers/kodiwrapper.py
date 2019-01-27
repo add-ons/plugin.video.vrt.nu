@@ -11,7 +11,7 @@ from resources.lib.kodiwrappers import sortmethod
 
 class KodiWrapper:
 
-    def __init__(self, handle, url, addon):
+    def __init__(self, addon, handle=None, url=None):
         self._handle = handle
         self._url = url
         self._addon = addon
@@ -47,10 +47,8 @@ class KodiWrapper:
             play_item.setMimeType('application/dash+xml')
             play_item.setContentLookup(False)
             if video.license_key is not None:
-                is_helper = inputstreamhelper.Helper('mpd', drm='com.widevine.alpha')
-                if is_helper.check_inputstream():
-                    play_item.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')
-                    play_item.setProperty('inputstream.adaptive.license_key', video.license_key)
+                play_item.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')
+                play_item.setProperty('inputstream.adaptive.license_key', video.license_key)
         
         subtitles_visible = self.get_setting('showsubtitles') == 'true'
         #separate subtitle url for hls-streams
@@ -81,7 +79,14 @@ class KodiWrapper:
 
     def can_play_widevine(self):
         kodi_version = int(xbmc.getInfoLabel('System.BuildVersion').split('.')[0])
-        return kodi_version > 17
+        if xbmc.getCondVisibility('system.platform.android') and kodi_version > 17:
+            return True
+        cdm_path = xbmc.translatePath('special://home/cdm/')
+        has_widevine_installed = False
+        if self.check_if_path_exists(cdm_path):
+            dirs, files = xbmcvfs.listdir(cdm_path)
+            has_widevine_installed = any('widevine' in s for s in files)
+        return has_widevine_installed
 
     def get_userdata_path(self):
         return xbmc.translatePath(self._addon.getAddonInfo('profile')).decode('utf-8')
