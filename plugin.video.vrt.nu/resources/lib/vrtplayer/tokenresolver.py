@@ -117,7 +117,7 @@ class TokenResolver:
         return token_dictionary
 
     def reset_cookies(self):
-        user_data_path = self._kodi_wrapper.get_userdata_path() 
+        user_data_path = self._kodi_wrapper.get_userdata_path()
         ondemand = user_data_path + self._ONDEMAND_COOKIE
         live = user_data_path + self._LIVE_COOKIE
         xvrt = user_data_path + self._XVRT_TOKEN_COOKIE

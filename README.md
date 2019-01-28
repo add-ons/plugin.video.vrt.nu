@@ -35,6 +35,10 @@ prompted.
 you can report issues here at github or you can send a message to the facebook page https://www.facebook.com/kodivrtnu/
 
 ## Releases | when not installing see the installing section above
+#### v1.5.2 (28-01-2019)
+- Bug fix where the vrt token would be stored in a wrong format
+- Inputstream helper for easier widevine installation
+- Token resets when settings are being changed
 #### v1.5.1 (20-01-2019)
 - Fixed subtitle issue where subtitles would always be visible (Thanks mediaminister)
 - Fixed categories (Thanks mediaminister)

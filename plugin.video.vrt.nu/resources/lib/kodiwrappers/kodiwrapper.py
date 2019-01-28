@@ -55,8 +55,7 @@ class KodiWrapper:
         subtitles_visible = self.get_setting('showsubtitles') == 'true'
         #separate subtitle url for hls-streams
         if subtitles_visible and video.subtitle_url is not None:
-            self.log_error('subtitle url hieronder!')
-            self.log_error(video.subtitle_url)
+            self.log_notice('subtitle ' + video.subtitle_url)
             play_item.setSubtitles([video.subtitle_url])
 
         xbmcplugin.setResolvedUrl(self._handle, True, listitem=play_item)
