@@ -58,9 +58,10 @@ class TokenResolver:
             now = datetime.datetime.utcnow()
             exp = datetime.datetime(*(time.strptime(token['expirationDate'], '%Y-%m-%dT%H:%M:%S.%fZ')[0:6]))
             if exp > now:
-                self._kodi_wrapper.log_notice(path)
+                self._kodi_wrapper.log_notice('Got cached token')
                 cached_token = token[token.keys()[0]]
             else:
+                self._kodi_wrapper.log_notice('Cached token deleted')
                 self._kodi_wrapper.delete_path(path)
         return cached_token
 
