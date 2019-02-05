@@ -106,7 +106,7 @@ class TokenResolver:
         roaming_xvrttoken = None
         if url is not None:
             cookie_jar = requests.get(url, headers=headers).cookies
-            roaming_xvrttoken = TokenResolver._create_token_dictionary_from_cookie_jar(cookie_jar)
+            roaming_xvrttoken = TokenResolver._create_token_dictionary(cookie_jar)
         return roaming_xvrttoken
 
     @staticmethod

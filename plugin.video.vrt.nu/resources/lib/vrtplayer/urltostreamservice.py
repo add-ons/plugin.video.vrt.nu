@@ -127,7 +127,7 @@ class UrlToStreamService:
 
         elif video_json['code'] == 'INVALID_LOCATION' or video_json['code'] == 'INCOMPLETE_ROAMING_CONFIG':
             self._kodi_wrapper.log_notice(video_json['message'])
-            roaming_xvrttoken = self.get_xvrttoken(True)
+            roaming_xvrttoken = self.token_resolver.get_xvrttoken(True)
             if not retry and roaming_xvrttoken is not None:
                 if video_json['code'] == 'INCOMPLETE_ROAMING_CONFIG':
                     #delete cached ondemand_vrtPlayerToken
