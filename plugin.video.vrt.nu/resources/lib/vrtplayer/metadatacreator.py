@@ -28,6 +28,10 @@ class MetadataCreator:
     def datetime(self):
         return self._datetime
 
+    @property
+    def datetime_as_short_date(self):
+        return time.strftime('%d/%m', self.datetime)
+
     @datetime.setter
     def datetime(self, value):
         self._datetime = value
@@ -43,6 +47,6 @@ class MetadataCreator:
 
         if self.datetime is not None:
             video_dictionary['date'] = time.strftime('%d.%m.%Y', self.datetime)
-            video_dictionary['shortdate'] = time.strftime('%d/%m', self.datetime)
+            video_dictionary['shortdate'] = self.datetime_as_short_date
 
         return video_dictionary

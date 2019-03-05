@@ -39,6 +39,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="resources\lib\vrtplayer\urltostreamservice.py" />
+    <Compile Include="resources\lib\vrtplayer\vrtapihelper.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="resources\lib\vrtplayer\vrtplayer.py" />
     <Compile Include="resources\lib\vrtplayer\__init__.py" />
     <Compile Include="resources\lib\__init__.py" />
@@ -47,6 +50,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="vrtnutests\urltostreamservicetests.py" />
+    <Compile Include="vrtnutests\apihelpertests.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="vrtnutests\vrtplayertests.py" />
     <Compile Include="vrtnutests\__init__.py" />
   </ItemGroup>
