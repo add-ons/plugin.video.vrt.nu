@@ -26,7 +26,8 @@ def router(params_string):
         elif params['action'] == actions.LISTING_LIVE:
             vrt_player.show_livestream_items()
         elif params['action'] == actions.LISTING_VIDEOS:
-            vrt_player.show_videos(params['video'])
+            season = params['season'] if  'season' in params else None
+            vrt_player.show_videos(params['video'], season)
         elif params['action'] == actions.LISTING_CATEGORY_VIDEOS:
             vrt_player.show_video_category_episodes(params['video'])
         elif params['action'] == actions.PLAY:

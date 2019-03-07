@@ -12,10 +12,6 @@ In Kodi, simply search for `VRT NU`, and install the add-on.
 Alternatively, you can download a ZIP archive from the [Kodi plugin page][3] and install it directly in Kodi
 using the **Install via Zip** option.
 
-#### Installing V1.5.x on Kodi 17.x
-If you get errors while installing V1.5.0 on Kodi 17.x make sure the inputstream.adaptive addon is enabled.
-To check on this go to addons -> video player inputstream -> inputstream adaptive and enable the addon.
-
 ## Using the plugin
 
 The [VRT NU][2] platform requires users to sign in before gaining access to video-on-demand content. Users can
@@ -34,7 +30,7 @@ prompted.
 ## Reporting issues
 you can report issues here at github or you can send a message to the facebook page https://www.facebook.com/kodivrtnu/
 
-## Releases | when not installing see the installing section above
+## Releases
 #### v1.5.2 (28-01-2019)
 - Bug fix where the vrt token would be stored in a wrong format
 - Inputstream helper for easier widevine installation
@@ -119,6 +115,9 @@ you can report issues here at github or you can send a message to the facebook p
 #### v0.0.1 (01-05-2017)
 
 - Initial working release
+
+## Donating
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6C58R2PNAWTNW&source=url)
 
 [1]: https://kodi.tv
 [2]: https://www.vrt.be/vrtnu

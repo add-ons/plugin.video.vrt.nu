@@ -88,8 +88,8 @@ class VRTPlayer:
                 }
         self._kodi_wrapper.show_listing(livestream_items, sortmethod.ALPHABET)
 
-    def show_videos(self, path):
-        title_items = self._api_helper.get_video_items(path)
+    def show_videos(self, path, season):
+        title_items = self._api_helper.get_video_items(path, season)
         self._kodi_wrapper.show_listing(title_items)
 
     def __get_media(self, file_name):
