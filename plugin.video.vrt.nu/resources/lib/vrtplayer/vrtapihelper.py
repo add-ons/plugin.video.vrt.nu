@@ -55,7 +55,7 @@ class VRTApiHelper:
                 metadata_creator.duration = result['duration']
                 metadata_creator.plot = BeautifulSoup(result['description'], 'html.parser').text
                 metadata_creator.plotoutline = result['shortDescription']
-                description = description +  " "  + result['shortDescription']
+                description = description +  " "  + BeautifulSoup(result['shortDescription'], 'html.parser').text
                 thumb = statichelper.replace_double_slashes_with_https(result['videoThumbnailUrl'])
                 title_items.append(helperobjects.TitleItem(description, {'action': actions.PLAY, 'video': result['url']}, True, thumb, metadata_creator.get_video_dictionary()))
 
