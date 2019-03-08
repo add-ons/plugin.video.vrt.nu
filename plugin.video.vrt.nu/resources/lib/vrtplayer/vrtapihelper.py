@@ -47,17 +47,21 @@ class VRTApiHelper:
             if (season is None) or (season is not None and season_name == season):
                 metadata_creator = metadatacreator.MetadataCreator()
                 json_broadcast_date = result['broadcastDate']
-                description = None
+                title = ''
                 if json_broadcast_date != -1 :
                     epoch_in_seconds = result['broadcastDate']/1000
                     metadata_creator.datetime = time.localtime(epoch_in_seconds)
-                    description = metadata_creator.datetime_as_short_date
+                    title = metadata_creator.datetime_as_short_date + ' '
+                description = BeautifulSoup(result['shortDescription'], 'html.parser').text
                 metadata_creator.duration = result['duration']
                 metadata_creator.plot = BeautifulSoup(result['description'], 'html.parser').text
                 metadata_creator.plotoutline = result['shortDescription']
-                description = description +  " "  + BeautifulSoup(result['shortDescription'], 'html.parser').text
-                thumb = statichelper.replace_double_slashes_with_https(result['videoThumbnailUrl'])
-                title_items.append(helperobjects.TitleItem(description, {'action': actions.PLAY, 'video': result['url']}, True, thumb, metadata_creator.get_video_dictionary()))
+                thumb_url = result['videoThumbnailUrl']
+                thumb = statichelper.replace_double_slashes_with_https(thumb_url) if thumb_url.startswith("//") else thumb_url
+                
+                #sometimes shortdescription is empty if that's the case use title => always prepend date
+                title = title +  (description if description != '' else result['title'])
+                title_items.append(helperobjects.TitleItem(title, {'action': actions.PLAY, 'video': result['url']}, True, thumb, metadata_creator.get_video_dictionary()))
 
         return title_items
 

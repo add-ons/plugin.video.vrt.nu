@@ -24,7 +24,7 @@
         <platform>all</platform>
         <license>GNU General Public License, v3</license>
         <news>
-v1.5.3 (07-03-2019)
+v1.6.0 (07-03-2019)
 - Use Vrt search api (greatly improves stability)
 - Fix for users with Non ASCII compatible user path
 - Fix for roaming token

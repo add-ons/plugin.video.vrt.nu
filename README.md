@@ -31,6 +31,10 @@ prompted.
 you can report issues here at github or you can send a message to the facebook page https://www.facebook.com/kodivrtnu/
 
 ## Releases
+#### v1.6.0 (07-03-2019)
+- Use Vrt search api (greatly improves stability)
+- Fix for users with Non ASCII compatible user path
+- Fix for roaming token
 #### v1.5.2 (28-01-2019)
 - Bug fix where the vrt token would be stored in a wrong format
 - Inputstream helper for easier widevine installation

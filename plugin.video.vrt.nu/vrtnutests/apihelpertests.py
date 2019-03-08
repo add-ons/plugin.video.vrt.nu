@@ -5,7 +5,7 @@ class ApiHelperTests(unittest.TestCase):
 
     def test_get_api_data_single_season(self):
         api_helper = vrtapihelper.VRTApiHelper()
-        title_items = api_helper.get_video_items('/vrtnu/a-z/animal-babies.relevant/', None)
+        title_items = api_helper.get_video_items('/vrtnu/a-z/piet-piraat.relevant/', None)
         self.assertEqual(3, len(title_items))
 
     def test_get_api_data_multiple_seasons(self):
@@ -17,3 +17,10 @@ class ApiHelperTests(unittest.TestCase):
         api_helper = vrtapihelper.VRTApiHelper()
         title_items = api_helper.get_video_items('/vrtnu/a-z/thuis.relevant/', '24')
         self.assertTrue(len(title_items) > 5)
+
+    def test_get_api_data_specific_season_without_broadcastdate(self):
+        api_helper = vrtapihelper.VRTApiHelper()
+        title_items = api_helper.get_video_items('/vrtnu/a-z/postbus-x.relevant/', '1')
+        self.assertTrue(len(title_items) > 5)
+
+        
