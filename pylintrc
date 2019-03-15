@@ -12,6 +12,7 @@ disable=
     old-style-class,
     too-few-public-methods,
     too-many-arguments,
+    too-many-locals,
     unnecessary-lambda,
     unused-argument,
     wrong-import-order,

@@ -6,13 +6,17 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import json
 import inputstreamhelper
-from urllib import urlencode
 
 import xbmc
 import xbmcgui
 import xbmcplugin
 import xbmcvfs
 from resources.lib.kodiwrappers import sortmethod
+
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
 
 
 class KodiWrapper:

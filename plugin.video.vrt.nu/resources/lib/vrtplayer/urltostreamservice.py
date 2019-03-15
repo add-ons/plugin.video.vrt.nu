@@ -126,7 +126,7 @@ class UrlToStreamService:
             stream_dict = dict(list(map(lambda x: (x['type'], x['url']), target_urls)))
             return self._select_stream(stream_dict, vudrm_token)
 
-        elif video_json['code'] == 'INVALID_LOCATION' or video_json['code'] == 'INCOMPLETE_ROAMING_CONFIG':
+        if video_json['code'] == 'INVALID_LOCATION' or video_json['code'] == 'INCOMPLETE_ROAMING_CONFIG':
             self._kodi_wrapper.log_notice(video_json['message'])
             roaming_xvrttoken = self.token_resolver.get_xvrttoken(True)
             if not retry and roaming_xvrttoken is not None:
@@ -136,9 +136,9 @@ class UrlToStreamService:
                 # Update api_data with roaming_xvrttoken and try again
                 api_data.xvrttoken = roaming_xvrttoken
                 return self.get_stream_from_url(video_url, True, api_data)
-            else:
-                message = self._kodi_wrapper.get_localized_string(32053)
-                self._kodi_wrapper.show_ok_dialog('', message)
+
+            message = self._kodi_wrapper.get_localized_string(32053)
+            self._kodi_wrapper.show_ok_dialog('', message)
         else:
             self._handle_error(video_json)
 
