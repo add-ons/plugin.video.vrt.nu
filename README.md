@@ -110,7 +110,7 @@ you can report issues here at github or you can send a message to the facebook p
 
 #### v0.0.3 (22-05-2017)
 
-- Fixed broken livestreams
+- Fixed broken livestreams 
 
 #### v0.0.2 (07-05-2017)
 
