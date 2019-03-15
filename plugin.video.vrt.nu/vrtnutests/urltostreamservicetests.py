@@ -63,3 +63,7 @@ class UrlToStreamServiceTests(unittest.TestCase):
         service = urltostreamservice.UrlToStreamService(vrtplayer.VRTPlayer._VRT_BASE, vrtplayer.VRTPlayer._VRTNU_BASE_URL, mock, token_resolver)
         stream = service.get_stream_from_url(vrtplayer.VRTPlayer._CANVAS_LIVESTREAM_)
         self.assertTrue(stream is not None)
+
+
+if __name__ == '__main__':
+    unittest.main()

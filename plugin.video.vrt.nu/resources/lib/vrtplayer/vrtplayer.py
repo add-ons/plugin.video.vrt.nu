@@ -15,7 +15,7 @@ from resources.lib.vrtplayer import actions, metadatacollector, metadatacreator,
 try:
     from urllib.parse import urljoin
 except ImportError:
-    from urllib import urljoin
+    from urlparse import urljoin
 
 
 class VRTPlayer:
