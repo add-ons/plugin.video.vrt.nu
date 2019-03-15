@@ -10,8 +10,17 @@ exclude_files = $(name).pyproj vrtnutests/ vrtnutests/*
 exclude_paths = $(patsubst %,$(name)/%,$(exclude_files))
 zip_dir = $(name)/
 
-all: zip
+.PHONY: test
+
+
 package: zip
+
+test:
+	@echo -e "\e[1;37m=\e[1;34m Starting tests\e[0m"
+	tox -e py27,py36
+	pylint $(name)/*.py
+	pylint $(name)/resources/lib/*/*.py
+	@echo -e "\e[1;37m=\e[1;34m Tests finished successfully.\e[0m"
 
 zip:
 	@echo -e "\e[1;37m=\e[1;34m Building new package\e[0m"
