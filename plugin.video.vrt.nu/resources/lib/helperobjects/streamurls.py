@@ -11,7 +11,7 @@ class StreamURLS:
         self._stream_url = stream_url
         self._subtitle_url = subtitle_url
         self._license_key = license_key
-        self._use_inputstream_adaptive = use_inputstream_adaptive
+        self.use_inputstream_adaptive = use_inputstream_adaptive
         self._video_id = None
 
     @property
@@ -31,5 +31,5 @@ class StreamURLS:
         return self._license_key
 
     @property
-    def _use_inputstream_adaptive(self):
-        return self._use_inputstream_adaptive
+    def use_inputstream_adaptive(self):
+        return self.use_inputstream_adaptive
