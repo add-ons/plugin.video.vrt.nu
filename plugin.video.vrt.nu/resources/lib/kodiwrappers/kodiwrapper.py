@@ -1,3 +1,11 @@
+# -*- coding: UTF-8 -*-
+
+# GNU General Public License v2.0 (see COPYING or https://www.gnu.org/licenses/gpl-2.0.txt)
+
+''' This is <describe here> '''
+
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 import xbmc
 import xbmcgui
 import xbmcplugin
@@ -5,7 +13,6 @@ import xbmcvfs
 import json
 import inputstreamhelper
 from urllib import urlencode
-from resources.lib.vrtplayer import vrtplayer
 from resources.lib.kodiwrappers import sortmethod
 
 
@@ -51,9 +58,9 @@ class KodiWrapper:
                 if is_helper.check_inputstream():
                     play_item.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')
                     play_item.setProperty('inputstream.adaptive.license_key', video.license_key)
-        
+
         subtitles_visible = self.get_setting('showsubtitles') == 'true'
-        #separate subtitle url for hls-streams
+        # Separate subtitle url for hls-streams
         if subtitles_visible and video.subtitle_url is not None:
             self.log_notice('subtitle ' + video.subtitle_url)
             play_item.setSubtitles([video.subtitle_url])
@@ -69,13 +76,14 @@ class KodiWrapper:
     def get_localized_string(self, string_id):
         return self._addon.getLocalizedString(string_id)
 
-    def get_setting(self, setting_id ):
+    def get_setting(self, setting_id):
         return self._addon.getSetting(setting_id)
 
     def open_settings(self):
         self._addon.openSettings()
 
-    def has_inputstream_adaptive_installed(self): #note normally inputstream adaptive will always be installed, this only applies for people uninstalling inputstream adaptive while this addon is disabled
+    # NOTE: normally inputstream adaptive will always be installed, this only applies for people uninstalling inputstream adaptive while this addon is disabled
+    def has_inputstream_adaptive_installed(self):
         return xbmc.getCondVisibility('System.HasAddon("{0}")'.format('inputstream.adaptive')) == 1
 
     def can_play_widevine(self):

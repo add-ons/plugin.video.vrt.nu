@@ -1,4 +1,13 @@
+# -*- coding: UTF-8 -*-
+
+# GNU General Public License v2.0 (see COPYING or https://www.gnu.org/licenses/gpl-2.0.txt)
+
+''' This is <describe here> '''
+
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 import time
+
 
 class MetadataCreator:
 
@@ -47,7 +56,7 @@ class MetadataCreator:
     @datetime.setter
     def datetime(self, value):
         self._datetime = value
-   
+
     @property
     def datetime_as_short_date(self):
         return time.strftime('%d/%m', self.datetime)
@@ -62,10 +71,10 @@ class MetadataCreator:
             video_dictionary['plotoutline'] = self.plotoutline
 
         if self.duration is not None:
-            video_dictionary['duration'] = (self.duration * 60) #minutes to seconds
+            video_dictionary['duration'] = (self.duration * 60)  # Minutes to seconds
 
         if self.datetime is not None:
             video_dictionary['date'] = time.strftime('%d.%m.%Y', self.datetime)
             video_dictionary['shortdate'] = self.datetime_as_short_date
-            
+
         return video_dictionary

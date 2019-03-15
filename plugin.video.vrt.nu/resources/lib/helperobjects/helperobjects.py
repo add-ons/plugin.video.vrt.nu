@@ -1,11 +1,21 @@
+# -*- coding: UTF-8 -*-
+
+# GNU General Public License v2.0 (see COPYING or https://www.gnu.org/licenses/gpl-2.0.txt)
+
+''' This is <describe here> '''
+
+from __future__ import absolute_import, division, print_function, unicode_literals
+
+
 class TitleItem:
 
-    def __init__(self, title, url_dictionary, is_playable, thumbnail = None, video_dictionary=None):
+    def __init__(self, title, url_dictionary, is_playable, thumbnail=None, video_dictionary=None):
         self.title = title
         self.url_dictionary = url_dictionary
         self.is_playable = is_playable
         self.thumbnail = thumbnail
         self.video_dictionary = video_dictionary
+
 
 class Credentials:
 
@@ -19,4 +29,3 @@ class Credentials:
     def reload(self):
         self.username = self._kodi_wrapper.get_setting('username')
         self.password = self._kodi_wrapper.get_setting('password')
-
