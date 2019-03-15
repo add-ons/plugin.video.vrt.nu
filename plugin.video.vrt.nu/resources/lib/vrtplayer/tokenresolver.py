@@ -2,8 +2,6 @@
 
 # GNU General Public License v2.0 (see COPYING or https://www.gnu.org/licenses/gpl-2.0.txt)
 
-''' This is <describe here> '''
-
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from resources.lib.helperobjects import helperobjects
@@ -121,7 +119,7 @@ class TokenResolver:
     def _create_token_dictionary(cookie_jar):
         token_dictionary = None
         if 'X-VRT-Token' in cookie_jar:
-            xvrttoken_cookie = cookie_jar._cookies['.vrt.be']['/']['X-VRT-Token']
+            xvrttoken_cookie = cookie_jar.cookies['.vrt.be']['/']['X-VRT-Token']
             token_dictionary = {
                 xvrttoken_cookie.name: xvrttoken_cookie.value,
                 'expirationDate': datetime.datetime.fromtimestamp(xvrttoken_cookie.expires).strftime('%Y-%m-%dT%H:%M:%S.%fZ')

@@ -2,18 +2,21 @@
 
 # GNU General Public License v2.0 (see COPYING or https://www.gnu.org/licenses/gpl-2.0.txt)
 
-''' This is <describe here> '''
-
 from __future__ import absolute_import, division, print_function, unicode_literals
+
+import json
+import inputstreamhelper
 
 import xbmc
 import xbmcgui
 import xbmcplugin
 import xbmcvfs
-import json
-import inputstreamhelper
-from urllib import urlencode
 from resources.lib.kodiwrappers import sortmethod
+
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
 
 
 class KodiWrapper:
@@ -48,7 +51,7 @@ class KodiWrapper:
 
     def play(self, video):
         play_item = xbmcgui.ListItem(path=video.stream_url)
-        if video.stream_url is not None and video._use_inputstream_adaptive:
+        if video.stream_url is not None and video.use_inputstream_adaptive:
             play_item.setProperty('inputstreamaddon', 'inputstream.adaptive')
             play_item.setProperty('inputstream.adaptive.manifest_type', 'mpd')
             play_item.setMimeType('application/dash+xml')

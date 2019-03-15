@@ -2,18 +2,16 @@
 
 # GNU General Public License v2.0 (see COPYING or https://www.gnu.org/licenses/gpl-2.0.txt)
 
-''' This is <describe here> '''
-
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import os
 import requests
+from bs4 import BeautifulSoup, SoupStrainer
 from urlparse import urljoin
-from bs4 import BeautifulSoup
-from bs4 import SoupStrainer
+
 from resources.lib.helperobjects import helperobjects
-from resources.lib.vrtplayer import metadatacollector, statichelper, actions, metadatacreator
 from resources.lib.kodiwrappers import sortmethod
+from resources.lib.vrtplayer import actions, metadatacollector, metadatacreator, statichelper
 
 
 class VRTPlayer:
@@ -35,22 +33,25 @@ class VRTPlayer:
         self._url_toStream_service = url_to_stream_service
 
     def show_main_menu_items(self):
-        menu_items = {helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32091), {'action': actions.LISTING_AZ}, False,
-                                        None),
-                helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32092), {'action': actions.LISTING_CATEGORIES},
-                                        False, None),
-                helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32100), {'action': actions.LISTING_LIVE}, False,
-                                        None)}
+        menu_items = {
+            helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32091),
+                                    {'action': actions.LISTING_AZ}, False, None),
+            helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32092),
+                                    {'action': actions.LISTING_CATEGORIES}, False, None),
+            helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32100),
+                                    {'action': actions.LISTING_LIVE}, False, None),
+        }
         self._kodi_wrapper.show_listing(menu_items, sortmethod.ALPHABET)
 
     def show_az_menu_items(self):
-        joined_url = urljoin(self._VRTNU_BASE_URL, './a-z/')
-        menu_items = self.__get_az_menu_items(joined_url, {'class': 'nui-tile'}, actions.LISTING_VIDEOS,
-                                     self.metadata_collector.get_az_metadata)
+        joined_url = urljoin(self.VRTNU_BASE_URL, './a-z/')
+        menu_items = self.__get_az_menu_items(joined_url, {'class': 'nui-tile'},
+                                              actions.LISTING_VIDEOS,
+                                              self.metadata_collector.get_az_metadata)
         self._kodi_wrapper.show_listing(menu_items, sortmethod.ALPHABET)
 
     def show_category_menu_items(self):
-        joined_url = urljoin(self._VRTNU_BASE_URL, './categorieen/')
+        joined_url = urljoin(self.VRTNU_BASE_URL, './categorieen/')
         menu_items = self.__get_category_menu_items(joined_url, {'class': 'nui-tile title'}, actions.LISTING_CATEGORY_VIDEOS)
         self._kodi_wrapper.show_listing(menu_items, sortmethod.ALPHABET)
 
