@@ -8,11 +8,10 @@ python:
 sudo: false
 
 install:
-- pip install tox-travis
-- pip install pylint
+- pip install -r requirements.txt
 
 script:
 - tox
-- pylint ./plugin.video.vrt.nu/*.py
-- pylint ./plugin.video.vrt.nu/resources/lib/*/*.py
-
+- pylint plugin.video.vrt.nu/*.py
+- pylint plugin.video.vrt.nu/resources/lib/*/*.py
+- make unittest

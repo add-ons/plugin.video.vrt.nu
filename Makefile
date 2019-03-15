@@ -12,15 +12,21 @@ zip_dir = $(name)/
 
 .PHONY: test
 
-
 package: zip
 
-test:
+test: unittest
 	@echo -e "\e[1;37m=\e[1;34m Starting tests\e[0m"
 	tox -e py27,py36
 	pylint $(name)/*.py
 	pylint $(name)/resources/lib/*/*.py
 	@echo -e "\e[1;37m=\e[1;34m Tests finished successfully.\e[0m"
+
+unittest:
+	@echo -e "\e[1;37m=\e[1;34m Starting unit tests\e[0m"
+	PYTHONPATH=$(name) python $(name)/vrtnutests/apihelpertests.py
+	PYTHONPATH=$(name) python $(name)/vrtnutests/urltostreamservicetests.py
+	PYTHONPATH=$(name) python $(name)/vrtnutests/vrtplayertests.py
+	@echo -e "\e[1;37m=\e[1;34m Unit tests finished successfully.\e[0m"
 
 zip:
 	@echo -e "\e[1;37m=\e[1;34m Building new package\e[0m"
