@@ -17,6 +17,4 @@ script:
 - tox
 - pylint plugin.video.vrt.nu/*.py
 - pylint plugin.video.vrt.nu/resources/lib/*/*.py
-- python plugin.video.vrt.nu/vrtnutests/apihelpertests.py
-- python plugin.video.vrt.nu/vrtnutests/urltostreamservicetests.py
 - python plugin.video.vrt.nu/vrtnutests/vrtplayertests.py
