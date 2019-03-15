@@ -7,11 +7,15 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import os
 import requests
 from bs4 import BeautifulSoup, SoupStrainer
-from urlparse import urljoin
 
 from resources.lib.helperobjects import helperobjects
 from resources.lib.kodiwrappers import sortmethod
 from resources.lib.vrtplayer import actions, metadatacollector, metadatacreator, statichelper
+
+try:
+    from urllib.parse import urljoin
+except ImportError:
+    from urllib import urljoin
 
 
 class VRTPlayer:
