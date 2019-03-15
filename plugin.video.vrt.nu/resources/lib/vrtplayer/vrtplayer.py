@@ -2,8 +2,6 @@
 
 # GNU General Public License v2.0 (see COPYING or https://www.gnu.org/licenses/gpl-2.0.txt)
 
-''' This is <describe here> '''
-
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import os
@@ -44,13 +42,13 @@ class VRTPlayer:
         self._kodi_wrapper.show_listing(menu_items, sortmethod.ALPHABET)
 
     def show_az_menu_items(self):
-        joined_url = urljoin(self._VRTNU_BASE_URL, './a-z/')
+        joined_url = urljoin(self.VRTNU_BASE_URL, './a-z/')
         menu_items = self.__get_az_menu_items(joined_url, {'class': 'nui-tile'}, actions.LISTING_VIDEOS,
                                      self.metadata_collector.get_az_metadata)
         self._kodi_wrapper.show_listing(menu_items, sortmethod.ALPHABET)
 
     def show_category_menu_items(self):
-        joined_url = urljoin(self._VRTNU_BASE_URL, './categorieen/')
+        joined_url = urljoin(self.VRTNU_BASE_URL, './categorieen/')
         menu_items = self.__get_category_menu_items(joined_url, {'class': 'nui-tile title'}, actions.LISTING_CATEGORY_VIDEOS)
         self._kodi_wrapper.show_listing(menu_items, sortmethod.ALPHABET)
 

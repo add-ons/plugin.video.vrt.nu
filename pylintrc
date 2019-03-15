@@ -6,8 +6,10 @@ disable=
     invalid-name,
     line-too-long,
     missing-docstring, # Temporarily disabled until we fixed it
+    no-init,
     no-self-use,
     old-style-class,
     too-few-public-methods,
     too-many-arguments,
     unused-argument,
+    wrong-import-order,
