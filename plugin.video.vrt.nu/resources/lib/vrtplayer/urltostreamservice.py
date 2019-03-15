@@ -2,14 +2,13 @@
 
 # GNU General Public License v2.0 (see COPYING or https://www.gnu.org/licenses/gpl-2.0.txt)
 
-''' This is <describe here> '''
-
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import requests
-from urlparse import urljoin
 import re
+import requests
 from bs4 import BeautifulSoup, SoupStrainer
+from urlparse import urljoin
+
 from resources.lib.helperobjects import apidata, streamurls
 
 
@@ -142,6 +141,8 @@ class UrlToStreamService:
                 self._kodi_wrapper.show_ok_dialog('', message)
         else:
             self._handle_error(video_json)
+
+        return None
 
     def _try_get_drm_stream(self, stream_dict, vudrm_token):
         protocol = "mpeg_dash"

@@ -1,6 +1,7 @@
 [MESSAGES CONTROL]
 disable=
     broad-except,
+    deprecated-lambda,
     fixme,
     import-error,
     invalid-name,
@@ -11,5 +12,6 @@ disable=
     old-style-class,
     too-few-public-methods,
     too-many-arguments,
+    unnecessary-lambda,
     unused-argument,
     wrong-import-order,
