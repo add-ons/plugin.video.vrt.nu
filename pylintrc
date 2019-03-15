@@ -7,5 +7,7 @@ disable=
     line-too-long,
     missing-docstring, # Temporarily disabled until we fixed it
     no-self-use,
+    old-style-class,
     too-few-public-methods,
+    too-many-arguments,
     unused-argument,
