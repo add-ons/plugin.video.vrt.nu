@@ -1,5 +1,12 @@
+# -*- coding: UTF-8 -*-
+
+# GNU General Public License v2.0 (see COPYING or https://www.gnu.org/licenses/gpl-2.0.txt)
+
+''' This is <describe here> '''
+
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 import os
-import re
 import requests
 from urlparse import urljoin
 from bs4 import BeautifulSoup
@@ -11,13 +18,13 @@ from resources.lib.kodiwrappers import sortmethod
 
 class VRTPlayer:
 
-    #Url met de urls https://services.vrt.be/videoplayer/r/live.json
+    # URLs van https://services.vrt.be/videoplayer/r/live.json
     _EEN_LIVESTREAM = 'https://www.vrt.be/vrtnu/kanalen/een/'
     _CANVAS_LIVESTREAM_ = 'https://www.vrt.be/vrtnu/kanalen/canvas/'
     _KETNET_LIVESTREAM = 'https://www.vrt.be/vrtnu/kanalen/ketnet/'
 
-    _VRT_BASE = 'https://www.vrt.be/'
-    _VRTNU_BASE_URL = urljoin(_VRT_BASE, '/vrtnu/')
+    VRT_BASE = 'https://www.vrt.be/'
+    VRTNU_BASE_URL = urljoin(VRT_BASE, '/vrtnu/')
     _VRTNU_SEARCH_URL = 'https://search.vrt.be/suggest?facets[categories]='
 
     def __init__(self, addon_path, kodi_wrapper, url_to_stream_service, api_helper):
@@ -26,7 +33,6 @@ class VRTPlayer:
         self._kodi_wrapper = kodi_wrapper
         self._api_helper = api_helper
         self._url_toStream_service = url_to_stream_service
-
 
     def show_main_menu_items(self):
         menu_items = {helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32091), {'action': actions.LISTING_AZ}, False,
@@ -62,9 +68,8 @@ class VRTPlayer:
             metadata_creator = metadatacreator.MetadataCreator()
             metadata_creator.plot = plot
             video_dictionary = metadata_creator.get_video_dictionary()
-            #cut vrtbase url off since it will be added again when searching for episodes (with a-z we dont have the
-            #  full url)
-            link_to_video = program['targetUrl'].replace('//www.vrt.be','')
+            # cut vrtbase url off since it will be added again when searching for episodes (with a-z we dont have the full url)
+            link_to_video = program['targetUrl'].replace('//www.vrt.be', '')
             item = helperobjects.TitleItem(title, {'action': actions.LISTING_VIDEOS, 'video': link_to_video},
                                            False, thumbnail, video_dictionary)
             menu_items.append(item)
@@ -76,16 +81,17 @@ class VRTPlayer:
             self._kodi_wrapper.play(video)
 
     def show_livestream_items(self):
-        livestream_items = {helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32101),
-                                        {'action': actions.PLAY, 'video': self._EEN_LIVESTREAM},
-                                        True, self.__get_media('een.png')),
-                helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32102),
-                                        {'action': actions.PLAY, 'video': self._CANVAS_LIVESTREAM_},
-                                        True, self.__get_media('canvas.png')),
-                helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32103),
-                                        {'action': actions.PLAY, 'video': self._KETNET_LIVESTREAM},
-                                        True, self.__get_media('ketnet.png'))
-                }
+        livestream_items = {
+            helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32101),
+                                    {'action': actions.PLAY, 'video': self._EEN_LIVESTREAM},
+                                    True, self.__get_media('een.png')),
+            helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32102),
+                                    {'action': actions.PLAY, 'video': self._CANVAS_LIVESTREAM_},
+                                    True, self.__get_media('canvas.png')),
+            helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32103),
+                                    {'action': actions.PLAY, 'video': self._KETNET_LIVESTREAM},
+                                    True, self.__get_media('ketnet.png'))
+        }
         self._kodi_wrapper.show_listing(livestream_items, sortmethod.ALPHABET)
 
     def show_videos(self, path, season):
@@ -117,7 +123,7 @@ class VRTPlayer:
         tiles = SoupStrainer('a', soupstrainer_parser_selector)
         soup = BeautifulSoup(response.content, 'html.parser', parse_only=tiles)
         listing = []
-        for tile in soup.find_all(class_= 'nui-tile'):
+        for tile in soup.find_all(class_='nui-tile'):
             link_to_video = tile['href']
             thumbnail, title = self.__get_az_thumbnail_and_title(tile)
             video_dictionary = None

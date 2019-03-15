@@ -1,6 +1,15 @@
+# -*- coding: UTF-8 -*-
+
+# GNU General Public License v2.0 (see COPYING or https://www.gnu.org/licenses/gpl-2.0.txt)
+
+''' This is <describe here> '''
+
+from __future__ import absolute_import, division, print_function, unicode_literals
+
+
 class StreamURLS:
 
-    def __init__(self, stream_url, subtitle_url=None, license_key=None, use_inputstream_adaptive = False):
+    def __init__(self, stream_url, subtitle_url=None, license_key=None, use_inputstream_adaptive=False):
         self._stream_url = stream_url
         self._subtitle_url = subtitle_url
         self._license_key = license_key

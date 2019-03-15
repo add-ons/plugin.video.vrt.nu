@@ -1,6 +1,15 @@
+# -*- coding: UTF-8 -*-
+
+# GNU General Public License v2.0 (see COPYING or https://www.gnu.org/licenses/gpl-2.0.txt)
+
+''' This is <describe here> '''
+
+from __future__ import absolute_import, division, print_function, unicode_literals
+
+
 class ApiData:
 
-    def __init__(self, client, media_api_url, video_id, publication_id, xvrttoken, is_live_stream ):
+    def __init__(self, client, media_api_url, video_id, publication_id, xvrttoken, is_live_stream):
         self._client = client
         self._media_api_url = media_api_url
         self._video_id = video_id

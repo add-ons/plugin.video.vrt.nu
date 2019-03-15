@@ -1,17 +1,19 @@
-# -*- coding: utf-8 -*-
+# -*- coding: UTF-8 -*-
+
+# GNU General Public License v2.0 (see COPYING or https://www.gnu.org/licenses/gpl-2.0.txt)
+
+''' This is <describe here> '''
+
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 import requests
 from urlparse import urljoin
-import datetime
-import time
-import _strptime
-import json
 import re
-from bs4 import BeautifulSoup
-from bs4 import SoupStrainer
-from resources.lib.helperobjects import helperobjects, streamurls, apidata
+from bs4 import BeautifulSoup, SoupStrainer
+from resources.lib.helperobjects import apidata, streamurls
+
 
 class UrlToStreamService:
-
 
     _VUPLAY_API_URL = 'https://api.vuplay.co.uk'
 
@@ -33,7 +35,7 @@ class UrlToStreamService:
             self._kodi_wrapper.make_dir(settingsdir)
 
     def _get_license_key(self, key_url, key_type='R', key_headers=None, key_value=None):
-            """ Generates a propery license key value
+        ''' Generates a propery license key value
 
             # A{SSM} -> not implemented
             # R{SSM} -> raw format
@@ -57,21 +59,20 @@ class UrlToStreamService:
             @type key_value: str
             @param key_value: i
             @return:
-            """
+        '''
+        header = ''
+        if key_headers:
+            for k, v in list(key_headers.items()):
+                header = ''.join((header, '&', k, '=', requests.utils.quote(v)))
 
-            header = ''
-            if key_headers:
-                for k, v in list(key_headers.items()):
-                    header = ''.join((header, '&', k, '=', requests.utils.quote(v)))
+        if key_type in ('A', 'R', 'B'):
+            key_value = ''.join((key_type, '{SSM}'))
+        elif key_type == 'D':
+            if 'D{SSM}' not in key_value:
+                raise ValueError('Missing D{SSM} placeholder')
+            key_value = requests.utils.quote(key_value)
 
-            if key_type in ('A', 'R', 'B'):
-                key_value = ''.join((key_type,'{SSM}'))
-            elif key_type == 'D':
-                if 'D{SSM}' not in key_value:
-                    raise ValueError('Missing D{SSM} placeholder')
-                key_value = requests.utils.quote(key_value)
-
-            return ''.join((key_url, '|', header.strip('&'), '|', key_value, '|'))
+        return ''.join((key_url, '|', header.strip('&'), '|', key_value, '|'))
 
     def _get_api_data(self, video_url):
         video_url = urljoin(self._vrt_base, video_url)
@@ -82,7 +83,7 @@ class UrlToStreamService:
         is_live_stream = False
         xvrttoken = None
 
-        #store required data attributes
+        # Store required data attributes
         client = video_data['data-client']
         media_api_url = video_data['data-mediaapiurl']
         if 'data-videoid' in video_data.keys():
@@ -98,15 +99,16 @@ class UrlToStreamService:
 
     def _get_video_json(self, api_data):
         token_url = api_data.media_api_url + '/tokens'
-        if api_data.is_live_stream :
+        if api_data.is_live_stream:
             playertoken = self.token_resolver.get_live_playertoken(token_url)
         else:
             playertoken = self.token_resolver.get_ondemand_playertoken(token_url, api_data.xvrttoken)
 
-        #construct api_url and get video json
-        api_url = ''.join((api_data.media_api_url, '/videos/', api_data.publication_id, api_data.video_id, '?vrtPlayerToken=', playertoken, '&client=', api_data.client))
+        # Construct api_url and get video json
+        api_url = api_data.media_api_url + '/videos/' + api_data.publication_id + \
+            api_data.video_id + '?vrtPlayerToken=' + playertoken + '&client=' + api_data.client
         video_json = requests.get(api_url).json()
-            
+
         return video_json
 
     def _handle_error(self, video_json):
@@ -114,7 +116,7 @@ class UrlToStreamService:
         message = self._kodi_wrapper.get_localized_string(32054)
         self._kodi_wrapper.show_ok_dialog('', message)
 
-    def get_stream_from_url(self, video_url, retry = False, api_data = None):
+    def get_stream_from_url(self, video_url, retry=False, api_data=None):
         vudrm_token = None
         api_data = api_data or self._get_api_data(video_url)
         video_json = self._get_video_json(api_data)
@@ -122,7 +124,7 @@ class UrlToStreamService:
         if 'drm' in video_json:
             vudrm_token = video_json['drm']
             target_urls = video_json['targetUrls']
-            stream_dict = dict(list(map(lambda x: (x['type'] , x['url']), target_urls)))
+            stream_dict = dict(list(map(lambda x: (x['type'], x['url']), target_urls)))
             return self._select_stream(stream_dict, vudrm_token)
 
         elif video_json['code'] == 'INVALID_LOCATION' or video_json['code'] == 'INCOMPLETE_ROAMING_CONFIG':
@@ -130,9 +132,9 @@ class UrlToStreamService:
             roaming_xvrttoken = self.token_resolver.get_xvrttoken(True)
             if not retry and roaming_xvrttoken is not None:
                 if video_json['code'] == 'INCOMPLETE_ROAMING_CONFIG':
-                    #delete cached ondemand_vrtPlayerToken
+                    # Delete cached ondemand_vrtPlayerToken
                     self._kodi_wrapper.delete_path(self._kodi_wrapper.get_userdata_path() + 'ondemand_vrtPlayerToken')
-                #update api_data with roaming_xvrttoken and try again
+                # Update api_data with roaming_xvrttoken and try again
                 api_data.xvrttoken = roaming_xvrttoken
                 return self.get_stream_from_url(video_url, True, api_data)
             else:
@@ -141,40 +143,42 @@ class UrlToStreamService:
         else:
             self._handle_error(video_json)
 
-
     def _try_get_drm_stream(self, stream_dict, vudrm_token):
         protocol = "mpeg_dash"
         encryption_json = '{{"token":"{0}","drm_info":[D{{SSM}}],"kid":"{{KID}}"}}'.format(vudrm_token)
-        license_key = self._get_license_key(key_url=self._license_url, key_type='D', key_value=encryption_json, key_headers={'Content-Type': 'text/plain;charset=UTF-8'})
+        license_key = self._get_license_key(key_url=self._license_url,
+                                            key_type='D',
+                                            key_value=encryption_json,
+                                            key_headers={'Content-Type': 'text/plain;charset=UTF-8'})
         return streamurls.StreamURLS(stream_dict[protocol], license_key=license_key, use_inputstream_adaptive=True) if protocol in stream_dict else None
-        
+
     def _select_stream(self, stream_dict, vudrm_token):
         stream_url = None
         protocol = None
         if vudrm_token and self._can_play_drm and self._kodi_wrapper.get_setting('usedrm') == 'true':
-            protocol = 'mpeg_dash drm';
+            protocol = 'mpeg_dash drm'
             self._kodi_wrapper.log_notice('protocol: ' + protocol)
             stream_url = self._try_get_drm_stream(stream_dict, vudrm_token)
-        
-        if vudrm_token and stream_url == None:
-            protocol = 'hls_aes';
+
+        if vudrm_token and stream_url is None:
+            protocol = 'hls_aes'
             self._kodi_wrapper.log_notice('protocol: ' + protocol)
             stream_url = streamurls.StreamURLS(*self._select_hls_substreams(stream_dict[protocol])) if protocol in stream_dict else None
 
-        if self._kodi_wrapper.has_inputstream_adaptive_installed() and stream_url == None:
-            protocol = 'mpeg_dash';
+        if self._kodi_wrapper.has_inputstream_adaptive_installed() and stream_url is None:
+            protocol = 'mpeg_dash'
             self._kodi_wrapper.log_notice('protocol: ' + protocol)
             stream_url = streamurls.StreamURLS(stream_dict[protocol], use_inputstream_adaptive=True) if protocol in stream_dict else None
 
-        if stream_url == None:
-            protocol = 'hls';
+        if stream_url is None:
+            protocol = 'hls'
             self._kodi_wrapper.log_notice('protocol: ' + protocol)
-            stream_url = streamurls.StreamURLS(*self._select_hls_substreams(stream_dict[protocol])) #no  if else statement because this is the last resort stream selection
+            # No if-else statement because this is the last resort stream selection
+            stream_url = streamurls.StreamURLS(*self._select_hls_substreams(stream_dict[protocol]))
 
         return stream_url
 
-
-    #speed up hls selection, workaround for slower kodi selection
+    # Speed up HLS selection, workaround for slower kodi selection
     def _select_hls_substreams(self, master_hls_url):
         base_url = master_hls_url.split('.m3u8')[0]
         m3u8 = requests.get(master_hls_url).text

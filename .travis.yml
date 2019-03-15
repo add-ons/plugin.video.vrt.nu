@@ -1,0 +1,18 @@
+language: python
+
+python:
+- '2.7'
+- '3.6'
+- 3.7-dev
+
+sudo: false
+
+install:
+- pip install tox-travis
+- pip install pylint
+
+script:
+- tox
+- pylint ./plugin.video.vrt.nu/*.py
+- pylint ./plugin.video.vrt.nu/resources/lib/*/*.py
+

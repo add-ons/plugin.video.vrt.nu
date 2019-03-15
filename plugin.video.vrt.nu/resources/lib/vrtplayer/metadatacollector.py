@@ -1,7 +1,13 @@
-import re
-import time
+# -*- coding: UTF-8 -*-
+
+# GNU General Public License v2.0 (see COPYING or https://www.gnu.org/licenses/gpl-2.0.txt)
+
+''' This is <describe here> '''
+
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 from resources.lib.vrtplayer import metadatacreator
-from resources.lib.vrtplayer import statichelper
+
 
 class MetadataCollector:
 
@@ -16,4 +22,3 @@ class MetadataCollector:
                 description = p_item.text.strip()
         metadata_creator.plot = description
         return metadata_creator.get_video_dictionary()
-
