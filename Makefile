@@ -12,17 +12,26 @@ zip_dir = $(name)/
 
 .PHONY: test
 
-
 package: zip
 
-test:
+clean:
+	@echo -e "\e[1;37m=\e[1;34m Clean up project directory\e[0m"
+	find . -name '*.pyc' -delete
+	@echo -e "\e[1;37m=\e[1;34m Finished cleaning up.\e[0m"
+
+test: unittest
 	@echo -e "\e[1;37m=\e[1;34m Starting tests\e[0m"
-	tox -e py27,py36
 	pylint $(name)/*.py
 	pylint $(name)/resources/lib/*/*.py
+	tox -e py27,py36
 	@echo -e "\e[1;37m=\e[1;34m Tests finished successfully.\e[0m"
 
-zip:
+unittest:
+	@echo -e "\e[1;37m=\e[1;34m Starting unit tests\e[0m"
+	PYTHONPATH=$(name) python $(name)/vrtnutests/vrtplayertests.py
+	@echo -e "\e[1;37m=\e[1;34m Unit tests finished successfully.\e[0m"
+
+zip: clean
 	@echo -e "\e[1;37m=\e[1;34m Building new package\e[0m"
 	rm -f $(zip_name)
 	zip -r $(zip_name) $(zip_dir) -x $(exclude_paths)

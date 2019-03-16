@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/pietje666/plugin.video.vrt.nu.svg?branch=master)](https://travis-ci.org/pietje666/plugin.video.vrt.nu)
+
 # plugin.video.vrt.nu
 
 **plugin.video.vrt.nu** is a [Kodi][1] add-on used to watch all live video streams *and* all video-on-demand

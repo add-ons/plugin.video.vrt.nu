@@ -31,3 +31,7 @@ class ApiHelperTests(unittest.TestCase):
         api_helper = vrtapihelper.VRTApiHelper()
         title_items = api_helper.get_video_items('/vrtnu/a-z/postbus-x.relevant/', '1')
         self.assertTrue(len(title_items) > 5)
+
+
+if __name__ == '__main__':
+    unittest.main()

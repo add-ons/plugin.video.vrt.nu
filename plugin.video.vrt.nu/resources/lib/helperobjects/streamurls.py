@@ -31,5 +31,5 @@ class StreamURLS:
         return self._license_key
 
     @property
-    def _use_inputstream_adaptive(self):
+    def use_inputstream_adaptive(self):
         return self._use_inputstream_adaptive

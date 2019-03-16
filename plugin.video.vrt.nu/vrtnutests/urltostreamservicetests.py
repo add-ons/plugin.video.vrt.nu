@@ -32,7 +32,7 @@ class UrlToStreamServiceTests(unittest.TestCase):
         mock.make_dir.return_value = None
         mock.open_path.return_value = False
         mock.check_inputstream_adaptive.return_value = True
-        service = urltostreamservice.UrlToStreamService(vrtplayer.VRTPlayer._VRT_BASE, vrtplayer.VRTPlayer._VRTNU_BASE_URL, mock, token_resolver)
+        service = urltostreamservice.UrlToStreamService(vrtplayer.VRTPlayer.VRT_BASE, vrtplayer.VRTPlayer.VRTNU_BASE_URL, mock, token_resolver)
         stream = service.get_stream_from_url('/vrtnu/a-z/22-3-1-jaar-later---het-onderzoek/2017/22-3-1-jaar-later---het-onderzoek-s2017/')
         self.assertTrue(stream is not None)
 
@@ -46,7 +46,7 @@ class UrlToStreamServiceTests(unittest.TestCase):
         mock.make_dir.return_value = None
         mock.open_path.return_value = False
         mock.check_inputstream_adaptive.return_value = True
-        service = urltostreamservice.UrlToStreamService(vrtplayer.VRTPlayer._VRT_BASE, vrtplayer.VRTPlayer._VRTNU_BASE_URL, mock, token_resolver)
+        service = urltostreamservice.UrlToStreamService(vrtplayer.VRTPlayer.VRT_BASE, vrtplayer.VRTPlayer.VRTNU_BASE_URL, mock, token_resolver)
         stream = service.get_stream_from_url(vrtplayer.VRTPlayer._CANVAS_LIVESTREAM_)
         self.assertTrue(stream is not None)
         self.assertTrue(stream.license_key is not None)
@@ -60,6 +60,10 @@ class UrlToStreamServiceTests(unittest.TestCase):
         mock.make_dir.return_value = None
         mock.open_path.return_value = False
         mock.check_inputstream_adaptive.return_value = True
-        service = urltostreamservice.UrlToStreamService(vrtplayer.VRTPlayer._VRT_BASE, vrtplayer.VRTPlayer._VRTNU_BASE_URL, mock, token_resolver)
+        service = urltostreamservice.UrlToStreamService(vrtplayer.VRTPlayer.VRT_BASE, vrtplayer.VRTPlayer.VRTNU_BASE_URL, mock, token_resolver)
         stream = service.get_stream_from_url(vrtplayer.VRTPlayer._CANVAS_LIVESTREAM_)
         self.assertTrue(stream is not None)
+
+
+if __name__ == '__main__':
+    unittest.main()

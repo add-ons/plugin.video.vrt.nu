@@ -7,12 +7,14 @@ python:
 
 sudo: false
 
+env:
+  PYTHONPATH: plugin.video.vrt.nu
+
 install:
-- pip install tox-travis
-- pip install pylint
+- pip install -r requirements.txt
 
 script:
 - tox
-- pylint ./plugin.video.vrt.nu/*.py
-- pylint ./plugin.video.vrt.nu/resources/lib/*/*.py
-
+- pylint plugin.video.vrt.nu/*.py
+- pylint plugin.video.vrt.nu/resources/lib/*/*.py
+- python plugin.video.vrt.nu/vrtnutests/vrtplayertests.py

@@ -1,0 +1,4 @@
+bs4
+pylint
+requests
+tox-travis
