@@ -13,7 +13,7 @@ class ApiData:
         self._video_id = video_id
         self._publication_id = publication_id
         self._xvrttoken = xvrttoken
-        self.is_live_stream = is_live_stream
+        self._is_live_stream = is_live_stream
 
     @property
     def client(self):
@@ -41,4 +41,8 @@ class ApiData:
 
     @property
     def is_live_stream(self):
-        return self.is_live_stream
+        return self._is_live_stream
+
+    @is_live_stream.setter
+    def is_live_stream(self, value):
+        self._is_live_stream = value

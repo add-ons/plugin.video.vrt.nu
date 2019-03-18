@@ -7,9 +7,13 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import re
 import requests
 from bs4 import BeautifulSoup, SoupStrainer
-from urlparse import urljoin
 
 from resources.lib.helperobjects import apidata, streamurls
+
+try:
+    from urllib.parse import urljoin
+except ImportError:
+    from urlparse import urljoin
 
 
 class UrlToStreamService:

@@ -1,3 +1,5 @@
+ENVS := py27,py36
+
 addon_xml = plugin.video.vrt.nu/addon.xml
 
 # Collect information to build as sensible package name
@@ -23,7 +25,7 @@ test: unittest
 	@echo -e "\e[1;37m=\e[1;34m Starting tests\e[0m"
 	pylint $(name)/*.py
 	pylint $(name)/resources/lib/*/*.py
-	tox -e py27,py36
+	tox -e $(ENVS)
 	@echo -e "\e[1;37m=\e[1;34m Tests finished successfully.\e[0m"
 
 unittest:
@@ -31,7 +33,7 @@ unittest:
 	PYTHONPATH=$(name) python $(name)/vrtnutests/vrtplayertests.py
 	@echo -e "\e[1;37m=\e[1;34m Unit tests finished successfully.\e[0m"
 
-zip: clean
+zip: test clean
 	@echo -e "\e[1;37m=\e[1;34m Building new package\e[0m"
 	rm -f $(zip_name)
 	zip -r $(zip_name) $(zip_dir) -x $(exclude_paths)

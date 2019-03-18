@@ -26,7 +26,7 @@ class TokenResolver:
 
     def get_ondemand_playertoken(self, token_url, xvrttoken):
         token_path = self._kodi_wrapper.get_userdata_path() + self._ONDEMAND_COOKIE
-        token = self._get_cached_token(token_path)
+        token = self._get_cached_token(token_path, 'vrtPlayerToken')
 
         if token is None:
             cookie_value = 'X-VRT-Token=' + xvrttoken
@@ -36,7 +36,7 @@ class TokenResolver:
 
     def get_live_playertoken(self, token_url):
         token_path = self._kodi_wrapper.get_userdata_path() + self._LIVE_COOKIE
-        token = self._get_cached_token(token_path)
+        token = self._get_cached_token(token_path, 'vrtPlayerToken')
         if token is None:
             headers = {'Content-Type': 'application/json'}
             token = TokenResolver._get_new_playertoken(token_path, token_url, headers)
@@ -45,11 +45,17 @@ class TokenResolver:
     def get_xvrttoken(self, get_roaming_token=False):
         token_filename = self._ROAMING_XVRTTOKEN_COOKIE if get_roaming_token else self._XVRT_TOKEN_COOKIE
         token_path = self._kodi_wrapper.get_userdata_path() + token_filename
-        token = self._get_cached_token(token_path)
+        token = self._get_cached_token(token_path, 'X-VRT-Token')
 
         if token is None:
             token = self._get_new_xvrttoken(token_path, get_roaming_token)
         return token
+
+    @staticmethod
+    def get_xvrttoken_from_cookiejar(cookiejar):
+        for cookie in cookiejar:
+            if cookie.name == 'X-VRT-Token':
+                yield cookie
 
     @staticmethod
     def _get_new_playertoken(path, token_url, headers):
@@ -57,7 +63,7 @@ class TokenResolver:
         json.dump(playertoken, open(path, 'w'))
         return playertoken['vrtPlayerToken']
 
-    def _get_cached_token(self, path):
+    def _get_cached_token(self, path, token_name):
         cached_token = None
 
         if self._kodi_wrapper.check_if_path_exists(path):
@@ -66,7 +72,7 @@ class TokenResolver:
             exp = datetime.datetime(*(time.strptime(token['expirationDate'], '%Y-%m-%dT%H:%M:%S.%fZ')[0:6]))
             if exp > now:
                 self._kodi_wrapper.log_notice('Got cached token')
-                cached_token = token[token.keys()[0]]
+                cached_token = token[token_name]
             else:
                 self._kodi_wrapper.log_notice('Cached token deleted')
                 self._kodi_wrapper.delete_path(path)
@@ -118,11 +124,11 @@ class TokenResolver:
     @staticmethod
     def _create_token_dictionary(cookie_jar):
         token_dictionary = None
-        if 'X-VRT-Token' in cookie_jar:
-            xvrttoken_cookie = cookie_jar.cookies['.vrt.be']['/']['X-VRT-Token']
+        xvrttoken_cookie = next(TokenResolver.get_xvrttoken_from_cookiejar(cookie_jar))
+        if xvrttoken_cookie is not None:
             token_dictionary = {
                 xvrttoken_cookie.name: xvrttoken_cookie.value,
-                'expirationDate': datetime.datetime.fromtimestamp(xvrttoken_cookie.expires).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+                'expirationDate': datetime.datetime.fromtimestamp(xvrttoken_cookie.expires).strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
             }
         return token_dictionary
 
