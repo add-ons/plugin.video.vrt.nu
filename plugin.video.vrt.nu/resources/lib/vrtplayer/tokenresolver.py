@@ -1,8 +1,6 @@
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 
 # GNU General Public License v2.0 (see COPYING or https://www.gnu.org/licenses/gpl-2.0.txt)
-
-from __future__ import absolute_import, division, print_function, unicode_literals
 
 from resources.lib.helperobjects import helperobjects
 import requests
@@ -34,11 +32,15 @@ class TokenResolver:
             token = TokenResolver._get_new_playertoken(token_path, token_url, headers)
         return token
 
-    def get_live_playertoken(self, token_url):
+    def get_live_playertoken(self, token_url, xvrttoken):
         token_path = self._kodi_wrapper.get_userdata_path() + self._LIVE_COOKIE
         token = self._get_cached_token(token_path, 'vrtPlayerToken')
         if token is None:
-            headers = {'Content-Type': 'application/json'}
+            if xvrttoken is not None:
+                cookie_value = 'X-VRT-Token=' + xvrttoken
+                headers = {'Content-Type': 'application/json', 'Cookie' : cookie_value}
+            else:
+                headers = {'Content-Type': 'application/json'}
             token = TokenResolver._get_new_playertoken(token_path, token_url, headers)
         return token
 
