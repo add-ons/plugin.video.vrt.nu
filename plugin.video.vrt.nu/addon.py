@@ -7,11 +7,15 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import sys
-from urlparse import parse_qsl
 
 import xbmcaddon
 from resources.lib.kodiwrappers import kodiwrapper
 from resources.lib.vrtplayer import vrtplayer, urltostreamservice, tokenresolver, actions, vrtapihelper
+
+try:
+    from urllib.parse import parse_qsl
+except ImportError:
+    from urlparse import parse_qsl
 
 
 _url = sys.argv[0]

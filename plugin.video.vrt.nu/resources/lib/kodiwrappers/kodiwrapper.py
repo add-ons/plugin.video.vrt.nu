@@ -94,7 +94,7 @@ class KodiWrapper:
         return kodi_version > 17
 
     def get_userdata_path(self):
-        return xbmc.translatePath(self._addon.getAddonInfo('profile')).decode('utf-8')
+        return xbmc.translatePath(self._addon.getAddonInfo('profile'))
 
     def make_dir(self, path):
         xbmcvfs.mkdir(path)
