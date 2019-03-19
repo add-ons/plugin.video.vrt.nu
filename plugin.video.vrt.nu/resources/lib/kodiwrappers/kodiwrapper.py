@@ -1,12 +1,11 @@
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 
 # GNU General Public License v2.0 (see COPYING or https://www.gnu.org/licenses/gpl-2.0.txt)
 
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import absolute_import, division, unicode_literals
 
 import json
 import inputstreamhelper
-
 import xbmc
 import xbmcgui
 import xbmcplugin
@@ -95,6 +94,12 @@ class KodiWrapper:
 
     def get_userdata_path(self):
         return xbmc.translatePath(self._addon.getAddonInfo('profile'))
+
+    def get_addon_path(self):
+        return xbmc.translatePath(self._addon.getAddonInfo('path'))
+
+    def get_path(self, path):
+        return xbmc.translatePath(path)
 
     def make_dir(self, path):
         xbmcvfs.mkdir(path)

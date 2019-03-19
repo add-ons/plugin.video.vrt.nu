@@ -1,19 +1,15 @@
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 
 # GNU General Public License v2.0 (see COPYING or https://www.gnu.org/licenses/gpl-2.0.txt)
 
-''' This is the actual VRT Nu video plugin entry point '''
-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import unittest
-from resources.lib.vrtplayer import vrtplayer, urltostreamservice, tokenresolver
+from resources.lib.vrtplayer import vrtplayer, streamservice, tokenresolver
 from mock import MagicMock
 
 use_drm = False
 
 
-class UrlToStreamServiceTests(unittest.TestCase):
+class StreamServiceTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
@@ -32,8 +28,9 @@ class UrlToStreamServiceTests(unittest.TestCase):
         mock.make_dir.return_value = None
         mock.open_path.return_value = False
         mock.check_inputstream_adaptive.return_value = True
-        service = urltostreamservice.UrlToStreamService(vrtplayer.VRTPlayer.VRT_BASE, vrtplayer.VRTPlayer.VRTNU_BASE_URL, mock, token_resolver)
-        stream = service.get_stream_from_url('/vrtnu/a-z/22-3-1-jaar-later---het-onderzoek/2017/22-3-1-jaar-later---het-onderzoek-s2017/')
+        service = streamservice.StreamService(vrtplayer.VRTPlayer.VRT_BASE, vrtplayer.VRTPlayer.VRTNU_BASE_URL, mock, token_resolver)
+        video = {'video_url' : 'vrtnu/a-z/pano/2019/pano-s2019a6/', 'video_id' : None, 'publication_id' : None,}
+        stream = service.get_stream(video)
         self.assertTrue(stream is not None)
 
     def test_get_live_stream_from_url_does_not_crash_returns_stream_and_licensekey(self):
@@ -46,8 +43,9 @@ class UrlToStreamServiceTests(unittest.TestCase):
         mock.make_dir.return_value = None
         mock.open_path.return_value = False
         mock.check_inputstream_adaptive.return_value = True
-        service = urltostreamservice.UrlToStreamService(vrtplayer.VRTPlayer.VRT_BASE, vrtplayer.VRTPlayer.VRTNU_BASE_URL, mock, token_resolver)
-        stream = service.get_stream_from_url(vrtplayer.VRTPlayer._CANVAS_LIVESTREAM_)
+        service = streamservice.StreamService(vrtplayer.VRTPlayer.VRT_BASE, vrtplayer.VRTPlayer.VRTNU_BASE_URL, mock, token_resolver)
+        video = {'video_url' : vrtplayer.VRTPlayer._CANVAS_LIVESTREAM_, 'video_id' : None, 'publication_id' : None}
+        stream = service.get_stream(video)
         self.assertTrue(stream is not None)
         self.assertTrue(stream.license_key is not None)
 
@@ -60,8 +58,9 @@ class UrlToStreamServiceTests(unittest.TestCase):
         mock.make_dir.return_value = None
         mock.open_path.return_value = False
         mock.check_inputstream_adaptive.return_value = True
-        service = urltostreamservice.UrlToStreamService(vrtplayer.VRTPlayer.VRT_BASE, vrtplayer.VRTPlayer.VRTNU_BASE_URL, mock, token_resolver)
-        stream = service.get_stream_from_url(vrtplayer.VRTPlayer._CANVAS_LIVESTREAM_)
+        service = streamservice.StreamService(vrtplayer.VRTPlayer.VRT_BASE, vrtplayer.VRTPlayer.VRTNU_BASE_URL, mock, token_resolver)
+        video = {'video_url' : vrtplayer.VRTPlayer._CANVAS_LIVESTREAM_, 'video_id' : None, 'publication_id' : None}
+        stream = service.get_stream(video)
         self.assertTrue(stream is not None)
 
 

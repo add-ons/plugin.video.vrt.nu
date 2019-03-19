@@ -1,8 +1,6 @@
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 
 # GNU General Public License v2.0 (see COPYING or https://www.gnu.org/licenses/gpl-2.0.txt)
-
-from __future__ import absolute_import, division, print_function, unicode_literals
 
 import time
 
@@ -10,11 +8,16 @@ import time
 class MetadataCreator:
 
     def __init__(self):
+        self._title = None
+        self._tvshowtitle = None
         self._duration = None
         self._plot = None
         self._plotoutline = None
         self._datetime = None
-        self._title = None
+        self._season = None
+        self._episode = None
+        self._year = None
+        self._mediatype = None
 
     @property
     def title(self):
@@ -23,6 +26,14 @@ class MetadataCreator:
     @title.setter
     def title(self, value):
         self._title = value
+
+    @property
+    def tvshowtitle(self):
+        return self._tvshowtitle
+
+    @tvshowtitle.setter
+    def tvshowtitle(self, value):
+        self._tvshowtitle = value
 
     @property
     def duration(self):
@@ -57,11 +68,42 @@ class MetadataCreator:
         self._datetime = value
 
     @property
-    def datetime_as_short_date(self):
-        return time.strftime('%d/%m', self.datetime)
+    def season(self):
+        return self._season
+
+    @season.setter
+    def season(self, value):
+        self._season = value
+
+    @property
+    def episode(self):
+        return self._episode
+
+    @episode.setter
+    def episode(self, value):
+        self._episode = value
+
+    @property
+    def year(self):
+        return self._year
+
+    @year.setter
+    def year(self, value):
+        self._year = value
+
+    @property
+    def mediatype(self):
+        return self._mediatype
+
+    @mediatype.setter
+    def mediatype(self, value):
+        self._mediatype = value
 
     def get_video_dictionary(self):
         video_dictionary = dict()
+
+        if self.tvshowtitle is not None:
+            video_dictionary['tvshowtitle'] = self.tvshowtitle
 
         if self.plot is not None:
             video_dictionary['plot'] = self.plot
@@ -70,10 +112,21 @@ class MetadataCreator:
             video_dictionary['plotoutline'] = self.plotoutline
 
         if self.duration is not None:
-            video_dictionary['duration'] = (self.duration * 60)  # Minutes to seconds
+            video_dictionary['duration'] = self.duration
 
         if self.datetime is not None:
             video_dictionary['date'] = time.strftime('%d.%m.%Y', self.datetime)
-            video_dictionary['shortdate'] = self.datetime_as_short_date
+
+        if self.season is not None:
+            video_dictionary['season'] = self.season
+
+        if self.episode is not None:
+            video_dictionary['episode'] = self.episode
+
+        if self.year is not None:
+            video_dictionary['year'] = self.year
+
+        if self.mediatype is not None:
+            video_dictionary['mediatype'] = self.mediatype
 
         return video_dictionary

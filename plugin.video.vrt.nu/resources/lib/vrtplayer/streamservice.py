@@ -1,8 +1,6 @@
-# -*- coding: UTF-8 -*-
+# -*- coding: utf-8 -*-
 
 # GNU General Public License v2.0 (see COPYING or https://www.gnu.org/licenses/gpl-2.0.txt)
-
-from __future__ import absolute_import, division, print_function, unicode_literals
 
 import re
 import requests
@@ -10,15 +8,13 @@ from bs4 import BeautifulSoup, SoupStrainer
 
 from resources.lib.helperobjects import apidata, streamurls
 
-try:
-    from urllib.parse import urljoin
-except ImportError:
-    from urlparse import urljoin
 
-
-class UrlToStreamService:
+class StreamService:
 
     _VUPLAY_API_URL = 'https://api.vuplay.co.uk'
+    _VUALTO_API_URL = 'https://media-services-public.vrt.be/vualto-video-aggregator-web/rest/external/v1'
+    _CLIENT = 'vrtvideo'
+
 
     def __init__(self, vrt_base, vrtnu_base_url, kodi_wrapper, token_resolver):
         self._kodi_wrapper = kodi_wrapper
@@ -78,7 +74,6 @@ class UrlToStreamService:
         return ''.join((key_url, '|', header.strip('&'), '|', key_value, '|'))
 
     def _get_api_data(self, video_url):
-        video_url = urljoin(self._vrt_base, video_url)
         html_page = requests.get(video_url).text
         strainer = SoupStrainer('div', {'class': 'cq-dd-vrtvideo'})
         soup = BeautifulSoup(html_page, 'html.parser', parse_only=strainer)
@@ -103,7 +98,7 @@ class UrlToStreamService:
     def _get_video_json(self, api_data):
         token_url = api_data.media_api_url + '/tokens'
         if api_data.is_live_stream:
-            playertoken = self.token_resolver.get_live_playertoken(token_url)
+            playertoken = self.token_resolver.get_live_playertoken(token_url, api_data.xvrttoken)
         else:
             playertoken = self.token_resolver.get_ondemand_playertoken(token_url, api_data.xvrttoken)
 
@@ -119,9 +114,14 @@ class UrlToStreamService:
         message = self._kodi_wrapper.get_localized_string(32054)
         self._kodi_wrapper.show_ok_dialog('', message)
 
-    def get_stream_from_url(self, video_url, retry=False, api_data=None):
+    def get_stream(self, video, retry=False, api_data=None):
+        self._kodi_wrapper.log_notice('video_url ' + video['video_url'])
+        if video['video_id'] is not None and video['publication_id'] is not None and retry is False:
+            xvrttoken = self.token_resolver.get_xvrttoken()
+            api_data = apidata.ApiData(self._CLIENT, self._VUALTO_API_URL, video['video_id'], video['publication_id'] + requests.utils.quote('$'), xvrttoken, False)
+        else:
+            api_data = api_data or self._get_api_data(video['video_url'])
         vudrm_token = None
-        api_data = api_data or self._get_api_data(video_url)
         video_json = self._get_video_json(api_data)
 
         if 'drm' in video_json:
@@ -134,13 +134,14 @@ class UrlToStreamService:
             self._kodi_wrapper.log_notice(video_json['message'])
             roaming_xvrttoken = self.token_resolver.get_xvrttoken(True)
             if not retry and roaming_xvrttoken is not None:
-                if video_json['code'] == 'INCOMPLETE_ROAMING_CONFIG':
-                    # Delete cached ondemand_vrtPlayerToken
+                # Delete cached playertokens
+                if api_data.is_live_stream:
+                    self._kodi_wrapper.delete_path(self._kodi_wrapper.get_userdata_path() + 'live_vrtPlayerToken')
+                else:
                     self._kodi_wrapper.delete_path(self._kodi_wrapper.get_userdata_path() + 'ondemand_vrtPlayerToken')
                 # Update api_data with roaming_xvrttoken and try again
                 api_data.xvrttoken = roaming_xvrttoken
-                return self.get_stream_from_url(video_url, True, api_data)
-
+                return self.get_stream(video, retry=True, api_data=api_data)
             message = self._kodi_wrapper.get_localized_string(32053)
             self._kodi_wrapper.show_ok_dialog('', message)
         else:
