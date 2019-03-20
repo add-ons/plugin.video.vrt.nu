@@ -94,9 +94,9 @@ class VRTApiHelper:
     def _map_to_season_title_item(self, api_url, bucket):
         metadata_creator = metadatacreator.MetadataCreator()
         metadata_creator.mediatype = 'season'
-        season_number = bucket['key']
-        title = ''.join((self._kodi_wrapper.get_localized_string(32094), ' ', season_number))
-        path = ''.join((api_url, '&facets[seasonTitle]=', season_number))
+        season_title = bucket['key']
+        title = ''.join((self._kodi_wrapper.get_localized_string(32094), ' ', season_title))
+        path = ''.join((api_url, '&facets[seasonName]=', season_title.replace(' ', '-')))
         return helperobjects.TitleItem(title, {'action': actions.LISTING_EPISODES, 'video_url': path}, False, None, metadata_creator.get_video_dictionary())
 
     def get_live_screenshot(self, channel):
