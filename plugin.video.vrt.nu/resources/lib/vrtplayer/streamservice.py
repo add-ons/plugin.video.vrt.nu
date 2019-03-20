@@ -188,15 +188,31 @@ class StreamService:
     def _select_hls_substreams(self, master_hls_url):
         base_url = master_hls_url.split('.m3u8')[0]
         m3u8 = requests.get(master_hls_url).text
-        stream_regex = re.compile(r'#EXT-X-STREAM-INF:[\w\-=,\.\"]+[\r\n]{1}([\w\-=]+\.m3u8)[\r\n]{2}')
-        direct_stream_url = None
+        direct_audio_url = None
+        direct_video_url = None
         direct_subtitle_url = None
-        match_stream = re.search(stream_regex, m3u8)
-        if match_stream:
-            direct_stream_url = base_url + match_stream.group(1)
+
+        # Get audio uri
+        audio_regex = re.compile(r'#EXT-X-MEDIA:TYPE=AUDIO[\w\-=,\.\"\/]+URI=\"([\w\-=]+)\.m3u8\"')
+        match_audio = re.findall(audio_regex, m3u8)
+        if match_audio:
+            direct_audio_url = match_audio[len(match_audio)-1]
+
+        # Get video uri
+        video_regex = re.compile(r'#EXT-X-STREAM-INF:[\w\-=,\.\"]+[\r\n]{1}([\w\-=]+\.m3u8)[\r\n]{2}')
+        match_video = re.search(video_regex, m3u8)
+        if match_video:
+            direct_video_url = base_url + match_video.group(1)
+
+        # Get subtitle uri
         if self._kodi_wrapper.get_setting('showsubtitles') == 'true':
             subtitle_regex = re.compile(r'#EXT-X-MEDIA:TYPE=SUBTITLES[\w\-=,\.\"\/]+URI=\"([\w\-=]+)\.m3u8\"')
             match_sub = re.search(subtitle_regex, m3u8)
             if match_sub and '/live/' not in master_hls_url:
                 direct_subtitle_url = ''.join((base_url, match_sub.group(1), '.webvtt'))
-        return direct_stream_url, direct_subtitle_url
+
+        # Merge audio and video uri
+        if direct_audio_url is not None:
+            direct_video_url = ''.join((base_url, direct_audio_url, '-', direct_video_url.split('-')[-1]))
+
+        return direct_video_url, direct_subtitle_url
