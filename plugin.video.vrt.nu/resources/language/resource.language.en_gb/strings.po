@@ -63,17 +63,37 @@ msgctxt "#32054"
 msgid "Woops something went wrong, check the log for more details"
 msgstr "Woops something went wrong, check the log for more details"
 
-msgctxt "#32091"
+msgctxt "#32080"
 msgid "A-Z"
 msgstr "A-Z"
 
-msgctxt "#32092"
+msgctxt "#32081"
+msgid "Alphabetically sorted list of TV programs"
+msgstr "Alphabetically sorted list of TV programs"
+
+msgctxt "#32082"
 msgid "Categories"
 msgstr "Categories"
 
-msgctxt "#32093"
+msgctxt "#32083"
+msgid "TV programs listed by category"
+msgstr "TV programs listed by category"
+
+msgctxt "#32084"
+msgid "Live TV"
+msgstr "Live TV"
+
+msgctxt "#32085"
+msgid "Watch TV channels live (using Internet streaming)"
+msgstr "Watch TV channels live (using Internet streaming)"
+
+msgctxt "#32086"
 msgid "Most recent"
 msgstr "Most recent"
+
+msgctxt "#32087"
+msgid "Recently published episodes of TV programs"
+msgstr "Recently published episodes of TV programs"
 
 msgctxt "#32094"
 msgid "Season"
@@ -82,10 +102,6 @@ msgstr "Season"
 msgctxt "#32095"
 msgid "Episode"
 msgstr "Episode"
-
-msgctxt "#32100"
-msgid "Live TV"
-msgstr "Live TV"
 
 msgctxt "#32101"
 msgid "Eén"
