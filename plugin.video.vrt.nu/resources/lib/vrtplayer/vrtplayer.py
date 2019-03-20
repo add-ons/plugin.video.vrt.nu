@@ -26,14 +26,22 @@ class VRTPlayer:
 
     def show_main_menu_items(self):
         menu_items = {
-            helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32091),
-                                    {'action': actions.LISTING_AZ_TVSHOWS}, False, None),
-            helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32092),
-                                    {'action': actions.LISTING_CATEGORIES}, False, None),
-            helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32100),
-                                    {'action': actions.LISTING_LIVE}, False, None),
-            helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32093),
-                                    {'action': actions.LISTING_EPISODES, 'video_url': 'recent'}, False, None)
+            helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32080),
+                                    dict(action=actions.LISTING_AZ_TVSHOWS), False,
+                                    'DefaultMovieTitle.png',
+                                    dict(plot=self._kodi_wrapper.get_localized_string(32081))),
+            helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32082),
+                                    dict(action=actions.LISTING_CATEGORIES), False,
+                                    'DefaultGenre.png',
+                                    dict(plot=self._kodi_wrapper.get_localized_string(32083))),
+            helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32084),
+                                    dict(action=actions.LISTING_LIVE), False,
+                                    'DefaultAddonPVRClient.png',
+                                    dict(plot=self._kodi_wrapper.get_localized_string(32085))),
+            helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32086),
+                                    dict(action=actions.LISTING_EPISODES, video_url='recent'), False,
+                                    'DefaultYear.png',
+                                    dict(plot=self._kodi_wrapper.get_localized_string(32087))),
         }
         self._kodi_wrapper.show_listing(menu_items, sortmethod.ALPHABET)
 
@@ -55,13 +63,16 @@ class VRTPlayer:
         livestream_items = {
             helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32101),
                                     {'action': actions.PLAY, 'video_url': self._EEN_LIVESTREAM},
-                                    True, self._api_helper.get_live_screenshot('een')),
+                                    True, self._api_helper.get_live_screenshot('een'),
+                                    dict(plot=self._kodi_wrapper.get_localized_string(32101))),
             helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32102),
                                     {'action': actions.PLAY, 'video_url': self._CANVAS_LIVESTREAM_},
-                                    True, self._api_helper.get_live_screenshot('canvas')),
+                                    True, self._api_helper.get_live_screenshot('canvas'),
+                                    dict(plot=self._kodi_wrapper.get_localized_string(32102))),
             helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32103),
                                     {'action': actions.PLAY, 'video_url': self._KETNET_LIVESTREAM},
-                                    True, self._api_helper.get_live_screenshot('ketnet'))
+                                    True, self._api_helper.get_live_screenshot('ketnet'),
+                                    dict(plot=self._kodi_wrapper.get_localized_string(32103))),
         }
         self._kodi_wrapper.show_listing(livestream_items, sortmethod.ALPHABET)
 
