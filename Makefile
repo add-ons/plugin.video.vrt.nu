@@ -24,7 +24,7 @@ clean:
 test: unittest
 	@echo -e "\e[1;37m=\e[1;34m Starting tests\e[0m"
 	pylint $(name)/*.py
-	pylint $(name)/resources/**/*.py
+	pylint $(name)/resources/lib/*/*.py
 	tox -e $(ENVS)
 	@echo -e "\e[1;37m=\e[1;34m Tests finished successfully.\e[0m"
 

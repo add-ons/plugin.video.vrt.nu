@@ -2,6 +2,7 @@
 
 # GNU General Public License v2.0 (see COPYING or https://www.gnu.org/licenses/gpl-2.0.txt)
 
+import os
 import requests
 from bs4 import BeautifulSoup, SoupStrainer
 from resources.lib.helperobjects import helperobjects
@@ -19,7 +20,8 @@ class VRTPlayer:
     VRT_BASE = 'https://www.vrt.be/'
     VRTNU_BASE_URL = ''.join((VRT_BASE, '/vrtnu'))
 
-    def __init__(self, kodi_wrapper, stream_service, api_helper):
+    def __init__(self, addon_path, kodi_wrapper, stream_service, api_helper):
+        self._addon_path = addon_path
         self._kodi_wrapper = kodi_wrapper
         self._api_helper = api_helper
         self._stream_service = stream_service
@@ -29,7 +31,7 @@ class VRTPlayer:
             helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32080),
                                     dict(action=actions.LISTING_AZ_TVSHOWS),
                                     is_playable=False,
-                                    thumb='DefaultMovieTitle.png',
+                                    thumbnail='DefaultMovieTitle.png',
                                     video_dictionary=dict(plot=self._kodi_wrapper.get_localized_string(32081)),
                                     icon='DefaultMovieTitle.png'),
             helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32082),
@@ -72,27 +74,33 @@ class VRTPlayer:
             helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32101),
                                     dict(action=actions.PLAY, video_url=self._EEN_LIVESTREAM),
                                     is_playable=True,
-                                    thumbnail=self._api_helper.get_live_screenshot('een'),
+                                    thumbnail=self.__get_media('een.png'),
                                     video_dictionary=dict(plot=self._kodi_wrapper.get_localized_string(32101)),
-                                    icon='DefaultAddonPVRClient.png'),
+                                    icon='DefaultAddonPVRClient.png',
+                                    fanart=self._api_helper.get_live_screenshot('een')),
             helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32102),
                                     dict(action=actions.PLAY, video_url=self._CANVAS_LIVESTREAM),
                                     is_playable=True,
-                                    thumbnail=self._api_helper.get_live_screenshot('canvas'),
+                                    thumbnail=self.__get_media('canvas.png'),
                                     video_dictionary=dict(plot=self._kodi_wrapper.get_localized_string(32102)),
-                                    icon='DefaultAddonPVRClient.png'),
+                                    icon='DefaultAddonPVRClient.png',
+                                    fanart=self._api_helper.get_live_screenshot('canvas')),
             helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32103),
                                     dict(action=actions.PLAY, video_url=self._KETNET_LIVESTREAM),
                                     is_playable=True,
-                                    thumbnail=self._api_helper.get_live_screenshot('ketnet'),
+                                    thumbnail=self.__get_media('ketnet.png'),
                                     video_dictionary=dict(plot=self._kodi_wrapper.get_localized_string(32103)),
-                                    icon='DefaultAddonPVRClient.png'),
+                                    icon='DefaultAddonPVRClient.png',
+                                    fanart=self._api_helper.get_live_screenshot('ketnet')),
         ]
         self._kodi_wrapper.show_listing(livestream_items, content_type='videos')
 
     def show_episodes(self, path):
         title_items, sort = self._api_helper.get_episode_items(path)
         self._kodi_wrapper.show_listing(title_items, sort=sort, content_type='episodes')
+
+    def __get_media(self, file_name):
+        return os.path.join(self._addon_path, 'resources', 'media', file_name)
 
     def __get_category_menu_items(self, url, soupstrainer_parser_selector, routing_action, video_dictionary_action=None):
         response = requests.get(url)

@@ -16,5 +16,5 @@ install:
 script:
 - tox
 - pylint plugin.video.vrt.nu/*.py
-- pylint plugin.video.vrt.nu/resources/**/*.py
+- pylint plugin.video.vrt.nu/resources/lib/*/*.py
 - python plugin.video.vrt.nu/vrtnutests/vrtplayertests.py
