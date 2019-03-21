@@ -41,7 +41,9 @@ you can send a message to [our Facebook page](https://www.facebook.com/kodivrtnu
 
 ## Releases
 
-#### v1.7.0 (2019-03-21)
+#### v1.7.0 (2019-03-23)
+- Indicate when content will disappear in the next 3 months (@dagwieers)
+- Indicate when content is geo-blocked (@dagwieers)
 - Add fanart to menus (@dagwieers)
 - Fix issue related to missing sound (@mediaminister)
 - Improve main menu listing (@dagwieers)

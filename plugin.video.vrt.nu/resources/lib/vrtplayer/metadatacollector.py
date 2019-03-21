@@ -17,4 +17,4 @@ class MetadataCollector:
             if p_item is not None:
                 description = p_item.text.strip()
         metadata_creator.plot = description
-        return metadata_creator.get_video_dictionary()
+        return metadata_creator.get_video_dict()

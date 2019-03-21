@@ -2,7 +2,7 @@
 
 # GNU General Public License v2.0 (see COPYING or https://www.gnu.org/licenses/gpl-2.0.txt)
 
-import time
+from datetime import datetime
 
 
 class MetadataCreator:
@@ -18,6 +18,12 @@ class MetadataCreator:
         self._episode = None
         self._year = None
         self._mediatype = None
+        self._url = None
+        self._ontime = None
+        self._offtime = None
+        self._subtitle = None
+        self._brands = None
+        self._geolocked = None
 
     @property
     def title(self):
@@ -26,6 +32,14 @@ class MetadataCreator:
     @title.setter
     def title(self, value):
         self._title = value
+
+    @property
+    def subtitle(self):
+        return self._subtitle
+
+    @subtitle.setter
+    def subtitle(self, value):
+        self._subtitle = value
 
     @property
     def tvshowtitle(self):
@@ -99,34 +113,114 @@ class MetadataCreator:
     def mediatype(self, value):
         self._mediatype = value
 
-    def get_video_dictionary(self):
-        video_dictionary = dict()
+    @property
+    def url(self):
+        return self._url
 
-        if self.tvshowtitle is not None:
-            video_dictionary['tvshowtitle'] = self.tvshowtitle
+    @url.setter
+    def url(self, value):
+        self._url = value
 
-        if self.plot is not None:
-            video_dictionary['plot'] = self.plot
+    @property
+    def brands(self):
+        return self._brands
 
-        if self.plotoutline is not None:
-            video_dictionary['plotoutline'] = self.plotoutline
+    @brands.setter
+    def brands(self, value):
+        self._brands = value
 
-        if self.duration is not None:
-            video_dictionary['duration'] = self.duration
+    @property
+    def ontime(self):
+        return self._ontime
 
-        if self.datetime is not None:
-            video_dictionary['date'] = time.strftime('%d.%m.%Y', self.datetime)
+    @ontime.setter
+    def ontime(self, value):
+        self._ontime = value
 
-        if self.season is not None:
-            video_dictionary['season'] = self.season
+    @property
+    def offtime(self):
+        return self._offtime
 
-        if self.episode is not None:
-            video_dictionary['episode'] = self.episode
+    @offtime.setter
+    def offtime(self, value):
+        self._offtime = value
 
-        if self.year is not None:
-            video_dictionary['year'] = self.year
+    @property
+    def geolocked(self):
+        return self._geolocked
 
-        if self.mediatype is not None:
-            video_dictionary['mediatype'] = self.mediatype
+    @geolocked.setter
+    def geolocked(self, value):
+        self._geolocked = value
 
-        return video_dictionary
+    def get_video_dict(self):
+        video_dict = dict()
+
+        if self.tvshowtitle:
+            video_dict['tvshowtitle'] = self.tvshowtitle
+            video_dict['set'] = self.tvshowtitle
+
+        # NOTE: Does not seem to have any effect
+        if self.subtitle:
+            video_dict['tagline'] = self.subtitle
+
+        if self.plot:
+            video_dict['plot'] = self.plot
+
+        if self.plotoutline:
+            video_dict['plotoutline'] = self.plotoutline
+
+        if self.duration:
+            video_dict['duration'] = self.duration
+
+        if self.season:
+            video_dict['season'] = self.season
+
+        if self.episode:
+            video_dict['episode'] = self.episode
+
+        if self.year:
+            video_dict['year'] = self.year
+
+        if self.mediatype:
+            video_dict['mediatype'] = self.mediatype
+
+        if self.datetime:
+            video_dict['aired'] = self.datetime.strftime('%d.%m.%Y')
+            video_dict['date'] = self.datetime.strftime('%d.%m.%Y')
+        elif self.ontime and self.ontime != datetime(1970, 1, 1):
+            video_dict['aired'] = self.ontime.strftime('%d.%m.%Y')
+            video_dict['date'] = self.ontime.strftime('%d.%m.%Y')
+
+        # NOTE: Does not seem to have any effect
+        if self.ontime:
+            video_dict['dateadded'] = self.ontime.strftime('%d.%m.%Y')
+            video_dict['startdate'] = self.ontime.strftime('%d.%m.%Y')
+
+        # NOTE/ Does not seem to have any effect
+        if self.offtime:
+            video_dict['enddate'] = self.offtime.strftime('%d.%m.%Y')
+
+        # NOTE: Does not seem to have any effect
+        if self.url:
+            video_dict['path'] = self.url
+
+        if self.brands:
+            # NOTE: Does not seem to have any effect
+            video_dict['channelname'] = self.brands[0] if isinstance(self.brands, list) else self.brands
+            video_dict['studio'] = self.brands
+
+        # rating
+        # episodename
+        # genre
+
+        #if self.icon:
+        #    video_dict['icon'] = self.icon
+        #    video_dict['actualicon'] = self.icon
+
+        # NOTE: Does not seem to have any effect
+        if self.geolocked:
+            video_dict['overlay'] = 7
+            #video_dict['overlay'] = 'OverlayLocked.png'
+
+        return video_dict
