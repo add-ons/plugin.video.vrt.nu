@@ -25,7 +25,7 @@ class KodiWrapper:
         self._url = url
         self._addon = addon
 
-    def show_listing(self, list_items, sort=None):
+    def show_listing(self, list_items, sort=None, content_type='episodes'):
         listing = []
         for title_item in list_items:
             list_item = xbmcgui.ListItem(label=title_item.title)
@@ -47,7 +47,7 @@ class KodiWrapper:
         else:
             xbmcplugin.addSortMethod(self._handle, xbmcplugin.SORT_METHOD_NONE)
 
-        xbmcplugin.setContent(int(self._handle), "episodes")
+        xbmcplugin.setContent(int(self._handle), content_type)
         xbmcplugin.endOfDirectory(self._handle)
 
     def play(self, video):

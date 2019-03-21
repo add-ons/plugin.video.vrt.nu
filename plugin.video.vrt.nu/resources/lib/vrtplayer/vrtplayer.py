@@ -43,16 +43,16 @@ class VRTPlayer:
                                     'DefaultYear.png',
                                     dict(plot=self._kodi_wrapper.get_localized_string(32087))),
         ]
-        self._kodi_wrapper.show_listing(menu_items)
+        self._kodi_wrapper.show_listing(menu_items, content_type='files')
 
     def show_tvshow_menu_items(self, path):
         menu_items = self._api_helper.get_tvshow_items(path)
-        self._kodi_wrapper.show_listing(menu_items, sortmethod.ALPHABET)
+        self._kodi_wrapper.show_listing(menu_items, sortmethod.ALPHABET, content_type='tvshows')
 
     def show_category_menu_items(self):
         joined_url = ''.join((self.VRTNU_BASE_URL, '/categorieen/'))
         menu_items = self.__get_category_menu_items(joined_url, {'class': 'nui-tile title'}, actions.LISTING_CATEGORY_TVSHOWS)
-        self._kodi_wrapper.show_listing(menu_items, sortmethod.ALPHABET)
+        self._kodi_wrapper.show_listing(menu_items, sort=sortmethod.ALPHABET, content_type='files')
 
     def play(self, video):
         stream = self._stream_service.get_stream(video)
@@ -74,11 +74,11 @@ class VRTPlayer:
                                     True, self._api_helper.get_live_screenshot('ketnet'),
                                     dict(plot=self._kodi_wrapper.get_localized_string(32103))),
         ]
-        self._kodi_wrapper.show_listing(livestream_items)
+        self._kodi_wrapper.show_listing(livestream_items, content_type='videos')
 
     def show_episodes(self, path):
         title_items, sort = self._api_helper.get_episode_items(path)
-        self._kodi_wrapper.show_listing(title_items, sort=sort)
+        self._kodi_wrapper.show_listing(title_items, sort=sort, content_type='episodes')
 
     def __get_category_menu_items(self, url, soupstrainer_parser_selector, routing_action, video_dictionary_action=None):
         response = requests.get(url)
