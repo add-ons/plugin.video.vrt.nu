@@ -31,7 +31,7 @@ class VRTApiHelper:
         for tvshow in tvshows:
             metadata_creator = metadatacreator.MetadataCreator()
             metadata_creator.mediatype = 'tvshow'
-            metadata_creator.plot = tvshow['description']
+            metadata_creator.plot = statichelper.unescape(tvshow['description'])
             thumbnail = statichelper.replace_double_slashes_with_https(tvshow['thumbnail'])
             # Cut vrtbase url off since it will be added again when searching for episodes (with a-z we dont have the
             # full url)

@@ -2,6 +2,14 @@
 
 # GNU General Public License v2.0 (see COPYING or https://www.gnu.org/licenses/gpl-2.0.txt)
 
+try:
+    from html import unescape
+except ImportError:
+    from HTMLParser import HTMLParser
+
+    def unescape(s):
+        return HTMLParser().unescape(s)
+
 
 def replace_newlines_and_strip(text):
     return text.replace('\n', '').strip()
