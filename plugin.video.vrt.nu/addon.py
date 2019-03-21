@@ -30,7 +30,7 @@ def router(params_string):
                                                  vrtplayer.VRTPlayer.VRTNU_BASE_URL,
                                                  kodi_wrapper, token_resolver)
     api_helper = vrtapihelper.VRTApiHelper(kodi_wrapper)
-    vrt_player = vrtplayer.VRTPlayer(kodi_wrapper, stream_service, api_helper)
+    vrt_player = vrtplayer.VRTPlayer(addon.getAddonInfo('path'), kodi_wrapper, stream_service, api_helper)
     params = dict(parse_qsl(params_string))
     if params:
         if params['action'] == actions.LISTING_AZ_TVSHOWS:
