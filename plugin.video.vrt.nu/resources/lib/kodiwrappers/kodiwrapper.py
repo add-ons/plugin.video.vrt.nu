@@ -44,6 +44,8 @@ class KodiWrapper:
             kodi_sorts = {sortmethod.ALPHABET: xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE}
             kodi_sortmethod = kodi_sorts.get(sort)
             xbmcplugin.addSortMethod(self._handle, kodi_sortmethod)
+        else:
+            xbmcplugin.addSortMethod(self._handle, xbmcplugin.SORT_METHOD_NONE)
 
         xbmcplugin.setContent(int(self._handle), "episodes")
         xbmcplugin.endOfDirectory(self._handle)
