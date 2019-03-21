@@ -41,7 +41,7 @@ you can send a message to [our Facebook page](https://www.facebook.com/kodivrtnu
 
 ## Releases
 
-#### v1.7.0 (2019-03-20)
+#### v1.7.0 (2019-03-21)
 - Fix issue related to missing sound (@mediaminister)
 - Improve main menu listing (@dagwieers)
 - Use VRT.NU search API for most information gathering (@mediaminister)
