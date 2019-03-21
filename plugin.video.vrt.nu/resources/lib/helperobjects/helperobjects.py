@@ -11,7 +11,7 @@ class TitleItem:
         self.thumbnail = thumbnail
         self.video_dictionary = video_dictionary
         self.icon = icon
-        self.fanart = self.fanart if self.fanart else self.thumbnail
+        self.fanart = fanart if fanart else thumbnail
 
 
 class Credentials:
