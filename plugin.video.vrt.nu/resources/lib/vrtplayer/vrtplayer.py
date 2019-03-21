@@ -25,7 +25,7 @@ class VRTPlayer:
         self._stream_service = stream_service
 
     def show_main_menu_items(self):
-        menu_items = {
+        menu_items = [
             helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32080),
                                     dict(action=actions.LISTING_AZ_TVSHOWS), False,
                                     'DefaultMovieTitle.png',
@@ -42,8 +42,8 @@ class VRTPlayer:
                                     dict(action=actions.LISTING_EPISODES, video_url='recent'), False,
                                     'DefaultYear.png',
                                     dict(plot=self._kodi_wrapper.get_localized_string(32087))),
-        }
-        self._kodi_wrapper.show_listing(menu_items, sortmethod.ALPHABET)
+        ]
+        self._kodi_wrapper.show_listing(menu_items)
 
     def show_tvshow_menu_items(self, path):
         menu_items = self._api_helper.get_tvshow_items(path)
@@ -60,7 +60,7 @@ class VRTPlayer:
             self._kodi_wrapper.play(stream)
 
     def show_livestream_items(self):
-        livestream_items = {
+        livestream_items = [
             helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32101),
                                     {'action': actions.PLAY, 'video_url': self._EEN_LIVESTREAM},
                                     True, self._api_helper.get_live_screenshot('een'),
@@ -73,8 +73,8 @@ class VRTPlayer:
                                     {'action': actions.PLAY, 'video_url': self._KETNET_LIVESTREAM},
                                     True, self._api_helper.get_live_screenshot('ketnet'),
                                     dict(plot=self._kodi_wrapper.get_localized_string(32103))),
-        }
-        self._kodi_wrapper.show_listing(livestream_items, sortmethod.ALPHABET)
+        ]
+        self._kodi_wrapper.show_listing(livestream_items)
 
     def show_episodes(self, path):
         title_items, sort = self._api_helper.get_episode_items(path)
