@@ -28,12 +28,12 @@ class KodiWrapper:
     def show_listing(self, list_items, sort=None):
         listing = []
         for title_item in list_items:
-            list_item = xbmcgui.ListItem(label=title_item.title)
+            list_item = xbmcgui.ListItem(label=title_item.title, iconImage=title_item.icon)
             url = self._url + '?' + urlencode(title_item.url_dictionary)
             list_item.setProperty('IsPlayable', str(title_item.is_playable))
 
             if title_item.thumbnail is not None:
-                list_item.setArt({'thumb': title_item.thumbnail})
+                list_item.setArt({'thumb': title_item.thumbnail, 'fanart': title_item.fanart, 'icon': title_item.icon})
 
             list_item.setInfo('video', title_item.video_dictionary)
 

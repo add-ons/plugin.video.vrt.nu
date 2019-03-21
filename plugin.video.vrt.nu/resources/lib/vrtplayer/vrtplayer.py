@@ -13,7 +13,7 @@ class VRTPlayer:
 
     # URLs van https://services.vrt.be/videoplayer/r/live.json
     _EEN_LIVESTREAM = 'https://www.vrt.be/vrtnu/kanalen/een/'
-    _CANVAS_LIVESTREAM_ = 'https://www.vrt.be/vrtnu/kanalen/canvas/'
+    _CANVAS_LIVESTREAM = 'https://www.vrt.be/vrtnu/kanalen/canvas/'
     _KETNET_LIVESTREAM = 'https://www.vrt.be/vrtnu/kanalen/ketnet/'
 
     VRT_BASE = 'https://www.vrt.be/'
@@ -27,21 +27,29 @@ class VRTPlayer:
     def show_main_menu_items(self):
         menu_items = [
             helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32080),
-                                    dict(action=actions.LISTING_AZ_TVSHOWS), False,
-                                    'DefaultMovieTitle.png',
-                                    dict(plot=self._kodi_wrapper.get_localized_string(32081))),
+                                    dict(action=actions.LISTING_AZ_TVSHOWS),
+                                    is_playable=False,
+                                    thumb='DefaultMovieTitle.png',
+                                    video_dictionary=dict(plot=self._kodi_wrapper.get_localized_string(32081)),
+                                    icon='DefaultMovieTitle.png'),
             helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32082),
-                                    dict(action=actions.LISTING_CATEGORIES), False,
-                                    'DefaultGenre.png',
-                                    dict(plot=self._kodi_wrapper.get_localized_string(32083))),
+                                    dict(action=actions.LISTING_CATEGORIES),
+                                    is_playable=False,
+                                    thumbnail='DefaultGenre.png',
+                                    video_dictionary=dict(plot=self._kodi_wrapper.get_localized_string(32083)),
+                                    icon='DefaultGenre.png'),
             helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32084),
-                                    dict(action=actions.LISTING_LIVE), False,
-                                    'DefaultAddonPVRClient.png',
-                                    dict(plot=self._kodi_wrapper.get_localized_string(32085))),
+                                    dict(action=actions.LISTING_LIVE),
+                                    is_playable=False,
+                                    thumbnail='DefaultAddonPVRClient.png',
+                                    video_dictionary=dict(plot=self._kodi_wrapper.get_localized_string(32085)),
+                                    icon='DefaultAddonPVRClient.png'),
             helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32086),
-                                    dict(action=actions.LISTING_EPISODES, video_url='recent'), False,
-                                    'DefaultYear.png',
-                                    dict(plot=self._kodi_wrapper.get_localized_string(32087))),
+                                    dict(action=actions.LISTING_EPISODES, video_url='recent'),
+                                    is_playable=False,
+                                    thumbnail='DefaultYear.png',
+                                    video_dictionary=dict(plot=self._kodi_wrapper.get_localized_string(32087)),
+                                    icon='DefaultYear.png'),
         ]
         self._kodi_wrapper.show_listing(menu_items)
 
@@ -62,17 +70,23 @@ class VRTPlayer:
     def show_livestream_items(self):
         livestream_items = [
             helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32101),
-                                    {'action': actions.PLAY, 'video_url': self._EEN_LIVESTREAM},
-                                    True, self._api_helper.get_live_screenshot('een'),
-                                    dict(plot=self._kodi_wrapper.get_localized_string(32101))),
+                                    dict(action=actions.PLAY, video_url=self._EEN_LIVESTREAM),
+                                    is_playable=True,
+                                    thumbnail=self._api_helper.get_live_screenshot('een'),
+                                    video_dictionary=dict(plot=self._kodi_wrapper.get_localized_string(32101)),
+                                    icon='DefaultAddonPVRClient.png'),
             helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32102),
-                                    {'action': actions.PLAY, 'video_url': self._CANVAS_LIVESTREAM_},
-                                    True, self._api_helper.get_live_screenshot('canvas'),
-                                    dict(plot=self._kodi_wrapper.get_localized_string(32102))),
+                                    dict(action=actions.PLAY, video_url=self._CANVAS_LIVESTREAM),
+                                    is_playable=True,
+                                    thumbnail=self._api_helper.get_live_screenshot('canvas'),
+                                    video_dictionary=dict(plot=self._kodi_wrapper.get_localized_string(32102)),
+                                    icon='DefaultAddonPVRClient.png'),
             helperobjects.TitleItem(self._kodi_wrapper.get_localized_string(32103),
-                                    {'action': actions.PLAY, 'video_url': self._KETNET_LIVESTREAM},
-                                    True, self._api_helper.get_live_screenshot('ketnet'),
-                                    dict(plot=self._kodi_wrapper.get_localized_string(32103))),
+                                    dict(action=actions.PLAY, video_url=self._KETNET_LIVESTREAM),
+                                    is_playable=True,
+                                    thumbnail=self._api_helper.get_live_screenshot('ketnet'),
+                                    video_dictionary=dict(plot=self._kodi_wrapper.get_localized_string(32103)),
+                                    icon='DefaultAddonPVRClient.png'),
         ]
         self._kodi_wrapper.show_listing(livestream_items)
 
