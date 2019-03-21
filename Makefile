@@ -8,7 +8,7 @@ version = $(shell xmllint --xpath 'string(/addon/@version)' $(addon_xml))
 git_hash = $(shell git rev-parse --short HEAD)
 
 zip_name = $(name)-$(version)-$(git_hash).zip
-exclude_files = $(name).pyproj vrtnutests/ vrtnutests/*
+exclude_files = $(name).pyproj
 exclude_paths = $(patsubst %,$(name)/%,$(exclude_files))
 zip_dir = $(name)/
 
@@ -24,13 +24,13 @@ clean:
 test: unittest
 	@echo -e "\e[1;37m=\e[1;34m Starting tests\e[0m"
 	pylint $(name)/*.py
-	pylint $(name)/resources/lib/*/*.py
+	pylint $(name)/lib/*/*.py
 	tox -e $(ENVS)
 	@echo -e "\e[1;37m=\e[1;34m Tests finished successfully.\e[0m"
 
 unittest:
 	@echo -e "\e[1;37m=\e[1;34m Starting unit tests\e[0m"
-	PYTHONPATH=$(name) python $(name)/vrtnutests/vrtplayertests.py
+	PYTHONPATH=$(name) python test/vrtplayertests.py
 	@echo -e "\e[1;37m=\e[1;34m Unit tests finished successfully.\e[0m"
 
 zip: test clean

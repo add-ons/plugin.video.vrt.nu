@@ -2,11 +2,11 @@
 
 # GNU General Public License v2.0 (see COPYING or https://www.gnu.org/licenses/gpl-2.0.txt)
 
+from bs4 import BeautifulSoup, SoupStrainer
 import re
 import requests
-from bs4 import BeautifulSoup, SoupStrainer
 
-from resources.lib.helperobjects import apidata, streamurls
+from lib.helperobjects import apidata, streamurls
 
 
 class StreamService:

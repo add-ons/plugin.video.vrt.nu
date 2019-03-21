@@ -6,8 +6,9 @@
 
 import xbmc
 import xbmcaddon
-from resources.lib.kodiwrappers import kodiwrapper
-from resources.lib.vrtplayer import tokenresolver
+
+from lib.kodiwrappers import kodiwrapper
+from lib.vrtplayer import tokenresolver
 
 
 class VrtMonitor(xbmc.Monitor):

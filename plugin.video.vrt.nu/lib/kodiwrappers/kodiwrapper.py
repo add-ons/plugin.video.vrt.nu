@@ -10,7 +10,8 @@ import xbmc
 import xbmcgui
 import xbmcplugin
 import xbmcvfs
-from resources.lib.kodiwrappers import sortmethod
+
+from lib.kodiwrappers import sortmethod
 
 try:
     from urllib.parse import urlencode

@@ -2,10 +2,10 @@
 
 # GNU General Public License v2.0 (see COPYING or https://www.gnu.org/licenses/gpl-2.0.txt)
 
-import unittest
-from resources.lib.vrtplayer import vrtplayer
-from resources.lib.vrtplayer import vrtapihelper
 from mock import MagicMock
+import unittest
+
+from lib.vrtplayer import vrtapihelper, vrtplayer
 
 
 class TestVRTPlayer(unittest.TestCase):

@@ -7,10 +7,10 @@
 from __future__ import absolute_import, division, unicode_literals
 
 import sys
-
 import xbmcaddon
-from resources.lib.kodiwrappers import kodiwrapper
-from resources.lib.vrtplayer import vrtplayer, streamservice, tokenresolver, actions, vrtapihelper
+
+from lib.kodiwrappers import kodiwrapper
+from lib.vrtplayer import actions, streamservice, tokenresolver, vrtapihelper, vrtplayer
 
 try:
     from urllib.parse import parse_qsl

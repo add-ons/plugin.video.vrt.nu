@@ -2,12 +2,13 @@
 
 # GNU General Public License v2.0 (see COPYING or https://www.gnu.org/licenses/gpl-2.0.txt)
 
+from bs4 import BeautifulSoup, SoupStrainer
 import os
 import requests
-from bs4 import BeautifulSoup, SoupStrainer
-from resources.lib.helperobjects import helperobjects
-from resources.lib.kodiwrappers import sortmethod
-from resources.lib.vrtplayer import actions, statichelper
+
+from lib.helperobjects import helperobjects
+from lib.kodiwrappers import sortmethod
+from lib.vrtplayer import actions, statichelper
 
 
 class VRTPlayer:

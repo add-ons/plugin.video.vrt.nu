@@ -2,12 +2,13 @@
 
 # GNU General Public License v2.0 (see COPYING or https://www.gnu.org/licenses/gpl-2.0.txt)
 
-import requests
-from resources.lib.vrtplayer import statichelper, metadatacreator, actions
-from resources.lib.helperobjects import helperobjects
-from resources.lib.kodiwrappers import sortmethod
 from bs4 import BeautifulSoup
+import requests
 import time
+
+from lib.helperobjects import helperobjects
+from lib.kodiwrappers import sortmethod
+from lib.vrtplayer import actions, metadatacreator, statichelper
 
 
 class VRTApiHelper:

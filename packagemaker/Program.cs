@@ -45,8 +45,8 @@ namespace plugin.video.vrt.nu.packagemaker
                 File.Delete(itemToDelete);
             }
 
-            Console.WriteLine("Deletings tests folder");
-            Directory.Delete(Path.Combine(destination, "vrtnutests"), true);
+            // Console.WriteLine("Deletings tests folder");
+            // Directory.Delete(Path.Combine(destination, "vrtnutests"), true);
         }
 
         private static string[] CopyFilesToDestination(string dllLocation, string foldername, string destination)
