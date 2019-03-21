@@ -44,7 +44,7 @@ class StreamServiceTests(unittest.TestCase):
         mock.open_path.return_value = False
         mock.check_inputstream_adaptive.return_value = True
         service = streamservice.StreamService(vrtplayer.VRTPlayer.VRT_BASE, vrtplayer.VRTPlayer.VRTNU_BASE_URL, mock, token_resolver)
-        video = {'video_url' : vrtplayer.VRTPlayer._CANVAS_LIVESTREAM_, 'video_id' : None, 'publication_id' : None}
+        video = {'video_url' : vrtplayer.VRTPlayer._CANVAS_LIVESTREAM, 'video_id' : None, 'publication_id' : None}
         stream = service.get_stream(video)
         self.assertTrue(stream is not None)
         self.assertTrue(stream.license_key is not None)
@@ -59,7 +59,7 @@ class StreamServiceTests(unittest.TestCase):
         mock.open_path.return_value = False
         mock.check_inputstream_adaptive.return_value = True
         service = streamservice.StreamService(vrtplayer.VRTPlayer.VRT_BASE, vrtplayer.VRTPlayer.VRTNU_BASE_URL, mock, token_resolver)
-        video = {'video_url' : vrtplayer.VRTPlayer._CANVAS_LIVESTREAM_, 'video_id' : None, 'publication_id' : None}
+        video = {'video_url' : vrtplayer.VRTPlayer._CANVAS_LIVESTREAM, 'video_id' : None, 'publication_id' : None}
         stream = service.get_stream(video)
         self.assertTrue(stream is not None)
 

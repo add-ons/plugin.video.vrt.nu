@@ -4,12 +4,14 @@
 
 class TitleItem:
 
-    def __init__(self, title, url_dictionary, is_playable, thumbnail=None, video_dictionary=None):
+    def __init__(self, title, url_dictionary, is_playable, thumbnail=None, video_dictionary=None, icon='', fanart=None):
         self.title = title
         self.url_dictionary = url_dictionary
         self.is_playable = is_playable
         self.thumbnail = thumbnail
         self.video_dictionary = video_dictionary
+        self.icon = icon
+        self.fanart = self.fanart if self.fanart else self.thumbnail
 
 
 class Credentials:
