@@ -42,6 +42,7 @@ you can send a message to [our Facebook page](https://www.facebook.com/kodivrtnu
 ## Releases
 
 #### v1.7.0 (2019-03-21)
+- Add fanart to menus (@dagwieers)
 - Fix issue related to missing sound (@mediaminister)
 - Improve main menu listing (@dagwieers)
 - Use VRT.NU search API for most information gathering (@mediaminister)
