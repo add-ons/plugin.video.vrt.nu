@@ -99,7 +99,6 @@ class KodiWrapper:
     def get_proxies(self):
         usehttpproxy = self.get_global_setting('network.usehttpproxy')
         if usehttpproxy is False:
-            self.log_notice('Proxy is disabled in Kodi')
             return dict()
 
         httpproxytype = self.get_global_setting('network.httpproxytype')
@@ -124,7 +123,6 @@ class KodiWrapper:
 
         if httpproxyserver and httpproxyport and httpproxyusername and httpproxypassword:
             proxy_address = '%s://%s:%s@%s:%s' % (httpproxyscheme, httpproxyusername, httpproxypassword, httpproxyserver, httpproxyport)
-            proxy_address_redacted = '%s://%s:%s@%s:%s' % (httpproxyscheme, httpproxyusername, '****', httpproxyserver, httpproxyport)
         elif httpproxyserver and httpproxyport and httpproxyusername:
             proxy_address = '%s://%s@%s:%s' % (httpproxyscheme, httpproxyusername, httpproxyserver, httpproxyport)
         elif httpproxyserver and httpproxyport:
@@ -133,11 +131,6 @@ class KodiWrapper:
             proxy_address = '%s://%s' % (httpproxyscheme, httpproxyserver)
         else:
             return dict()
-
-        if not httpproxypassword:
-            proxy_address_redacted = proxy_address
-
-        self.log_notice("Using proxy address '%s'" % proxy_address_redacted)
 
         return dict(http=proxy_address, https=proxy_address)
 
