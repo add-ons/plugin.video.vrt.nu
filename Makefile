@@ -30,7 +30,7 @@ test: unittest
 
 unittest:
 	@echo -e "\e[1;37m=\e[1;34m Starting unit tests\e[0m"
-	#PYTHONPATH=$(name) python $(name)/vrtnutests/vrtplayertests.py
+	PYTHONPATH=$(name) python $(name)/vrtnutests/vrtplayertests.py
 	@echo -e "\e[1;37m=\e[1;34m Unit tests finished successfully.\e[0m"
 
 zip: test clean
