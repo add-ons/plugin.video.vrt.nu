@@ -119,3 +119,14 @@ msgctxt "#32104"
 msgid "Sporza"
 msgstr "Sporza"
 
+msgctxt "#32201"
+msgid "[B][COLOR red]Geo-blocked[/COLOR][/B]\n"
+msgstr "[B][COLOR red]Geo-blocked[/COLOR][/B]\n"
+
+msgctxt "#32202"
+msgid "[B][COLOR blue]Available until %s[/COLOR][/B]\n"
+msgstr "[B][COLOR blue]Available until %s[/COLOR][/B]\n"
+
+msgctxt "#32203"
+msgid "[B][COLOR green](%s days left)[/COLOR][/B]\n"
+msgstr "[B][COLOR green](%s days left)[/COLOR][/B]\n"

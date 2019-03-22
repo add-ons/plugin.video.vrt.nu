@@ -28,27 +28,29 @@ class KodiWrapper:
     def show_listing(self, list_items, sort=None, content_type='episodes'):
         listing = []
         for title_item in list_items:
-            list_item = xbmcgui.ListItem(label=title_item.title, iconImage=title_item.icon)
-            url = self._url + '?' + urlencode(title_item.url_dictionary)
+            list_item = xbmcgui.ListItem(label=title_item.title)
+            url = self._url + '?' + urlencode(title_item.url_dict)
             list_item.setProperty('IsPlayable', str(title_item.is_playable))
 
-            if title_item.thumbnail is not None:
-                list_item.setArt({'thumb': title_item.thumbnail, 'fanart': title_item.fanart, 'icon': title_item.icon})
+            if title_item.art_dict:
+                list_item.setArt(title_item.art_dict)
 
-            list_item.setInfo('video', title_item.video_dictionary)
+            if title_item.video_dict:
+                list_item.setInfo('video', infoLabels=title_item.video_dict)
 
             listing.append((url, list_item, not title_item.is_playable))
-        xbmcplugin.addDirectoryItems(self._handle, listing, len(listing))
+
+        ok = xbmcplugin.addDirectoryItems(self._handle, listing, len(listing))
 
         if sort is not None:
             kodi_sorts = {sortmethod.ALPHABET: xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE}
             kodi_sortmethod = kodi_sorts.get(sort)
-            xbmcplugin.addSortMethod(self._handle, kodi_sortmethod)
+            xbmcplugin.addSortMethod(handle=self._handle, sortMethod=kodi_sortmethod)
         else:
-            xbmcplugin.addSortMethod(self._handle, xbmcplugin.SORT_METHOD_NONE)
+            xbmcplugin.addSortMethod(handle=self._handle, sortMethod=xbmcplugin.SORT_METHOD_NONE)
 
-        xbmcplugin.setContent(int(self._handle), content_type)
-        xbmcplugin.endOfDirectory(self._handle)
+        xbmcplugin.setContent(self._handle, content=content_type)
+        xbmcplugin.endOfDirectory(self._handle, ok)
 
     def play(self, video):
         play_item = xbmcgui.ListItem(path=video.stream_url)
@@ -79,6 +81,9 @@ class KodiWrapper:
 
     def get_localized_string(self, string_id):
         return self._addon.getLocalizedString(string_id)
+
+    def get_localized_dateshort(self):
+        return xbmc.getRegion('dateshort')
 
     def get_setting(self, setting_id):
         return self._addon.getSetting(setting_id)

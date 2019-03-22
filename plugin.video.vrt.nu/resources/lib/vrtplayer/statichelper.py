@@ -12,12 +12,14 @@ except ImportError:
         return HTMLParser().unescape(s)
 
 
-def replace_newlines_and_strip(text):
+def strip_newlines(text):
     return text.replace('\n', '').strip()
 
 
-def replace_double_slashes_with_https(url):
-    return url.replace('//', 'https://')
+def add_https_method(url):
+    if url.startswith('//'):
+        return 'https:' + url
+    return url
 
 
 def distinct(sequence):
