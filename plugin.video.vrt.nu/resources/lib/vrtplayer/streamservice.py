@@ -75,7 +75,7 @@ class StreamService:
         return ''.join((key_url, '|', header.strip('&'), '|', key_value, '|'))
 
     def _get_api_data(self, video_url):
-        html_page = requests.get(video_url).text
+        html_page = requests.get(video_url, proxies=self._proxies).text
         strainer = SoupStrainer('div', {'class': 'cq-dd-vrtvideo'})
         soup = BeautifulSoup(html_page, 'html.parser', parse_only=strainer)
         video_data = soup.find(lambda tag: tag.name == 'div' and tag.get('class') == ['vrtvideo']).attrs
