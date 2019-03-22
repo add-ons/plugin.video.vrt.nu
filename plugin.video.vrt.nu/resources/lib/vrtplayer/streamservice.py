@@ -18,6 +18,7 @@ class StreamService:
 
     def __init__(self, vrt_base, vrtnu_base_url, kodi_wrapper, token_resolver):
         self._kodi_wrapper = kodi_wrapper
+        self._proxies = self._kodi_wrapper.get_proxies()
         self.token_resolver = token_resolver
         self._vrt_base = vrt_base
         self._vrtnu_base_url = vrtnu_base_url
@@ -26,7 +27,7 @@ class StreamService:
         self._license_url = self._get_license_url()
 
     def _get_license_url(self):
-        return requests.get(self._VUPLAY_API_URL).json()['drm_providers']['widevine']['la_url']
+        return requests.get(self._VUPLAY_API_URL, proxies=self._proxies).json()['drm_providers']['widevine']['la_url']
 
     def _create_settings_dir(self):
         settingsdir = self._kodi_wrapper.get_userdata_path()
@@ -105,7 +106,7 @@ class StreamService:
         # Construct api_url and get video json
         api_url = api_data.media_api_url + '/videos/' + api_data.publication_id + \
             api_data.video_id + '?vrtPlayerToken=' + playertoken + '&client=' + api_data.client
-        video_json = requests.get(api_url).json()
+        video_json = requests.get(api_url, proxies=self._proxies).json()
 
         return video_json
 
@@ -187,7 +188,7 @@ class StreamService:
     # Speed up HLS selection, workaround for slower kodi selection
     def _select_hls_substreams(self, master_hls_url):
         base_url = master_hls_url.split('.m3u8')[0]
-        m3u8 = requests.get(master_hls_url).text
+        m3u8 = requests.get(master_hls_url, proxies=self._proxies).text
         direct_audio_url = None
         direct_video_url = None
         direct_subtitle_url = None
