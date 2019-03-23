@@ -116,9 +116,12 @@ class VRTApiHelper:
             if metadata_creator.geolocked:
                 plot_meta += self._kodi_wrapper.get_localized_string(32201)
             # Only display when a video disappears if it is within the next 3 months
-            if metadata_creator.offtime is not None and (metadata_creator.offtime - datetime.now()).days < 92:
+            if metadata_creator.offtime is not None and (metadata_creator.offtime - datetime.utcnow()).days < 92:
                 plot_meta += self._kodi_wrapper.get_localized_string(32202) % metadata_creator.offtime.strftime(self._kodi_wrapper.get_localized_dateshort())
-                plot_meta += self._kodi_wrapper.get_localized_string(32203) % (metadata_creator.offtime - datetime.now()).days
+                if (metadata_creator.offtime - datetime.utcnow()).days > 0:
+                    plot_meta += self._kodi_wrapper.get_localized_string(32203) % (metadata_creator.offtime - datetime.utcnow()).days
+                else:
+                    plot_meta += self._kodi_wrapper.get_localized_string(32204) % int((metadata_creator.offtime - datetime.utcnow()).seconds/3600)
             if plot_meta:
                 plot_meta += '\n'
             metadata_creator.plot = plot_meta + metadata_creator.plot
