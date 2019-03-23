@@ -200,7 +200,7 @@ class StreamService:
             direct_audio_url = match_audio[len(match_audio)-1]
 
         # Get video uri
-        video_regex = re.compile(r'#EXT-X-STREAM-INF:[\w\-=,\.\"]+[\r\n]{1}([\w\-=]+\.m3u8)[\r\n]{2}')
+        video_regex = re.compile(r'#EXT-X-STREAM-INF:[\w\-=,\.\"]+[\r\n]{1}([\w\-=]+\.m3u8(\?vbegin=[0-9]{10})?(&vend=[0-9]{10})?)[\r\n]{2}')
         match_video = re.search(video_regex, m3u8)
         if match_video:
             direct_video_url = base_url + match_video.group(1)
