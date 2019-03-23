@@ -99,14 +99,18 @@ class KodiWrapper:
     def get_proxies(self):
         usehttpproxy = self.get_global_setting('network.usehttpproxy')
         if usehttpproxy is False:
-            return dict()
+            return None
 
         httpproxytype = self.get_global_setting('network.httpproxytype')
 
-        if httpproxytype != 0:
-            title = self.get_localized_string(32061)
-            message = self.get_localized_string(32062)
-            self.show_ok_dialog(title, message)
+        if httpproxytype != 0: 
+            try:
+                import socks
+            except ImportError:
+                title = self.get_localized_string(32061)
+                message = self.get_localized_string(32062)
+                self.show_ok_dialog(title, message)
+                return None
 
         if httpproxytype == 0:
             httpproxyscheme = 'http'
@@ -135,7 +139,7 @@ class KodiWrapper:
         elif httpproxyserver:
             proxy_address = '%s://%s' % (httpproxyscheme, httpproxyserver)
         else:
-            return dict()
+            return None
 
         return dict(http=proxy_address, https=proxy_address)
 
