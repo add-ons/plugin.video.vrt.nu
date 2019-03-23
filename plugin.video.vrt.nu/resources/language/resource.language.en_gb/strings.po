@@ -138,3 +138,7 @@ msgstr "[B][COLOR blue]Available until %s[/COLOR][/B]\n"
 msgctxt "#32203"
 msgid "[B][COLOR green](%s days left)[/COLOR][/B]\n"
 msgstr "[B][COLOR green](%s days left)[/COLOR][/B]\n"
+
+msgctxt "#32204"
+msgid "[B][COLOR green](%s hours left)[/COLOR][/B]\n"
+msgstr "[B][COLOR green](%s hours left)[/COLOR][/B]\n"
