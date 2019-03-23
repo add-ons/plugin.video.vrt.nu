@@ -23,6 +23,7 @@ class VRTPlayer:
     def __init__(self, addon_path, kodi_wrapper, stream_service, api_helper):
         self._addon_path = addon_path
         self._kodi_wrapper = kodi_wrapper
+        self._proxies = self._kodi_wrapper.get_proxies()
         self._api_helper = api_helper
         self._stream_service = stream_service
 
@@ -93,7 +94,7 @@ class VRTPlayer:
         return os.path.join(self._addon_path, 'resources', 'media', file_name)
 
     def __get_category_menu_items(self, url, soupstrainer_parser_selector, routing_action, video_dict_action=None):
-        response = requests.get(url)
+        response = requests.get(url, proxies=self._proxies)
         tiles = SoupStrainer('a', soupstrainer_parser_selector)
         soup = BeautifulSoup(response.content, 'html.parser', parse_only=tiles)
         listing = []

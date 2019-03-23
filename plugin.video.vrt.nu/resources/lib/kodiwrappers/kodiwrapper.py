@@ -24,6 +24,7 @@ class KodiWrapper:
         self._handle = handle
         self._url = url
         self._addon = addon
+        self._addon_id = addon.getAddonInfo('id')
 
     def show_listing(self, list_items, sort=None, content_type='episodes'):
         listing = []
@@ -91,6 +92,53 @@ class KodiWrapper:
     def open_settings(self):
         self._addon.openSettings()
 
+    def get_global_setting(self, setting):
+        json_result = xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Settings.GetSettingValue", "params": {"setting": "%s"}, "id": 1}' % setting)
+        return json.loads(json_result)['result']['value']
+
+    def get_proxies(self):
+        usehttpproxy = self.get_global_setting('network.usehttpproxy')
+        if usehttpproxy is False:
+            return dict()
+
+        httpproxytype = self.get_global_setting('network.httpproxytype')
+
+        if httpproxytype != 0:
+            title = self.get_localized_string(32061)
+            message = self.get_localized_string(32062)
+            self.show_ok_dialog(title, message)
+
+        if httpproxytype == 0:
+            httpproxyscheme = 'http'
+        elif httpproxytype == 1:
+            httpproxyscheme = 'socks4'
+        elif httpproxytype == 2:
+            httpproxyscheme = 'socks4a'
+        elif httpproxytype == 3:
+            httpproxyscheme = 'socks5'
+        elif httpproxytype == 4:
+            httpproxyscheme = 'socks5h'
+        else:
+            httpproxyscheme = 'http'
+
+        httpproxyserver = self.get_global_setting('network.httpproxyserver')
+        httpproxyport = self.get_global_setting('network.httpproxyport')
+        httpproxyusername = self.get_global_setting('network.httpproxyusername')
+        httpproxypassword = self.get_global_setting('network.httpproxypassword')
+
+        if httpproxyserver and httpproxyport and httpproxyusername and httpproxypassword:
+            proxy_address = '%s://%s:%s@%s:%s' % (httpproxyscheme, httpproxyusername, httpproxypassword, httpproxyserver, httpproxyport)
+        elif httpproxyserver and httpproxyport and httpproxyusername:
+            proxy_address = '%s://%s@%s:%s' % (httpproxyscheme, httpproxyusername, httpproxyserver, httpproxyport)
+        elif httpproxyserver and httpproxyport:
+            proxy_address = '%s://%s:%s' % (httpproxyscheme, httpproxyserver, httpproxyport)
+        elif httpproxyserver:
+            proxy_address = '%s://%s' % (httpproxyscheme, httpproxyserver)
+        else:
+            return dict()
+
+        return dict(http=proxy_address, https=proxy_address)
+
     # NOTE: normally inputstream adaptive will always be installed, this only applies for people uninstalling inputstream adaptive while this addon is disabled
     def has_inputstream_adaptive_installed(self):
         return xbmc.getCondVisibility('System.HasAddon("{0}")'.format('inputstream.adaptive')) == 1
@@ -121,7 +169,9 @@ class KodiWrapper:
         return xbmcvfs.delete(path)
 
     def log_notice(self, message):
-        xbmc.log(message, xbmc.LOGNOTICE)
+        ''' Log info messages to Kodi '''
+        xbmc.log(msg='[%s] %s' % (self._addon_id, message), level=xbmc.LOGNOTICE)
 
     def log_error(self, message):
-        xbmc.log(message, xbmc.LOGERROR)
+        ''' Log error messages to Kodi '''
+        xbmc.log(msg='[%s] %s' % (self._addon_id, message), level=xbmc.LOGERROR)

@@ -13,21 +13,22 @@ import time
 
 class VRTApiHelper:
 
-    def __init__(self, kodi_wrapper):
-        self._kodi_wrapper = kodi_wrapper
-
     _VRT_BASE = 'https://www.vrt.be'
     _VRTNU_API_BASE = 'https://vrtnu-api.vrt.be'
     _VRTNU_SEARCH_URL = ''.join((_VRTNU_API_BASE, '/search'))
     _VRTNU_SUGGEST_URL = ''.join((_VRTNU_API_BASE, '/suggest'))
     _VRTNU_SCREENSHOT_URL = ''.join((_VRTNU_API_BASE, '/screenshots'))
 
+    def __init__(self, kodi_wrapper):
+        self._kodi_wrapper = kodi_wrapper
+        self._proxies = self._kodi_wrapper.get_proxies()
+
     def get_tvshow_items(self, path):
         if path == 'az':
             api_url = ''.join((self._VRTNU_SUGGEST_URL, '?facets[transcodingStatus]=AVAILABLE'))
         else:
             api_url = ''.join((self._VRTNU_SUGGEST_URL, '?facets[categories]=', path))
-        tvshows = requests.get(api_url).json()
+        tvshows = requests.get(api_url, proxies=self._proxies).json()
         tvshow_items = []
         for tvshow in tvshows:
             metadata_creator = metadatacreator.MetadataCreator()
@@ -61,11 +62,11 @@ class VRTApiHelper:
         sort_method = None
         if path == 'recent':
             api_url = ''.join((self._VRTNU_SEARCH_URL, '?i=video&size=50&facets[transcodingStatus]=AVAILABLE&facets[brands]=[een,canvas,sporza,radio1,klara,stubru,mnm]'))
-            api_json = requests.get(api_url).json()
+            api_json = requests.get(api_url, proxies=self._proxies).json()
             episode_items, sort_method = self._map_to_episode_items(api_json['results'], path)
         else:
             api_url = ''.join((self._VRTNU_SEARCH_URL, '?i=video&size=150&facets[programUrl]=//www.vrt.be', path.replace('.relevant', ''))) if '.relevant/' in path else path
-            api_json = requests.get(api_url).json()
+            api_json = requests.get(api_url, proxies=self._proxies).json()
             # Look for seasons items if not yet done
             if 'facets[seasonTitle]' not in path:
                 episode_items = self._get_season_items(api_url, api_json['facets']['facets'])

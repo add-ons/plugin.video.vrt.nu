@@ -63,6 +63,14 @@ msgctxt "#32054"
 msgid "Woops something went wrong, check the log for more details"
 msgstr "Woops something went wrong, check the log for more details"
 
+msgctxt "#32061"
+msgid "SOCKS proxies are currently unsupported"
+msgstr "SOCKS proxies are currently unsupported"
+
+msgctxt "#32062"
+msgid "Using a SOCKS proxy requires the requests[socks] library installed."
+msgstr "Using a SOCKS proxy requires the requests[socks] library installed."
+
 msgctxt "#32080"
 msgid "A-Z"
 msgstr "A-Z"
