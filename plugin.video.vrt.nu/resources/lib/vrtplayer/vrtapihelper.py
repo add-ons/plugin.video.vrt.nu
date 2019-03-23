@@ -97,8 +97,9 @@ class VRTApiHelper:
             metadata_creator.brands = episode.get('programBrands', episode.get('brands'))
             metadata_creator.geolocked = episode.get('allowedRegion') == 'BE'
             if display_options.get('showShortDescription'):
-                metadata_creator.plotoutline = episode.get('shortDescription')
-                metadata_creator.subtitle = episode.get('shortDescription')
+                short_description = BeautifulSoup(episode.get('shortDescription'), 'html.parser').text
+                metadata_creator.plotoutline = short_description
+                metadata_creator.subtitle = short_description
             else:
                 metadata_creator.plotoutline = episode.get('subtitle')
                 metadata_creator.subtitle = episode.get('subtitle')
