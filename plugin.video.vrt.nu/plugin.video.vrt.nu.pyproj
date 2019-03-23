@@ -35,10 +35,10 @@
     <Compile Include="resources\lib\vrtplayer\metadatacollector.py" />
     <Compile Include="resources\lib\vrtplayer\metadatacreator.py" />
     <Compile Include="resources\lib\vrtplayer\statichelper.py" />
+    <Compile Include="resources\lib\vrtplayer\streamservice.py" />
     <Compile Include="resources\lib\vrtplayer\tokenresolver.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="resources\lib\vrtplayer\urltostreamservice.py" />
     <Compile Include="resources\lib\vrtplayer\vrtapihelper.py">
       <SubType>Code</SubType>
     </Compile>
@@ -49,7 +49,7 @@
     <Compile Include="service.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="vrtnutests\urltostreamservicetests.py" />
+    <Compile Include="vrtnutests\streamservicetests.py" />
     <Compile Include="vrtnutests\apihelpertests.py">
       <SubType>Code</SubType>
     </Compile>
@@ -61,6 +61,7 @@
     <Content Include="resources\fanart.jpg" />
     <Content Include="resources\icon.png" />
     <Content Include="resources\language\resource.language.en_gb\strings.po" />
+    <Content Include="resources\language\resource.language.nl_nl\strings.po" />
     <Content Include="resources\media\canvas.png" />
     <Content Include="resources\media\een.png" />
     <Content Include="resources\media\ketnet.png" />
@@ -71,6 +72,7 @@
     <Folder Include="resources" />
     <Folder Include="resources\language\" />
     <Folder Include="resources\language\resource.language.en_gb\" />
+    <Folder Include="resources\language\resource.language.nl_nl\" />
     <Folder Include="resources\lib" />
     <Folder Include="resources\lib\helperobjects" />
     <Folder Include="resources\lib\kodiwrappers" />
