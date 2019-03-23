@@ -103,15 +103,20 @@ class KodiWrapper:
 
         httpproxytype = self.get_global_setting('network.httpproxytype')
 
-        if httpproxytype == '0':
+        if httpproxytype != 0:
+            title = self.get_localized_string(32061)
+            message = self.get_localized_string(32062)
+            self.show_ok_dialog(title, message)
+
+        if httpproxytype == 0:
             httpproxyscheme = 'http'
-        elif httpproxytype == '1':
+        elif httpproxytype == 1:
             httpproxyscheme = 'socks4'
-        elif httpproxytype == '2':
+        elif httpproxytype == 2:
             httpproxyscheme = 'socks4a'
-        elif httpproxytype == '3':
+        elif httpproxytype == 3:
             httpproxyscheme = 'socks5'
-        elif httpproxytype == '4':
+        elif httpproxytype == 4:
             httpproxyscheme = 'socks5h'
         else:
             httpproxyscheme = 'http'
