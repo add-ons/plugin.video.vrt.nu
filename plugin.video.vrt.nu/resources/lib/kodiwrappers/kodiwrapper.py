@@ -17,6 +17,12 @@ try:
 except ImportError:
     from urllib import urlencode
 
+try:
+    import socks  # pylint: disable=unused-import
+    HAS_SOCKS = True
+except ImportError:
+    HAS_SOCKS = False
+
 
 class KodiWrapper:
 
@@ -103,15 +109,6 @@ class KodiWrapper:
 
         httpproxytype = self.get_global_setting('network.httpproxytype')
 
-        if httpproxytype != 0: 
-            try:
-                import socks
-            except ImportError:
-                title = self.get_localized_string(32061)
-                message = self.get_localized_string(32062)
-                self.show_ok_dialog(title, message)
-                return None
-
         if httpproxytype == 0:
             httpproxyscheme = 'http'
         elif httpproxytype == 1:
@@ -139,6 +136,11 @@ class KodiWrapper:
         elif httpproxyserver:
             proxy_address = '%s://%s' % (httpproxyscheme, httpproxyserver)
         else:
+            return None
+
+        if httpproxytype != 0 and HAS_SOCKS is False:
+            message = self.get_localized_string(32061)
+            self.show_ok_dialog('', message)
             return None
 
         return dict(http=proxy_address, https=proxy_address)

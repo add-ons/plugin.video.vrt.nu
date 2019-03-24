@@ -65,10 +65,6 @@ msgid "Woops something went wrong, check the log for more details"
 msgstr "Oeps, er ging iets mis, check de log voor meer informatie"
 
 msgctxt "#32061"
-msgid "SOCKS proxies are currently unsupported"
-msgstr "SOCKS proxies zijn momenteel niet ondersteund"
-
-msgctxt "#32062"
 msgid "Using a SOCKS proxy requires the PySocks library (script.module.pysocks) installed."
 msgstr "Het gebruik van SOCKS proxies vereist dat de PySocks library (script.module.pysocks) geïnstalleerd is."
 
