@@ -41,7 +41,7 @@ you can send a message to [our Facebook page](https://www.facebook.com/kodivrtnu
 
 ## Releases
 
-#### v1.7.0 (2019-03-24)
+#### v1.7.0 (2019-XX-XX)
 - Add full proxy support (@dagwieers)
 - Indicate when content will disappear in the next 3 months (@dagwieers)
 - Indicate when content is geo-blocked (@dagwieers)
