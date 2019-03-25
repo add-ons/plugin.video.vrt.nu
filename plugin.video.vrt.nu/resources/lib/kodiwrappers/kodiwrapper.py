@@ -4,8 +4,8 @@
 
 from __future__ import absolute_import, division, unicode_literals
 
-import json
 import inputstreamhelper
+import json
 import xbmc
 import xbmcgui
 import xbmcplugin
@@ -16,6 +16,18 @@ try:
     from urllib.parse import urlencode
 except ImportError:
     from urllib import urlencode
+
+
+def has_socks():
+    ''' Test if socks is installed, and remember this information '''
+    if not hasattr(has_socks, 'installed'):
+        try:
+            import socks  # pylint: disable=unused-variable,unused-import
+            has_socks.installed = True
+        except ImportError:
+            has_socks.installed = False
+            return None  # Detect if this is the first run
+    return has_socks.installed
 
 
 class KodiWrapper:
@@ -99,14 +111,17 @@ class KodiWrapper:
     def get_proxies(self):
         usehttpproxy = self.get_global_setting('network.usehttpproxy')
         if usehttpproxy is False:
-            return dict()
+            return None
 
         httpproxytype = self.get_global_setting('network.httpproxytype')
 
-        if httpproxytype != 0:
-            title = self.get_localized_string(32061)
-            message = self.get_localized_string(32062)
-            self.show_ok_dialog(title, message)
+        socks_supported = has_socks()
+        if httpproxytype != 0 and not socks_supported:
+            # Only open the dialog the first time (to avoid multiple popups)
+            if socks_supported is None:
+                message = self.get_localized_string(32061)
+                self.show_ok_dialog('', message)
+            return None
 
         if httpproxytype == 0:
             httpproxyscheme = 'http'
@@ -135,7 +150,7 @@ class KodiWrapper:
         elif httpproxyserver:
             proxy_address = '%s://%s' % (httpproxyscheme, httpproxyserver)
         else:
-            return dict()
+            return None
 
         return dict(http=proxy_address, https=proxy_address)
 
