@@ -22,7 +22,7 @@ def has_socks():
     ''' Test if socks is installed, and remember this information '''
     if not hasattr(has_socks, 'installed'):
         try:
-            import socks  # pylint: disable=unused-variable
+            import socks  # pylint: disable=unused-variable,unused-import
             has_socks.installed = True
         except ImportError:
             has_socks.installed = False
