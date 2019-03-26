@@ -123,16 +123,9 @@ class KodiWrapper:
                 self.show_ok_dialog('', message)
             return None
 
-        if httpproxytype == 0:
-            httpproxyscheme = 'http'
-        elif httpproxytype == 1:
-            httpproxyscheme = 'socks4'
-        elif httpproxytype == 2:
-            httpproxyscheme = 'socks4a'
-        elif httpproxytype == 3:
-            httpproxyscheme = 'socks5'
-        elif httpproxytype == 4:
-            httpproxyscheme = 'socks5h'
+        proxy_types = ['http', 'socks4', 'socks4a', 'socks5', 'socks5h']
+        if 0 <= httpproxytype <= 5:
+            httpproxyscheme = proxy_types[httpproxytype]
         else:
             httpproxyscheme = 'http'
 
