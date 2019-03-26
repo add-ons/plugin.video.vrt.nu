@@ -58,7 +58,7 @@ class VRTPlayer:
 
     def show_category_menu_items(self):
         joined_url = ''.join((self.VRTNU_BASE_URL, '/categorieen/'))
-        category_items = self.__get_category_menu_items(joined_url, {'class': 'nui-tile title'}, actions.LISTING_CATEGORY_TVSHOWS)
+        category_items = self.__get_category_menu_items(joined_url, {'class': 'nui-tile'}, actions.LISTING_CATEGORY_TVSHOWS)
         self._kodi_wrapper.show_listing(category_items, sort=sortmethod.ALPHABET, content_type='files')
 
     def play(self, video):
@@ -98,7 +98,8 @@ class VRTPlayer:
         tiles = SoupStrainer('a', soupstrainer_parser_selector)
         soup = BeautifulSoup(response.content, 'html.parser', parse_only=tiles)
         listing = []
-        for tile in soup.find_all(class_='nui-tile title'):
+        self._kodi_wrapper.log_notice('testcat ' + str(soup.find_all(class_='nui-tile')))
+        for tile in soup.find_all(class_='nui-tile'):
             category = tile['href'].split('/')[-2]
             thumbnail, title = self.__get_category_thumbnail_and_title(tile)
             video_dict = None
@@ -114,13 +115,13 @@ class VRTPlayer:
 
     @staticmethod
     def __format_category_image_url(element):
-        raw_thumbnail = element.find(class_='nui-tile--image')['data-responsive-image']
+        raw_thumbnail = element.find(class_='media')['data-responsive-image']
         return statichelper.add_https_method(raw_thumbnail)
 
     @staticmethod
     def __get_category_thumbnail_and_title(element):
         thumbnail = VRTPlayer.__format_category_image_url(element)
-        found_element = element.find('h2')
+        found_element = element.find('h3')
         title = ''
         if found_element is not None:
             title = statichelper.strip_newlines(found_element.contents[0])
