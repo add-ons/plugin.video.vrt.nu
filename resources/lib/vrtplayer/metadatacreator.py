@@ -23,8 +23,6 @@ class MetadataCreator:
         self._subtitle = None
         self._brands = None
         self._geolocked = None
-        self._videoid = None
-        self._whatsonid = None
 
     @property
     def title(self):
@@ -145,22 +143,6 @@ class MetadataCreator:
     @geolocked.setter
     def geolocked(self, value):
         self._geolocked = value
-
-    @property
-    def videoid(self):
-        return self._videoid
-
-    @videoid.setter
-    def videoid(self, value):
-        self._videoid = value
-
-    @property
-    def whatsonid(self):
-        return self._whatsonid
-
-    @whatsonid.setter
-    def whatsonid(self, value):
-        self._whatsonid = value
 
     def get_video_dict(self):
         video_dict = dict()

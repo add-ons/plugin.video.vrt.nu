@@ -77,9 +77,12 @@ msbuild.wrn
 # Visual Studio 2015
 .vs/
 
-
 # Test caches
 .pytest_cache/
 .tox/
 # Packages
 *.zip
+
+# Temporary files
+*.new
+*.orig
