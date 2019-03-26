@@ -10,25 +10,37 @@ namespace plugin.video.vrt.nu.packagemaker
 {
     class Program
     {
+        private const string ZipfileName = "plugin.video.vrt.nu.zip";
+        private const string SubFolderName = "plugin.video.vrt.nu";
+        private const string ZipFolderName = "zip";
+
         static void Main(string[] args)
         {
-            Console.WriteLine(@"Note this program needs to be run from the following path plugin.video.vrt.nu\plugin.video.vrt.nu.packagemaker\bin\Debug\netcoreapp2.1");
-
-            var zipfileName = "plugin.video.vrt.nu.zip";
-            var foldername = "plugin.video.vrt.nu";
             var dllLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-            var destination = Path.Combine(dllLocation, foldername);
+            var rootFolder = Path.Combine(dllLocation, @"..");
+#if DEBUG
+            rootFolder = Path.Combine(dllLocation, @"..", @"..", @"..", @"..");
+#endif
+            rootFolder = Path.GetFullPath(rootFolder);//gives nicer output in logs
 
-            RemoveDestinationDirectory(destination);
-            RemoveDestinationZip(Path.Combine(dllLocation, zipfileName));
+            var destination = Path.Combine(rootFolder, ZipFolderName, SubFolderName);
 
-            var copiedFiles = CopyFilesToDestination(dllLocation, foldername, destination);
+            var zipDestination = Path.Combine(rootFolder, ZipFolderName, ZipfileName);
+            RemoveDestinationZip(zipDestination);
+
+            var vrtPluginRoot = Path.Combine(rootFolder, SubFolderName);
+
+            var copiedFiles = CopyFilesToDestination(rootFolder, vrtPluginRoot, destination);
             DeleteUnecesaryFiles(destination, copiedFiles);
 
-            CreateZipFile(Path.Combine(dllLocation,zipfileName), destination);
+            CreateZipFile(zipDestination, destination);
+            
+            RemoveDestinationDirectory(destination);
 
-            Process.Start("explorer.exe", dllLocation);
+            Console.WriteLine($"Created zip at {Path.GetFullPath(zipDestination)}");
+            Console.WriteLine("Type any key to exit");
+            Console.ReadLine();
         }
 
         private static void CreateZipFile(string zipfileName, string destination)
@@ -49,13 +61,11 @@ namespace plugin.video.vrt.nu.packagemaker
             Directory.Delete(Path.Combine(destination, "vrtnutests"), true);
         }
 
-        private static string[] CopyFilesToDestination(string dllLocation, string foldername, string destination)
+        private static string[] CopyFilesToDestination(string root, string pluginVideoVrtNuRoot, string destination)
         {
-            var root = Path.Combine(dllLocation, @"../../../../");
-            var pluginVideoVrtNuRoot = Path.Combine(root, foldername);
-            DirectoryCopy(pluginVideoVrtNuRoot, Path.Combine(dllLocation, foldername), true);
+            DirectoryCopy(pluginVideoVrtNuRoot, destination, true);
 
-            File.Copy(Path.Combine(root, "LICENSE"), Path.Combine(Path.Combine(dllLocation, foldername), "LICENSE"));
+            File.Copy(Path.Combine(root, "LICENSE"), Path.Combine(destination, "LICENSE"));
             var copiedFiles = Directory.GetFiles(destination, string.Empty, SearchOption.AllDirectories);
             return copiedFiles;
         }
