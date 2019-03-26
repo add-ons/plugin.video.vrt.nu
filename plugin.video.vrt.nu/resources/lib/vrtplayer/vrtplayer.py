@@ -98,7 +98,6 @@ class VRTPlayer:
         tiles = SoupStrainer('a', soupstrainer_parser_selector)
         soup = BeautifulSoup(response.content, 'html.parser', parse_only=tiles)
         listing = []
-        self._kodi_wrapper.log_notice('testcat ' + str(soup.find_all(class_='nui-tile')))
         for tile in soup.find_all(class_='nui-tile'):
             category = tile['href'].split('/')[-2]
             thumbnail, title = self.__get_category_thumbnail_and_title(tile)
