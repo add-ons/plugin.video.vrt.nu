@@ -16,17 +16,20 @@
     <extension point="xbmc.python.pluginsource" library="addon.py">
         <provides>video</provides>
     </extension>
+
     <extension point="xbmc.service" library="service.py" start="startup" />
+
     <extension point="xbmc.addon.metadata">
-    <summary lang="en_GB">Addon to watch VRT.NU</summary>
-    <description lang="en_GB">This addon can be used to watch all streams from VRT.NU. And also offers livestreams from Eén, Canvas and Ketnet!</description>
-    <summary lang="nl_NL">Addon om VRT.NU te bekijken.</summary>
-    <description lang="nl_NL">Met deze addon kan je alle streams van VRT.NU bekijken. Alsook de livestreams van Eén, Canvas en Ketnet!</description>
+        <summary lang="en_GB">Addon to watch VRT.NU</summary>
+        <description lang="en_GB">This addon can be used to watch all streams from VRT.NU. And also offers livestreams from Eén, Canvas and Ketnet!</description>
+        <summary lang="nl_NL">Addon om VRT.NU te bekijken.</summary>
+        <description lang="nl_NL">Met deze addon kan je alle streams van VRT.NU bekijken. Alsook de livestreams van Eén, Canvas en Ketnet!</description>
         <language>nl</language>
         <platform>all</platform>
         <license>GNU General Public License, v3</license>
         <news>
-v1.7.0 (2019-XX-XX)
+v1.7.0 (2019-03-26)
+- Fix the categories web-scraping (@mediaminister)
 - Add full proxy support (@dagwieers)
 - Indicate when content will disappear in the next 3 months (@dagwieers)
 - Indicate when content is geo-blocked (@dagwieers)
@@ -68,11 +71,12 @@ v1.3.4 (2018-09-10)
 - Fixed A-Z menu so it shows items
         </news>
         <source>https://github.com/pietje666/plugin.video.vrt.nu</source>
-    <website>https://www.facebook.com/kodivrtnu/</website>
-    <assets>
-    <icon>resources/icon.png</icon>
-      <fanart>resources/fanart.jpg</fanart>
-      <!--<screenshot>resources/screenshot-01.jpg</screenshot>-->
-    </assets>
+        <website>https://github.com/pietje666/plugin.video.vrt.nu/wiki</website>
+        <forum>https://www.facebook.com/kodivrtnu/</forum>
+        <assets>
+            <icon>resources/icon.png</icon>
+            <fanart>resources/fanart.jpg</fanart>
+            <!-- screenshot>resources/screenshot-01.jpg</screenshot -->
+        </assets>
     </extension>
 </addon>
