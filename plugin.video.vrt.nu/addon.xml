@@ -5,7 +5,7 @@
        provider-name="Martijn Moreel">
 
     <requires>
-        <import addon="inputstream.adaptive" version="2.0.19" />
+        <import addon="inputstream.adaptive" version="2.0.19"/>
         <import addon="script.module.beautifulsoup4" version="4.5.3"/>
         <import addon="script.module.inputstreamhelper" version="0.3.3"/>
         <import addon="script.module.pysocks" version="1.6.8" optional="true"/>
@@ -16,9 +16,7 @@
     <extension point="xbmc.python.pluginsource" library="addon.py">
         <provides>video</provides>
     </extension>
-
-    <extension point="xbmc.service" library="service.py" start="startup" />
-
+    <extension point="xbmc.service" library="service.py"/>
     <extension point="xbmc.addon.metadata">
         <summary lang="en_GB">Addon to watch VRT.NU</summary>
         <description lang="en_GB">This addon can be used to watch all streams from VRT.NU. And also offers livestreams from Eén, Canvas and Ketnet!</description>
@@ -58,17 +56,6 @@ v1.5.0 (2018-12-27)
 - 720p Livestreams when enabled in settings + having kodi 18 + having widevine.dll present (Thanks mediaminister)
 - Fixed bug where watched icon was not showing in Kodi 18
 - Implemented different way of working with subtitles (@mediaminister)
-v1.4.3 (2018-11-07)
-- Livestreams working again
-v1.4.2 (2018-10-11)
-- Changed way of working with urls when a season is refering to href="#"
-v1.4.1 (2018-09-24)
-- Adapted plugin to new vrtnu layout for showing multiple seasons
-v1.4.0 (2018-09-20)
-- Using the new vrtnu login method and video services
-- Fixed bug where some videos would not be able to play (@dagwieers)
-v1.3.4 (2018-09-10)
-- Fixed A-Z menu so it shows items
         </news>
         <source>https://github.com/pietje666/plugin.video.vrt.nu</source>
         <website>https://github.com/pietje666/plugin.video.vrt.nu/wiki</website>
