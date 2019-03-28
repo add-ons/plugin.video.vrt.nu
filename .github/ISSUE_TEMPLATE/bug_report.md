@@ -1,30 +1,37 @@
 ---
-name: Bug report
-about: Create a report to help us improve
-
+name: 🐛 Bug report
+about: Create a report to help us improve the addon
 ---
+<!--- Verify first that your issue is not already reported on GitHub -->
+<!--- Complete *all* sections as described -->
 
-Please use this template, it really helps me to tackle bugs more easily when everything is filled in a structural manner
+### Describe the bug ###
+<!--- Add a clear and concise description of what the bug is -->
 
-**Describe the bug**
-A clear and concise description of what the bug is.
 
-**To Reproduce**
+### To Reproduce ###
 Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
+1. Go to ...
+2. Click on ....
+3. Scroll down to ....
 4. See error
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
 
-**(please complete the following information):**
- - Operating system:
- - Kodi Version:
+### Expected behavior ###
+<!--- Add a clear and concise description of what you expected to happen -->
 
-**Additional context**
-- Using a VPN:
-- Country you are using the addon from:
 
-**Log (if available)**
+### Additional context ###
+<!-- Please complete the following information -->
+- Operating system:
+- Kodi version:
+- Addon version:
+- Using a VPN: yes/no
+- Country you are using the addon from: ...
+
+
+### Log (if available) ###
+```paste below
+
+
+```
