@@ -37,6 +37,6 @@ unit:
 
 zip: test
 	@echo -e "$(white)=$(blue) Building new package$(reset)"
-	rm -f ../$(zip_name)
+	@rm -f ../$(zip_name)
 	cd ..; zip -r $(zip_name) $(include_paths) -x $(exclude_files)
 	@echo -e "$(white)=$(blue) Successfully wrote package as: $(white)../$(zip_name)$(reset)"
