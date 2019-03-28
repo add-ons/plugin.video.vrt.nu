@@ -2,7 +2,7 @@
 #
 $include_files = @( 'addon.py', 'addon.xml', 'LICENSE', 'README.md', 'service.py' )
 $include_paths = @( 'resources/' )
-$exclude_paths = @( 'test/' )
+$exclude_paths = @( '*.new', '*.orig', '*.pyc' )
 
 # Get addon metadata
 [xml]$XmlDocument = Get-Content -LiteralPath 'addon.xml'
@@ -21,12 +21,15 @@ Add-Type -AssemblyName System.IO.Compression
 
 Write-Host '= Building new package'
 $zip_file = [System.IO.Compression.ZipFile]::Open($zip_name, 'Create')
-ForEach ($file in $include_files) {
-    [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip_file, $file, "$name/$file")
+ForEach ($relative_file in $include_files) {
+    $archive_file = Join-Path -Path $name -ChildPath $relative_file
+    [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip_file, $relative_file, $archive_file)
 }
 ForEach ($path in $include_paths) {
-    Get-ChildItem -Recurse -File -LiteralPath $path | ForEach-Object {
-        [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip_file, $_.FullName, "$name/$(Resolve-Path -Path $_.FullName -Relative)")
+    Get-ChildItem -Recurse -File -Path $path -Exclude *.pyc | ForEach-Object {
+        $relative_file = Resolve-Path -Path $_.FullName -Relative
+        $archive_file = Join-Path -Path $name -ChildPath $relative_file
+        [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip_file, $relative_file, $archive_file)
     }
 }
 $zip_file.Dispose()
