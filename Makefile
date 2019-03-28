@@ -10,32 +10,33 @@ git_hash = $(shell git rev-parse --short HEAD)
 zip_name = $(name)-$(version)-$(git_hash).zip
 include_files = addon.py addon.xml LICENSE README.md resources/ service.py
 include_paths = $(patsubst %,$(name)/%,$(include_files))
-exclude_files = \*.new \*.orig
+exclude_files = \*.new \*.orig \*.pyc
 zip_dir = $(name)/
+
+blue = \e[1;34m
+white = \e[1;37m
+reset = \e[0m
 
 .PHONY: test
 
 package: zip
 
-clean:
-	@echo -e "\e[1;37m=\e[1;34m Clean up project directory\e[0m"
-	find . -name '*.pyc' -delete
-	@echo -e "\e[1;37m=\e[1;34m Finished cleaning up.\e[0m"
+test: sanity unit
 
-test: unittest
-	@echo -e "\e[1;37m=\e[1;34m Starting tests\e[0m"
+sanity:
+	@echo -e "$(white)=$(blue) Starting sanity tests$(reset)"
 	pylint *.py
 	pylint resources/lib/*/*.py
 	tox -e $(ENVS)
-	@echo -e "\e[1;37m=\e[1;34m Tests finished successfully.\e[0m"
+	@echo -e "$(white)=$(blue) Sanity tests finished successfully.$(reset)"
 
-unittest:
-	@echo -e "\e[1;37m=\e[1;34m Starting unit tests\e[0m"
+unit:
+	@echo -e "$(white)=$(blue) Starting unit tests$(reset)"
 	PYTHONPATH=$(pwd) python test/vrtplayertests.py
-	@echo -e "\e[1;37m=\e[1;34m Unit tests finished successfully.\e[0m"
+	@echo -e "$(white)=$(blue) Unit tests finished successfully.$(reset)"
 
-zip: test clean
-	@echo -e "\e[1;37m=\e[1;34m Building new package\e[0m"
+zip: test
+	@echo -e "$(white)=$(blue) Building new package$(reset)"
 	rm -f ../$(zip_name)
 	cd ..; zip -r $(zip_name) $(include_paths) -x $(exclude_files)
-	@echo -e "\e[1;37m=\e[1;34m Successfully wrote package as: \e[1;37m../$(zip_name)\e[0m"
+	@echo -e "$(white)=$(blue) Successfully wrote package as: $(white)../$(zip_name)$(reset)"
