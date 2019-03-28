@@ -147,11 +147,11 @@ class KodiWrapper:
 
         return dict(http=proxy_address, https=proxy_address)
 
-    # NOTE: normally inputstream adaptive will always be installed, this only applies for people uninstalling inputstream adaptive while this addon is disabled
+    # Note: InputStream Adaptive is not pre-installed on Windows and in some cases users can uninstall it
     def has_inputstream_adaptive_installed(self):
         return xbmc.getCondVisibility('System.HasAddon("{0}")'.format('inputstream.adaptive')) == 1
 
-    def can_play_widevine(self):
+    def can_play_drm(self):
         kodi_version = int(xbmc.getInfoLabel('System.BuildVersion').split('.')[0])
         return kodi_version > 17
 
