@@ -23,7 +23,7 @@ class StreamService:
         self._vrt_base = vrt_base
         self._vrtnu_base_url = vrtnu_base_url
         self._create_settings_dir()
-        self._can_play_drm = self._kodi_wrapper.can_play_widevine() and self._kodi_wrapper.has_inputstream_adaptive_installed()
+        self._can_play_drm = self._kodi_wrapper.can_play_drm()
         self._license_url = self._get_license_url()
 
     def _get_license_url(self):
