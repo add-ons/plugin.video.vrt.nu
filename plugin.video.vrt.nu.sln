@@ -11,9 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "plugin.video.vrt.nu", "plugin.video.vrt.nu\plugin.video.vrt.nu.pyproj", "{0360D216-8FEA-4853-AEF8-EBD17CD8B763}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Packagemaker", "packagemaker\Packagemaker.csproj", "{0400C90D-4756-4811-8AF1-CB921F0A83E9}"
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "plugin.video.vrt.nu.pyproj", "plugin.video.vrt.nu.pyproj", "{0360D216-8FEA-4853-AEF8-EBD17CD8B763}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
