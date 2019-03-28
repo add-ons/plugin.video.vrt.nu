@@ -2,7 +2,7 @@
 #
 $include_files = @( 'addon.py', 'addon.xml', 'LICENSE', 'README.md', 'service.py' )
 $include_paths = @( 'resources/' )
-$exclude_paths = @( '*.new', '*.orig', '*.pyc' )
+$exclude_files = @( '*.new', '*.orig', '*.pyc' )
 
 # Get addon metadata
 [xml]$XmlDocument = Get-Content -LiteralPath 'addon.xml'
@@ -26,7 +26,7 @@ ForEach ($relative_file in $include_files) {
     [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip_file, $relative_file, $archive_file)
 }
 ForEach ($path in $include_paths) {
-    Get-ChildItem -Recurse -File -Path $path -Exclude *.pyc | ForEach-Object {
+    Get-ChildItem -Recurse -File -Path $path -Exclude $exclude_files | ForEach-Object {
         $relative_file = Resolve-Path -Path $_.FullName -Relative
         $archive_file = Join-Path -Path $name -ChildPath $relative_file
         [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip_file, $relative_file, $archive_file)

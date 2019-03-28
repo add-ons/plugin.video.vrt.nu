@@ -82,7 +82,3 @@ msbuild.wrn
 .tox/
 # Packages
 *.zip
-
-# Temporary files
-*.new
-*.orig
