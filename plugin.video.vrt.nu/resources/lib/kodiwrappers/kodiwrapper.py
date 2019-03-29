@@ -40,8 +40,16 @@ class KodiWrapper:
 
     def show_listing(self, list_items, sort=None, content_type='episodes'):
         listing = []
+
+        if sort is not None:
+            kodi_sorts = {sortmethod.ALPHABET: xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE}
+            kodi_sortmethod = kodi_sorts.get(sort)
+            xbmcplugin.addSortMethod(handle=self._handle, sortMethod=kodi_sortmethod)
+        else:
+            xbmcplugin.addSortMethod(handle=self._handle, sortMethod=xbmcplugin.SORT_METHOD_NONE)
+
         for title_item in list_items:
-            list_item = xbmcgui.ListItem(label=title_item.title)
+            list_item = xbmcgui.ListItem(label=title_item.title, thumbnailImage=title_item.art_dict.get('thumb'))
             url = self._url + '?' + urlencode(title_item.url_dict)
             list_item.setProperty('IsPlayable', str(title_item.is_playable))
 
@@ -54,13 +62,6 @@ class KodiWrapper:
             listing.append((url, list_item, not title_item.is_playable))
 
         ok = xbmcplugin.addDirectoryItems(self._handle, listing, len(listing))
-
-        if sort is not None:
-            kodi_sorts = {sortmethod.ALPHABET: xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE}
-            kodi_sortmethod = kodi_sorts.get(sort)
-            xbmcplugin.addSortMethod(handle=self._handle, sortMethod=kodi_sortmethod)
-        else:
-            xbmcplugin.addSortMethod(handle=self._handle, sortMethod=xbmcplugin.SORT_METHOD_NONE)
 
         xbmcplugin.setContent(self._handle, content=content_type)
         xbmcplugin.endOfDirectory(self._handle, ok)

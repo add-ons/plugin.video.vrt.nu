@@ -18,7 +18,6 @@ class MetadataCreator:
         self._episode = None
         self._year = None
         self._mediatype = None
-        self._url = None
         self._ontime = None
         self._offtime = None
         self._subtitle = None
@@ -114,14 +113,6 @@ class MetadataCreator:
         self._mediatype = value
 
     @property
-    def url(self):
-        return self._url
-
-    @url.setter
-    def url(self, value):
-        self._url = value
-
-    @property
     def brands(self):
         return self._brands
 
@@ -155,6 +146,9 @@ class MetadataCreator:
 
     def get_video_dict(self):
         video_dict = dict()
+
+        if self.title:
+            video_dict['title'] = self.title
 
         if self.tvshowtitle:
             video_dict['tvshowtitle'] = self.tvshowtitle
@@ -200,10 +194,6 @@ class MetadataCreator:
         # NOTE/ Does not seem to have any effect
         if self.offtime:
             video_dict['enddate'] = self.offtime.strftime('%d.%m.%Y')
-
-        # NOTE: Does not seem to have any effect
-        if self.url:
-            video_dict['path'] = self.url
 
         if self.brands:
             # NOTE: Does not seem to have any effect
