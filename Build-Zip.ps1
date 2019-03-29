@@ -1,5 +1,7 @@
-#!powershell
-#
+#!/usr/bin/env pwsh
+
+Set-StrictMode -Version 5.0
+
 $include_files = @( 'addon.py', 'addon.xml', 'LICENSE', 'README.md', 'service.py' )
 $include_paths = @( 'resources/' )
 $exclude_files = @( '*.new', '*.orig', '*.pyc' )
@@ -16,10 +18,14 @@ if (Test-Path -LiteralPath $zip_name) {
     Remove-Item -LiteralPath $zip_name
 }
 
-# Create ZIP file
-Add-Type -AssemblyName System.IO.Compression
+# Ensure .NET's current directory is Powershell's working directory
+# NOTE: This is to ensure .NET can find our files correctly
+[System.IO.Directory]::SetCurrentDirectory($PWD)
 
-Write-Host '= Building new package'
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+
+# Create ZIP file
+Write-Host -fore blue '= Building new package'
 $zip_file = [System.IO.Compression.ZipFile]::Open($zip_name, 'Create')
 ForEach ($relative_file in $include_files) {
     $archive_file = Join-Path -Path $name -ChildPath $relative_file
@@ -28,9 +34,11 @@ ForEach ($relative_file in $include_files) {
 ForEach ($path in $include_paths) {
     Get-ChildItem -Recurse -File -Path $path -Exclude $exclude_files | ForEach-Object {
         $relative_file = Resolve-Path -Path $_.FullName -Relative
-        $archive_file = Join-Path -Path $name -ChildPath $relative_file
+        # NOTE: Powershell lacks functionality to normalize a path
+        $archive_file = (Join-Path -Path $name -ChildPath $relative_file).Replace('/./', '/')
         [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip_file, $relative_file, $archive_file)
     }
 }
 $zip_file.Dispose()
-Write-Host "= Successfully wrote package as: $zip_name"
+Write-Host "= Successfully wrote package as: " -ForegroundColor:Blue -NoNewLine
+Write-Host "$zip_name" -ForegroundColor:Cyan
