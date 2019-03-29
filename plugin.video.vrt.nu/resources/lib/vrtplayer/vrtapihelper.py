@@ -127,12 +127,13 @@ class VRTApiHelper:
             metadata_creator.plot = plot_meta + metadata_creator.plot
 
             thumb = statichelper.add_https_method(episode.get('videoThumbnailUrl'))
+            fanart = statichelper.add_https_method(episode.get('programImageUrl'))
             video_url = statichelper.add_https_method(episode.get('url'))
             title, sort = self._make_title(episode, titletype)
             episode_items.append(helperobjects.TitleItem(title=title,
                                                          url_dict=dict(action=actions.PLAY, video_url=video_url, video_id=episode.get('videoId'), publication_id=episode.get('publicationId')),
                                                          is_playable=True,
-                                                         art_dict=dict(thumb=thumb, icon='DefaultAddonVideo.png', fanart=thumb),
+                                                         art_dict=dict(thumb=thumb, icon='DefaultAddonVideo.png', fanart=fanart),
                                                          video_dict=metadata_creator.get_video_dict()))
         return episode_items, sort
 
