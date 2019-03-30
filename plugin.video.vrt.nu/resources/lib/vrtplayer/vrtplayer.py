@@ -99,7 +99,7 @@ class VRTPlayer:
         soup = BeautifulSoup(response.content, 'html.parser', parse_only=tiles)
         listing = []
         for tile in soup.find_all(class_='nui-tile'):
-            category = tile['href'].split('/')[-2]
+            category = tile.get('href').split('/')[-2]
             thumbnail, title = self.__get_category_thumbnail_and_title(tile)
             video_dict = None
             if video_dict_action is not None:
@@ -114,7 +114,7 @@ class VRTPlayer:
 
     @staticmethod
     def __format_category_image_url(element):
-        raw_thumbnail = element.find(class_='media')['data-responsive-image']
+        raw_thumbnail = element.find(class_='media').get('data-responsive-image')
         return statichelper.add_https_method(raw_thumbnail)
 
     @staticmethod

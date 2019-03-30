@@ -27,7 +27,7 @@ class StreamService:
         self._license_url = self._get_license_url()
 
     def _get_license_url(self):
-        return requests.get(self._VUPLAY_API_URL, proxies=self._proxies).json()['drm_providers']['widevine']['la_url']
+        return requests.get(self._VUPLAY_API_URL, proxies=self._proxies).json().get('drm_providers', dict()).get('widevine', dict()).get('la_url')
 
     def _create_settings_dir(self):
         settingsdir = self._kodi_wrapper.get_userdata_path()
@@ -83,17 +83,17 @@ class StreamService:
         xvrttoken = None
 
         # Store required data attributes
-        client = video_data['data-client']
-        media_api_url = video_data['data-mediaapiurl']
-        if 'data-videoid' in list(video_data.keys()):
-            video_id = video_data['data-videoid']
+        client = video_data.get('data-client')
+        media_api_url = video_data.get('data-mediaapiurl')
+        video_id = video_data.get('data-videoid')
+        if video_id is not None:
             xvrttoken = self.token_resolver.get_xvrttoken()
         else:
-            video_id = video_data['data-livestream']
+            video_id = video_data.get('data-livestream')
             is_live_stream = True
-        publication_id = ''
-        if 'data-publicationid' in list(video_data.keys()):
-            publication_id = video_data['data-publicationid'] + requests.utils.quote('$')
+        publication_id = video_data.get('data-publicationid', '')
+        if publication_id:
+            publication_id += requests.utils.quote('$')
         return apidata.ApiData(client, media_api_url, video_id, publication_id, xvrttoken, is_live_stream)
 
     def _get_video_json(self, api_data):
@@ -111,28 +111,28 @@ class StreamService:
         return video_json
 
     def _handle_error(self, video_json):
-        self._kodi_wrapper.log_error(video_json['message'])
+        self._kodi_wrapper.log_error(video_json.get('message'))
         message = self._kodi_wrapper.get_localized_string(32054)
         self._kodi_wrapper.show_ok_dialog('', message)
 
     def get_stream(self, video, retry=False, api_data=None):
-        self._kodi_wrapper.log_notice('video_url ' + video['video_url'])
-        if video['video_id'] is not None and video['publication_id'] is not None and retry is False:
+        self._kodi_wrapper.log_notice('video_url ' + video.get('video_url'))
+        if video.get('video_id') is not None and video.get('publication_id') is not None and retry is False:
             xvrttoken = self.token_resolver.get_xvrttoken()
-            api_data = apidata.ApiData(self._CLIENT, self._VUALTO_API_URL, video['video_id'], video['publication_id'] + requests.utils.quote('$'), xvrttoken, False)
+            api_data = apidata.ApiData(self._CLIENT, self._VUALTO_API_URL, video.get('video_id'), video.get('publication_id') + requests.utils.quote('$'), xvrttoken, False)
         else:
-            api_data = api_data or self._get_api_data(video['video_url'])
+            api_data = api_data or self._get_api_data(video.get('video_url'))
         vudrm_token = None
         video_json = self._get_video_json(api_data)
 
         if 'drm' in video_json:
-            vudrm_token = video_json['drm']
-            target_urls = video_json['targetUrls']
-            stream_dict = dict(list([(x['type'], x['url']) for x in target_urls]))
+            vudrm_token = video_json.get('drm')
+            target_urls = video_json.get('targetUrls')
+            stream_dict = dict(list([(x.get('type'), x.get('url')) for x in target_urls]))
             return self._select_stream(stream_dict, vudrm_token)
 
-        if video_json['code'] == 'INVALID_LOCATION' or video_json['code'] == 'INCOMPLETE_ROAMING_CONFIG':
-            self._kodi_wrapper.log_notice(video_json['message'])
+        if video_json.get('code') in ('INCOMPLETE_ROAMING_CONFIG', 'INVALID_LOCATION'):
+            self._kodi_wrapper.log_notice(video_json.get('message'))
             roaming_xvrttoken = self.token_resolver.get_xvrttoken(True)
             if not retry and roaming_xvrttoken is not None:
                 # Delete cached playertokens

@@ -48,7 +48,7 @@ class VRTApiHelper:
         return tvshow_items
 
     def _get_season_items(self, api_url, api_json):
-        season_items = None
+        season_items = []
         if api_json.get('results'):
             episode = api_json['results'][0]
         else:
@@ -62,12 +62,12 @@ class VRTApiHelper:
         return season_items
 
     def get_episode_items(self, path):
-        episode_items = None
-        sort_method = None
+        episode_items = []
+        sort = None
         if path == 'recent':
             api_url = ''.join((self._VRTNU_SEARCH_URL, '?i=video&size=100&facets[transcodingStatus]=AVAILABLE&facets[brands]=[een,canvas,sporza,vrtnws,vrtnxt,radio1,radio2,klara,stubru,mnm]'))
             api_json = requests.get(api_url, proxies=self._proxies).json()
-            episode_items, sort_method = self._map_to_episode_items(api_json.get('results', []), path)
+            episode_items, sort = self._map_to_episode_items(api_json.get('results', []), path)
         else:
             api_url = ''.join((self._VRTNU_SEARCH_URL, '?i=video&size=150&facets[programUrl]=//www.vrt.be', path.replace('.relevant', ''))) if '.relevant/' in path else path
             api_json = requests.get(api_url, proxies=self._proxies).json()
@@ -75,10 +75,10 @@ class VRTApiHelper:
             if 'facets[seasonTitle]' not in path:
                 episode_items = self._get_season_items(api_url, api_json)
             # No season items, generate episode items
-            if episode_items is None:
-                episode_items, sort_method = self._map_to_episode_items(api_json.get('results', []))
+            if not episode_items:
+                episode_items, sort = self._map_to_episode_items(api_json.get('results', []))
 
-        return episode_items, sort_method
+        return episode_items, sort
 
     def _map_to_episode_items(self, episodes, titletype=None):
         episode_items = []
@@ -86,7 +86,7 @@ class VRTApiHelper:
         for episode in episodes:
             display_options = episode.get('displayOptions', dict())
 
-            if episode['programType'] == 'reeksoplopend' and titletype is None:
+            if episode.get('programType') == 'reeksoplopend' and titletype is None:
                 titletype = 'reeksoplopend'
 
             metadata_creator = metadatacreator.MetadataCreator()
@@ -109,9 +109,9 @@ class VRTApiHelper:
             metadata_creator.season = episode.get('seasonName')
             metadata_creator.episode = episode.get('episodeNumber')
             metadata_creator.mediatype = episode.get('type', 'episode')
-            if episode.get('assetOnTime') is not None:
+            if episode.get('assetOnTime'):
                 metadata_creator.ontime = datetime(*time.strptime(episode.get('assetOnTime'), '%Y-%m-%dT%H:%M:%S+0000')[0:6])
-            if episode.get('assetOffTime') is not None:
+            if episode.get('assetOffTime'):
                 metadata_creator.offtime = datetime(*time.strptime(episode.get('assetOffTime'), '%Y-%m-%dT%H:%M:%S+0000')[0:6])
 
             # Add additional metadata to plot
@@ -190,11 +190,11 @@ class VRTApiHelper:
     def _make_title(self, result, titletype):
         sort = None
         if titletype == 'recent':
-            title = ''.join((result['program'], ' - ', BeautifulSoup(result['shortDescription'], 'html.parser').text))
-        elif titletype == 'reeksoplopend' or result['formattedBroadcastShortDate'] == '':
-            title = ''.join((self._kodi_wrapper.get_localized_string(32095), ' ', str(result['episodeNumber']), ' - ', BeautifulSoup(result['shortDescription'], 'html.parser').text if result['shortDescription'] != '' else BeautifulSoup(result['title'], 'html.parser').text))
+            title = ''.join((result.get('program'), ' - ', BeautifulSoup(result.get('shortDescription'), 'html.parser').text))
+        elif titletype == 'reeksoplopend' or result.get('formattedBroadcastShortDate') == '':
+            title = ''.join((self._kodi_wrapper.get_localized_string(32095), ' ', str(result.get('episodeNumber')), ' - ', BeautifulSoup(result.get('shortDescription'), 'html.parser').text if result.get('shortDescription') != '' else BeautifulSoup(result.get('title'), 'html.parser').text))
             sort = sortmethod.ALPHABET
         else:
-            title = ''.join((result['formattedBroadcastShortDate'], ' - ', BeautifulSoup(result['shortDescription'], 'html.parser').text if result['shortDescription'] != '' else BeautifulSoup(result['title'], 'html.parser').text))
+            title = ''.join((result.get('formattedBroadcastShortDate'), ' - ', BeautifulSoup(result.get('shortDescription'), 'html.parser').text if result.get('shortDescription') != '' else BeautifulSoup(result.get('title'), 'html.parser').text))
 
         return title, sort
