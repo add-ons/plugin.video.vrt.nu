@@ -35,7 +35,6 @@ class VRTApiHelper:
             metadata_creator.mediatype = 'tvshow'
             metadata_creator.tvshowtitle = tvshow.get('title')
             metadata_creator.plot = statichelper.unescape(tvshow.get('description'))
-            metadata_creator.url = statichelper.add_https_method(tvshow.get('targetUrl'))
             metadata_creator.brands = tvshow.get('brands')
             thumbnail = statichelper.add_https_method(tvshow.get('thumbnail'))
             # Cut vrtbase url off since it will be added again when searching for episodes
@@ -92,7 +91,6 @@ class VRTApiHelper:
 
             metadata_creator = metadatacreator.MetadataCreator()
             metadata_creator.tvshowtitle = episode.get('program')
-            metadata_creator.url = episode.get('permalink')
             json_broadcast_date = episode.get('broadcastDate')
             if json_broadcast_date != -1:
                 metadata_creator.datetime = datetime.fromtimestamp(episode.get('broadcastDate', 0)/1000)
@@ -135,6 +133,7 @@ class VRTApiHelper:
             fanart = statichelper.add_https_method(episode.get('programImageUrl', thumb))
             video_url = statichelper.add_https_method(episode.get('url'))
             title, sort = self._make_title(episode, titletype)
+            metadata_creator.title = title
             episode_items.append(helperobjects.TitleItem(title=title,
                                                          url_dict=dict(action=actions.PLAY, video_url=video_url, video_id=episode.get('videoId'), publication_id=episode.get('publicationId')),
                                                          is_playable=True,
