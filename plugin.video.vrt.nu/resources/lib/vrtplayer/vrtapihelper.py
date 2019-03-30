@@ -54,12 +54,12 @@ class VRTApiHelper:
             episode = api_json['results'][0]
         else:
             episode = dict()
-        facets = api_json.get('facets').get('facets')
+        facets = api_json.get('facets', dict()).get('facets', [])
         # Check if program has seasons
         for facet in facets:
-            if facet.get('name') == 'seasons' and len(facet.get('buckets')) > 1:
+            if facet.get('name') == 'seasons' and len(facet.get('buckets', [])) > 1:
                 # Found multiple seasons, make list of seasons
-                season_items = self._map_to_season_items(api_url, facet.get('buckets'), episode)
+                season_items = self._map_to_season_items(api_url, facet.get('buckets', []), episode)
         return season_items
 
     def get_episode_items(self, path):
@@ -68,7 +68,7 @@ class VRTApiHelper:
         if path == 'recent':
             api_url = ''.join((self._VRTNU_SEARCH_URL, '?i=video&size=100&facets[transcodingStatus]=AVAILABLE&facets[brands]=[een,canvas,sporza,vrtnws,vrtnxt,radio1,radio2,klara,stubru,mnm]'))
             api_json = requests.get(api_url, proxies=self._proxies).json()
-            episode_items, sort_method = self._map_to_episode_items(api_json.get('results'), path)
+            episode_items, sort_method = self._map_to_episode_items(api_json.get('results', []), path)
         else:
             api_url = ''.join((self._VRTNU_SEARCH_URL, '?i=video&size=150&facets[programUrl]=//www.vrt.be', path.replace('.relevant', ''))) if '.relevant/' in path else path
             api_json = requests.get(api_url, proxies=self._proxies).json()
@@ -77,7 +77,7 @@ class VRTApiHelper:
                 episode_items = self._get_season_items(api_url, api_json)
             # No season items, generate episode items
             if episode_items is None:
-                episode_items, sort_method = self._map_to_episode_items(api_json.get('results'))
+                episode_items, sort_method = self._map_to_episode_items(api_json.get('results', []))
 
         return episode_items, sort_method
 
@@ -121,7 +121,7 @@ class VRTApiHelper:
             if metadata_creator.geolocked:
                 plot_meta += self._kodi_wrapper.get_localized_string(32201)
             # Only display when a video disappears if it is within the next 3 months
-            if metadata_creator.offtime is not None and (metadata_creator.offtime - datetime.utcnow()).days < 92:
+            if metadata_creator.offtime is not None and (metadata_creator.offtime - datetime.utcnow()).days < 93:
                 plot_meta += self._kodi_wrapper.get_localized_string(32202) % metadata_creator.offtime.strftime(self._kodi_wrapper.get_localized_dateshort())
                 if (metadata_creator.offtime - datetime.utcnow()).days > 0:
                     plot_meta += self._kodi_wrapper.get_localized_string(32203) % (metadata_creator.offtime - datetime.utcnow()).days
