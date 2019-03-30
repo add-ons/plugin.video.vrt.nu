@@ -28,14 +28,15 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem
 Write-Host -fore blue '= Building new package'
 $zip_file = [System.IO.Compression.ZipFile]::Open($zip_name, 'Create')
 ForEach ($relative_file in $include_files) {
-    $archive_file = Join-Path -Path $name -ChildPath $relative_file
+    # NOTE: Avoid Windows path-separator in ZIP files
+    $archive_file = (Join-Path -Path $name -ChildPath $relative_file).Replace('\', '/')
     [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip_file, $relative_file, $archive_file)
 }
 ForEach ($path in $include_paths) {
     Get-ChildItem -Recurse -File -Path $path -Exclude $exclude_files | ForEach-Object {
         $relative_file = Resolve-Path -Path $_.FullName -Relative
-        # NOTE: Powershell lacks functionality to normalize a path
-        $archive_file = (Join-Path -Path $name -ChildPath $relative_file).Replace('/./', '/')
+        # NOTE: Powershell lacks functionality to normalize a path and uses Windows path-separator in ZIP files
+        $archive_file = (Join-Path -Path $name -ChildPath $relative_file).Replace('\', '/').Replace('/./', '/')
         [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip_file, $relative_file, $archive_file)
     }
 }
