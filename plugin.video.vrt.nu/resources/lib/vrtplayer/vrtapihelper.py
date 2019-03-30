@@ -48,31 +48,36 @@ class VRTApiHelper:
                                                         video_dict=metadata_creator.get_video_dict()))
         return tvshow_items
 
-    def _get_season_items(self, api_url, facets):
+    def _get_season_items(self, api_url, api_json):
         season_items = None
+        if api_json.get('results'):
+            episode = api_json['results'][0]
+        else:
+            episode = dict()
+        facets = api_json.get('facets', dict()).get('facets', [])
         # Check if program has seasons
         for facet in facets:
-            if facet['name'] == 'seasons' and len(facet['buckets']) > 1:
+            if facet.get('name') == 'seasons' and len(facet.get('buckets', [])) > 1:
                 # Found multiple seasons, make list of seasons
-                season_items = self._map_to_season_items(api_url, facet['buckets'])
+                season_items = self._map_to_season_items(api_url, facet.get('buckets', []), episode)
         return season_items
 
     def get_episode_items(self, path):
         episode_items = None
         sort_method = None
         if path == 'recent':
-            api_url = ''.join((self._VRTNU_SEARCH_URL, '?i=video&size=50&facets[transcodingStatus]=AVAILABLE&facets[brands]=[een,canvas,sporza,radio1,klara,stubru,mnm]'))
+            api_url = ''.join((self._VRTNU_SEARCH_URL, '?i=video&size=100&facets[transcodingStatus]=AVAILABLE&facets[brands]=[een,canvas,sporza,vrtnws,vrtnxt,radio1,radio2,klara,stubru,mnm]'))
             api_json = requests.get(api_url, proxies=self._proxies).json()
-            episode_items, sort_method = self._map_to_episode_items(api_json['results'], path)
+            episode_items, sort_method = self._map_to_episode_items(api_json.get('results', []), path)
         else:
             api_url = ''.join((self._VRTNU_SEARCH_URL, '?i=video&size=150&facets[programUrl]=//www.vrt.be', path.replace('.relevant', ''))) if '.relevant/' in path else path
             api_json = requests.get(api_url, proxies=self._proxies).json()
             # Look for seasons items if not yet done
             if 'facets[seasonTitle]' not in path:
-                episode_items = self._get_season_items(api_url, api_json['facets']['facets'])
+                episode_items = self._get_season_items(api_url, api_json)
             # No season items, generate episode items
             if episode_items is None:
-                episode_items, sort_method = self._map_to_episode_items(api_json['results'])
+                episode_items, sort_method = self._map_to_episode_items(api_json.get('results', []))
 
         return episode_items, sort_method
 
@@ -116,7 +121,7 @@ class VRTApiHelper:
             if metadata_creator.geolocked:
                 plot_meta += self._kodi_wrapper.get_localized_string(32201)
             # Only display when a video disappears if it is within the next 3 months
-            if metadata_creator.offtime is not None and (metadata_creator.offtime - datetime.utcnow()).days < 92:
+            if metadata_creator.offtime is not None and (metadata_creator.offtime - datetime.utcnow()).days < 93:
                 plot_meta += self._kodi_wrapper.get_localized_string(32202) % metadata_creator.offtime.strftime(self._kodi_wrapper.get_localized_dateshort())
                 if (metadata_creator.offtime - datetime.utcnow()).days > 0:
                     plot_meta += self._kodi_wrapper.get_localized_string(32203) % (metadata_creator.offtime - datetime.utcnow()).days
@@ -127,20 +132,22 @@ class VRTApiHelper:
             metadata_creator.plot = plot_meta + metadata_creator.plot
 
             thumb = statichelper.add_https_method(episode.get('videoThumbnailUrl'))
+            fanart = statichelper.add_https_method(episode.get('programImageUrl', thumb))
             video_url = statichelper.add_https_method(episode.get('url'))
             title, sort = self._make_title(episode, titletype)
             episode_items.append(helperobjects.TitleItem(title=title,
                                                          url_dict=dict(action=actions.PLAY, video_url=video_url, video_id=episode.get('videoId'), publication_id=episode.get('publicationId')),
                                                          is_playable=True,
-                                                         art_dict=dict(thumb=thumb, icon='DefaultAddonVideo.png', fanart=thumb),
+                                                         art_dict=dict(thumb=thumb, icon='DefaultAddonVideo.png', fanart=fanart),
                                                          video_dict=metadata_creator.get_video_dict()))
         return episode_items, sort
 
-    def _map_to_season_items(self, api_url, buckets):
+    def _map_to_season_items(self, api_url, buckets, episode):
         season_items = []
+        fanart = statichelper.add_https_method(episode.get('programImageUrl'))
+        metadata_creator = metadatacreator.MetadataCreator()
+        metadata_creator.mediatype = 'season'
         for bucket in buckets:
-            metadata_creator = metadatacreator.MetadataCreator()
-            metadata_creator.mediatype = 'season'
             season_title = bucket.get('key')
             title = ''.join((self._kodi_wrapper.get_localized_string(32094), ' ', season_title))
             season_facet = '&facets[seasonTitle]='
@@ -151,7 +158,7 @@ class VRTApiHelper:
             season_items.append(helperobjects.TitleItem(title=title,
                                                         url_dict=dict(action=actions.LISTING_EPISODES, video_url=path),
                                                         is_playable=False,
-                                                        art_dict=dict(thumb='DefaultSets.png', icon='DefaultSets.png', fanart='DefaultSets.png'),
+                                                        art_dict=dict(thumb=fanart, icon='DefaultSets.png', fanart=fanart),
                                                         video_dict=metadata_creator.get_video_dict()))
         return season_items
 
