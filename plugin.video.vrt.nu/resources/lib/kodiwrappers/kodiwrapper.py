@@ -107,7 +107,7 @@ class KodiWrapper:
 
     def get_global_setting(self, setting):
         json_result = xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Settings.GetSettingValue", "params": {"setting": "%s"}, "id": 1}' % setting)
-        return json.loads(json_result)['result']['value']
+        return json.loads(json_result).get('result', dict()).get('value')
 
     def get_proxies(self):
         usehttpproxy = self.get_global_setting('network.usehttpproxy')
