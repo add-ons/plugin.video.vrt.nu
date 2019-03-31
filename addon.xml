@@ -63,11 +63,11 @@ v1.5.0 (2018-12-27)
         <website>https://github.com/pietje666/plugin.video.vrt.nu/wiki</website>
         <forum>https://www.facebook.com/kodivrtnu/</forum>
         <assets>
-            <icon>resources/images/icon.png</icon>
-            <fanart>resources/images/fanart.jpg</fanart>
-            <screenshot>resources/images/screenshot01.jpg</screenshot>
-            <screenshot>resources/images/screenshot02.jpg</screenshot>
-            <screenshot>resources/images/screenshot03.jpg</screenshot>
+            <icon>resources/media/icon.png</icon>
+            <fanart>resources/media/fanart.jpg</fanart>
+            <screenshot>resources/media/screenshot01.jpg</screenshot>
+            <screenshot>resources/media/screenshot02.jpg</screenshot>
+            <screenshot>resources/media/screenshot03.jpg</screenshot>
         </assets>
     </extension>
 </addon>
