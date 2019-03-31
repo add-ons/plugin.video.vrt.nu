@@ -43,6 +43,8 @@ class VRTApiHelper:
             metadata = metadatacreator.MetadataCreator()
             metadata.mediatype = 'tvshow'
             metadata.tvshowtitle = tvshow.get('title', '???')
+            if tvshow.get('episode_count'):
+                metadata.tvshowtitle += ' (%s)' % tvshow.get('episode_count')
             metadata.plot = statichelper.unescape(tvshow.get('description', '???'))
             metadata.brands = tvshow.get('brands')
             metadata.permalink = statichelper.shorten_link(tvshow.get('targetUrl'))
@@ -169,6 +171,7 @@ class VRTApiHelper:
                 metadata.ontime = dateutil.parser.parse(episode.get('assetOnTime'))
             if episode.get('assetOffTime'):
                 metadata.offtime = dateutil.parser.parse(episode.get('assetOffTime'))
+            metadata.genre = episode.get('genre')
 
             # Add additional metadata to plot
             plot_meta = ''
@@ -210,11 +213,13 @@ class VRTApiHelper:
         sort = 'label'
         ascending = True
 
-        fanart = statichelper.add_https_method(episode.get('programImageUrl', 'DefaultSets.png'))
+        fanart = statichelper.add_https_method(episode.get('programImageUrl', 'DefaultAddonVideo.png'))
         program_type = episode.get('programType')
         metadata = metadatacreator.MetadataCreator()
         metadata.mediatype = 'season'
         metadata.brands = episode.get('programBrands') or episode.get('brands')
+        metadata.tvshowtitle = episode.get('program')
+        metadata.genre = episode.get('genre')
 
         # Reverse sort seasons if program_type is 'reeksaflopend' or 'daily'
         if program_type in ('daily', 'reeksaflopend'):

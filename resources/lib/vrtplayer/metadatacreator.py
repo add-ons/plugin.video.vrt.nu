@@ -16,17 +16,22 @@ class MetadataCreator:
         self._datetime = None
         self._duration = None
         self._episode = None
+        self._genre = None
         self._geolocked = None
+        self._icon = None
         self._mediatype = None
         self._offtime = None
         self._ontime = None
+        self._pageid = None
         self._permalink = None
         self._plot = None
         self._plotoutline = None
+        self._score = None
         self._season = None
         self._subtitle = None
         self._title = None
         self._tvshowtitle = None
+        self._videoid = None
         self._year = None
 
     @property
@@ -62,12 +67,28 @@ class MetadataCreator:
         self._episode = value
 
     @property
+    def genre(self):
+        return self._genre
+
+    @genre.setter
+    def genre(self, value):
+        self._genre = value
+
+    @property
     def geolocked(self):
         return self._geolocked
 
     @geolocked.setter
     def geolocked(self, value):
         self._geolocked = value
+
+    @property
+    def icon(self):
+        return self._icon
+
+    @icon.setter
+    def icon(self, value):
+        self._icon = value
 
     @property
     def mediatype(self):
@@ -94,6 +115,14 @@ class MetadataCreator:
         self._ontime = value
 
     @property
+    def pageid(self):
+        return self._pageid
+
+    @pageid.setter
+    def pageid(self, value):
+        self._pageid = value
+
+    @property
     def permalink(self):
         return self._permalink
 
@@ -116,6 +145,14 @@ class MetadataCreator:
     @plotoutline.setter
     def plotoutline(self, value):
         self._plotoutline = value.strip()
+
+    @property
+    def score(self):
+        return self._score
+
+    @score.setter
+    def score(self, value):
+        self._score = value
 
     @property
     def season(self):
@@ -148,6 +185,14 @@ class MetadataCreator:
     @tvshowtitle.setter
     def tvshowtitle(self, value):
         self._tvshowtitle = value
+
+    @property
+    def videoid(self):
+        return self._videoid
+
+    @videoid.setter
+    def videoid(self, value):
+        self._videoid = value
 
     @property
     def year(self):
@@ -193,16 +238,21 @@ class MetadataCreator:
         if self.episode:
             video_dict['episode'] = self.episode
 
+        if self.genre:
+            video_dict['genre'] = self.genre
+            video_dict['tag'] = self.genre
+
         # NOTE: Does not seem to have any effect
         if self.geolocked:
-            video_dict['overlay'] = 7
+            video_dict['overlay'] = 3
             # video_dict['overlay'] = 'OverlayLocked.png'
         else:
             video_dict['overlay'] = 3
 
-        # if self.icon:
-        #    video_dict['icon'] = self.icon
-        #    video_dict['actualicon'] = self.icon
+        # NOTE: Does not seem to have any effect
+        if self.icon:
+            video_dict['icon'] = self.icon
+            video_dict['actualicon'] = self.icon
 
         if self.mediatype:
             video_dict['mediatype'] = self.mediatype
@@ -216,6 +266,10 @@ class MetadataCreator:
 
         if self.plotoutline:
             video_dict['plotoutline'] = self.plotoutline
+            video_dict['tagline'] = self.plotoutline
+
+        if self.score:
+            video_dict['rating'] = self.score
 
         if self.season:
             video_dict['season'] = self.season
@@ -230,6 +284,9 @@ class MetadataCreator:
         if self.tvshowtitle:
             video_dict['tvshowtitle'] = self.tvshowtitle
             video_dict['set'] = self.tvshowtitle
+
+        if self.videoid:
+            video_dict['videoid'] = self.videoid
 
         if self.year:
             video_dict['year'] = self.year

@@ -80,7 +80,7 @@ class VRTPlayer:
 
     def show_tvshow_menu_items(self, path):
         tvshow_items = self._api_helper.get_tvshow_items(path)
-        self._kodi_wrapper.show_listing(tvshow_items, sort='label', content_type='tvshows')
+        self._kodi_wrapper.show_listing(tvshow_items, sort='label', content_type='tvshows')  # Using tvshows here doesn't show folders
 
     def show_category_menu_items(self):
         category_items = self.__get_category_menu_items()
