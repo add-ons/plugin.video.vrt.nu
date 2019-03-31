@@ -4,6 +4,8 @@
 
 import re
 import requests
+from datetime import datetime, timedelta
+import time
 from bs4 import BeautifulSoup, SoupStrainer
 
 from resources.lib.helperobjects import apidata, streamurls
@@ -115,6 +117,28 @@ class StreamService:
         message = self._kodi_wrapper.get_localized_string(32054)
         self._kodi_wrapper.show_ok_dialog('', message)
 
+    @staticmethod
+    def _fix_virtualsubclip(stream_dict, duration):
+        '''VRT NU uses virtual subclips to provide on demand programs (mostly current affair programs)
+           already from a livestream while or shortly after live broadcasting them.
+           But this feature doesn't work always as expected because Kodi doesn't play the program from
+           the beginning when the ending timestamp of the program is missing from the stream_url.
+           When begintime is present in the stream_url and endtime is missing, we must add endtime
+           to the stream_url so Kodi treats the program as an on demand program and starts the stream
+           from the beginning like a real on demand program.'''
+        for key, value in stream_dict.items():
+            begin = value.split('?t=')[1] if '?t=' in value else None
+            if begin and len(begin) == 19:
+                begin_time = datetime(*time.strptime(begin, '%Y-%m-%dT%H:%M:%S')[0:6])
+                end_time = begin_time + duration
+                # If on demand program is not yet broadcasted completely,
+                # use current time minus 5 seconds safety margin as endtime.
+                now = datetime.utcnow()
+                if end_time > now:
+                    end_time = now - timedelta(seconds=5)
+                stream_dict[key] = '-'.join((value, end_time.strftime('%Y-%m-%dT%H:%M:%S')))
+        return stream_dict
+
     def get_stream(self, video, retry=False, api_data=None):
         self._kodi_wrapper.log_notice('video_url ' + video.get('video_url'))
         if video.get('video_id') is not None and video.get('publication_id') is not None and retry is False:
@@ -128,7 +152,8 @@ class StreamService:
         if 'drm' in video_json:
             vudrm_token = video_json.get('drm')
             target_urls = video_json.get('targetUrls')
-            stream_dict = dict(list([(x.get('type'), x.get('url')) for x in target_urls]))
+            duration = timedelta(milliseconds=video_json.get('duration'))
+            stream_dict = self._fix_virtualsubclip(dict(list([(x.get('type'), x.get('url')) for x in target_urls])), duration)
             return self._select_stream(stream_dict, vudrm_token)
 
         if video_json.get('code') in ('INCOMPLETE_ROAMING_CONFIG', 'INVALID_LOCATION'):
