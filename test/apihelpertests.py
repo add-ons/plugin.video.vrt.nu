@@ -2,9 +2,10 @@
 
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-import unittest
-from resources.lib.vrtplayer import vrtapihelper
+from __future__ import absolute_import, division, unicode_literals
 from mock import MagicMock
+from resources.lib.vrtplayer import vrtapihelper
+import unittest
 
 
 class ApiHelperTests(unittest.TestCase):
@@ -34,7 +35,7 @@ class ApiHelperTests(unittest.TestCase):
         mock = MagicMock()
         mock.get_localized_string.return_value = 'vrttest'
         api_helper = vrtapihelper.VRTApiHelper(mock)
-        title_items, sort = api_helper.get_episode_items('/vrtnu/a-z/postbus-x.relevant/')       
+        title_items, sort = api_helper.get_episode_items('/vrtnu/a-z/postbus-x.relevant/')
         self.assertTrue(len(title_items) == 3)
 
 

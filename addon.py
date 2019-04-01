@@ -5,7 +5,6 @@
 ''' This is the actual VRT Nu video plugin entry point '''
 
 from __future__ import absolute_import, division, unicode_literals
-
 import sys
 
 import xbmcaddon

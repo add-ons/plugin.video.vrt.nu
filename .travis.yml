@@ -15,6 +15,7 @@ install:
 
 script:
 - tox
+- tox -e flake8
 - pylint *.py
 - pylint resources/lib/*/*.py
 - python test/vrtplayertests.py

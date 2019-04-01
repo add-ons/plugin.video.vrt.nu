@@ -1,4 +1,4 @@
-ENVS := py27,py36
+ENVS := flake8,py27,py36
 
 addon_xml = addon.xml
 
@@ -23,12 +23,17 @@ package: zip
 
 test: sanity unit
 
-sanity:
-	@echo -e "$(white)=$(blue) Starting sanity tests$(reset)"
-	pylint *.py
-	pylint resources/lib/*/*.py
-	tox -e $(ENVS)
-	@echo -e "$(white)=$(blue) Sanity tests finished successfully.$(reset)"
+sanity: tox pylint
+
+tox:
+	@echo -e "$(white)=$(blue) Starting sanity tox test$(reset)"
+	tox -q -e $(ENVS)
+	@echo -e "$(white)=$(blue) Sanity tox test finished successfully.$(reset)"
+
+pylint:
+	@echo -e "$(white)=$(blue) Starting sanity pylint test$(reset)"
+	pylint *.py resources/lib/*/*.py
+	@echo -e "$(white)=$(blue) Sanity tox test finished successfully.$(reset)"
 
 unit:
 	@echo -e "$(white)=$(blue) Starting unit tests$(reset)"
