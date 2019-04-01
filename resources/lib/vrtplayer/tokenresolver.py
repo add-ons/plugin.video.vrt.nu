@@ -27,7 +27,7 @@ class TokenResolver:
         token_path = self._kodi_wrapper.get_userdata_path() + self._ONDEMAND_COOKIE
         token = self._get_cached_token(token_path, 'vrtPlayerToken')
 
-        if token is None:
+        if xvrttoken and token is None:
             cookie_value = 'X-VRT-Token=' + xvrttoken
             headers = {'Content-Type': 'application/json', 'Cookie': cookie_value}
             token = self._get_new_playertoken(token_path, token_url, headers)
@@ -74,7 +74,7 @@ class TokenResolver:
             exp = datetime.datetime(*(time.strptime(token.get('expirationDate'), '%Y-%m-%dT%H:%M:%S.%fZ')[0:6]))
             if exp > now:
                 self._kodi_wrapper.log_notice('Got cached token')
-                cached_token = token[token_name]
+                cached_token = token.get('token_name')
             else:
                 self._kodi_wrapper.log_notice('Cached token deleted')
                 self._kodi_wrapper.delete_path(path)
@@ -102,10 +102,22 @@ class TokenResolver:
                 token = xvrttoken.get('X-VRT-Token')
             json.dump(xvrttoken, open(path, 'w'))
         else:
-            title = self._kodi_wrapper.get_localized_string(32051)
-            message = self._kodi_wrapper.get_localized_string(32052)
-            self._kodi_wrapper.show_ok_dialog(title, message)
+            self._handle_error(logon_json, cred)
         return token
+
+    def _handle_error(self, logon_json, cred):
+        error_message = logon_json.get('errorDetails')
+        title = self._kodi_wrapper.get_localized_string(32051)
+        if error_message == 'invalid loginID or password':
+            cred.reset()
+            message = self._kodi_wrapper.get_localized_string(32052)
+        elif error_message == 'loginID must be provided':
+            message = self._kodi_wrapper.get_localized_string(32055)
+        elif error_message == 'Missing required parameter: password':
+            message = self._kodi_wrapper.get_localized_string(32056)
+        else:
+            message = error_message
+        self._kodi_wrapper.show_ok_dialog(title, message)
 
     def _get_roaming_xvrttoken(self, login_cookie, xvrttoken):
         url = 'https://token.vrt.be/vrtnuinitloginEU?destination=https://www.vrt.be/vrtnu/'

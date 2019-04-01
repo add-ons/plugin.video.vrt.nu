@@ -102,6 +102,9 @@ class KodiWrapper:
     def get_setting(self, setting_id):
         return self._addon.getSetting(setting_id)
 
+    def set_setting(self, setting_id, setting_value):
+        return self._addon.setSetting(setting_id, setting_value)
+
     def open_settings(self):
         self._addon.openSettings()
 

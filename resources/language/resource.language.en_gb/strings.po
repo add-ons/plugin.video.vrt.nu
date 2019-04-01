@@ -20,8 +20,8 @@ msgid "Credentials"
 msgstr "Credentials"
 
 msgctxt "#32001"
-msgid "Username"
-msgstr "Username"
+msgid "Email address"
+msgstr "Email address"
 
 msgctxt "#32002"
 msgid "Password"
@@ -48,12 +48,12 @@ msgid "Use DRM for 720p HD-quality livestreams"
 msgstr "Use DRM for 720p HD-quality livestreams"
 
 msgctxt "#32051"
-msgid "Could not login!"
-msgstr "could not login"
+msgid "Login failed!"
+msgstr "Login failed!"
 
 msgctxt "#32052"
-msgid "Only VRT logins are supported no Google or Facebook login!"
-msgstr "Only VRT logins are supported no Google or Facebook login "
+msgid "Invalid email adress or password. Only VRT logins are supported, no Google or Facebook logins."
+msgstr "Invalid email adress or password. Only VRT logins are supported, no Google or Facebook logins."
 
 msgctxt "#32053"
 msgid "This program cannot be played. To view this program outside of Belgium, you first have to validate a Belgian mobile phone number on the VRT NU website."
@@ -62,6 +62,14 @@ msgstr "This program cannot be played. To view this program outside of Belgium, 
 msgctxt "#32054"
 msgid "Woops something went wrong, check the log for more details"
 msgstr "Woops something went wrong, check the log for more details"
+
+msgctxt "#32055"
+msgid "Please fill in your email address to login."
+msgstr "Please fill in your email address to login."
+
+msgctxt "#32056"
+msgid "Please fill in your password to login."
+msgstr "Please fill in your password to login."
 
 msgctxt "#32061"
 msgid "Using a SOCKS proxy requires the PySocks library (script.module.pysocks) installed."
