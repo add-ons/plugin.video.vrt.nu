@@ -3,14 +3,14 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, unicode_literals
+import json
 
 import inputstreamhelper
-import json
+from resources.lib.kodiwrappers import sortmethod
 import xbmc
 import xbmcgui
 import xbmcplugin
 import xbmcvfs
-from resources.lib.kodiwrappers import sortmethod
 
 try:
     from urllib.parse import urlencode
@@ -22,7 +22,7 @@ def has_socks():
     ''' Test if socks is installed, and remember this information '''
     if not hasattr(has_socks, 'installed'):
         try:
-            import socks  # pylint: disable=unused-variable,unused-import
+            import socks  # noqa: F401  # pylint: disable=unused-variable,unused-import
             has_socks.installed = True
         except ImportError:
             has_socks.installed = False

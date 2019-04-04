@@ -25,7 +25,7 @@ if (Test-Path -LiteralPath $zip_name) {
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
 # Create ZIP file
-Write-Host -fore blue '= Building new package'
+Write-Host '= Building new package' -ForegroundColor:blue
 $zip_file = [System.IO.Compression.ZipFile]::Open($zip_name, 'Create')
 ForEach ($relative_file in $include_files) {
     # NOTE: Avoid Windows path-separator in ZIP files
@@ -34,12 +34,12 @@ ForEach ($relative_file in $include_files) {
 }
 ForEach ($path in $include_paths) {
     Get-ChildItem -Recurse -File -Path $path -Exclude $exclude_files | ForEach-Object {
-        $relative_file = Resolve-Path -Path $_.FullName -Relative
+        $relative_file = Resolve-Path -LiteralPath $_.FullName -Relative
         # NOTE: Powershell lacks functionality to normalize a path and uses Windows path-separator in ZIP files
         $archive_file = (Join-Path -Path $name -ChildPath $relative_file).Replace('\', '/').Replace('/./', '/')
         [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip_file, $relative_file, $archive_file)
     }
 }
 $zip_file.Dispose()
-Write-Host "= Successfully wrote package as: " -ForegroundColor:Blue -NoNewLine
+Write-Host '= Successfully wrote package as: ' -ForegroundColor:Blue -NoNewLine
 Write-Host "$zip_name" -ForegroundColor:Cyan

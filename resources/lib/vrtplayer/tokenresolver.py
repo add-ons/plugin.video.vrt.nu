@@ -2,11 +2,13 @@
 
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from resources.lib.helperobjects import helperobjects
-import requests
+from __future__ import absolute_import, division, unicode_literals
+from datetime import datetime
 import json
-import datetime
+import requests
 import time
+
+from resources.lib.helperobjects import helperobjects
 
 
 class TokenResolver:
@@ -39,7 +41,7 @@ class TokenResolver:
         if token is None:
             if xvrttoken is not None:
                 cookie_value = 'X-VRT-Token=' + xvrttoken
-                headers = {'Content-Type': 'application/json', 'Cookie' : cookie_value}
+                headers = {'Content-Type': 'application/json', 'Cookie': cookie_value}
             else:
                 headers = {'Content-Type': 'application/json'}
             token = self._get_new_playertoken(token_path, token_url, headers)
@@ -70,8 +72,8 @@ class TokenResolver:
 
         if self._kodi_wrapper.check_if_path_exists(path):
             token = json.loads(open(path, 'r').read())
-            now = datetime.datetime.utcnow()
-            exp = datetime.datetime(*(time.strptime(token.get('expirationDate'), '%Y-%m-%dT%H:%M:%S.%fZ')[0:6]))
+            now = datetime.utcnow()
+            exp = datetime(*(time.strptime(token.get('expirationDate'), '%Y-%m-%dT%H:%M:%S.%fZ')[0:6]))
             if exp > now:
                 self._kodi_wrapper.log_notice('Got cached token')
                 cached_token = token[token_name]
@@ -85,13 +87,24 @@ class TokenResolver:
         if not cred.are_filled_in():
             self._kodi_wrapper.open_settings()
             cred.reload()
-        data = {'loginID': cred.username, 'password': cred.password, 'sessionExpiration': '-1', 'APIKey': self._API_KEY, 'targetEnv': 'jssdk'}
+        data = dict(
+            loginID=cred.username,
+            password=cred.password,
+            sessionExpiration='-1',
+            APIKey=self._API_KEY,
+            targetEnv='jssdk',
+        )
         logon_json = requests.post(self._LOGIN_URL, data, proxies=self._proxies).json()
         token = None
         if logon_json.get('errorCode') == 0:
             login_token = logon_json.get('sessionInfo', dict()).get('login_token')
             login_cookie = ''.join(('glt_', self._API_KEY, '=', login_token))
-            payload = {'uid': logon_json.get('UID'), 'uidsig': logon_json.get('UIDSignature'), 'ts': logon_json.get('signatureTimestamp'), 'email': cred.username}
+            payload = dict(
+                uid=logon_json.get('UID'),
+                uidsig=logon_json.get('UIDSignature'),
+                ts=logon_json.get('signatureTimestamp'),
+                email=cred.username,
+            )
             headers = {'Content-Type': 'application/json', 'Cookie': login_cookie}
             cookie_jar = requests.post(self._TOKEN_GATEWAY_URL, proxies=self._proxies, headers=headers, json=payload).cookies
 
@@ -129,7 +142,7 @@ class TokenResolver:
         if xvrttoken_cookie is not None:
             token_dictionary = {
                 xvrttoken_cookie.name: xvrttoken_cookie.value,
-                'expirationDate': datetime.datetime.fromtimestamp(xvrttoken_cookie.expires).strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
+                'expirationDate': datetime.fromtimestamp(xvrttoken_cookie.expires).strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
             }
         return token_dictionary
 

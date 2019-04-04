@@ -2,6 +2,7 @@
 
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
+from __future__ import absolute_import, division, unicode_literals
 from datetime import datetime
 
 
@@ -204,13 +205,13 @@ class MetadataCreator:
         # episodename
         # genre
 
-        #if self.icon:
+        # if self.icon:
         #    video_dict['icon'] = self.icon
         #    video_dict['actualicon'] = self.icon
 
         # NOTE: Does not seem to have any effect
         if self.geolocked:
             video_dict['overlay'] = 7
-            #video_dict['overlay'] = 'OverlayLocked.png'
+            # video_dict['overlay'] = 'OverlayLocked.png'
 
         return video_dict

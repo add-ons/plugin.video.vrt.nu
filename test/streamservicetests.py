@@ -2,9 +2,10 @@
 
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-import unittest
-from resources.lib.vrtplayer import vrtplayer, streamservice, tokenresolver
+from __future__ import absolute_import, division, unicode_literals
 from mock import MagicMock
+from resources.lib.vrtplayer import vrtplayer, streamservice, tokenresolver
+import unittest
 
 use_drm = False
 
@@ -16,7 +17,12 @@ class StreamServiceTests(unittest.TestCase):
         self._use_drm = 'false'
 
     def _side_effect(self, arg):
-        vals = {'username': 'qsdfdsq', 'password': 'qsdfqsdfds', 'showsubtitles': 'true', 'usedrm': self._use_drm}
+        vals = dict(
+            username='qsdfdsq',
+            password='qsdfqsdfds',
+            showsubtitles='true',
+            usedrm=self._use_drm,
+        )
         return vals[arg]
 
     def test_get_ondemand_stream_from_url_gets_stream_does_not_crash(self):
@@ -29,7 +35,11 @@ class StreamServiceTests(unittest.TestCase):
         mock.open_path.return_value = False
         mock.check_inputstream_adaptive.return_value = True
         service = streamservice.StreamService(vrtplayer.VRTPlayer.VRT_BASE, vrtplayer.VRTPlayer.VRTNU_BASE_URL, mock, token_resolver)
-        video = {'video_url' : 'vrtnu/a-z/pano/2019/pano-s2019a6/', 'video_id' : None, 'publication_id' : None,}
+        video = dict(
+            video_url='vrtnu/a-z/pano/2019/pano-s2019a6/',
+            video_id=None,
+            publication_id=None,
+        )
         stream = service.get_stream(video)
         self.assertTrue(stream is not None)
 
@@ -44,7 +54,11 @@ class StreamServiceTests(unittest.TestCase):
         mock.open_path.return_value = False
         mock.check_inputstream_adaptive.return_value = True
         service = streamservice.StreamService(vrtplayer.VRTPlayer.VRT_BASE, vrtplayer.VRTPlayer.VRTNU_BASE_URL, mock, token_resolver)
-        video = {'video_url' : vrtplayer.VRTPlayer._CANVAS_LIVESTREAM, 'video_id' : None, 'publication_id' : None}
+        video = dict(
+            video_url=vrtplayer.VRTPlayer._CANVAS_LIVESTREAM,
+            video_id=None,
+            publication_id=None,
+        )
         stream = service.get_stream(video)
         self.assertTrue(stream is not None)
         self.assertTrue(stream.license_key is not None)
@@ -59,7 +73,11 @@ class StreamServiceTests(unittest.TestCase):
         mock.open_path.return_value = False
         mock.check_inputstream_adaptive.return_value = True
         service = streamservice.StreamService(vrtplayer.VRTPlayer.VRT_BASE, vrtplayer.VRTPlayer.VRTNU_BASE_URL, mock, token_resolver)
-        video = {'video_url' : vrtplayer.VRTPlayer._CANVAS_LIVESTREAM, 'video_id' : None, 'publication_id' : None}
+        video = dict(
+            video_url=vrtplayer.VRTPlayer._CANVAS_LIVESTREAM,
+            video_id=None,
+            publication_id=None,
+        )
         stream = service.get_stream(video)
         self.assertTrue(stream is not None)
 

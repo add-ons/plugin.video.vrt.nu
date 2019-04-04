@@ -2,11 +2,12 @@
 
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
+from __future__ import absolute_import, division, unicode_literals
+from bs4 import BeautifulSoup, SoupStrainer
+from datetime import datetime, timedelta
 import re
 import requests
-from datetime import datetime, timedelta
 import time
-from bs4 import BeautifulSoup, SoupStrainer
 
 from resources.lib.helperobjects import apidata, streamurls
 
@@ -16,7 +17,6 @@ class StreamService:
     _VUPLAY_API_URL = 'https://api.vuplay.co.uk'
     _VUALTO_API_URL = 'https://media-services-public.vrt.be/vualto-video-aggregator-web/rest/external/v1'
     _CLIENT = 'vrtvideo'
-
 
     def __init__(self, vrt_base, vrtnu_base_url, kodi_wrapper, token_resolver):
         self._kodi_wrapper = kodi_wrapper
@@ -141,11 +141,14 @@ class StreamService:
 
     def get_stream(self, video, retry=False, api_data=None):
         self._kodi_wrapper.log_notice('video_url ' + video.get('video_url'))
-        if video.get('video_id') is not None and video.get('publication_id') is not None and retry is False:
+        video_id = video.get('video_id')
+        publication_id = video.get('publication_id')
+        if video_id and publication_id and not retry:
             xvrttoken = self.token_resolver.get_xvrttoken()
-            api_data = apidata.ApiData(self._CLIENT, self._VUALTO_API_URL, video.get('video_id'), video.get('publication_id') + requests.utils.quote('$'), xvrttoken, False)
+            api_data = apidata.ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, publication_id + requests.utils.quote('$'), xvrttoken, False)
         else:
             api_data = api_data or self._get_api_data(video.get('video_url'))
+
         vudrm_token = None
         video_json = self._get_video_json(api_data)
 
@@ -222,7 +225,7 @@ class StreamService:
         audio_regex = re.compile(r'#EXT-X-MEDIA:TYPE=AUDIO[\w\-=,\.\"\/]+URI=\"([\w\-=]+)\.m3u8\"')
         match_audio = re.findall(audio_regex, m3u8)
         if match_audio:
-            direct_audio_url = match_audio[len(match_audio)-1]
+            direct_audio_url = match_audio[len(match_audio) - 1]
 
         # Get video uri
         video_regex = re.compile(r'#EXT-X-STREAM-INF:[\w\-=,\.\"]+[\r\n]{1}([\w\-=]+\.m3u8(\?vbegin=[0-9]{10})?(&vend=[0-9]{10})?)[\r\n]{2}')
