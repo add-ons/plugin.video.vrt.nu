@@ -12,11 +12,6 @@ from resources.lib.vrtplayer import statichelper, metadatacreator, actions
 from resources.lib.helperobjects import helperobjects
 from resources.lib.kodiwrappers import sortmethod
 
-try:
-    from urllib.parse import urlencode
-except ImportError:
-    from urllib import urlencode
-
 
 class VRTApiHelper:
 
@@ -78,17 +73,19 @@ class VRTApiHelper:
                 'facets[transcodingStatus]': 'AVAILABLE',
                 'facets[brands]': '[een,canvas,sporza,vrtnws,vrtnxt,radio1,radio2,klara,stubru,mnm]',
             }
-            api_url = ''.join((self._VRTNU_SEARCH_URL, '?', urlencode(params)))
+            api_url = self._VRTNU_SEARCH_URL + '?' + '&'.join(['='.join(t) for t in params.items()])
             api_json = requests.get(api_url, proxies=self._proxies).json()
             episode_items, sort = self._map_to_episode_items(api_json.get('results', []), path)
         else:
-            params = {
-                'i': 'video',
-                'size': '150',
-                'facets[programUrl]': '//www.vrt.be' + path.replace('.relevant/', '/'),
-                'facets[brands]': '[een,canvas,sporza,vrtnws,vrtnxt,radio1,radio2,klara,stubru,mnm]',
-            }
-            api_url = ''.join((self._VRTNU_SEARCH_URL, '?', urlencode(params)))
+            if '.relevant/' in path:
+                params = {
+                    'i': 'video',
+                    'size': '150',
+                    'facets[programUrl]': '//www.vrt.be' + path.replace('.relevant/', '/'),
+                }
+                api_url = self._VRTNU_SEARCH_URL + '?' + '&'.join(['='.join(t) for t in params.items()])
+            else:
+                api_url = path
             api_json = requests.get(api_url, proxies=self._proxies).json()
             # Look for seasons items if not yet done
             if 'facets[seasonTitle]' not in path:
@@ -212,7 +209,7 @@ class VRTApiHelper:
         return '%08x' % crc
 
     def _make_title(self, result, titletype):
-        short_description = BeautifulSoup(result.get('shortDescription', result.get('title')), 'html.parser').text
+        short_description = BeautifulSoup(result.get('shortDescription') or result.get('title'), 'html.parser').text
 
         if titletype == 'recent':
             title = '%s - %s' % (result.get('program'), short_description)
