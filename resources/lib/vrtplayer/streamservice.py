@@ -106,9 +106,11 @@ class StreamService:
             playertoken = self.token_resolver.get_ondemand_playertoken(token_url, api_data.xvrttoken)
 
         # Construct api_url and get video json
-        api_url = api_data.media_api_url + '/videos/' + api_data.publication_id + \
-            api_data.video_id + '?vrtPlayerToken=' + playertoken + '&client=' + api_data.client
-        video_json = requests.get(api_url, proxies=self._proxies).json()
+        video_json = None
+        if playertoken:
+            api_url = api_data.media_api_url + '/videos/' + api_data.publication_id + \
+                api_data.video_id + '?vrtPlayerToken=' + playertoken + '&client=' + api_data.client
+            video_json = requests.get(api_url, proxies=self._proxies).json()
 
         return video_json
 
@@ -151,30 +153,30 @@ class StreamService:
 
         vudrm_token = None
         video_json = self._get_video_json(api_data)
+        if video_json:
+            if 'drm' in video_json:
+                vudrm_token = video_json.get('drm')
+                target_urls = video_json.get('targetUrls')
+                duration = timedelta(milliseconds=video_json.get('duration'))
+                stream_dict = self._fix_virtualsubclip(dict(list([(x.get('type'), x.get('url')) for x in target_urls])), duration)
+                return self._select_stream(stream_dict, vudrm_token)
 
-        if 'drm' in video_json:
-            vudrm_token = video_json.get('drm')
-            target_urls = video_json.get('targetUrls')
-            duration = timedelta(milliseconds=video_json.get('duration'))
-            stream_dict = self._fix_virtualsubclip(dict(list([(x.get('type'), x.get('url')) for x in target_urls])), duration)
-            return self._select_stream(stream_dict, vudrm_token)
-
-        if video_json.get('code') in ('INCOMPLETE_ROAMING_CONFIG', 'INVALID_LOCATION'):
-            self._kodi_wrapper.log_notice(video_json.get('message'))
-            roaming_xvrttoken = self.token_resolver.get_xvrttoken(True)
-            if not retry and roaming_xvrttoken is not None:
-                # Delete cached playertokens
-                if api_data.is_live_stream:
-                    self._kodi_wrapper.delete_path(self._kodi_wrapper.get_userdata_path() + 'live_vrtPlayerToken')
-                else:
-                    self._kodi_wrapper.delete_path(self._kodi_wrapper.get_userdata_path() + 'ondemand_vrtPlayerToken')
-                # Update api_data with roaming_xvrttoken and try again
-                api_data.xvrttoken = roaming_xvrttoken
-                return self.get_stream(video, retry=True, api_data=api_data)
-            message = self._kodi_wrapper.get_localized_string(32053)
-            self._kodi_wrapper.show_ok_dialog('', message)
-        else:
-            self._handle_error(video_json)
+            if video_json.get('code') in ('INCOMPLETE_ROAMING_CONFIG', 'INVALID_LOCATION'):
+                self._kodi_wrapper.log_notice(video_json.get('message'))
+                roaming_xvrttoken = self.token_resolver.get_xvrttoken(True)
+                if not retry and roaming_xvrttoken is not None:
+                    # Delete cached playertokens
+                    if api_data.is_live_stream:
+                        self._kodi_wrapper.delete_path(self._kodi_wrapper.get_userdata_path() + 'live_vrtPlayerToken')
+                    else:
+                        self._kodi_wrapper.delete_path(self._kodi_wrapper.get_userdata_path() + 'ondemand_vrtPlayerToken')
+                    # Update api_data with roaming_xvrttoken and try again
+                    api_data.xvrttoken = roaming_xvrttoken
+                    return self.get_stream(video, retry=True, api_data=api_data)
+                message = self._kodi_wrapper.get_localized_string(32053)
+                self._kodi_wrapper.show_ok_dialog('', message)
+            else:
+                self._handle_error(video_json)
 
         return None
 

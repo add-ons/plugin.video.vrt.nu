@@ -21,8 +21,8 @@ msgid "Credentials"
 msgstr "Inloggegevens"
 
 msgctxt "#32001"
-msgid "Username"
-msgstr "Gebruikersnaam"
+msgid "Email address"
+msgstr "E-mailadres"
 
 msgctxt "#32002"
 msgid "Password"
@@ -49,12 +49,12 @@ msgid "Use DRM for 720p HD-quality livestreams"
 msgstr "Gebruik DRM voor de livestreams in 720p HD-kwaliteit"
 
 msgctxt "#32051"
-msgid "Could not login!"
-msgstr "Kan niet inloggen!"
+msgid "Login failed!"
+msgstr "Inloggen mislukt!"
 
 msgctxt "#32052"
-msgid "Only VRT logins are supported no Google or Facebook login!"
-msgstr "Alleen VRT-logins worden ondersteund, geen Google of Facebook login!"
+msgid "Invalid email adress or password. Only VRT logins are supported, no Google or Facebook logins."
+msgstr "Ongeldig e-mailadres of wachtwoord. Alleen VRT-logins worden ondersteund, geen Google- of Facebook-logins."
 
 msgctxt "#32053"
 msgid "This program cannot be played. To view this program outside of Belgium, you first have to validate a Belgian mobile phone number on the VRT NU website."
@@ -63,6 +63,14 @@ msgstr "Het programma kan niet afgespeeld worden. Om dit programma buiten Belgi√
 msgctxt "#32054"
 msgid "Woops something went wrong, check the log for more details"
 msgstr "Oeps, er ging iets mis, check de log voor meer informatie"
+
+msgctxt "#32055"
+msgid "Please fill in your email address to login."
+msgstr "Gelieve je e-mailadres in te vullen om in te loggen."
+
+msgctxt "#32056"
+msgid "Please fill in your password to login."
+msgstr "Gelieve je wachtwoord in te vullen om in te loggen."
 
 msgctxt "#32061"
 msgid "Using a SOCKS proxy requires the PySocks library (script.module.pysocks) installed."

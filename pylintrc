@@ -11,6 +11,7 @@ disable=
     no-self-use,
     old-style-class,
     too-few-public-methods,
+    too-many-public-methods,
     too-many-arguments,
     too-many-branches,
     too-many-instance-attributes,
