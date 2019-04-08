@@ -87,92 +87,99 @@ class VRTApiHelper:
             else:
                 api_url = path
             api_json = requests.get(api_url, proxies=self._proxies).json()
+            season_key = None
             # Look for seasons items if not yet done
             if 'facets[seasonTitle]' not in path:
                 episode_items = self._get_season_items(api_url, api_json)
+            else:
+                season_key = path.split('facets[seasonTitle]=')[1]
             # No season items, generate episode items
             if not episode_items:
-                episode_items, sort = self._map_to_episode_items(api_json.get('results', []))
+                episode_items, sort = self._map_to_episode_items(api_json.get('results', []), season_key=season_key)
 
         return episode_items, sort
 
-    def _map_to_episode_items(self, episodes, titletype=None):
+    def _map_to_episode_items(self, episodes, titletype=None, season_key=None):
         episode_items = []
         sort = None
         for episode in episodes:
-            display_options = episode.get('displayOptions', dict())
+            # VRT API workaround: seasonTitle facet behaves as a partial match regex,
+            # so we have to filter out the episodes from seasons that don't exactly match.
+            if not (season_key and episode.get('seasonTitle') != season_key):
+                display_options = episode.get('displayOptions', dict())
 
-            if episode.get('programType') == 'reeksoplopend' and titletype is None:
-                titletype = 'reeksoplopend'
+                if episode.get('programType') == 'reeksoplopend' and titletype is None:
+                    titletype = 'reeksoplopend'
 
-            metadata_creator = metadatacreator.MetadataCreator()
-            metadata_creator.tvshowtitle = episode.get('program')
-            if episode.get('broadcastDate') != -1:
-                metadata_creator.datetime = datetime.fromtimestamp(episode.get('broadcastDate', 0) / 1000)
+                metadata_creator = metadatacreator.MetadataCreator()
+                metadata_creator.tvshowtitle = episode.get('program')
+                if episode.get('broadcastDate') != -1:
+                    metadata_creator.datetime = datetime.fromtimestamp(episode.get('broadcastDate', 0) / 1000)
 
-            metadata_creator.duration = (episode.get('duration', 0) * 60)  # Minutes to seconds
-            metadata_creator.plot = BeautifulSoup(episode.get('description'), 'html.parser').text
-            metadata_creator.brands = episode.get('programBrands', episode.get('brands'))
-            metadata_creator.geolocked = episode.get('allowedRegion') == 'BE'
-            if display_options.get('showShortDescription'):
-                short_description = BeautifulSoup(episode.get('shortDescription'), 'html.parser').text
-                metadata_creator.plotoutline = short_description
-                metadata_creator.subtitle = short_description
-            else:
-                metadata_creator.plotoutline = episode.get('subtitle')
-                metadata_creator.subtitle = episode.get('subtitle')
-            metadata_creator.season = episode.get('seasonName')
-            metadata_creator.episode = episode.get('episodeNumber')
-            metadata_creator.mediatype = episode.get('type', 'episode')
-            if episode.get('assetOnTime'):
-                metadata_creator.ontime = datetime(*time.strptime(episode.get('assetOnTime'), '%Y-%m-%dT%H:%M:%S+0000')[0:6])
-            if episode.get('assetOffTime'):
-                metadata_creator.offtime = datetime(*time.strptime(episode.get('assetOffTime'), '%Y-%m-%dT%H:%M:%S+0000')[0:6])
-
-            # Add additional metadata to plot
-            plot_meta = ''
-            if metadata_creator.geolocked:
-                # Show Geo-locked
-                plot_meta += self._kodi_wrapper.get_localized_string(32201)
-            # Only display when a video disappears if it is within the next 3 months
-            if metadata_creator.offtime is not None and (metadata_creator.offtime - datetime.utcnow()).days < 93:
-                # Show date when episode is removed
-                plot_meta += self._kodi_wrapper.get_localized_string(32202) % metadata_creator.offtime.strftime(self._kodi_wrapper.get_localized_dateshort())
-                # Show the remaining days/hours the episode is still available
-                if (metadata_creator.offtime - datetime.utcnow()).days > 0:
-                    plot_meta += self._kodi_wrapper.get_localized_string(32203) % (metadata_creator.offtime - datetime.utcnow()).days
+                metadata_creator.duration = (episode.get('duration', 0) * 60)  # Minutes to seconds
+                metadata_creator.plot = BeautifulSoup(episode.get('description'), 'html.parser').text
+                metadata_creator.brands = episode.get('programBrands', episode.get('brands'))
+                metadata_creator.geolocked = episode.get('allowedRegion') == 'BE'
+                if display_options.get('showShortDescription'):
+                    short_description = BeautifulSoup(episode.get('shortDescription'), 'html.parser').text
+                    metadata_creator.plotoutline = short_description
+                    metadata_creator.subtitle = short_description
                 else:
-                    plot_meta += self._kodi_wrapper.get_localized_string(32204) % int((metadata_creator.offtime - datetime.utcnow()).seconds / 3600)
-            if plot_meta:
-                metadata_creator.plot = plot_meta + '\n' + metadata_creator.plot
+                    metadata_creator.plotoutline = episode.get('subtitle')
+                    metadata_creator.subtitle = episode.get('subtitle')
+                metadata_creator.season = episode.get('seasonName')
+                metadata_creator.episode = episode.get('episodeNumber')
+                metadata_creator.mediatype = episode.get('type', 'episode')
+                if episode.get('assetOnTime'):
+                    metadata_creator.ontime = datetime(*time.strptime(episode.get('assetOnTime'), '%Y-%m-%dT%H:%M:%S+0000')[0:6])
+                if episode.get('assetOffTime'):
+                    metadata_creator.offtime = datetime(*time.strptime(episode.get('assetOffTime'), '%Y-%m-%dT%H:%M:%S+0000')[0:6])
 
-            thumb = statichelper.add_https_method(episode.get('videoThumbnailUrl'))
-            fanart = statichelper.add_https_method(episode.get('programImageUrl', thumb))
-            video_url = statichelper.add_https_method(episode.get('url'))
-            title, sort = self._make_title(episode, titletype)
-            metadata_creator.title = title
-            episode_items.append(helperobjects.TitleItem(
-                title=title,
-                url_dict=dict(action=actions.PLAY, video_url=video_url, video_id=episode.get('videoId'), publication_id=episode.get('publicationId')),
-                is_playable=True,
-                art_dict=dict(thumb=thumb, icon='DefaultAddonVideo.png', fanart=fanart),
-                video_dict=metadata_creator.get_video_dict(),
-            ))
+                # Add additional metadata to plot
+                plot_meta = ''
+                if metadata_creator.geolocked:
+                    # Show Geo-locked
+                    plot_meta += self._kodi_wrapper.get_localized_string(32201)
+                # Only display when a video disappears if it is within the next 3 months
+                if metadata_creator.offtime is not None and (metadata_creator.offtime - datetime.utcnow()).days < 93:
+                    # Show date when episode is removed
+                    plot_meta += self._kodi_wrapper.get_localized_string(32202) \
+                                 % metadata_creator.offtime.strftime(self._kodi_wrapper.get_localized_dateshort())
+                    # Show the remaining days/hours the episode is still available
+                    if (metadata_creator.offtime - datetime.utcnow()).days > 0:
+                        plot_meta += self._kodi_wrapper.get_localized_string(32203) % (metadata_creator.offtime - datetime.utcnow()).days
+                    else:
+                        plot_meta += self._kodi_wrapper.get_localized_string(32204) % int((metadata_creator.offtime - datetime.utcnow()).seconds / 3600)
+                if plot_meta:
+                    metadata_creator.plot = plot_meta + '\n' + metadata_creator.plot
+
+                thumb = statichelper.add_https_method(episode.get('videoThumbnailUrl'))
+                fanart = statichelper.add_https_method(episode.get('programImageUrl', thumb))
+                video_url = statichelper.add_https_method(episode.get('url'))
+                title, sort = self._make_title(episode, titletype)
+                metadata_creator.title = title
+                episode_items.append(helperobjects.TitleItem(
+                    title=title,
+                    url_dict=dict(action=actions.PLAY, video_url=video_url, video_id=episode.get('videoId'), publication_id=episode.get('publicationId')),
+                    is_playable=True,
+                    art_dict=dict(thumb=thumb, icon='DefaultAddonVideo.png', fanart=fanart),
+                    video_dict=metadata_creator.get_video_dict(),
+                ))
         return episode_items, sort
 
-    def _map_to_season_items(self, api_url, buckets, episode):
+    def _map_to_season_items(self, api_url, seasons, episode):
         season_items = []
         fanart = statichelper.add_https_method(episode.get('programImageUrl'))
+        program_type = episode.get('programType')
         metadata_creator = metadatacreator.MetadataCreator()
         metadata_creator.mediatype = 'season'
-        for bucket in buckets:
-            season_title = bucket.get('key')
-            title = ''.join((self._kodi_wrapper.get_localized_string(32094), ' ', season_title))
+        # Reverse sort seasons if program_type is 'reeksaflopend' or 'daily'
+        seasons = sorted(seasons, key=lambda k: k['key'], reverse=True) if program_type in ('reeksaflopend', 'daily') else seasons
+        for season in seasons:
+            season_key = season.get('key')
+            title = ''.join((self._kodi_wrapper.get_localized_string(32094), ' ', season_key))
             season_facet = '&facets[seasonTitle]='
-            if ' ' in season_title:
-                season_title = season_title.replace(' ', '-')
-                season_facet = '&facets[seasonName]='
-            path = ''.join((api_url, season_facet, season_title))
+            path = ''.join((api_url, season_facet, season_key))
             season_items.append(helperobjects.TitleItem(
                 title=title,
                 url_dict=dict(action=actions.LISTING_EPISODES, video_url=path),
