@@ -111,7 +111,7 @@ class VRTApiHelper:
                 metadata_creator.datetime = datetime.fromtimestamp(episode.get('broadcastDate', 0) / 1000)
 
             metadata_creator.duration = (episode.get('duration', 0) * 60)  # Minutes to seconds
-            metadata_creator.plot = BeautifulSoup(episode.get('description'), 'html.parser').text
+            metadata_creator.plot = BeautifulSoup(statichelper.convert_html_to_kodilabel(episode.get('description')), 'html.parser').text
             metadata_creator.brands = episode.get('programBrands', episode.get('brands'))
             metadata_creator.geolocked = episode.get('allowedRegion') == 'BE'
             if display_options.get('showShortDescription'):
