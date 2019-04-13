@@ -17,7 +17,7 @@ except ImportError:
 
 
 def convert_html_to_kodilabel(text):
-    rep = {"<i>": "[I]", "</i>": "[/I]"} 
+    rep = {"<i>": "[I]", "</i>": "[/I]"}
     rep = dict((re.escape(k), v) for k, v in rep.iteritems())
     pattern = re.compile("|".join(rep.keys()))
     return pattern.sub(lambda m: rep[re.escape(m.group(0))], text)
