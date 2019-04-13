@@ -49,15 +49,21 @@
     <Compile Include="service.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="vrtnutests\streamservicetests.py" />
-    <Compile Include="vrtnutests\apihelpertests.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="vrtnutests\vrtplayertests.py" />
-    <Compile Include="vrtnutests\__init__.py" />
+    <Compile Include="test\apihelpertests.py" />
+    <Compile Include="test\streamservicetests.py" />
+    <Compile Include="test\vrtplayertests.py" />
+    <Compile Include="test\__init__.py" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include=".gitignore" />
+    <Content Include=".travis.yml" />
     <Content Include="addon.xml" />
+    <Content Include="Build-Zip.ps1" />
+    <Content Include="LICENSE" />
+    <Content Include="Makefile" />
+    <Content Include="pylintrc" />
+    <Content Include="README.md" />
+    <Content Include="requirements.txt" />
     <Content Include="resources\language\resource.language.en_gb\strings.po" />
     <Content Include="resources\language\resource.language.nl_nl\strings.po" />
     <Content Include="resources\media\canvas.png" />
@@ -65,11 +71,12 @@
     <Content Include="resources\media\fanart.jpg" />
     <Content Include="resources\media\icon.png" />
     <Content Include="resources\media\ketnet.png" />
-    <Content Include="resources\media\screenshot01.png" />
-    <Content Include="resources\media\screenshot02.png" />
-    <Content Include="resources\media\screenshot03.png" />
+    <Content Include="resources\media\screenshot01.jpg" />
+    <Content Include="resources\media\screenshot02.jpg" />
+    <Content Include="resources\media\screenshot03.jpg" />
     <Content Include="resources\media\sporza.png" />
     <Content Include="resources\settings.xml" />
+    <Content Include="tox.ini" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="resources" />
@@ -81,7 +88,7 @@
     <Folder Include="resources\lib\kodiwrappers" />
     <Folder Include="resources\lib\vrtplayer" />
     <Folder Include="resources\media" />
-    <Folder Include="vrtnutests\" />
+    <Folder Include="test\" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|PythonCore|2.7-32" />
