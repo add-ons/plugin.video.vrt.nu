@@ -175,8 +175,11 @@ class VRTApiHelper:
         program_type = episode.get('programType')
         metadata_creator = metadatacreator.MetadataCreator()
         metadata_creator.mediatype = 'season'
+
         # Reverse sort seasons if program_type is 'reeksaflopend' or 'daily'
-        seasons = sorted(seasons, key=lambda k: k['key'], reverse=True) if program_type in ('reeksaflopend', 'daily') else seasons
+        if program_type in ('daily', 'reeksaflopend'):
+            seasons = sorted(seasons, key=lambda k: k['key'], reverse=True)
+
         for season in seasons:
             season_key = season.get('key')
             title = ''.join((self._kodi_wrapper.get_localized_string(32094), ' ', season_key))
