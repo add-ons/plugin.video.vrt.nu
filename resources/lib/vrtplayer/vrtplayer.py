@@ -75,21 +75,21 @@ class VRTPlayer:
                 url_dict=dict(action=actions.PLAY, video_url=self._EEN_LIVESTREAM),
                 is_playable=True,
                 art_dict=dict(thumb=self.__get_media('een.png'), icon='DefaultAddonPVRClient.png', fanart=self._api_helper.get_live_screenshot('een')),
-                video_dict=dict(plot=self._kodi_wrapper.get_localized_string(32101)),
+                video_dict=dict(plot=self._kodi_wrapper.get_localized_string(32201) + '\n' + self._kodi_wrapper.get_localized_string(32102)),
             ),
             helperobjects.TitleItem(
-                title=self._kodi_wrapper.get_localized_string(32102),
+                title=self._kodi_wrapper.get_localized_string(32111),
                 url_dict=dict(action=actions.PLAY, video_url=self._CANVAS_LIVESTREAM),
                 is_playable=True,
                 art_dict=dict(thumb=self.__get_media('canvas.png'), icon='DefaultAddonPVRClient.png', fanart=self._api_helper.get_live_screenshot('canvas')),
-                video_dict=dict(plot=self._kodi_wrapper.get_localized_string(32102)),
+                video_dict=dict(plot=self._kodi_wrapper.get_localized_string(32201) + '\n' + self._kodi_wrapper.get_localized_string(32112)),
             ),
             helperobjects.TitleItem(
-                title=self._kodi_wrapper.get_localized_string(32103),
+                title=self._kodi_wrapper.get_localized_string(32121),
                 url_dict=dict(action=actions.PLAY, video_url=self._KETNET_LIVESTREAM),
                 is_playable=True,
                 art_dict=dict(thumb=self.__get_media('ketnet.png'), icon='DefaultAddonPVRClient.png', fanart=self._api_helper.get_live_screenshot('ketnet')),
-                video_dict=dict(plot=self._kodi_wrapper.get_localized_string(32103)),
+                video_dict=dict(plot=self._kodi_wrapper.get_localized_string(32201) + '\n' + self._kodi_wrapper.get_localized_string(32122)),
             ),
         ]
         self._kodi_wrapper.show_listing(livestream_items, content_type='videos')
