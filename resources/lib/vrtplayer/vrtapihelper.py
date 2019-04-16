@@ -87,19 +87,27 @@ class VRTApiHelper:
             else:
                 api_url = path
             api_json = requests.get(api_url, proxies=self._proxies).json()
+            season_key = None
             # Look for seasons items if not yet done
             if 'facets[seasonTitle]' not in path:
                 episode_items = self._get_season_items(api_url, api_json)
+            else:
+                season_key = path.split('facets[seasonTitle]=')[1]
             # No season items, generate episode items
             if not episode_items:
-                episode_items, sort = self._map_to_episode_items(api_json.get('results', []))
+                episode_items, sort = self._map_to_episode_items(api_json.get('results', []), season_key=season_key)
 
         return episode_items, sort
 
-    def _map_to_episode_items(self, episodes, titletype=None):
+    def _map_to_episode_items(self, episodes, titletype=None, season_key=None):
         episode_items = []
         sort = None
         for episode in episodes:
+            # VRT API workaround: seasonTitle facet behaves as a partial match regex,
+            # so we have to filter out the episodes from seasons that don't exactly match.
+            if season_key and episode.get('seasonTitle') != season_key:
+                continue
+
             display_options = episode.get('displayOptions', dict())
 
             if episode.get('programType') == 'reeksoplopend' and titletype is None:
@@ -137,7 +145,8 @@ class VRTApiHelper:
             # Only display when a video disappears if it is within the next 3 months
             if metadata_creator.offtime is not None and (metadata_creator.offtime - datetime.utcnow()).days < 93:
                 # Show date when episode is removed
-                plot_meta += self._kodi_wrapper.get_localized_string(32202) % metadata_creator.offtime.strftime(self._kodi_wrapper.get_localized_dateshort())
+                plot_meta += self._kodi_wrapper.get_localized_string(32202) \
+                             % metadata_creator.offtime.strftime(self._kodi_wrapper.get_localized_dateshort())
                 # Show the remaining days/hours the episode is still available
                 if (metadata_creator.offtime - datetime.utcnow()).days > 0:
                     plot_meta += self._kodi_wrapper.get_localized_string(32203) % (metadata_creator.offtime - datetime.utcnow()).days
@@ -160,19 +169,22 @@ class VRTApiHelper:
             ))
         return episode_items, sort
 
-    def _map_to_season_items(self, api_url, buckets, episode):
+    def _map_to_season_items(self, api_url, seasons, episode):
         season_items = []
         fanart = statichelper.add_https_method(episode.get('programImageUrl'))
+        program_type = episode.get('programType')
         metadata_creator = metadatacreator.MetadataCreator()
         metadata_creator.mediatype = 'season'
-        for bucket in buckets:
-            season_title = bucket.get('key')
-            title = ''.join((self._kodi_wrapper.get_localized_string(32094), ' ', season_title))
+
+        # Reverse sort seasons if program_type is 'reeksaflopend' or 'daily'
+        if program_type in ('daily', 'reeksaflopend'):
+            seasons = sorted(seasons, key=lambda k: k['key'], reverse=True)
+
+        for season in seasons:
+            season_key = season.get('key')
+            title = ''.join((self._kodi_wrapper.get_localized_string(32094), ' ', season_key))
             season_facet = '&facets[seasonTitle]='
-            if ' ' in season_title:
-                season_title = season_title.replace(' ', '-')
-                season_facet = '&facets[seasonName]='
-            path = ''.join((api_url, season_facet, season_title))
+            path = ''.join((api_url, season_facet, season_key))
             season_items.append(helperobjects.TitleItem(
                 title=title,
                 url_dict=dict(action=actions.LISTING_EPISODES, video_url=path),
