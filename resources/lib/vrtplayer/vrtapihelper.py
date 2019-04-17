@@ -37,7 +37,7 @@ class VRTApiHelper:
             metadata_creator.tvshowtitle = tvshow.get('title')
             metadata_creator.plot = statichelper.unescape(tvshow.get('description'))
             metadata_creator.brands = tvshow.get('brands')
-            thumbnail = statichelper.add_https_method(tvshow.get('thumbnail'))
+            thumbnail = statichelper.add_https_method(tvshow.get('thumbnail', 'DefaultAddonVideo.png'))
             # Cut vrtbase url off since it will be added again when searching for episodes
             # (with a-z we dont have the full url)
             video_url = statichelper.add_https_method(tvshow.get('targetUrl')).replace(self._VRT_BASE, '')
@@ -153,7 +153,7 @@ class VRTApiHelper:
             if plot_meta:
                 metadata_creator.plot = plot_meta + '\n' + metadata_creator.plot
 
-            thumb = statichelper.add_https_method(episode.get('videoThumbnailUrl'))
+            thumb = statichelper.add_https_method(episode.get('videoThumbnailUrl', 'DefaultAddonVideo.png'))
             fanart = statichelper.add_https_method(episode.get('programImageUrl', thumb))
             video_url = statichelper.add_https_method(episode.get('url'))
             title, sort = self._make_title(episode, titletype)
@@ -169,7 +169,7 @@ class VRTApiHelper:
 
     def _map_to_season_items(self, api_url, seasons, episode):
         season_items = []
-        fanart = statichelper.add_https_method(episode.get('programImageUrl'))
+        fanart = statichelper.add_https_method(episode.get('programImageUrl', 'DefaultSets.png'))
         program_type = episode.get('programType')
         metadata_creator = metadatacreator.MetadataCreator()
         metadata_creator.mediatype = 'season'
