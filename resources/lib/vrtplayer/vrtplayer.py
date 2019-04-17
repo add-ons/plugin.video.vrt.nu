@@ -122,7 +122,7 @@ class VRTPlayer:
 
     @staticmethod
     def __format_category_image_url(element):
-        raw_thumbnail = element.find(class_='media').get('data-responsive-image')
+        raw_thumbnail = element.find(class_='media').get('data-responsive-image', 'DefaultGenre.png')
         return statichelper.add_https_method(raw_thumbnail)
 
     @staticmethod
