@@ -6,6 +6,26 @@ from __future__ import absolute_import, division, unicode_literals
 import re
 
 
+HTML_MAPPING = [
+    (re.compile(r'<i\s[^>]+>'), '[I]'),
+    (re.compile('<i>'), '[I]'),
+    (re.compile('</i>'), '[/I]'),
+    (re.compile(r'<b\s[^>]+>'), '[B]'),
+    (re.compile('<b>'), '[B]'),
+    (re.compile('</b>'), '[/B]'),
+    (re.compile(r'<p\s[^>]+>'), ''),
+    (re.compile('<p>'), '',),
+    (re.compile('</p>'), ''),
+    (re.compile(r'<div\s[^>]+>'), ''),
+    (re.compile('<div>'), ''),
+    (re.compile('</div>'), ''),
+    (re.compile(r'<span\s[^>]+>'), ''),
+    (re.compile('<span>'), ''),
+    (re.compile('</span>'), ''),
+    (re.compile('<br>\n'), ' '),  # This appears to be specific formatting for VRT.NU, but unwanted for us
+    (re.compile('<br>'), ' '),  # This appears to be specific formatting for VRT.NU, but unwanted for us
+]
+
 # pylint: disable=unused-import
 try:
     from html import unescape
@@ -17,10 +37,9 @@ except ImportError:
 
 
 def convert_html_to_kodilabel(text):
-    rep = {"<i>": "[I]", "</i>": "[/I]"}
-    rep = dict((re.escape(k), v) for k, v in rep.items())
-    pattern = re.compile("|".join(rep.keys()))
-    return pattern.sub(lambda m: rep[re.escape(m.group(0))], text)
+    for (k, v) in HTML_MAPPING:
+        text = k.sub(v, text)
+    return unescape(text).strip()
 
 
 def strip_newlines(text):

@@ -3,14 +3,13 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, unicode_literals
-from bs4 import BeautifulSoup
 from datetime import datetime
 import requests
 import time
 
-from resources.lib.vrtplayer import statichelper, metadatacreator, actions
 from resources.lib.helperobjects import helperobjects
 from resources.lib.kodiwrappers import sortmethod
+from resources.lib.vrtplayer import actions, metadatacreator, statichelper
 
 
 class VRTApiHelper:
@@ -119,11 +118,11 @@ class VRTApiHelper:
                 metadata_creator.datetime = datetime.fromtimestamp(episode.get('broadcastDate', 0) / 1000)
 
             metadata_creator.duration = (episode.get('duration', 0) * 60)  # Minutes to seconds
-            metadata_creator.plot = BeautifulSoup(statichelper.convert_html_to_kodilabel(episode.get('description')), 'html.parser').text
+            metadata_creator.plot = statichelper.convert_html_to_kodilabel(episode.get('description'))
             metadata_creator.brands = episode.get('programBrands', episode.get('brands'))
             metadata_creator.geolocked = episode.get('allowedRegion') == 'BE'
             if display_options.get('showShortDescription'):
-                short_description = BeautifulSoup(episode.get('shortDescription'), 'html.parser').text
+                short_description = statichelper.convert_html_to_kodilabel(episode.get('shortDescription'))
                 metadata_creator.plotoutline = short_description
                 metadata_creator.subtitle = short_description
             else:
@@ -145,8 +144,7 @@ class VRTApiHelper:
             # Only display when a video disappears if it is within the next 3 months
             if metadata_creator.offtime is not None and (metadata_creator.offtime - datetime.utcnow()).days < 93:
                 # Show date when episode is removed
-                plot_meta += self._kodi_wrapper.get_localized_string(32202) \
-                             % metadata_creator.offtime.strftime(self._kodi_wrapper.get_localized_dateshort())
+                plot_meta += self._kodi_wrapper.get_localized_string(32202) % metadata_creator.offtime.strftime(self._kodi_wrapper.get_localized_dateshort())
                 # Show the remaining days/hours the episode is still available
                 if (metadata_creator.offtime - datetime.utcnow()).days > 0:
                     plot_meta += self._kodi_wrapper.get_localized_string(32203) % (metadata_creator.offtime - datetime.utcnow()).days
@@ -221,7 +219,7 @@ class VRTApiHelper:
         return '%08x' % crc
 
     def _make_title(self, result, titletype):
-        short_description = BeautifulSoup(result.get('shortDescription') or result.get('title'), 'html.parser').text
+        short_description = statichelper.convert_html_to_kodilabel(result.get('shortDescription') or result.get('title'))
 
         if titletype == 'recent':
             title = '%s - %s' % (result.get('program'), short_description)
