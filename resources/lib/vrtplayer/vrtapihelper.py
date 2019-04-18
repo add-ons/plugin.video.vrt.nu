@@ -8,7 +8,6 @@ import requests
 import time
 
 from resources.lib.helperobjects import helperobjects
-from resources.lib.kodiwrappers import sortmethod
 from resources.lib.vrtplayer import actions, metadatacreator, statichelper
 
 
@@ -50,6 +49,8 @@ class VRTApiHelper:
 
     def _get_season_items(self, api_url, api_json):
         season_items = []
+        sort = 'label'
+        ascending = True
         if api_json.get('results'):
             episode = api_json['results'][0]
         else:
@@ -59,12 +60,13 @@ class VRTApiHelper:
         for facet in facets:
             if facet.get('name') == 'seasons' and len(facet.get('buckets', [])) > 1:
                 # Found multiple seasons, make list of seasons
-                season_items = self._map_to_season_items(api_url, facet.get('buckets', []), episode)
-        return season_items
+                season_items, sort, ascending = self._map_to_season_items(api_url, facet.get('buckets', []), episode)
+        return season_items, sort, ascending
 
     def get_episode_items(self, path):
         episode_items = []
-        sort = None
+        sort = 'episode'
+        ascending = True
         if path == 'recent':
             params = {
                 'i': 'video',
@@ -74,7 +76,7 @@ class VRTApiHelper:
             }
             api_url = self._VRTNU_SEARCH_URL + '?' + '&'.join(['='.join(t) for t in params.items()])
             api_json = requests.get(api_url, proxies=self._proxies).json()
-            episode_items, sort = self._map_to_episode_items(api_json.get('results', []), path)
+            episode_items, sort, ascending = self._map_to_episode_items(api_json.get('results', []), path)
         else:
             if '.relevant/' in path:
                 params = {
@@ -86,21 +88,31 @@ class VRTApiHelper:
             else:
                 api_url = path
             api_json = requests.get(api_url, proxies=self._proxies).json()
-            season_key = None
-            # Look for seasons items if not yet done
-            if 'facets[seasonTitle]' not in path:
-                episode_items = self._get_season_items(api_url, api_json)
+
+            episodes = api_json.get('results', [{}])
+            if episodes:
+                episode = episodes[0]
             else:
+                episode = dict()
+            display_options = episode.get('displayOptions', dict())
+
+            # Look for seasons items if not yet done
+            season_key = None
+            if 'facets[seasonTitle]' in path:
                 season_key = path.split('facets[seasonTitle]=')[1]
+            elif display_options.get('showSeason') is True:
+                episode_items, sort, ascending = self._get_season_items(api_url, api_json)
+
             # No season items, generate episode items
             if not episode_items:
-                episode_items, sort = self._map_to_episode_items(api_json.get('results', []), season_key=season_key)
+                episode_items, sort, ascending = self._map_to_episode_items(episodes, season_key=season_key)
 
-        return episode_items, sort
+        return episode_items, sort, ascending
 
     def _map_to_episode_items(self, episodes, titletype=None, season_key=None):
         episode_items = []
-        sort = None
+        sort = 'episode'
+        ascending = True
         for episode in episodes:
             # VRT API workaround: seasonTitle facet behaves as a partial match regex,
             # so we have to filter out the episodes from seasons that don't exactly match.
@@ -109,8 +121,8 @@ class VRTApiHelper:
 
             display_options = episode.get('displayOptions', dict())
 
-            if episode.get('programType') == 'reeksoplopend' and titletype is None:
-                titletype = 'reeksoplopend'
+            if titletype is None:
+                titletype = episode.get('programType')
 
             metadata_creator = metadatacreator.MetadataCreator()
             metadata_creator.tvshowtitle = episode.get('program')
@@ -156,7 +168,7 @@ class VRTApiHelper:
             thumb = statichelper.add_https_method(episode.get('videoThumbnailUrl', 'DefaultAddonVideo.png'))
             fanart = statichelper.add_https_method(episode.get('programImageUrl', thumb))
             video_url = statichelper.add_https_method(episode.get('url'))
-            title, sort = self._make_title(episode, titletype)
+            title, sort, ascending = self._make_title(episode, titletype, options=display_options)
             metadata_creator.title = title
             episode_items.append(helperobjects.TitleItem(
                 title=title,
@@ -165,10 +177,13 @@ class VRTApiHelper:
                 art_dict=dict(thumb=thumb, icon='DefaultAddonVideo.png', fanart=fanart),
                 video_dict=metadata_creator.get_video_dict(),
             ))
-        return episode_items, sort
+        return episode_items, sort, ascending
 
     def _map_to_season_items(self, api_url, seasons, episode):
         season_items = []
+        sort = 'label'
+        ascending = True
+
         fanart = statichelper.add_https_method(episode.get('programImageUrl', 'DefaultSets.png'))
         program_type = episode.get('programType')
         metadata_creator = metadatacreator.MetadataCreator()
@@ -176,7 +191,7 @@ class VRTApiHelper:
 
         # Reverse sort seasons if program_type is 'reeksaflopend' or 'daily'
         if program_type in ('daily', 'reeksaflopend'):
-            seasons = sorted(seasons, key=lambda k: k['key'], reverse=True)
+            ascending = False
 
         for season in seasons:
             season_key = season.get('key')
@@ -190,7 +205,7 @@ class VRTApiHelper:
                 art_dict=dict(thumb=fanart, icon='DefaultSets.png', fanart=fanart),
                 video_dict=metadata_creator.get_video_dict(),
             ))
-        return season_items
+        return season_items, sort, ascending
 
     def get_live_screenshot(self, channel):
         url = ''.join((self._VRTNU_SCREENSHOT_URL, '/', channel, '.jpg'))
@@ -218,17 +233,51 @@ class VRTApiHelper:
             crc = crc & 0xFFFFFFFF
         return '%08x' % crc
 
-    def _make_title(self, result, titletype):
-        short_description = statichelper.convert_html_to_kodilabel(result.get('shortDescription') or result.get('title'))
+    def _make_title(self, result, titletype, options=None):
+        if options is None:
+            options = dict()
+
+        if options.get('showShortDescription'):
+            title = statichelper.convert_html_to_kodilabel(result.get('shortDescription') or result.get('title'))
+        elif options.get('showEpisodeTitle'):
+            title = statichelper.convert_html_to_kodilabel(result.get('title') or result.get('shortDescription'))
+        else:
+            title = statichelper.convert_html_to_kodilabel(result.get('shortDescription') or result.get('title'))
+
+        sort = 'none'
+        ascending = True
 
         if titletype == 'recent':
-            title = '%s - %s' % (result.get('program'), short_description)
-            sort = None
-        elif titletype == 'reeksoplopend' or result.get('formattedBroadcastShortDate') == '':
-            title = '%s %s - %s' % (self._kodi_wrapper.get_localized_string(32095), result.get('episodeNumber'), short_description)
-            sort = sortmethod.ALPHABET
-        else:
-            title = '%s - %s' % (result.get('formattedBroadcastShortDate'), short_description)
-            sort = None
+            title = '%s - %s' % (result.get('program'), title)
+            sort = 'dateadded'
+            ascending = False
 
-        return title, sort
+        elif titletype in ('reeksaflopend', 'reeksoplopend'):
+
+            if options.get('showBroadcastDate') and result.get('formattedBroadcastShortDate'):
+                title = '%s - %s' % (result.get('formattedBroadcastShortDate'), title)
+                sort = 'dateadded'
+            elif options.get('showSeason') is False and options.get('showEpisodeNumber') and result.get('seasonName') and result.get('episodeNumber'):
+                try:
+                    title = 'S%02dE%02d: %s' % (int(result.get('seasonName')), int(result.get('episodeNumber')), title)
+                    sort = 'dateadded'
+                except Exception:
+                    # Season may not always be a perfect number
+                    sort = 'episode'
+            elif options.get('showEpisodeNumber'):
+                sort = 'episode'
+            else:
+                sort = 'dateadded'
+
+            if titletype == 'reeksaflopend':
+                ascending = False
+
+        elif titletype == 'daily':
+            title = '%s - %s' % (result.get('formattedBroadcastShortDate'), title)
+            sort = 'dateadded'
+            ascending = False
+
+        elif titletype == 'oneoff':
+            sort = 'label'
+
+        return title, sort, ascending

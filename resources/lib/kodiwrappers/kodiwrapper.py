@@ -6,7 +6,6 @@ from __future__ import absolute_import, division, unicode_literals
 import json
 
 import inputstreamhelper
-from resources.lib.kodiwrappers import sortmethod
 import xbmc
 import xbmcgui
 import xbmcplugin
@@ -16,6 +15,18 @@ try:
     from urllib.parse import urlencode
 except ImportError:
     from urllib import urlencode
+
+sort_methods = {
+    'date': xbmcplugin.SORT_METHOD_DATE,
+    'dateadded': xbmcplugin.SORT_METHOD_DATEADDED,
+    'duration': xbmcplugin.SORT_METHOD_DURATION,
+    'episode': xbmcplugin.SORT_METHOD_EPISODE,
+    'genre': xbmcplugin.SORT_METHOD_GENRE,
+    'label': xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE,
+    'none': xbmcplugin.SORT_METHOD_NONE,
+    'title': xbmcplugin.SORT_METHOD_TITLE_IGNORE_THE,
+    'unsorted': xbmcplugin.SORT_METHOD_UNSORTED,
+}
 
 
 def has_socks():
@@ -38,20 +49,22 @@ class KodiWrapper:
         self._addon = addon
         self._addon_id = addon.getAddonInfo('id')
 
-    def show_listing(self, list_items, sort=None, content_type='episodes'):
+    def show_listing(self, list_items, sort='none', ascending=True, content_type='episodes'):
         listing = []
 
-        if sort is not None:
-            kodi_sorts = {sortmethod.ALPHABET: xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE}
-            kodi_sortmethod = kodi_sorts.get(sort)
-            xbmcplugin.addSortMethod(handle=self._handle, sortMethod=kodi_sortmethod)
-        else:
-            xbmcplugin.addSortMethod(handle=self._handle, sortMethod=xbmcplugin.SORT_METHOD_NONE)
+        # Add all sort methods to GUI
+        xbmcplugin.addSortMethod(handle=self._handle, sortMethod=sort_methods[sort])
+        for key in sorted(sort_methods):
+            if key not in ('none', sort):
+                xbmcplugin.addSortMethod(handle=self._handle, sortMethod=sort_methods[key])
+
+        xbmcplugin.setProperty(handle=self._handle, key='sort.order', value=str(sort_methods[sort]))
+        xbmcplugin.setProperty(handle=self._handle, key='sort.ascending', value='true' if ascending else 'false')
 
         for title_item in list_items:
             list_item = xbmcgui.ListItem(label=title_item.title, thumbnailImage=title_item.art_dict.get('thumb'))
             url = self._url + '?' + urlencode(title_item.url_dict)
-            list_item.setProperty('IsPlayable', str(title_item.is_playable))
+            list_item.setProperty('IsPlayable', 'true' if title_item.is_playable else 'false')
 
             if title_item.art_dict:
                 list_item.setArt(title_item.art_dict)
