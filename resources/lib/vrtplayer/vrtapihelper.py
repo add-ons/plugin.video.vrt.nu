@@ -97,6 +97,9 @@ class VRTApiHelper:
                 episode = dict()
             display_options = episode.get('displayOptions', dict())
 
+            # NOTE: Hard-code showing seasons because it is unreliable (i.e; Thuis or Down the Road have it disabled)
+            display_options['showSeason'] = True
+
             # Look for seasons items if not yet done
             season_key = None
             if 'facets[seasonTitle]' in path:
@@ -121,6 +124,9 @@ class VRTApiHelper:
                 continue
 
             display_options = episode.get('displayOptions', dict())
+
+            # NOTE: Hard-code showing seasons because it is unreliable (i.e; Thuis or Down the Road have it disabled)
+            display_options['showSeason'] = True
 
             if titletype is None:
                 titletype = episode.get('programType')
@@ -196,7 +202,7 @@ class VRTApiHelper:
 
         for season in seasons:
             season_key = season.get('key')
-            title = '%s %s (%d)' % (self._kodi_wrapper.get_localized_string(32094), season_key, season.)
+            title = '%s %s' % (self._kodi_wrapper.get_localized_string(32094), season_key)
             season_facet = '&facets[seasonTitle]='
             path = ''.join((api_url, season_facet, season_key))
             season_items.append(helperobjects.TitleItem(
