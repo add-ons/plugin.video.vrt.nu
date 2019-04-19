@@ -36,11 +36,12 @@ class VRTApiHelper:
             metadata_creator.tvshowtitle = tvshow.get('title')
             metadata_creator.plot = statichelper.unescape(tvshow.get('description'))
             metadata_creator.brands = tvshow.get('brands')
+            title = '%s  [LIGHT][COLOR yellow]%s[/COLOR][/LIGHT]' % (tvshow.get('title', '???'), tvshow.get('episode_count', '?'))
             thumbnail = statichelper.add_https_method(tvshow.get('thumbnail', 'DefaultAddonVideo.png'))
             # Cut vrtbase url off since it will be added again when searching for episodes
             # (with a-z we dont have the full url)
             video_url = statichelper.add_https_method(tvshow.get('targetUrl')).replace(self._VRT_BASE, '')
-            tvshow_items.append(helperobjects.TitleItem(title=tvshow.get('title'),
+            tvshow_items.append(helperobjects.TitleItem(title=title,
                                                         url_dict=dict(action=actions.LISTING_EPISODES, video_url=video_url),
                                                         is_playable=False,
                                                         art_dict=dict(thumb=thumbnail, icon='DefaultAddonVideo.png', fanart=thumbnail),
@@ -195,7 +196,7 @@ class VRTApiHelper:
 
         for season in seasons:
             season_key = season.get('key')
-            title = ''.join((self._kodi_wrapper.get_localized_string(32094), ' ', season_key))
+            title = '%s %s (%d)' % (self._kodi_wrapper.get_localized_string(32094), season_key, season.)
             season_facet = '&facets[seasonTitle]='
             path = ''.join((api_url, season_facet, season_key))
             season_items.append(helperobjects.TitleItem(
