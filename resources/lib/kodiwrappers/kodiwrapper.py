@@ -52,6 +52,8 @@ class KodiWrapper:
     def show_listing(self, list_items, sort='none', ascending=True, content_type='episodes'):
         listing = []
 
+        xbmcplugin.setContent(self._handle, content=content_type)
+
         # Add all sort methods to GUI
         xbmcplugin.addSortMethod(handle=self._handle, sortMethod=sort_methods[sort])
         for key in sorted(sort_methods):
@@ -64,7 +66,9 @@ class KodiWrapper:
         for title_item in list_items:
             list_item = xbmcgui.ListItem(label=title_item.title, thumbnailImage=title_item.art_dict.get('thumb'))
             url = self._url + '?' + urlencode(title_item.url_dict)
-            list_item.setProperty('IsPlayable', 'true' if title_item.is_playable else 'false')
+            list_item.setProperty(key='IsPlayable', value='true' if title_item.is_playable else 'false')
+            list_item.setProperty(key='sort.order', value=str(sort_methods[sort]))
+            list_item.setProperty(key='sort.ascending', value='true' if ascending else 'false')
 
             if title_item.art_dict:
                 list_item.setArt(title_item.art_dict)
@@ -75,8 +79,6 @@ class KodiWrapper:
             listing.append((url, list_item, not title_item.is_playable))
 
         ok = xbmcplugin.addDirectoryItems(self._handle, listing, len(listing))
-
-        xbmcplugin.setContent(self._handle, content=content_type)
         xbmcplugin.endOfDirectory(self._handle, ok)
 
     def play(self, video):
