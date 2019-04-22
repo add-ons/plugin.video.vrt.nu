@@ -42,6 +42,16 @@ def convert_html_to_kodilabel(text):
     return unescape(text).strip()
 
 
+def shorten_link(url):
+    if url is None:
+        return None
+    # As used in episode search result 'permalink'
+    url = url.replace('https://www.vrt.be/vrtnu/', 'vrtnu.be/')
+    # As used in program a-z listing 'targetUrl'
+    url = url.replace('//www.vrt.be/vrtnu/', 'vrtnu.be/')
+    return url
+
+
 def strip_newlines(text):
     return text.replace('\n', '').strip()
 
