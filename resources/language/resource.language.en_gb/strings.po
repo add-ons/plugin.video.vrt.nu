@@ -116,32 +116,32 @@ msgid "Episode"
 msgstr "Episode"
 
 msgctxt "#32101"
-msgid "Eén"
-msgstr "Eén"
+msgid "Eén live"
+msgstr "Eén live"
 
 msgctxt "#32102"
 msgid "Watch Eén live TV stream"
 msgstr "Watch Eén live TV stream"
 
 msgctxt "#32111"
-msgid "Canvas"
-msgstr "Canvas"
+msgid "Canvas live"
+msgstr "Canvas live"
 
 msgctxt "#32112"
 msgid "Watch Canvas live TV stream"
 msgstr "Watch Canvas live TV stream"
 
 msgctxt "#32121"
-msgid "Ketnet"
-msgstr "Ketnet"
+msgid "Ketnet live"
+msgstr "Ketnet live"
 
 msgctxt "#32122"
 msgid "Watch Ketnet live TV stream"
 msgstr "Watch Ketnet live TV stream"
 
 msgctxt "#32131"
-msgid "Sporza"
-msgstr "Sporza"
+msgid "Sporza live"
+msgstr "Sporza live"
 
 msgctxt "#32132"
 msgid "Watch Sporza live TV stream"
