@@ -202,8 +202,7 @@ class MetadataCreator:
 #            video_dict['enddate'] = self.datetime.strftime('%Y-%m-%d %H:%M:%S')
 
         if self.brands:
-            # NOTE: Does not seem to have any effect
-            video_dict['channelname'] = self.brands[0] if isinstance(self.brands, list) else self.brands
+            #video_dict['channelname'] = self.brands[0] if isinstance(self.brands, list) else self.brands
             video_dict['studio'] = self.brands
 
         # rating
