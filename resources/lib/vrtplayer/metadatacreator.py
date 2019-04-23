@@ -182,10 +182,10 @@ class MetadataCreator:
 
         if self.datetime:
             video_dict['aired'] = self.datetime.strftime('%Y-%m-%d %H:%M:%S')
-            video_dict['date'] = self.datetime.strftime('%d.%m.%Y')
+            video_dict['date'] = self.datetime.strftime('%Y-%m-%d')
         elif self.ontime and self.ontime != datetime(1970, 1, 1):
             video_dict['aired'] = self.ontime.strftime('%Y-%m-%d %H:%M:%S')
-            video_dict['date'] = self.ontime.strftime('%d.%m.%Y')
+            video_dict['date'] = self.ontime.strftime('%Y-%m-%d')
 
         if self.ontime and self.ontime != datetime(1970, 1, 1):
             video_dict['dateadded'] = self.ontime.strftime('%Y-%m-%d %H:%M:%S')

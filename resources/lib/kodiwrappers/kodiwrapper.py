@@ -21,10 +21,10 @@ sort_methods = {
     'dateadded': xbmcplugin.SORT_METHOD_DATEADDED,
     'duration': xbmcplugin.SORT_METHOD_DURATION,
     'episode': xbmcplugin.SORT_METHOD_EPISODE,
-    'genre': xbmcplugin.SORT_METHOD_GENRE,
+    # 'genre': xbmcplugin.SORT_METHOD_GENRE,
     'label': xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE,
     'none': xbmcplugin.SORT_METHOD_NONE,
-    'title': xbmcplugin.SORT_METHOD_TITLE_IGNORE_THE,
+    # 'title': xbmcplugin.SORT_METHOD_TITLE_IGNORE_THE,
     'unsorted': xbmcplugin.SORT_METHOD_UNSORTED,
 }
 
@@ -56,15 +56,16 @@ class KodiWrapper:
 
         # Add all sort methods to GUI
         xbmcplugin.addSortMethod(handle=self._handle, sortMethod=sort_methods[sort])
-        for key in sorted(sort_methods):
-            if key not in ('none', sort):
+        for key in sort_methods:
+            if key != sort:
                 xbmcplugin.addSortMethod(handle=self._handle, sortMethod=sort_methods[key])
 
-        # NOTE: This does not appear to be working, we have to order it ourselves
+        # FIXME: This does not appear to be working, we have to order it ourselves
         xbmcplugin.setProperty(handle=self._handle, key='sort.ascending', value='true' if ascending else 'false')
         if ascending:
             xbmcplugin.setProperty(handle=self._handle, key='sort.order', value=str(sort_methods[sort]))
         else:
+            # NOTE: When descending, use unsorted
             xbmcplugin.setProperty(handle=self._handle, key='sort.order', value=str(sort_methods['none']))
 
         for title_item in list_items:
@@ -72,11 +73,12 @@ class KodiWrapper:
             url = self._url + '?' + urlencode(title_item.url_dict)
             list_item.setProperty(key='IsPlayable', value='true' if title_item.is_playable else 'false')
 
-            # NOTE: This does not appear to be working, we have to order it ourselves
+            # FIXME: This does not appear to be working, we have to order it ourselves
             list_item.setProperty(key='sort.ascending', value='true' if ascending else 'false')
             if ascending:
                 list_item.setProperty(key='sort.order', value=str(sort_methods[sort]))
             else:
+                # NOTE: When descending, use unsorted
                 list_item.setProperty(key='sort.order', value=str(sort_methods['none']))
 
             if title_item.art_dict:

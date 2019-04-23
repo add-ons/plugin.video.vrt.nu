@@ -11,6 +11,11 @@ import time
 
 from resources.lib.helperobjects import apidata, streamurls
 
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
+
 
 class StreamService:
 
@@ -64,8 +69,7 @@ class StreamService:
         '''
         header = ''
         if key_headers:
-            for k, v in list(key_headers.items()):
-                header = header + '&' + k + '=' + requests.utils.quote(v)
+            header = urlencode(key_headers)
 
         if key_type in ('A', 'R', 'B'):
             key_value = key_type + '{SSM}'
@@ -74,7 +78,7 @@ class StreamService:
                 raise ValueError('Missing D{SSM} placeholder')
             key_value = requests.utils.quote(key_value)
 
-        return '%s|%s|%s|' % (key_url, header.strip('&'), key_value)
+        return '%s|%s|%s|' % (key_url, header, key_value)
 
     def _get_api_data(self, video_url):
         html_page = requests.get(video_url, proxies=self._proxies).text
@@ -244,6 +248,6 @@ class StreamService:
 
         # Merge audio and video uri
         if direct_audio_url is not None:
-            direct_video_url = base_url, direct_audio_url + '-' + direct_video_url.split('-')[-1]
+            direct_video_url = base_url + direct_audio_url + '-' + direct_video_url.split('-')[-1]
 
         return direct_video_url, direct_subtitle_url

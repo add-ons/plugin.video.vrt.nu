@@ -10,6 +10,11 @@ import time
 from resources.lib.helperobjects import helperobjects
 from resources.lib.vrtplayer import actions, metadatacreator, statichelper
 
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
+
 
 class VRTApiHelper:
 
@@ -23,20 +28,23 @@ class VRTApiHelper:
         self._kodi_wrapper = kodi_wrapper
         self._proxies = self._kodi_wrapper.get_proxies()
 
-    def get_tvshow_items(self, path):
-        if path == 'az':
-            api_url = self._VRTNU_SUGGEST_URL + '?facets[transcodingStatus]=AVAILABLE'
-        else:
+    def get_tvshow_items(self, path=None):
+        if path:
             api_url = self._VRTNU_SUGGEST_URL + '?facets[categories]=' + path
+        else:
+            # If no path is provided, we return the A-Z listing
+            api_url = self._VRTNU_SUGGEST_URL + '?facets[transcodingStatus]=AVAILABLE'
         tvshows = requests.get(api_url, proxies=self._proxies).json()
         tvshow_items = []
         for tvshow in tvshows:
             metadata_creator = metadatacreator.MetadataCreator()
             metadata_creator.mediatype = 'tvshow'
-            metadata_creator.tvshowtitle = tvshow.get('title')
-            metadata_creator.plot = statichelper.unescape(tvshow.get('description'))
+            metadata_creator.tvshowtitle = tvshow.get('title', '???')
+            metadata_creator.plot = statichelper.unescape(tvshow.get('description', '???'))
             metadata_creator.brands = tvshow.get('brands')
-            title = '%s  [LIGHT][COLOR yellow]%s[/COLOR][/LIGHT]' % (tvshow.get('title', '???'), tvshow.get('episode_count', '?'))
+            # NOTE: This adds episode_count to title, would be better as metadata
+            # title = '%s  [LIGHT][COLOR yellow]%s[/COLOR][/LIGHT]' % (tvshow.get('title', '???'), tvshow.get('episode_count', '?'))
+            title = tvshow.get('title', '???')
             thumbnail = statichelper.add_https_method(tvshow.get('thumbnail', 'DefaultAddonVideo.png'))
             # Cut vrtbase url off since it will be added again when searching for episodes
             # (with a-z we dont have the full url)
@@ -75,7 +83,7 @@ class VRTApiHelper:
                 'facets[transcodingStatus]': 'AVAILABLE',
                 'facets[brands]': '[een,canvas,sporza,vrtnws,vrtnxt,radio1,radio2,klara,stubru,mnm]',
             }
-            api_url = self._VRTNU_SEARCH_URL + '?' + '&'.join(['='.join(t) for t in params.items()])
+            api_url = self._VRTNU_SEARCH_URL + '?' + urlencode(params)
             api_json = requests.get(api_url, proxies=self._proxies).json()
             episode_items, sort, ascending = self._map_to_episode_items(api_json.get('results', []), path)
         else:
@@ -85,7 +93,7 @@ class VRTApiHelper:
                     'size': '150',
                     'facets[programUrl]': '//www.vrt.be' + path.replace('.relevant/', '/'),
                 }
-                api_url = self._VRTNU_SEARCH_URL + '?' + '&'.join(['='.join(t) for t in params.items()])
+                api_url = self._VRTNU_SEARCH_URL + '?' + urlencode(params)
             else:
                 api_url = path
             api_json = requests.get(api_url, proxies=self._proxies).json()
@@ -267,21 +275,22 @@ class VRTApiHelper:
             if titletype == 'reeksaflopend':
                 ascending = False
 
-            if options.get('showBroadcastDate') and result.get('formattedBroadcastShortDate'):
-                sort = 'dateadded'
-                title = '%s - %s' % (result.get('formattedBroadcastShortDate'), title)
-            elif options.get('showSeason') is False and options.get('showEpisodeNumber') and result.get('seasonName') and result.get('episodeNumber'):
+            # NOTE: This is disable on purpose as 'showSeason' is not reliable
+            if options.get('showSeason') is False and options.get('showEpisodeNumber') and result.get('seasonName') and result.get('episodeNumber'):
                 try:
                     sort = 'dateadded'
                     title = 'S%02dE%02d: %s' % (int(result.get('seasonName')), int(result.get('episodeNumber')), title)
                 except Exception:
                     # Season may not always be a perfect number
                     sort = 'episode'
-            elif options.get('showEpisodeNumber'):
-                # NOTE: Sort the episodes ourselves, because Kodi does not allow to set to 'ascending'
+            elif options.get('showEpisodeNumber') and result.get('episodeNumber') and ascending:
+                # NOTE: Sort the episodes ourselves, because Kodi does not allow to set to 'descending'
                 # sort = 'episode'
                 sort = 'label'
-                title = '%s %s - %s' % (self._kodi_wrapper.get_localized_string(32095), result.get('episodeNumber'), title)
+                title = '%s %s: %s' % (self._kodi_wrapper.get_localized_string(32095), result.get('episodeNumber'), title)
+            elif options.get('showBroadcastDate') and result.get('formattedBroadcastShortDate'):
+                sort = 'dateadded'
+                title = '%s - %s' % (result.get('formattedBroadcastShortDate'), title)
             else:
                 sort = 'dateadded'
 
