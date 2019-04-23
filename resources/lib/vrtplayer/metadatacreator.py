@@ -181,29 +181,29 @@ class MetadataCreator:
             video_dict['mediatype'] = self.mediatype
 
         if self.datetime:
-            video_dict['aired'] = self.datetime.strftime('%d.%m.%Y')
-            video_dict['date'] = self.datetime.strftime('%d.%m.%Y')
+            video_dict['aired'] = self.datetime.strftime('%Y-%m-%d %H:%M:%S')
+            video_dict['date'] = self.datetime.strftime('%Y-%m-%d')
         elif self.ontime and self.ontime != datetime(1970, 1, 1):
-            video_dict['aired'] = self.ontime.strftime('%d.%m.%Y')
-            video_dict['date'] = self.ontime.strftime('%d.%m.%Y')
+            video_dict['aired'] = self.ontime.strftime('%Y-%m-%d %H:%M:%S')
+            video_dict['date'] = self.ontime.strftime('%Y-%m-%d')
 
-        # NOTE: Does not seem to have any effect
-        if self.ontime:
-            video_dict['dateadded'] = self.ontime.strftime('%d.%m.%Y')
-            video_dict['startdate'] = self.ontime.strftime('%d.%m.%Y')
+        if self.ontime and self.ontime != datetime(1970, 1, 1):
+            video_dict['dateadded'] = self.ontime.strftime('%Y-%m-%d %H:%M:%S')
+#            video_dict['startdate'] = self.ontime.strftime('%Y-%m-%d %H:%M:%S')
+        elif self.datetime:
+            video_dict['dateadded'] = self.datetime.strftime('%Y-%m-%d %H:%M:%S')
+#            video_dict['startdate'] = self.datetime.strftime('%Y-%m-%d %H:%M:%S')
 
-        # NOTE/ Does not seem to have any effect
-        if self.offtime:
-            video_dict['enddate'] = self.offtime.strftime('%d.%m.%Y')
+#        if self.offtime and self.offtime != datetime(1970, 1, 1):
+#            video_dict['enddate'] = self.offtime.strftime('%Y-%m-%d %H:%M:%S')
+#        elif self.ontime and self.ontime != datetime(1970, 1, 1):
+#            video_dict['enddate'] = self.ontime.strftime('%Y-%m-%d %H:%M:%S')
+#        elif self.datetime:
+#            video_dict['enddate'] = self.datetime.strftime('%Y-%m-%d %H:%M:%S')
 
         if self.brands:
-            # NOTE: Does not seem to have any effect
-            video_dict['channelname'] = self.brands[0] if isinstance(self.brands, list) else self.brands
             video_dict['studio'] = self.brands
-
-        # rating
-        # episodename
-        # genre
+#            video_dict['channelname'] = self.brands[0] if isinstance(self.brands, list) else self.brands
 
         # if self.icon:
         #    video_dict['icon'] = self.icon

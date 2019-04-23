@@ -98,7 +98,7 @@ class TokenResolver:
         token = None
         if logon_json.get('errorCode') == 0:
             login_token = logon_json.get('sessionInfo', dict()).get('login_token')
-            login_cookie = ''.join(('glt_', self._API_KEY, '=', login_token))
+            login_cookie = 'glt_%s=%s' % (self._API_KEY, login_token)
             payload = dict(
                 uid=logon_json.get('UID'),
                 uidsig=logon_json.get('UIDSignature'),

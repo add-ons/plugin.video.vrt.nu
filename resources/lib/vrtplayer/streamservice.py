@@ -11,6 +11,11 @@ import time
 
 from resources.lib.helperobjects import apidata, streamurls
 
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
+
 
 class StreamService:
 
@@ -64,17 +69,16 @@ class StreamService:
         '''
         header = ''
         if key_headers:
-            for k, v in list(key_headers.items()):
-                header = ''.join((header, '&', k, '=', requests.utils.quote(v)))
+            header = urlencode(key_headers)
 
         if key_type in ('A', 'R', 'B'):
-            key_value = ''.join((key_type, '{SSM}'))
+            key_value = key_type + '{SSM}'
         elif key_type == 'D':
             if 'D{SSM}' not in key_value:
                 raise ValueError('Missing D{SSM} placeholder')
             key_value = requests.utils.quote(key_value)
 
-        return ''.join((key_url, '|', header.strip('&'), '|', key_value, '|'))
+        return '%s|%s|%s|' % (key_url, header, key_value)
 
     def _get_api_data(self, video_url):
         html_page = requests.get(video_url, proxies=self._proxies).text
@@ -240,10 +244,10 @@ class StreamService:
             subtitle_regex = re.compile(r'#EXT-X-MEDIA:TYPE=SUBTITLES[\w\-=,\.\"\/]+URI=\"([\w\-=]+)\.m3u8\"')
             match_sub = re.search(subtitle_regex, m3u8)
             if match_sub and '/live/' not in master_hls_url:
-                direct_subtitle_url = ''.join((base_url, match_sub.group(1), '.webvtt'))
+                direct_subtitle_url = base_url + match_sub.group(1) + '.webvtt'
 
         # Merge audio and video uri
         if direct_audio_url is not None:
-            direct_video_url = ''.join((base_url, direct_audio_url, '-', direct_video_url.split('-')[-1]))
+            direct_video_url = base_url + direct_audio_url + '-' + direct_video_url.split('-')[-1]
 
         return direct_video_url, direct_subtitle_url

@@ -8,7 +8,6 @@ import os
 import requests
 
 from resources.lib.helperobjects import helperobjects
-from resources.lib.kodiwrappers import sortmethod
 from resources.lib.vrtplayer import actions, statichelper
 
 
@@ -20,7 +19,7 @@ class VRTPlayer:
     _KETNET_LIVESTREAM = 'https://www.vrt.be/vrtnu/kanalen/ketnet/'
 
     VRT_BASE = 'https://www.vrt.be/'
-    VRTNU_BASE_URL = ''.join((VRT_BASE, '/vrtnu'))
+    VRTNU_BASE_URL = VRT_BASE + '/vrtnu'
 
     def __init__(self, addon_path, kodi_wrapper, stream_service, api_helper):
         self._addon_path = addon_path
@@ -52,16 +51,16 @@ class VRTPlayer:
                                     art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
                                     video_dict=dict(plot=self._kodi_wrapper.get_localized_string(32087))),
         ]
-        self._kodi_wrapper.show_listing(main_items, content_type='files')
+        self._kodi_wrapper.show_listing(main_items, sort='none', content_type='files')
 
     def show_tvshow_menu_items(self, path):
         tvshow_items = self._api_helper.get_tvshow_items(path)
-        self._kodi_wrapper.show_listing(tvshow_items, sort=sortmethod.ALPHABET, content_type='tvshows')
+        self._kodi_wrapper.show_listing(tvshow_items, sort='label', content_type='tvshows')
 
     def show_category_menu_items(self):
-        joined_url = ''.join((self.VRTNU_BASE_URL, '/categorieen/'))
+        joined_url = self.VRTNU_BASE_URL + '/categorieen/'
         category_items = self.__get_category_menu_items(joined_url, {'class': 'nui-tile'}, actions.LISTING_CATEGORY_TVSHOWS)
-        self._kodi_wrapper.show_listing(category_items, sort=sortmethod.ALPHABET, content_type='files')
+        self._kodi_wrapper.show_listing(category_items, sort='label', content_type='files')
 
     def play(self, video):
         stream = self._stream_service.get_stream(video)
@@ -95,8 +94,8 @@ class VRTPlayer:
         self._kodi_wrapper.show_listing(livestream_items, content_type='videos')
 
     def show_episodes(self, path):
-        episode_items, sort = self._api_helper.get_episode_items(path)
-        self._kodi_wrapper.show_listing(episode_items, sort=sort, content_type='episodes')
+        episode_items, sort, ascending = self._api_helper.get_episode_items(path)
+        self._kodi_wrapper.show_listing(episode_items, sort=sort, ascending=ascending, content_type='episodes')
 
     def __get_media(self, file_name):
         return os.path.join(self._addon_path, 'resources', 'media', file_name)

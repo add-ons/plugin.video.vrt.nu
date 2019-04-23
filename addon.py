@@ -33,7 +33,7 @@ def router(params_string):
     params = dict(parse_qsl(params_string))
     action = params.get('action')
     if action == actions.LISTING_AZ_TVSHOWS:
-        vrt_player.show_tvshow_menu_items('az')
+        vrt_player.show_tvshow_menu_items(path=None)
     elif action == actions.LISTING_CATEGORIES:
         vrt_player.show_category_menu_items()
     elif action == actions.LISTING_LIVE:
@@ -41,7 +41,7 @@ def router(params_string):
     elif action == actions.LISTING_EPISODES:
         vrt_player.show_episodes(params.get('video_url'))
     elif action == actions.LISTING_CATEGORY_TVSHOWS:
-        vrt_player.show_tvshow_menu_items(params.get('video_url'))
+        vrt_player.show_tvshow_menu_items(path=params.get('video_url'))
     elif action == actions.PLAY:
         video = dict(
             video_url=params.get('video_url'),
