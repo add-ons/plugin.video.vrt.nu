@@ -19,7 +19,7 @@ class VRTPlayer:
     _KETNET_LIVESTREAM = 'https://www.vrt.be/vrtnu/kanalen/ketnet/'
 
     VRT_BASE = 'https://www.vrt.be/'
-    VRTNU_BASE_URL = ''.join((VRT_BASE, '/vrtnu'))
+    VRTNU_BASE_URL = VRT_BASE + '/vrtnu'
 
     def __init__(self, addon_path, kodi_wrapper, stream_service, api_helper):
         self._addon_path = addon_path
@@ -58,7 +58,7 @@ class VRTPlayer:
         self._kodi_wrapper.show_listing(tvshow_items, sort='label', content_type='tvshows')
 
     def show_category_menu_items(self):
-        joined_url = ''.join((self.VRTNU_BASE_URL, '/categorieen/'))
+        joined_url = self.VRTNU_BASE_URL + '/categorieen/'
         category_items = self.__get_category_menu_items(joined_url, {'class': 'nui-tile'}, actions.LISTING_CATEGORY_TVSHOWS)
         self._kodi_wrapper.show_listing(category_items, sort='label', content_type='files')
 

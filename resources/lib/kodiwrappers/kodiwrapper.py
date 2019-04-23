@@ -60,15 +60,24 @@ class KodiWrapper:
             if key not in ('none', sort):
                 xbmcplugin.addSortMethod(handle=self._handle, sortMethod=sort_methods[key])
 
-        xbmcplugin.setProperty(handle=self._handle, key='sort.order', value=str(sort_methods[sort]))
+        # NOTE: This does not appear to be working, we have to order it ourselves
         xbmcplugin.setProperty(handle=self._handle, key='sort.ascending', value='true' if ascending else 'false')
+        if ascending:
+            xbmcplugin.setProperty(handle=self._handle, key='sort.order', value=str(sort_methods[sort]))
+        else:
+            xbmcplugin.setProperty(handle=self._handle, key='sort.order', value=str(sort_methods['none']))
 
         for title_item in list_items:
             list_item = xbmcgui.ListItem(label=title_item.title, thumbnailImage=title_item.art_dict.get('thumb'))
             url = self._url + '?' + urlencode(title_item.url_dict)
             list_item.setProperty(key='IsPlayable', value='true' if title_item.is_playable else 'false')
-            list_item.setProperty(key='sort.order', value=str(sort_methods[sort]))
+
+            # NOTE: This does not appear to be working, we have to order it ourselves
             list_item.setProperty(key='sort.ascending', value='true' if ascending else 'false')
+            if ascending:
+                list_item.setProperty(key='sort.order', value=str(sort_methods[sort]))
+            else:
+                list_item.setProperty(key='sort.order', value=str(sort_methods['none']))
 
             if title_item.art_dict:
                 list_item.setArt(title_item.art_dict)

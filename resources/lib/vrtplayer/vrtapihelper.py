@@ -15,9 +15,9 @@ class VRTApiHelper:
 
     _VRT_BASE = 'https://www.vrt.be'
     _VRTNU_API_BASE = 'https://vrtnu-api.vrt.be'
-    _VRTNU_SEARCH_URL = ''.join((_VRTNU_API_BASE, '/search'))
-    _VRTNU_SUGGEST_URL = ''.join((_VRTNU_API_BASE, '/suggest'))
-    _VRTNU_SCREENSHOT_URL = ''.join((_VRTNU_API_BASE, '/screenshots'))
+    _VRTNU_SEARCH_URL = _VRTNU_API_BASE + '/search'
+    _VRTNU_SUGGEST_URL = _VRTNU_API_BASE + '/suggest'
+    _VRTNU_SCREENSHOT_URL = _VRTNU_API_BASE + '/screenshots'
 
     def __init__(self, kodi_wrapper):
         self._kodi_wrapper = kodi_wrapper
@@ -25,9 +25,9 @@ class VRTApiHelper:
 
     def get_tvshow_items(self, path):
         if path == 'az':
-            api_url = ''.join((self._VRTNU_SUGGEST_URL, '?facets[transcodingStatus]=AVAILABLE'))
+            api_url = self._VRTNU_SUGGEST_URL + '?facets[transcodingStatus]=AVAILABLE'
         else:
-            api_url = ''.join((self._VRTNU_SUGGEST_URL, '?facets[categories]=', path))
+            api_url = self._VRTNU_SUGGEST_URL + '?facets[categories]=' + path
         tvshows = requests.get(api_url, proxies=self._proxies).json()
         tvshow_items = []
         for tvshow in tvshows:
@@ -200,11 +200,14 @@ class VRTApiHelper:
         if program_type in ('daily', 'reeksaflopend'):
             ascending = False
 
+        # NOTE: Sort the episodes ourselves, because Kodi does not allow to set to 'ascending'
+        seasons = sorted(seasons, key=lambda k: k['key'], reverse=not ascending)
+
         for season in seasons:
             season_key = season.get('key')
             title = '%s %s' % (self._kodi_wrapper.get_localized_string(32094), season_key)
             season_facet = '&facets[seasonTitle]='
-            path = ''.join((api_url, season_facet, season_key))
+            path = api_url + season_facet + season_key
             season_items.append(helperobjects.TitleItem(
                 title=title,
                 url_dict=dict(action=actions.LISTING_EPISODES, video_url=path),
@@ -215,14 +218,14 @@ class VRTApiHelper:
         return season_items, sort, ascending
 
     def get_live_screenshot(self, channel):
-        url = ''.join((self._VRTNU_SCREENSHOT_URL, '/', channel, '.jpg'))
+        url = '%s/%s.jpg' % (self._VRTNU_SCREENSHOT_URL, channel)
         self.__delete_cached_thumbnail(url)
         return url
 
     def __delete_cached_thumbnail(self, url):
         crc = self.__get_crc32(url)
         ext = url.split('.')[-1]
-        path = ''.join(('special://thumbnails/', crc[0], '/', crc, '.', ext))
+        path = 'special://thumbnails/%s/%s.%s' % (crc[0], crc, ext)
         self._kodi_wrapper.delete_path(path)
 
     @staticmethod
@@ -255,34 +258,37 @@ class VRTApiHelper:
         ascending = True
 
         if titletype == 'recent':
-            title = '%s - %s' % (result.get('program'), title)
-            sort = 'dateadded'
             ascending = False
+            sort = 'dateadded'
+            title = '%s - %s' % (result.get('program'), title)
 
         elif titletype in ('reeksaflopend', 'reeksoplopend'):
-
-            if options.get('showBroadcastDate') and result.get('formattedBroadcastShortDate'):
-                title = '%s - %s' % (result.get('formattedBroadcastShortDate'), title)
-                sort = 'dateadded'
-            elif options.get('showSeason') is False and options.get('showEpisodeNumber') and result.get('seasonName') and result.get('episodeNumber'):
-                try:
-                    title = 'S%02dE%02d: %s' % (int(result.get('seasonName')), int(result.get('episodeNumber')), title)
-                    sort = 'dateadded'
-                except Exception:
-                    # Season may not always be a perfect number
-                    sort = 'episode'
-            elif options.get('showEpisodeNumber'):
-                sort = 'episode'
-            else:
-                sort = 'dateadded'
 
             if titletype == 'reeksaflopend':
                 ascending = False
 
+            if options.get('showBroadcastDate') and result.get('formattedBroadcastShortDate'):
+                sort = 'dateadded'
+                title = '%s - %s' % (result.get('formattedBroadcastShortDate'), title)
+            elif options.get('showSeason') is False and options.get('showEpisodeNumber') and result.get('seasonName') and result.get('episodeNumber'):
+                try:
+                    sort = 'dateadded'
+                    title = 'S%02dE%02d: %s' % (int(result.get('seasonName')), int(result.get('episodeNumber')), title)
+                except Exception:
+                    # Season may not always be a perfect number
+                    sort = 'episode'
+            elif options.get('showEpisodeNumber'):
+                # NOTE: Sort the episodes ourselves, because Kodi does not allow to set to 'ascending'
+                # sort = 'episode'
+                sort = 'label'
+                title = '%s %s - %s' % (self._kodi_wrapper.get_localized_string(32095), result.get('episodeNumber'), title)
+            else:
+                sort = 'dateadded'
+
         elif titletype == 'daily':
-            title = '%s - %s' % (result.get('formattedBroadcastShortDate'), title)
-            sort = 'dateadded'
             ascending = False
+            sort = 'dateadded'
+            title = '%s - %s' % (result.get('formattedBroadcastShortDate'), title)
 
         elif titletype == 'oneoff':
             sort = 'label'
