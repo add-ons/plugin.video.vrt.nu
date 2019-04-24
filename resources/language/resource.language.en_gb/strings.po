@@ -111,6 +111,14 @@ msgctxt "#32087"
 msgid "Recently published episodes of TV programs"
 msgstr "Recently published episodes of TV programs"
 
+msgctxt "#32088"
+msgid "TV guide"
+msgstr "TV guide"
+
+msgctxt "#32089"
+msgid "Browse channel TV guides"
+msgstr "Browse channel TV guides"
+
 msgctxt "#32094"
 msgid "Season"
 msgstr "Season"

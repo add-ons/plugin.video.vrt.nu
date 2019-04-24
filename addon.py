@@ -9,7 +9,7 @@ import sys
 
 import xbmcaddon
 from resources.lib.kodiwrappers import kodiwrapper
-from resources.lib.vrtplayer import actions, streamservice, tokenresolver, vrtapihelper, vrtplayer
+from resources.lib.vrtplayer import actions, streamservice, tokenresolver, tvguide, vrtapihelper, vrtplayer
 
 try:
     from urllib.parse import parse_qsl
@@ -42,6 +42,9 @@ def router(params_string):
         vrt_player.show_episodes(params.get('video_url'))
     elif action == actions.LISTING_CATEGORY_TVSHOWS:
         vrt_player.show_tvshow_menu_items(path=params.get('video_url'))
+    elif action == actions.LISTING_TVGUIDE:
+        tv_guide = tvguide.TVGuide(addon.getAddonInfo('path'), kodi_wrapper)
+        tv_guide.show_tvguide(params)
     elif action == actions.PLAY:
         video = dict(
             video_url=params.get('video_url'),

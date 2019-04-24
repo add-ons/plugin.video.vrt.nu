@@ -59,6 +59,8 @@ def strip_newlines(text):
 def add_https_method(url):
     if url.startswith('//'):
         return 'https:' + url
+    if url.startswith('/'):
+        return 'https://vrt.be' + url
     return url
 
 

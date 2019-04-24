@@ -192,6 +192,8 @@ class MetadataCreator:
         if self.geolocked:
             video_dict['overlay'] = 7
             # video_dict['overlay'] = 'OverlayLocked.png'
+        else:
+            video_dict['overlay'] = 3
 
         # if self.icon:
         #    video_dict['icon'] = self.icon

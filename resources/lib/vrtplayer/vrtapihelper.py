@@ -148,7 +148,7 @@ class VRTApiHelper:
 
             metadata.duration = (episode.get('duration', 0) * 60)  # Minutes to seconds
             metadata.plot = statichelper.convert_html_to_kodilabel(episode.get('description'))
-            metadata.brands = episode.get('programBrands', episode.get('brands'))
+            metadata.brands = episode.get('programBrands') or episode.get('brands')
             metadata.geolocked = episode.get('allowedRegion') == 'BE'
             if display_options.get('showShortDescription'):
                 short_description = statichelper.convert_html_to_kodilabel(episode.get('shortDescription'))
@@ -209,6 +209,7 @@ class VRTApiHelper:
         program_type = episode.get('programType')
         metadata = metadatacreator.MetadataCreator()
         metadata.mediatype = 'season'
+        metadata.brands = episode.get('programBrands') or episode.get('brands')
 
         # Reverse sort seasons if program_type is 'reeksaflopend' or 'daily'
         if program_type in ('daily', 'reeksaflopend'):

@@ -98,7 +98,7 @@ msgstr "Lijst van tv-programma's per categorie"
 
 msgctxt "#32084"
 msgid "Live TV"
-msgstr "Live tv"
+msgstr "Live kijken"
 
 msgctxt "#32085"
 msgid "Watch TV channels live (using Internet streaming)"
@@ -111,6 +111,14 @@ msgstr "Meest recent"
 msgctxt "#32087"
 msgid "Recently published episodes of TV programs"
 msgstr "Recent gepubliceerde afleveringen van tv-programma's"
+
+msgctxt "#32088"
+msgid "TV guide"
+msgstr "TV-gids"
+
+msgctxt "#32089"
+msgid "Browse channel TV guides"
+msgstr "Doorzoek de TV-gids per kanaal"
 
 msgctxt "#32094"
 msgid "Season"
