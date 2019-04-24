@@ -27,6 +27,7 @@ class VRTApiHelper:
     def __init__(self, kodi_wrapper):
         self._kodi_wrapper = kodi_wrapper
         self._proxies = self._kodi_wrapper.get_proxies()
+        self._showpermalink = kodi_wrapper.get_setting('showpermalink') == 'true'
 
     def get_tvshow_items(self, path=None):
         if path:
@@ -182,7 +183,7 @@ class VRTApiHelper:
             if plot_meta:
                 metadata.plot = '%s\n%s' % (plot_meta, metadata.plot)
 
-            if metadata.permalink:
+            if self._showpermalink and metadata.permalink:
                 metadata.plot = '%s\n\n[COLOR yellow]%s[/COLOR]' % (metadata.plot, metadata.permalink)
 
             thumb = statichelper.add_https_method(episode.get('videoThumbnailUrl', 'DefaultAddonVideo.png'))
