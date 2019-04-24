@@ -262,7 +262,7 @@ class VRTApiHelper:
         else:
             title = statichelper.convert_html_to_kodilabel(result.get('shortDescription') or result.get('title'))
 
-        sort = 'none'
+        sort = 'unsorted'
         ascending = True
 
         if titletype == 'recent':
