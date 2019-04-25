@@ -174,3 +174,28 @@ msgstr "[B][COLOR green](%s days left)[/COLOR][/B]\n"
 msgctxt "#32204"
 msgid "[B][COLOR green](%s hours left)[/COLOR][/B]\n"
 msgstr "[B][COLOR green](%s hours left)[/COLOR][/B]\n"
+
+msgctxt "#32301"
+msgid "[B]TV guide for channel %s[/B]"
+msgstr "[B]TV guide for channel %s[/B]"
+
+msgctxt "#32330"
+msgid "2 days ago"
+msgstr "2 days ago"
+
+msgctxt "#32331"
+msgid "Yesterday"
+msgstr "Yesterday"
+
+msgctxt "#32332"
+msgid "Today"
+msgstr "Today"
+
+msgctxt "#32333"
+msgid "Tomorrow"
+msgstr "Tomorrow"
+
+msgctxt "#32334"
+msgid "In 2 days"
+msgstr "In 2 days"
+

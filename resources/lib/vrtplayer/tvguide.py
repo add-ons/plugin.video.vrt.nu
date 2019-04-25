@@ -25,10 +25,12 @@ CHANNELS = dict(
     ),
 )
 
-DATES = {
-    '1': 'Tomorrow',
-    '0': 'Today',
-    '-1': 'Yesterday',
+DATE_STRINGS = {
+    '-2': 32330,  # 2 days ago
+    '-1': 32331,  # Yesterday
+    '0': 32332,  # Today
+    '1': 32333,  # Tomorrow
+    '2': 32334,  # In 2 days
 }
 
 
@@ -51,11 +53,11 @@ class TVGuide:
             for i in range(7, -31, -1):
                 day = today + timedelta(days=i)
                 title = day.strftime(self._kodi_wrapper.get_localized_datelong())
-                if str(i) in DATES:
+                if str(i) in DATE_STRINGS:
                     if i == 0:
-                        title = '[COLOR yellow][B]%s[/B], %s[/COLOR]' % (DATES[str(i)], title)
+                        title = '[COLOR yellow][B]%s[/B], %s[/COLOR]' % (self._kodi_wrapper.get_localized_string(DATE_STRINGS[str(i)]), title)
                     else:
-                        title = '[B]%s[/B], %s' % (DATES[str(i)], title)
+                        title = '[B]%s[/B], %s' % (self._kodi_wrapper.get_localized_string(DATE_STRINGS[str(i)]), title)
                 date_items.append(
                     helperobjects.TitleItem(title=title,
                                             url_dict=dict(action=actions.LISTING_TVGUIDE, date=day.strftime('%Y-%m-%d')),
@@ -66,15 +68,18 @@ class TVGuide:
             self._kodi_wrapper.show_listing(date_items, sort='unsorted', content_type='files')
 
         elif not channel:
+            dateobj = statichelper.strptime(date, '%Y-%m-%d')
+            datelong = dateobj.strftime(self._kodi_wrapper.get_localized_datelong())
             channel_items = []
             for channel in ('een', 'canvas', 'ketnet'):
+                plot = self._kodi_wrapper.get_localized_string(32301) % CHANNELS[channel]['name'] + '\n' + datelong
                 channel_items.append(
                     helperobjects.TitleItem(
                         title=CHANNELS[channel]['name'],
                         url_dict=dict(action=actions.LISTING_TVGUIDE, date=date, channel=channel),
                         is_playable=False,
                         art_dict=dict(thumb=self.__get_media(channel + '.png'), icon='DefaultAddonPVRClient.png', fanart='DefaultAddonPVRClient.png'),
-                        video_dict=dict(plot='TV guide for channel %s' % CHANNELS[channel]['name']),
+                        video_dict=dict(plot=plot),
                     ),
                 )
             self._kodi_wrapper.show_listing(channel_items, content_type='files')
@@ -96,7 +101,7 @@ class TVGuide:
                 metadata.tvshowtitle = title
                 metadata.datetime = dateobj
                 metadata.duration = (statichelper.strptime(end, '%H:%M') - statichelper.strptime(start, '%H:%M')).total_seconds()
-                metadata.plot = '[B]%s[/B]\n%s\n%s - %s\n[I]%s[/I]' % (title, datelong, start, end, channel)
+                metadata.plot = '[B]%s[/B]\n%s\n%s - %s\n[I]%s[/I]' % (title, datelong, start, end, CHANNELS[channel]['name'])
                 metadata.brands = [channel]
                 metadata.mediatype = 'episode'
                 thumb = episode.get('image', 'DefaultAddonVideo.png')
