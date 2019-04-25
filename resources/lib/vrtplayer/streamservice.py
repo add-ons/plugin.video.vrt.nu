@@ -146,8 +146,6 @@ class StreamService:
         return stream_dict
 
     def get_stream(self, video, retry=False, api_data=None):
-        if self._license_url is None:
-            self._get_license_url()
         self._kodi_wrapper.log_notice('video_url ' + video.get('video_url'))
         video_id = video.get('video_id')
         publication_id = video.get('publication_id')
@@ -187,6 +185,8 @@ class StreamService:
         return None
 
     def _try_get_drm_stream(self, stream_dict, vudrm_token):
+        if self._license_url is None:
+            self._get_license_url()
         protocol = "mpeg_dash"
         encryption_json = '{{"token":"{0}","drm_info":[D{{SSM}}],"kid":"{{KID}}"}}'.format(vudrm_token)
         license_key = self._get_license_key(key_url=self._license_url,
