@@ -5,7 +5,6 @@
 from __future__ import absolute_import, division, unicode_literals
 from datetime import datetime
 import requests
-import time
 
 from resources.lib.helperobjects import helperobjects
 from resources.lib.vrtplayer import actions, metadatacreator, statichelper
@@ -162,9 +161,9 @@ class VRTApiHelper:
             metadata.mediatype = episode.get('type', 'episode')
             metadata.permalink = statichelper.shorten_link(episode.get('permalink')) or episode.get('externalPermalink')
             if episode.get('assetOnTime'):
-                metadata.ontime = datetime(*time.strptime(episode.get('assetOnTime'), '%Y-%m-%dT%H:%M:%S+0000')[0:6])
+                metadata.ontime = statichelper.strptime(episode.get('assetOnTime'), '%Y-%m-%dT%H:%M:%S+0000')
             if episode.get('assetOffTime'):
-                metadata.offtime = datetime(*time.strptime(episode.get('assetOffTime'), '%Y-%m-%dT%H:%M:%S+0000')[0:6])
+                metadata.offtime = statichelper.strptime(episode.get('assetOffTime'), '%Y-%m-%dT%H:%M:%S+0000')
 
             # Add additional metadata to plot
             plot_meta = ''

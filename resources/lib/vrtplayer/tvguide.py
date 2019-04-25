@@ -80,7 +80,7 @@ class TVGuide:
             self._kodi_wrapper.show_listing(channel_items, content_type='files')
 
         else:
-            dateobj = datetime.strptime(date, '%Y-%m-%d')
+            dateobj = statichelper.strptime(date, '%Y-%m-%d')
             datelong = dateobj.strftime(self._kodi_wrapper.get_localized_datelong())
             api_url = dateobj.strftime(self.VRT_TVGUIDE)
             schedule = requests.get(api_url, proxies=self._proxies).json()
@@ -95,7 +95,7 @@ class TVGuide:
                 metadata.title = '%s - %s' % (start, title)
                 metadata.tvshowtitle = title
                 metadata.datetime = dateobj
-                metadata.duration = (datetime.strptime(end, '%H:%M') - datetime.strptime(start, '%H:%M')).total_seconds()
+                metadata.duration = (statichelper.strptime(end, '%H:%M') - statichelper.strptime(start, '%H:%M')).total_seconds()
                 metadata.plot = '[B]%s[/B]\n%s\n%s - %s\n[I]%s[/I]' % (title, datelong, start, end, channel)
                 metadata.brands = [channel]
                 metadata.mediatype = 'episode'

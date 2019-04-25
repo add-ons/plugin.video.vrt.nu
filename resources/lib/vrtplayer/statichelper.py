@@ -3,6 +3,9 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, unicode_literals
+
+from datetime import datetime
+import time
 import re
 
 
@@ -70,3 +73,10 @@ def distinct(sequence):
         if s not in seen:
             seen.add(s)
             yield s
+
+
+def strptime(date_string, fmt):
+    try:
+        return datetime.strptime(date_string, fmt)
+    except TypeError:
+        return datetime(*(time.strptime(date_string, fmt)[0:6]))
