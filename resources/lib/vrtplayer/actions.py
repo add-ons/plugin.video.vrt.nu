@@ -11,6 +11,6 @@ LISTING_LIVE = 'listinglive'
 
 LISTING_CATEGORY_TVSHOWS = 'listingcategorytvshows'
 LISTING_EPISODES = 'listingepisodes'
+LISTING_TVGUIDE = 'listingtvguide'
 
 PLAY = 'play'
-CREDENTIALS = 'credentials'

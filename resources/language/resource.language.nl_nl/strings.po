@@ -98,7 +98,7 @@ msgstr "Lijst van tv-programma's per categorie"
 
 msgctxt "#32084"
 msgid "Live TV"
-msgstr "Live tv"
+msgstr "Live kijken"
 
 msgctxt "#32085"
 msgid "Watch TV channels live (using Internet streaming)"
@@ -111,6 +111,14 @@ msgstr "Meest recent"
 msgctxt "#32087"
 msgid "Recently published episodes of TV programs"
 msgstr "Recent gepubliceerde afleveringen van tv-programma's"
+
+msgctxt "#32088"
+msgid "TV guide"
+msgstr "TV-gids"
+
+msgctxt "#32089"
+msgid "Browse channel TV guides"
+msgstr "Doorzoek de TV-gids per kanaal"
 
 msgctxt "#32094"
 msgid "Season"
@@ -167,3 +175,27 @@ msgstr "[B][COLOR green](nog %s dagen)[/COLOR][/B]\n"
 msgctxt "#32204"
 msgid "[B][COLOR green](%s hours left)[/COLOR][/B]\n"
 msgstr "[B][COLOR green](nog %s uur)[/COLOR][/B]\n"
+
+msgctxt "#32301"
+msgid "[B]TV guide for channel %s[/B]"
+msgstr "[B]TV-gids for kanaal %s[/B]"
+
+msgctxt "#32330"
+msgid "2 days ago"
+msgstr "Eergisteren"
+
+msgctxt "#32331"
+msgid "Yesterday"
+msgstr "Gisteren"
+
+msgctxt "#32332"
+msgid "Today"
+msgstr "Vandaag"
+
+msgctxt "#32333"
+msgid "Tomorrow"
+msgstr "Morgen"
+
+msgctxt "#32334"
+msgid "In 2 days"
+msgstr "Overmorgen"

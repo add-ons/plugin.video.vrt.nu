@@ -5,7 +5,6 @@
 from __future__ import absolute_import, division, unicode_literals
 from datetime import datetime
 import requests
-import time
 
 from resources.lib.helperobjects import helperobjects
 from resources.lib.vrtplayer import actions, metadatacreator, statichelper
@@ -148,7 +147,7 @@ class VRTApiHelper:
 
             metadata.duration = (episode.get('duration', 0) * 60)  # Minutes to seconds
             metadata.plot = statichelper.convert_html_to_kodilabel(episode.get('description'))
-            metadata.brands = episode.get('programBrands', episode.get('brands'))
+            metadata.brands = episode.get('programBrands') or episode.get('brands')
             metadata.geolocked = episode.get('allowedRegion') == 'BE'
             if display_options.get('showShortDescription'):
                 short_description = statichelper.convert_html_to_kodilabel(episode.get('shortDescription'))
@@ -162,9 +161,9 @@ class VRTApiHelper:
             metadata.mediatype = episode.get('type', 'episode')
             metadata.permalink = statichelper.shorten_link(episode.get('permalink')) or episode.get('externalPermalink')
             if episode.get('assetOnTime'):
-                metadata.ontime = datetime(*time.strptime(episode.get('assetOnTime'), '%Y-%m-%dT%H:%M:%S+0000')[0:6])
+                metadata.ontime = statichelper.strptime(episode.get('assetOnTime'), '%Y-%m-%dT%H:%M:%S+0000')
             if episode.get('assetOffTime'):
-                metadata.offtime = datetime(*time.strptime(episode.get('assetOffTime'), '%Y-%m-%dT%H:%M:%S+0000')[0:6])
+                metadata.offtime = statichelper.strptime(episode.get('assetOffTime'), '%Y-%m-%dT%H:%M:%S+0000')
 
             # Add additional metadata to plot
             plot_meta = ''
@@ -209,6 +208,7 @@ class VRTApiHelper:
         program_type = episode.get('programType')
         metadata = metadatacreator.MetadataCreator()
         metadata.mediatype = 'season'
+        metadata.brands = episode.get('programBrands') or episode.get('brands')
 
         # Reverse sort seasons if program_type is 'reeksaflopend' or 'daily'
         if program_type in ('daily', 'reeksaflopend'):

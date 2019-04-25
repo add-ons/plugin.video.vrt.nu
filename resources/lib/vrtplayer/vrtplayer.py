@@ -50,6 +50,11 @@ class VRTPlayer:
                                     is_playable=False,
                                     art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
                                     video_dict=dict(plot=self._kodi_wrapper.get_localized_string(32087))),
+            helperobjects.TitleItem(title=self._kodi_wrapper.get_localized_string(32088),
+                                    url_dict=dict(action=actions.LISTING_TVGUIDE),
+                                    is_playable=False,
+                                    art_dict=dict(thumb='DefaultAddonTvInfo.png', icon='DefaultAddonTvInfo.png', fanart='DefaultAddonTvInfo.png'),
+                                    video_dict=dict(plot=self._kodi_wrapper.get_localized_string(32089))),
         ]
         self._kodi_wrapper.show_listing(main_items, sort='unsorted', content_type='files')
 

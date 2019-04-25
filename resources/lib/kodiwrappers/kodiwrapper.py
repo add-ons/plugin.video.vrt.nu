@@ -130,6 +130,9 @@ class KodiWrapper:
     def get_localized_dateshort(self):
         return xbmc.getRegion('dateshort')
 
+    def get_localized_datelong(self):
+        return xbmc.getRegion('datelong')
+
     def get_setting(self, setting_id):
         return self._addon.getSetting(setting_id)
 
