@@ -31,10 +31,10 @@ class StreamService:
         self._vrtnu_base_url = vrtnu_base_url
         self._create_settings_dir()
         self._can_play_drm = self._kodi_wrapper.can_play_drm()
-        self._license_url = self._get_license_url()
+        self._license_url = None
 
     def _get_license_url(self):
-        return requests.get(self._VUPLAY_API_URL, proxies=self._proxies).json().get('drm_providers', dict()).get('widevine', dict()).get('la_url')
+        self._license_url = requests.get(self._VUPLAY_API_URL, proxies=self._proxies).json().get('drm_providers', dict()).get('widevine', dict()).get('la_url')
 
     def _create_settings_dir(self):
         settingsdir = self._kodi_wrapper.get_userdata_path()
@@ -146,6 +146,8 @@ class StreamService:
         return stream_dict
 
     def get_stream(self, video, retry=False, api_data=None):
+        if self._license_url is None:
+            self._get_license_url()
         self._kodi_wrapper.log_notice('video_url ' + video.get('video_url'))
         video_id = video.get('video_id')
         publication_id = video.get('publication_id')
