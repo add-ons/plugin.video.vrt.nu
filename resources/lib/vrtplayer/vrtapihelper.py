@@ -27,6 +27,7 @@ class VRTApiHelper:
     def __init__(self, kodi_wrapper):
         self._kodi_wrapper = kodi_wrapper
         self._proxies = self._kodi_wrapper.get_proxies()
+        self._showpermalink = kodi_wrapper.get_setting('showpermalink') == 'true'
 
     def get_tvshow_items(self, path=None):
         if path:
@@ -42,6 +43,7 @@ class VRTApiHelper:
             metadata.tvshowtitle = tvshow.get('title', '???')
             metadata.plot = statichelper.unescape(tvshow.get('description', '???'))
             metadata.brands = tvshow.get('brands')
+            metadata.permalink = statichelper.shorten_link(tvshow.get('targetUrl'))
             # NOTE: This adds episode_count to title, would be better as metadata
             # title = '%s  [LIGHT][COLOR yellow]%s[/COLOR][/LIGHT]' % (tvshow.get('title', '???'), tvshow.get('episode_count', '?'))
             title = tvshow.get('title', '???')
@@ -158,6 +160,7 @@ class VRTApiHelper:
             metadata.season = episode.get('seasonName')
             metadata.episode = episode.get('episodeNumber')
             metadata.mediatype = episode.get('type', 'episode')
+            metadata.permalink = statichelper.shorten_link(episode.get('permalink')) or episode.get('externalPermalink')
             if episode.get('assetOnTime'):
                 metadata.ontime = datetime(*time.strptime(episode.get('assetOnTime'), '%Y-%m-%dT%H:%M:%S+0000')[0:6])
             if episode.get('assetOffTime'):
@@ -178,7 +181,10 @@ class VRTApiHelper:
                 else:
                     plot_meta += self._kodi_wrapper.get_localized_string(32204) % int((metadata.offtime - datetime.utcnow()).seconds / 3600)
             if plot_meta:
-                metadata.plot = plot_meta + '\n' + metadata.plot
+                metadata.plot = '%s\n%s' % (plot_meta, metadata.plot)
+
+            if self._showpermalink and metadata.permalink:
+                metadata.plot = '%s\n\n[COLOR yellow]%s[/COLOR]' % (metadata.plot, metadata.permalink)
 
             thumb = statichelper.add_https_method(episode.get('videoThumbnailUrl', 'DefaultAddonVideo.png'))
             fanart = statichelper.add_https_method(episode.get('programImageUrl', thumb))

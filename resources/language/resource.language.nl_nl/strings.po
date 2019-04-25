@@ -33,12 +33,16 @@ msgid "Delete cookies"
 msgstr "Verwijder cookies"
 
 msgctxt "#32010"
-msgid "Subtitles"
-msgstr "Ondertiteling"
+msgid "Interface"
+msgstr "Interface"
 
 msgctxt "#32011"
-msgid "Show subtitles if available"
+msgid "Show subtitles when available"
 msgstr "Toon ondertiteling indien beschikbaar"
+
+msgctxt "#32012"
+msgid "Show episode permalink in plot"
+msgstr "Toon aflevering permalink in beschrijving"
 
 msgctxt "#32020"
 msgid "DRM"

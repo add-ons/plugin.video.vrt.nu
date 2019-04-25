@@ -17,6 +17,7 @@ class MetadataCreator:
         self._mediatype = None
         self._offtime = None
         self._ontime = None
+        self._permalink = None
         self._plot = None
         self._plotoutline = None
         self._season = None
@@ -88,6 +89,14 @@ class MetadataCreator:
     @ontime.setter
     def ontime(self, value):
         self._ontime = value
+
+    @property
+    def permalink(self):
+        return self._permalink
+
+    @permalink.setter
+    def permalink(self, value):
+        self._permalink = value
 
     @property
     def plot(self):
@@ -190,6 +199,10 @@ class MetadataCreator:
 
         if self.mediatype:
             video_dict['mediatype'] = self.mediatype
+
+        if self.permalink:
+            video_dict['path'] = self.permalink
+            video_dict['showlink'] = [self.permalink]
 
         if self.plot:
             video_dict['plot'] = self.plot
