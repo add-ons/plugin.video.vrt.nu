@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.vrt.nu"
        name="VRT Nu"
-       version="1.7.1"
+       version="1.8.0"
        provider-name="Martijn Moreel">
 
     <requires>
@@ -27,6 +27,16 @@
         <platform>all</platform>
         <license>GNU General Public License, v3</license>
         <news>
+v1.8.0 (2019-04-27)
+- Fix the menu listings due to the urllib3 update (@dagwieers)
+- Add a TV guide menu entry (@dagwieers)
+- Add a permalink to the episode plot (optionally) (@dagwieers)
+- Avoid getting license url on every request (@mediaminister)
+- Improve menu listings order and add menu sort methods (@dagwieers)
+- Implement Kodi formatted text conversion (@pietje666)
+- Improved login handling (@mediaminister)
+- Improve thumbnail/fanart for menu listings (@dagwieers)
+- Fixes to remote play (@mediaminister)
 v1.7.1 (2019-03-28)
 - Remove the inputstream.adaptive requirement for Krypton
 v1.7.0 (2019-03-26)
@@ -47,18 +57,6 @@ v1.6.0 (2019-03-07)
 - Use VRT search api (greatly improves stability)
 - Fix for users with Non ASCII compatible user path
 - Fix for roaming token
-v1.5.2 (2019-01-28)
-- Bug fix where the vrt token would be stored in a wrong format
-- Inputstream helper for easier widevine installation
-- Token resets when settings are being changed
-v1.5.1 (20-01-2019)
-- Fixed subtitle issue where subtitles would always be visible (@mediaminister)
-- Fixed categories (@mediaminister)
-- Roaming support added (@mediaminister)
-v1.5.0 (2018-12-27)
-- 720p Livestreams when enabled in settings + having kodi 18 + having widevine.dll present (Thanks mediaminister)
-- Fixed bug where watched icon was not showing in Kodi 18
-- Implemented different way of working with subtitles (@mediaminister)
         </news>
         <source>https://github.com/pietje666/plugin.video.vrt.nu</source>
         <website>https://github.com/pietje666/plugin.video.vrt.nu/wiki</website>
