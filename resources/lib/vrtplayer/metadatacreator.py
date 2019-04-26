@@ -156,7 +156,10 @@ class MetadataCreator:
         self._year = value
 
     def get_video_dict(self):
-        epoch = datetime.fromtimestamp(0, dateutil.tz.tzlocal())
+        try:
+            epoch = datetime.fromtimestamp(0, dateutil.tz.tzlocal())
+        except ValueError:
+            epoch = datetime.fromtimestamp(0, dateutil.tz.tzwinlocal())
 
         video_dict = dict()
 
