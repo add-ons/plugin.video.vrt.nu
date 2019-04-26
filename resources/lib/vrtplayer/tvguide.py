@@ -44,6 +44,7 @@ class TVGuide:
         self._addon_path = addon_path
         self._kodi_wrapper = kodi_wrapper
         self._proxies = self._kodi_wrapper.get_proxies()
+        kodi_wrapper.set_locale()
 
     def show_tvguide(self, params):
         date = params.get('date')
@@ -133,7 +134,7 @@ class TVGuide:
                     art_dict=dict(thumb=thumb, icon='DefaultAddonVideo.png', fanart=thumb),
                     video_dict=metadata.get_video_dict(),
                 ))
-            self._kodi_wrapper.show_listing(episode_items, sort='unsorted', content_type='episodes')
+            self._kodi_wrapper.show_listing(episode_items, sort='unsorted', content_type='episodes', cache=False)
 
     def __get_media(self, file_name):
         return os.path.join(self._addon_path, 'resources', 'media', file_name)

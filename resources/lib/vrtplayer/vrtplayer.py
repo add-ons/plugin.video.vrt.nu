@@ -100,7 +100,7 @@ class VRTPlayer:
 
     def show_episodes(self, path):
         episode_items, sort, ascending = self._api_helper.get_episode_items(path)
-        self._kodi_wrapper.show_listing(episode_items, sort=sort, ascending=ascending, content_type='episodes')
+        self._kodi_wrapper.show_listing(episode_items, sort=sort, ascending=ascending, content_type='episodes', cache=False)
 
     def __get_media(self, file_name):
         return os.path.join(self._addon_path, 'resources', 'media', file_name)

@@ -50,7 +50,7 @@ class KodiWrapper:
         self._addon = addon
         self._addon_id = addon.getAddonInfo('id')
 
-    def show_listing(self, list_items, sort='unsorted', ascending=True, content_type='episodes'):
+    def show_listing(self, list_items, sort='unsorted', ascending=True, content_type='episodes', cache=True):
         listing = []
 
         xbmcplugin.setContent(self._handle, content=content_type)
@@ -95,7 +95,7 @@ class KodiWrapper:
             listing.append((url, list_item, not title_item.is_playable))
 
         ok = xbmcplugin.addDirectoryItems(self._handle, listing, len(listing))
-        xbmcplugin.endOfDirectory(self._handle, ok)
+        xbmcplugin.endOfDirectory(self._handle, ok, cacheToDisc=cache)
 
     def play(self, video):
         play_item = xbmcgui.ListItem(path=video.stream_url)
@@ -123,6 +123,15 @@ class KodiWrapper:
 
     def show_ok_dialog(self, title, message):
         xbmcgui.Dialog().ok(self._addon.getAddonInfo('name'), title, message)
+
+    def set_locale(self):
+        import locale
+        locale_lang = self.get_global_setting('locale.language').split('.')[-1]
+        try:
+            # NOTE: This only works if the platform supports the Kodi configured locale
+            locale.setlocale(locale.LC_ALL, locale_lang)
+        except Exception as e:
+            self.log_notice(e)
 
     def get_localized_string(self, string_id):
         return self._addon.getLocalizedString(string_id)
