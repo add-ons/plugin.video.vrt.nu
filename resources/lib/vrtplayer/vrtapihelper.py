@@ -30,10 +30,10 @@ class VRTApiHelper:
 
     def get_tvshow_items(self, path=None):
         if path:
-            api_url = self._VRTNU_SUGGEST_URL + '?facets[categories]=' + path
+            api_url = self._VRTNU_SUGGEST_URL + '?facets%5Bcategories%5D=' + path
         else:
             # If no path is provided, we return the A-Z listing
-            api_url = self._VRTNU_SUGGEST_URL + '?facets[transcodingStatus]=AVAILABLE'
+            api_url = self._VRTNU_SUGGEST_URL + '?facets%5BtranscodingStatus%5D=AVAILABLE'
         tvshows = requests.get(api_url, proxies=self._proxies).json()
         tvshow_items = []
         for tvshow in tvshows:
@@ -111,8 +111,8 @@ class VRTApiHelper:
 
             # Look for seasons items if not yet done
             season_key = None
-            if 'facets[seasonTitle]' in path:
-                season_key = path.split('facets[seasonTitle]=')[1]
+            if 'facets%5BseasonTitle%5D' in path:
+                season_key = path.split('facets%5BseasonTitle%5D=')[1]
             elif display_options.get('showSeason') is True:
                 episode_items, sort, ascending = self._get_season_items(api_url, api_json)
 
@@ -220,7 +220,7 @@ class VRTApiHelper:
         for season in seasons:
             season_key = season.get('key')
             title = '%s %s' % (self._kodi_wrapper.get_localized_string(32094), season_key)
-            season_facet = '&facets[seasonTitle]='
+            season_facet = '&facets%5BseasonTitle%5D='
             path = api_url + season_facet + season_key
             season_items.append(helperobjects.TitleItem(
                 title=title,
