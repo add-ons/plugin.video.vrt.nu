@@ -4,9 +4,10 @@
 
 from __future__ import absolute_import, division, unicode_literals
 from datetime import datetime
+import dateutil.parser
+import dateutil.tz
 import json
 import requests
-import time
 
 from resources.lib.helperobjects import helperobjects
 
@@ -72,8 +73,8 @@ class TokenResolver:
 
         if self._kodi_wrapper.check_if_path_exists(path):
             token = json.loads(open(path, 'r').read())
-            now = datetime.utcnow()
-            exp = datetime(*(time.strptime(token.get('expirationDate'), '%Y-%m-%dT%H:%M:%S.%fZ')[0:6]))
+            now = datetime.now(dateutil.tz.tzlocal())
+            exp = dateutil.parser.parse(token.get('expirationDate'))
             if exp > now:
                 self._kodi_wrapper.log_notice('Got cached token')
                 cached_token = token.get(token_name)
@@ -156,7 +157,7 @@ class TokenResolver:
         if xvrttoken_cookie is not None:
             token_dictionary = {
                 xvrttoken_cookie.name: xvrttoken_cookie.value,
-                'expirationDate': datetime.fromtimestamp(xvrttoken_cookie.expires).strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
+                'expirationDate': datetime.utcfromtimestamp(xvrttoken_cookie.expires).strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
             }
         return token_dictionary
 

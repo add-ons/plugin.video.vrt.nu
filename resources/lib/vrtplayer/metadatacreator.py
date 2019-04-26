@@ -4,6 +4,7 @@
 
 from __future__ import absolute_import, division, unicode_literals
 from datetime import datetime
+import dateutil.tz
 
 
 class MetadataCreator:
@@ -155,6 +156,8 @@ class MetadataCreator:
         self._year = value
 
     def get_video_dict(self):
+        epoch = datetime.fromtimestamp(0, dateutil.tz.tzlocal())
+
         video_dict = dict()
 
         if self.brands:
@@ -164,20 +167,20 @@ class MetadataCreator:
         if self.datetime:
             video_dict['aired'] = self.datetime.strftime('%Y-%m-%d %H:%M:%S')
             video_dict['date'] = self.datetime.strftime('%Y-%m-%d')
-        elif self.ontime and self.ontime != datetime(1970, 1, 1):
+        elif self.ontime and self.ontime != epoch:
             video_dict['aired'] = self.ontime.strftime('%Y-%m-%d %H:%M:%S')
             video_dict['date'] = self.ontime.strftime('%Y-%m-%d')
 
-        if self.ontime and self.ontime != datetime(1970, 1, 1):
+        if self.ontime and self.ontime != epoch:
             video_dict['dateadded'] = self.ontime.strftime('%Y-%m-%d %H:%M:%S')
 #            video_dict['startdate'] = self.ontime.strftime('%Y-%m-%d %H:%M:%S')
         elif self.datetime:
             video_dict['dateadded'] = self.datetime.strftime('%Y-%m-%d %H:%M:%S')
 #            video_dict['startdate'] = self.datetime.strftime('%Y-%m-%d %H:%M:%S')
 
-#        if self.offtime and self.offtime != datetime(1970, 1, 1):
+#        if self.offtime and self.offtime != epoch:
 #            video_dict['enddate'] = self.offtime.strftime('%Y-%m-%d %H:%M:%S')
-#        elif self.ontime and self.ontime != datetime(1970, 1, 1):
+#        elif self.ontime and self.ontime != epoch:
 #            video_dict['enddate'] = self.ontime.strftime('%Y-%m-%d %H:%M:%S')
 #        elif self.datetime:
 #            video_dict['enddate'] = self.datetime.strftime('%Y-%m-%d %H:%M:%S')

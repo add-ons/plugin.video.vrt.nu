@@ -7,6 +7,7 @@
     <requires>
         <!-- import addon="inputstream.adaptive" version="2.0.19"/ -->
         <import addon="script.module.beautifulsoup4" version="4.5.3"/>
+        <import addon="script.module.dateutil" version="2.6.0"/>
         <import addon="script.module.inputstreamhelper" version="0.3.3"/>
         <import addon="script.module.pysocks" version="1.6.8" optional="true"/>
         <import addon="script.module.requests" version="2.19.1"/>

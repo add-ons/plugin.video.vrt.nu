@@ -179,6 +179,10 @@ msgctxt "#32301"
 msgid "[B]TV guide for channel %s[/B]"
 msgstr "[B]TV guide for channel %s[/B]"
 
+msgctxt "#32302"
+msgid "[B][I]Now on live TV[/I][/B]"
+msgstr "[B][I]Now on live TV[/I][/B]"
+
 msgctxt "#32330"
 msgid "2 days ago"
 msgstr "2 days ago"

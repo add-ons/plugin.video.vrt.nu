@@ -4,6 +4,8 @@
 
 from __future__ import absolute_import, division, unicode_literals
 from datetime import datetime, timedelta
+import dateutil.parser
+import dateutil.tz
 import os
 import requests
 
@@ -48,10 +50,10 @@ class TVGuide:
         channel = params.get('channel')
 
         if not date:
-            today = datetime.today()
+            now = datetime.now(dateutil.tz.tzlocal())
             date_items = []
             for i in range(7, -31, -1):
-                day = today + timedelta(days=i)
+                day = now + timedelta(days=i)
                 title = day.strftime(self._kodi_wrapper.get_localized_datelong())
                 if str(i) in DATE_STRINGS:
                     if i == 0:
@@ -68,7 +70,7 @@ class TVGuide:
             self._kodi_wrapper.show_listing(date_items, sort='unsorted', content_type='files')
 
         elif not channel:
-            dateobj = statichelper.strptime(date, '%Y-%m-%d')
+            dateobj = dateutil.parser.parse(date)
             datelong = dateobj.strftime(self._kodi_wrapper.get_localized_datelong())
             channel_items = []
             for channel in ('een', 'canvas', 'ketnet'):
@@ -85,7 +87,8 @@ class TVGuide:
             self._kodi_wrapper.show_listing(channel_items, content_type='files')
 
         else:
-            dateobj = statichelper.strptime(date, '%Y-%m-%d')
+            now = datetime.now(dateutil.tz.tzlocal())
+            dateobj = dateutil.parser.parse(date)
             datelong = dateobj.strftime(self._kodi_wrapper.get_localized_datelong())
             api_url = dateobj.strftime(self.VRT_TVGUIDE)
             schedule = requests.get(api_url, proxies=self._proxies).json()
@@ -96,11 +99,14 @@ class TVGuide:
                 title = episode.get('title')
                 start = episode.get('start')
                 end = episode.get('end')
+                start_date = dateutil.parser.parse(episode.get('startTime'))
+                end_date = dateutil.parser.parse(episode.get('endTime'))
                 url = episode.get('url')
-                metadata.title = '%s - %s' % (start, title)
+                label = '%s - %s' % (start, title)
                 metadata.tvshowtitle = title
                 metadata.datetime = dateobj
-                metadata.duration = (statichelper.strptime(end, '%H:%M') - statichelper.strptime(start, '%H:%M')).total_seconds()
+                # NOTE: Do not use startTime and endTime as we don't want duration in seconds
+                metadata.duration = (dateutil.parser.parse(end) - dateutil.parser.parse(start)).total_seconds()
                 metadata.plot = '[B]%s[/B]\n%s\n%s - %s\n[I]%s[/I]' % (title, datelong, start, end, CHANNELS[channel]['name'])
                 metadata.brands = [channel]
                 metadata.mediatype = 'episode'
@@ -109,13 +115,19 @@ class TVGuide:
                 if url:
                     video_url = statichelper.add_https_method(url)
                     url_dict = dict(action=actions.PLAY, video_url=video_url)
+                    if start_date < now <= end_date:  # Now playing
+                        metadata.title = '[COLOR yellow]%s[/COLOR] %s' % (label, self._kodi_wrapper.get_localized_string(32302))
+                    else:
+                        metadata.title = label
                 else:
                     # FIXME: Find a better solution for non-actionable items
                     url_dict = dict(action=actions.LISTING_TVGUIDE, date=date, channel=channel)
-                    metadata.title = '[COLOR gray]%s[/COLOR]' % metadata.title
-                    title = '[COLOR gray]%s[/COLOR]' % metadata.title
+                    if start_date < now <= end_date:  # Now playing
+                        metadata.title = '[COLOR brown]%s[/COLOR] %s' % (label, self._kodi_wrapper.get_localized_string(32302))
+                    else:
+                        metadata.title = '[COLOR gray]%s[/COLOR]' % label
                 episode_items.append(helperobjects.TitleItem(
-                    title=title,
+                    title=metadata.title,
                     url_dict=url_dict,
                     is_playable=bool(url),
                     art_dict=dict(thumb=thumb, icon='DefaultAddonVideo.png', fanart=thumb),

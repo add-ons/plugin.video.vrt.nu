@@ -1,4 +1,5 @@
 bs4
+python-dateutil
 pylint
 requests
 tox-travis
