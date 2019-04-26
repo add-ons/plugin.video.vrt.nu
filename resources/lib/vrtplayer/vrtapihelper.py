@@ -4,6 +4,8 @@
 
 from __future__ import absolute_import, division, unicode_literals
 from datetime import datetime
+import dateutil.parser
+import dateutil.tz
 import requests
 
 from resources.lib.helperobjects import helperobjects
@@ -123,9 +125,10 @@ class VRTApiHelper:
         return episode_items, sort, ascending
 
     def _map_to_episode_items(self, episodes, titletype=None, season_key=None):
-        episode_items = []
+        now = datetime.now(dateutil.tz.tzlocal())
         sort = 'episode'
         ascending = True
+        episode_items = []
         for episode in episodes:
             # VRT API workaround: seasonTitle facet behaves as a partial match regex,
             # so we have to filter out the episodes from seasons that don't exactly match.
@@ -143,7 +146,7 @@ class VRTApiHelper:
             metadata = metadatacreator.MetadataCreator()
             metadata.tvshowtitle = episode.get('program')
             if episode.get('broadcastDate') != -1:
-                metadata.datetime = datetime.fromtimestamp(episode.get('broadcastDate', 0) / 1000)
+                metadata.datetime = datetime.fromtimestamp(episode.get('broadcastDate', 0) / 1000, dateutil.tz.UTC)
 
             metadata.duration = (episode.get('duration', 0) * 60)  # Minutes to seconds
             metadata.plot = statichelper.convert_html_to_kodilabel(episode.get('description'))
@@ -161,9 +164,9 @@ class VRTApiHelper:
             metadata.mediatype = episode.get('type', 'episode')
             metadata.permalink = statichelper.shorten_link(episode.get('permalink')) or episode.get('externalPermalink')
             if episode.get('assetOnTime'):
-                metadata.ontime = statichelper.strptime(episode.get('assetOnTime'), '%Y-%m-%dT%H:%M:%S+0000')
+                metadata.ontime = dateutil.parser.parse(episode.get('assetOnTime'))
             if episode.get('assetOffTime'):
-                metadata.offtime = statichelper.strptime(episode.get('assetOffTime'), '%Y-%m-%dT%H:%M:%S+0000')
+                metadata.offtime = dateutil.parser.parse(episode.get('assetOffTime'))
 
             # Add additional metadata to plot
             plot_meta = ''
@@ -171,14 +174,14 @@ class VRTApiHelper:
                 # Show Geo-locked
                 plot_meta += self._kodi_wrapper.get_localized_string(32201)
             # Only display when a video disappears if it is within the next 3 months
-            if metadata.offtime is not None and (metadata.offtime - datetime.utcnow()).days < 93:
+            if metadata.offtime is not None and (metadata.offtime - now).days < 93:
                 # Show date when episode is removed
                 plot_meta += self._kodi_wrapper.get_localized_string(32202) % metadata.offtime.strftime(self._kodi_wrapper.get_localized_dateshort())
                 # Show the remaining days/hours the episode is still available
-                if (metadata.offtime - datetime.utcnow()).days > 0:
-                    plot_meta += self._kodi_wrapper.get_localized_string(32203) % (metadata.offtime - datetime.utcnow()).days
+                if (metadata.offtime - now).days > 0:
+                    plot_meta += self._kodi_wrapper.get_localized_string(32203) % (metadata.offtime - now).days
                 else:
-                    plot_meta += self._kodi_wrapper.get_localized_string(32204) % int((metadata.offtime - datetime.utcnow()).seconds / 3600)
+                    plot_meta += self._kodi_wrapper.get_localized_string(32204) % int((metadata.offtime - now).seconds / 3600)
             if plot_meta:
                 metadata.plot = '%s\n%s' % (plot_meta, metadata.plot)
 

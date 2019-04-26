@@ -5,9 +5,9 @@
 from __future__ import absolute_import, division, unicode_literals
 from bs4 import BeautifulSoup, SoupStrainer
 from datetime import datetime, timedelta
+import dateutil.parser
 import re
 import requests
-import time
 
 from resources.lib.helperobjects import apidata, streamurls
 
@@ -135,7 +135,7 @@ class StreamService:
         for key, value in stream_dict.items():
             begin = value.split('?t=')[1] if '?t=' in value else None
             if begin and len(begin) == 19:
-                begin_time = datetime(*time.strptime(begin, '%Y-%m-%dT%H:%M:%S')[0:6])
+                begin_time = dateutil.parser.parse(begin)
                 end_time = begin_time + duration
                 # If on demand program is not yet broadcasted completely,
                 # use current time minus 5 seconds safety margin as endtime.
