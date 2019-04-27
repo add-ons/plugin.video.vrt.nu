@@ -34,7 +34,7 @@ def has_socks():
     ''' Test if socks is installed, and remember this information '''
     if not hasattr(has_socks, 'installed'):
         try:
-            import socks  # noqa: F401  # pylint: disable=unused-variable,unused-import
+            import socks  # noqa: F401; pylint: disable=unused-variable,unused-import
             has_socks.installed = True
         except ImportError:
             has_socks.installed = False
