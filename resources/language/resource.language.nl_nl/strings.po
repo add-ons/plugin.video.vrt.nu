@@ -40,10 +40,6 @@ msgctxt "#32011"
 msgid "Show subtitles when available"
 msgstr "Toon ondertiteling indien beschikbaar"
 
-msgctxt "#32012"
-msgid "Show episode permalink in plot"
-msgstr "Toon aflevering permalink in beschrijving"
-
 msgctxt "#32020"
 msgid "DRM"
 msgstr "DRM"
@@ -51,6 +47,14 @@ msgstr "DRM"
 msgctxt "#32021"
 msgid "Use DRM for 720p HD-quality livestreams"
 msgstr "Gebruik DRM voor de livestreams in 720p HD-kwaliteit"
+
+msgctxt "#32030"
+msgid "Advanced"
+msgstr "Geavanceerd"
+
+msgctxt "#32031"
+msgid "Show episode permalink in plot"
+msgstr "Toon aflevering permalink in beschrijving"
 
 msgctxt "#32051"
 msgid "Login failed!"
