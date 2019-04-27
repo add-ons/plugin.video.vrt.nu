@@ -6,9 +6,11 @@
     </category>
     <category label="32010">
         <setting label="32011" type="bool" id="showsubtitles" default="true"/>
-        <setting label="32012" type="bool" id="showpermalink" default="false"/>
     </category>
     <category label="32020">
         <setting label="32021" type="bool" id="usedrm" default="false"/>
+    </category>  
+    <category label="32030">
+        <setting label="32031" type="bool" id="showpermalink" default="false"/>
     </category>  
 </settings>

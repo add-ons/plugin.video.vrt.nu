@@ -39,10 +39,6 @@ msgctxt "#32011"
 msgid "Show subtitles when available"
 msgstr "Show subtitles when available"
 
-msgctxt "#32012"
-msgid "Show episode permalink in plot"
-msgstr "Show episode permalink in plot"
-
 msgctxt "#32020"
 msgid "DRM"
 msgstr "DRM"
@@ -50,6 +46,14 @@ msgstr "DRM"
 msgctxt "#32021"
 msgid "Use DRM for 720p HD-quality livestreams"
 msgstr "Use DRM for 720p HD-quality livestreams"
+
+msgctxt "#32030"
+msgid "Advanced"
+msgstr "Advanced"
+
+msgctxt "#32031"
+msgid "Show episode permalink in plot"
+msgstr "Show episode permalink in plot"
 
 msgctxt "#32051"
 msgid "Login failed!"
