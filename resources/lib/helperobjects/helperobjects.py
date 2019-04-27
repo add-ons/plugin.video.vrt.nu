@@ -19,17 +19,24 @@ class Credentials:
 
     def __init__(self, kodi_wrapper):
         self._kodi_wrapper = kodi_wrapper
+        self._usecredentials = self._kodi_wrapper.get_setting('usecredentials')
         self._username = self._kodi_wrapper.get_setting('username')
         self._password = self._kodi_wrapper.get_setting('password')
 
+
+    def use_credentials(self):
+        return self._kodi_wrapper.get_setting('usecredentials') == 'true'
+
     def are_filled_in(self):
-        return not (self._username is None or self._password is None or self._username == '' or self._password == '')
+        return bool(self._username and self._password)
 
     def reload(self):
+        self._usecredentials = self._kodi_wrapper.get_setting('usecredentials')
         self._username = self._kodi_wrapper.get_setting('username')
         self._password = self._kodi_wrapper.get_setting('password')
 
     def reset(self):
+        self._usecredentials = self._kodi_wrapper.get_setting('usecredentials', False)
         self._username = self._kodi_wrapper.set_setting('username', None)
         self._password = self._kodi_wrapper.set_setting('password', None)
 

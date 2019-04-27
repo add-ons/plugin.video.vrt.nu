@@ -20,20 +20,24 @@ msgid "Credentials"
 msgstr "Credentials"
 
 msgctxt "#32001"
+msgid "Use VRT.NU credentials"
+msgstr "Use VRT.NU credentials"
+
+msgctxt "#32002"
 msgid "Email address"
 msgstr "Email address"
 
-msgctxt "#32002"
+msgctxt "#32003"
 msgid "Password"
 msgstr "Password"
 
-msgctxt "#32003"
+msgctxt "#32004"
 msgid "Delete cookies"
 msgstr "Delete cookies"
 
 msgctxt "#32010"
-msgid "Interface"
-msgstr "Interface"
+msgid "Subtitles"
+msgstr "Subtitles"
 
 msgctxt "#32011"
 msgid "Show subtitles when available"

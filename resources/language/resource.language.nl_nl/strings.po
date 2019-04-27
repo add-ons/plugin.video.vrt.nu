@@ -21,20 +21,24 @@ msgid "Credentials"
 msgstr "Inloggegevens"
 
 msgctxt "#32001"
+msgid "Use VRT.NU credentials"
+msgstr "Gebruik VRT.NU inloggegevens"
+
+msgctxt "#32002"
 msgid "Email address"
 msgstr "E-mailadres"
 
-msgctxt "#32002"
+msgctxt "#32003"
 msgid "Password"
 msgstr "Wachtwoord"
 
-msgctxt "#32003"
+msgctxt "#32004"
 msgid "Delete cookies"
 msgstr "Verwijder cookies"
 
 msgctxt "#32010"
-msgid "Interface"
-msgstr "Interface"
+msgid "Subtitles"
+msgstr "Ondertiteling"
 
 msgctxt "#32011"
 msgid "Show subtitles when available"

@@ -85,6 +85,9 @@ class TokenResolver:
 
     def _get_new_xvrttoken(self, path, get_roaming_token):
         cred = helperobjects.Credentials(self._kodi_wrapper)
+        if not cred.use_credentials():
+            self._kodi_wrapper.show_ok_dialog('Using credentials is disabled', 'You have the use of credentials disabled, so we cannot play this content.')
+            return None
         if not cred.are_filled_in():
             self._kodi_wrapper.open_settings()
             cred.reload()
