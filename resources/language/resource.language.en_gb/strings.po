@@ -32,8 +32,8 @@ msgid "Delete cookies"
 msgstr "Delete cookies"
 
 msgctxt "#32010"
-msgid "Interface"
-msgstr "Interface"
+msgid "Subtitles"
+msgstr "Subtitles"
 
 msgctxt "#32011"
 msgid "Show subtitles when available"
