@@ -166,7 +166,7 @@ msgstr "Bekijk Sporza live tv stream (via Internet)"
 
 msgctxt "#32201"
 msgid "[B][COLOR red]Geo-blocked[/COLOR][/B]\n"
-msgstr "[B][COLOR red]Geo-blocked[/COLOR][/B]\n"
+msgstr "[B][COLOR red]Geo-geblokkeerd[/COLOR][/B]\n"
 
 msgctxt "#32202"
 msgid "[B][COLOR blue]Available until %s[/COLOR][/B]\n"

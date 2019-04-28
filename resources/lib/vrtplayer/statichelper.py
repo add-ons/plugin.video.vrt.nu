@@ -10,7 +10,7 @@ HTML_MAPPING = [
     (re.compile(r'<(/?)i(|\s[^>]+)>'), '[\\1I]'),
     (re.compile(r'<(/?)b(|\s[^>]+)>'), '[\\1B]'),
     (re.compile(r'</?(div|p|span)(|\s[^>]+)>'), ''),
-    (re.compile('<br>\n{0,1}'), ' '),  # This appears to be specific formatting for VRT.NU, but unwanted for us
+    (re.compile('<br>\n{0,1}'), ' '),  # This appears to be specific formatting for VRT NU, but unwanted for us
 ]
 
 # pylint: disable=unused-import
