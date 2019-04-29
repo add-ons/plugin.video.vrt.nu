@@ -156,11 +156,8 @@ class MetadataCreator:
         self._year = value
 
     def get_video_dict(self):
-        video_dict = dict()
-        # NOTE: This avoids issues on Windows:
-        #       https://github.com/dateutil/dateutil/issues/197
-        #       https://github.com/dateutil/dateutil/issues/210
         epoch = datetime.fromtimestamp(0, dateutil.tz.UTC)
+        video_dict = dict()
 
         if self.brands:
             video_dict['studio'] = self.brands
