@@ -47,14 +47,14 @@ class VRTApiHelper:
             metadata.plot = statichelper.unescape(tvshow.get('description', '???'))
             metadata.brands = tvshow.get('brands')
             metadata.permalink = statichelper.shorten_link(tvshow.get('targetUrl'))
-            # NOTE: This adds episode_count to title, would be better as metadata
+            # NOTE: This adds episode_count to label, would be better as metadata
             # title = '%s  [LIGHT][COLOR yellow]%s[/COLOR][/LIGHT]' % (tvshow.get('title', '???'), tvshow.get('episode_count', '?'))
-            title = tvshow.get('title', '???')
+            label = tvshow.get('title', '???')
             thumbnail = statichelper.add_https_method(tvshow.get('thumbnail', 'DefaultAddonVideo.png'))
             # Cut vrtbase url off since it will be added again when searching for episodes
             # (with a-z we dont have the full url)
             video_url = statichelper.add_https_method(tvshow.get('targetUrl')).replace(self._VRT_BASE, '')
-            tvshow_items.append(helperobjects.TitleItem(title=title,
+            tvshow_items.append(helperobjects.TitleItem(title=label,
                                                         url_dict=dict(action=actions.LISTING_EPISODES, video_url=video_url),
                                                         is_playable=False,
                                                         art_dict=dict(thumb=thumbnail, icon='DefaultAddonVideo.png', fanart=thumbnail),
@@ -185,6 +185,7 @@ class VRTApiHelper:
                     plot_meta += self._kodi_wrapper.get_localized_string(32203) % (metadata.offtime - now).days
                 else:
                     plot_meta += self._kodi_wrapper.get_localized_string(32204) % int((metadata.offtime - now).seconds / 3600)
+
             if plot_meta:
                 metadata.plot = '%s\n%s' % (plot_meta, metadata.plot)
 
@@ -194,10 +195,10 @@ class VRTApiHelper:
             thumb = statichelper.add_https_method(episode.get('videoThumbnailUrl', 'DefaultAddonVideo.png'))
             fanart = statichelper.add_https_method(episode.get('programImageUrl', thumb))
             video_url = statichelper.add_https_method(episode.get('url'))
-            title, sort, ascending = self._make_title(episode, titletype, options=display_options)
-            metadata.title = title
+            label, sort, ascending = self._make_label(episode, titletype, options=display_options)
+            metadata.title = label
             episode_items.append(helperobjects.TitleItem(
-                title=title,
+                title=label,
                 url_dict=dict(action=actions.PLAY, video_url=video_url, video_id=episode.get('videoId'), publication_id=episode.get('publicationId')),
                 is_playable=True,
                 art_dict=dict(thumb=thumb, icon='DefaultAddonVideo.png', fanart=fanart),
@@ -225,11 +226,11 @@ class VRTApiHelper:
 
         for season in seasons:
             season_key = season.get('key')
-            title = '%s %s' % (self._kodi_wrapper.get_localized_string(32094), season_key)
+            label = '%s %s' % (self._kodi_wrapper.get_localized_string(32094), season_key)
             params = {'facets[seasonTitle]': season_key}
             path = api_url + '&' + urlencode(params)
             season_items.append(helperobjects.TitleItem(
-                title=title,
+                title=label,
                 url_dict=dict(action=actions.LISTING_EPISODES, video_url=path),
                 is_playable=False,
                 art_dict=dict(thumb=fanart, icon='DefaultSets.png', fanart=fanart),
@@ -263,16 +264,16 @@ class VRTApiHelper:
             crc = crc & 0xFFFFFFFF
         return '%08x' % crc
 
-    def _make_title(self, result, titletype, options=None):
+    def _make_label(self, result, titletype, options=None):
         if options is None:
             options = dict()
 
-        if options.get('showShortDescription'):
-            title = statichelper.convert_html_to_kodilabel(result.get('shortDescription') or result.get('title'))
-        elif options.get('showEpisodeTitle'):
-            title = statichelper.convert_html_to_kodilabel(result.get('title') or result.get('shortDescription'))
+        if options.get('showEpisodeTitle'):
+            label = statichelper.convert_html_to_kodilabel(result.get('title') or result.get('shortDescription'))
+        elif options.get('showShortDescription'):
+            label = statichelper.convert_html_to_kodilabel(result.get('shortDescription') or result.get('title'))
         else:
-            title = statichelper.convert_html_to_kodilabel(result.get('shortDescription') or result.get('title'))
+            label = statichelper.convert_html_to_kodilabel(result.get('title') or result.get('shortDescription'))
 
         sort = 'unsorted'
         ascending = True
@@ -280,7 +281,7 @@ class VRTApiHelper:
         if titletype == 'recent':
             ascending = False
             sort = 'dateadded'
-            title = '%s - %s' % (result.get('program'), title)
+            label = '%s - %s' % (result.get('program'), label)
 
         elif titletype in ('reeksaflopend', 'reeksoplopend'):
 
@@ -291,7 +292,7 @@ class VRTApiHelper:
             if options.get('showSeason') is False and options.get('showEpisodeNumber') and result.get('seasonName') and result.get('episodeNumber'):
                 try:
                     sort = 'dateadded'
-                    title = 'S%02dE%02d: %s' % (int(result.get('seasonName')), int(result.get('episodeNumber')), title)
+                    label = 'S%02dE%02d: %s' % (int(result.get('seasonName')), int(result.get('episodeNumber')), label)
                 except Exception:
                     # Season may not always be a perfect number
                     sort = 'episode'
@@ -299,19 +300,19 @@ class VRTApiHelper:
                 # NOTE: Sort the episodes ourselves, because Kodi does not allow to set to 'descending'
                 # sort = 'episode'
                 sort = 'label'
-                title = '%s %s: %s' % (self._kodi_wrapper.get_localized_string(32095), result.get('episodeNumber'), title)
+                label = '%s %s: %s' % (self._kodi_wrapper.get_localized_string(32095), result.get('episodeNumber'), label)
             elif options.get('showBroadcastDate') and result.get('formattedBroadcastShortDate'):
                 sort = 'dateadded'
-                title = '%s - %s' % (result.get('formattedBroadcastShortDate'), title)
+                label = '%s - %s' % (result.get('formattedBroadcastShortDate'), label)
             else:
                 sort = 'dateadded'
 
         elif titletype == 'daily':
             ascending = False
             sort = 'dateadded'
-            title = '%s - %s' % (result.get('formattedBroadcastShortDate'), title)
+            label = '%s - %s' % (result.get('formattedBroadcastShortDate'), label)
 
         elif titletype == 'oneoff':
             sort = 'label'
 
-        return title, sort, ascending
+        return label, sort, ascending
