@@ -23,12 +23,10 @@ class StreamService:
     _VUALTO_API_URL = 'https://media-services-public.vrt.be/vualto-video-aggregator-web/rest/external/v1'
     _CLIENT = 'vrtvideo'
 
-    def __init__(self, vrt_base, vrtnu_base_url, kodi_wrapper, token_resolver):
+    def __init__(self, kodi_wrapper, token_resolver):
         self._kodi_wrapper = kodi_wrapper
         self._proxies = self._kodi_wrapper.get_proxies()
         self.token_resolver = token_resolver
-        self._vrt_base = vrt_base
-        self._vrtnu_base_url = vrtnu_base_url
         self._create_settings_dir()
         self._can_play_drm = self._kodi_wrapper.can_play_drm()
         self._license_url = None

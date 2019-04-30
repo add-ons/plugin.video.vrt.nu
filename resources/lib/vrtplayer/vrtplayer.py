@@ -8,18 +8,38 @@ import os
 import requests
 
 from resources.lib.helperobjects import helperobjects
-from resources.lib.vrtplayer import actions, statichelper
+from resources.lib.vrtplayer import CATEGORIES, CHANNELS, actions, statichelper
+
+
+def get_categories(proxies=None):
+    response = requests.get('https://www.vrt.be/vrtnu/categorieen/', proxies=proxies)
+    tiles = SoupStrainer('a', {'class': 'nui-tile'})
+    soup = BeautifulSoup(response.content, 'html.parser', parse_only=tiles)
+
+    categories = []
+    for tile in soup.find_all(class_='nui-tile'):
+        categories.append(dict(
+            id=tile.get('href').split('/')[-2],
+            thumbnail=get_category_thumbnail(tile),
+            name=get_category_title(tile),
+        ))
+
+    return categories
+
+
+def get_category_thumbnail(element):
+    raw_thumbnail = element.find(class_='media').get('data-responsive-image', 'DefaultGenre.png')
+    return statichelper.add_https_method(raw_thumbnail)
+
+
+def get_category_title(element):
+    found_element = element.find('h3')
+    if found_element is not None:
+        return statichelper.strip_newlines(found_element.contents[0])
+    return ''
 
 
 class VRTPlayer:
-
-    # URLs van https://services.vrt.be/videoplayer/r/live.json
-    _EEN_LIVESTREAM = 'https://www.vrt.be/vrtnu/kanalen/een/'
-    _CANVAS_LIVESTREAM = 'https://www.vrt.be/vrtnu/kanalen/canvas/'
-    _KETNET_LIVESTREAM = 'https://www.vrt.be/vrtnu/kanalen/ketnet/'
-
-    VRT_BASE = 'https://www.vrt.be/'
-    VRTNU_BASE_URL = VRT_BASE + '/vrtnu'
 
     def __init__(self, addon_path, kodi_wrapper, stream_service, api_helper):
         self._addon_path = addon_path
@@ -63,94 +83,63 @@ class VRTPlayer:
         self._kodi_wrapper.show_listing(tvshow_items, sort='label', content_type='tvshows')
 
     def show_category_menu_items(self):
-        joined_url = self.VRTNU_BASE_URL + '/categorieen/'
-        category_items = self.__get_category_menu_items(joined_url, {'class': 'nui-tile'}, actions.LISTING_CATEGORY_TVSHOWS)
+        category_items = self.__get_category_menu_items()
         self._kodi_wrapper.show_listing(category_items, sort='label', content_type='files')
 
-    def play(self, video):
-        stream = self._stream_service.get_stream(video)
-        if stream is not None:
-            self._kodi_wrapper.play(stream)
-
     def show_livestream_items(self):
-        livestream_items = [
-            helperobjects.TitleItem(
-                title=self._kodi_wrapper.get_localized_string(32101),
-                url_dict=dict(action=actions.PLAY, video_url=self._EEN_LIVESTREAM),
+        livestream_items = []
+        for channel in ['een', 'canvas', 'ketnet', 'stubru', 'mnm']:
+            if channel in ['een', 'canvas', 'ketnet']:
+                thumbnail = self.__get_media(channel + '.png')
+                fanart = self._api_helper.get_live_screenshot(channel)
+                plot = self._kodi_wrapper.get_localized_string(32201) + '\n' + self._kodi_wrapper.get_localized_string(32102) % CHANNELS[channel].get('name')
+            else:
+                thumbnail = 'DefaultAddonMusic.png'
+                fanart = 'DefaultAddonPVRClient.png'
+                plot = self._kodi_wrapper.get_localized_string(32102) % CHANNELS[channel].get('name')
+            livestream_items.append(helperobjects.TitleItem(
+                title=self._kodi_wrapper.get_localized_string(32101) % CHANNELS[channel].get('name'),
+                url_dict=dict(action=actions.PLAY, video_url=CHANNELS[channel].get('live_stream')),
                 is_playable=True,
-                art_dict=dict(thumb=self.__get_media('een.png'), icon='DefaultAddonPVRClient.png', fanart=self._api_helper.get_live_screenshot('een')),
-                video_dict=dict(plot=self._kodi_wrapper.get_localized_string(32201) + '\n' + self._kodi_wrapper.get_localized_string(32102)),
-            ),
-            helperobjects.TitleItem(
-                title=self._kodi_wrapper.get_localized_string(32111),
-                url_dict=dict(action=actions.PLAY, video_url=self._CANVAS_LIVESTREAM),
-                is_playable=True,
-                art_dict=dict(thumb=self.__get_media('canvas.png'), icon='DefaultAddonPVRClient.png', fanart=self._api_helper.get_live_screenshot('canvas')),
-                video_dict=dict(plot=self._kodi_wrapper.get_localized_string(32201) + '\n' + self._kodi_wrapper.get_localized_string(32112)),
-            ),
-            helperobjects.TitleItem(
-                title=self._kodi_wrapper.get_localized_string(32121),
-                url_dict=dict(action=actions.PLAY, video_url=self._KETNET_LIVESTREAM),
-                is_playable=True,
-                art_dict=dict(thumb=self.__get_media('ketnet.png'), icon='DefaultAddonPVRClient.png', fanart=self._api_helper.get_live_screenshot('ketnet')),
-                video_dict=dict(plot=self._kodi_wrapper.get_localized_string(32201) + '\n' + self._kodi_wrapper.get_localized_string(32122)),
-            ),
-            helperobjects.TitleItem(
-                title=self._kodi_wrapper.get_localized_string(32141),
-                url_dict=dict(
-                    action=actions.PLAY,
-                    video_url='https://live-radio-cf-vrt.akamaized.net/groupb/live/0f394a26-c87d-475e-8590-e9c6e79b28d9/live.isml/.mpd',
+                art_dict=dict(thumb=thumbnail, icon='DefaultAddonPVRClient.png', fanart=fanart),
+                video_dict=dict(
+                    title=self._kodi_wrapper.get_localized_string(32101) % CHANNELS[channel].get('name'),
+                    plot=plot,
+                    studio=CHANNELS[channel].get('studio'),
+                    mediatype='video',
                 ),
-                is_playable=True,
-                art_dict=dict(thumb='DefaultMusicAddon.png', icon='DefaultAddonPVRClient.png', fanart='DefaultAddonPVRClient.png'),
-                video_dict=dict(plot=self._kodi_wrapper.get_localized_string(32142)),
-            ),
-            helperobjects.TitleItem(
-                title=self._kodi_wrapper.get_localized_string(32151),
-                url_dict=dict(
-                    action=actions.PLAY,
-                    video_url='https://live-radio-cf-vrt.akamaized.net/groupa/live/bac277a1-306d-44a0-8e2e-e5b9c07fa270/live.isml/.mpd',
-                ),
-                is_playable=True,
-                art_dict=dict(thumb='DefaultMusicAddon.png', icon='DefaultAddonPVRClient.png', fanart='DefaultAddonPVRClient.png'),
-                video_dict=dict(plot=self._kodi_wrapper.get_localized_string(32152)),
-            ),
-        ]
-        self._kodi_wrapper.show_listing(livestream_items, content_type='videos')
+            ))
+
+        self._kodi_wrapper.show_listing(livestream_items, sort='unsorted', content_type='videos', cache=False)
 
     def show_episodes(self, path):
         episode_items, sort, ascending = self._api_helper.get_episode_items(path)
         self._kodi_wrapper.show_listing(episode_items, sort=sort, ascending=ascending, content_type='episodes', cache=False)
 
+    def play(self, params):
+        stream = self._stream_service.get_stream(params)
+        if stream is not None:
+            self._kodi_wrapper.play(stream)
+
     def __get_media(self, file_name):
         return os.path.join(self._addon_path, 'resources', 'media', file_name)
 
-    def __get_category_menu_items(self, url, soupstrainer_parser_selector, routing_action):
-        response = requests.get(url, proxies=self._proxies)
-        tiles = SoupStrainer('a', soupstrainer_parser_selector)
-        soup = BeautifulSoup(response.content, 'html.parser', parse_only=tiles)
-        listing = []
-        for tile in soup.find_all(class_='nui-tile'):
-            category = tile.get('href').split('/')[-2]
-            thumbnail, label = self.__get_category_thumbnail_and_label(tile)
+    def __get_category_menu_items(self):
+        try:
+            categories = get_categories(self._proxies)
+        except Exception:
+            categories = []
 
-            listing.append(helperobjects.TitleItem(title=label,
-                                                   url_dict=dict(action=routing_action, video_url=category),
-                                                   is_playable=False,
-                                                   art_dict=dict(thumb=thumbnail, icon='DefaultGenre.png', fanart=thumbnail),
-                                                   video_dict=dict(plot='[B]%s[/B]' % label, studio='VRT')))
-        return listing
+        # Fallback to internal categories if web-scraping fails
+        if not categories:
+            categories = CATEGORIES
 
-    @staticmethod
-    def __format_category_image_url(element):
-        raw_thumbnail = element.find(class_='media').get('data-responsive-image', 'DefaultGenre.png')
-        return statichelper.add_https_method(raw_thumbnail)
-
-    @staticmethod
-    def __get_category_thumbnail_and_label(element):
-        thumbnail = VRTPlayer.__format_category_image_url(element)
-        found_element = element.find('h3')
-        label = ''
-        if found_element is not None:
-            label = statichelper.strip_newlines(found_element.contents[0])
-        return thumbnail, label
+        category_items = []
+        for category in categories:
+            thumbnail = category.get('thumbnail', 'DefaultGenre.png')
+            category_items.append(helperobjects.TitleItem(title=category.get('name'),
+                                                          url_dict=dict(action=actions.LISTING_CATEGORY_TVSHOWS, video_url=category.get('id')),
+                                                          is_playable=False,
+                                                          art_dict=dict(thumb=thumbnail, icon='DefaultGenre.png', fanart=thumbnail),
+                                                          video_dict=dict(plot='[B]%s[/B]' % category.get('name'), studio='VRT')))
+        return category_items

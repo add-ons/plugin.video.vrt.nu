@@ -132,52 +132,12 @@ msgid "Episode"
 msgstr "Episode"
 
 msgctxt "#32101"
-msgid "Eén live"
-msgstr "Eén live"
+msgid "%s live"
+msgstr "%s live"
 
 msgctxt "#32102"
-msgid "Watch Eén live TV stream (via Internet)"
-msgstr "Watch Eén live TV stream (via Internet)"
-
-msgctxt "#32111"
-msgid "Canvas live"
-msgstr "Canvas live"
-
-msgctxt "#32112"
-msgid "Watch Canvas live TV stream (via Internet)"
-msgstr "Watch Canvas live TV stream (via Internet)"
-
-msgctxt "#32121"
-msgid "Ketnet live"
-msgstr "Ketnet live"
-
-msgctxt "#32122"
-msgid "Watch Ketnet live TV stream (via Internet)"
-msgstr "Watch Ketnet live TV stream (via Internet)"
-
-msgctxt "#32131"
-msgid "Sporza live"
-msgstr "Sporza live"
-
-msgctxt "#32132"
-msgid "Watch Sporza live TV stream (via Internet)"
-msgstr "Watch Sporza live TV stream via (Internet)"
-
-msgctxt "#32141"
-msgid "Studio Brussel live"
-msgstr "Studio Brussel live"
-
-msgctxt "#32142"
-msgid "Watch Studio Brussel live TV stream (via Internet)"
-msgstr "Watch Studio Brussel live TV stream via (Internet)"
-
-msgctxt "#32151"
-msgid "MNM live"
-msgstr "MNM live"
-
-msgctxt "#32152"
-msgid "Watch MNM live TV stream (via Internet)"
-msgstr "Watch MNM live TV stream via (Internet)"
+msgid "Watch %s live TV stream (via Internet)"
+msgstr "Watch %s live TV stream (via Internet)"
 
 msgctxt "#32201"
 msgid "[B][COLOR red]Geo-blocked[/COLOR][/B]\n"

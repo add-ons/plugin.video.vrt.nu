@@ -4,9 +4,10 @@
 
 from __future__ import absolute_import, division, unicode_literals
 import mock
+import random
 import unittest
 
-from resources.lib.vrtplayer import vrtapihelper, vrtplayer
+from resources.lib.vrtplayer import CATEGORIES, vrtapihelper, vrtplayer
 
 
 class TestVRTPlayer(unittest.TestCase):
@@ -81,6 +82,25 @@ class TestVRTPlayer(unittest.TestCase):
         path = 'nieuws-en-actua'
         tvshow_items = self._api_helper.get_tvshow_items(path)
         self.assertTrue(tvshow_items)
+
+    def test_categories_scraping(self):
+        ''' Test to ensure our hardcoded categories conforms to scraped categories '''
+        # Remove thumbnails from scraped categories first
+        categories = [dict(id=c['id'], name=c['name']) for c in vrtplayer.get_categories()]
+        self.assertEqual(categories, CATEGORIES)
+
+    def test_random_tvshow_episodes(self):
+        ''' Rest episode from a random tvshow in a random category '''
+        categories = vrtplayer.get_categories()
+        self.assertTrue(categories)
+
+        category = random.choice(categories)
+        tvshow_items = self._api_helper.get_tvshow_items(category['id'])
+        self.assertTrue(tvshow_items, msg=category['id'])
+
+        tvshow = random.choice(tvshow_items)
+        episode_items, sort, ascending = self._api_helper.get_episode_items(tvshow.url_dict['video_url'])
+        self.assertTrue(episode_items, msg=tvshow.url_dict['video_url'])
 
 
 if __name__ == '__main__':
