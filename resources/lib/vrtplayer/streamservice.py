@@ -146,14 +146,18 @@ class StreamService:
         return stream_dict
 
     def get_stream(self, video, retry=False, api_data=None):
-        self._kodi_wrapper.log_notice('video_url ' + video.get('video_url'))
+        video_url = video.get('video_url')
+        self._kodi_wrapper.log_notice('video_url ' + video_url)
         video_id = video.get('video_id')
         publication_id = video.get('publication_id')
         if video_id and publication_id and not retry:
             xvrttoken = self.token_resolver.get_xvrttoken()
             api_data = apidata.ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, publication_id + requests.utils.quote('$'), xvrttoken, False)
+        # Support .mpd streams directly
+        elif video_url.endswith('.mpd'):
+            return streamurls.StreamURLS(video_url, use_inputstream_adaptive=True)
         else:
-            api_data = api_data or self._get_api_data(video.get('video_url'))
+            api_data = api_data or self._get_api_data(video_url)
 
         vudrm_token = None
         video_json = self._get_video_json(api_data)
