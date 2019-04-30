@@ -163,6 +163,22 @@ msgctxt "#32132"
 msgid "Watch Sporza live TV stream (via Internet)"
 msgstr "Watch Sporza live TV stream via (Internet)"
 
+msgctxt "#32141"
+msgid "Studio Brussel live"
+msgstr "Studio Brussel live"
+
+msgctxt "#32142"
+msgid "Watch Studio Brussel live TV stream (via Internet)"
+msgstr "Watch Studio Brussel live TV stream via (Internet)"
+
+msgctxt "#32151"
+msgid "MNM live"
+msgstr "MNM live"
+
+msgctxt "#32152"
+msgid "Watch MNM live TV stream (via Internet)"
+msgstr "Watch MNM live TV stream via (Internet)"
+
 msgctxt "#32201"
 msgid "[B][COLOR red]Geo-blocked[/COLOR][/B]\n"
 msgstr "[B][COLOR red]Geo-blocked[/COLOR][/B]\n"

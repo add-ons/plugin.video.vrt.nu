@@ -95,6 +95,26 @@ class VRTPlayer:
                 art_dict=dict(thumb=self.__get_media('ketnet.png'), icon='DefaultAddonPVRClient.png', fanart=self._api_helper.get_live_screenshot('ketnet')),
                 video_dict=dict(plot=self._kodi_wrapper.get_localized_string(32201) + '\n' + self._kodi_wrapper.get_localized_string(32122)),
             ),
+            helperobjects.TitleItem(
+                title=self._kodi_wrapper.get_localized_string(32141),
+                url_dict=dict(
+                    action=actions.PLAY,
+                    video_url='https://live-radio-cf-vrt.akamaized.net/groupb/live/0f394a26-c87d-475e-8590-e9c6e79b28d9/live.isml/.mpd',
+                ),
+                is_playable=True,
+                art_dict=dict(thumb='DefaultMusicAddon.png', icon='DefaultAddonPVRClient.png', fanart='DefaultAddonPVRClient.png'),
+                video_dict=dict(plot=self._kodi_wrapper.get_localized_string(32142)),
+            ),
+            helperobjects.TitleItem(
+                title=self._kodi_wrapper.get_localized_string(32151),
+                url_dict=dict(
+                    action=actions.PLAY,
+                    video_url='https://live-radio-cf-vrt.akamaized.net/groupa/live/bac277a1-306d-44a0-8e2e-e5b9c07fa270/live.isml/.mpd',
+                ),
+                is_playable=True,
+                art_dict=dict(thumb='DefaultMusicAddon.png', icon='DefaultAddonPVRClient.png', fanart='DefaultAddonPVRClient.png'),
+                video_dict=dict(plot=self._kodi_wrapper.get_localized_string(32152)),
+            ),
         ]
         self._kodi_wrapper.show_listing(livestream_items, content_type='videos')
 
