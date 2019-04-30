@@ -105,23 +105,20 @@ class VRTPlayer:
     def __get_media(self, file_name):
         return os.path.join(self._addon_path, 'resources', 'media', file_name)
 
-    def __get_category_menu_items(self, url, soupstrainer_parser_selector, routing_action, video_dict_action=None):
+    def __get_category_menu_items(self, url, soupstrainer_parser_selector, routing_action):
         response = requests.get(url, proxies=self._proxies)
         tiles = SoupStrainer('a', soupstrainer_parser_selector)
         soup = BeautifulSoup(response.content, 'html.parser', parse_only=tiles)
         listing = []
         for tile in soup.find_all(class_='nui-tile'):
             category = tile.get('href').split('/')[-2]
-            thumbnail, title = self.__get_category_thumbnail_and_title(tile)
-            video_dict = None
-            if video_dict_action is not None:
-                video_dict = video_dict_action(tile)
+            thumbnail, label = self.__get_category_thumbnail_and_label(tile)
 
-            listing.append(helperobjects.TitleItem(title=title,
+            listing.append(helperobjects.TitleItem(title=label,
                                                    url_dict=dict(action=routing_action, video_url=category),
                                                    is_playable=False,
                                                    art_dict=dict(thumb=thumbnail, icon='DefaultGenre.png', fanart=thumbnail),
-                                                   video_dict=video_dict))
+                                                   video_dict=dict(plot='[B]%s[/B]' % label, studio='VRT')))
         return listing
 
     @staticmethod
@@ -130,10 +127,10 @@ class VRTPlayer:
         return statichelper.add_https_method(raw_thumbnail)
 
     @staticmethod
-    def __get_category_thumbnail_and_title(element):
+    def __get_category_thumbnail_and_label(element):
         thumbnail = VRTPlayer.__format_category_image_url(element)
         found_element = element.find('h3')
-        title = ''
+        label = ''
         if found_element is not None:
-            title = statichelper.strip_newlines(found_element.contents[0])
-        return thumbnail, title
+            label = statichelper.strip_newlines(found_element.contents[0])
+        return thumbnail, label
