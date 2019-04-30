@@ -87,6 +87,7 @@ class TestVRTPlayer(unittest.TestCase):
         ''' Test to ensure our hardcoded categories conforms to scraped categories '''
         # Remove thumbnails from scraped categories first
         categories = [dict(id=c['id'], name=c['name']) for c in vrtplayer.get_categories()]
+        self.assertTrue(categories)
         self.assertEqual(categories, CATEGORIES)
 
     def test_random_tvshow_episodes(self):

@@ -119,6 +119,29 @@ class VRTPlayer:
 
         self._kodi_wrapper.show_listing(livestream_items, sort='unsorted', content_type='videos', cache=False)
 
+    def show_radio_menu_items(self):
+        radio_items = []
+        for channel in CHANNELS:
+            if 'radio' not in CHANNELS[channel].get('type'):
+                continue
+            if CHANNELS[channel].get('tagline'):
+                label = '%(name)s  [I][COLOR blue]--  %(tagline)s[/COLOR][/I]' % CHANNELS[channel]
+            else:
+                label = CHANNELS[channel].get('name')
+            radio_items.append(helperobjects.TitleItem(
+                title=label,
+                # Only MP3 support includes song information
+                url_dict=dict(action=actions.PLAY_RADIO, radio_stream=CHANNELS[channel].get('mp3_128')),
+                is_playable=True,
+                art_dict=dict(thumb='DefaultAddonMusic.png', icon='DefaultAddonMusic.png', fanart='DefaultAddonMusic.png'),
+                video_dict=dict(
+                    plot='[B]%(name)s[/B]\n[I]%(tagline)s[/I]\n\n[COLOR yellow]%(website)s[/COLOR]' % CHANNELS[channel],
+                    mediatype='music',
+                ),
+            ))
+
+        self._kodi_wrapper.show_listing(radio_items, sort='label', content_type='music', list_type='video')
+
     def show_episodes(self, path):
         episode_items, sort, ascending = self._api_helper.get_episode_items(path)
         self._kodi_wrapper.show_listing(episode_items, sort=sort, ascending=ascending, content_type='episodes', cache=False)
@@ -127,6 +150,13 @@ class VRTPlayer:
         stream = self._stream_service.get_stream(params)
         if stream is not None:
             self._kodi_wrapper.play(stream)
+
+    def play_radio(self, params):
+        if 'channel' in params:
+            stream = CHANNELS[params.get('channel')].get('mp3_128')
+        else:
+            stream = params.get('radio_stream')
+        self._kodi_wrapper.play_radio(stream)
 
     def __get_media(self, file_name):
         return os.path.join(self._addon_path, 'resources', 'media', file_name)

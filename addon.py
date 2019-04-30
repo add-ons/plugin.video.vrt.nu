@@ -29,6 +29,7 @@ def router(params_string):
     api_helper = vrtapihelper.VRTApiHelper(kodi_wrapper)
     vrt_player = vrtplayer.VRTPlayer(addon.getAddonInfo('path'), kodi_wrapper, stream_service, api_helper)
     params = dict(parse_qsl(params_string))
+    content_type = params.get('content_type')
     action = params.get('action')
     if action == actions.LISTING_AZ_TVSHOWS:
         vrt_player.show_tvshow_menu_items(path=None)
@@ -45,6 +46,10 @@ def router(params_string):
         tv_guide.show_tvguide(params)
     elif action == actions.PLAY:
         vrt_player.play(params)
+    elif action == actions.PLAY_RADIO:
+        vrt_player.play_radio(params)
+    elif content_type == 'audio':
+        vrt_player.show_radio_menu_items()
     else:
         vrt_player.show_main_menu_items()
 

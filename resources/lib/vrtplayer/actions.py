@@ -14,3 +14,4 @@ LISTING_EPISODES = 'listingepisodes'
 LISTING_TVGUIDE = 'listingtvguide'
 
 PLAY = 'play'
+PLAY_RADIO = 'play_radio'

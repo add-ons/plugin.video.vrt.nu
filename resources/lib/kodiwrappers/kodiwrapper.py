@@ -50,7 +50,7 @@ class KodiWrapper:
         self._addon = addon
         self._addon_id = addon.getAddonInfo('id')
 
-    def show_listing(self, list_items, sort='unsorted', ascending=True, content_type='episodes', cache=True):
+    def show_listing(self, list_items, sort='unsorted', ascending=True, content_type='episodes', list_type='video', cache=True):
         listing = []
 
         xbmcplugin.setContent(self._handle, content=content_type)
@@ -90,7 +90,7 @@ class KodiWrapper:
                 list_item.setArt(title_item.art_dict)
 
             if title_item.video_dict:
-                list_item.setInfo(type='video', infoLabels=title_item.video_dict)
+                list_item.setInfo(type=list_type, infoLabels=title_item.video_dict)
 
             listing.append((url, list_item, not title_item.is_playable))
 
@@ -120,6 +120,17 @@ class KodiWrapper:
         while not xbmc.Player().isPlaying() and not xbmc.Monitor().abortRequested():
             xbmc.sleep(100)
         xbmc.Player().showSubtitles(subtitles_visible)
+
+    def play_radio(self, stream):
+        play_item = xbmcgui.ListItem(path=stream)
+        if stream.endswith('.mpd'):
+            play_item.setProperty('inputstreamaddon', 'inputstream.adaptive')
+            play_item.setProperty('inputstream.adaptive.manifest_type', 'mpd')
+            play_item.setMimeType('application/dash+xml')
+            play_item.setContentLookup(False)
+        xbmcplugin.setResolvedUrl(self._handle, True, listitem=play_item)
+        while not xbmc.Player().isPlaying() and not xbmc.Monitor().abortRequested():
+            xbmc.sleep(100)
 
     def show_ok_dialog(self, title, message):
         xbmcgui.Dialog().ok(self._addon.getAddonInfo('name'), title, message)
