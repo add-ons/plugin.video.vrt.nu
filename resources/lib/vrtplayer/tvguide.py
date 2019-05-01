@@ -10,22 +10,7 @@ import os
 import requests
 
 from resources.lib.helperobjects import helperobjects
-from resources.lib.vrtplayer import actions, metadatacreator, statichelper
-
-CHANNELS = dict(
-    een=dict(
-        id='O8',
-        name='Eén',
-    ),
-    canvas=dict(
-        id='1H',
-        name='Canvas',
-    ),
-    ketnet=dict(
-        id='O9',
-        name='Ketnet',
-    ),
-)
+from resources.lib.vrtplayer import CHANNELS, actions, metadatacreator, statichelper
 
 DATE_STRINGS = {
     '-2': 32330,  # 2 days ago
@@ -82,7 +67,7 @@ class TVGuide:
                         url_dict=dict(action=actions.LISTING_TVGUIDE, date=date, channel=channel),
                         is_playable=False,
                         art_dict=dict(thumb=self.__get_media(channel + '.png'), icon='DefaultAddonPVRClient.png', fanart='DefaultAddonPVRClient.png'),
-                        video_dict=dict(plot=plot),
+                        video_dict=dict(plot=plot, studio=CHANNELS[channel]['studio']),
                     ),
                 )
             self._kodi_wrapper.show_listing(channel_items, content_type='files')

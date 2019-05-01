@@ -20,10 +20,9 @@ except ImportError:
 class VRTApiHelper:
 
     _VRT_BASE = 'https://www.vrt.be'
-    _VRTNU_API_BASE = 'https://vrtnu-api.vrt.be'
-    _VRTNU_SEARCH_URL = _VRTNU_API_BASE + '/search'
-    _VRTNU_SUGGEST_URL = _VRTNU_API_BASE + '/suggest'
-    _VRTNU_SCREENSHOT_URL = _VRTNU_API_BASE + '/screenshots'
+    _VRTNU_SEARCH_URL = 'https://vrtnu-api.vrt.be/search'
+    _VRTNU_SUGGEST_URL = 'https://vrtnu-api.vrt.be/suggest'
+    _VRTNU_SCREENSHOT_URL = 'https://vrtnu-api.vrt.be/screenshots'
 
     def __init__(self, kodi_wrapper):
         self._kodi_wrapper = kodi_wrapper

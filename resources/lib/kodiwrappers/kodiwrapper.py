@@ -90,7 +90,7 @@ class KodiWrapper:
                 list_item.setArt(title_item.art_dict)
 
             if title_item.video_dict:
-                list_item.setInfo('video', infoLabels=title_item.video_dict)
+                list_item.setInfo(type='video', infoLabels=title_item.video_dict)
 
             listing.append((url, list_item, not title_item.is_playable))
 

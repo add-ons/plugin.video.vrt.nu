@@ -6,6 +6,8 @@ from __future__ import absolute_import, division, unicode_literals
 from datetime import datetime
 import dateutil.tz
 
+from resources.lib.vrtplayer import CHANNELS
+
 
 class MetadataCreator:
 
@@ -160,8 +162,9 @@ class MetadataCreator:
         video_dict = dict()
 
         if self.brands:
-            video_dict['studio'] = self.brands
-#            video_dict['channelname'] = self.brands[0] if isinstance(self.brands, list) else self.brands
+            video_dict['studio'] = CHANNELS.get(self.brands[0], {'studio': 'VRT'}).get('studio')
+        else:
+            video_dict['studio'] = 'VRT'
 
         if self.datetime:
             video_dict['aired'] = self.datetime.strftime('%Y-%m-%d %H:%M:%S')
