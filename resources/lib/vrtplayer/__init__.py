@@ -32,7 +32,7 @@ CHANNELS = {
         name='Eén',
         studio='Een',
         live_stream='https://www.vrt.be/vrtnu/kanalen/een/',
-        live_stream_id='vualto_een',
+        live_stream_id='vualto_een_geo',
     ),
     'canvas': dict(
         id='1H',
@@ -40,7 +40,7 @@ CHANNELS = {
         name='Canvas',
         studio='Canvas',
         live_stream='https://www.vrt.be/vrtnu/kanalen/canvas/',
-        live_stream_id='vualto_canvas',
+        live_stream_id='vualto_canvas_geo',
     ),
     'ketnet': dict(
         id='O9',
@@ -48,7 +48,7 @@ CHANNELS = {
         name='Ketnet',
         studio='Ketnet',
         live_stream='https://www.vrt.be/vrtnu/kanalen/ketnet/',
-        live_stream_id='vualto_ketnet',
+        live_stream_id='vualto_ketnet_geo',
     ),
     'ketnet-jr': dict(
         id='1H',
@@ -61,7 +61,7 @@ CHANNELS = {
         type='radio+tv',
         name='Sporza',
         studio='Sporza',
-        live_stream_id='vualto_sporza',
+        live_stream_id='vualto_sporza_geo',
     ),
     'vrtnxt': dict(
         id='',

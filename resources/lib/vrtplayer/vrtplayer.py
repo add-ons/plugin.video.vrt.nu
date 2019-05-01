@@ -88,7 +88,7 @@ class VRTPlayer:
 
     def show_livestream_items(self):
         livestream_items = []
-        for channel in ['een', 'canvas', 'ketnet', 'stubru', 'mnm']:
+        for channel in ['een', 'canvas', 'ketnet', 'sporza', 'stubru', 'mnm']:
             if channel in ['een', 'canvas', 'ketnet']:
                 thumbnail = self.__get_media(channel + '.png')
                 fanart = self._api_helper.get_live_screenshot(channel)

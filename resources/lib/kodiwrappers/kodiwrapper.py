@@ -74,9 +74,10 @@ class KodiWrapper:
 #            xbmcplugin.setProperty(handle=self._handle, key='sort.order', value=str(sort_methods['unsorted']))
 
         for title_item in list_items:
-            list_item = xbmcgui.ListItem(label=title_item.title, thumbnailImage=title_item.art_dict.get('thumb'))
+            list_item = xbmcgui.ListItem(label=title_item.title)
             url = self._url + '?' + urlencode(title_item.url_dict)
             list_item.setProperty(key='IsPlayable', value='true' if title_item.is_playable else 'false')
+            list_item.setProperty(key='video', value='true' if title_item.is_playable else 'false')
 
             # FIXME: This does not appear to be working, we have to order it ourselves
 #            list_item.setProperty(key='sort.ascending', value='true' if ascending else 'false')
@@ -194,7 +195,7 @@ class KodiWrapper:
 
         return dict(http=proxy_address, https=proxy_address)
 
-    # Note: InputStream Adaptive is not pre-installed on Windows and in some cases users can uninstall it
+    # NOTE: InputStream Adaptive is not pre-installed on Windows and in some cases users can uninstall it
     def has_inputstream_adaptive_installed(self):
         return xbmc.getCondVisibility('System.HasAddon("{0}")'.format('inputstream.adaptive')) == 1
 
