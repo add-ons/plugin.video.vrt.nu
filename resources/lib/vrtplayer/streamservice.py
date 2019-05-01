@@ -97,31 +97,41 @@ class StreamService:
 
     def _webscrape_api_data(self, video_url):
         '''Scrape api data from VRT NU html page'''
-        api_data = None
         html_page = requests.get(video_url, proxies=self._proxies).text
         strainer = SoupStrainer('div', {'class': 'cq-dd-vrtvideo'})
         soup = BeautifulSoup(html_page, 'html.parser', parse_only=strainer)
         try:
             video_data = soup.find(lambda tag: tag.name == 'div' and tag.get('class') == ['vrtvideo']).attrs
-            # Store required html data attributes
-            client = video_data.get('data-client')
-            media_api_url = video_data.get('data-mediaapiurl')
-            video_id = video_data.get('data-videoid')
-            publication_id = video_data.get('data-publicationid', '')
-            # Live stream or on demand
-            if video_id is None:
-                is_live_stream = True
-                video_id = video_data.get('data-livestream')
-                xvrttoken = None
-            else:
-                is_live_stream = False
-                publication_id += requests.utils.quote('$')
-                xvrttoken = self.token_resolver.get_xvrttoken()
-            api_data = apidata.ApiData(client, media_api_url, video_id, publication_id, xvrttoken, is_live_stream)
-        except Exception:
+        except Exception as e:
             # Web scraping failed, log error
-            self._kodi_wrapper.log_error('Web scraping api data failed')
-        return api_data
+            self._kodi_wrapper.log_error('Web scraping api data failed: %s', e)
+            return None
+        
+        # Web scraping failed, log error
+        if not video_data:
+            self._kodi_wrapper.log_error('Web scraping api data failed, empty video_data')
+            return None
+        
+        # Store required html data attributes
+        client = video_data.get('data-client')
+        media_api_url = video_data.get('data-mediaapiurl')
+        video_id = video_data.get('data-videoid')
+        publication_id = video_data.get('data-publicationid', '')
+        # Live stream or on demand
+        if video_id is None:
+            is_live_stream = True
+            video_id = video_data.get('data-livestream')
+            xvrttoken = None
+        else:
+            is_live_stream = False
+            publication_id += requests.utils.quote('$')
+            xvrttoken = self.token_resolver.get_xvrttoken()
+
+        if client is None or meta_api_url is None or (video_id is None and publication_id is None):
+            self._kodi_wrapper.log_error('Web scraping api data failed, required attributes missing')
+            return None
+
+        return apidata.ApiData(client, media_api_url, video_id, publication_id, xvrttoken, is_live_stream)
 
     def _get_video_json(self, api_data):
         token_url = api_data.media_api_url + '/tokens'
