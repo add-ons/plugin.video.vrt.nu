@@ -106,12 +106,12 @@ class StreamService:
             # Web scraping failed, log error
             self._kodi_wrapper.log_error('Web scraping api data failed: %s', e)
             return None
-        
+
         # Web scraping failed, log error
         if not video_data:
             self._kodi_wrapper.log_error('Web scraping api data failed, empty video_data')
             return None
-        
+
         # Store required html data attributes
         client = video_data.get('data-client')
         media_api_url = video_data.get('data-mediaapiurl')
@@ -127,7 +127,7 @@ class StreamService:
             publication_id += requests.utils.quote('$')
             xvrttoken = self.token_resolver.get_xvrttoken()
 
-        if client is None or meta_api_url is None or (video_id is None and publication_id is None):
+        if client is None or media_api_url is None or (video_id is None and publication_id is None):
             self._kodi_wrapper.log_error('Web scraping api data failed, required attributes missing')
             return None
 
