@@ -32,7 +32,7 @@ CHANNELS = {
         name='Eén',
         studio='Een',
         live_stream='https://www.vrt.be/vrtnu/kanalen/een/',
-
+        live_stream_id='vualto_een',
     ),
     'canvas': dict(
         id='1H',
@@ -40,6 +40,7 @@ CHANNELS = {
         name='Canvas',
         studio='Canvas',
         live_stream='https://www.vrt.be/vrtnu/kanalen/canvas/',
+        live_stream_id='vualto_canvas',
     ),
     'ketnet': dict(
         id='O9',
@@ -47,6 +48,7 @@ CHANNELS = {
         name='Ketnet',
         studio='Ketnet',
         live_stream='https://www.vrt.be/vrtnu/kanalen/ketnet/',
+        live_stream_id='vualto_ketnet',
     ),
     'ketnet-jr': dict(
         id='1H',
@@ -59,6 +61,7 @@ CHANNELS = {
         type='radio+tv',
         name='Sporza',
         studio='Sporza',
+        live_stream_id='vualto_sporza',
     ),
     'vrtnxt': dict(
         id='',
@@ -90,7 +93,7 @@ CHANNELS = {
         name='Studio Brussel',
         studio='Studio Brussel',
         # live_stream='https://stubru.be/live',
-        live_stream='https://live-radio-cf-vrt.akamaized.net/groupb/live/0f394a26-c87d-475e-8590-e9c6e79b28d9/live.isml/.mpd',
+        live_stream_id='vualto_stubru',
     ),
     'mnm': dict(
         id='55',
@@ -98,12 +101,14 @@ CHANNELS = {
         name='MNM',
         studio='MNM',
         # live_stream='https://mnm.be/kijk/live',
-        live_stream='https://live-radio-cf-vrt.akamaized.net/groupa/live/bac277a1-306d-44a0-8e2e-e5b9c07fa270/live.isml/.mpd',
+        live_stream_id='vualto_mnm',
     ),
     'vrtnws': dict(
         id='13',
         type='radio+tv',
         name='VRT NWS',
         studio='VRT NWS',
+        live_stream_id='vualto_nieuws',
+        # live_stream_id='vualto_journaal',
     ),
 }
