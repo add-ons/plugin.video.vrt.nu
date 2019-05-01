@@ -97,9 +97,16 @@ class VRTPlayer:
                 thumbnail = 'DefaultAddonMusic.png'
                 fanart = 'DefaultAddonPVRClient.png'
                 plot = self._kodi_wrapper.get_localized_string(32102) % CHANNELS[channel].get('name')
+
+            url_dict = dict(action=actions.PLAY)
+            if CHANNELS[channel].get('live_stream'):
+                url_dict['video_url'] = CHANNELS[channel].get('live_stream')
+            if CHANNELS[channel].get('live_stream_id'):
+                url_dict['video_id'] = CHANNELS[channel].get('live_stream_id')
+
             livestream_items.append(helperobjects.TitleItem(
                 title=self._kodi_wrapper.get_localized_string(32101) % CHANNELS[channel].get('name'),
-                url_dict=dict(action=actions.PLAY, video_url=CHANNELS[channel].get('live_stream')),
+                url_dict=url_dict,
                 is_playable=True,
                 art_dict=dict(thumb=thumbnail, icon='DefaultAddonPVRClient.png', fanart=fanart),
                 video_dict=dict(
