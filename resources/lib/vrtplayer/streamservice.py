@@ -104,7 +104,7 @@ class StreamService:
             video_data = soup.find(lambda tag: tag.name == 'div' and tag.get('class') == ['vrtvideo']).attrs
         except Exception as e:
             # Web scraping failed, log error
-            self._kodi_wrapper.log_error('Web scraping api data failed: %s', e)
+            self._kodi_wrapper.log_error('Web scraping api data failed: %s' % e)
             return None
 
         # Web scraping failed, log error
