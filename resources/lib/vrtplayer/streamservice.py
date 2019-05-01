@@ -78,39 +78,50 @@ class StreamService:
 
         return '%s|%s|%s|' % (key_url, header, key_value)
 
-    def _get_api_data(self, video_url, video_id=None):
+    def _get_api_data(self, video):
+        '''Get and prepare api data object'''
+        video_url = video.get('video_url')
+        video_id = video.get('video_id')
+        publication_id = video.get('publication_id')
+        # Prepare api_data for on demand streams by video_id and publication_id
+        if video_id and publication_id:
+            xvrttoken = self.token_resolver.get_xvrttoken()
+            api_data = apidata.ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, publication_id + requests.utils.quote('$'), xvrttoken, False)
+        # Prepare api_data for livestreams by video_id, e.g. vualto_strubru, vualto_mnm
+        elif video_id and not video_url:
+            api_data = apidata.ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, '', None, True)
+        # Webscrape api_data with video_id fallback
+        elif video_url:
+            api_data = self._webscrape_api_data(video_url) or apidata.ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, '', None, True)
+        return api_data
+
+    def _webscrape_api_data(self, video_url):
+        '''Scrape api data from VRT NU html page'''
+        api_data = None
         html_page = requests.get(video_url, proxies=self._proxies).text
         strainer = SoupStrainer('div', {'class': 'cq-dd-vrtvideo'})
         soup = BeautifulSoup(html_page, 'html.parser', parse_only=strainer)
         try:
             video_data = soup.find(lambda tag: tag.name == 'div' and tag.get('class') == ['vrtvideo']).attrs
+            # Store required html data attributes
+            client = video_data.get('data-client')
+            media_api_url = video_data.get('data-mediaapiurl')
+            video_id = video_data.get('data-videoid')
+            publication_id = video_data.get('data-publicationid', '')
+            # Live stream or on demand
+            if video_id is None:
+                is_live_stream = True
+                video_id = video_data.get('data-livestream')
+                xvrttoken = None
+            else:
+                is_live_stream = False
+                publication_id += requests.utils.quote('$')
+                xvrttoken = self.token_resolver.get_xvrttoken()
+            api_data = apidata.ApiData(client, media_api_url, video_id, publication_id, xvrttoken, is_live_stream)
         except Exception:
-            # Web scraping failed
-            video_data = None
-
-        # Web scraping failed, fall back to using video_id only
-        if not video_data and video_id:
-            return apidata.ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, '', None, True)
-
-        # Store required data attributes
-        client = video_data.get('data-client')
-        media_api_url = video_data.get('data-mediaapiurl')
-
-        video_id = video_data.get('data-videoid')
-        # Is this a livestream instead ?
-        if video_id is None:
-            is_live_stream = True
-            xvrttoken = None
-            video_id = video_data.get('data-livestream')
-        else:
-            is_live_stream = False
-            xvrttoken = self.token_resolver.get_xvrttoken()
-
-        publication_id = video_data.get('data-publicationid', '')
-        if publication_id:
-            publication_id += requests.utils.quote('$')
-
-        return apidata.ApiData(client, media_api_url, video_id, publication_id, xvrttoken, is_live_stream)
+            # Web scraping failed, log error
+            self._kodi_wrapper.log_error('Web scraping api data failed')
+        return api_data
 
     def _get_video_json(self, api_data):
         token_url = api_data.media_api_url + '/tokens'
@@ -156,22 +167,9 @@ class StreamService:
         return stream_dict
 
     def get_stream(self, video, retry=False, api_data=None):
-        video_url = video.get('video_url')
-        video_id = video.get('video_id')
-        publication_id = video.get('publication_id')
-        # Prepare api_data for on demand streams by video_id and publication_id
-        if video_id and publication_id and not retry:
-            xvrttoken = self.token_resolver.get_xvrttoken()
-            api_data = apidata.ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, publication_id + requests.utils.quote('$'), xvrttoken, False)
-        # Prepare api_data for livestreams by video_id, e.g. vualto_strubru, vualto_mnm
-        elif video_id and not video_url:
-            api_data = apidata.ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, '', None, True)
-        # Support .mpd streams directly (only works on Kodi 18+ with inputstream.adaptive)
-        elif video_url.endswith('.mpd'):
-            return streamurls.StreamURLS(video_url, use_inputstream_adaptive=True)
-        # Webscrape api_data from html video_url
-        else:
-            api_data = api_data or self._get_api_data(video_url, video_id)
+        '''Main streamservice function'''
+        if not api_data:
+            api_data = self._get_api_data(video)
 
         vudrm_token = None
         video_json = self._get_video_json(api_data)
