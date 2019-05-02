@@ -4,7 +4,6 @@
 
 from __future__ import absolute_import, division, unicode_literals
 from bs4 import BeautifulSoup, SoupStrainer
-import os
 import requests
 
 from resources.lib.helperobjects import helperobjects
@@ -76,7 +75,7 @@ class VRTPlayer:
                                     art_dict=dict(thumb='DefaultAddonTvInfo.png', icon='DefaultAddonTvInfo.png', fanart='DefaultAddonTvInfo.png'),
                                     video_dict=dict(plot=self._kodi_wrapper.get_localized_string(32089))),
         ]
-        self._kodi_wrapper.show_listing(main_items, sort='unsorted', content_type='files')
+        self._kodi_wrapper.show_listing(main_items)
 
     def show_tvshow_menu_items(self, path):
         tvshow_items = self._api_helper.get_tvshow_items(path)
@@ -87,15 +86,21 @@ class VRTPlayer:
         self._kodi_wrapper.show_listing(category_items, sort='label', content_type='files')
 
     def show_livestream_items(self):
+
+        fanart_path = 'resource://resource.images.studios.white/%(studio)s.png'
+        icon_path = 'resource://resource.images.studios.white/%(studio)s.png'
+        # NOTE: Wait for resource.images.studios.coloured v0.16 to be released
+        # icon_path = 'resource://resource.images.studios.coloured/%(studio)s.png'
+
         livestream_items = []
         for channel in ['een', 'canvas', 'ketnet', 'sporza', 'stubru', 'mnm']:
+
+            icon = icon_path % CHANNELS[channel]
             if channel in ['een', 'canvas', 'ketnet']:
-                thumbnail = self.__get_media(channel + '.png')
                 fanart = self._api_helper.get_live_screenshot(channel)
                 plot = self._kodi_wrapper.get_localized_string(32201) + '\n' + self._kodi_wrapper.get_localized_string(32102) % CHANNELS[channel].get('name')
             else:
-                thumbnail = 'DefaultAddonMusic.png'
-                fanart = 'DefaultAddonPVRClient.png'
+                fanart = fanart_path % CHANNELS[channel]
                 plot = self._kodi_wrapper.get_localized_string(32102) % CHANNELS[channel].get('name')
 
             url_dict = dict(action=actions.PLAY)
@@ -108,7 +113,7 @@ class VRTPlayer:
                 title=self._kodi_wrapper.get_localized_string(32101) % CHANNELS[channel].get('name'),
                 url_dict=url_dict,
                 is_playable=True,
-                art_dict=dict(thumb=thumbnail, icon='DefaultAddonPVRClient.png', fanart=fanart),
+                art_dict=dict(thumb=icon, icon=icon, fanart=fanart),
                 video_dict=dict(
                     title=self._kodi_wrapper.get_localized_string(32101) % CHANNELS[channel].get('name'),
                     plot=plot,
@@ -117,7 +122,7 @@ class VRTPlayer:
                 ),
             ))
 
-        self._kodi_wrapper.show_listing(livestream_items, sort='unsorted', content_type='videos', cache=False)
+        self._kodi_wrapper.show_listing(livestream_items, cache=False)
 
     def show_episodes(self, path):
         episode_items, sort, ascending = self._api_helper.get_episode_items(path)
@@ -127,9 +132,6 @@ class VRTPlayer:
         stream = self._stream_service.get_stream(params)
         if stream is not None:
             self._kodi_wrapper.play(stream)
-
-    def __get_media(self, file_name):
-        return os.path.join(self._addon_path, 'resources', 'media', file_name)
 
     def __get_category_menu_items(self):
         try:

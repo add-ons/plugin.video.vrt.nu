@@ -50,10 +50,11 @@ class KodiWrapper:
         self._addon = addon
         self._addon_id = addon.getAddonInfo('id')
 
-    def show_listing(self, list_items, sort='unsorted', ascending=True, content_type='episodes', cache=True):
+    def show_listing(self, list_items, sort='unsorted', ascending=True, content_type=None, cache=True):
         listing = []
 
-        xbmcplugin.setContent(self._handle, content=content_type)
+        if content_type:
+            xbmcplugin.setContent(self._handle, content=content_type)
 
         # FIXME: Since there is no way to influence descending order, we force it here
         if not ascending:

@@ -6,7 +6,6 @@ from __future__ import absolute_import, division, unicode_literals
 from datetime import datetime, timedelta
 import dateutil.parser
 import dateutil.tz
-import os
 import requests
 
 from resources.lib.helperobjects import helperobjects
@@ -53,24 +52,32 @@ class TVGuide:
                                             art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
                                             video_dict=dict(plot=day.strftime(self._kodi_wrapper.get_localized_datelong()))),
                 )
-            self._kodi_wrapper.show_listing(date_items, sort='unsorted', content_type='files')
+            self._kodi_wrapper.show_listing(date_items, content_type='files')
 
         elif not channel:
             dateobj = dateutil.parser.parse(date)
             datelong = dateobj.strftime(self._kodi_wrapper.get_localized_datelong())
+
+            fanart_path = 'resource://resource.images.studios.white/%(studio)s.png'
+            icon_path = 'resource://resource.images.studios.white/%(studio)s.png'
+            # NOTE: Wait for resource.images.studios.coloured v0.16 to be released
+            # icon_path = 'resource://resource.images.studios.coloured/%(studio)s.png'
+
             channel_items = []
             for channel in ('een', 'canvas', 'ketnet'):
+                icon = icon_path % CHANNELS[channel]
+                fanart = fanart_path % CHANNELS[channel]
                 plot = self._kodi_wrapper.get_localized_string(32301) % CHANNELS[channel]['name'] + '\n' + datelong
                 channel_items.append(
                     helperobjects.TitleItem(
                         title=CHANNELS[channel]['name'],
                         url_dict=dict(action=actions.LISTING_TVGUIDE, date=date, channel=channel),
                         is_playable=False,
-                        art_dict=dict(thumb=self.__get_media(channel + '.png'), icon='DefaultAddonPVRClient.png', fanart='DefaultAddonPVRClient.png'),
+                        art_dict=dict(thumb=icon, icon=icon, fanart=fanart),
                         video_dict=dict(plot=plot, studio=CHANNELS[channel]['studio']),
                     ),
                 )
-            self._kodi_wrapper.show_listing(channel_items, content_type='files')
+            self._kodi_wrapper.show_listing(channel_items)
 
         else:
             now = datetime.now(dateutil.tz.tzlocal())
@@ -119,7 +126,4 @@ class TVGuide:
                     art_dict=dict(thumb=thumb, icon='DefaultAddonVideo.png', fanart=thumb),
                     video_dict=metadata.get_video_dict(),
                 ))
-            self._kodi_wrapper.show_listing(episode_items, sort='unsorted', content_type='episodes', cache=False)
-
-    def __get_media(self, file_name):
-        return os.path.join(self._addon_path, 'resources', 'media', file_name)
+            self._kodi_wrapper.show_listing(episode_items, content_type='episodes', cache=False)
