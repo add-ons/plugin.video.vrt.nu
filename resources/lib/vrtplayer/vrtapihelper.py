@@ -76,23 +76,28 @@ class VRTApiHelper:
                 season_items, sort, ascending = self._map_to_season_items(api_url, facet.get('buckets', []), episode)
         return season_items, sort, ascending
 
-    def get_episode_items(self, path):
+    def get_episode_items(self, path=None, page=None):
         import json
         episode_items = []
         sort = 'episode'
         ascending = True
-        if path == 'recent':
+
+        # Recent items
+        if page:
+            entries = 50
             params = {
+                'from': (page - 1) * entries,
                 'i': 'video',
-                'size': '100',
+                'size': entries,
                 'facets[transcodingStatus]': 'AVAILABLE',
                 'facets[brands]': '[een,canvas,sporza,vrtnws,vrtnxt,radio1,radio2,klara,stubru,mnm]',
             }
             api_url = self._VRTNU_SEARCH_URL + '?' + urlencode(params)
             # api_json = requests.get(api_url, proxies=self._proxies).json()
             api_json = json.loads(urlopen(api_url).read())
-            episode_items, sort, ascending = self._map_to_episode_items(api_json.get('results', []), path)
-        else:
+            episode_items, sort, ascending = self._map_to_episode_items(api_json.get('results', []), titletype='recent')
+
+        if path:
             if '.relevant/' in path:
                 params = {
                     'i': 'video',

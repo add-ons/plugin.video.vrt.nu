@@ -69,7 +69,7 @@ class VRTPlayer:
                                     art_dict=dict(thumb='DefaultAddonPVRClient.png', icon='DefaultAddonPVRClient.png', fanart='DefaultAddonPVRClient.png'),
                                     video_dict=dict(plot=self._kodi_wrapper.get_localized_string(32085))),
             helperobjects.TitleItem(title=self._kodi_wrapper.get_localized_string(32086),
-                                    url_dict=dict(action=actions.LISTING_EPISODES, video_url='recent'),
+                                    url_dict=dict(action=actions.LISTING_RECENT, page='1'),
                                     is_playable=False,
                                     art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
                                     video_dict=dict(plot=self._kodi_wrapper.get_localized_string(32087))),
@@ -130,7 +130,24 @@ class VRTPlayer:
         self._kodi_wrapper.show_listing(livestream_items, cache=False)
 
     def show_episodes(self, path):
-        episode_items, sort, ascending = self._api_helper.get_episode_items(path)
+        episode_items, sort, ascending = self._api_helper.get_episode_items(path=path)
+        self._kodi_wrapper.show_listing(episode_items, sort=sort, ascending=ascending, content_type='episodes')
+
+    def show_recent(self, page):
+        try:
+            page = int(page)
+        except TypeError:
+            page = 1
+
+        episode_items, sort, ascending = self._api_helper.get_episode_items(page=page)
+
+        # Add 'More...' entry at the end
+        episode_items.append(helperobjects.TitleItem(title=self._kodi_wrapper.get_localized_string(32300),
+                                                     url_dict=dict(action=actions.LISTING_RECENT, page=page + 1),
+                                                     is_playable=False,
+                                                     art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
+                                                     video_dict=dict()))
+
         self._kodi_wrapper.show_listing(episode_items, sort=sort, ascending=ascending, content_type='episodes', cache=False)
 
     def play(self, params):
