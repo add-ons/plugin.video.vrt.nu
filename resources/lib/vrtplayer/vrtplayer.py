@@ -6,13 +6,17 @@ from __future__ import absolute_import, division, unicode_literals
 from resources.lib.helperobjects import helperobjects
 from resources.lib.vrtplayer import actions
 
+try:
+    from urllib.request import build_opener, install_opener, ProxyHandler, urlopen
+except ImportError:
+    from urllib2 import build_opener, install_opener, ProxyHandler, urlopen
+
 
 def get_categories(proxies=None):
     from bs4 import BeautifulSoup, SoupStrainer
-    import requests
-    response = requests.get('https://www.vrt.be/vrtnu/categorieen/', proxies=proxies)
+    response = urlopen('https://www.vrt.be/vrtnu/categorieen/')
     tiles = SoupStrainer('a', {'class': 'nui-tile'})
-    soup = BeautifulSoup(response.content, 'html.parser', parse_only=tiles)
+    soup = BeautifulSoup(response.read(), 'html.parser', parse_only=tiles)
 
     categories = []
     for tile in soup.find_all(class_='nui-tile'):
@@ -44,6 +48,7 @@ class VRTPlayer:
     def __init__(self, kodi_wrapper, api_helper):
         self._kodi_wrapper = kodi_wrapper
         self._proxies = self._kodi_wrapper.get_proxies()
+        install_opener(build_opener(ProxyHandler(self._proxies)))
         self._api_helper = api_helper
 
     def show_main_menu_items(self):

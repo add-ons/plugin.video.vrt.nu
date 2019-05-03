@@ -6,6 +6,12 @@ from __future__ import absolute_import, division, unicode_literals
 from datetime import datetime, timedelta
 import dateutil.parser
 import dateutil.tz
+import json
+
+try:
+    from urllib.request import build_opener, install_opener, ProxyHandler, urlopen
+except ImportError:
+    from urllib2 import build_opener, install_opener, ProxyHandler, urlopen
 
 from resources.lib.helperobjects import helperobjects
 from resources.lib.vrtplayer import CHANNELS, actions, metadatacreator, statichelper
@@ -26,6 +32,7 @@ class TVGuide:
     def __init__(self, kodi_wrapper):
         self._kodi_wrapper = kodi_wrapper
         self._proxies = self._kodi_wrapper.get_proxies()
+        install_opener(build_opener(ProxyHandler(self._proxies)))
         kodi_wrapper.set_locale()
 
     def show_tvguide(self, params):
@@ -82,8 +89,7 @@ class TVGuide:
             dateobj = dateutil.parser.parse(date)
             datelong = dateobj.strftime(self._kodi_wrapper.get_localized_datelong())
             api_url = dateobj.strftime(self.VRT_TVGUIDE)
-            import requests
-            schedule = requests.get(api_url, proxies=self._proxies).json()
+            schedule = json.loads(urlopen(api_url).read())
             episodes = schedule[CHANNELS[channel]['id']]
             episode_items = []
             for episode in episodes:

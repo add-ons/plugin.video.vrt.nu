@@ -3,12 +3,17 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, unicode_literals
+import json
+
 from resources.lib.helperobjects import apidata, streamurls
 
 try:
-    from urllib.parse import urlencode
+    from urllib.parse import urlencode, quote
+    from urllib.error import HTTPError
+    from urllib.request import build_opener, install_opener, urlopen, ProxyHandler
 except ImportError:
-    from urllib import urlencode
+    from urllib2 import build_opener, install_opener, urlopen, ProxyHandler, quote, HTTPError
+    from urllib import urlencode  # pylint: disable=ungrouped-imports
 
 
 class StreamService:
@@ -20,14 +25,14 @@ class StreamService:
     def __init__(self, kodi_wrapper, token_resolver):
         self._kodi_wrapper = kodi_wrapper
         self._proxies = self._kodi_wrapper.get_proxies()
+        install_opener(build_opener(ProxyHandler(self._proxies)))
         self.token_resolver = token_resolver
         self._create_settings_dir()
         self._can_play_drm = self._kodi_wrapper.can_play_drm()
         self._license_url = None
 
     def _get_license_url(self):
-        import requests
-        self._license_url = requests.get(self._VUPLAY_API_URL, proxies=self._proxies).json().get('drm_providers', dict()).get('widevine', dict()).get('la_url')
+        self._license_url = json.loads(urlopen(self._VUPLAY_API_URL).read()).get('drm_providers', dict()).get('widevine', dict()).get('la_url')
 
     def _create_settings_dir(self):
         settingsdir = self._kodi_wrapper.get_userdata_path()
@@ -69,8 +74,7 @@ class StreamService:
         elif key_type == 'D':
             if 'D{SSM}' not in key_value:
                 raise ValueError('Missing D{SSM} placeholder')
-            import requests
-            key_value = requests.utils.quote(key_value)
+            key_value = quote(key_value)
 
         return '%s|%s|%s|' % (key_url, header, key_value)
 
@@ -82,8 +86,7 @@ class StreamService:
         # Prepare api_data for on demand streams by video_id and publication_id
         if video_id and publication_id:
             xvrttoken = self.token_resolver.get_xvrttoken()
-            import requests
-            api_data = apidata.ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, publication_id + requests.utils.quote('$'), xvrttoken, False)
+            api_data = apidata.ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, publication_id + quote('$'), xvrttoken, False)
         # Prepare api_data for livestreams by video_id, e.g. vualto_strubru, vualto_mnm
         elif video_id and not video_url:
             api_data = apidata.ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, '', None, True)
@@ -95,8 +98,7 @@ class StreamService:
     def _webscrape_api_data(self, video_url):
         '''Scrape api data from VRT NU html page'''
         from bs4 import BeautifulSoup, SoupStrainer
-        import requests
-        html_page = requests.get(video_url, proxies=self._proxies).text
+        html_page = urlopen(video_url).read()
         strainer = SoupStrainer('div', {'class': 'cq-dd-vrtvideo'})
         soup = BeautifulSoup(html_page, 'html.parser', parse_only=strainer)
         try:
@@ -123,7 +125,8 @@ class StreamService:
             xvrttoken = None
         else:
             is_live_stream = False
-            publication_id += requests.utils.quote('$')
+            # publication_id += requests.utils.quote('$')
+            publication_id += quote('$')
             xvrttoken = self.token_resolver.get_xvrttoken()
 
         if client is None or media_api_url is None or (video_id is None and publication_id is None):
@@ -144,8 +147,10 @@ class StreamService:
         if playertoken:
             api_url = api_data.media_api_url + '/videos/' + api_data.publication_id + \
                 api_data.video_id + '?vrtPlayerToken=' + playertoken + '&client=' + api_data.client
-            import requests
-            video_json = requests.get(api_url, proxies=self._proxies).json()
+            try:
+                video_json = json.loads(urlopen(api_url).read())
+            except HTTPError as e:
+                video_json = json.loads(e.read())
 
         return video_json
 
@@ -253,9 +258,9 @@ class StreamService:
     # Speed up HLS selection, workaround for slower kodi selection
     def _select_hls_substreams(self, master_hls_url):
         import re
-        import requests
         base_url = master_hls_url.split('.m3u8')[0]
-        m3u8 = requests.get(master_hls_url, proxies=self._proxies).text
+        # m3u8 = requests.get(master_hls_url, proxies=self._proxies).text
+        m3u8 = urlopen(master_hls_url).read()
         direct_audio_url = None
         direct_video_url = None
         direct_subtitle_url = None

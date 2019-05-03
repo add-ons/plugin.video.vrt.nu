@@ -7,9 +7,11 @@ from resources.lib.helperobjects import helperobjects
 from resources.lib.vrtplayer import actions, metadatacreator, statichelper
 
 try:
-    from urllib.parse import urlencode
+    from urllib.parse import urlencode, unquote
+    from urllib.request import build_opener, install_opener, ProxyHandler, urlopen
 except ImportError:
-    from urllib import urlencode
+    from urllib2 import build_opener, install_opener, ProxyHandler, urlopen, unquote
+    from urllib import urlencode  # pylint: disable=ungrouped-imports
 
 
 class VRTApiHelper:
@@ -22,10 +24,11 @@ class VRTApiHelper:
     def __init__(self, kodi_wrapper):
         self._kodi_wrapper = kodi_wrapper
         self._proxies = self._kodi_wrapper.get_proxies()
+        install_opener(build_opener(ProxyHandler(self._proxies)))
         self._showpermalink = kodi_wrapper.get_setting('showpermalink') == 'true'
 
     def get_tvshow_items(self, path=None):
-        import requests
+        import json
         if path:
             params = {'facets[categories]': path}
             api_url = self._VRTNU_SUGGEST_URL + '?' + urlencode(params)
@@ -33,7 +36,8 @@ class VRTApiHelper:
             # If no path is provided, we return the A-Z listing
             params = {'facets[transcodingStatus]': 'AVAILABLE'}
             api_url = self._VRTNU_SUGGEST_URL + '?' + urlencode(params)
-        tvshows = requests.get(api_url, proxies=self._proxies).json()
+        # tvshows = requests.get(api_url, proxies=self._proxies).json()
+        tvshows = json.loads(urlopen(api_url).read())
         tvshow_items = []
         for tvshow in tvshows:
             metadata = metadatacreator.MetadataCreator()
@@ -73,7 +77,7 @@ class VRTApiHelper:
         return season_items, sort, ascending
 
     def get_episode_items(self, path):
-        import requests
+        import json
         episode_items = []
         sort = 'episode'
         ascending = True
@@ -85,7 +89,8 @@ class VRTApiHelper:
                 'facets[brands]': '[een,canvas,sporza,vrtnws,vrtnxt,radio1,radio2,klara,stubru,mnm]',
             }
             api_url = self._VRTNU_SEARCH_URL + '?' + urlencode(params)
-            api_json = requests.get(api_url, proxies=self._proxies).json()
+            # api_json = requests.get(api_url, proxies=self._proxies).json()
+            api_json = json.loads(urlopen(api_url).read())
             episode_items, sort, ascending = self._map_to_episode_items(api_json.get('results', []), path)
         else:
             if '.relevant/' in path:
@@ -97,7 +102,8 @@ class VRTApiHelper:
                 api_url = self._VRTNU_SEARCH_URL + '?' + urlencode(params)
             else:
                 api_url = path
-            api_json = requests.get(api_url, proxies=self._proxies).json()
+            # api_json = requests.get(api_url, proxies=self._proxies).json()
+            api_json = json.loads(urlopen(api_url).read())
 
             episodes = api_json.get('results', [{}])
             if episodes:
@@ -111,7 +117,8 @@ class VRTApiHelper:
 
             # Look for seasons items if not yet done
             season_key = None
-            path = requests.utils.unquote(path)
+            # path = requests.utils.unquote(path)
+            path = unquote(path)
             if 'facets[seasonTitle]' in path:
                 season_key = path.split('facets[seasonTitle]=')[1]
             elif display_options.get('showSeason') is True:
