@@ -3,13 +3,8 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, unicode_literals
-import json
-
-import inputstreamhelper
 import xbmc
-import xbmcgui
 import xbmcplugin
-import xbmcvfs
 
 try:
     from urllib.parse import urlencode
@@ -51,6 +46,7 @@ class KodiWrapper:
         self._addon_id = addon.getAddonInfo('id')
 
     def show_listing(self, list_items, sort='unsorted', ascending=True, content_type=None, cache=True):
+        import xbmcgui
         listing = []
 
         if content_type:
@@ -99,6 +95,7 @@ class KodiWrapper:
         xbmcplugin.endOfDirectory(self._handle, ok, cacheToDisc=cache)
 
     def play(self, video):
+        import xbmcgui
         play_item = xbmcgui.ListItem(path=video.stream_url)
         if video.stream_url is not None and video.use_inputstream_adaptive:
             play_item.setProperty('inputstreamaddon', 'inputstream.adaptive')
@@ -106,6 +103,7 @@ class KodiWrapper:
             play_item.setMimeType('application/dash+xml')
             play_item.setContentLookup(False)
             if video.license_key is not None:
+                import inputstreamhelper
                 is_helper = inputstreamhelper.Helper('mpd', drm='com.widevine.alpha')
                 if is_helper.check_inputstream():
                     play_item.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')
@@ -123,6 +121,7 @@ class KodiWrapper:
         xbmc.Player().showSubtitles(subtitles_visible)
 
     def show_ok_dialog(self, title, message):
+        import xbmcgui
         xbmcgui.Dialog().ok(self._addon.getAddonInfo('name'), title, message)
 
     def set_locale(self):
@@ -153,6 +152,7 @@ class KodiWrapper:
         self._addon.openSettings()
 
     def get_global_setting(self, setting):
+        import json
         json_result = xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Settings.GetSettingValue", "params": {"setting": "%s"}, "id": 1}' % setting)
         return json.loads(json_result).get('result', dict()).get('value')
 
@@ -213,15 +213,19 @@ class KodiWrapper:
         return xbmc.translatePath(path)
 
     def make_dir(self, path):
+        import xbmcvfs
         xbmcvfs.mkdir(path)
 
     def check_if_path_exists(self, path):
+        import xbmcvfs
         return xbmcvfs.exists(path)
 
     def open_path(self, path):
+        import json
         return json.loads(open(path, 'r').read())
 
     def delete_path(self, path):
+        import xbmcvfs
         return xbmcvfs.delete(path)
 
     def log_notice(self, message):

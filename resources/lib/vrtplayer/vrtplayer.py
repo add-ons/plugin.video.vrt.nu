@@ -3,14 +3,13 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, unicode_literals
-from bs4 import BeautifulSoup, SoupStrainer
-import requests
-
 from resources.lib.helperobjects import helperobjects
-from resources.lib.vrtplayer import CATEGORIES, CHANNELS, actions, statichelper
+from resources.lib.vrtplayer import actions
 
 
 def get_categories(proxies=None):
+    from bs4 import BeautifulSoup, SoupStrainer
+    import requests
     response = requests.get('https://www.vrt.be/vrtnu/categorieen/', proxies=proxies)
     tiles = SoupStrainer('a', {'class': 'nui-tile'})
     soup = BeautifulSoup(response.content, 'html.parser', parse_only=tiles)
@@ -27,11 +26,13 @@ def get_categories(proxies=None):
 
 
 def get_category_thumbnail(element):
+    from resources.lib.vrtplayer import statichelper
     raw_thumbnail = element.find(class_='media').get('data-responsive-image', 'DefaultGenre.png')
     return statichelper.add_https_method(raw_thumbnail)
 
 
 def get_category_title(element):
+    from resources.lib.vrtplayer import statichelper
     found_element = element.find('h3')
     if found_element is not None:
         return statichelper.strip_newlines(found_element.contents[0])
@@ -40,12 +41,10 @@ def get_category_title(element):
 
 class VRTPlayer:
 
-    def __init__(self, addon_path, kodi_wrapper, stream_service, api_helper):
-        self._addon_path = addon_path
+    def __init__(self, kodi_wrapper, api_helper):
         self._kodi_wrapper = kodi_wrapper
         self._proxies = self._kodi_wrapper.get_proxies()
         self._api_helper = api_helper
-        self._stream_service = stream_service
 
     def show_main_menu_items(self):
         main_items = [
@@ -86,6 +85,7 @@ class VRTPlayer:
         self._kodi_wrapper.show_listing(category_items, sort='label', content_type='files')
 
     def show_livestream_items(self):
+        from resources.lib.vrtplayer import CHANNELS
 
         fanart_path = 'resource://resource.images.studios.white/%(studio)s.png'
         icon_path = 'resource://resource.images.studios.white/%(studio)s.png'
@@ -129,7 +129,10 @@ class VRTPlayer:
         self._kodi_wrapper.show_listing(episode_items, sort=sort, ascending=ascending, content_type='episodes', cache=False)
 
     def play(self, params):
-        stream = self._stream_service.get_stream(params)
+        from resources.lib.vrtplayer import streamservice, tokenresolver
+        token_resolver = tokenresolver.TokenResolver(self._kodi_wrapper)
+        stream_service = streamservice.StreamService(self._kodi_wrapper, token_resolver)
+        stream = stream_service.get_stream(params)
         if stream is not None:
             self._kodi_wrapper.play(stream)
 
@@ -141,6 +144,7 @@ class VRTPlayer:
 
         # Fallback to internal categories if web-scraping fails
         if not categories:
+            from resources.lib.vrtplayer import CATEGORIES
             categories = CATEGORIES
 
         category_items = []

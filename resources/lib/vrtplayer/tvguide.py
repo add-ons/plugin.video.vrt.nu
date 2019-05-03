@@ -6,7 +6,6 @@ from __future__ import absolute_import, division, unicode_literals
 from datetime import datetime, timedelta
 import dateutil.parser
 import dateutil.tz
-import requests
 
 from resources.lib.helperobjects import helperobjects
 from resources.lib.vrtplayer import CHANNELS, actions, metadatacreator, statichelper
@@ -24,8 +23,7 @@ class TVGuide:
 
     VRT_TVGUIDE = 'https://www.vrt.be/bin/epg/schedule.%Y-%m-%d.json'
 
-    def __init__(self, addon_path, kodi_wrapper):
-        self._addon_path = addon_path
+    def __init__(self, kodi_wrapper):
         self._kodi_wrapper = kodi_wrapper
         self._proxies = self._kodi_wrapper.get_proxies()
         kodi_wrapper.set_locale()
@@ -84,6 +82,7 @@ class TVGuide:
             dateobj = dateutil.parser.parse(date)
             datelong = dateobj.strftime(self._kodi_wrapper.get_localized_datelong())
             api_url = dateobj.strftime(self.VRT_TVGUIDE)
+            import requests
             schedule = requests.get(api_url, proxies=self._proxies).json()
             episodes = schedule[CHANNELS[channel]['id']]
             episode_items = []

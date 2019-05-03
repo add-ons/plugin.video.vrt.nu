@@ -3,11 +3,6 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, unicode_literals
-from datetime import datetime
-import dateutil.parser
-import dateutil.tz
-import requests
-
 from resources.lib.helperobjects import helperobjects
 from resources.lib.vrtplayer import actions, metadatacreator, statichelper
 
@@ -30,6 +25,7 @@ class VRTApiHelper:
         self._showpermalink = kodi_wrapper.get_setting('showpermalink') == 'true'
 
     def get_tvshow_items(self, path=None):
+        import requests
         if path:
             params = {'facets[categories]': path}
             api_url = self._VRTNU_SUGGEST_URL + '?' + urlencode(params)
@@ -77,6 +73,7 @@ class VRTApiHelper:
         return season_items, sort, ascending
 
     def get_episode_items(self, path):
+        import requests
         episode_items = []
         sort = 'episode'
         ascending = True
@@ -127,6 +124,9 @@ class VRTApiHelper:
         return episode_items, sort, ascending
 
     def _map_to_episode_items(self, episodes, titletype=None, season_key=None):
+        from datetime import datetime
+        import dateutil.parser
+        import dateutil.tz
         now = datetime.now(dateutil.tz.tzlocal())
         sort = 'episode'
         ascending = True

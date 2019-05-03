@@ -9,7 +9,7 @@ import sys
 
 import xbmcaddon
 from resources.lib.kodiwrappers import kodiwrapper
-from resources.lib.vrtplayer import actions, streamservice, tokenresolver, tvguide, vrtapihelper, vrtplayer
+from resources.lib.vrtplayer import actions
 
 try:
     from urllib.parse import parse_qsl
@@ -23,13 +23,21 @@ _ADDON_HANDLE = int(sys.argv[1])
 def router(params_string):
     ''' This is the main router for the video plugin menu '''
     addon = xbmcaddon.Addon()
-    kodi_wrapper = kodiwrapper.KodiWrapper(_ADDON_HANDLE, _ADDON_URL, addon)
-    token_resolver = tokenresolver.TokenResolver(kodi_wrapper)
-    stream_service = streamservice.StreamService(kodi_wrapper, token_resolver)
-    api_helper = vrtapihelper.VRTApiHelper(kodi_wrapper)
-    vrt_player = vrtplayer.VRTPlayer(addon.getAddonInfo('path'), kodi_wrapper, stream_service, api_helper)
     params = dict(parse_qsl(params_string))
     action = params.get('action')
+
+    kodi_wrapper = kodiwrapper.KodiWrapper(_ADDON_HANDLE, _ADDON_URL, addon)
+
+    if action == actions.LISTING_TVGUIDE:
+        from resources.lib.vrtplayer import tvguide
+        tv_guide = tvguide.TVGuide(kodi_wrapper)
+        tv_guide.show_tvguide(params)
+        return
+
+    from resources.lib.vrtplayer import vrtapihelper, vrtplayer
+    api_helper = vrtapihelper.VRTApiHelper(kodi_wrapper)
+    vrt_player = vrtplayer.VRTPlayer(kodi_wrapper, api_helper)
+
     if action == actions.LISTING_AZ_TVSHOWS:
         vrt_player.show_tvshow_menu_items(path=None)
     elif action == actions.LISTING_CATEGORIES:
@@ -40,9 +48,6 @@ def router(params_string):
         vrt_player.show_episodes(path=params.get('video_url'))
     elif action == actions.LISTING_CATEGORY_TVSHOWS:
         vrt_player.show_tvshow_menu_items(path=params.get('video_url'))
-    elif action == actions.LISTING_TVGUIDE:
-        tv_guide = tvguide.TVGuide(addon.getAddonInfo('path'), kodi_wrapper)
-        tv_guide.show_tvguide(params)
     elif action == actions.PLAY:
         vrt_player.play(params)
     else:

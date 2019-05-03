@@ -3,12 +3,6 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, unicode_literals
-from bs4 import BeautifulSoup, SoupStrainer
-from datetime import datetime, timedelta
-import dateutil.parser
-import re
-import requests
-
 from resources.lib.helperobjects import apidata, streamurls
 
 try:
@@ -32,6 +26,7 @@ class StreamService:
         self._license_url = None
 
     def _get_license_url(self):
+        import requests
         self._license_url = requests.get(self._VUPLAY_API_URL, proxies=self._proxies).json().get('drm_providers', dict()).get('widevine', dict()).get('la_url')
 
     def _create_settings_dir(self):
@@ -74,6 +69,7 @@ class StreamService:
         elif key_type == 'D':
             if 'D{SSM}' not in key_value:
                 raise ValueError('Missing D{SSM} placeholder')
+            import requests
             key_value = requests.utils.quote(key_value)
 
         return '%s|%s|%s|' % (key_url, header, key_value)
@@ -86,6 +82,7 @@ class StreamService:
         # Prepare api_data for on demand streams by video_id and publication_id
         if video_id and publication_id:
             xvrttoken = self.token_resolver.get_xvrttoken()
+            import requests
             api_data = apidata.ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, publication_id + requests.utils.quote('$'), xvrttoken, False)
         # Prepare api_data for livestreams by video_id, e.g. vualto_strubru, vualto_mnm
         elif video_id and not video_url:
@@ -97,6 +94,8 @@ class StreamService:
 
     def _webscrape_api_data(self, video_url):
         '''Scrape api data from VRT NU html page'''
+        from bs4 import BeautifulSoup, SoupStrainer
+        import requests
         html_page = requests.get(video_url, proxies=self._proxies).text
         strainer = SoupStrainer('div', {'class': 'cq-dd-vrtvideo'})
         soup = BeautifulSoup(html_page, 'html.parser', parse_only=strainer)
@@ -145,6 +144,7 @@ class StreamService:
         if playertoken:
             api_url = api_data.media_api_url + '/videos/' + api_data.publication_id + \
                 api_data.video_id + '?vrtPlayerToken=' + playertoken + '&client=' + api_data.client
+            import requests
             video_json = requests.get(api_url, proxies=self._proxies).json()
 
         return video_json
@@ -163,6 +163,8 @@ class StreamService:
            When begintime is present in the stream_url and endtime is missing, we must add endtime
            to the stream_url so Kodi treats the program as an on demand program and starts the stream
            from the beginning like a real on demand program.'''
+        from datetime import datetime, timedelta
+        import dateutil.parser
         for key, value in stream_dict.items():
             begin = value.split('?t=')[1] if '?t=' in value else None
             if begin and len(begin) == 19:
@@ -178,6 +180,7 @@ class StreamService:
 
     def get_stream(self, video, retry=False, api_data=None):
         '''Main streamservice function'''
+        from datetime import timedelta
         if not api_data:
             api_data = self._get_api_data(video)
 
@@ -249,6 +252,8 @@ class StreamService:
 
     # Speed up HLS selection, workaround for slower kodi selection
     def _select_hls_substreams(self, master_hls_url):
+        import re
+        import requests
         base_url = master_hls_url.split('.m3u8')[0]
         m3u8 = requests.get(master_hls_url, proxies=self._proxies).text
         direct_audio_url = None

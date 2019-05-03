@@ -3,12 +3,6 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, unicode_literals
-from datetime import datetime
-import dateutil.parser
-import dateutil.tz
-import json
-import requests
-
 from resources.lib.helperobjects import helperobjects
 
 
@@ -64,6 +58,8 @@ class TokenResolver:
                 yield cookie
 
     def _get_new_playertoken(self, path, token_url, headers):
+        import json
+        import requests
         playertoken = requests.post(token_url, proxies=self._proxies, headers=headers).json()
         json.dump(playertoken, open(path, 'w'))
         return playertoken.get('vrtPlayerToken')
@@ -72,6 +68,10 @@ class TokenResolver:
         cached_token = None
 
         if self._kodi_wrapper.check_if_path_exists(path):
+            from datetime import datetime
+            import dateutil.parser
+            import dateutil.tz
+            import json
             token = json.loads(open(path, 'r').read())
             now = datetime.now(dateutil.tz.tzlocal())
             exp = dateutil.parser.parse(token.get('expirationDate'))
@@ -84,6 +84,7 @@ class TokenResolver:
         return cached_token
 
     def _get_new_xvrttoken(self, path, get_roaming_token):
+        import requests
         cred = helperobjects.Credentials(self._kodi_wrapper)
         if not cred.are_filled_in():
             self._kodi_wrapper.open_settings()
@@ -113,6 +114,7 @@ class TokenResolver:
             if get_roaming_token:
                 xvrttoken = self._get_roaming_xvrttoken(xvrttoken)
             if xvrttoken is not None:
+                import json
                 token = xvrttoken.get('X-VRT-Token')
                 json.dump(xvrttoken, open(path, 'w'))
         else:
@@ -134,6 +136,7 @@ class TokenResolver:
         self._kodi_wrapper.show_ok_dialog(title, message)
 
     def _get_roaming_xvrttoken(self, xvrttoken):
+        import requests
         roaming_xvrttoken = None
         url = 'https://token.vrt.be/vrtnuinitloginEU?destination=https://www.vrt.be/vrtnu/'
         cookie_value = 'X-VRT-Token=' + xvrttoken.get('X-VRT-Token')
@@ -155,6 +158,7 @@ class TokenResolver:
         token_dictionary = None
         xvrttoken_cookie = next(TokenResolver.get_cookie_from_cookiejar('X-VRT-Token', cookie_jar))
         if xvrttoken_cookie is not None:
+            from datetime import datetime
             token_dictionary = {
                 xvrttoken_cookie.name: xvrttoken_cookie.value,
                 'expirationDate': datetime.utcfromtimestamp(xvrttoken_cookie.expires).strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
