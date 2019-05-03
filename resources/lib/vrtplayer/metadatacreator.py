@@ -3,10 +3,6 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, unicode_literals
-from datetime import datetime
-import dateutil.tz
-
-from resources.lib.vrtplayer import CHANNELS
 
 
 class MetadataCreator:
@@ -158,6 +154,10 @@ class MetadataCreator:
         self._year = value
 
     def get_video_dict(self):
+        from datetime import datetime
+        import dateutil.tz
+        from resources.lib.vrtplayer import CHANNELS
+
         epoch = datetime.fromtimestamp(0, dateutil.tz.UTC)
         video_dict = dict()
 
