@@ -155,6 +155,10 @@ msgctxt "#32204"
 msgid "[B][COLOR green](%s hours left)[/COLOR][/B]\n"
 msgstr "[B][COLOR green](%s hours left)[/COLOR][/B]\n"
 
+msgctxt "#32300"
+msgid "[B][COLOR yellow]More...[/COLOR][/B]"
+msgstr "[B][COLOR yellow]More...[/COLOR][/B]"
+
 msgctxt "#32301"
 msgid "[B]TV guide for channel %s[/B]"
 msgstr "[B]TV guide for channel %s[/B]"
