@@ -69,17 +69,20 @@ class TVGuide:
             # icon_path = 'resource://resource.images.studios.coloured/%(studio)s.png'
 
             channel_items = []
-            for channel in ('een', 'canvas', 'ketnet'):
-                icon = icon_path % CHANNELS[channel]
-                fanart = fanart_path % CHANNELS[channel]
-                plot = self._kodi_wrapper.get_localized_string(32301) % CHANNELS[channel]['name'] + '\n' + datelong
+            for channel in CHANNELS:
+                if channel.get('name') not in ('een', 'canvas', 'ketnet'):
+                    continue
+
+                icon = icon_path % channel
+                fanart = fanart_path % channel
+                plot = self._kodi_wrapper.get_localized_string(32301) % channel.get('label') + '\n' + datelong
                 channel_items.append(
                     helperobjects.TitleItem(
-                        title=CHANNELS[channel]['name'],
-                        url_dict=dict(action=actions.LISTING_TVGUIDE, date=date, channel=channel),
+                        title=channel.get('label'),
+                        url_dict=dict(action=actions.LISTING_TVGUIDE, date=date, channel=channel.get('name')),
                         is_playable=False,
                         art_dict=dict(thumb=icon, icon=icon, fanart=fanart),
-                        video_dict=dict(plot=plot, studio=CHANNELS[channel]['studio']),
+                        video_dict=dict(plot=plot, studio=channel.get('studio')),
                     ),
                 )
             self._kodi_wrapper.show_listing(channel_items)
@@ -90,7 +93,12 @@ class TVGuide:
             datelong = dateobj.strftime(self._kodi_wrapper.get_localized_datelong())
             api_url = dateobj.strftime(self.VRT_TVGUIDE)
             schedule = json.loads(urlopen(api_url).read())
-            episodes = schedule[CHANNELS[channel]['id']]
+            name = channel
+            try:
+                channel = next(c for c in CHANNELS if c.get('name') == name)
+                episodes = schedule[channel.get('id')]
+            except StopIteration:
+                episodes = []
             episode_items = []
             for episode in episodes:
                 metadata = metadatacreator.MetadataCreator()
@@ -105,7 +113,7 @@ class TVGuide:
                 metadata.datetime = dateobj
                 # NOTE: Do not use startTime and endTime as we don't want duration in seconds
                 metadata.duration = (dateutil.parser.parse(end) - dateutil.parser.parse(start)).total_seconds()
-                metadata.plot = '[B]%s[/B]\n%s\n%s - %s\n[I]%s[/I]' % (title, datelong, start, end, CHANNELS[channel]['name'])
+                metadata.plot = '[B]%s[/B]\n%s\n%s - %s\n[I]%s[/I]' % (title, datelong, start, end, channel.get('label'))
                 metadata.brands = [channel]
                 metadata.mediatype = 'episode'
                 thumb = episode.get('image', 'DefaultAddonVideo.png')

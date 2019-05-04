@@ -25,90 +25,90 @@ CATEGORIES = [
     dict(name='Wetenschap en natuur', id='wetenschap-en-natuur'),
 ]
 
-CHANNELS = {
-    'een': dict(
+CHANNELS = [
+    dict(
         id='O8',
-        type='tv',
-        name='Eén',
+        name='een',
+        label='Eén',
         studio='Een',
         live_stream='https://www.vrt.be/vrtnu/kanalen/een/',
         live_stream_id='vualto_een_geo',
     ),
-    'canvas': dict(
+    dict(
         id='1H',
-        type='tv',
-        name='Canvas',
+        name='canvas',
+        label='Canvas',
         studio='Canvas',
         live_stream='https://www.vrt.be/vrtnu/kanalen/canvas/',
         live_stream_id='vualto_canvas_geo',
     ),
-    'ketnet': dict(
+    dict(
+        id='12',
+        name='sporza',
+        label='Sporza',
+        studio='Sporza',
+        live_stream_id='vualto_sporza_geo',
+    ),
+    dict(
+        id='1H',
+        name='ketnet-jr',
+        label='Ketnet Junior',
+        studio='Ketnet Junior',
+    ),
+    dict(
         id='O9',
-        type='tv',
-        name='Ketnet',
+        name='ketnet',
+        label='Ketnet',
         studio='Ketnet',
         live_stream='https://www.vrt.be/vrtnu/kanalen/ketnet/',
         live_stream_id='vualto_ketnet_geo',
     ),
-    'ketnet-jr': dict(
-        id='1H',
-        type='tv',
-        name='Ketnet Junior',
-        studio='Ketnet Junior',
-    ),
-    'sporza': dict(
-        id='12',
-        type='radio+tv',
-        name='Sporza',
-        studio='Sporza',
-        live_stream_id='vualto_sporza_geo',
-    ),
-    'vrtnxt': dict(
-        id='',
-        type='tv',
-        name='VRT NXT',
-        studio='VRT NXT',
-    ),
-    'radio1': dict(
+    dict(
         id='11',
-        type='radio',
-        name='Radio 1',
+        name='radio1',
+        label='Radio 1',
         studio='Radio 1',
     ),
-    'radio2': dict(
+    dict(
         id='24',
-        type='radio',
-        name='Radio 2',
+        name='radio2',
+        label='Radio 2',
         studio='Radio 2',
     ),
-    'klara': dict(
+    dict(
         id='31',
-        type='radio',
-        name='Klara',
+        name='klara',
+        label='Klara',
         studio='Klara',
     ),
-    'stubru': dict(
+    dict(
         id='41',
-        type='radio+tv',
-        name='Studio Brussel',
+        name='stubru',
+        label='Studio Brussel',
         studio='Studio Brussel',
         # live_stream='https://stubru.be/live',
         live_stream_id='vualto_stubru',
     ),
-    'mnm': dict(
+    dict(
         id='55',
-        type='radio+tv',
-        name='MNM',
+        name='mnm',
+        label='MNM',
         studio='MNM',
         # live_stream='https://mnm.be/kijk/live',
         live_stream_id='vualto_mnm',
     ),
-    'vrtnws': dict(
+    dict(
+        id='',
+        name='vrtnxt',
+        label='VRT NXT',
+        studio='VRT NXT',
+    ),
+    dict(
         id='13',
-        type='radio+tv',
-        name='VRT NWS',
+        name='vrtnws',
+        label='VRT NWS',
         studio='VRT NWS',
         live_stream_id='vualto_nieuws',
         # live_stream_id='vualto_journaal',
     ),
-}
+]
