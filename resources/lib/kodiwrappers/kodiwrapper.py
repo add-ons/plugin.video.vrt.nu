@@ -167,7 +167,7 @@ class KodiWrapper:
         if httpproxytype != 0 and not socks_supported:
             # Only open the dialog the first time (to avoid multiple popups)
             if socks_supported is None:
-                message = self.get_localized_string(32061)
+                message = self.get_localized_string(30061)
                 self.show_ok_dialog('', message)
             return None
 

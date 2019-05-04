@@ -191,16 +191,16 @@ class VRTApiHelper:
             plot_meta = ''
             if metadata.geolocked:
                 # Show Geo-locked
-                plot_meta += self._kodi_wrapper.get_localized_string(32201)
+                plot_meta += self._kodi_wrapper.get_localized_string(30201)
             # Only display when a video disappears if it is within the next 3 months
             if metadata.offtime is not None and (metadata.offtime - now).days < 93:
                 # Show date when episode is removed
-                plot_meta += self._kodi_wrapper.get_localized_string(32202) % metadata.offtime.strftime(self._kodi_wrapper.get_localized_dateshort())
+                plot_meta += self._kodi_wrapper.get_localized_string(30202) % metadata.offtime.strftime(self._kodi_wrapper.get_localized_dateshort())
                 # Show the remaining days/hours the episode is still available
                 if (metadata.offtime - now).days > 0:
-                    plot_meta += self._kodi_wrapper.get_localized_string(32203) % (metadata.offtime - now).days
+                    plot_meta += self._kodi_wrapper.get_localized_string(30203) % (metadata.offtime - now).days
                 else:
-                    plot_meta += self._kodi_wrapper.get_localized_string(32204) % int((metadata.offtime - now).seconds / 3600)
+                    plot_meta += self._kodi_wrapper.get_localized_string(30204) % int((metadata.offtime - now).seconds / 3600)
 
             if plot_meta:
                 metadata.plot = '%s\n%s' % (plot_meta, metadata.plot)
@@ -242,7 +242,7 @@ class VRTApiHelper:
 
         for season in seasons:
             season_key = season.get('key')
-            label = '%s %s' % (self._kodi_wrapper.get_localized_string(32094), season_key)
+            label = '%s %s' % (self._kodi_wrapper.get_localized_string(30094), season_key)
             params = {'facets[seasonTitle]': season_key}
             path = api_url + '&' + urlencode(params)
             season_items.append(helperobjects.TitleItem(
@@ -316,7 +316,7 @@ class VRTApiHelper:
                 # NOTE: Sort the episodes ourselves, because Kodi does not allow to set to 'descending'
                 # sort = 'episode'
                 sort = 'label'
-                label = '%s %s: %s' % (self._kodi_wrapper.get_localized_string(32095), result.get('episodeNumber'), label)
+                label = '%s %s: %s' % (self._kodi_wrapper.get_localized_string(30095), result.get('episodeNumber'), label)
             elif options.get('showBroadcastDate') and result.get('formattedBroadcastShortDate'):
                 sort = 'dateadded'
                 label = '%s - %s' % (result.get('formattedBroadcastShortDate'), label)
