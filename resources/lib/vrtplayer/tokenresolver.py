@@ -139,14 +139,14 @@ class TokenResolver:
 
     def _handle_error(self, logon_json, cred):
         error_message = logon_json.get('errorDetails')
-        title = self._kodi_wrapper.get_localized_string(32051)
+        title = self._kodi_wrapper.get_localized_string(30051)
         if error_message == 'invalid loginID or password':
             cred.reset()
-            message = self._kodi_wrapper.get_localized_string(32052)
+            message = self._kodi_wrapper.get_localized_string(30052)
         elif error_message == 'loginID must be provided':
-            message = self._kodi_wrapper.get_localized_string(32055)
+            message = self._kodi_wrapper.get_localized_string(30055)
         elif error_message == 'Missing required parameter: password':
-            message = self._kodi_wrapper.get_localized_string(32056)
+            message = self._kodi_wrapper.get_localized_string(30056)
         else:
             message = error_message
         self._kodi_wrapper.show_ok_dialog(title, message)

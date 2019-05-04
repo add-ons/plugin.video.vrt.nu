@@ -17,11 +17,11 @@ from resources.lib.helperobjects import helperobjects
 from resources.lib.vrtplayer import CHANNELS, actions, metadatacreator, statichelper
 
 DATE_STRINGS = {
-    '-2': 32330,  # 2 days ago
-    '-1': 32331,  # Yesterday
-    '0': 32332,  # Today
-    '1': 32333,  # Tomorrow
-    '2': 32334,  # In 2 days
+    '-2': 30330,  # 2 days ago
+    '-1': 30331,  # Yesterday
+    '0': 30332,  # Today
+    '1': 30333,  # Tomorrow
+    '2': 30334,  # In 2 days
 }
 
 
@@ -75,7 +75,7 @@ class TVGuide:
 
                 icon = icon_path % channel
                 fanart = fanart_path % channel
-                plot = self._kodi_wrapper.get_localized_string(32301) % channel.get('label') + '\n' + datelong
+                plot = self._kodi_wrapper.get_localized_string(30301) % channel.get('label') + '\n' + datelong
                 channel_items.append(
                     helperobjects.TitleItem(
                         title=channel.get('label'),
@@ -122,14 +122,14 @@ class TVGuide:
                     video_url = statichelper.add_https_method(url)
                     url_dict = dict(action=actions.PLAY, video_url=video_url)
                     if start_date < now <= end_date:  # Now playing
-                        metadata.title = '[COLOR yellow]%s[/COLOR] %s' % (label, self._kodi_wrapper.get_localized_string(32302))
+                        metadata.title = '[COLOR yellow]%s[/COLOR] %s' % (label, self._kodi_wrapper.get_localized_string(30302))
                     else:
                         metadata.title = label
                 else:
                     # FIXME: Find a better solution for non-actionable items
                     url_dict = dict(action=actions.LISTING_TVGUIDE, date=date, channel=channel)
                     if start_date < now <= end_date:  # Now playing
-                        metadata.title = '[COLOR brown]%s[/COLOR] %s' % (label, self._kodi_wrapper.get_localized_string(32302))
+                        metadata.title = '[COLOR brown]%s[/COLOR] %s' % (label, self._kodi_wrapper.get_localized_string(30302))
                     else:
                         metadata.title = '[COLOR gray]%s[/COLOR]' % label
                 episode_items.append(helperobjects.TitleItem(

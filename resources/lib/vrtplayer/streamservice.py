@@ -156,7 +156,7 @@ class StreamService:
 
     def _handle_error(self, video_json):
         self._kodi_wrapper.log_error(video_json.get('message'))
-        message = self._kodi_wrapper.get_localized_string(32054)
+        message = self._kodi_wrapper.get_localized_string(30054)
         self._kodi_wrapper.show_ok_dialog('', message)
 
     @staticmethod
@@ -211,7 +211,7 @@ class StreamService:
                     # Update api_data with roaming_xvrttoken and try again
                     api_data.xvrttoken = roaming_xvrttoken
                     return self.get_stream(video, retry=True, api_data=api_data)
-                message = self._kodi_wrapper.get_localized_string(32053)
+                message = self._kodi_wrapper.get_localized_string(30053)
                 self._kodi_wrapper.show_ok_dialog('', message)
             else:
                 self._handle_error(video_json)

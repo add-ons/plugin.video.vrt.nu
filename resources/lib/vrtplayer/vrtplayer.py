@@ -53,36 +53,36 @@ class VRTPlayer:
 
     def show_main_menu_items(self):
         main_items = [
-            helperobjects.TitleItem(title=self._kodi_wrapper.get_localized_string(32080),
+            helperobjects.TitleItem(title=self._kodi_wrapper.get_localized_string(30080),
                                     url_dict=dict(action=actions.LISTING_AZ_TVSHOWS),
                                     is_playable=False,
                                     art_dict=dict(thumb='DefaultMovieTitle.png', icon='DefaultMovieTitle.png', fanart='DefaultMovieTitle.png'),
-                                    video_dict=dict(plot=self._kodi_wrapper.get_localized_string(32081))),
-            helperobjects.TitleItem(title=self._kodi_wrapper.get_localized_string(32082),
+                                    video_dict=dict(plot=self._kodi_wrapper.get_localized_string(30081))),
+            helperobjects.TitleItem(title=self._kodi_wrapper.get_localized_string(30082),
                                     url_dict=dict(action=actions.LISTING_CATEGORIES),
                                     is_playable=False,
                                     art_dict=dict(thumb='DefaultGenre.png', icon='DefaultGenre.png', fanart='DefaultGenre.png'),
-                                    video_dict=dict(plot=self._kodi_wrapper.get_localized_string(32083))),
-            helperobjects.TitleItem(title=self._kodi_wrapper.get_localized_string(32084),
+                                    video_dict=dict(plot=self._kodi_wrapper.get_localized_string(30083))),
+            helperobjects.TitleItem(title=self._kodi_wrapper.get_localized_string(30084),
                                     url_dict=dict(action=actions.LISTING_CHANNELS),
                                     is_playable=False,
                                     art_dict=dict(thumb='DefaultTags.png', icon='DefaultTags.png', fanart='DefaultTags.png'),
-                                    video_dict=dict(plot=self._kodi_wrapper.get_localized_string(32085))),
-            helperobjects.TitleItem(title=self._kodi_wrapper.get_localized_string(32086),
+                                    video_dict=dict(plot=self._kodi_wrapper.get_localized_string(30085))),
+            helperobjects.TitleItem(title=self._kodi_wrapper.get_localized_string(30086),
                                     url_dict=dict(action=actions.LISTING_LIVE),
                                     is_playable=False,
                                     art_dict=dict(thumb='DefaultAddonPVRClient.png', icon='DefaultAddonPVRClient.png', fanart='DefaultAddonPVRClient.png'),
-                                    video_dict=dict(plot=self._kodi_wrapper.get_localized_string(32087))),
-            helperobjects.TitleItem(title=self._kodi_wrapper.get_localized_string(32088),
+                                    video_dict=dict(plot=self._kodi_wrapper.get_localized_string(30087))),
+            helperobjects.TitleItem(title=self._kodi_wrapper.get_localized_string(30088),
                                     url_dict=dict(action=actions.LISTING_RECENT, page='1'),
                                     is_playable=False,
                                     art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
-                                    video_dict=dict(plot=self._kodi_wrapper.get_localized_string(32089))),
-            helperobjects.TitleItem(title=self._kodi_wrapper.get_localized_string(32090),
+                                    video_dict=dict(plot=self._kodi_wrapper.get_localized_string(30089))),
+            helperobjects.TitleItem(title=self._kodi_wrapper.get_localized_string(30090),
                                     url_dict=dict(action=actions.LISTING_TVGUIDE),
                                     is_playable=False,
                                     art_dict=dict(thumb='DefaultAddonTvInfo.png', icon='DefaultAddonTvInfo.png', fanart='DefaultAddonTvInfo.png'),
-                                    video_dict=dict(plot=self._kodi_wrapper.get_localized_string(32091))),
+                                    video_dict=dict(plot=self._kodi_wrapper.get_localized_string(30091))),
         ]
         self._kodi_wrapper.show_listing(main_items)
 
@@ -128,14 +128,14 @@ class VRTPlayer:
                 is_playable = False
             else:
                 url_dict = dict(action=action)
-                label = self._kodi_wrapper.get_localized_string(32101) % channel.get('label')
+                label = self._kodi_wrapper.get_localized_string(30101) % channel.get('label')
                 is_playable = True
                 if channel.get('name') in ['een', 'canvas', 'ketnet']:
                     fanart = self._api_helper.get_live_screenshot(channel.get('name'))
-                    plot = '%s\n%s' % (self._kodi_wrapper.get_localized_string(32201),
-                                       self._kodi_wrapper.get_localized_string(32102) % channel.get('label'))
+                    plot = '%s\n%s' % (self._kodi_wrapper.get_localized_string(30201),
+                                       self._kodi_wrapper.get_localized_string(30102) % channel.get('label'))
                 else:
-                    plot = self._kodi_wrapper.get_localized_string(32102) % channel.get('label')
+                    plot = self._kodi_wrapper.get_localized_string(30102) % channel.get('label')
                 if channel.get('live_stream'):
                     url_dict['video_url'] = channel.get('live_stream')
                 if channel.get('live_stream_id'):
@@ -169,7 +169,7 @@ class VRTPlayer:
         episode_items, sort, ascending = self._api_helper.get_episode_items(page=page)
 
         # Add 'More...' entry at the end
-        episode_items.append(helperobjects.TitleItem(title=self._kodi_wrapper.get_localized_string(32300),
+        episode_items.append(helperobjects.TitleItem(title=self._kodi_wrapper.get_localized_string(30300),
                                                      url_dict=dict(action=actions.LISTING_RECENT, page=page + 1),
                                                      is_playable=False,
                                                      art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
