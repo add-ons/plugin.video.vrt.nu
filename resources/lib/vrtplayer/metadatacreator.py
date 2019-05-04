@@ -162,7 +162,11 @@ class MetadataCreator:
         video_dict = dict()
 
         if self.brands:
-            video_dict['studio'] = CHANNELS.get(self.brands[0], {'studio': 'VRT'}).get('studio')
+            try:
+                channel = next(c for c in CHANNELS if c.get('name') == self.brands[0])
+                video_dict['studio'] = channel.get('studio', 'VRT')
+            except StopIteration:
+                video_dict['studio'] = 'VRT'
         else:
             video_dict['studio'] = 'VRT'
 

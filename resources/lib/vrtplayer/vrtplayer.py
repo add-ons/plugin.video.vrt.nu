@@ -99,12 +99,11 @@ class VRTPlayer:
             tvshow_items = self._api_helper.get_tvshow_items(channel=channel)
             self._kodi_wrapper.show_listing(tvshow_items, sort='label', content_type='tvshows')
         else:
-            self.show_channels(action=actions.LISTING_CHANNELS,
-                               channels=['een', 'canvas', 'sporza', 'ketnet-jr', 'ketnet', 'stubru', 'mnm', 'vrtnws', 'vrtnxt'])
+            from resources.lib.vrtplayer import CHANNELS
+            self.show_channels(action=actions.LISTING_CHANNELS, channels=[c.get('name') for c in CHANNELS])
 
     def show_livestream_items(self):
-        self.show_channels(action=actions.PLAY,
-                           channels=['een', 'canvas', 'sporza', 'ketnet', 'stubru', 'mnm'])
+        self.show_channels(action=actions.PLAY, channels=['een', 'canvas', 'sporza', 'ketnet', 'stubru', 'mnm'])
 
     def show_channels(self, action=actions.PLAY, channels=None):
         from resources.lib.vrtplayer import CHANNELS
@@ -115,30 +114,32 @@ class VRTPlayer:
         # icon_path = 'resource://resource.images.studios.coloured/%(studio)s.png'
 
         channel_items = []
-        for channel in channels:
+        for channel in CHANNELS:
+            if channel.get('name') not in channels:
+                continue
 
-            icon = icon_path % CHANNELS[channel]
-            fanart = fanart_path % CHANNELS[channel]
+            icon = icon_path % channel
+            fanart = fanart_path % channel
 
             if action == actions.LISTING_CHANNELS:
-                url_dict = dict(action=action, channel=channel)
-                label = CHANNELS[channel].get('name')
-                plot = '[B]%s[/B]' % CHANNELS[channel].get('name')
+                url_dict = dict(action=action, channel=channel.get('name'))
+                label = channel.get('label')
+                plot = '[B]%s[/B]' % channel.get('label')
                 is_playable = False
             else:
                 url_dict = dict(action=action)
-                label = self._kodi_wrapper.get_localized_string(32101) % CHANNELS[channel].get('name')
+                label = self._kodi_wrapper.get_localized_string(32101) % channel.get('label')
                 is_playable = True
-                if channel in ['een', 'canvas', 'ketnet']:
-                    fanart = self._api_helper.get_live_screenshot(channel)
+                if channel.get('name') in ['een', 'canvas', 'ketnet']:
+                    fanart = self._api_helper.get_live_screenshot(channel.get('name'))
                     plot = '%s\n%s' % (self._kodi_wrapper.get_localized_string(32201),
-                                       self._kodi_wrapper.get_localized_string(32102) % CHANNELS[channel].get('name'))
+                                       self._kodi_wrapper.get_localized_string(32102) % channel.get('label'))
                 else:
-                    plot = self._kodi_wrapper.get_localized_string(32102) % CHANNELS[channel].get('name')
-                if CHANNELS[channel].get('live_stream'):
-                    url_dict['video_url'] = CHANNELS[channel].get('live_stream')
-                if CHANNELS[channel].get('live_stream_id'):
-                    url_dict['video_id'] = CHANNELS[channel].get('live_stream_id')
+                    plot = self._kodi_wrapper.get_localized_string(32102) % channel.get('label')
+                if channel.get('live_stream'):
+                    url_dict['video_url'] = channel.get('live_stream')
+                if channel.get('live_stream_id'):
+                    url_dict['video_id'] = channel.get('live_stream_id')
 
             channel_items.append(helperobjects.TitleItem(
                 title=label,
@@ -148,7 +149,7 @@ class VRTPlayer:
                 video_dict=dict(
                     title=label,
                     plot=plot,
-                    studio=CHANNELS[channel].get('studio'),
+                    studio=channel.get('studio'),
                     mediatype='video',
                 ),
             ))

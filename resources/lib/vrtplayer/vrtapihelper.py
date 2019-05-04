@@ -38,7 +38,7 @@ class VRTApiHelper:
             params['facets[transcodingStatus]'] = 'AVAILABLE'
 
         if channel:
-            params['facets[brands]'] = channel
+            params['facets[programBrands]'] = channel
 
         api_url = self._VRTNU_SUGGEST_URL + '?' + urlencode(params)
         # tvshows = requests.get(api_url, proxies=self._proxies).json()
@@ -95,7 +95,7 @@ class VRTApiHelper:
                 'i': 'video',
                 'size': entries,
                 'facets[transcodingStatus]': 'AVAILABLE',
-                'facets[brands]': '[een,canvas,sporza,vrtnws,vrtnxt,radio1,radio2,klara,stubru,mnm]',
+                'facets[programBrands]': '[een,canvas,sporza,vrtnws,vrtnxt,radio1,radio2,klara,stubru,mnm]',
             }
             api_url = self._VRTNU_SEARCH_URL + '?' + urlencode(params)
             # api_json = requests.get(api_url, proxies=self._proxies).json()
