@@ -100,26 +100,34 @@ msgid "TV programs listed by category"
 msgstr "TV programs listed by category"
 
 msgctxt "#32084"
+msgid "Channels"
+msgstr "Channels"
+
+msgctxt "#32085"
+msgid "TV programs listed by channel"
+msgstr "TV programs listed by channel"
+
+msgctxt "#32086"
 msgid "Live TV"
 msgstr "Live TV"
 
-msgctxt "#32085"
+msgctxt "#32087"
 msgid "Watch TV channels live (using Internet streaming)"
 msgstr "Watch TV channels live (using Internet streaming)"
 
-msgctxt "#32086"
+msgctxt "#32088"
 msgid "Most recent"
 msgstr "Most recent"
 
-msgctxt "#32087"
+msgctxt "#32089"
 msgid "Recently published episodes of TV programs"
 msgstr "Recently published episodes of TV programs"
 
-msgctxt "#32088"
+msgctxt "#32090"
 msgid "TV guide"
 msgstr "TV guide"
 
-msgctxt "#32089"
+msgctxt "#32091"
 msgid "Browse channel TV guides"
 msgstr "Browse channel TV guides"
 
