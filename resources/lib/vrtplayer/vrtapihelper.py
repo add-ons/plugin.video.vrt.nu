@@ -27,15 +27,20 @@ class VRTApiHelper:
         install_opener(build_opener(ProxyHandler(self._proxies)))
         self._showpermalink = kodi_wrapper.get_setting('showpermalink') == 'true'
 
-    def get_tvshow_items(self, path=None):
+    def get_tvshow_items(self, category=None, channel=None):
         import json
-        if path:
-            params = {'facets[categories]': path}
-            api_url = self._VRTNU_SUGGEST_URL + '?' + urlencode(params)
+        params = dict()
+
+        if category:
+            params['facets[categories]'] = category
         else:
             # If no path is provided, we return the A-Z listing
-            params = {'facets[transcodingStatus]': 'AVAILABLE'}
-            api_url = self._VRTNU_SUGGEST_URL + '?' + urlencode(params)
+            params['facets[transcodingStatus]'] = 'AVAILABLE'
+
+        if channel:
+            params['facets[brands]'] = channel
+
+        api_url = self._VRTNU_SUGGEST_URL + '?' + urlencode(params)
         # tvshows = requests.get(api_url, proxies=self._proxies).json()
         tvshows = json.loads(urlopen(api_url).read())
         tvshow_items = []

@@ -90,7 +90,7 @@ msgstr "A-Z"
 
 msgctxt "#32081"
 msgid "Alphabetically sorted list of TV programs"
-msgstr "Alle tv-programma's in alfabetische volgorde"
+msgstr "Alle TV-programma's in alfabetische volgorde"
 
 msgctxt "#32082"
 msgid "Categories"
@@ -98,29 +98,37 @@ msgstr "Categorieën"
 
 msgctxt "#32083"
 msgid "TV programs listed by category"
-msgstr "Lijst van tv-programma's per categorie"
+msgstr "Lijst van TV-programma's per categorie"
 
 msgctxt "#32084"
+msgid "Channels"
+msgstr "Kanalen"
+
+msgctxt "#32085"
+msgid "TV programs listed by channel"
+msgstr "Lijst van TV-programma's per kanaal"
+
+msgctxt "#32086"
 msgid "Live TV"
 msgstr "Live kijken"
 
-msgctxt "#32085"
+msgctxt "#32087"
 msgid "Watch TV channels live (using Internet streaming)"
-msgstr "Bekijk tv-kanalen live (via Internet)"
+msgstr "Bekijk TV-kanalen live (via Internet)"
 
-msgctxt "#32086"
+msgctxt "#32088"
 msgid "Most recent"
 msgstr "Meest recent"
 
-msgctxt "#32087"
+msgctxt "#32089"
 msgid "Recently published episodes of TV programs"
-msgstr "Recent gepubliceerde afleveringen van tv-programma's"
+msgstr "Recent gepubliceerde afleveringen van TV-programma's"
 
-msgctxt "#32088"
+msgctxt "#32090"
 msgid "TV guide"
 msgstr "TV-gids"
 
-msgctxt "#32089"
+msgctxt "#32091"
 msgid "Browse channel TV guides"
 msgstr "Doorzoek de TV-gids per kanaal"
 
