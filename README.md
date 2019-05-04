@@ -47,6 +47,15 @@ you can send a message to [our Facebook page](https://facebook.com/kodivrtnu/).
 
 ## Releases
 
+#### v1.9.0 (2019-05-04)
+- Add a Channels menu (@dagwieers)
+- Add page-browsing in Recent menu, 50 items per page (@dagwieers)
+- Fix general performance issue on Raspberry Pi (@mediaminister)
+- Add icon support to channel listings (@dagwieers)
+- Improvements to streamservice (@mediaminister)
+- Add fallback code for web scraping logic (@dagwieers)
+- Add Studio Brussel and MNM live streams (@dagwieers)
+
 #### v1.8.0 (2019-04-27)
 - Fix the menu listings due to the urllib3 update (@dagwieers)
 - Add a TV guide menu entry (@dagwieers)

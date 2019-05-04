@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.vrt.nu"
        name="VRT NU"
-       version="1.8.0"
+       version="1.9.0"
        provider-name="Martijn Moreel">
 
     <requires>
@@ -46,6 +46,15 @@ Sommige videos zijn geografisch geblokkeerd.
         <platform>all</platform>
         <license>GNU General Public License, v3</license>
         <news>
+v1.9.0 (2019-05-04)
+- Add a Channels menu (@dagwieers)
+- Add page-browsing in Recent menu, 50 items per page (@dagwieers)
+- Fix general performance issue on Raspberry Pi (@mediaminister)
+- Add icon support to channel listings (@dagwieers)
+- Improvements to streamservice (@mediaminister)
+- Add fallback code for web scraping logic (@dagwieers)
+- Add Studio Brussel and MNM live streams (@dagwieers)
+
 v1.8.0 (2019-04-27)
 - Fix the menu listings due to the urllib3 update (@dagwieers)
 - Add a TV guide menu entry (@dagwieers)
@@ -56,8 +65,10 @@ v1.8.0 (2019-04-27)
 - Improved login handling (@mediaminister)
 - Improve thumbnail/fanart for menu listings (@dagwieers)
 - Fixes to remote play (@mediaminister)
+
 v1.7.1 (2019-03-28)
 - Remove the inputstream.adaptive requirement for Krypton
+
 v1.7.0 (2019-03-26)
 - Fix the categories web-scraping (@mediaminister)
 - Add full proxy support (@dagwieers)
@@ -72,10 +83,6 @@ v1.7.0 (2019-03-26)
 - Fix roaming for live streams (@mediaminister)
 - Add Python 3 compatibility (@dagwieers)
 - Added automated testing using Travis CI (@dagwieers)
-v1.6.0 (2019-03-07)
-- Use VRT search api (greatly improves stability)
-- Fix for users with Non ASCII compatible user path
-- Fix for roaming token
         </news>
         <source>https://github.com/pietje666/plugin.video.vrt.nu</source>
         <website>https://github.com/pietje666/plugin.video.vrt.nu/wiki</website>
