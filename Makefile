@@ -8,7 +8,7 @@ version = $(shell xmllint --xpath 'string(/addon/@version)' $(addon_xml))
 git_hash = $(shell git rev-parse --short HEAD)
 
 zip_name = $(name)-$(version)-$(git_hash).zip
-include_files = addon.py addon.xml LICENSE README.md resources/ service.py
+include_files = addon.py addon.xml LICENSE README.md resources/ service.py vrtnu/
 include_paths = $(patsubst %,$(name)/%,$(include_files))
 exclude_files = \*.new \*.orig \*.pyc
 zip_dir = $(name)/
@@ -32,12 +32,12 @@ tox:
 
 pylint:
 	@echo -e "$(white)=$(blue) Starting sanity pylint test$(reset)"
-	pylint *.py resources/lib/*/*.py
+	pylint *.py vrtnu/*.py
 	@echo -e "$(white)=$(blue) Sanity pylint test finished successfully.$(reset)"
 
 unit:
 	@echo -e "$(white)=$(blue) Starting unit tests$(reset)"
-	PYTHONPATH=$(pwd) python test/vrtplayertests.py
+	PYTHONPATH=$(shell pwd) python test/vrtplayertests.py
 	@echo -e "$(white)=$(blue) Unit tests finished successfully.$(reset)"
 
 zip: test

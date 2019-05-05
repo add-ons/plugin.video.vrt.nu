@@ -5,7 +5,7 @@
 from __future__ import absolute_import, division, unicode_literals
 import json
 
-from resources.lib.helperobjects import apidata, streamurls
+from vrtnu.helperobjects import ApiData, StreamURLS
 
 try:
     from urllib.parse import urlencode, quote
@@ -78,21 +78,18 @@ class StreamService:
 
         return '%s|%s|%s|' % (key_url, header, key_value)
 
-    def _get_api_data(self, video):
+    def _get_api_data(self, video_url, video_id, publication_id):
         '''Get and prepare api data object'''
-        video_url = video.get('video_url')
-        video_id = video.get('video_id')
-        publication_id = video.get('publication_id')
         # Prepare api_data for on demand streams by video_id and publication_id
         if video_id and publication_id:
             xvrttoken = self.token_resolver.get_xvrttoken()
-            api_data = apidata.ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, publication_id + quote('$'), xvrttoken, False)
+            api_data = ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, publication_id + quote('$'), xvrttoken, False)
         # Prepare api_data for livestreams by video_id, e.g. vualto_strubru, vualto_mnm
         elif video_id and not video_url:
-            api_data = apidata.ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, '', None, True)
+            api_data = ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, '', None, True)
         # Webscrape api_data with video_id fallback
         elif video_url:
-            api_data = self._webscrape_api_data(video_url) or apidata.ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, '', None, True)
+            api_data = self._webscrape_api_data(video_url) or ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, '', None, True)
         return api_data
 
     def _webscrape_api_data(self, video_url):
@@ -133,7 +130,7 @@ class StreamService:
             self._kodi_wrapper.log_error('Web scraping api data failed, required attributes missing')
             return None
 
-        return apidata.ApiData(client, media_api_url, video_id, publication_id, xvrttoken, is_live_stream)
+        return ApiData(client, media_api_url, video_id, publication_id, xvrttoken, is_live_stream)
 
     def _get_video_json(self, api_data):
         token_url = api_data.media_api_url + '/tokens'
@@ -183,11 +180,11 @@ class StreamService:
                 stream_dict[key] = '-'.join((value, end_time.strftime('%Y-%m-%dT%H:%M:%S')))
         return stream_dict
 
-    def get_stream(self, video, retry=False, api_data=None):
+    def get_stream(self, video_url, video_id, publication_id, retry=False, api_data=None):
         '''Main streamservice function'''
         from datetime import timedelta
         if not api_data:
-            api_data = self._get_api_data(video)
+            api_data = self._get_api_data(video_url, video_id, publication_id)
 
         vudrm_token = None
         video_json = self._get_video_json(api_data)
@@ -210,7 +207,7 @@ class StreamService:
                         self._kodi_wrapper.delete_path(self._kodi_wrapper.get_userdata_path() + 'ondemand_vrtPlayerToken')
                     # Update api_data with roaming_xvrttoken and try again
                     api_data.xvrttoken = roaming_xvrttoken
-                    return self.get_stream(video, retry=True, api_data=api_data)
+                    return self.get_stream(video_url, video_id, publication_id, retry=True, api_data=api_data)
                 message = self._kodi_wrapper.get_localized_string(30053)
                 self._kodi_wrapper.show_ok_dialog('', message)
             else:
@@ -227,7 +224,7 @@ class StreamService:
                                             key_type='D',
                                             key_value=encryption_json,
                                             key_headers={'Content-Type': 'text/plain;charset=UTF-8'})
-        return streamurls.StreamURLS(stream_dict[protocol], license_key=license_key, use_inputstream_adaptive=True) if protocol in stream_dict else None
+        return StreamURLS(stream_dict[protocol], license_key=license_key, use_inputstream_adaptive=True) if protocol in stream_dict else None
 
     def _select_stream(self, stream_dict, vudrm_token):
         stream_url = None
@@ -240,18 +237,18 @@ class StreamService:
         if vudrm_token and stream_url is None:
             protocol = 'hls_aes'
             self._kodi_wrapper.log_notice('protocol: ' + protocol)
-            stream_url = streamurls.StreamURLS(*self._select_hls_substreams(stream_dict[protocol])) if protocol in stream_dict else None
+            stream_url = StreamURLS(*self._select_hls_substreams(stream_dict[protocol])) if protocol in stream_dict else None
 
         if self._kodi_wrapper.has_inputstream_adaptive_installed() and stream_url is None:
             protocol = 'mpeg_dash'
             self._kodi_wrapper.log_notice('protocol: ' + protocol)
-            stream_url = streamurls.StreamURLS(stream_dict[protocol], use_inputstream_adaptive=True) if protocol in stream_dict else None
+            stream_url = StreamURLS(stream_dict[protocol], use_inputstream_adaptive=True) if protocol in stream_dict else None
 
         if stream_url is None:
             protocol = 'hls'
             self._kodi_wrapper.log_notice('protocol: ' + protocol)
             # No if-else statement because this is the last resort stream selection
-            stream_url = streamurls.StreamURLS(*self._select_hls_substreams(stream_dict[protocol]))
+            stream_url = StreamURLS(*self._select_hls_substreams(stream_dict[protocol]))
 
         return stream_url
 

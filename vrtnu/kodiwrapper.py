@@ -6,10 +6,6 @@ from __future__ import absolute_import, division, unicode_literals
 import xbmc
 import xbmcplugin
 
-try:
-    from urllib.parse import urlencode
-except ImportError:
-    from urllib import urlencode
 
 sort_methods = {
     # 'date': xbmcplugin.SORT_METHOD_DATE,
@@ -39,11 +35,15 @@ def has_socks():
 
 class KodiWrapper:
 
-    def __init__(self, handle, url, addon):
-        self._handle = handle
+    def __init__(self, url, addon, plugin=None):
         self._url = url
         self._addon = addon
         self._addon_id = addon.getAddonInfo('id')
+        self._plugin = plugin
+        if plugin:
+            self._handle = plugin.handle
+        else:
+            self._handle = None
 
     def show_listing(self, list_items, sort='unsorted', ascending=True, content_type=None, cache=True):
         import xbmcgui
@@ -72,7 +72,6 @@ class KodiWrapper:
 
         for title_item in list_items:
             list_item = xbmcgui.ListItem(label=title_item.title, thumbnailImage=title_item.art_dict.get('thumb'))
-            url = self._url + '?' + urlencode(title_item.url_dict)
             list_item.setProperty(key='IsPlayable', value='true' if title_item.is_playable else 'false')
 
             # FIXME: This does not appear to be working, we have to order it ourselves
@@ -89,7 +88,7 @@ class KodiWrapper:
             if title_item.video_dict:
                 list_item.setInfo(type='video', infoLabels=title_item.video_dict)
 
-            listing.append((url, list_item, not title_item.is_playable))
+            listing.append((title_item.url, list_item, not title_item.is_playable))
 
         ok = xbmcplugin.addDirectoryItems(self._handle, listing, len(listing))
         xbmcplugin.endOfDirectory(self._handle, ok, cacheToDisc=cache)

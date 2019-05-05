@@ -7,7 +7,8 @@ import mock
 import random
 import unittest
 
-from resources.lib.vrtplayer import CATEGORIES, vrtapihelper, vrtplayer
+from vrtnu.data import CATEGORIES
+from vrtnu import vrtapihelper, vrtplayer
 
 
 class TestVRTPlayer(unittest.TestCase):
@@ -24,7 +25,7 @@ class TestVRTPlayer(unittest.TestCase):
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
 
-        player = vrtplayer.VRTPlayer(self._kodi_wrapper, self._api_helper)
+        player = vrtplayer.VRTPlayer(self._kodi_wrapper)
         player.show_episodes(path)
         self.assertTrue(self._kodi_wrapper.show_listing.called)
 
@@ -35,7 +36,7 @@ class TestVRTPlayer(unittest.TestCase):
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
 
-        player = vrtplayer.VRTPlayer(self._kodi_wrapper, self._api_helper)
+        player = vrtplayer.VRTPlayer(self._kodi_wrapper)
         player.show_episodes(path)
         self.assertTrue(self._kodi_wrapper.show_listing.called)
 
@@ -46,7 +47,7 @@ class TestVRTPlayer(unittest.TestCase):
         self.assertEqual(sort, 'label')
         self.assertFalse(ascending)
 
-        player = vrtplayer.VRTPlayer(self._kodi_wrapper, self._api_helper)
+        player = vrtplayer.VRTPlayer(self._kodi_wrapper)
         player.show_episodes(path)
         self.assertTrue(self._kodi_wrapper.show_listing.called)
 
@@ -57,7 +58,7 @@ class TestVRTPlayer(unittest.TestCase):
         self.assertEqual(sort, 'label')
         self.assertFalse(ascending)
 
-        player = vrtplayer.VRTPlayer(self._kodi_wrapper, self._api_helper)
+        player = vrtplayer.VRTPlayer(self._kodi_wrapper)
         player.show_episodes(path)
         self.assertTrue(self._kodi_wrapper.show_listing.called)
 

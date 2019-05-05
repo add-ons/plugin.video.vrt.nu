@@ -11,10 +11,11 @@
         <import addon="script.module.dateutil" version="2.6.0"/>
         <import addon="script.module.inputstreamhelper" version="0.3.3"/>
         <import addon="script.module.pysocks" version="1.6.8" optional="true"/>
-        <!-- import addon="script.module.requests" version="2.19.1"/ -->
+        <import addon="script.module.routing" version="0.2.0"/>
         <import addon="xbmc.python" version="2.25.0"/>
     </requires>
 
+    <extension point="xbmc.python.module" library="vrtnu"/>
     <extension point="xbmc.python.pluginsource" library="addon.py">
         <provides>video</provides>
     </extension>

@@ -3,7 +3,7 @@
 Set-StrictMode -Version 5.0
 
 $include_files = @( 'addon.py', 'addon.xml', 'LICENSE', 'README.md', 'service.py' )
-$include_paths = @( 'resources/' )
+$include_paths = @( 'resources/', 'vrtnu/' )
 $exclude_files = @( '*.new', '*.orig', '*.pyc' )
 
 # Get addon metadata

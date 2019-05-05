@@ -112,3 +112,11 @@ CHANNELS = [
         # live_stream_id='vualto_journaal',
     ),
 ]
+
+DATE_STRINGS = {
+    '-2': 30330,  # 2 days ago
+    '-1': 30331,  # Yesterday
+    '0': 30332,  # Today
+    '1': 30333,  # Tomorrow
+    '2': 30334,  # In 2 days
+}

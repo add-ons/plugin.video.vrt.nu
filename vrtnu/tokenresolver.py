@@ -3,7 +3,7 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, unicode_literals
-from resources.lib.helperobjects import helperobjects
+from vrtnu.helperobjects import Credentials
 
 try:
     from urllib.parse import urlencode
@@ -101,7 +101,7 @@ class TokenResolver:
 
     def _get_new_xvrttoken(self, path, get_roaming_token):
         import json
-        cred = helperobjects.Credentials(self._kodi_wrapper)
+        cred = Credentials(self._kodi_wrapper)
         if not cred.are_filled_in():
             self._kodi_wrapper.open_settings()
             cred.reload()

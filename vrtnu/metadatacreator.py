@@ -156,7 +156,7 @@ class MetadataCreator:
     def get_video_dict(self):
         from datetime import datetime
         import dateutil.tz
-        from resources.lib.vrtplayer import CHANNELS
+        from vrtnu.data import CHANNELS
 
         epoch = datetime.fromtimestamp(0, dateutil.tz.UTC)
         video_dict = dict()
