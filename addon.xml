@@ -94,5 +94,6 @@ v1.7.0 (2019-03-26)
             <screenshot>resources/media/screenshot02.jpg</screenshot>
             <screenshot>resources/media/screenshot03.jpg</screenshot>
         </assets>
+        <reuselanguageinvoker>true</reuselanguageinvoker>
     </extension>
 </addon>
