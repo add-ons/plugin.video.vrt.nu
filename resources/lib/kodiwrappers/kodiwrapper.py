@@ -97,6 +97,8 @@ class KodiWrapper:
     def play(self, video):
         import xbmcgui
         play_item = xbmcgui.ListItem(path=video.stream_url)
+        play_item.setProperty('inputstream.adaptive.max_bandwidth', str(self.get_max_bandwidth() * 1000))
+        play_item.setProperty('network.bandwidth', str(self.get_max_bandwidth() * 1000))
         if video.stream_url is not None and video.use_inputstream_adaptive:
             play_item.setProperty('inputstreamaddon', 'inputstream.adaptive')
             play_item.setProperty('inputstream.adaptive.manifest_type', 'mpd')
@@ -155,6 +157,17 @@ class KodiWrapper:
         import json
         json_result = xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Settings.GetSettingValue", "params": {"setting": "%s"}, "id": 1}' % setting)
         return json.loads(json_result).get('result', dict()).get('value')
+
+    def get_max_bandwidth(self):
+        vrtnu_max_bandwidth = int(self.get_setting('max_bandwidth'))
+        global_max_bandwidth = int(self.get_global_setting('network.bandwidth'))
+        if vrtnu_max_bandwidth != 0 and global_max_bandwidth != 0:
+            return min(vrtnu_max_bandwidth, global_max_bandwidth)
+        if vrtnu_max_bandwidth != 0:
+            return vrtnu_max_bandwidth
+        if global_max_bandwidth != 0:
+            return global_max_bandwidth
+        return 0
 
     def get_proxies(self):
         usehttpproxy = self.get_global_setting('network.usehttpproxy')
