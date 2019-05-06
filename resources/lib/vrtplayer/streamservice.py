@@ -255,37 +255,42 @@ class StreamService:
 
         return stream_url
 
-    # Speed up HLS selection, workaround for slower kodi selection
     def _select_hls_substreams(self, master_hls_url):
-        import re
-        base_url = master_hls_url.split('.m3u8')[0]
-        # m3u8 = requests.get(master_hls_url, proxies=self._proxies).text
-        m3u8 = urlopen(master_hls_url).read()
+        '''Select HLS substreams to speed up Kodi player start, workaround for slower kodi selection'''
         direct_audio_url = None
         direct_video_url = None
         direct_subtitle_url = None
 
-        # Get audio uri
-        audio_regex = re.compile(r'#EXT-X-MEDIA:TYPE=AUDIO[\w\-=,\.\"\/]+URI=\"([\w\-=]+)\.m3u8\"')
-        match_audio = re.findall(audio_regex, m3u8)
-        if match_audio:
-            direct_audio_url = match_audio[len(match_audio) - 1]
+        bandwidth_limit = self._kodi_wrapper.get_global_setting('network.bandwidth')
 
-        # Get video uri
-        video_regex = re.compile(r'#EXT-X-STREAM-INF:[\w\-=,\.\"]+[\r\n]{1}([\w\-=]+\.m3u8(\?vbegin=[0-9]{10})?(&vend=[0-9]{10})?)[\r\n]{2}')
-        match_video = re.search(video_regex, m3u8)
-        if match_video:
-            direct_video_url = base_url + match_video.group(1)
+        # Only select urls from Unified Streaming Platform and when no bandwidth limit is set in Kodi
+        if any(x in master_hls_url for x in ('.ism/', '.isml/')) and bandwidth_limit == 0:
+            import re
+            base_url = master_hls_url.split('.m3u8')[0]
+            m3u8 = urlopen(master_hls_url).read()
 
-        # Get subtitle uri
-        if self._kodi_wrapper.get_setting('showsubtitles') == 'true':
-            subtitle_regex = re.compile(r'#EXT-X-MEDIA:TYPE=SUBTITLES[\w\-=,\.\"\/]+URI=\"([\w\-=]+)\.m3u8\"')
-            match_sub = re.search(subtitle_regex, m3u8)
-            if match_sub and '/live/' not in master_hls_url:
-                direct_subtitle_url = base_url + match_sub.group(1) + '.webvtt'
+            # Get audio uri
+            audio_regex = re.compile(r'#EXT-X-MEDIA:TYPE=AUDIO[\w\-=,\.\"\/]+URI=\"([\w\-=]+)\.m3u8\"')
+            match_audio = re.findall(audio_regex, m3u8)
+            if match_audio:
+                direct_audio_url = match_audio[len(match_audio) - 1]
 
-        # Merge audio and video uri
-        if direct_audio_url is not None:
-            direct_video_url = base_url + direct_audio_url + '-' + direct_video_url.split('-')[-1]
+            # Get video uri
+            video_regex = re.compile(r'#EXT-X-STREAM-INF:[\w\-=,\.\"]+[\r\n]{1}([\w\-=]+\.m3u8(\?vbegin=[0-9]{10})?(&vend=[0-9]{10})?)[\r\n]{2}')
+            match_video = re.search(video_regex, m3u8)
+            if match_video:
+                direct_video_url = base_url + match_video.group(1)
 
+            # Get subtitle uri
+            if self._kodi_wrapper.get_setting('showsubtitles') == 'true':
+                subtitle_regex = re.compile(r'#EXT-X-MEDIA:TYPE=SUBTITLES[\w\-=,\.\"\/]+URI=\"([\w\-=]+)\.m3u8\"')
+                match_sub = re.search(subtitle_regex, m3u8)
+                if match_sub and '/live/' not in master_hls_url:
+                    direct_subtitle_url = base_url + match_sub.group(1) + '.webvtt'
+
+            # Merge audio and video uri
+            if direct_audio_url is not None:
+                direct_video_url = base_url + direct_audio_url + '-' + direct_video_url.split('-')[-1]
+        else:
+            direct_video_url = master_hls_url
         return direct_video_url, direct_subtitle_url
