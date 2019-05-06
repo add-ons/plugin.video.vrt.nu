@@ -47,6 +47,10 @@ msgctxt "#30021"
 msgid "Use DRM for 720p HD-quality livestreams"
 msgstr "Use DRM for 720p HD-quality livestreams"
 
+msgctxt "#30022"
+msgid "Maximum bandwidth (bits/sec)"
+msgstr "Maximum bandwidth (bits/sec)"
+
 msgctxt "#30030"
 msgid "Advanced"
 msgstr "Advanced"

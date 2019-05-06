@@ -48,6 +48,10 @@ msgctxt "#30021"
 msgid "Use DRM for 720p HD-quality livestreams"
 msgstr "Gebruik DRM voor de livestreams in 720p HD-kwaliteit"
 
+msgctxt "#30022"
+msgid "Maximum bandwidth (bits/sec)"
+msgstr "Maximale bandbreedte (bits/sec)"
+
 msgctxt "#30030"
 msgid "Advanced"
 msgstr "Geavanceerd"
