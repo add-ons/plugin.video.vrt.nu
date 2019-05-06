@@ -28,6 +28,11 @@ def router(params_string):
 
     kodi_wrapper = kodiwrapper.KodiWrapper(_ADDON_HANDLE, _ADDON_URL, addon)
 
+    if action == actions.CLEAR_COOKIES:
+        from resources.lib.vrtplayer import tokenresolver
+        token_resolver = tokenresolver.TokenResolver(kodi_wrapper)
+        token_resolver.reset_cookies()
+        return
     if action == actions.LISTING_TVGUIDE:
         from resources.lib.vrtplayer import tvguide
         tv_guide = tvguide.TVGuide(kodi_wrapper)

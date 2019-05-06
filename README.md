@@ -101,15 +101,15 @@ you can send a message to [our Facebook page](https://facebook.com/kodivrtnu/).
 - Roaming support added (@mediaminister)
 
 #### v1.5.0 (2018-12-27)
- - 720p Livestreams when enabling in settings + having kodi 18 + having widevine.dll present (@mediaminister)
- - Fixed bug where watched icon was not showing in Kodi 18
- - Implemented different way of working with subtitles (@mediaminister)
+- 720p Livestreams when enabling in settings + having kodi 18 + having widevine.dll present (@mediaminister)
+- Fixed bug where watched icon was not showing in Kodi 18
+- Implemented different way of working with subtitles (@mediaminister)
 
 #### v1.4.3 (2018-11-07)
- - Livestreams working again
+- Livestreams working again
 
 #### v1.4.2 (2018-10-11)
- - Changed way of working with urls when a season is refering to href="#"
+- Changed way of working with urls when a season is refering to href="#"
 
 #### v1.4.1 (2018-09-24)
 - Adapted plugin to new vrtnu layout for showing multiple seasons
