@@ -212,7 +212,6 @@ class MetadataCreator:
             video_dict['mediatype'] = self.mediatype
 
         if self.permalink:
-            video_dict['path'] = self.permalink
             video_dict['showlink'] = [self.permalink]
 
         if self.plot:
