@@ -164,10 +164,12 @@ class MetadataCreator:
         if self.brands:
             try:
                 channel = next(c for c in CHANNELS if c.get('name') == self.brands[0])
-                video_dict['studio'] = channel.get('studio', 'VRT')
+                video_dict['studio'] = channel.get('studio')
             except StopIteration:
-                video_dict['studio'] = 'VRT'
+                # Retain original (unknown) brand, unless it is empty
+                video_dict['studio'] = self.brands[0] or 'VRT'
         else:
+            # No brands ? Use VRT instead
             video_dict['studio'] = 'VRT'
 
         if self.datetime:
