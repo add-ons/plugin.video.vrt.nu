@@ -27,37 +27,49 @@ msgctxt "#30002"
 msgid "Password"
 msgstr "Password"
 
-msgctxt "#30003"
-msgid "Delete cookies"
-msgstr "Delete cookies"
-
 msgctxt "#30010"
-msgid "Subtitles"
-msgstr "Subtitles"
+msgid "Video"
+msgstr "Video"
 
 msgctxt "#30011"
 msgid "Show subtitles when available"
 msgstr "Show subtitles when available"
 
-msgctxt "#30020"
-msgid "DRM"
-msgstr "DRM"
-
-msgctxt "#30021"
+msgctxt "#30012"
 msgid "Use DRM for 720p HD-quality livestreams"
 msgstr "Use DRM for 720p HD-quality livestreams"
 
-msgctxt "#30022"
+msgctxt "#30013"
 msgid "Maximum bandwidth (bits/sec)"
 msgstr "Maximum bandwidth (bits/sec)"
 
-msgctxt "#30030"
-msgid "Advanced"
-msgstr "Advanced"
+msgctxt "#30020"
+msgid "Interface"
+msgstr "Interface"
 
-msgctxt "#30031"
+msgctxt "#30021"
 msgid "Show episode permalink in plot"
 msgstr "Show episode permalink in plot"
+
+msgctxt "#30040"
+msgid "Debug"
+msgstr "Debug"
+
+msgctxt "#30041"
+msgid "InputStream Adaptive settings"
+msgstr "InputStream Adaptive settings"
+
+msgctxt "#30042"
+msgid "Install Widevine (for DRM content)"
+msgstr "Install Widevine (for DRM content)"
+
+msgctxt "#30048"
+msgid "Clear VRT cookies"
+msgstr "Clear VRT cookies"
+
+msgctxt "#30049"
+msgid "Log level"
+msgstr "Log level"
 
 msgctxt "#30051"
 msgid "Login failed!"
@@ -72,8 +84,8 @@ msgid "This program cannot be played. To view this program outside of Belgium, y
 msgstr "This program cannot be played. To view this program outside of Belgium, you first have to validate a Belgian mobile phone number on the VRT NU website."
 
 msgctxt "#30054"
-msgid "Woops something went wrong, check the log for more details"
-msgstr "Woops something went wrong, check the log for more details"
+msgid "Whoops something went wrong, check the kodi log for more details."
+msgstr "Whoops something went wrong, check the kodi log for more details."
 
 msgctxt "#30055"
 msgid "Please fill in your email address to login."
