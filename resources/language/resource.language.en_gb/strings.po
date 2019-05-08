@@ -32,16 +32,24 @@ msgid "Video"
 msgstr "Video"
 
 msgctxt "#30011"
+msgid "Subtitles"
+msgstr "Subtitles"
+
+msgctxt "#30012"
 msgid "Show subtitles when available"
 msgstr "Show subtitles when available"
 
-msgctxt "#30012"
+msgctxt "#30013"
+msgid "InputStream Adaptive"
+msgstr "InputStream Adaptive"
+
+msgctxt "#30014"
 msgid "Use DRM for 720p HD-quality livestreams"
 msgstr "Use DRM for 720p HD-quality livestreams"
 
-msgctxt "#30013"
-msgid "Maximum bandwidth (bits/sec)"
-msgstr "Maximum bandwidth (bits/sec)"
+msgctxt "#30015"
+msgid "Maximum bandwidth (kbits/sec)"
+msgstr "Maximum bandwidth (kbits/sec)"
 
 msgctxt "#30020"
 msgid "Interface"
@@ -56,8 +64,8 @@ msgid "Debug"
 msgstr "Debug"
 
 msgctxt "#30041"
-msgid "InputStream Adaptive settings"
-msgstr "InputStream Adaptive settings"
+msgid "InputStream Adaptive settings..."
+msgstr "InputStream Adaptive settings..."
 
 msgctxt "#30042"
 msgid "Install Widevine (for DRM content)"

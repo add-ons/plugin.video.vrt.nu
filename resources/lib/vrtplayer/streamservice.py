@@ -261,7 +261,7 @@ class StreamService:
         direct_video_url = None
         direct_subtitle_url = None
 
-        bandwidth_limit = self._kodi_wrapper.get_global_setting('network.bandwidth')
+        bandwidth_limit = self._kodi_wrapper.get_max_bandwidth()
 
         # Only select urls from Unified Streaming Platform and when no bandwidth limit is set in Kodi
         if any(x in master_hls_url for x in ('.ism/', '.isml/')) and bandwidth_limit == 0:

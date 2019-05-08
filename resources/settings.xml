@@ -5,9 +5,11 @@
         <setting label="30002" type="text" id="password" option="hidden"/>
     </category>
     <category label="30010"> <!-- Video -->
-        <setting label="30011" type="bool" id="showsubtitles" default="true"/>
-        <setting label="30012" type="bool" id="usedrm" default="false"/>
-        <!-- setting label="14041" type="select" id="max_bandwidth" help="36386" default="0" values="0|256|512|1024|1536|2048|2560|3072|4096|6144|8192|10240|15360|20480|25600|30720"/ -->
+        <setting label="30011" type="lsep"/>
+        <setting label="30012" type="bool" id="showsubtitles" default="true"/>
+        <setting label="30013" type="lsep"/> <!-- InputStream Adaptive -->
+        <setting label="30014" type="bool" id="usedrm" default="false"/>
+        <setting label="30015" type="select" id="max_bandwidth" default="0" values="0|256|512|1024|1536|2048|2560|3072|4096|6144|8192|10240|15360|20480|25600|30720"/>
     </category>
     <category label="30020"> <!-- Interface -->
         <setting label="30021" type="bool" id="showpermalink" default="false"/>
