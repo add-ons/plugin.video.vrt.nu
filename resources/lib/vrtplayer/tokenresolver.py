@@ -75,7 +75,8 @@ class TokenResolver:
 
     def _get_new_playertoken(self, path, token_url, headers):
         import json
-        req = Request(token_url, data='', headers=headers)
+        req = Request(token_url, headers=headers)
+        req.get_method = lambda: 'POST'
         playertoken = json.loads(urlopen(req).read())
         json.dump(playertoken, open(path, 'w'))
         return playertoken.get('vrtPlayerToken')
