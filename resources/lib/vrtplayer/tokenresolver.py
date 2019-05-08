@@ -75,6 +75,7 @@ class TokenResolver:
 
     def _get_new_playertoken(self, path, token_url, headers):
         import json
+        self._kodi_wrapper.log_notice('URL post: ' + token_url, 'Verbose')
         req = Request(token_url, data='', headers=headers)
         playertoken = json.loads(urlopen(req).read())
         json.dump(playertoken, open(path, 'w'))
@@ -92,10 +93,10 @@ class TokenResolver:
             now = datetime.now(dateutil.tz.tzlocal())
             exp = dateutil.parser.parse(token.get('expirationDate'))
             if exp > now:
-                self._kodi_wrapper.log_notice('Got cached token')
+                self._kodi_wrapper.log_notice('Got cached token', 'Verbose')
                 cached_token = token.get(token_name)
             else:
-                self._kodi_wrapper.log_notice('Cached token deleted')
+                self._kodi_wrapper.log_notice('Cached token deleted', 'Info')
                 self._kodi_wrapper.delete_path(path)
         return cached_token
 
@@ -112,6 +113,7 @@ class TokenResolver:
             APIKey=self._API_KEY,
             targetEnv='jssdk',
         )
+        self._kodi_wrapper.log_notice('URL post: ' + self._LOGIN_URL, 'Verbose')
         req = Request(self._LOGIN_URL, data=urlencode(data))
         logon_json = json.loads(urlopen(req).read())
         token = None
@@ -125,7 +127,8 @@ class TokenResolver:
                 email=cred.username,
             )
             headers = {'Content-Type': 'application/json', 'Cookie': login_cookie}
-            req = Request(self._TOKEN_GATEWAY_URL, json.dumps(payload), headers)
+            self._kodi_wrapper.log_notice('URL post: ' + self._TOKEN_GATEWAY_URL, 'Verbose')
+            req = Request(self._TOKEN_GATEWAY_URL, data=json.dumps(payload), headers=headers)
             cookie_data = urlopen(req).info().getheader('Set-Cookie').split('X-VRT-Token=')[1].split('; ')
             xvrttoken = TokenResolver._create_token_dictionary_from_urllib(cookie_data)
             if get_roaming_token:
@@ -157,6 +160,7 @@ class TokenResolver:
         cookie_value = 'X-VRT-Token=' + xvrttoken.get('X-VRT-Token')
         headers = {'Cookie': cookie_value}
         opener = build_opener(NoRedirection, ProxyHandler(self._proxies))
+        self._kodi_wrapper.log_notice('URL post: ' + url, 'Verbose')
         req = Request(url, headers=headers)
         req_info = opener.open(req).info()
         cookie_value += '; state=' + req_info.getheader('Set-Cookie').split('state=')[1].split('; ')[0]
@@ -164,6 +168,7 @@ class TokenResolver:
         url = opener.open(url).info().getheader('Location')
         headers = {'Cookie': cookie_value}
         if url is not None:
+            self._kodi_wrapper.log_notice('URL post: ' + url, 'Verbose')
             req = Request(url, headers=headers)
             cookie_data = opener.open(req).info().getheader('Set-Cookie').split('X-VRT-Token=')[1].split('; ')
             roaming_xvrttoken = TokenResolver._create_token_dictionary_from_urllib(cookie_data)

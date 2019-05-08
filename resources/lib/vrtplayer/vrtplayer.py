@@ -12,37 +12,6 @@ except ImportError:
     from urllib2 import build_opener, install_opener, ProxyHandler, urlopen
 
 
-def get_categories(proxies=None):
-    from bs4 import BeautifulSoup, SoupStrainer
-    response = urlopen('https://www.vrt.be/vrtnu/categorieen/')
-    tiles = SoupStrainer('a', {'class': 'nui-tile'})
-    soup = BeautifulSoup(response.read(), 'html.parser', parse_only=tiles)
-
-    categories = []
-    for tile in soup.find_all(class_='nui-tile'):
-        categories.append(dict(
-            id=tile.get('href').split('/')[-2],
-            thumbnail=get_category_thumbnail(tile),
-            name=get_category_title(tile),
-        ))
-
-    return categories
-
-
-def get_category_thumbnail(element):
-    from resources.lib.vrtplayer import statichelper
-    raw_thumbnail = element.find(class_='media').get('data-responsive-image', 'DefaultGenre.png')
-    return statichelper.add_https_method(raw_thumbnail)
-
-
-def get_category_title(element):
-    from resources.lib.vrtplayer import statichelper
-    found_element = element.find('h3')
-    if found_element is not None:
-        return statichelper.strip_newlines(found_element.contents[0])
-    return ''
-
-
 class VRTPlayer:
 
     def __init__(self, kodi_wrapper, api_helper):
@@ -187,7 +156,7 @@ class VRTPlayer:
 
     def __get_category_menu_items(self):
         try:
-            categories = get_categories(self._proxies)
+            categories = self.get_categories(self._proxies)
         except Exception:
             categories = []
 
@@ -205,3 +174,34 @@ class VRTPlayer:
                                                           art_dict=dict(thumb=thumbnail, icon='DefaultGenre.png', fanart=thumbnail),
                                                           video_dict=dict(plot='[B]%s[/B]' % category.get('name'), studio='VRT')))
         return category_items
+
+    def get_categories(self, proxies=None):
+        from bs4 import BeautifulSoup, SoupStrainer
+        self._kodi_wrapper.log_notice('URL get: https://www.vrt.be/vrtnu/categorieen/', 'Verbose')
+        response = urlopen('https://www.vrt.be/vrtnu/categorieen/')
+        tiles = SoupStrainer('a', {'class': 'nui-tile'})
+        soup = BeautifulSoup(response.read(), 'html.parser', parse_only=tiles)
+
+        categories = []
+        for tile in soup.find_all(class_='nui-tile'):
+            categories.append(dict(
+                id=tile.get('href').split('/')[-2],
+                thumbnail=self.get_category_thumbnail(tile),
+                name=self.get_category_title(tile),
+            ))
+
+        return categories
+
+    @staticmethod
+    def get_category_thumbnail(element):
+        from resources.lib.vrtplayer import statichelper
+        raw_thumbnail = element.find(class_='media').get('data-responsive-image', 'DefaultGenre.png')
+        return statichelper.add_https_method(raw_thumbnail)
+
+    @staticmethod
+    def get_category_title(element):
+        from resources.lib.vrtplayer import statichelper
+        found_element = element.find('h3')
+        if found_element is not None:
+            return statichelper.strip_newlines(found_element.contents[0])
+        return ''

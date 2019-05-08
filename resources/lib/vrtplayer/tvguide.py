@@ -92,6 +92,7 @@ class TVGuide:
             dateobj = dateutil.parser.parse(date)
             datelong = dateobj.strftime(self._kodi_wrapper.get_localized_datelong())
             api_url = dateobj.strftime(self.VRT_TVGUIDE)
+            self._kodi_wrapper.log_notice('URL get: ' + api_url, 'Verbose')
             schedule = json.loads(urlopen(api_url).read())
             name = channel
             try:
