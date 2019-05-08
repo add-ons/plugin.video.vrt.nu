@@ -32,12 +32,14 @@ tox:
 
 pylint:
 	@echo -e "$(white)=$(blue) Starting sanity pylint test$(reset)"
-	pylint *.py resources/lib/*/*.py
+	pylint *.py resources/ test/
 	@echo -e "$(white)=$(blue) Sanity pylint test finished successfully.$(reset)"
 
 unit:
 	@echo -e "$(white)=$(blue) Starting unit tests$(reset)"
 	PYTHONPATH=$(pwd) python test/vrtplayertests.py
+	#PYTHONPATH=$(pwd) python test/streamservicetests.py
+	PYTHONPATH=$(pwd) python test/apihelpertests.py
 	PYTHONPATH=$(pwd) python test/tvguidetests.py
 	@echo -e "$(white)=$(blue) Unit tests finished successfully.$(reset)"
 

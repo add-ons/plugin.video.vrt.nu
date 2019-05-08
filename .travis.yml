@@ -16,6 +16,7 @@ install:
 script:
 - tox
 - tox -e flake8
-- pylint *.py
-- pylint resources/lib/*/*.py
+- pylint *.py resources/lib/ test/
 - python test/vrtplayertests.py
+- python test/apihelpertests.py
+- python test/tvguidetests.py

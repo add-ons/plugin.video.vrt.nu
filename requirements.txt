@@ -1,4 +1,5 @@
 bs4
+polib
 python-dateutil
 pylint
 requests
