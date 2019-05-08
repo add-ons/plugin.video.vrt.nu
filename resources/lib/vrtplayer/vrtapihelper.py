@@ -41,7 +41,7 @@ class VRTApiHelper:
             params['facets[programBrands]'] = channel
 
         api_url = self._VRTNU_SUGGEST_URL + '?' + urlencode(params)
-        # tvshows = requests.get(api_url, proxies=self._proxies).json()
+        self._kodi_wrapper.log_notice('URL get: ' + api_url, 'Verbose')
         tvshows = json.loads(urlopen(api_url).read())
         tvshow_items = []
         for tvshow in tvshows:
@@ -98,7 +98,7 @@ class VRTApiHelper:
                 'facets[programBrands]': '[een,canvas,sporza,vrtnws,vrtnxt,radio1,radio2,klara,stubru,mnm]',
             }
             api_url = self._VRTNU_SEARCH_URL + '?' + urlencode(params)
-            # api_json = requests.get(api_url, proxies=self._proxies).json()
+            self._kodi_wrapper.log_notice('URL get: ' + api_url, 'Verbose')
             api_json = json.loads(urlopen(api_url).read())
             episode_items, sort, ascending = self._map_to_episode_items(api_json.get('results', []), titletype='recent')
 
@@ -112,7 +112,7 @@ class VRTApiHelper:
                 api_url = self._VRTNU_SEARCH_URL + '?' + urlencode(params)
             else:
                 api_url = path
-            # api_json = requests.get(api_url, proxies=self._proxies).json()
+            self._kodi_wrapper.log_notice('URL get: ' + api_url, 'Verbose')
             api_json = json.loads(urlopen(api_url).read())
 
             episodes = api_json.get('results', [{}])

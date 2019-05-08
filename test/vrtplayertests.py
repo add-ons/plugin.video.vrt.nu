@@ -98,12 +98,14 @@ class TestVRTPlayer(unittest.TestCase):
     def test_categories_scraping(self):
         ''' Test to ensure our hardcoded categories conforms to scraped categories '''
         # Remove thumbnails from scraped categories first
-        categories = [dict(id=c['id'], name=c['name']) for c in vrtplayer.get_categories()]
+        vrt_player = vrtplayer.VRTPlayer(self._kodi_wrapper, self._api_helper)
+        categories = [dict(id=c['id'], name=c['name']) for c in vrt_player.get_categories()]
         self.assertEqual(categories, CATEGORIES)
 
     def test_random_tvshow_episodes(self):
         ''' Rest episode from a random tvshow in a random category '''
-        categories = vrtplayer.get_categories()
+        vrt_player = vrtplayer.VRTPlayer(self._kodi_wrapper, self._api_helper)
+        categories = vrt_player.get_categories()
         self.assertTrue(categories)
 
         category = random.choice(categories)

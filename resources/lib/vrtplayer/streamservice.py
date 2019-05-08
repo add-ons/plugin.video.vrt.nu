@@ -32,6 +32,7 @@ class StreamService:
         self._license_url = None
 
     def _get_license_url(self):
+        self._kodi_wrapper.log_notice('URL get: ' + self._VUPLAY_API_URL, 'Verbose')
         self._license_url = json.loads(urlopen(self._VUPLAY_API_URL).read()).get('drm_providers', dict()).get('widevine', dict()).get('la_url')
 
     def _create_settings_dir(self):
@@ -98,6 +99,7 @@ class StreamService:
     def _webscrape_api_data(self, video_url):
         '''Scrape api data from VRT NU html page'''
         from bs4 import BeautifulSoup, SoupStrainer
+        self._kodi_wrapper.log_notice('URL get: ' + video_url, 'Verbose')
         html_page = urlopen(video_url).read()
         strainer = SoupStrainer('div', {'class': 'cq-dd-vrtvideo'})
         soup = BeautifulSoup(html_page, 'html.parser', parse_only=strainer)
@@ -147,6 +149,7 @@ class StreamService:
         if playertoken:
             api_url = api_data.media_api_url + '/videos/' + api_data.publication_id + \
                 api_data.video_id + '?vrtPlayerToken=' + playertoken + '&client=' + api_data.client
+            self._kodi_wrapper.log_notice('URL get: ' + api_url, 'Verbose')
             try:
                 video_json = json.loads(urlopen(api_url).read())
             except HTTPError as e:
@@ -200,7 +203,7 @@ class StreamService:
                 return self._select_stream(stream_dict, vudrm_token)
 
             if video_json.get('code') in ('INCOMPLETE_ROAMING_CONFIG', 'INVALID_LOCATION'):
-                self._kodi_wrapper.log_notice(video_json.get('message'))
+                self._kodi_wrapper.log_error(video_json.get('message'))
                 roaming_xvrttoken = self.token_resolver.get_xvrttoken(True)
                 if not retry and roaming_xvrttoken is not None:
                     # Delete cached playertokens
@@ -234,22 +237,22 @@ class StreamService:
         protocol = None
         if vudrm_token and self._can_play_drm and self._kodi_wrapper.get_setting('usedrm') == 'true':
             protocol = 'mpeg_dash drm'
-            self._kodi_wrapper.log_notice('protocol: ' + protocol)
+            self._kodi_wrapper.log_notice('Protocol: ' + protocol)
             stream_url = self._try_get_drm_stream(stream_dict, vudrm_token)
 
         if vudrm_token and stream_url is None:
             protocol = 'hls_aes'
-            self._kodi_wrapper.log_notice('protocol: ' + protocol)
+            self._kodi_wrapper.log_notice('Protocol: ' + protocol)
             stream_url = streamurls.StreamURLS(*self._select_hls_substreams(stream_dict[protocol])) if protocol in stream_dict else None
 
         if self._kodi_wrapper.has_inputstream_adaptive_installed() and stream_url is None:
             protocol = 'mpeg_dash'
-            self._kodi_wrapper.log_notice('protocol: ' + protocol)
+            self._kodi_wrapper.log_notice('Protocol: ' + protocol)
             stream_url = streamurls.StreamURLS(stream_dict[protocol], use_inputstream_adaptive=True) if protocol in stream_dict else None
 
         if stream_url is None:
             protocol = 'hls'
-            self._kodi_wrapper.log_notice('protocol: ' + protocol)
+            self._kodi_wrapper.log_notice('Protocol: ' + protocol)
             # No if-else statement because this is the last resort stream selection
             stream_url = streamurls.StreamURLS(*self._select_hls_substreams(stream_dict[protocol]))
 
@@ -267,6 +270,7 @@ class StreamService:
         if any(x in master_hls_url for x in ('.ism/', '.isml/')) and bandwidth_limit == 0:
             import re
             base_url = master_hls_url.split('.m3u8')[0]
+            self._kodi_wrapper.log_notice('URL get: ' + master_hls_url, 'Verbose')
             m3u8 = urlopen(master_hls_url).read()
 
             # Get audio uri

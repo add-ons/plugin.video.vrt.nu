@@ -28,6 +28,8 @@ def router(params_string):
 
     kodi_wrapper = kodiwrapper.KodiWrapper(_ADDON_HANDLE, _ADDON_URL, addon)
 
+    kodi_wrapper.log_notice('Path: ' + _ADDON_URL, 'Verbose')
+
     if action == actions.CLEAR_COOKIES:
         from resources.lib.vrtplayer import tokenresolver
         token_resolver = tokenresolver.TokenResolver(kodi_wrapper)

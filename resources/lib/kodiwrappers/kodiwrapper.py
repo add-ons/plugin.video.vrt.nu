@@ -11,18 +11,25 @@ try:
 except ImportError:
     from urllib import urlencode
 
-sort_methods = {
-    # 'date': xbmcplugin.SORT_METHOD_DATE,
-    'dateadded': xbmcplugin.SORT_METHOD_DATEADDED,
-    'duration': xbmcplugin.SORT_METHOD_DURATION,
-    'episode': xbmcplugin.SORT_METHOD_EPISODE,
-    # 'genre': xbmcplugin.SORT_METHOD_GENRE,
-    'label': xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE,
-    # 'none': xbmcplugin.SORT_METHOD_UNSORTED,
+sort_methods = dict(
+    # date=xbmcplugin.SORT_METHOD_DATE,
+    dateadded=xbmcplugin.SORT_METHOD_DATEADDED,
+    duration=xbmcplugin.SORT_METHOD_DURATION,
+    episode=xbmcplugin.SORT_METHOD_EPISODE,
+    # genre=xbmcplugin.SORT_METHOD_GENRE,
+    label=xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE,
+    # none=xbmcplugin.SORT_METHOD_UNSORTED,
     # FIXME: We would like to be able to sort by unprefixed title (ignore date/episode prefix)
-    # 'title': xbmcplugin.SORT_METHOD_TITLE_IGNORE_THE,
-    'unsorted': xbmcplugin.SORT_METHOD_UNSORTED,
-}
+    # title=xbmcplugin.SORT_METHOD_TITLE_IGNORE_THE,
+    unsorted=xbmcplugin.SORT_METHOD_UNSORTED,
+)
+
+log_levels = dict(
+    Quiet=0,
+    Info=1,
+    Verbose=2,
+    Debug=3,
+)
 
 
 def has_socks():
@@ -44,6 +51,7 @@ class KodiWrapper:
         self._url = url
         self._addon = addon
         self._addon_id = addon.getAddonInfo('id')
+        self._max_log_level = log_levels.get(self.get_setting('max_log_level'), 3)
 
     def show_listing(self, list_items, sort='unsorted', ascending=True, content_type=None, cache=True):
         import xbmcgui
@@ -114,7 +122,7 @@ class KodiWrapper:
         subtitles_visible = self.get_setting('showsubtitles') == 'true'
         # Separate subtitle url for hls-streams
         if subtitles_visible and video.subtitle_url is not None:
-            self.log_notice('subtitle ' + video.subtitle_url)
+            self.log_notice('Subtitle URL: ' + video.subtitle_url)
             play_item.setSubtitles([video.subtitle_url])
 
         xbmcplugin.setResolvedUrl(self._handle, True, listitem=play_item)
@@ -133,7 +141,7 @@ class KodiWrapper:
             # NOTE: This only works if the platform supports the Kodi configured locale
             locale.setlocale(locale.LC_ALL, locale_lang)
         except Exception as e:
-            self.log_notice(e)
+            self.log_notice(e, 'Verbose')
 
     def get_localized_string(self, string_id):
         return self._addon.getLocalizedString(string_id)
@@ -241,10 +249,11 @@ class KodiWrapper:
         import xbmcvfs
         return xbmcvfs.delete(path)
 
-    def log_notice(self, message):
+    def log_notice(self, message, log_level='Info'):
         ''' Log info messages to Kodi '''
-        xbmc.log(msg='[%s] %s' % (self._addon_id, message), level=xbmc.LOGNOTICE)
+        if log_levels.get(log_level, 0) <= self._max_log_level:
+            xbmc.log(msg='[%s] %s' % (self._addon_id, message), level=xbmc.LOGNOTICE)
 
-    def log_error(self, message):
+    def log_error(self, message, log_level='Info'):
         ''' Log error messages to Kodi '''
         xbmc.log(msg='[%s] %s' % (self._addon_id, message), level=xbmc.LOGERROR)
