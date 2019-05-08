@@ -38,6 +38,7 @@ pylint:
 unit:
 	@echo -e "$(white)=$(blue) Starting unit tests$(reset)"
 	PYTHONPATH=$(pwd) python test/vrtplayertests.py
+	PYTHONPATH=$(pwd) python test/tvguidetests.py
 	@echo -e "$(white)=$(blue) Unit tests finished successfully.$(reset)"
 
 zip: test
