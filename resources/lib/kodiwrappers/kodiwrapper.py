@@ -249,6 +249,12 @@ class KodiWrapper:
         import xbmcvfs
         return xbmcvfs.delete(path)
 
+    def log_access(self, url, query_string, log_level='Verbose'):
+        ''' Log addon access '''
+        if log_levels.get(log_level, 0) <= self._max_log_level:
+            message = url + ('?' if query_string else '') + query_string
+            xbmc.log(msg='[%s] Access: %s' % (self._addon_id, message), level=xbmc.LOGNOTICE)
+
     def log_notice(self, message, log_level='Info'):
         ''' Log info messages to Kodi '''
         if log_levels.get(log_level, 0) <= self._max_log_level:

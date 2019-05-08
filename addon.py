@@ -27,8 +27,7 @@ def router(params_string):
     action = params.get('action')
 
     kodi_wrapper = kodiwrapper.KodiWrapper(_ADDON_HANDLE, _ADDON_URL, addon)
-
-    kodi_wrapper.log_notice('Path: ' + _ADDON_URL, 'Verbose')
+    kodi_wrapper.log_access(_ADDON_URL, params_string)
 
     if action == actions.CLEAR_COOKIES:
         from resources.lib.vrtplayer import tokenresolver
