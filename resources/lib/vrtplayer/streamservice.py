@@ -265,8 +265,8 @@ class StreamService:
         hls_audio_id = None
         hls_subtitle_id = None
         hls_base_url = master_hls_url.split('.m3u8')[0]
-        self._kodi_wrapper.log_notice('URL get: ' + master_hls_url, 'Verbose')
-        hls_playlist = urlopen(master_hls_url).read()
+        self._kodi_wrapper.log_notice('URL get: ' + master_hls_url + '?hd', 'Verbose')
+        hls_playlist = urlopen(master_hls_url + '?hd').read()
         max_bandwidth = self._kodi_wrapper.get_max_bandwidth()
         stream_bandwidth = None
 
