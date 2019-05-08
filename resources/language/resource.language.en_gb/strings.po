@@ -40,16 +40,16 @@ msgid "Show subtitles when available"
 msgstr "Show subtitles when available"
 
 msgctxt "#30013"
-msgid "InputStream Adaptive"
-msgstr "InputStream Adaptive"
+msgid "Streaming"
+msgstr "Streaming"
 
 msgctxt "#30014"
 msgid "Use DRM for 720p HD-quality livestreams"
 msgstr "Use DRM for 720p HD-quality livestreams"
 
 msgctxt "#30015"
-msgid "Maximum bandwidth (kbits/sec)"
-msgstr "Maximum bandwidth (kbits/sec)"
+msgid "Maximum bandwidth (kbps)"
+msgstr "Maximum bandwidth (kbps)"
 
 msgctxt "#30020"
 msgid "Interface"
@@ -102,6 +102,10 @@ msgstr "Please fill in your email address to login."
 msgctxt "#30056"
 msgid "Please fill in your password to login."
 msgstr "Please fill in your password to login."
+
+msgctxt "#30057"
+msgid "Please increase the maximum bandwidth. Maximum bandwidth is set to %s kbps, but this stream needs a minimum of %s kbps."
+msgstr "Please increase the maximum bandwidth. Maximum bandwidth is set to %s kbps, but this stream needs a minimum of %s kbps."
 
 msgctxt "#30061"
 msgid "Using a SOCKS proxy requires the PySocks library (script.module.pysocks) installed."
