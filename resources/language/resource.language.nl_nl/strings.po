@@ -41,16 +41,16 @@ msgid "Show subtitles when available"
 msgstr "Toon ondertiteling indien beschikbaar"
 
 msgctxt "#30013"
-msgid "InputStream Adaptive"
-msgstr "InputStream Adaptive"
+msgid "Streaming"
+msgstr "Streaming"
 
 msgctxt "#30014"
 msgid "Use DRM for 720p HD-quality livestreams"
 msgstr "Gebruik DRM voor de livestreams in 720p HD-kwaliteit"
 
 msgctxt "#30015"
-msgid "Maximum bandwidth (kbits/sec)"
-msgstr "Maximale bandbreedte (kbits/sec)"
+msgid "Maximum bandwidth (kbps)"
+msgstr "Maximale bandbreedte (kbps)"
 
 msgctxt "#30020"
 msgid "Interface"
@@ -111,6 +111,10 @@ msgstr "Gelieve je e-mailadres in te vullen om in te loggen."
 msgctxt "#30056"
 msgid "Please fill in your password to login."
 msgstr "Gelieve je wachtwoord in te vullen om in te loggen."
+
+msgctxt "#30057"
+msgid "Please increase the maximum bandwidth. Maximum bandwidth is set to %s kbps, but this stream needs a minimum of %s kbps."
+msgstr "Verhoog de maximale bandbreedte alstublieft. De maximale bandbreedte is ingesteld op %s kbps, maar deze stream heeft minimum %s kbps nodig."
 
 msgctxt "#30061"
 msgid "Using a SOCKS proxy requires the PySocks library (script.module.pysocks) installed."
