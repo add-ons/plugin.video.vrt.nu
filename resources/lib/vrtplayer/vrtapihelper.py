@@ -81,7 +81,7 @@ class VRTApiHelper:
                 season_items, sort, ascending = self._map_to_season_items(api_url, facet.get('buckets', []), episode)
         return season_items, sort, ascending
 
-    def get_episode_items(self, path=None, page=None):
+    def get_episode_items(self, path=None, page=None, all_seasons=False):
         import json
         episode_items = []
         sort = 'episode'
@@ -129,7 +129,9 @@ class VRTApiHelper:
             season_key = None
             # path = requests.utils.unquote(path)
             path = unquote(path)
-            if 'facets[seasonTitle]' in path:
+            if all_seasons is True:
+                episode_items, sort, ascending = self._map_to_episode_items(episodes, season_key=None)
+            elif 'facets[seasonTitle]' in path:
                 season_key = path.split('facets[seasonTitle]=')[1]
             elif display_options.get('showSeason') is True:
                 episode_items, sort, ascending = self._get_season_items(api_url, api_json)
@@ -236,6 +238,16 @@ class VRTApiHelper:
         # Reverse sort seasons if program_type is 'reeksaflopend' or 'daily'
         if program_type in ('daily', 'reeksaflopend'):
             ascending = False
+
+        # Add an "* All seasons" list item
+        if self._kodi_wrapper.get_global_setting('videolibrary.showallitems') is True:
+            season_items.append(helperobjects.TitleItem(
+                title=self._kodi_wrapper.get_localized_string(30096),
+                url_dict=dict(action=actions.LISTING_ALL_EPISODES, video_url=api_url),
+                is_playable=False,
+                art_dict=dict(thumb=fanart, icon='DefaultSets.png', fanart=fanart),
+                video_dict=metadata.get_video_dict(),
+            ))
 
         # NOTE: Sort the episodes ourselves, because Kodi does not allow to set to 'ascending'
         seasons = sorted(seasons, key=lambda k: k['key'], reverse=not ascending)

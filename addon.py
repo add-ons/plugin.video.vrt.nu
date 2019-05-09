@@ -54,6 +54,8 @@ def router(params_string):
         vrt_player.show_livestream_items()
     elif action == actions.LISTING_EPISODES:
         vrt_player.show_episodes(path=params.get('video_url'))
+    elif action == actions.LISTING_ALL_EPISODES:
+        vrt_player.show_all_episodes(path=params.get('video_url'))
     elif action == actions.LISTING_RECENT:
         vrt_player.show_recent(page=params.get('page', 1))
     elif action == actions.LISTING_CATEGORY_TVSHOWS:
