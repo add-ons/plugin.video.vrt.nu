@@ -167,6 +167,10 @@ msgctxt "#30095"
 msgid "Episode"
 msgstr "Episode"
 
+msgctxt "#30096"
+msgid "* All seasons"
+msgstr "* All seasons"
+
 msgctxt "#30101"
 msgid "%s live"
 msgstr "%s live"

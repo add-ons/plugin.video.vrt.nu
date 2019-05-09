@@ -129,6 +129,10 @@ class VRTPlayer:
         episode_items, sort, ascending = self._api_helper.get_episode_items(path=path)
         self._kodi_wrapper.show_listing(episode_items, sort=sort, ascending=ascending, content_type='episodes')
 
+    def show_all_episodes(self, path):
+        episode_items, sort, ascending = self._api_helper.get_episode_items(path=path, all_seasons=True)
+        self._kodi_wrapper.show_listing(episode_items, sort=sort, ascending=ascending, content_type='episodes')
+
     def show_recent(self, page):
         try:
             page = int(page)
