@@ -2,6 +2,7 @@
 disable=
     broad-except,
     deprecated-lambda,
+    duplicate-code,
     fixme,
     import-error,
     invalid-name,

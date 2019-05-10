@@ -172,6 +172,14 @@ msgctxt "#30091"
 msgid "Browse channel TV guides"
 msgstr "Doorzoek de TV-gids per kanaal"
 
+msgctxt "#30092"
+msgid "Doorzoek VRT NU"
+msgstr "Doorzoek VRT NU"
+
+msgctxt "#30093"
+msgid "Search the complete VRT NU library"
+msgstr "Doorzoek de hele VRT NU bibliotheek"
+
 msgctxt "#30094"
 msgid "Season"
 msgstr "Seizoen"
@@ -183,6 +191,18 @@ msgstr "Aflevering"
 msgctxt "#30096"
 msgid "* All seasons"
 msgstr "* Alle seizoenen"
+
+msgctxt "#30097"
+msgid "Enter search string"
+msgstr "Geef zoektermen op"
+
+msgctxt "#30098"
+msgid "Nothing found"
+msgstr "Niets gevonden"
+
+msgctxt "#30099"
+msgid "Nothing was found when searching for: %s"
+msgstr "Er werd niets gevonden bij het zoeken naar: %s"
 
 msgctxt "#30101"
 msgid "%s live"

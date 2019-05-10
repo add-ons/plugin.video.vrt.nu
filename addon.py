@@ -44,10 +44,14 @@ def router(params_string):
     api_helper = vrtapihelper.VRTApiHelper(kodi_wrapper)
     vrt_player = vrtplayer.VRTPlayer(kodi_wrapper, api_helper)
 
-    if action == actions.LISTING_AZ_TVSHOWS:
+    if action == actions.PLAY:
+        vrt_player.play(params)
+    elif action == actions.LISTING_AZ_TVSHOWS:
         vrt_player.show_tvshow_menu_items()
     elif action == actions.LISTING_CATEGORIES:
         vrt_player.show_category_menu_items()
+    elif action == actions.LISTING_CATEGORY_TVSHOWS:
+        vrt_player.show_tvshow_menu_items(category=params.get('category'))
     elif action == actions.LISTING_CHANNELS:
         vrt_player.show_channels_menu_items(channel=params.get('channel'))
     elif action == actions.LISTING_LIVE:
@@ -58,10 +62,8 @@ def router(params_string):
         vrt_player.show_all_episodes(path=params.get('video_url'))
     elif action == actions.LISTING_RECENT:
         vrt_player.show_recent(page=params.get('page', 1))
-    elif action == actions.LISTING_CATEGORY_TVSHOWS:
-        vrt_player.show_tvshow_menu_items(category=params.get('category'))
-    elif action == actions.PLAY:
-        vrt_player.play(params)
+    elif action == actions.SEARCH:
+        vrt_player.search(search_string=params.get('query'), page=params.get('page', 1))
     else:
         vrt_player.show_main_menu_items()
 
