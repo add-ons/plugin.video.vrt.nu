@@ -72,7 +72,7 @@ class VRTPlayer:
             self.show_channels(action=actions.LISTING_CHANNELS, channels=[c.get('name') for c in CHANNELS])
 
     def show_livestream_items(self):
-        self.show_channels(action=actions.PLAY, channels=['een', 'canvas', 'sporza', 'ketnet', 'stubru', 'mnm'])
+        self.show_channels(action=actions.PLAY, channels=['een', 'canvas', 'sporza', 'ketnet-jr', 'ketnet', 'stubru', 'mnm'])
 
     def show_channels(self, action=actions.PLAY, channels=None):
         from resources.lib.vrtplayer import CHANNELS
@@ -105,7 +105,9 @@ class VRTPlayer:
                                        self._kodi_wrapper.get_localized_string(30102) % channel.get('label'))
                 else:
                     plot = self._kodi_wrapper.get_localized_string(30102) % channel.get('label')
-                if channel.get('live_stream'):
+                if channel.get('live_stream_url'):
+                    url_dict['video_url'] = channel.get('live_stream_url')
+                elif channel.get('live_stream'):
                     url_dict['video_url'] = channel.get('live_stream')
                 if channel.get('live_stream_id'):
                     url_dict['video_id'] = channel.get('live_stream_id')
