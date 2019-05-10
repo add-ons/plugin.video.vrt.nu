@@ -54,6 +54,8 @@ CHANNELS = [
         name='ketnet-jr',
         label='Ketnet Junior',
         studio='Ketnet Junior',
+        live_stream='https://www.ketnet.be/kijken/ketnet-junior-livestream',
+        live_stream_url='https://content.uplynk.com/channel/e11a05356cc44198977436418ad71832.m3u8',
     ),
     dict(
         id='O9',

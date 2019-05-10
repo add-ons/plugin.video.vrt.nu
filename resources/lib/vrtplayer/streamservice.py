@@ -189,6 +189,8 @@ class StreamService:
     def get_stream(self, video, retry=False, api_data=None):
         '''Main streamservice function'''
         from datetime import timedelta
+        if not video.get('video_id') and video.get('video_url'):
+            return streamurls.StreamURLS(video.get('video_url'))
         if not api_data:
             api_data = self._get_api_data(video)
 
