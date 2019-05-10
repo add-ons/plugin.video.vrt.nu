@@ -16,48 +16,52 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgctxt "#30000"
-msgid "Credentials"
-msgstr "Credentials"
-
-msgctxt "#30001"
-msgid "Email address"
-msgstr "Email address"
-
-msgctxt "#30002"
-msgid "Password"
-msgstr "Password"
-
-msgctxt "#30010"
-msgid "Video"
-msgstr "Video"
-
-msgctxt "#30011"
-msgid "Subtitles"
-msgstr "Subtitles"
-
-msgctxt "#30012"
-msgid "Show subtitles when available"
-msgstr "Show subtitles when available"
-
-msgctxt "#30013"
-msgid "Streaming"
-msgstr "Streaming"
-
-msgctxt "#30014"
-msgid "Use DRM for 720p HD-quality livestreams"
-msgstr "Use DRM for 720p HD-quality livestreams"
-
-msgctxt "#30015"
-msgid "Maximum bandwidth (kbps)"
-msgstr "Maximum bandwidth (kbps)"
-
-msgctxt "#30020"
 msgid "Interface"
 msgstr "Interface"
 
-msgctxt "#30021"
+msgctxt "#30001"
 msgid "Show episode permalink in plot"
 msgstr "Show episode permalink in plot"
+
+msgctxt "#30002"
+msgid "Enable menu caching"
+msgstr "Enable menu caching"
+
+msgctxt "#30010"
+msgid "Credentials"
+msgstr "Credentials"
+
+msgctxt "#30011"
+msgid "Email address"
+msgstr "Email address"
+
+msgctxt "#30012"
+msgid "Password"
+msgstr "Password"
+
+msgctxt "#30020"
+msgid "Video"
+msgstr "Video"
+
+msgctxt "#30021"
+msgid "Subtitles"
+msgstr "Subtitles"
+
+msgctxt "#30022"
+msgid "Show subtitles when available"
+msgstr "Show subtitles when available"
+
+msgctxt "#30023"
+msgid "Streaming"
+msgstr "Streaming"
+
+msgctxt "#30024"
+msgid "Use DRM for 720p HD-quality livestreams"
+msgstr "Use DRM for 720p HD-quality livestreams"
+
+msgctxt "#30025"
+msgid "Maximum bandwidth (kbps)"
+msgstr "Maximum bandwidth (kbps)"
 
 msgctxt "#30040"
 msgid "Debug"

@@ -17,48 +17,52 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgctxt "#30000"
-msgid "Credentials"
-msgstr "Inloggegevens"
-
-msgctxt "#30001"
-msgid "Email address"
-msgstr "E-mailadres"
-
-msgctxt "#30002"
-msgid "Password"
-msgstr "Wachtwoord"
-
-msgctxt "#30010"
-msgid "Video"
-msgstr "Video"
-
-msgctxt "#30011"
-msgid "Subtitles"
-msgstr "Ondertiteling"
-
-msgctxt "#30012"
-msgid "Show subtitles when available"
-msgstr "Toon ondertiteling indien beschikbaar"
-
-msgctxt "#30013"
-msgid "Streaming"
-msgstr "Streaming"
-
-msgctxt "#30014"
-msgid "Use DRM for 720p HD-quality livestreams"
-msgstr "Gebruik DRM voor de livestreams in 720p HD-kwaliteit"
-
-msgctxt "#30015"
-msgid "Maximum bandwidth (kbps)"
-msgstr "Maximale bandbreedte (kbps)"
-
-msgctxt "#30020"
 msgid "Interface"
 msgstr "Interface"
 
-msgctxt "#30021"
+msgctxt "#30001"
 msgid "Show episode permalink in plot"
 msgstr "Toon aflevering permalink in beschrijving"
+
+msgctxt "#30002"
+msgid "Enable menu caching"
+msgstr "Gebruik menu caching"
+
+msgctxt "#30010"
+msgid "Credentials"
+msgstr "Inloggegevens"
+
+msgctxt "#30011"
+msgid "Email address"
+msgstr "E-mailadres"
+
+msgctxt "#30012"
+msgid "Password"
+msgstr "Wachtwoord"
+
+msgctxt "#30020"
+msgid "Video"
+msgstr "Video"
+
+msgctxt "#30021"
+msgid "Subtitles"
+msgstr "Ondertiteling"
+
+msgctxt "#30022"
+msgid "Show subtitles when available"
+msgstr "Toon ondertiteling indien beschikbaar"
+
+msgctxt "#30023"
+msgid "Streaming"
+msgstr "Streaming"
+
+msgctxt "#30024"
+msgid "Use DRM for 720p HD-quality livestreams"
+msgstr "Gebruik DRM voor de livestreams in 720p HD-kwaliteit"
+
+msgctxt "#30025"
+msgid "Maximum bandwidth (kbps)"
+msgstr "Maximale bandbreedte (kbps)"
 
 msgctxt "#30030"
 msgid "VRT Radio"
