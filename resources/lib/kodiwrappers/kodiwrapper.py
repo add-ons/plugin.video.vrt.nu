@@ -52,7 +52,7 @@ class KodiWrapper:
         self._addon = addon
         self._addon_id = addon.getAddonInfo('id')
         self._max_log_level = log_levels.get(self.get_setting('max_log_level'), 3)
-        self._usemenucaching = self.get_setting('usemenucaching')
+        self._usemenucaching = self.get_setting('usemenucaching') == 'true'
 
     def show_listing(self, list_items, sort='unsorted', ascending=True, content_type=None, cache=None):
         import xbmcgui
