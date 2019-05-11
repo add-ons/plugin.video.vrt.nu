@@ -134,6 +134,14 @@ class KodiWrapper:
             xbmc.sleep(100)
         xbmc.Player().showSubtitles(subtitles_visible)
 
+    def get_search_string(self):
+        search_string = None
+        keyboard = xbmc.Keyboard('', self.get_localized_string(30097))
+        keyboard.doModal()
+        if keyboard.isConfirmed():
+            search_string = keyboard.getText()
+        return search_string
+
     def show_ok_dialog(self, title, message):
         import xbmcgui
         xbmcgui.Dialog().ok(self._addon.getAddonInfo('name'), title, message)

@@ -20,19 +20,19 @@ class ApiHelperTests(unittest.TestCase):
 
     def test_get_api_data_single_season(self):
         title_items, sort, ascending = self._api_helper.get_episode_items(path='/vrtnu/a-z/het-journaal.relevant/')
-        self.assertEqual(len(title_items), 124)
+        self.assertTrue(122 < len(title_items) < 126)
 
     def test_get_api_data_multiple_seasons(self):
         title_items, sort, ascending = self._api_helper.get_episode_items(path='/vrtnu/a-z/thuis.relevant/')
         self.assertTrue(len(title_items) < 5)
 
     def test_get_api_data_specific_season(self):
-        title_items, sort, ascending = self._api_helper.get_episode_items(path='/vrtnu/a-z/thuis.relevant/')
-        self.assertTrue(len(title_items) == 2)
+        title_items, sort, ascending = self._api_helper.get_episode_items(path='/vrtnu/a-z/pano.relevant/')
+        self.assertEqual(len(title_items), 4)
 
     def test_get_api_data_specific_season_without_broadcastdate(self):
         title_items, sort, ascending = self._api_helper.get_episode_items(path='/vrtnu/a-z/postbus-x.relevant/')
-        self.assertTrue(len(title_items) == 3)
+        self.assertEqual(len(title_items), 3)
 
 
 if __name__ == '__main__':

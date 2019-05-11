@@ -163,6 +163,14 @@ msgctxt "#30091"
 msgid "Browse channel TV guides"
 msgstr "Browse channel TV guides"
 
+msgctxt "#30092"
+msgid "Search VRT NU"
+msgstr "Search VRT NU"
+
+msgctxt "#30093"
+msgid "Search the complete VRT NU library"
+msgstr "Search the complete VRT NU library"
+
 msgctxt "#30094"
 msgid "Season"
 msgstr "Season"
@@ -174,6 +182,18 @@ msgstr "Episode"
 msgctxt "#30096"
 msgid "* All seasons"
 msgstr "* All seasons"
+
+msgctxt "#30097"
+msgid "Enter search string"
+msgstr "Enter search string"
+
+msgctxt "#30098"
+msgid "Nothing found"
+msgstr "Nothing found"
+
+msgctxt "#30099"
+msgid "Nothing was found when searching for: %s"
+msgstr "Nothing was found when searching for: %s"
 
 msgctxt "#30101"
 msgid "%s live"

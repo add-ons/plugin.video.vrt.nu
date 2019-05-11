@@ -4,7 +4,6 @@
 
 from __future__ import absolute_import, division, unicode_literals
 
-
 CLEAR_COOKIES = 'clearcookies'
 LISTING_ALL_EPISODES = 'listingallepisodes'
 LISTING_AZ_TVSHOWS = 'listingaztvshows'
@@ -16,3 +15,4 @@ LISTING_LIVE = 'listinglive'
 LISTING_RECENT = 'listingrecent'
 LISTING_TVGUIDE = 'listingtvguide'
 PLAY = 'play'
+SEARCH = 'search'

@@ -3,7 +3,7 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, unicode_literals
-from resources.lib.helperobjects import helperobjects
+from resources.lib.helperobjects.helperobjects import TitleItem
 from resources.lib.vrtplayer import actions, metadatacreator, statichelper
 
 try:
@@ -42,7 +42,10 @@ class VRTApiHelper:
 
         api_url = self._VRTNU_SUGGEST_URL + '?' + urlencode(params)
         self._kodi_wrapper.log_notice('URL get: ' + api_url, 'Verbose')
-        tvshows = json.loads(urlopen(api_url).read())
+        api_json = json.loads(urlopen(api_url).read())
+        return self._map_to_tvshow_items(api_json)
+
+    def _map_to_tvshow_items(self, tvshows):
         tvshow_items = []
         for tvshow in tvshows:
             metadata = metadatacreator.MetadataCreator()
@@ -58,11 +61,13 @@ class VRTApiHelper:
             # Cut vrtbase url off since it will be added again when searching for episodes
             # (with a-z we dont have the full url)
             video_url = statichelper.add_https_method(tvshow.get('targetUrl')).replace(self._VRT_BASE, '')
-            tvshow_items.append(helperobjects.TitleItem(title=label,
-                                                        url_dict=dict(action=actions.LISTING_EPISODES, video_url=video_url),
-                                                        is_playable=False,
-                                                        art_dict=dict(thumb=thumbnail, icon='DefaultAddonVideo.png', fanart=thumbnail),
-                                                        video_dict=metadata.get_video_dict()))
+            tvshow_items.append(TitleItem(
+                title=label,
+                url_dict=dict(action=actions.LISTING_EPISODES, video_url=video_url),
+                is_playable=False,
+                art_dict=dict(thumb=thumbnail, icon='DefaultAddonVideo.png', fanart=thumbnail),
+                video_dict=metadata.get_video_dict(),
+            ))
         return tvshow_items
 
     def _get_season_items(self, api_url, api_json):
@@ -89,11 +94,10 @@ class VRTApiHelper:
 
         # Recent items
         if page:
-            entries = 50
             params = {
-                'from': (page - 1) * entries,
+                'from': (page - 1) * 50,
                 'i': 'video',
-                'size': entries,
+                'size': 50,
                 'facets[transcodingStatus]': 'AVAILABLE',
                 'facets[programBrands]': '[een,canvas,sporza,vrtnws,vrtnxt,radio1,radio2,klara,stubru,mnm]',
             }
@@ -215,7 +219,7 @@ class VRTApiHelper:
             video_url = statichelper.add_https_method(episode.get('url'))
             label, sort, ascending = self._make_label(episode, titletype, options=display_options)
             metadata.title = label
-            episode_items.append(helperobjects.TitleItem(
+            episode_items.append(TitleItem(
                 title=label,
                 url_dict=dict(action=actions.PLAY, video_url=video_url, video_id=episode.get('videoId'), publication_id=episode.get('publicationId')),
                 is_playable=True,
@@ -241,7 +245,7 @@ class VRTApiHelper:
 
         # Add an "* All seasons" list item
         if self._kodi_wrapper.get_global_setting('videolibrary.showallitems') is True:
-            season_items.append(helperobjects.TitleItem(
+            season_items.append(TitleItem(
                 title=self._kodi_wrapper.get_localized_string(30096),
                 url_dict=dict(action=actions.LISTING_ALL_EPISODES, video_url=api_url),
                 is_playable=False,
@@ -257,7 +261,7 @@ class VRTApiHelper:
             label = '%s %s' % (self._kodi_wrapper.get_localized_string(30094), season_key)
             params = {'facets[seasonTitle]': season_key}
             path = api_url + '&' + urlencode(params)
-            season_items.append(helperobjects.TitleItem(
+            season_items.append(TitleItem(
                 title=label,
                 url_dict=dict(action=actions.LISTING_EPISODES, video_url=path),
                 is_playable=False,
@@ -265,6 +269,23 @@ class VRTApiHelper:
                 video_dict=metadata.get_video_dict(),
             ))
         return season_items, sort, ascending
+
+    def search(self, search_string, page=1):
+        import json
+
+        params = {
+            'from': (page - 1) * 50,
+            'i': 'video',
+            'size': 50,
+            'q': search_string,
+        }
+        api_url = 'https://search.vrt.be/search?' + urlencode(params)
+        self._kodi_wrapper.log_notice('URL get: ' + api_url, 'Verbose')
+        api_json = json.loads(urlopen(api_url).read())
+
+        episodes = api_json.get('results', [{}])
+        episode_items, sort, ascending = self._map_to_episode_items(episodes, titletype='recent')
+        return episode_items, sort, ascending
 
     def get_live_screenshot(self, channel):
         url = '%s/%s.jpg' % (self._VRTNU_SCREENSHOT_URL, channel)
