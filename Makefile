@@ -42,6 +42,7 @@ unit:
 	PYTHONPATH=$(pwd) python test/apihelpertests.py
 	PYTHONPATH=$(pwd) python test/tvguidetests.py
 	PYTHONPATH=$(pwd) python test/searchtests.py
+	PYTHONPATH=$(pwd) python test/favoritestests.py
 	@echo -e "$(white)=$(blue) Unit tests finished successfully.$(reset)"
 
 zip: test

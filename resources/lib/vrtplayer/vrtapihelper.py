@@ -4,7 +4,7 @@
 
 from __future__ import absolute_import, division, unicode_literals
 from resources.lib.helperobjects.helperobjects import TitleItem
-from resources.lib.vrtplayer import actions, metadatacreator, statichelper
+from resources.lib.vrtplayer import actions, favorites, metadatacreator, statichelper
 
 try:
     from urllib.parse import urlencode, unquote
@@ -26,8 +26,12 @@ class VRTApiHelper:
         self._proxies = _kodiwrapper.get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
         self._showpermalink = _kodiwrapper.get_setting('showpermalink') == 'true'
+        if _kodiwrapper.get_setting('usefavorites') == 'true':
+            self._favorites = favorites.Favorites(self._kodiwrapper)
+        else:
+            self._favorites = None
 
-    def get_tvshow_items(self, category=None, channel=None):
+    def get_tvshow_items(self, category=None, channel=None, filtered=False):
         import json
         params = dict()
 
@@ -44,11 +48,15 @@ class VRTApiHelper:
         api_url = self._VRTNU_SUGGEST_URL + '?' + urlencode(params)
         self._kodiwrapper.log_notice('URL get: ' + unquote(api_url), 'Verbose')
         api_json = json.loads(urlopen(api_url).read())
-        return self._map_to_tvshow_items(api_json)
+        return self._map_to_tvshow_items(api_json, filtered=filtered)
 
-    def _map_to_tvshow_items(self, tvshows):
+    def _map_to_tvshow_items(self, tvshows, filtered=False):
         tvshow_items = []
+        if filtered:
+            favorite_names = self._favorites.names()
         for tvshow in tvshows:
+            if filtered and tvshow.get('programName') not in favorite_names:
+                continue
             metadata = metadatacreator.MetadataCreator()
             metadata.mediatype = 'tvshow'
             metadata.tvshowtitle = tvshow.get('title', '???')
@@ -59,6 +67,16 @@ class VRTApiHelper:
             # title = '%s  [LIGHT][COLOR yellow]%s[/COLOR][/LIGHT]' % (tvshow.get('title', '???'), tvshow.get('episode_count', '?'))
             label = tvshow.get('title', '???')
             thumbnail = statichelper.add_https_method(tvshow.get('thumbnail', 'DefaultAddonVideo.png'))
+            program_path = statichelper.unique_path(tvshow.get('targetUrl'))
+            if self._favorites:
+                if self._favorites.is_favorite(program_path):
+                    params = dict(action='unfollow', program=tvshow.get('title'), path=program_path)
+                    context_menu = [(self._kodiwrapper.get_localized_string(30412), 'RunPlugin(plugin://plugin.video.vrt.nu?%s)' % urlencode(params))]
+                else:
+                    params = dict(action='follow', program=tvshow.get('title'), path=program_path)
+                    context_menu = [(self._kodiwrapper.get_localized_string(30411), 'RunPlugin(plugin://plugin.video.vrt.nu?%s)' % urlencode(params))]
+            else:
+                context_menu = []
             # Cut vrtbase url off since it will be added again when searching for episodes
             # (with a-z we dont have the full url)
             video_url = statichelper.add_https_method(tvshow.get('targetUrl')).replace(self._VRT_BASE, '')
@@ -68,6 +86,7 @@ class VRTApiHelper:
                 is_playable=False,
                 art_dict=dict(thumb=thumbnail, icon='DefaultAddonVideo.png', fanart=thumbnail),
                 video_dict=metadata.get_video_dict(),
+                context_menu=context_menu,
             ))
         return tvshow_items
 
@@ -88,7 +107,7 @@ class VRTApiHelper:
                 pass
         return season_items, sort, ascending, content
 
-    def get_episode_items(self, path=None, page=None, all_seasons=False):
+    def get_episode_items(self, path=None, page=None, all_seasons=False, filtered=False):
         import json
         episode_items = []
         sort = 'episode'
@@ -100,13 +119,18 @@ class VRTApiHelper:
                 'from': ((page - 1) * 50) + 1,
                 'i': 'video',
                 'size': 50,
-                'facets[transcodingStatus]': 'AVAILABLE',
-                'facets[programBrands]': '[een,canvas,sporza,vrtnws,vrtnxt,radio1,radio2,klara,stubru,mnm]',
+                # 'facets[transcodingStatus]': 'AVAILABLE',
             }
+
+            if filtered:
+                params['facets[programName]'] = '[%s]' % (','.join(self._favorites.names()))
+            else:
+                params['facets[programBrands]'] = '[een,canvas,sporza,vrtnws,vrtnxt,radio1,radio2,klara,stubru,mnm]'
+
             api_url = self._VRTNU_SEARCH_URL + '?' + urlencode(params)
             self._kodiwrapper.log_notice('URL get: ' + unquote(api_url), 'Verbose')
             api_json = json.loads(urlopen(api_url).read())
-            episode_items, sort, ascending, content = self._map_to_episode_items(api_json.get('results', []), titletype='recent')
+            episode_items, sort, ascending, content = self._map_to_episode_items(api_json.get('results', []), titletype='recent', filtered=filtered)
 
         if path:
             if '.relevant/' in path:
@@ -133,6 +157,7 @@ class VRTApiHelper:
 
             # Look for seasons items if not yet done
             season_key = None
+
             # path = requests.utils.unquote(path)
             path = unquote(path)
             if all_seasons is True:
@@ -148,18 +173,23 @@ class VRTApiHelper:
 
         return episode_items, sort, ascending, content
 
-    def _map_to_episode_items(self, episodes, titletype=None, season_key=None):
+    def _map_to_episode_items(self, episodes, titletype=None, season_key=None, filtered=False):
         from datetime import datetime
         import dateutil.parser
         import dateutil.tz
         now = datetime.now(dateutil.tz.tzlocal())
         sort = 'episode'
         ascending = True
+        if filtered:
+            favorite_names = self._favorites.names()
         episode_items = []
         for episode in episodes:
             # VRT API workaround: seasonTitle facet behaves as a partial match regex,
             # so we have to filter out the episodes from seasons that don't exactly match.
             if season_key and episode.get('seasonTitle') != season_key:
+                continue
+
+            if filtered and episode.get('programName') not in favorite_names:
                 continue
 
             # Support search highlights
@@ -222,6 +252,17 @@ class VRTApiHelper:
             if self._showpermalink and metadata.permalink:
                 metadata.plot = '%s\n\n[COLOR yellow]%s[/COLOR]' % (metadata.plot, metadata.permalink)
 
+            program_path = statichelper.unique_path(episode.get('programUrl'))
+            if self._favorites:
+                if self._favorites.is_favorite(program_path):
+                    params = dict(action='unfollow', program=episode.get('program'), path=program_path)
+                    context_menu = [(self._kodiwrapper.get_localized_string(30412), 'RunPlugin(plugin://plugin.video.vrt.nu?%s)' % urlencode(params))]
+                else:
+                    params = dict(action='follow', program=episode.get('program'), path=program_path)
+                    context_menu = [(self._kodiwrapper.get_localized_string(30411), 'RunPlugin(plugin://plugin.video.vrt.nu?%s)' % urlencode(params))]
+            else:
+                context_menu = []
+
             thumb = statichelper.add_https_method(episode.get('videoThumbnailUrl', 'DefaultAddonVideo.png'))
             fanart = statichelper.add_https_method(episode.get('programImageUrl', thumb))
             video_url = statichelper.add_https_method(episode.get('url'))
@@ -233,6 +274,7 @@ class VRTApiHelper:
                 is_playable=True,
                 art_dict=dict(thumb=thumb, icon='DefaultAddonVideo.png', fanart=fanart),
                 video_dict=metadata.get_video_dict(),
+                context_menu=context_menu,
             ))
         return episode_items, sort, ascending, 'episodes'
 
@@ -249,8 +291,8 @@ class VRTApiHelper:
 
         metadata = metadatacreator.MetadataCreator()
         metadata.tvshowtitle = episode.get('program')
-        metadata.subtitle = statichelper.convert_html_to_kodilabel(episode.get('programDescription'))
         metadata.plot = statichelper.convert_html_to_kodilabel(episode.get('programDescription'))
+        metadata.plotoutline = statichelper.convert_html_to_kodilabel(episode.get('programDescription'))
         metadata.mediatype = 'season'
         metadata.brands = episode.get('programBrands') or episode.get('brands')
         metadata.geolocked = episode.get('allowedRegion') == 'BE'

@@ -20,10 +20,14 @@ msgid "Interface"
 msgstr ""
 
 msgctxt "#30001"
-msgid "Show episode permalink in plot"
+msgid "Enable My programs"
 msgstr ""
 
 msgctxt "#30002"
+msgid "Show episode permalink in plot"
+msgstr ""
+
+msgctxt "#30003"
 msgid "Enable menu caching"
 msgstr ""
 
@@ -75,6 +79,10 @@ msgctxt "#30042"
 msgid "Install Widevine (for DRM content)"
 msgstr ""
 
+msgctxt "#30047"
+msgid "Refresh favorites"
+msgstr ""
+
 msgctxt "#30048"
 msgid "Clear VRT cookies"
 msgstr ""
@@ -113,6 +121,14 @@ msgstr ""
 
 msgctxt "#30061"
 msgid "Using a SOCKS proxy requires the PySocks library (script.module.pysocks) installed."
+msgstr ""
+
+msgctxt "#30078"
+msgid "My programs"
+msgstr ""
+
+msgctxt "#30079"
+msgid "Browse only the programs you follow"
 msgstr ""
 
 msgctxt "#30080"
@@ -251,3 +267,34 @@ msgctxt "#30334"
 msgid "In 2 days"
 msgstr ""
 
+msgctxt "#30411"
+msgid "Follow"
+msgstr ""
+
+msgctxt "#30412"
+msgid "Unfollow"
+msgstr ""
+
+msgctxt "#30415"
+msgid "No followed programs found"
+msgstr ""
+
+msgctxt "#30416"
+msgid "We could not find any programs that were followed.\n\nEither right-click on a program or an episode to follow a program, or follow a program on the VRT NU website."
+msgstr ""
+
+msgctxt "#30420"
+msgid "My A-Z"
+msgstr ""
+
+msgctxt "#30421"
+msgid "Alphabetically sorted list of My TV programs"
+msgstr ""
+
+msgctxt "#30422"
+msgid "My recent items"
+msgstr ""
+
+msgctxt "#30423"
+msgid "Recently published episodes of My TV programs"
+msgstr ""

@@ -39,6 +39,21 @@ def router(params_string):
         _tvguide = tvguide.TVGuide(_kodiwrapper)
         _tvguide.show_tvguide(params)
         return
+    if action == actions.FOLLOW:
+        from resources.lib.vrtplayer import favorites
+        _favorites = favorites.Favorites(_kodiwrapper)
+        _favorites.follow(program=params.get('program'), path=params.get('path'))
+        return
+    if action == actions.UNFOLLOW:
+        from resources.lib.vrtplayer import favorites
+        _favorites = favorites.Favorites(_kodiwrapper)
+        _favorites.unfollow(program=params.get('program'), path=params.get('path'))
+        return
+    if action == actions.REFRESH_FAVORITES:
+        from resources.lib.vrtplayer import favorites
+        _favorites = favorites.Favorites(_kodiwrapper)
+        _favorites.update_favorites()
+        return
 
     from resources.lib.vrtplayer import vrtapihelper, vrtplayer
     _apihelper = vrtapihelper.VRTApiHelper(_kodiwrapper)
@@ -47,13 +62,15 @@ def router(params_string):
     if action == actions.PLAY:
         _vrtplayer.play(params)
     elif action == actions.LISTING_AZ_TVSHOWS:
-        _vrtplayer.show_tvshow_menu_items()
+        _vrtplayer.show_tvshow_menu_items(filtered=params.get('filtered'))
     elif action == actions.LISTING_CATEGORIES:
         _vrtplayer.show_category_menu_items()
     elif action == actions.LISTING_CATEGORY_TVSHOWS:
         _vrtplayer.show_tvshow_menu_items(category=params.get('category'))
     elif action == actions.LISTING_CHANNELS:
         _vrtplayer.show_channels_menu_items(channel=params.get('channel'))
+    elif action == actions.LISTING_FAVORITES:
+        _vrtplayer.show_favorites_menu_items()
     elif action == actions.LISTING_LIVE:
         _vrtplayer.show_livestream_items()
     elif action == actions.LISTING_EPISODES:
@@ -61,7 +78,7 @@ def router(params_string):
     elif action == actions.LISTING_ALL_EPISODES:
         _vrtplayer.show_all_episodes(path=params.get('video_url'))
     elif action == actions.LISTING_RECENT:
-        _vrtplayer.show_recent(page=params.get('page', 1))
+        _vrtplayer.show_recent(page=params.get('page', 1), filtered=params.get('filtered'))
     elif action == actions.SEARCH:
         _vrtplayer.search(search_string=params.get('query'), page=params.get('page', 1))
     else:

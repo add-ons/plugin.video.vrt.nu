@@ -7,12 +7,13 @@ from __future__ import absolute_import, division, unicode_literals
 
 class TitleItem:
 
-    def __init__(self, title, url_dict, is_playable, art_dict=None, video_dict=None):
+    def __init__(self, title, url_dict, is_playable, art_dict=None, video_dict=None, context_menu=None):
         self.title = title
         self.url_dict = url_dict
         self.is_playable = is_playable
         self.art_dict = art_dict
         self.video_dict = video_dict
+        self.context_menu = context_menu
 
 
 class Credentials:
