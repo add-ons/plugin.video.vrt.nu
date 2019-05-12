@@ -41,7 +41,7 @@ class TVGuide:
 
         if not date:
             date_items = self.show_date_menu()
-            self._kodiwrapper.show_listing(date_items, content_type='files')
+            self._kodiwrapper.show_listing(date_items, content='files')
 
         elif not channel:
             channel_items = self.show_channel_menu(date)
@@ -49,7 +49,7 @@ class TVGuide:
 
         else:
             episode_items = self.show_episodes(date, channel)
-            self._kodiwrapper.show_listing(episode_items, content_type='episodes', cache=False)
+            self._kodiwrapper.show_listing(episode_items, content='episodes', cache=False)
 
     def show_date_menu(self):
         now = datetime.now(dateutil.tz.tzlocal())
