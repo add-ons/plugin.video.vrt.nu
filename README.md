@@ -19,6 +19,8 @@ This addon can be used to watch all video content from VRT NU.
 
 Some video content may be geo-blocked.
 
+**This project is not endorsed by VRT.**
+
 ## Installing
 In Kodi, simply search for `VRT NU`, and install the add-on.
 
