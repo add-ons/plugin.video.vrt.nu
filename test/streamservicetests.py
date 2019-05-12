@@ -4,7 +4,7 @@
 
 # pylint: disable=unused-variable
 
-from __future__ import absolute_import, division, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
 from datetime import datetime, timedelta
 import dateutil.tz
 import mock
@@ -36,6 +36,10 @@ def get_localized_string(msgctxt):
     return 'vrttest'
 
 
+def log_notice(msg, level):
+    print('%s: %s' % (level, msg))
+
+
 use_drm = False
 now = datetime.now(dateutil.tz.tzlocal())
 yesterday = now + timedelta(days=-1)
@@ -44,15 +48,15 @@ yesterday = now + timedelta(days=-1)
 class StreamServiceTests(unittest.TestCase):
 
     _kodiwrapper = mock.MagicMock()
-    _kodiwrapper.get_proxies = mock.MagicMock(return_value=dict())
+    _kodiwrapper.check_if_path_exists.return_value = False
+    _kodiwrapper.check_inputstream_adaptive.return_value = True
     _kodiwrapper.get_localized_dateshort = mock.MagicMock(return_value='%d-%m-%Y')
-    _kodiwrapper.get_localized_string.return_value = mock.MagicMock(side_effect=get_localized_string)
+    _kodiwrapper.get_localized_string = mock.MagicMock(side_effect=get_localized_string)
+    _kodiwrapper.get_proxies = mock.MagicMock(return_value=dict())
     _kodiwrapper.get_setting = mock.MagicMock(side_effect=get_settings)
     _kodiwrapper.get_userdata_path.return_value = 'vrttest'
-    _kodiwrapper.check_if_path_exists.return_value = False
+    _kodiwrapper.log_notice = mock.MagicMock(side_effect=log_notice)
     _kodiwrapper.make_dir.return_value = None
-    _kodiwrapper.open_path.return_value = False
-    _kodiwrapper.check_inputstream_adaptive.return_value = True
     _apihelper = vrtapihelper.VRTApiHelper(_kodiwrapper)
     _tokenresolver = tokenresolver.TokenResolver(_kodiwrapper)
     _streamservice = streamservice.StreamService(_kodiwrapper, _tokenresolver)
