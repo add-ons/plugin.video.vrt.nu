@@ -3,6 +3,8 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, unicode_literals
+from contextlib import contextmanager
+
 import xbmc
 import xbmcplugin
 
@@ -54,15 +56,15 @@ class KodiWrapper:
         self._max_log_level = log_levels.get(self.get_setting('max_log_level'), 3)
         self._usemenucaching = self.get_setting('usemenucaching') == 'true'
 
-    def show_listing(self, list_items, sort='unsorted', ascending=True, content_type=None, cache=None):
+    def show_listing(self, list_items, sort='unsorted', ascending=True, content=None, cache=None):
         import xbmcgui
         listing = []
 
         if cache is None:
             cache = self._usemenucaching
 
-        if content_type:
-            xbmcplugin.setContent(self._handle, content=content_type)
+        if content:
+            xbmcplugin.setContent(self._handle, content=content)
 
         # FIXME: Since there is no way to influence descending order, we force it here
         if not ascending:
@@ -253,11 +255,14 @@ class KodiWrapper:
         import xbmcvfs
         return xbmcvfs.exists(path)
 
-    def open_path(self, path):
-        import json
-        return json.loads(open(path, 'r').read())
+    @contextmanager
+    def open_file(self, path, flags='r'):
+        import xbmcvfs
+        f = xbmcvfs.File(path, flags)
+        yield f
+        f.close()
 
-    def delete_path(self, path):
+    def delete_file(self, path):
         import xbmcvfs
         return xbmcvfs.delete(path)
 

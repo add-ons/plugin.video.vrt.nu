@@ -13,8 +13,8 @@ try:
     from urllib.error import HTTPError
     from urllib.request import build_opener, install_opener, urlopen, ProxyHandler
 except ImportError:
-    from urllib2 import build_opener, install_opener, urlopen, ProxyHandler, quote, HTTPError
     from urllib import urlencode  # pylint: disable=ungrouped-imports
+    from urllib2 import build_opener, install_opener, urlopen, ProxyHandler, quote, HTTPError
 
 
 class StreamService:
@@ -210,9 +210,9 @@ class StreamService:
                 if not retry and roaming_xvrttoken is not None:
                     # Delete cached playertokens
                     if api_data.is_live_stream:
-                        self._kodiwrapper.delete_path(self._kodiwrapper.get_userdata_path() + 'live_vrtPlayerToken')
+                        self._kodiwrapper.delete_file(self._kodiwrapper.get_userdata_path() + 'live_vrtPlayerToken')
                     else:
-                        self._kodiwrapper.delete_path(self._kodiwrapper.get_userdata_path() + 'ondemand_vrtPlayerToken')
+                        self._kodiwrapper.delete_file(self._kodiwrapper.get_userdata_path() + 'ondemand_vrtPlayerToken')
                     # Update api_data with roaming_xvrttoken and try again
                     api_data.xvrttoken = roaming_xvrttoken
                     return self.get_stream(video, retry=True, api_data=api_data)

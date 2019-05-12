@@ -41,7 +41,7 @@ class VRTApiHelper:
             params['facets[programBrands]'] = channel
 
         api_url = self._VRTNU_SUGGEST_URL + '?' + urlencode(params)
-        self._kodiwrapper.log_notice('URL get: ' + api_url, 'Verbose')
+        self._kodiwrapper.log_notice('URL get: ' + unquote(api_url), 'Verbose')
         api_json = json.loads(urlopen(api_url).read())
         return self._map_to_tvshow_items(api_json)
 
@@ -102,7 +102,7 @@ class VRTApiHelper:
                 'facets[programBrands]': '[een,canvas,sporza,vrtnws,vrtnxt,radio1,radio2,klara,stubru,mnm]',
             }
             api_url = self._VRTNU_SEARCH_URL + '?' + urlencode(params)
-            self._kodiwrapper.log_notice('URL get: ' + api_url, 'Verbose')
+            self._kodiwrapper.log_notice('URL get: ' + unquote(api_url), 'Verbose')
             api_json = json.loads(urlopen(api_url).read())
             episode_items, sort, ascending = self._map_to_episode_items(api_json.get('results', []), titletype='recent')
 
@@ -116,7 +116,7 @@ class VRTApiHelper:
                 api_url = self._VRTNU_SEARCH_URL + '?' + urlencode(params)
             else:
                 api_url = path
-            self._kodiwrapper.log_notice('URL get: ' + api_url, 'Verbose')
+            self._kodiwrapper.log_notice('URL get: ' + unquote(api_url), 'Verbose')
             api_json = json.loads(urlopen(api_url).read())
 
             episodes = api_json.get('results', [{}])
@@ -280,7 +280,7 @@ class VRTApiHelper:
             'q': search_string,
         }
         api_url = 'https://search.vrt.be/search?' + urlencode(params)
-        self._kodiwrapper.log_notice('URL get: ' + api_url, 'Verbose')
+        self._kodiwrapper.log_notice('URL get: ' + unquote(api_url), 'Verbose')
         api_json = json.loads(urlopen(api_url).read())
 
         episodes = api_json.get('results', [{}])
@@ -296,7 +296,7 @@ class VRTApiHelper:
         crc = self.__get_crc32(url)
         ext = url.split('.')[-1]
         path = 'special://thumbnails/%s/%s.%s' % (crc[0], crc, ext)
-        self._kodiwrapper.delete_path(path)
+        self._kodiwrapper.delete_file(path)
 
     @staticmethod
     def __get_crc32(string):
