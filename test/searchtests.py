@@ -11,14 +11,14 @@ from resources.lib.vrtplayer import vrtapihelper
 
 class TestVRTPlayer(unittest.TestCase):
 
-    _kodi_wrapper = mock.MagicMock()
-    _kodi_wrapper.get_proxies = mock.MagicMock(return_value=dict())
-    _kodi_wrapper.get_localized_dateshort = mock.MagicMock(return_value='%d-%m-%Y')
-    _api_helper = vrtapihelper.VRTApiHelper(_kodi_wrapper)
+    _kodiwrapper = mock.MagicMock()
+    _kodiwrapper.get_proxies = mock.MagicMock(return_value=dict())
+    _kodiwrapper.get_localized_dateshort = mock.MagicMock(return_value='%d-%m-%Y')
+    _apihelper = vrtapihelper.VRTApiHelper(_kodiwrapper)
 
     def test_search_journaal(self):
         ''' Test for journaal '''
-        search_items, sort, ascending = self._api_helper.search('journaal', page=1)
+        search_items, sort, ascending = self._apihelper.search('journaal', page=1)
 
         # Test we get a non-empty search result
         self.assertEqual(len(search_items), 50)
@@ -27,7 +27,7 @@ class TestVRTPlayer(unittest.TestCase):
 
     def test_search_journaal_page2(self):
         ''' Test for journaal '''
-        search_items, sort, ascending = self._api_helper.search('journaal', page=2)
+        search_items, sort, ascending = self._apihelper.search('journaal', page=2)
 
         # Test we get a non-empty search result
         self.assertEqual(len(search_items), 50)
@@ -36,7 +36,7 @@ class TestVRTPlayer(unittest.TestCase):
 
     def test_search_weer(self):
         ''' Test for journaal '''
-        search_items, sort, ascending = self._api_helper.search('weer', page=1)
+        search_items, sort, ascending = self._apihelper.search('weer', page=1)
 
         # Test we get a non-empty search result
         self.assertEqual(len(search_items), 50)

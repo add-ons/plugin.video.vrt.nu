@@ -23,23 +23,23 @@ class StreamService:
     _VUALTO_API_URL = 'https://media-services-public.vrt.be/vualto-video-aggregator-web/rest/external/v1'
     _CLIENT = 'vrtvideo'
 
-    def __init__(self, kodi_wrapper, token_resolver):
-        self._kodi_wrapper = kodi_wrapper
-        self._proxies = self._kodi_wrapper.get_proxies()
+    def __init__(self, _kodiwrapper, _tokenresolver):
+        self._kodiwrapper = _kodiwrapper
+        self._proxies = _kodiwrapper.get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
-        self.token_resolver = token_resolver
+        self._tokenresolver = _tokenresolver
         self._create_settings_dir()
-        self._can_play_drm = self._kodi_wrapper.can_play_drm()
+        self._can_play_drm = _kodiwrapper.can_play_drm()
         self._license_url = None
 
     def _get_license_url(self):
-        self._kodi_wrapper.log_notice('URL get: ' + self._VUPLAY_API_URL, 'Verbose')
+        self._kodiwrapper.log_notice('URL get: ' + self._VUPLAY_API_URL, 'Verbose')
         self._license_url = json.loads(urlopen(self._VUPLAY_API_URL).read()).get('drm_providers', dict()).get('widevine', dict()).get('la_url')
 
     def _create_settings_dir(self):
-        settingsdir = self._kodi_wrapper.get_userdata_path()
-        if not self._kodi_wrapper.check_if_path_exists(settingsdir):
-            self._kodi_wrapper.make_dir(settingsdir)
+        settingsdir = self._kodiwrapper.get_userdata_path()
+        if not self._kodiwrapper.check_if_path_exists(settingsdir):
+            self._kodiwrapper.make_dir(settingsdir)
 
     def _get_license_key(self, key_url, key_type='R', key_headers=None, key_value=None):
         ''' Generates a propery license key value
@@ -87,7 +87,7 @@ class StreamService:
         publication_id = video.get('publication_id')
         # Prepare api_data for on demand streams by video_id and publication_id
         if video_id and publication_id:
-            xvrttoken = self.token_resolver.get_xvrttoken()
+            xvrttoken = self._tokenresolver.get_xvrttoken()
             api_data = apidata.ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, publication_id + quote('$'), xvrttoken, False)
         # Prepare api_data for livestreams by video_id, e.g. vualto_strubru, vualto_mnm
         elif video_id and not video_url:
@@ -100,7 +100,7 @@ class StreamService:
     def _webscrape_api_data(self, video_url):
         '''Scrape api data from VRT NU html page'''
         from bs4 import BeautifulSoup, SoupStrainer
-        self._kodi_wrapper.log_notice('URL get: ' + video_url, 'Verbose')
+        self._kodiwrapper.log_notice('URL get: ' + video_url, 'Verbose')
         html_page = urlopen(video_url).read()
         strainer = SoupStrainer('div', {'class': 'cq-dd-vrtvideo'})
         soup = BeautifulSoup(html_page, 'html.parser', parse_only=strainer)
@@ -108,12 +108,12 @@ class StreamService:
             video_data = soup.find(lambda tag: tag.name == 'div' and tag.get('class') == ['vrtvideo']).attrs
         except Exception as e:
             # Web scraping failed, log error
-            self._kodi_wrapper.log_error('Web scraping api data failed: %s' % e)
+            self._kodiwrapper.log_error('Web scraping api data failed: %s' % e)
             return None
 
         # Web scraping failed, log error
         if not video_data:
-            self._kodi_wrapper.log_error('Web scraping api data failed, empty video_data')
+            self._kodiwrapper.log_error('Web scraping api data failed, empty video_data')
             return None
 
         # Store required html data attributes
@@ -129,10 +129,10 @@ class StreamService:
         else:
             is_live_stream = False
             publication_id += quote('$')
-            xvrttoken = self.token_resolver.get_xvrttoken()
+            xvrttoken = self._tokenresolver.get_xvrttoken()
 
         if client is None or media_api_url is None or (video_id is None and publication_id is None):
-            self._kodi_wrapper.log_error('Web scraping api data failed, required attributes missing')
+            self._kodiwrapper.log_error('Web scraping api data failed, required attributes missing')
             return None
 
         return apidata.ApiData(client, media_api_url, video_id, publication_id, xvrttoken, is_live_stream)
@@ -140,16 +140,16 @@ class StreamService:
     def _get_video_json(self, api_data):
         token_url = api_data.media_api_url + '/tokens'
         if api_data.is_live_stream:
-            playertoken = self.token_resolver.get_live_playertoken(token_url, api_data.xvrttoken)
+            playertoken = self._tokenresolver.get_live_playertoken(token_url, api_data.xvrttoken)
         else:
-            playertoken = self.token_resolver.get_ondemand_playertoken(token_url, api_data.xvrttoken)
+            playertoken = self._tokenresolver.get_ondemand_playertoken(token_url, api_data.xvrttoken)
 
         # Construct api_url and get video json
         video_json = None
         if playertoken:
             api_url = api_data.media_api_url + '/videos/' + api_data.publication_id + \
                 api_data.video_id + '?vrtPlayerToken=' + playertoken + '&client=' + api_data.client
-            self._kodi_wrapper.log_notice('URL get: ' + api_url, 'Verbose')
+            self._kodiwrapper.log_notice('URL get: ' + api_url, 'Verbose')
             try:
                 video_json = json.loads(urlopen(api_url).read())
             except HTTPError as e:
@@ -158,9 +158,9 @@ class StreamService:
         return video_json
 
     def _handle_error(self, video_json):
-        self._kodi_wrapper.log_error(video_json.get('message'))
-        message = self._kodi_wrapper.get_localized_string(30054)
-        self._kodi_wrapper.show_ok_dialog('', message)
+        self._kodiwrapper.log_error(video_json.get('message'))
+        message = self._kodiwrapper.get_localized_string(30054)
+        self._kodiwrapper.show_ok_dialog('', message)
 
     @staticmethod
     def _fix_virtualsubclip(stream_dict, duration):
@@ -205,19 +205,19 @@ class StreamService:
                 return self._select_stream(stream_dict, vudrm_token)
 
             if video_json.get('code') in ('INCOMPLETE_ROAMING_CONFIG', 'INVALID_LOCATION'):
-                self._kodi_wrapper.log_error(video_json.get('message'))
-                roaming_xvrttoken = self.token_resolver.get_xvrttoken(True)
+                self._kodiwrapper.log_error(video_json.get('message'))
+                roaming_xvrttoken = self._tokenresolver.get_xvrttoken(True)
                 if not retry and roaming_xvrttoken is not None:
                     # Delete cached playertokens
                     if api_data.is_live_stream:
-                        self._kodi_wrapper.delete_path(self._kodi_wrapper.get_userdata_path() + 'live_vrtPlayerToken')
+                        self._kodiwrapper.delete_path(self._kodiwrapper.get_userdata_path() + 'live_vrtPlayerToken')
                     else:
-                        self._kodi_wrapper.delete_path(self._kodi_wrapper.get_userdata_path() + 'ondemand_vrtPlayerToken')
+                        self._kodiwrapper.delete_path(self._kodiwrapper.get_userdata_path() + 'ondemand_vrtPlayerToken')
                     # Update api_data with roaming_xvrttoken and try again
                     api_data.xvrttoken = roaming_xvrttoken
                     return self.get_stream(video, retry=True, api_data=api_data)
-                message = self._kodi_wrapper.get_localized_string(30053)
-                self._kodi_wrapper.show_ok_dialog('', message)
+                message = self._kodiwrapper.get_localized_string(30053)
+                self._kodiwrapper.show_ok_dialog('', message)
             else:
                 self._handle_error(video_json)
 
@@ -237,24 +237,24 @@ class StreamService:
     def _select_stream(self, stream_dict, vudrm_token):
         stream_url = None
         protocol = None
-        if vudrm_token and self._can_play_drm and self._kodi_wrapper.get_setting('usedrm') == 'true':
+        if vudrm_token and self._can_play_drm and self._kodiwrapper.get_setting('usedrm') == 'true':
             protocol = 'mpeg_dash drm'
-            self._kodi_wrapper.log_notice('Protocol: ' + protocol)
+            self._kodiwrapper.log_notice('Protocol: ' + protocol)
             stream_url = self._try_get_drm_stream(stream_dict, vudrm_token)
 
         if vudrm_token and stream_url is None:
             protocol = 'hls_aes'
-            self._kodi_wrapper.log_notice('Protocol: ' + protocol)
+            self._kodiwrapper.log_notice('Protocol: ' + protocol)
             stream_url = streamurls.StreamURLS(*self._select_hls_substreams(stream_dict[protocol])) if protocol in stream_dict else None
 
-        if self._kodi_wrapper.has_inputstream_adaptive_installed() and stream_url is None:
+        if self._kodiwrapper.has_inputstream_adaptive_installed() and stream_url is None:
             protocol = 'mpeg_dash'
-            self._kodi_wrapper.log_notice('Protocol: ' + protocol)
+            self._kodiwrapper.log_notice('Protocol: ' + protocol)
             stream_url = streamurls.StreamURLS(stream_dict[protocol], use_inputstream_adaptive=True) if protocol in stream_dict else None
 
         if stream_url is None:
             protocol = 'hls'
-            self._kodi_wrapper.log_notice('Protocol: ' + protocol)
+            self._kodiwrapper.log_notice('Protocol: ' + protocol)
             # No if-else statement because this is the last resort stream selection
             stream_url = streamurls.StreamURLS(*self._select_hls_substreams(stream_dict[protocol]))
 
@@ -267,9 +267,9 @@ class StreamService:
         hls_audio_id = None
         hls_subtitle_id = None
         hls_base_url = master_hls_url.split('.m3u8')[0]
-        self._kodi_wrapper.log_notice('URL get: ' + master_hls_url + '?hd', 'Verbose')
+        self._kodiwrapper.log_notice('URL get: ' + master_hls_url + '?hd', 'Verbose')
         hls_playlist = urlopen(master_hls_url + '?hd').read()
-        max_bandwidth = self._kodi_wrapper.get_max_bandwidth()
+        max_bandwidth = self._kodiwrapper.get_max_bandwidth()
         stream_bandwidth = None
 
         # Get hls variant url based on max_bandwith setting
@@ -287,9 +287,9 @@ class StreamService:
                 break
 
         if not hls_variant_url:
-            message = self._kodi_wrapper.get_localized_string(30057) % (str(max_bandwidth), stream_bandwidth)
-            self._kodi_wrapper.show_ok_dialog('', message)
-            self._kodi_wrapper.open_settings()
+            message = self._kodiwrapper.get_localized_string(30057) % (str(max_bandwidth), stream_bandwidth)
+            self._kodiwrapper.show_ok_dialog('', message)
+            self._kodiwrapper.open_settings()
 
         # Get audio url
         if hls_audio_id:
@@ -299,7 +299,7 @@ class StreamService:
                 hls_variant_url = hls_base_url + match_audio.group(1) + '-' + hls_variant_url.split('-')[-1]
 
         # Get subtitle url, works only for on demand streams
-        if self._kodi_wrapper.get_setting('showsubtitles') == 'true' and '/live/' not in master_hls_url and hls_subtitle_id:
+        if self._kodiwrapper.get_setting('showsubtitles') == 'true' and '/live/' not in master_hls_url and hls_subtitle_id:
             subtitle_regex = re.compile(r'#EXT-X-MEDIA:TYPE=SUBTITLES[\w\-=,\.\"\/]+GROUP-ID=\"' + hls_subtitle_id + r'\"[\w\-=,\.\"\/]+URI=\"([\w\-=]+)\.m3u8\"')
             match_subtitle = re.search(subtitle_regex, hls_playlist)
             if match_subtitle:

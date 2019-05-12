@@ -29,11 +29,11 @@ class TVGuide:
 
     VRT_TVGUIDE = 'https://www.vrt.be/bin/epg/schedule.%Y-%m-%d.json'
 
-    def __init__(self, kodi_wrapper):
-        self._kodi_wrapper = kodi_wrapper
-        self._proxies = self._kodi_wrapper.get_proxies()
+    def __init__(self, _kodiwrapper):
+        self._kodiwrapper = _kodiwrapper
+        self._proxies = _kodiwrapper.get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
-        kodi_wrapper.set_locale()
+        _kodiwrapper.set_locale()
 
     def show_tvguide(self, params):
         date = params.get('date')
@@ -41,39 +41,39 @@ class TVGuide:
 
         if not date:
             date_items = self.show_date_menu()
-            self._kodi_wrapper.show_listing(date_items, content_type='files')
+            self._kodiwrapper.show_listing(date_items, content_type='files')
 
         elif not channel:
             channel_items = self.show_channel_menu(date)
-            self._kodi_wrapper.show_listing(channel_items)
+            self._kodiwrapper.show_listing(channel_items)
 
         else:
             episode_items = self.show_episodes(date, channel)
-            self._kodi_wrapper.show_listing(episode_items, content_type='episodes', cache=False)
+            self._kodiwrapper.show_listing(episode_items, content_type='episodes', cache=False)
 
     def show_date_menu(self):
         now = datetime.now(dateutil.tz.tzlocal())
         date_items = []
         for i in range(7, -31, -1):
             day = now + timedelta(days=i)
-            title = day.strftime(self._kodi_wrapper.get_localized_datelong())
+            title = day.strftime(self._kodiwrapper.get_localized_datelong())
             if str(i) in DATE_STRINGS:
                 if i == 0:
-                    title = '[COLOR yellow][B]%s[/B], %s[/COLOR]' % (self._kodi_wrapper.get_localized_string(DATE_STRINGS[str(i)]), title)
+                    title = '[COLOR yellow][B]%s[/B], %s[/COLOR]' % (self._kodiwrapper.get_localized_string(DATE_STRINGS[str(i)]), title)
                 else:
-                    title = '[B]%s[/B], %s' % (self._kodi_wrapper.get_localized_string(DATE_STRINGS[str(i)]), title)
+                    title = '[B]%s[/B], %s' % (self._kodiwrapper.get_localized_string(DATE_STRINGS[str(i)]), title)
             date_items.append(helperobjects.TitleItem(
                 title=title,
                 url_dict=dict(action=actions.LISTING_TVGUIDE, date=day.strftime('%Y-%m-%d')),
                 is_playable=False,
                 art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
-                video_dict=dict(plot=day.strftime(self._kodi_wrapper.get_localized_datelong())),
+                video_dict=dict(plot=day.strftime(self._kodiwrapper.get_localized_datelong())),
             ))
         return date_items
 
     def show_channel_menu(self, date):
         dateobj = dateutil.parser.parse(date)
-        datelong = dateobj.strftime(self._kodi_wrapper.get_localized_datelong())
+        datelong = dateobj.strftime(self._kodiwrapper.get_localized_datelong())
 
         fanart_path = 'resource://resource.images.studios.white/%(studio)s.png'
         icon_path = 'resource://resource.images.studios.white/%(studio)s.png'
@@ -87,7 +87,7 @@ class TVGuide:
 
             icon = icon_path % channel
             fanart = fanart_path % channel
-            plot = self._kodi_wrapper.get_localized_string(30301) % channel.get('label') + '\n' + datelong
+            plot = self._kodiwrapper.get_localized_string(30301) % channel.get('label') + '\n' + datelong
             channel_items.append(helperobjects.TitleItem(
                 title=channel.get('label'),
                 url_dict=dict(action=actions.LISTING_TVGUIDE, date=date, channel=channel.get('name')),
@@ -100,9 +100,9 @@ class TVGuide:
     def show_episodes(self, date, channel):
         now = datetime.now(dateutil.tz.tzlocal())
         dateobj = dateutil.parser.parse(date)
-        datelong = dateobj.strftime(self._kodi_wrapper.get_localized_datelong())
+        datelong = dateobj.strftime(self._kodiwrapper.get_localized_datelong())
         api_url = dateobj.strftime(self.VRT_TVGUIDE)
-        self._kodi_wrapper.log_notice('URL get: ' + api_url, 'Verbose')
+        self._kodiwrapper.log_notice('URL get: ' + api_url, 'Verbose')
         schedule = json.loads(urlopen(api_url).read())
         name = channel
         try:
@@ -137,14 +137,14 @@ class TVGuide:
                 video_url = statichelper.add_https_method(url)
                 url_dict = dict(action=actions.PLAY, video_url=video_url)
                 if start_date < now <= end_date:  # Now playing
-                    metadata.title = '[COLOR yellow]%s[/COLOR] %s' % (label, self._kodi_wrapper.get_localized_string(30302))
+                    metadata.title = '[COLOR yellow]%s[/COLOR] %s' % (label, self._kodiwrapper.get_localized_string(30302))
                 else:
                     metadata.title = label
             else:
                 # FIXME: Find a better solution for non-actionable items
                 url_dict = dict(action=actions.LISTING_TVGUIDE, date=date, channel=channel)
                 if start_date < now <= end_date:  # Now playing
-                    metadata.title = '[COLOR brown]%s[/COLOR] %s' % (label, self._kodi_wrapper.get_localized_string(30302))
+                    metadata.title = '[COLOR brown]%s[/COLOR] %s' % (label, self._kodiwrapper.get_localized_string(30302))
                 else:
                     metadata.title = '[COLOR gray]%s[/COLOR]' % label
             episode_items.append(helperobjects.TitleItem(

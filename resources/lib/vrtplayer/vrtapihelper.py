@@ -21,11 +21,11 @@ class VRTApiHelper:
     _VRTNU_SUGGEST_URL = 'https://vrtnu-api.vrt.be/suggest'
     _VRTNU_SCREENSHOT_URL = 'https://vrtnu-api.vrt.be/screenshots'
 
-    def __init__(self, kodi_wrapper):
-        self._kodi_wrapper = kodi_wrapper
-        self._proxies = self._kodi_wrapper.get_proxies()
+    def __init__(self, _kodiwrapper):
+        self._kodiwrapper = _kodiwrapper
+        self._proxies = _kodiwrapper.get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
-        self._showpermalink = kodi_wrapper.get_setting('showpermalink') == 'true'
+        self._showpermalink = _kodiwrapper.get_setting('showpermalink') == 'true'
 
     def get_tvshow_items(self, category=None, channel=None):
         import json
@@ -41,7 +41,7 @@ class VRTApiHelper:
             params['facets[programBrands]'] = channel
 
         api_url = self._VRTNU_SUGGEST_URL + '?' + urlencode(params)
-        self._kodi_wrapper.log_notice('URL get: ' + api_url, 'Verbose')
+        self._kodiwrapper.log_notice('URL get: ' + api_url, 'Verbose')
         api_json = json.loads(urlopen(api_url).read())
         return self._map_to_tvshow_items(api_json)
 
@@ -102,7 +102,7 @@ class VRTApiHelper:
                 'facets[programBrands]': '[een,canvas,sporza,vrtnws,vrtnxt,radio1,radio2,klara,stubru,mnm]',
             }
             api_url = self._VRTNU_SEARCH_URL + '?' + urlencode(params)
-            self._kodi_wrapper.log_notice('URL get: ' + api_url, 'Verbose')
+            self._kodiwrapper.log_notice('URL get: ' + api_url, 'Verbose')
             api_json = json.loads(urlopen(api_url).read())
             episode_items, sort, ascending = self._map_to_episode_items(api_json.get('results', []), titletype='recent')
 
@@ -116,7 +116,7 @@ class VRTApiHelper:
                 api_url = self._VRTNU_SEARCH_URL + '?' + urlencode(params)
             else:
                 api_url = path
-            self._kodi_wrapper.log_notice('URL get: ' + api_url, 'Verbose')
+            self._kodiwrapper.log_notice('URL get: ' + api_url, 'Verbose')
             api_json = json.loads(urlopen(api_url).read())
 
             episodes = api_json.get('results', [{}])
@@ -197,16 +197,16 @@ class VRTApiHelper:
             plot_meta = ''
             if metadata.geolocked:
                 # Show Geo-locked
-                plot_meta += self._kodi_wrapper.get_localized_string(30201)
+                plot_meta += self._kodiwrapper.get_localized_string(30201)
             # Only display when a video disappears if it is within the next 3 months
             if metadata.offtime is not None and (metadata.offtime - now).days < 93:
                 # Show date when episode is removed
-                plot_meta += self._kodi_wrapper.get_localized_string(30202) % metadata.offtime.strftime(self._kodi_wrapper.get_localized_dateshort())
+                plot_meta += self._kodiwrapper.get_localized_string(30202) % metadata.offtime.strftime(self._kodiwrapper.get_localized_dateshort())
                 # Show the remaining days/hours the episode is still available
                 if (metadata.offtime - now).days > 0:
-                    plot_meta += self._kodi_wrapper.get_localized_string(30203) % (metadata.offtime - now).days
+                    plot_meta += self._kodiwrapper.get_localized_string(30203) % (metadata.offtime - now).days
                 else:
-                    plot_meta += self._kodi_wrapper.get_localized_string(30204) % int((metadata.offtime - now).seconds / 3600)
+                    plot_meta += self._kodiwrapper.get_localized_string(30204) % int((metadata.offtime - now).seconds / 3600)
 
             if plot_meta:
                 metadata.plot = '%s\n%s' % (plot_meta, metadata.plot)
@@ -244,9 +244,9 @@ class VRTApiHelper:
             ascending = False
 
         # Add an "* All seasons" list item
-        if self._kodi_wrapper.get_global_setting('videolibrary.showallitems') is True:
+        if self._kodiwrapper.get_global_setting('videolibrary.showallitems') is True:
             season_items.append(TitleItem(
-                title=self._kodi_wrapper.get_localized_string(30096),
+                title=self._kodiwrapper.get_localized_string(30096),
                 url_dict=dict(action=actions.LISTING_ALL_EPISODES, video_url=api_url),
                 is_playable=False,
                 art_dict=dict(thumb=fanart, icon='DefaultSets.png', fanart=fanart),
@@ -258,7 +258,7 @@ class VRTApiHelper:
 
         for season in seasons:
             season_key = season.get('key')
-            label = '%s %s' % (self._kodi_wrapper.get_localized_string(30094), season_key)
+            label = '%s %s' % (self._kodiwrapper.get_localized_string(30094), season_key)
             params = {'facets[seasonTitle]': season_key}
             path = api_url + '&' + urlencode(params)
             season_items.append(TitleItem(
@@ -280,7 +280,7 @@ class VRTApiHelper:
             'q': search_string,
         }
         api_url = 'https://search.vrt.be/search?' + urlencode(params)
-        self._kodi_wrapper.log_notice('URL get: ' + api_url, 'Verbose')
+        self._kodiwrapper.log_notice('URL get: ' + api_url, 'Verbose')
         api_json = json.loads(urlopen(api_url).read())
 
         episodes = api_json.get('results', [{}])
@@ -296,7 +296,7 @@ class VRTApiHelper:
         crc = self.__get_crc32(url)
         ext = url.split('.')[-1]
         path = 'special://thumbnails/%s/%s.%s' % (crc[0], crc, ext)
-        self._kodi_wrapper.delete_path(path)
+        self._kodiwrapper.delete_path(path)
 
     @staticmethod
     def __get_crc32(string):
@@ -349,7 +349,7 @@ class VRTApiHelper:
                 # NOTE: Sort the episodes ourselves, because Kodi does not allow to set to 'descending'
                 # sort = 'episode'
                 sort = 'label'
-                label = '%s %s: %s' % (self._kodi_wrapper.get_localized_string(30095), result.get('episodeNumber'), label)
+                label = '%s %s: %s' % (self._kodiwrapper.get_localized_string(30095), result.get('episodeNumber'), label)
             elif options.get('showBroadcastDate') and result.get('formattedBroadcastShortDate'):
                 sort = 'dateadded'
                 label = '%s - %s' % (result.get('formattedBroadcastShortDate'), label)

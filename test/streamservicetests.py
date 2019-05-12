@@ -43,19 +43,19 @@ yesterday = now + timedelta(days=-1)
 
 class StreamServiceTests(unittest.TestCase):
 
-    _kodi_wrapper = mock.MagicMock()
-    _kodi_wrapper.get_proxies = mock.MagicMock(return_value=dict())
-    _kodi_wrapper.get_localized_dateshort = mock.MagicMock(return_value='%d-%m-%Y')
-    _kodi_wrapper.get_localized_string.return_value = mock.MagicMock(side_effect=get_localized_string)
-    _kodi_wrapper.get_setting = mock.MagicMock(side_effect=get_settings)
-    _kodi_wrapper.get_userdata_path.return_value = 'vrttest'
-    _kodi_wrapper.check_if_path_exists.return_value = False
-    _kodi_wrapper.make_dir.return_value = None
-    _kodi_wrapper.open_path.return_value = False
-    _kodi_wrapper.check_inputstream_adaptive.return_value = True
-    _api_helper = vrtapihelper.VRTApiHelper(_kodi_wrapper)
-    _token_resolver = tokenresolver.TokenResolver(_kodi_wrapper)
-    _stream_service = streamservice.StreamService(_kodi_wrapper, _token_resolver)
+    _kodiwrapper = mock.MagicMock()
+    _kodiwrapper.get_proxies = mock.MagicMock(return_value=dict())
+    _kodiwrapper.get_localized_dateshort = mock.MagicMock(return_value='%d-%m-%Y')
+    _kodiwrapper.get_localized_string.return_value = mock.MagicMock(side_effect=get_localized_string)
+    _kodiwrapper.get_setting = mock.MagicMock(side_effect=get_settings)
+    _kodiwrapper.get_userdata_path.return_value = 'vrttest'
+    _kodiwrapper.check_if_path_exists.return_value = False
+    _kodiwrapper.make_dir.return_value = None
+    _kodiwrapper.open_path.return_value = False
+    _kodiwrapper.check_inputstream_adaptive.return_value = True
+    _apihelper = vrtapihelper.VRTApiHelper(_kodiwrapper)
+    _tokenresolver = tokenresolver.TokenResolver(_kodiwrapper)
+    _streamservice = streamservice.StreamService(_kodiwrapper, _tokenresolver)
 
     def test_get_ondemand_stream_from_invalid_url(self):
         video = dict(
@@ -64,7 +64,7 @@ class StreamServiceTests(unittest.TestCase):
             publication_id=None,
         )
         try:
-            stream = self._stream_service.get_stream(video)
+            stream = self._streamservice.get_stream(video)
             self.assertEqual(stream.stream_url, video['video_url'])
         except HTTPError:
             pass
@@ -76,7 +76,7 @@ class StreamServiceTests(unittest.TestCase):
             video_id=None,
             publication_id=None,
         )
-        stream = self._stream_service.get_stream(video)
+        stream = self._streamservice.get_stream(video)
         self.assertTrue(stream is not None)
 
     def test_get_live_stream_from_url_does_not_crash_returns_stream_and_licensekey(self):
@@ -86,7 +86,7 @@ class StreamServiceTests(unittest.TestCase):
             video_id=None,
             publication_id=None,
         )
-        stream = self._stream_service.get_stream(video)
+        stream = self._streamservice.get_stream(video)
         self.assertTrue(stream is not None)
         self.assertTrue(stream.license_key is not None)
 
@@ -96,7 +96,7 @@ class StreamServiceTests(unittest.TestCase):
             video_id=None,
             publication_id=None,
         )
-        stream = self._stream_service.get_stream(video)
+        stream = self._streamservice.get_stream(video)
         self.assertTrue(stream is not None)
 
     def test_get_live_stream_from_id_does_not_crash(self):
@@ -105,7 +105,7 @@ class StreamServiceTests(unittest.TestCase):
             video_id=CHANNELS[1]['live_stream_id'],
             publication_id=None,
         )
-        stream = self._stream_service.get_stream(video)
+        stream = self._streamservice.get_stream(video)
         self.assertTrue(stream is not None)
 
 
