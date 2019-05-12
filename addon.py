@@ -26,46 +26,46 @@ def router(params_string):
     params = dict(parse_qsl(params_string))
     action = params.get('action')
 
-    kodi_wrapper = kodiwrapper.KodiWrapper(_ADDON_HANDLE, _ADDON_URL, addon)
-    kodi_wrapper.log_access(_ADDON_URL, params_string)
+    _kodiwrapper = kodiwrapper.KodiWrapper(_ADDON_HANDLE, _ADDON_URL, addon)
+    _kodiwrapper.log_access(_ADDON_URL, params_string)
 
     if action == actions.CLEAR_COOKIES:
         from resources.lib.vrtplayer import tokenresolver
-        token_resolver = tokenresolver.TokenResolver(kodi_wrapper)
-        token_resolver.reset_cookies()
+        _tokenresolver = tokenresolver.TokenResolver(_kodiwrapper)
+        _tokenresolver.reset_cookies()
         return
     if action == actions.LISTING_TVGUIDE:
         from resources.lib.vrtplayer import tvguide
-        tv_guide = tvguide.TVGuide(kodi_wrapper)
-        tv_guide.show_tvguide(params)
+        _tvguide = tvguide.TVGuide(_kodiwrapper)
+        _tvguide.show_tvguide(params)
         return
 
     from resources.lib.vrtplayer import vrtapihelper, vrtplayer
-    api_helper = vrtapihelper.VRTApiHelper(kodi_wrapper)
-    vrt_player = vrtplayer.VRTPlayer(kodi_wrapper, api_helper)
+    _apihelper = vrtapihelper.VRTApiHelper(_kodiwrapper)
+    _vrtplayer = vrtplayer.VRTPlayer(_kodiwrapper, _apihelper)
 
     if action == actions.PLAY:
-        vrt_player.play(params)
+        _vrtplayer.play(params)
     elif action == actions.LISTING_AZ_TVSHOWS:
-        vrt_player.show_tvshow_menu_items()
+        _vrtplayer.show_tvshow_menu_items()
     elif action == actions.LISTING_CATEGORIES:
-        vrt_player.show_category_menu_items()
+        _vrtplayer.show_category_menu_items()
     elif action == actions.LISTING_CATEGORY_TVSHOWS:
-        vrt_player.show_tvshow_menu_items(category=params.get('category'))
+        _vrtplayer.show_tvshow_menu_items(category=params.get('category'))
     elif action == actions.LISTING_CHANNELS:
-        vrt_player.show_channels_menu_items(channel=params.get('channel'))
+        _vrtplayer.show_channels_menu_items(channel=params.get('channel'))
     elif action == actions.LISTING_LIVE:
-        vrt_player.show_livestream_items()
+        _vrtplayer.show_livestream_items()
     elif action == actions.LISTING_EPISODES:
-        vrt_player.show_episodes(path=params.get('video_url'))
+        _vrtplayer.show_episodes(path=params.get('video_url'))
     elif action == actions.LISTING_ALL_EPISODES:
-        vrt_player.show_all_episodes(path=params.get('video_url'))
+        _vrtplayer.show_all_episodes(path=params.get('video_url'))
     elif action == actions.LISTING_RECENT:
-        vrt_player.show_recent(page=params.get('page', 1))
+        _vrtplayer.show_recent(page=params.get('page', 1))
     elif action == actions.SEARCH:
-        vrt_player.search(search_string=params.get('query'), page=params.get('page', 1))
+        _vrtplayer.search(search_string=params.get('query'), page=params.get('page', 1))
     else:
-        vrt_player.show_main_menu_items()
+        _vrtplayer.show_main_menu_items()
 
 
 if __name__ == '__main__':

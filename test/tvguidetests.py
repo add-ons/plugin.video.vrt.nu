@@ -16,21 +16,21 @@ channels = ['een', 'canvas', 'ketnet']
 
 class TestTVGuide(unittest.TestCase):
 
-    _kodi_wrapper = mock.MagicMock()
-    _kodi_wrapper.get_proxies = mock.MagicMock(return_value=dict())
-    _kodi_wrapper.get_localized_datelong = mock.MagicMock(return_value='%a %d-%m-%Y')
-    _tv_guide = tvguide.TVGuide(_kodi_wrapper)
+    _kodiwrapper = mock.MagicMock()
+    _kodiwrapper.get_proxies = mock.MagicMock(return_value=dict())
+    _kodiwrapper.get_localized_datelong = mock.MagicMock(return_value='%a %d-%m-%Y')
+    _tvguide = tvguide.TVGuide(_kodiwrapper)
 
     def test_tvguide_date_menu(self):
         ''' Test TV guide main menu '''
-        date_items = self._tv_guide.show_date_menu()
+        date_items = self._tvguide.show_date_menu()
         self.assertEqual(len(date_items), 38)
 
     def test_tvguide_channel_menu(self):
         ''' Test channel menu '''
         now = datetime.now(dateutil.tz.tzlocal())
         date = now.strftime('%Y-%m-%d')
-        channel_items = self._tv_guide.show_channel_menu(date)
+        channel_items = self._tvguide.show_channel_menu(date)
         self.assertTrue(channel_items)
 
     def test_tvguide_episode_menu(self):
@@ -38,7 +38,7 @@ class TestTVGuide(unittest.TestCase):
         now = datetime.now(dateutil.tz.tzlocal())
         date = now.strftime('%Y-%m-%d')
         channel = random.choice(channels)
-        episode_items = self._tv_guide.show_episodes(date, channel)
+        episode_items = self._tvguide.show_episodes(date, channel)
         self.assertTrue(episode_items)
 
 

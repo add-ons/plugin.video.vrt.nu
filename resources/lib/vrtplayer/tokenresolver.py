@@ -31,13 +31,13 @@ class TokenResolver:
     _ROAMING_XVRTTOKEN_COOKIE = 'roaming_XVRTToken'
     _XVRT_TOKEN_COOKIE = 'XVRTToken'
 
-    def __init__(self, kodi_wrapper):
-        self._kodi_wrapper = kodi_wrapper
-        self._proxies = self._kodi_wrapper.get_proxies()
+    def __init__(self, _kodiwrapper):
+        self._kodiwrapper = _kodiwrapper
+        self._proxies = _kodiwrapper.get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
 
     def get_ondemand_playertoken(self, token_url, xvrttoken):
-        token_path = self._kodi_wrapper.get_userdata_path() + self._ONDEMAND_COOKIE
+        token_path = self._kodiwrapper.get_userdata_path() + self._ONDEMAND_COOKIE
         token = self._get_cached_token(token_path, 'vrtPlayerToken')
 
         if xvrttoken and token is None:
@@ -47,7 +47,7 @@ class TokenResolver:
         return token
 
     def get_live_playertoken(self, token_url, xvrttoken):
-        token_path = self._kodi_wrapper.get_userdata_path() + self._LIVE_COOKIE
+        token_path = self._kodiwrapper.get_userdata_path() + self._LIVE_COOKIE
         token = self._get_cached_token(token_path, 'vrtPlayerToken')
         if token is None:
             if xvrttoken is not None:
@@ -60,7 +60,7 @@ class TokenResolver:
 
     def get_xvrttoken(self, get_roaming_token=False):
         token_filename = self._ROAMING_XVRTTOKEN_COOKIE if get_roaming_token else self._XVRT_TOKEN_COOKIE
-        token_path = self._kodi_wrapper.get_userdata_path() + token_filename
+        token_path = self._kodiwrapper.get_userdata_path() + token_filename
         token = self._get_cached_token(token_path, 'X-VRT-Token')
 
         if token is None:
@@ -75,7 +75,7 @@ class TokenResolver:
 
     def _get_new_playertoken(self, path, token_url, headers):
         import json
-        self._kodi_wrapper.log_notice('URL post: ' + token_url, 'Verbose')
+        self._kodiwrapper.log_notice('URL post: ' + token_url, 'Verbose')
         req = Request(token_url, data='', headers=headers)
         playertoken = json.loads(urlopen(req).read())
         json.dump(playertoken, open(path, 'w'))
@@ -84,7 +84,7 @@ class TokenResolver:
     def _get_cached_token(self, path, token_name):
         cached_token = None
 
-        if self._kodi_wrapper.check_if_path_exists(path):
+        if self._kodiwrapper.check_if_path_exists(path):
             from datetime import datetime
             import dateutil.parser
             import dateutil.tz
@@ -93,18 +93,18 @@ class TokenResolver:
             now = datetime.now(dateutil.tz.tzlocal())
             exp = dateutil.parser.parse(token.get('expirationDate'))
             if exp > now:
-                self._kodi_wrapper.log_notice('Got cached token', 'Verbose')
+                self._kodiwrapper.log_notice('Got cached token', 'Verbose')
                 cached_token = token.get(token_name)
             else:
-                self._kodi_wrapper.log_notice('Cached token deleted', 'Info')
-                self._kodi_wrapper.delete_path(path)
+                self._kodiwrapper.log_notice('Cached token deleted', 'Info')
+                self._kodiwrapper.delete_path(path)
         return cached_token
 
     def _get_new_xvrttoken(self, path, get_roaming_token):
         import json
-        cred = helperobjects.Credentials(self._kodi_wrapper)
+        cred = helperobjects.Credentials(self._kodiwrapper)
         if not cred.are_filled_in():
-            self._kodi_wrapper.open_settings()
+            self._kodiwrapper.open_settings()
             cred.reload()
         data = dict(
             loginID=cred.username,
@@ -113,7 +113,7 @@ class TokenResolver:
             APIKey=self._API_KEY,
             targetEnv='jssdk',
         )
-        self._kodi_wrapper.log_notice('URL post: ' + self._LOGIN_URL, 'Verbose')
+        self._kodiwrapper.log_notice('URL post: ' + self._LOGIN_URL, 'Verbose')
         req = Request(self._LOGIN_URL, data=urlencode(data))
         logon_json = json.loads(urlopen(req).read())
         token = None
@@ -127,7 +127,7 @@ class TokenResolver:
                 email=cred.username,
             )
             headers = {'Content-Type': 'application/json', 'Cookie': login_cookie}
-            self._kodi_wrapper.log_notice('URL post: ' + self._TOKEN_GATEWAY_URL, 'Verbose')
+            self._kodiwrapper.log_notice('URL post: ' + self._TOKEN_GATEWAY_URL, 'Verbose')
             req = Request(self._TOKEN_GATEWAY_URL, data=json.dumps(payload), headers=headers)
             cookie_data = urlopen(req).info().getheader('Set-Cookie').split('X-VRT-Token=')[1].split('; ')
             xvrttoken = TokenResolver._create_token_dictionary_from_urllib(cookie_data)
@@ -142,17 +142,17 @@ class TokenResolver:
 
     def _handle_error(self, logon_json, cred):
         error_message = logon_json.get('errorDetails')
-        title = self._kodi_wrapper.get_localized_string(30051)
+        title = self._kodiwrapper.get_localized_string(30051)
         if error_message == 'invalid loginID or password':
             cred.reset()
-            message = self._kodi_wrapper.get_localized_string(30052)
+            message = self._kodiwrapper.get_localized_string(30052)
         elif error_message == 'loginID must be provided':
-            message = self._kodi_wrapper.get_localized_string(30055)
+            message = self._kodiwrapper.get_localized_string(30055)
         elif error_message == 'Missing required parameter: password':
-            message = self._kodi_wrapper.get_localized_string(30056)
+            message = self._kodiwrapper.get_localized_string(30056)
         else:
             message = error_message
-        self._kodi_wrapper.show_ok_dialog(title, message)
+        self._kodiwrapper.show_ok_dialog(title, message)
 
     def _get_roaming_xvrttoken(self, xvrttoken):
         roaming_xvrttoken = None
@@ -160,7 +160,7 @@ class TokenResolver:
         cookie_value = 'X-VRT-Token=' + xvrttoken.get('X-VRT-Token')
         headers = {'Cookie': cookie_value}
         opener = build_opener(NoRedirection, ProxyHandler(self._proxies))
-        self._kodi_wrapper.log_notice('URL post: ' + url, 'Verbose')
+        self._kodiwrapper.log_notice('URL post: ' + url, 'Verbose')
         req = Request(url, headers=headers)
         req_info = opener.open(req).info()
         cookie_value += '; state=' + req_info.getheader('Set-Cookie').split('state=')[1].split('; ')[0]
@@ -168,7 +168,7 @@ class TokenResolver:
         url = opener.open(url).info().getheader('Location')
         headers = {'Cookie': cookie_value}
         if url is not None:
-            self._kodi_wrapper.log_notice('URL post: ' + url, 'Verbose')
+            self._kodiwrapper.log_notice('URL post: ' + url, 'Verbose')
             req = Request(url, headers=headers)
             cookie_data = opener.open(req).info().getheader('Set-Cookie').split('X-VRT-Token=')[1].split('; ')
             roaming_xvrttoken = TokenResolver._create_token_dictionary_from_urllib(cookie_data)
@@ -198,12 +198,12 @@ class TokenResolver:
         return token_dictionary
 
     def reset_cookies(self):
-        user_data_path = self._kodi_wrapper.get_userdata_path()
+        user_data_path = self._kodiwrapper.get_userdata_path()
         ondemand = user_data_path + self._ONDEMAND_COOKIE
         live = user_data_path + self._LIVE_COOKIE
         xvrt = user_data_path + self._XVRT_TOKEN_COOKIE
         roaming = user_data_path + self._ROAMING_XVRTTOKEN_COOKIE
-        self._kodi_wrapper.delete_path(ondemand)
-        self._kodi_wrapper.delete_path(live)
-        self._kodi_wrapper.delete_path(xvrt)
-        self._kodi_wrapper.delete_path(roaming)
+        self._kodiwrapper.delete_path(ondemand)
+        self._kodiwrapper.delete_path(live)
+        self._kodiwrapper.delete_path(xvrt)
+        self._kodiwrapper.delete_path(roaming)
