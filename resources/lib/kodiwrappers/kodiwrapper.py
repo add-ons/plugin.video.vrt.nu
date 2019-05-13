@@ -9,9 +9,10 @@ import xbmc
 import xbmcplugin
 
 try:
-    from urllib.parse import urlencode
+    from urllib.parse import urlencode, unquote
 except ImportError:
     from urllib import urlencode
+    from urllib2 import unquote
 
 sort_methods = dict(
     # date=xbmcplugin.SORT_METHOD_DATE,
@@ -128,9 +129,10 @@ class KodiWrapper:
         subtitles_visible = self.get_setting('showsubtitles') == 'true'
         # Separate subtitle url for hls-streams
         if subtitles_visible and video.subtitle_url is not None:
-            self.log_notice('Subtitle URL: ' + video.subtitle_url)
+            self.log_notice('Subtitle URL: ' + unquote(video.subtitle_url), 'Verbose')
             play_item.setSubtitles([video.subtitle_url])
 
+        self.log_notice('Play: %s' % unquote(video.stream_url), 'Info')
         xbmcplugin.setResolvedUrl(self._handle, bool(video.stream_url), listitem=play_item)
         while not xbmc.Player().isPlaying() and not xbmc.Monitor().abortRequested():
             xbmc.sleep(100)
@@ -270,7 +272,7 @@ class KodiWrapper:
         ''' Log addon access '''
         if log_levels.get(log_level, 0) <= self._max_log_level:
             message = url + ('?' if query_string else '') + query_string
-            xbmc.log(msg='[%s] Access: %s' % (self._addon_id, message), level=xbmc.LOGNOTICE)
+            xbmc.log(msg='[%s] Access: %s' % (self._addon_id, unquote(message)), level=xbmc.LOGNOTICE)
 
     def log_notice(self, message, log_level='Info'):
         ''' Log info messages to Kodi '''

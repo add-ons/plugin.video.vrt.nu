@@ -98,7 +98,7 @@ class TokenResolver:
                 self._kodiwrapper.log_notice('Got cached token', 'Verbose')
                 cached_token = token.get(token_name)
             else:
-                self._kodiwrapper.log_notice('Cached token deleted', 'Info')
+                self._kodiwrapper.log_notice('Cached token deleted', 'Verbose')
                 self._kodiwrapper.delete_file(path)
         return cached_token
 
