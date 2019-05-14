@@ -75,16 +75,16 @@ class VRTApiHelper:
         season_items = []
         sort = 'label'
         ascending = True
-        if api_json.get('results'):
-            episode = api_json['results'][0]
-        else:
-            episode = dict()
-        facets = api_json.get('facets', dict()).get('facets', [])
-        # Check if program has seasons
-        for facet in facets:
-            if facet.get('name') == 'seasons' and len(facet.get('buckets', [])) > 1:
+        episodes = api_json.get('results')
+        facets = api_json.get('facets', dict()).get('facets')
+        if episodes and facets:
+            try:
+                # Check if program has seasons
+                facet = next(f for f in facets if f.get('name') == 'seasons' and len(f.get('buckets', [])) > 1)
                 # Found multiple seasons, make list of seasons
-                season_items, sort, ascending = self._map_to_season_items(api_url, facet.get('buckets', []), episode)
+                season_items, sort, ascending = self._map_to_season_items(api_url, facet.get('buckets', []), episodes)
+            except StopIteration:
+                pass
         return season_items, sort, ascending
 
     def get_episode_items(self, path=None, page=None, all_seasons=False):
@@ -185,7 +185,7 @@ class VRTApiHelper:
             else:
                 metadata.plotoutline = episode.get('subtitle')
                 metadata.subtitle = episode.get('subtitle')
-            metadata.season = episode.get('seasonName')
+            metadata.season = episode.get('seasonTitle')
             metadata.episode = episode.get('episodeNumber')
             metadata.mediatype = episode.get('type', 'episode')
             metadata.permalink = statichelper.shorten_link(episode.get('permalink')) or episode.get('externalPermalink')
@@ -229,16 +229,32 @@ class VRTApiHelper:
             ))
         return episode_items, sort, ascending
 
-    def _map_to_season_items(self, api_url, seasons, episode):
+    def _map_to_season_items(self, api_url, seasons, episodes):
+        import random
+
         season_items = []
         sort = 'label'
         ascending = True
 
-        fanart = statichelper.add_https_method(episode.get('programImageUrl', 'DefaultSets.png'))
+        episode = random.choice(episodes)
         program_type = episode.get('programType')
+        fanart = statichelper.add_https_method(episode.get('programImageUrl', 'DefaultSets.png'))
+
         metadata = metadatacreator.MetadataCreator()
+        metadata.tvshowtitle = episode.get('program')
+        metadata.subtitle = statichelper.convert_html_to_kodilabel(episode.get('programDescription'))
+        metadata.plot = statichelper.convert_html_to_kodilabel(episode.get('programDescription'))
         metadata.mediatype = 'season'
         metadata.brands = episode.get('programBrands') or episode.get('brands')
+        metadata.geolocked = episode.get('allowedRegion') == 'BE'
+        metadata.season = episode.get('seasonTitle')
+
+        # Add additional metadata to plot
+        plot_meta = ''
+        if metadata.geolocked:
+            # Show Geo-locked
+            plot_meta += self._kodiwrapper.get_localized_string(30201) + '\n'
+        metadata.plot = '%s[B]%s[/B]\n%s' % (plot_meta, episode.get('program'), metadata.plot)
 
         # Reverse sort seasons if program_type is 'reeksaflopend' or 'daily'
         if program_type in ('daily', 'reeksaflopend'):
@@ -258,15 +274,18 @@ class VRTApiHelper:
         seasons = sorted(seasons, key=lambda k: k['key'], reverse=not ascending)
 
         for season in seasons:
-            season_key = season.get('key')
-            label = '%s %s' % (self._kodiwrapper.get_localized_string(30094), season_key)
+            season_key = season['key']
+            episode = random.choice([e for e in episodes if e['seasonName'] == season_key])
+            fanart = statichelper.add_https_method(episode.get('programImageUrl', 'DefaultSets.png'))
+            thumbnail = statichelper.add_https_method(episode.get('videoThumbnailUrl', fanart))
+            label = '%s %s' % (self._kodiwrapper.get_localized_string(30094), episode.get('seasonTitle'))
             params = {'facets[seasonTitle]': season_key}
             path = api_url + '&' + urlencode(params)
             season_items.append(TitleItem(
                 title=label,
                 url_dict=dict(action=actions.LISTING_EPISODES, video_url=path),
                 is_playable=False,
-                art_dict=dict(thumb=fanart, icon='DefaultSets.png', fanart=fanart),
+                art_dict=dict(thumb=thumbnail, icon='DefaultSets.png', fanart=fanart),
                 video_dict=metadata.get_video_dict(),
             ))
         return season_items, sort, ascending
