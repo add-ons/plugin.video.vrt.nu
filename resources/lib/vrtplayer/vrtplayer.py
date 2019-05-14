@@ -133,12 +133,12 @@ class VRTPlayer:
         self._kodiwrapper.show_listing(channel_items, cache=False)
 
     def show_episodes(self, path):
-        episode_items, sort, ascending = self._apihelper.get_episode_items(path=path)
-        self._kodiwrapper.show_listing(episode_items, sort=sort, ascending=ascending, content='episodes')
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(path=path)
+        self._kodiwrapper.show_listing(episode_items, sort=sort, ascending=ascending, content=content)
 
     def show_all_episodes(self, path):
-        episode_items, sort, ascending = self._apihelper.get_episode_items(path=path, all_seasons=True)
-        self._kodiwrapper.show_listing(episode_items, sort=sort, ascending=ascending, content='episodes')
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(path=path, all_seasons=True)
+        self._kodiwrapper.show_listing(episode_items, sort=sort, ascending=ascending, content=content)
 
     def show_recent(self, page):
         try:
@@ -146,7 +146,7 @@ class VRTPlayer:
         except TypeError:
             page = 1
 
-        episode_items, sort, ascending = self._apihelper.get_episode_items(page=page)
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=page)
 
         # Add 'More...' entry at the end
         episode_items.append(TitleItem(
@@ -157,7 +157,7 @@ class VRTPlayer:
             video_dict=dict(),
         ))
 
-        self._kodiwrapper.show_listing(episode_items, sort=sort, ascending=ascending, content='episodes', cache=False)
+        self._kodiwrapper.show_listing(episode_items, sort=sort, ascending=ascending, content=content, cache=False)
 
     def play(self, params):
         from resources.lib.vrtplayer import streamservice, tokenresolver
@@ -179,7 +179,7 @@ class VRTPlayer:
         if not search_string:
             return
 
-        search_items, sort, ascending = self._apihelper.search(search_string, page=page)
+        search_items, sort, ascending, content = self._apihelper.search(search_string, page=page)
         if not search_items:
             self._kodiwrapper.show_ok_dialog(self._kodiwrapper.get_localized_string(30098), self._kodiwrapper.get_localized_string(30099) % search_string)
             return
@@ -194,7 +194,7 @@ class VRTPlayer:
                 video_dict=dict(),
             ))
 
-        self._kodiwrapper.show_listing(search_items, sort=sort, ascending=ascending, content='episodes', cache=False)
+        self._kodiwrapper.show_listing(search_items, sort=sort, ascending=ascending, content=content, cache=False)
 
     def __get_category_menu_items(self):
         try:

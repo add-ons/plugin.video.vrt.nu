@@ -42,58 +42,64 @@ class TestVRTPlayer(unittest.TestCase):
 
     def test_show_videos_single_episode_shows_videos(self):
         path = '/vrtnu/a-z/marathonradio.relevant/'
-        episode_items, sort, ascending = self._apihelper.get_episode_items(path=path)
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(path=path)
         self.assertTrue(episode_items, msg=path)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
+        self.assertEqual(content, 'episodes')
 
         self._vrtplayer.show_episodes(path)
         self.assertTrue(self._kodiwrapper.show_listing.called)
 
     def test_show_videos_single_season_shows_videos(self):
         path = '/vrtnu/a-z/het-weer.relevant/'
-        episode_items, sort, ascending = self._apihelper.get_episode_items(path=path)
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(path=path)
         self.assertTrue(episode_items, msg=path)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
+        self.assertEqual(content, 'episodes')
 
         self._vrtplayer.show_episodes(path)
         self.assertTrue(self._kodiwrapper.show_listing.called)
 
     def test_show_videos_multiple_seasons_shows_videos(self):
         path = '/vrtnu/a-z/pano.relevant/'
-        episode_items, sort, ascending = self._apihelper.get_episode_items(path=path)
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(path=path)
         self.assertTrue(episode_items)
         self.assertEqual(sort, 'label')
         self.assertFalse(ascending)
+        self.assertEqual(content, 'seasons')
 
         self._vrtplayer.show_episodes(path)
         self.assertTrue(self._kodiwrapper.show_listing.called)
 
     def test_show_videos_specific_seasons_shows_videos(self):
         path = '/vrtnu/a-z/thuis.relevant/'
-        episode_items, sort, ascending = self._apihelper.get_episode_items(path=path)
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(path=path)
         self.assertTrue(episode_items, msg=path)
         self.assertEqual(sort, 'label')
         self.assertFalse(ascending)
+        self.assertEqual(content, 'seasons')
 
         self._vrtplayer.show_episodes(path)
         self.assertTrue(self._kodiwrapper.show_listing.called)
 
     def test_get_recent_episodes(self):
         ''' Test items, sort and order '''
-        episode_items, sort, ascending = self._apihelper.get_episode_items(page=1)
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=1)
         self.assertEqual(len(episode_items), 50)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
+        self.assertEqual(content, 'episodes')
 
     def test_get_program_episodes(self):
         ''' Test items, sort and order '''
         path = '/vrtnu/a-z/het-journaal.relevant/'
-        episode_items, sort, ascending = self._apihelper.get_episode_items(path=path)
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(path=path)
         self.assertTrue(episode_items)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
+        self.assertEqual(content, 'episodes')
 
     def test_get_tvshows(self):
         ''' Test items, sort and order '''
@@ -117,8 +123,9 @@ class TestVRTPlayer(unittest.TestCase):
         self.assertTrue(tvshow_items, msg=category['id'])
 
         tvshow = random.choice(tvshow_items)
-        episode_items, sort, ascending = self._apihelper.get_episode_items(tvshow.url_dict['video_url'])
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(tvshow.url_dict['video_url'])
         self.assertTrue(episode_items, msg=tvshow.url_dict['video_url'])
+        self.assertTrue(content in ['episodes', 'seasons'], "Content for '%s' is '%s'" % (tvshow.title, content))
 
 
 if __name__ == '__main__':

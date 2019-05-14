@@ -20,3 +20,4 @@ script:
 - python test/vrtplayertests.py
 - python test/apihelpertests.py
 - python test/tvguidetests.py
+- python test/searchtests.py
