@@ -34,6 +34,56 @@ log_levels = dict(
     Debug=3,
 )
 
+WEEKDAY_LONG = {
+    '0': xbmc.getLocalizedString(17),
+    '1': xbmc.getLocalizedString(11),
+    '2': xbmc.getLocalizedString(12),
+    '3': xbmc.getLocalizedString(13),
+    '4': xbmc.getLocalizedString(14),
+    '5': xbmc.getLocalizedString(15),
+    '6': xbmc.getLocalizedString(16),
+}
+
+MONTH_LONG = {
+    '01': xbmc.getLocalizedString(21),
+    '02': xbmc.getLocalizedString(22),
+    '03': xbmc.getLocalizedString(23),
+    '04': xbmc.getLocalizedString(24),
+    '05': xbmc.getLocalizedString(25),
+    '06': xbmc.getLocalizedString(26),
+    '07': xbmc.getLocalizedString(27),
+    '08': xbmc.getLocalizedString(28),
+    '09': xbmc.getLocalizedString(29),
+    '10': xbmc.getLocalizedString(30),
+    '11': xbmc.getLocalizedString(31),
+    '12': xbmc.getLocalizedString(32),
+}
+
+WEEKDAY_SHORT = {
+    '0': xbmc.getLocalizedString(47),
+    '1': xbmc.getLocalizedString(41),
+    '2': xbmc.getLocalizedString(42),
+    '3': xbmc.getLocalizedString(43),
+    '4': xbmc.getLocalizedString(44),
+    '5': xbmc.getLocalizedString(45),
+    '6': xbmc.getLocalizedString(46),
+}
+
+MONTH_SHORT = {
+    '01': xbmc.getLocalizedString(51),
+    '02': xbmc.getLocalizedString(52),
+    '03': xbmc.getLocalizedString(53),
+    '04': xbmc.getLocalizedString(54),
+    '05': xbmc.getLocalizedString(55),
+    '06': xbmc.getLocalizedString(56),
+    '07': xbmc.getLocalizedString(57),
+    '08': xbmc.getLocalizedString(58),
+    '09': xbmc.getLocalizedString(59),
+    '10': xbmc.getLocalizedString(60),
+    '11': xbmc.getLocalizedString(61),
+    '12': xbmc.getLocalizedString(62),
+}
+
 
 def has_socks():
     ''' Test if socks is installed, and remember this information '''
@@ -56,6 +106,7 @@ class KodiWrapper:
         self._addon_id = addon.getAddonInfo('id')
         self._max_log_level = log_levels.get(self.get_setting('max_log_level'), 3)
         self._usemenucaching = self.get_setting('usemenucaching') == 'true'
+        self._system_locale_works = self.set_locale()
 
     def show_listing(self, list_items, sort='unsorted', ascending=True, content=None, cache=None):
         import xbmcgui
@@ -156,8 +207,10 @@ class KodiWrapper:
         try:
             # NOTE: This only works if the platform supports the Kodi configured locale
             locale.setlocale(locale.LC_ALL, locale_lang)
+            return True
         except Exception as e:
             self.log_notice(e, 'Verbose')
+            return False
 
     def get_localized_string(self, string_id):
         return self._addon.getLocalizedString(string_id)
@@ -167,6 +220,24 @@ class KodiWrapper:
 
     def get_localized_datelong(self):
         return xbmc.getRegion('datelong')
+
+    def localize_date(self, date, strftime):
+        if not self._system_locale_works:
+            if '%a' in strftime:
+                strftime = strftime.replace('%a', WEEKDAY_SHORT[date.strftime('%w')])
+            elif '%A' in strftime:
+                strftime = strftime.replace('%A', WEEKDAY_LONG[date.strftime('%w')])
+            if '%b' in strftime:
+                strftime = strftime.replace('%b', MONTH_SHORT[date.strftime('%m')])
+            elif '%B' in strftime:
+                strftime = strftime.replace('%B', MONTH_LONG[date.strftime('%m')])
+        return date.strftime(strftime)
+
+    def localize_dateshort(self, date):
+        return self.localize_date(date, self.get_localized_dateshort())
+
+    def localize_datelong(self, date):
+        return self.localize_date(date, self.get_localized_datelong())
 
     def get_setting(self, setting_id):
         return self._addon.getSetting(setting_id)
