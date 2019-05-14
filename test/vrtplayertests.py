@@ -5,24 +5,13 @@
 # pylint: disable=unused-variable
 
 from __future__ import absolute_import, division, print_function, unicode_literals
-from contextlib import contextmanager
 import mock
 import os
 import random
 import unittest
 
 from resources.lib.vrtplayer import CATEGORIES, CHANNELS, vrtapihelper, vrtplayer
-
-
-@contextmanager
-def open_file(path, flags='r'):
-    f = open(path, flags)
-    yield f
-    f.close()
-
-
-def log_notice(msg, level):
-    print('%s: %s' % (level, msg))
+from test import get_setting, log_notice, open_file
 
 
 class TestVRTPlayer(unittest.TestCase):
@@ -31,10 +20,10 @@ class TestVRTPlayer(unittest.TestCase):
     _kodiwrapper.check_if_path_exists = mock.MagicMock(side_effect=os.path.exists)
     _kodiwrapper.get_localized_dateshort = mock.MagicMock(return_value='%d-%m-%Y')
     _kodiwrapper.get_proxies = mock.MagicMock(return_value=dict())
+    _kodiwrapper.get_setting = mock.MagicMock(side_effect=get_setting)
     _kodiwrapper.get_userdata_path.return_value = './userdata/'
     _kodiwrapper.log_notice = mock.MagicMock(side_effect=log_notice)
     _kodiwrapper.open_file = mock.MagicMock(side_effect=open_file)
-    # _kodiwrapper.stat_file = mock.MagicMock(side_effect=os.stat)
     _apihelper = vrtapihelper.VRTApiHelper(_kodiwrapper)
     _vrtplayer = vrtplayer.VRTPlayer(_kodiwrapper, _apihelper)
 

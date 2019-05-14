@@ -33,12 +33,13 @@ class VRTApiHelper:
 
         if category:
             params['facets[categories]'] = category
-        else:
-            # If no path is provided, we return the A-Z listing
-            params['facets[transcodingStatus]'] = 'AVAILABLE'
 
         if channel:
             params['facets[programBrands]'] = channel
+
+        # If no facet-selection is done, we return the A-Z listing
+        if not category and not channel:
+            params['facets[transcodingStatus]'] = 'AVAILABLE'
 
         api_url = self._VRTNU_SUGGEST_URL + '?' + urlencode(params)
         self._kodiwrapper.log_notice('URL get: ' + unquote(api_url), 'Verbose')
@@ -95,7 +96,7 @@ class VRTApiHelper:
         # Recent items
         if page:
             params = {
-                'from': (page - 1) * 50,
+                'from': ((page - 1) * 50) + 1,
                 'i': 'video',
                 'size': 50,
                 'facets[transcodingStatus]': 'AVAILABLE',
@@ -274,7 +275,7 @@ class VRTApiHelper:
         import json
 
         params = {
-            'from': (page - 1) * 50,
+            'from': ((page - 1) * 50) + 1,
             'i': 'video',
             'size': 50,
             'q': search_string,

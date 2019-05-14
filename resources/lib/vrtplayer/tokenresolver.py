@@ -163,7 +163,7 @@ class TokenResolver:
         cookie_value = 'X-VRT-Token=' + xvrttoken.get('X-VRT-Token')
         headers = {'Cookie': cookie_value}
         opener = build_opener(NoRedirection, ProxyHandler(self._proxies))
-        self._kodiwrapper.log_notice('URL post: ' + unquote(url), 'Verbose')
+        self._kodiwrapper.log_notice('URL get: ' + unquote(url), 'Verbose')
         req = Request(url, headers=headers)
         req_info = opener.open(req).info()
         cookie_value += '; state=' + req_info.getheader('Set-Cookie').split('state=')[1].split('; ')[0]
@@ -171,7 +171,7 @@ class TokenResolver:
         url = opener.open(url).info().getheader('Location')
         headers = {'Cookie': cookie_value}
         if url is not None:
-            self._kodiwrapper.log_notice('URL post: ' + unquote(url), 'Verbose')
+            self._kodiwrapper.log_notice('URL get: ' + unquote(url), 'Verbose')
             req = Request(url, headers=headers)
             cookie_data = opener.open(req).info().getheader('Set-Cookie').split('X-VRT-Token=')[1].split('; ')
             roaming_xvrttoken = TokenResolver._create_token_dictionary_from_urllib(cookie_data)

@@ -8,39 +8,13 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from datetime import datetime, timedelta
 import dateutil.tz
 import mock
-import polib
 import unittest
 from urllib2 import HTTPError
 
 from resources.lib.vrtplayer import CHANNELS, streamservice, tokenresolver, vrtapihelper
+from test import SETTINGS, get_setting, get_localized_string, log_notice
 
-SETTINGS = dict(
-    username='qsdfdsq',
-    password='qsdfqsdfds',
-    showsubtitles='true',
-    showpermalink='true',
-    usedrm='false',
-)
-
-PO = polib.pofile('resources/language/resource.language.en_gb/strings.po')
-
-
-def get_settings(key):
-    return SETTINGS[key]
-
-
-def get_localized_string(msgctxt):
-    for entry in PO:
-        if entry.msgctxt == '#%s' % msgctxt:
-            return entry.msgstr
-    return 'vrttest'
-
-
-def log_notice(msg, level):
-    print('%s: %s' % (level, msg))
-
-
-use_drm = False
+SETTINGS['use_drm'] = 'false'
 now = datetime.now(dateutil.tz.tzlocal())
 yesterday = now + timedelta(days=-1)
 
@@ -53,8 +27,8 @@ class StreamServiceTests(unittest.TestCase):
     _kodiwrapper.get_localized_dateshort = mock.MagicMock(return_value='%d-%m-%Y')
     _kodiwrapper.get_localized_string = mock.MagicMock(side_effect=get_localized_string)
     _kodiwrapper.get_proxies = mock.MagicMock(return_value=dict())
-    _kodiwrapper.get_setting = mock.MagicMock(side_effect=get_settings)
-    _kodiwrapper.get_userdata_path.return_value = 'vrttest'
+    _kodiwrapper.get_setting = mock.MagicMock(side_effect=get_setting)
+    _kodiwrapper.get_userdata_path.return_value = './userdata/'
     _kodiwrapper.log_notice = mock.MagicMock(side_effect=log_notice)
     _kodiwrapper.make_dir.return_value = None
     _apihelper = vrtapihelper.VRTApiHelper(_kodiwrapper)

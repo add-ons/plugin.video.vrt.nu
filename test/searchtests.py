@@ -3,37 +3,27 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, print_function, unicode_literals
-from contextlib import contextmanager
 import mock
 import os
 import unittest
 
 from resources.lib.vrtplayer import vrtapihelper
+from test import get_setting, log_notice, open_file, stat_file
 
 
-@contextmanager
-def open_file(path, flags='r'):
-    f = open(path, flags)
-    yield f
-    f.close()
-
-
-def log_notice(msg, level):
-    print('%s: %s' % (level, msg))
-
-
-class TestVRTPlayer(unittest.TestCase):
+class TestSearch(unittest.TestCase):
 
     _kodiwrapper = mock.MagicMock()
     _kodiwrapper.check_if_path_exists = mock.MagicMock(side_effect=os.path.exists)
+    _kodiwrapper.check_inputstream_adaptive.return_value = True
     _kodiwrapper.get_localized_dateshort = mock.MagicMock(return_value='%d-%m-%Y')
-    _kodiwrapper.get_localized_string.return_value = '"[B][COLOR blue]Available until %s[/COLOR][/B]\n"'
     _kodiwrapper.get_proxies = mock.MagicMock(return_value=dict())
+    _kodiwrapper.get_setting = mock.MagicMock(side_effect=get_setting)
     _kodiwrapper.get_userdata_path.return_value = './userdata/'
     _kodiwrapper.log_notice = mock.MagicMock(side_effect=log_notice)
     _kodiwrapper.make_dir.return_value = None
     _kodiwrapper.open_file = mock.MagicMock(side_effect=open_file)
-    _kodiwrapper.stat_file = mock.MagicMock(side_effect=os.stat)
+    _kodiwrapper.stat_file = mock.MagicMock(side_effect=stat_file)
     _apihelper = vrtapihelper.VRTApiHelper(_kodiwrapper)
 
     def test_search_journaal(self):

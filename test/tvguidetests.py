@@ -10,12 +10,9 @@ import random
 import unittest
 
 from resources.lib.vrtplayer import tvguide
+from test import log_notice
 
 channels = ['een', 'canvas', 'ketnet']
-
-
-def log_notice(msg, level):
-    print('%s: %s' % (level, msg))
 
 
 class TestTVGuide(unittest.TestCase):
@@ -23,7 +20,9 @@ class TestTVGuide(unittest.TestCase):
     _kodiwrapper = mock.MagicMock()
     _kodiwrapper.get_localized_datelong = mock.MagicMock(return_value='%a %d-%m-%Y')
     _kodiwrapper.get_proxies = mock.MagicMock(return_value=dict())
+    _kodiwrapper.get_userdata_path.return_value = './userdata/'
     _kodiwrapper.log_notice = mock.MagicMock(side_effect=log_notice)
+    _kodiwrapper.make_dir.return_value = None
     _tvguide = tvguide.TVGuide(_kodiwrapper)
 
     def test_tvguide_date_menu(self):
