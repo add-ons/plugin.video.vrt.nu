@@ -223,11 +223,11 @@ class VRTPlayer:
         from bs4 import BeautifulSoup, SoupStrainer
         self._kodiwrapper.log_notice('URL get: https://www.vrt.be/vrtnu/categorieen/', 'Verbose')
         response = urlopen('https://www.vrt.be/vrtnu/categorieen/')
-        tiles = SoupStrainer('a', {'class': 'nui-tile'})
+        tiles = SoupStrainer('nui-list--content')
         soup = BeautifulSoup(response.read(), 'html.parser', parse_only=tiles)
 
         categories = []
-        for tile in soup.find_all(class_='nui-tile'):
+        for tile in soup.find_all('nui-tile'):
             categories.append(dict(
                 id=tile.get('href').split('/')[-2],
                 thumbnail=self.get_category_thumbnail(tile),
@@ -245,7 +245,7 @@ class VRTPlayer:
     @staticmethod
     def get_category_title(element):
         from resources.lib.vrtplayer import statichelper
-        found_element = element.find('h3')
-        if found_element is not None:
+        found_element = element.find('a')
+        if found_element:
             return statichelper.strip_newlines(found_element.contents[0])
         return ''
