@@ -33,7 +33,6 @@ class TVGuide:
         self._kodiwrapper = _kodiwrapper
         self._proxies = _kodiwrapper.get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
-        _kodiwrapper.set_locale()
 
     def show_tvguide(self, params):
         date = params.get('date')
@@ -56,7 +55,7 @@ class TVGuide:
         date_items = []
         for i in range(7, -31, -1):
             day = now + timedelta(days=i)
-            title = day.strftime(self._kodiwrapper.get_localized_datelong())
+            title = self._kodiwrapper.localize_datelong(day)
             if str(i) in DATE_STRINGS:
                 if i == 0:
                     title = '[COLOR yellow][B]%s[/B], %s[/COLOR]' % (self._kodiwrapper.get_localized_string(DATE_STRINGS[str(i)]), title)
@@ -67,13 +66,13 @@ class TVGuide:
                 url_dict=dict(action=actions.LISTING_TVGUIDE, date=day.strftime('%Y-%m-%d')),
                 is_playable=False,
                 art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
-                video_dict=dict(plot=day.strftime(self._kodiwrapper.get_localized_datelong())),
+                video_dict=dict(plot=self._kodiwrapper.localize_datelong(day)),
             ))
         return date_items
 
     def show_channel_menu(self, date):
         dateobj = dateutil.parser.parse(date)
-        datelong = dateobj.strftime(self._kodiwrapper.get_localized_datelong())
+        datelong = self._kodiwrapper.localize_datelong(dateobj)
 
         fanart_path = 'resource://resource.images.studios.white/%(studio)s.png'
         icon_path = 'resource://resource.images.studios.white/%(studio)s.png'
@@ -100,7 +99,7 @@ class TVGuide:
     def show_episodes(self, date, channel):
         now = datetime.now(dateutil.tz.tzlocal())
         dateobj = dateutil.parser.parse(date)
-        datelong = dateobj.strftime(self._kodiwrapper.get_localized_datelong())
+        datelong = self._kodiwrapper.localize_datelong(dateobj)
         api_url = dateobj.strftime(self.VRT_TVGUIDE)
         self._kodiwrapper.log_notice('URL get: ' + api_url, 'Verbose')
         schedule = json.loads(urlopen(api_url).read())
