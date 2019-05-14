@@ -14,9 +14,9 @@ except ImportError:
 
 class VRTPlayer:
 
-    def __init__(self, _kodiwrapper, _apihelper):
-        self._kodiwrapper = _kodiwrapper
-        self._proxies = _kodiwrapper.get_proxies()
+    def __init__(self, _kodi, _apihelper):
+        self._kodi = _kodi
+        self._proxies = _kodi.get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
         self._apihelper = _apihelper
 
@@ -24,86 +24,86 @@ class VRTPlayer:
         main_items = []
 
         # Only add 'My programs' when this is enabled in config
-        if self._kodiwrapper.get_setting('usefavorites') == 'true':
+        if self._kodi.get_setting('usefavorites') == 'true':
             main_items.append(TitleItem(
-                title=self._kodiwrapper.get_localized_string(30078),
+                title=self._kodi.localize(30078),
                 url_dict=dict(action=actions.LISTING_FAVORITES),
                 is_playable=False,
                 art_dict=dict(thumb='icons/settings/profiles.png', icon='icons/settings/profiles.png', fanart='icons/settings/profiles.png'),
-                video_dict=dict(plot=self._kodiwrapper.get_localized_string(30079))
+                video_dict=dict(plot=self._kodi.localize(30079))
             ))
 
         main_items.extend([
-            TitleItem(title=self._kodiwrapper.get_localized_string(30080),
+            TitleItem(title=self._kodi.localize(30080),
                       url_dict=dict(action=actions.LISTING_AZ_TVSHOWS),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultMovieTitle.png', icon='DefaultMovieTitle.png', fanart='DefaultMovieTitle.png'),
-                      video_dict=dict(plot=self._kodiwrapper.get_localized_string(30081))),
-            TitleItem(title=self._kodiwrapper.get_localized_string(30082),
+                      video_dict=dict(plot=self._kodi.localize(30081))),
+            TitleItem(title=self._kodi.localize(30082),
                       url_dict=dict(action=actions.LISTING_CATEGORIES),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultGenre.png', icon='DefaultGenre.png', fanart='DefaultGenre.png'),
-                      video_dict=dict(plot=self._kodiwrapper.get_localized_string(30083))),
-            TitleItem(title=self._kodiwrapper.get_localized_string(30084),
+                      video_dict=dict(plot=self._kodi.localize(30083))),
+            TitleItem(title=self._kodi.localize(30084),
                       url_dict=dict(action=actions.LISTING_CHANNELS),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultTags.png', icon='DefaultTags.png', fanart='DefaultTags.png'),
-                      video_dict=dict(plot=self._kodiwrapper.get_localized_string(30085))),
-            TitleItem(title=self._kodiwrapper.get_localized_string(30086),
+                      video_dict=dict(plot=self._kodi.localize(30085))),
+            TitleItem(title=self._kodi.localize(30086),
                       url_dict=dict(action=actions.LISTING_LIVE),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultAddonPVRClient.png', icon='DefaultAddonPVRClient.png', fanart='DefaultAddonPVRClient.png'),
-                      video_dict=dict(plot=self._kodiwrapper.get_localized_string(30087))),
-            TitleItem(title=self._kodiwrapper.get_localized_string(30088),
+                      video_dict=dict(plot=self._kodi.localize(30087))),
+            TitleItem(title=self._kodi.localize(30088),
                       url_dict=dict(action=actions.LISTING_RECENT, page='1'),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
-                      video_dict=dict(plot=self._kodiwrapper.get_localized_string(30089))),
-            TitleItem(title=self._kodiwrapper.get_localized_string(30090),
+                      video_dict=dict(plot=self._kodi.localize(30089))),
+            TitleItem(title=self._kodi.localize(30090),
                       url_dict=dict(action=actions.LISTING_TVGUIDE),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultAddonTvInfo.png', icon='DefaultAddonTvInfo.png', fanart='DefaultAddonTvInfo.png'),
-                      video_dict=dict(plot=self._kodiwrapper.get_localized_string(30091))),
-            TitleItem(title=self._kodiwrapper.get_localized_string(30092),
+                      video_dict=dict(plot=self._kodi.localize(30091))),
+            TitleItem(title=self._kodi.localize(30092),
                       url_dict=dict(action=actions.SEARCH),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultAddonsSearch.png', icon='DefaultAddonsSearch.png', fanart='DefaultAddonsSearch.png'),
-                      video_dict=dict(plot=self._kodiwrapper.get_localized_string(30093))),
+                      video_dict=dict(plot=self._kodi.localize(30093))),
         ])
-        self._kodiwrapper.show_listing(main_items)
+        self._kodi.show_listing(main_items)
 
     def show_favorites_menu_items(self):
         favorites_items = [
-            TitleItem(title=self._kodiwrapper.get_localized_string(30420),
+            TitleItem(title=self._kodi.localize(30420),
                       url_dict=dict(action=actions.LISTING_AZ_TVSHOWS, filtered=True),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultMovieTitle.png', icon='DefaultMovieTitle.png', fanart='DefaultMovieTitle.png'),
-                      video_dict=dict(plot=self._kodiwrapper.get_localized_string(30421))),
-            TitleItem(title=self._kodiwrapper.get_localized_string(30422),
+                      video_dict=dict(plot=self._kodi.localize(30421))),
+            TitleItem(title=self._kodi.localize(30422),
                       url_dict=dict(action=actions.LISTING_RECENT, page='1', filtered=True),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
-                      video_dict=dict(plot=self._kodiwrapper.get_localized_string(30423))),
+                      video_dict=dict(plot=self._kodi.localize(30423))),
         ]
-        self._kodiwrapper.show_listing(favorites_items)
+        self._kodi.show_listing(favorites_items)
 
         # Show dialog when no favorites were found
         from resources.lib.vrtplayer import favorites
-        if not favorites.Favorites(self._kodiwrapper).names():
-            self._kodiwrapper.show_ok_dialog(self._kodiwrapper.get_localized_string(30415), self._kodiwrapper.get_localized_string(30416))
+        if not favorites.Favorites(self._kodi).names():
+            self._kodi.show_ok_dialog(self._kodi.localize(30415), self._kodi.localize(30416))
 
     def show_tvshow_menu_items(self, category=None, filtered=False):
         tvshow_items = self._apihelper.get_tvshow_items(category=category, filtered=filtered)
-        self._kodiwrapper.show_listing(tvshow_items, sort='label', content='tvshows')
+        self._kodi.show_listing(tvshow_items, sort='label', content='tvshows')
 
     def show_category_menu_items(self):
         category_items = self.__get_category_menu_items()
-        self._kodiwrapper.show_listing(category_items, sort='label', content='files')
+        self._kodi.show_listing(category_items, sort='label', content='files')
 
     def show_channels_menu_items(self, channel=None):
         if channel:
             tvshow_items = self._apihelper.get_tvshow_items(channel=channel)
-            self._kodiwrapper.show_listing(tvshow_items, sort='label', content='tvshows')
+            self._kodi.show_listing(tvshow_items, sort='label', content='tvshows')
         else:
             from resources.lib.vrtplayer import CHANNELS
             self.show_channels(action=actions.LISTING_CHANNELS, channels=[c.get('name') for c in CHANNELS])
@@ -134,14 +134,14 @@ class VRTPlayer:
                 is_playable = False
             else:
                 url_dict = dict(action=action)
-                label = self._kodiwrapper.get_localized_string(30101) % channel.get('label')
+                label = self._kodi.localize(30101) % channel.get('label')
                 is_playable = True
                 if channel.get('name') in ['een', 'canvas', 'ketnet']:
                     fanart = self._apihelper.get_live_screenshot(channel.get('name'))
-                    plot = '%s\n%s' % (self._kodiwrapper.get_localized_string(30201),
-                                       self._kodiwrapper.get_localized_string(30102) % channel.get('label'))
+                    plot = '%s\n%s' % (self._kodi.localize(30201),
+                                       self._kodi.localize(30102) % channel.get('label'))
                 else:
-                    plot = self._kodiwrapper.get_localized_string(30102) % channel.get('label')
+                    plot = self._kodi.localize(30102) % channel.get('label')
                 if channel.get('live_stream_url'):
                     url_dict['video_url'] = channel.get('live_stream_url')
                 elif channel.get('live_stream'):
@@ -162,15 +162,15 @@ class VRTPlayer:
                 ),
             ))
 
-        self._kodiwrapper.show_listing(channel_items, cache=False)
+        self._kodi.show_listing(channel_items, cache=False)
 
     def show_episodes(self, path):
         episode_items, sort, ascending, content = self._apihelper.get_episode_items(path=path)
-        self._kodiwrapper.show_listing(episode_items, sort=sort, ascending=ascending, content=content)
+        self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content)
 
     def show_all_episodes(self, path):
         episode_items, sort, ascending, content = self._apihelper.get_episode_items(path=path, all_seasons=True)
-        self._kodiwrapper.show_listing(episode_items, sort=sort, ascending=ascending, content=content)
+        self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content)
 
     def show_recent(self, page, filtered=False):
         try:
@@ -183,22 +183,22 @@ class VRTPlayer:
         # Add 'More...' entry at the end
         if len(episode_items) == 50:
             episode_items.append(TitleItem(
-                title=self._kodiwrapper.get_localized_string(30300),
+                title=self._kodi.localize(30300),
                 url_dict=dict(action=actions.LISTING_RECENT, page=page + 1, filtered=filtered),
                 is_playable=False,
                 art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
                 video_dict=dict(),
             ))
 
-        self._kodiwrapper.show_listing(episode_items, sort=sort, ascending=ascending, content=content, cache=False)
+        self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content, cache=False)
 
     def play(self, params):
         from resources.lib.vrtplayer import streamservice, tokenresolver
-        _tokenresolver = tokenresolver.TokenResolver(self._kodiwrapper)
-        _streamservice = streamservice.StreamService(self._kodiwrapper, _tokenresolver)
+        _tokenresolver = tokenresolver.TokenResolver(self._kodi)
+        _streamservice = streamservice.StreamService(self._kodi, _tokenresolver)
         stream = _streamservice.get_stream(params)
         if stream is not None:
-            self._kodiwrapper.play(stream)
+            self._kodi.play(stream)
 
     def search(self, search_string=None, page=1):
         try:
@@ -207,26 +207,27 @@ class VRTPlayer:
             page = 1
 
         if search_string is None:
-            search_string = self._kodiwrapper.get_search_string()
+            search_string = self._kodi.get_search_string()
 
         if not search_string:
             return
 
         search_items, sort, ascending, content = self._apihelper.search(search_string, page=page)
         if not search_items:
-            self._kodiwrapper.show_ok_dialog(self._kodiwrapper.get_localized_string(30098), self._kodiwrapper.get_localized_string(30099) % search_string)
+            self._kodi.show_ok_dialog(self._kodi.localize(30098), self._kodi.localize(30099) % search_string)
+            return
 
         # Add 'More...' entry at the end
         if len(search_items) == 50:
             search_items.append(TitleItem(
-                title=self._kodiwrapper.get_localized_string(30300),
+                title=self._kodi.localize(30300),
                 url_dict=dict(action=actions.SEARCH, query=search_string, page=page + 1),
                 is_playable=False,
                 art_dict=dict(thumb='DefaultAddonSearch.png', icon='DefaultAddonSearch.png', fanart='DefaultAddonSearch.png'),
                 video_dict=dict(),
             ))
 
-        self._kodiwrapper.show_listing(search_items, sort=sort, ascending=ascending, content=content, cache=False)
+        self._kodi.show_listing(search_items, sort=sort, ascending=ascending, content=content, cache=False)
 
     def __get_category_menu_items(self):
         try:
@@ -253,7 +254,7 @@ class VRTPlayer:
 
     def get_categories(self, proxies=None):
         from bs4 import BeautifulSoup, SoupStrainer
-        self._kodiwrapper.log_notice('URL get: https://www.vrt.be/vrtnu/categorieen/', 'Verbose')
+        self._kodi.log_notice('URL get: https://www.vrt.be/vrtnu/categorieen/', 'Verbose')
         response = urlopen('https://www.vrt.be/vrtnu/categorieen/')
         tiles = SoupStrainer('nui-list--content')
         soup = BeautifulSoup(response.read(), 'html.parser', parse_only=tiles)

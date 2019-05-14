@@ -18,21 +18,21 @@ class TitleItem:
 
 class Credentials:
 
-    def __init__(self, _kodiwrapper):
-        self._kodiwrapper = _kodiwrapper
-        self._username = _kodiwrapper.get_setting('username')
-        self._password = _kodiwrapper.get_setting('password')
+    def __init__(self, _kodi):
+        self._kodi = _kodi
+        self._username = _kodi.get_setting('username')
+        self._password = _kodi.get_setting('password')
 
     def are_filled_in(self):
         return not (self._username is None or self._password is None or self._username == '' or self._password == '')
 
     def reload(self):
-        self._username = self._kodiwrapper.get_setting('username')
-        self._password = self._kodiwrapper.get_setting('password')
+        self._username = self._kodi.get_setting('username')
+        self._password = self._kodi.get_setting('password')
 
     def reset(self):
-        self._username = self._kodiwrapper.set_setting('username', None)
-        self._password = self._kodiwrapper.set_setting('password', None)
+        self._username = self._kodi.set_setting('username', None)
+        self._password = self._kodi.set_setting('password', None)
 
     @property
     def username(self):

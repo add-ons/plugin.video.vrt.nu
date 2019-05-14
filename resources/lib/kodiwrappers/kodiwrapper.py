@@ -194,7 +194,7 @@ class KodiWrapper:
 
     def get_search_string(self):
         search_string = None
-        keyboard = xbmc.Keyboard('', self.get_localized_string(30097))
+        keyboard = xbmc.Keyboard('', self.localize(30097))
         keyboard.doModal()
         if keyboard.isConfirmed():
             search_string = keyboard.getText()
@@ -221,14 +221,8 @@ class KodiWrapper:
             self.log_notice(e, 'Verbose')
             return False
 
-    def get_localized_string(self, string_id):
+    def localize(self, string_id):
         return self._addon.getLocalizedString(string_id)
-
-    def get_localized_dateshort(self):
-        return xbmc.getRegion('dateshort')
-
-    def get_localized_datelong(self):
-        return xbmc.getRegion('datelong')
 
     def localize_date(self, date, strftime):
         if not self._system_locale_works:
@@ -243,10 +237,10 @@ class KodiWrapper:
         return date.strftime(strftime)
 
     def localize_dateshort(self, date):
-        return self.localize_date(date, self.get_localized_dateshort())
+        return self.localize_date(date, xbmc.getRegion('dateshort'))
 
     def localize_datelong(self, date):
-        return self.localize_date(date, self.get_localized_datelong())
+        return self.localize_date(date, xbmc.getRegion('datelong'))
 
     def get_setting(self, setting_id):
         return self._addon.getSetting(setting_id)
@@ -284,7 +278,7 @@ class KodiWrapper:
         if httpproxytype != 0 and not socks_supported:
             # Only open the dialog the first time (to avoid multiple popups)
             if socks_supported is None:
-                self.show_ok_dialog('', self.get_localized_string(30061))
+                self.show_ok_dialog('', self.localize(30061))
             return None
 
         proxy_types = ['http', 'socks4', 'socks4a', 'socks5', 'socks5h']
