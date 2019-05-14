@@ -75,6 +75,7 @@ class VRTApiHelper:
         season_items = []
         sort = 'label'
         ascending = True
+        content = 'seasons'
         episodes = api_json.get('results')
         facets = api_json.get('facets', dict()).get('facets')
         if episodes and facets:
@@ -82,10 +83,10 @@ class VRTApiHelper:
                 # Check if program has seasons
                 facet = next(f for f in facets if f.get('name') == 'seasons' and len(f.get('buckets', [])) > 1)
                 # Found multiple seasons, make list of seasons
-                season_items, sort, ascending = self._map_to_season_items(api_url, facet.get('buckets', []), episodes)
+                season_items, sort, ascending, content = self._map_to_season_items(api_url, facet.get('buckets', []), episodes)
             except StopIteration:
                 pass
-        return season_items, sort, ascending
+        return season_items, sort, ascending, content
 
     def get_episode_items(self, path=None, page=None, all_seasons=False):
         import json
@@ -105,7 +106,7 @@ class VRTApiHelper:
             api_url = self._VRTNU_SEARCH_URL + '?' + urlencode(params)
             self._kodiwrapper.log_notice('URL get: ' + unquote(api_url), 'Verbose')
             api_json = json.loads(urlopen(api_url).read())
-            episode_items, sort, ascending = self._map_to_episode_items(api_json.get('results', []), titletype='recent')
+            episode_items, sort, ascending, content = self._map_to_episode_items(api_json.get('results', []), titletype='recent')
 
         if path:
             if '.relevant/' in path:
@@ -135,17 +136,17 @@ class VRTApiHelper:
             # path = requests.utils.unquote(path)
             path = unquote(path)
             if all_seasons is True:
-                episode_items, sort, ascending = self._map_to_episode_items(episodes, season_key=None)
+                episode_items, sort, ascending, content = self._map_to_episode_items(episodes, season_key=None)
             elif 'facets[seasonTitle]' in path:
                 season_key = path.split('facets[seasonTitle]=')[1]
             elif display_options.get('showSeason') is True:
-                episode_items, sort, ascending = self._get_season_items(api_url, api_json)
+                episode_items, sort, ascending, content = self._get_season_items(api_url, api_json)
 
             # No season items, generate episode items
             if not episode_items:
-                episode_items, sort, ascending = self._map_to_episode_items(episodes, season_key=season_key)
+                episode_items, sort, ascending, content = self._map_to_episode_items(episodes, season_key=season_key)
 
-        return episode_items, sort, ascending
+        return episode_items, sort, ascending, content
 
     def _map_to_episode_items(self, episodes, titletype=None, season_key=None):
         from datetime import datetime
@@ -227,7 +228,7 @@ class VRTApiHelper:
                 art_dict=dict(thumb=thumb, icon='DefaultAddonVideo.png', fanart=fanart),
                 video_dict=metadata.get_video_dict(),
             ))
-        return episode_items, sort, ascending
+        return episode_items, sort, ascending, 'episodes'
 
     def _map_to_season_items(self, api_url, seasons, episodes):
         import random
@@ -288,7 +289,7 @@ class VRTApiHelper:
                 art_dict=dict(thumb=thumbnail, icon='DefaultSets.png', fanart=fanart),
                 video_dict=metadata.get_video_dict(),
             ))
-        return season_items, sort, ascending
+        return season_items, sort, ascending, 'seasons'
 
     def search(self, search_string, page=1):
         import json
@@ -304,8 +305,8 @@ class VRTApiHelper:
         api_json = json.loads(urlopen(api_url).read())
 
         episodes = api_json.get('results', [{}])
-        episode_items, sort, ascending = self._map_to_episode_items(episodes, titletype='recent')
-        return episode_items, sort, ascending
+        episode_items, sort, ascending, content = self._map_to_episode_items(episodes, titletype='recent')
+        return episode_items, sort, ascending, content
 
     def get_live_screenshot(self, channel):
         url = '%s/%s.jpg' % (self._VRTNU_SCREENSHOT_URL, channel)

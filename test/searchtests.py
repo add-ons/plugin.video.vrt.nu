@@ -28,30 +28,33 @@ class TestSearch(unittest.TestCase):
 
     def test_search_journaal(self):
         ''' Test for journaal '''
-        search_items, sort, ascending = self._apihelper.search('journaal', page=1)
+        search_items, sort, ascending, content = self._apihelper.search('journaal', page=1)
 
         # Test we get a non-empty search result
         self.assertEqual(len(search_items), 50)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
+        self.assertEqual(content, 'episodes')
 
     def test_search_journaal_page2(self):
         ''' Test for journaal '''
-        search_items, sort, ascending = self._apihelper.search('journaal', page=2)
+        search_items, sort, ascending, content = self._apihelper.search('journaal', page=2)
 
         # Test we get a non-empty search result
         self.assertEqual(len(search_items), 50)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
+        self.assertEqual(content, 'episodes')
 
     def test_search_weer(self):
         ''' Test for journaal '''
-        search_items, sort, ascending = self._apihelper.search('weer', page=1)
+        search_items, sort, ascending, content = self._apihelper.search('weer', page=1)
 
         # Test we get a non-empty search result
         self.assertEqual(len(search_items), 50)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
+        self.assertEqual(content, 'episodes')
 
 
 if __name__ == '__main__':
