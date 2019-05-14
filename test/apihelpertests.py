@@ -5,35 +5,24 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 import mock
 import os
-import polib
 import unittest
 
 from resources.lib.vrtplayer import vrtapihelper
-
-PO = polib.pofile('resources/language/resource.language.en_gb/strings.po')
-
-
-def get_localized_string(msgctxt):
-    for entry in PO:
-        if entry.msgctxt == '#%s' % msgctxt:
-            return entry.msgstr
-    return 'vrttest'
-
-
-def log_notice(msg, level):
-    print('%s: %s' % (level, msg))
+from test import get_localized_string, get_setting, log_notice, open_file
 
 
 class ApiHelperTests(unittest.TestCase):
 
     _kodiwrapper = mock.MagicMock()
-
     _kodiwrapper.check_if_path_exists = mock.MagicMock(side_effect=os.path.exists)
     _kodiwrapper.get_localized_dateshort = mock.MagicMock(return_value='%d-%m-%Y')
     _kodiwrapper.get_localized_string = mock.MagicMock(side_effect=get_localized_string)
     _kodiwrapper.get_proxies = mock.MagicMock(return_value=dict())
+    _kodiwrapper.get_setting = mock.MagicMock(side_effect=get_setting)
+    _kodiwrapper.get_userdata_path.return_value = './userdata/'
     _kodiwrapper.log_notice = mock.MagicMock(side_effect=log_notice)
     _kodiwrapper.make_dir.return_value = None
+    _kodiwrapper.open_file = mock.MagicMock(side_effect=open_file)
     _apihelper = vrtapihelper.VRTApiHelper(_kodiwrapper)
 
     def test_get_api_data_single_season(self):

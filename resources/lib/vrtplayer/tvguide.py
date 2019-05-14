@@ -142,7 +142,7 @@ class TVGuide:
                     metadata.title = label
             else:
                 # FIXME: Find a better solution for non-actionable items
-                url_dict = dict(action=actions.LISTING_TVGUIDE, date=date, channel=channel)
+                url_dict = dict(action=actions.LISTING_TVGUIDE, date=date, channel=channel.get('name'))
                 if start_date < now <= end_date:  # Now playing
                     metadata.title = '[COLOR brown]%s[/COLOR] %s' % (label, self._kodiwrapper.get_localized_string(30302))
                 else:
