@@ -276,10 +276,14 @@ class VRTApiHelper:
 
         for season in seasons:
             season_key = season['key']
-            episode = random.choice([e for e in episodes if e['seasonName'] == season_key])
+            try:
+                # If more than 150 episodes exist, we may end up with an empty season (Winteruur)
+                episode = random.choice([e for e in episodes if e.get('seasonName') == season_key])
+            except IndexError:
+                episode = episodes[0]
             fanart = statichelper.add_https_method(episode.get('programImageUrl', 'DefaultSets.png'))
             thumbnail = statichelper.add_https_method(episode.get('videoThumbnailUrl', fanart))
-            label = '%s %s' % (self._kodiwrapper.get_localized_string(30094), episode.get('seasonTitle'))
+            label = '%s %s' % (self._kodiwrapper.get_localized_string(30094), season_key)
             params = {'facets[seasonTitle]': season_key}
             path = api_url + '&' + urlencode(params)
             season_items.append(TitleItem(
