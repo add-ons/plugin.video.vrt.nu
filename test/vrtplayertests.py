@@ -10,7 +10,7 @@ import os
 import random
 import unittest
 
-from resources.lib.vrtplayer import CATEGORIES, CHANNELS, vrtapihelper, vrtplayer
+from resources.lib.vrtplayer import CATEGORIES, favorites, vrtapihelper, vrtplayer
 from test import get_setting, log_notice, open_file
 
 
@@ -24,21 +24,9 @@ class TestVRTPlayer(unittest.TestCase):
     _kodiwrapper.get_userdata_path.return_value = './userdata/'
     _kodiwrapper.log_notice = mock.MagicMock(side_effect=log_notice)
     _kodiwrapper.open_file = mock.MagicMock(side_effect=open_file)
-    _apihelper = vrtapihelper.VRTApiHelper(_kodiwrapper)
-    _vrtplayer = vrtplayer.VRTPlayer(_kodiwrapper, _apihelper)
-
-    def test_tvshows(self):
-        ''' Test A-Z tvshow listing and CHANNELS list '''
-        tvshow_items = self._apihelper.get_tvshow_items(category=None)
-
-        # Test we get a non-empty A-Z listing back
-        self.assertTrue(tvshow_items)
-
-        # Test every brand is a known channel studio name
-        bogus_brands = ['lang-zullen-we-lezen', 'VRT']
-        channel_studios = [c.get('studio') for c in CHANNELS] + bogus_brands
-        for tvshow in tvshow_items:
-            self.assertTrue(tvshow.video_dict['studio'] in channel_studios, '%s | %s | %s' % (tvshow.title, tvshow.video_dict['studio'], channel_studios))
+    _favorites = favorites.Favorites(_kodiwrapper)
+    _apihelper = vrtapihelper.VRTApiHelper(_kodiwrapper, _favorites)
+    _vrtplayer = vrtplayer.VRTPlayer(_kodiwrapper, _favorites, _apihelper)
 
     def test_show_videos_single_episode_shows_videos(self):
         path = '/vrtnu/a-z/marathonradio.relevant/'
@@ -83,29 +71,6 @@ class TestVRTPlayer(unittest.TestCase):
 
         self._vrtplayer.show_episodes(path)
         self.assertTrue(self._kodiwrapper.show_listing.called)
-
-    def test_get_recent_episodes(self):
-        ''' Test items, sort and order '''
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=1)
-        self.assertEqual(len(episode_items), 50)
-        self.assertEqual(sort, 'dateadded')
-        self.assertFalse(ascending)
-        self.assertEqual(content, 'episodes')
-
-    def test_get_program_episodes(self):
-        ''' Test items, sort and order '''
-        path = '/vrtnu/a-z/het-journaal.relevant/'
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(path=path)
-        self.assertTrue(episode_items)
-        self.assertEqual(sort, 'dateadded')
-        self.assertFalse(ascending)
-        self.assertEqual(content, 'episodes')
-
-    def test_get_tvshows(self):
-        ''' Test items, sort and order '''
-        path = 'nieuws-en-actua'
-        tvshow_items = self._apihelper.get_tvshow_items(path)
-        self.assertTrue(tvshow_items)
 
     def test_categories_scraping(self):
         ''' Test to ensure our hardcoded categories conforms to scraped categories '''

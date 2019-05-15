@@ -39,25 +39,22 @@ def router(params_string):
         _tvguide = tvguide.TVGuide(_kodi)
         _tvguide.show_tvguide(params)
         return
+
+    from resources.lib.vrtplayer import favorites
+    _favorites = favorites.Favorites(_kodi)
     if action == actions.FOLLOW:
-        from resources.lib.vrtplayer import favorites
-        _favorites = favorites.Favorites(_kodi)
         _favorites.follow(program=params.get('program'), path=params.get('path'))
         return
     if action == actions.UNFOLLOW:
-        from resources.lib.vrtplayer import favorites
-        _favorites = favorites.Favorites(_kodi)
         _favorites.unfollow(program=params.get('program'), path=params.get('path'))
         return
     if action == actions.REFRESH_FAVORITES:
-        from resources.lib.vrtplayer import favorites
-        _favorites = favorites.Favorites(_kodi)
         _favorites.update_favorites()
         return
 
     from resources.lib.vrtplayer import vrtapihelper, vrtplayer
-    _apihelper = vrtapihelper.VRTApiHelper(_kodi)
-    _vrtplayer = vrtplayer.VRTPlayer(_kodi, _apihelper)
+    _apihelper = vrtapihelper.VRTApiHelper(_kodi, _favorites)
+    _vrtplayer = vrtplayer.VRTPlayer(_kodi, _favorites, _apihelper)
 
     if action == actions.PLAY:
         _vrtplayer.play(params)

@@ -11,7 +11,7 @@ import mock
 import unittest
 from urllib2 import HTTPError
 
-from resources.lib.vrtplayer import CHANNELS, streamservice, tokenresolver, vrtapihelper
+from resources.lib.vrtplayer import CHANNELS, streamservice, tokenresolver
 from test import SETTINGS, get_setting, get_localized_string, log_notice
 
 SETTINGS['use_drm'] = 'false'
@@ -31,7 +31,6 @@ class StreamServiceTests(unittest.TestCase):
     _kodiwrapper.get_userdata_path.return_value = './userdata/'
     _kodiwrapper.log_notice = mock.MagicMock(side_effect=log_notice)
     _kodiwrapper.make_dir.return_value = None
-    _apihelper = vrtapihelper.VRTApiHelper(_kodiwrapper)
     _tokenresolver = tokenresolver.TokenResolver(_kodiwrapper)
     _streamservice = streamservice.StreamService(_kodiwrapper, _tokenresolver)
 

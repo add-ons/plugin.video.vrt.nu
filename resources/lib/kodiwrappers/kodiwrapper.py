@@ -218,7 +218,7 @@ class KodiWrapper:
             locale.setlocale(locale.LC_ALL, locale_lang)
             return True
         except Exception as e:
-            self.log_notice(e, 'Verbose')
+            self.log_notice(e, 'Debug')
             return False
 
     def localize(self, string_id):
@@ -278,7 +278,7 @@ class KodiWrapper:
         if httpproxytype != 0 and not socks_supported:
             # Only open the dialog the first time (to avoid multiple popups)
             if socks_supported is None:
-                self.show_ok_dialog('', self.localize(30061))
+                self.show_ok_dialog('', self.localize(30961))  # Requires PySocks
             return None
 
         proxy_types = ['http', 'socks4', 'socks4a', 'socks5', 'socks5h']
@@ -308,6 +308,9 @@ class KodiWrapper:
     # Note: InputStream Adaptive is not pre-installed on Windows and in some cases users can uninstall it
     def has_inputstream_adaptive_installed(self):
         return xbmc.getCondVisibility('System.HasAddon("{0}")'.format('inputstream.adaptive')) == 1
+
+    def has_credentials(self):
+        return bool(self.get_setting('username') and self.get_setting('password'))
 
     def can_play_drm(self):
         kodi_version = int(xbmc.getInfoLabel('System.BuildVersion').split('.')[0])

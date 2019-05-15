@@ -14,76 +14,77 @@ except ImportError:
 
 class VRTPlayer:
 
-    def __init__(self, _kodi, _apihelper):
+    def __init__(self, _kodi, _favorites, _apihelper):
         self._kodi = _kodi
         self._proxies = _kodi.get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
+        self._favorites = _favorites
         self._apihelper = _apihelper
 
     def show_main_menu_items(self):
         main_items = []
 
-        # Only add 'My programs' when this is enabled in config
-        if self._kodi.get_setting('usefavorites') == 'true':
+        # Only add 'My programs' when it has been activated
+        if self._favorites.is_activated():
             main_items.append(TitleItem(
-                title=self._kodi.localize(30078),
+                title=self._kodi.localize(30010),
                 url_dict=dict(action=actions.LISTING_FAVORITES),
                 is_playable=False,
                 art_dict=dict(thumb='icons/settings/profiles.png', icon='icons/settings/profiles.png', fanart='icons/settings/profiles.png'),
-                video_dict=dict(plot=self._kodi.localize(30079))
+                video_dict=dict(plot=self._kodi.localize(30011))
             ))
 
         main_items.extend([
-            TitleItem(title=self._kodi.localize(30080),
+            TitleItem(title=self._kodi.localize(30012),
                       url_dict=dict(action=actions.LISTING_AZ_TVSHOWS),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultMovieTitle.png', icon='DefaultMovieTitle.png', fanart='DefaultMovieTitle.png'),
-                      video_dict=dict(plot=self._kodi.localize(30081))),
-            TitleItem(title=self._kodi.localize(30082),
+                      video_dict=dict(plot=self._kodi.localize(30013))),
+            TitleItem(title=self._kodi.localize(30014),
                       url_dict=dict(action=actions.LISTING_CATEGORIES),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultGenre.png', icon='DefaultGenre.png', fanart='DefaultGenre.png'),
-                      video_dict=dict(plot=self._kodi.localize(30083))),
-            TitleItem(title=self._kodi.localize(30084),
+                      video_dict=dict(plot=self._kodi.localize(30015))),
+            TitleItem(title=self._kodi.localize(30016),
                       url_dict=dict(action=actions.LISTING_CHANNELS),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultTags.png', icon='DefaultTags.png', fanart='DefaultTags.png'),
-                      video_dict=dict(plot=self._kodi.localize(30085))),
-            TitleItem(title=self._kodi.localize(30086),
+                      video_dict=dict(plot=self._kodi.localize(30017))),
+            TitleItem(title=self._kodi.localize(30018),
                       url_dict=dict(action=actions.LISTING_LIVE),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultAddonPVRClient.png', icon='DefaultAddonPVRClient.png', fanart='DefaultAddonPVRClient.png'),
-                      video_dict=dict(plot=self._kodi.localize(30087))),
-            TitleItem(title=self._kodi.localize(30088),
+                      video_dict=dict(plot=self._kodi.localize(30019))),
+            TitleItem(title=self._kodi.localize(30020),
                       url_dict=dict(action=actions.LISTING_RECENT, page='1'),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
-                      video_dict=dict(plot=self._kodi.localize(30089))),
-            TitleItem(title=self._kodi.localize(30090),
+                      video_dict=dict(plot=self._kodi.localize(30021))),
+            TitleItem(title=self._kodi.localize(30022),
                       url_dict=dict(action=actions.LISTING_TVGUIDE),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultAddonTvInfo.png', icon='DefaultAddonTvInfo.png', fanart='DefaultAddonTvInfo.png'),
-                      video_dict=dict(plot=self._kodi.localize(30091))),
-            TitleItem(title=self._kodi.localize(30092),
+                      video_dict=dict(plot=self._kodi.localize(30023))),
+            TitleItem(title=self._kodi.localize(30024),
                       url_dict=dict(action=actions.SEARCH),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultAddonsSearch.png', icon='DefaultAddonsSearch.png', fanart='DefaultAddonsSearch.png'),
-                      video_dict=dict(plot=self._kodi.localize(30093))),
+                      video_dict=dict(plot=self._kodi.localize(30025))),
         ])
         self._kodi.show_listing(main_items)
 
     def show_favorites_menu_items(self):
         favorites_items = [
-            TitleItem(title=self._kodi.localize(30420),
+            TitleItem(title=self._kodi.localize(30040),
                       url_dict=dict(action=actions.LISTING_AZ_TVSHOWS, filtered=True),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultMovieTitle.png', icon='DefaultMovieTitle.png', fanart='DefaultMovieTitle.png'),
-                      video_dict=dict(plot=self._kodi.localize(30421))),
-            TitleItem(title=self._kodi.localize(30422),
+                      video_dict=dict(plot=self._kodi.localize(30041))),
+            TitleItem(title=self._kodi.localize(30042),
                       url_dict=dict(action=actions.LISTING_RECENT, page='1', filtered=True),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
-                      video_dict=dict(plot=self._kodi.localize(30423))),
+                      video_dict=dict(plot=self._kodi.localize(30043))),
         ]
         self._kodi.show_listing(favorites_items)
 

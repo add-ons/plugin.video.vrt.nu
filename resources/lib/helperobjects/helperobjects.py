@@ -24,7 +24,7 @@ class Credentials:
         self._password = _kodi.get_setting('password')
 
     def are_filled_in(self):
-        return not (self._username is None or self._password is None or self._username == '' or self._password == '')
+        return bool(self._username and self._password)
 
     def reload(self):
         self._username = self._kodi.get_setting('username')

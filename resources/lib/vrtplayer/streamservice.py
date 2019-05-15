@@ -159,7 +159,7 @@ class StreamService:
 
     def _handle_error(self, video_json):
         self._kodi.log_error(video_json.get('message'))
-        message = self._kodi.localize(30054)
+        message = self._kodi.localize(30954)  # Whoops something went wrong
         self._kodi.show_ok_dialog('', message)
 
     @staticmethod
@@ -216,7 +216,7 @@ class StreamService:
                     # Update api_data with roaming_xvrttoken and try again
                     api_data.xvrttoken = roaming_xvrttoken
                     return self.get_stream(video, retry=True, api_data=api_data)
-                message = self._kodi.localize(30053)
+                message = self._kodi.localize(30953)  # Cannot be played
                 self._kodi.show_ok_dialog('', message)
             else:
                 self._handle_error(video_json)
@@ -287,7 +287,7 @@ class StreamService:
                 break
 
         if not hls_variant_url:
-            message = self._kodi.localize(30057) % (str(max_bandwidth), stream_bandwidth)
+            message = self._kodi.localize(30957) % (str(max_bandwidth), stream_bandwidth)
             self._kodi.show_ok_dialog('', message)
             self._kodi.open_settings()
 

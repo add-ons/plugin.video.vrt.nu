@@ -4,7 +4,7 @@
 
 from __future__ import absolute_import, division, unicode_literals
 from resources.lib.helperobjects.helperobjects import TitleItem
-from resources.lib.vrtplayer import actions, favorites, metadatacreator, statichelper
+from resources.lib.vrtplayer import actions, metadatacreator, statichelper
 
 try:
     from urllib.parse import urlencode, unquote
@@ -21,15 +21,12 @@ class VRTApiHelper:
     _VRTNU_SUGGEST_URL = 'https://vrtnu-api.vrt.be/suggest'
     _VRTNU_SCREENSHOT_URL = 'https://vrtnu-api.vrt.be/screenshots'
 
-    def __init__(self, _kodi):
+    def __init__(self, _kodi, _favorites):
         self._kodi = _kodi
         self._proxies = _kodi.get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
         self._showpermalink = _kodi.get_setting('showpermalink') == 'true'
-        if _kodi.get_setting('usefavorites') == 'true':
-            self._favorites = favorites.Favorites(self._kodi)
-        else:
-            self._favorites = None
+        self._favorites = _favorites
 
     def get_tvshow_items(self, category=None, channel=None, filtered=False):
         import json
@@ -68,7 +65,7 @@ class VRTApiHelper:
             label = tvshow.get('title', '???')
             thumbnail = statichelper.add_https_method(tvshow.get('thumbnail', 'DefaultAddonVideo.png'))
             program_path = statichelper.unique_path(tvshow.get('targetUrl'))
-            if self._favorites:
+            if self._favorites.is_activated():
                 if self._favorites.is_favorite(program_path):
                     params = dict(action='unfollow', program=tvshow.get('title'), path=program_path)
                     context_menu = [(self._kodi.localize(30412), 'RunPlugin(plugin://plugin.video.vrt.nu?%s)' % urlencode(params))]
@@ -253,7 +250,7 @@ class VRTApiHelper:
                 metadata.plot = '%s\n\n[COLOR yellow]%s[/COLOR]' % (metadata.plot, metadata.permalink)
 
             program_path = statichelper.unique_path(episode.get('programUrl'))
-            if self._favorites:
+            if self._favorites.is_activated():
                 if self._favorites.is_favorite(program_path):
                     params = dict(action='unfollow', program=episode.get('program'), path=program_path)
                     context_menu = [(self._kodi.localize(30412), 'RunPlugin(plugin://plugin.video.vrt.nu?%s)' % urlencode(params))]
