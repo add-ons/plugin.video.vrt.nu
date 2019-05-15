@@ -30,7 +30,7 @@ else:
 def get_localized_string(msgctxt):
     for entry in PO:
         if entry.msgctxt == '#%s' % msgctxt:
-            return entry.msgstr
+            return entry.msgstr or entry.msgid
     return 'vrttest'
 
 

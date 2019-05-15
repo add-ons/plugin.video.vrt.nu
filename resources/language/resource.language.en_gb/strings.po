@@ -17,237 +17,237 @@ msgstr ""
 
 msgctxt "#30000"
 msgid "Interface"
-msgstr "Interface"
+msgstr ""
 
 msgctxt "#30001"
 msgid "Show episode permalink in plot"
-msgstr "Show episode permalink in plot"
+msgstr ""
 
 msgctxt "#30002"
 msgid "Enable menu caching"
-msgstr "Enable menu caching"
+msgstr ""
 
 msgctxt "#30010"
 msgid "Credentials"
-msgstr "Credentials"
+msgstr ""
 
 msgctxt "#30011"
 msgid "Email address"
-msgstr "Email address"
+msgstr ""
 
 msgctxt "#30012"
 msgid "Password"
-msgstr "Password"
+msgstr ""
 
 msgctxt "#30020"
 msgid "Video"
-msgstr "Video"
+msgstr ""
 
 msgctxt "#30021"
 msgid "Subtitles"
-msgstr "Subtitles"
+msgstr ""
 
 msgctxt "#30022"
 msgid "Show subtitles when available"
-msgstr "Show subtitles when available"
+msgstr ""
 
 msgctxt "#30023"
 msgid "Streaming"
-msgstr "Streaming"
+msgstr ""
 
 msgctxt "#30024"
 msgid "Use DRM for 720p HD-quality livestreams"
-msgstr "Use DRM for 720p HD-quality livestreams"
+msgstr ""
 
 msgctxt "#30025"
 msgid "Maximum bandwidth (kbps)"
-msgstr "Maximum bandwidth (kbps)"
+msgstr ""
 
 msgctxt "#30040"
 msgid "Debug"
-msgstr "Debug"
+msgstr ""
 
 msgctxt "#30041"
 msgid "InputStream Adaptive settings..."
-msgstr "InputStream Adaptive settings..."
+msgstr ""
 
 msgctxt "#30042"
 msgid "Install Widevine (for DRM content)"
-msgstr "Install Widevine (for DRM content)"
+msgstr ""
 
 msgctxt "#30048"
 msgid "Clear VRT cookies"
-msgstr "Clear VRT cookies"
+msgstr ""
 
 msgctxt "#30049"
 msgid "Log level"
-msgstr "Log level"
+msgstr ""
 
 msgctxt "#30051"
 msgid "Login failed!"
-msgstr "Login failed!"
+msgstr ""
 
 msgctxt "#30052"
 msgid "Invalid email adress or password. Only VRT logins are supported, no Google or Facebook logins."
-msgstr "Invalid email adress or password. Only VRT logins are supported, no Google or Facebook logins."
+msgstr ""
 
 msgctxt "#30053"
 msgid "This program cannot be played. To view this program outside of Belgium, you first have to validate a Belgian mobile phone number on the VRT NU website."
-msgstr "This program cannot be played. To view this program outside of Belgium, you first have to validate a Belgian mobile phone number on the VRT NU website."
+msgstr ""
 
 msgctxt "#30054"
 msgid "Whoops something went wrong, check the kodi log for more details."
-msgstr "Whoops something went wrong, check the kodi log for more details."
+msgstr ""
 
 msgctxt "#30055"
 msgid "Please fill in your email address to login."
-msgstr "Please fill in your email address to login."
+msgstr ""
 
 msgctxt "#30056"
 msgid "Please fill in your password to login."
-msgstr "Please fill in your password to login."
+msgstr ""
 
 msgctxt "#30057"
 msgid "Please increase the maximum bandwidth. Maximum bandwidth is set to %s kbps, but this stream needs a minimum of %s kbps."
-msgstr "Please increase the maximum bandwidth. Maximum bandwidth is set to %s kbps, but this stream needs a minimum of %s kbps."
+msgstr ""
 
 msgctxt "#30061"
 msgid "Using a SOCKS proxy requires the PySocks library (script.module.pysocks) installed."
-msgstr "Using a SOCKS proxy requires the PySocks library (script.module.pysocks) installed."
+msgstr ""
 
 msgctxt "#30080"
 msgid "A-Z"
-msgstr "A-Z"
+msgstr ""
 
 msgctxt "#30081"
 msgid "Alphabetically sorted list of TV programs"
-msgstr "Alphabetically sorted list of TV programs"
+msgstr ""
 
 msgctxt "#30082"
 msgid "Categories"
-msgstr "Categories"
+msgstr ""
 
 msgctxt "#30083"
 msgid "TV programs listed by category"
-msgstr "TV programs listed by category"
+msgstr ""
 
 msgctxt "#30084"
 msgid "Channels"
-msgstr "Channels"
+msgstr ""
 
 msgctxt "#30085"
 msgid "TV programs listed by channel"
-msgstr "TV programs listed by channel"
+msgstr ""
 
 msgctxt "#30086"
 msgid "Live TV"
-msgstr "Live TV"
+msgstr ""
 
 msgctxt "#30087"
 msgid "Watch TV channels live (using Internet streaming)"
-msgstr "Watch TV channels live (using Internet streaming)"
+msgstr ""
 
 msgctxt "#30088"
 msgid "Most recent"
-msgstr "Most recent"
+msgstr ""
 
 msgctxt "#30089"
 msgid "Recently published episodes of TV programs"
-msgstr "Recently published episodes of TV programs"
+msgstr ""
 
 msgctxt "#30090"
 msgid "TV guide"
-msgstr "TV guide"
+msgstr ""
 
 msgctxt "#30091"
 msgid "Browse channel TV guides"
-msgstr "Browse channel TV guides"
+msgstr ""
 
 msgctxt "#30092"
 msgid "Search VRT NU"
-msgstr "Search VRT NU"
+msgstr ""
 
 msgctxt "#30093"
 msgid "Search the complete VRT NU library"
-msgstr "Search the complete VRT NU library"
+msgstr ""
 
 msgctxt "#30094"
 msgid "Season"
-msgstr "Season"
+msgstr ""
 
 msgctxt "#30095"
 msgid "Episode"
-msgstr "Episode"
+msgstr ""
 
 msgctxt "#30096"
 msgid "* All seasons"
-msgstr "* All seasons"
+msgstr ""
 
 msgctxt "#30097"
 msgid "Enter search string"
-msgstr "Enter search string"
+msgstr ""
 
 msgctxt "#30098"
 msgid "Nothing found"
-msgstr "Nothing found"
+msgstr ""
 
 msgctxt "#30099"
 msgid "Nothing was found when searching for: %s"
-msgstr "Nothing was found when searching for: %s"
+msgstr ""
 
 msgctxt "#30101"
 msgid "%s live"
-msgstr "%s live"
+msgstr ""
 
 msgctxt "#30102"
 msgid "Watch %s live TV stream (via Internet)"
-msgstr "Watch %s live TV stream (via Internet)"
+msgstr ""
 
 msgctxt "#30201"
 msgid "[B][COLOR red]Geo-blocked[/COLOR][/B]\n"
-msgstr "[B][COLOR red]Geo-blocked[/COLOR][/B]\n"
+msgstr ""
 
 msgctxt "#30202"
 msgid "[B][COLOR blue]Available until %s[/COLOR][/B]\n"
-msgstr "[B][COLOR blue]Available until %s[/COLOR][/B]\n"
+msgstr ""
 
 msgctxt "#30203"
 msgid "[B][COLOR green](%s days left)[/COLOR][/B]\n"
-msgstr "[B][COLOR green](%s days left)[/COLOR][/B]\n"
+msgstr ""
 
 msgctxt "#30204"
 msgid "[B][COLOR green](%s hours left)[/COLOR][/B]\n"
-msgstr "[B][COLOR green](%s hours left)[/COLOR][/B]\n"
+msgstr ""
 
 msgctxt "#30300"
 msgid "[B][COLOR yellow]More...[/COLOR][/B]"
-msgstr "[B][COLOR yellow]More...[/COLOR][/B]"
+msgstr ""
 
 msgctxt "#30301"
 msgid "[B]TV guide for channel %s[/B]"
-msgstr "[B]TV guide for channel %s[/B]"
+msgstr ""
 
 msgctxt "#30302"
 msgid "[B][I]Now on live TV[/I][/B]"
-msgstr "[B][I]Now on live TV[/I][/B]"
+msgstr ""
 
 msgctxt "#30330"
 msgid "2 days ago"
-msgstr "2 days ago"
+msgstr ""
 
 msgctxt "#30331"
 msgid "Yesterday"
-msgstr "Yesterday"
+msgstr ""
 
 msgctxt "#30332"
 msgid "Today"
-msgstr "Today"
+msgstr ""
 
 msgctxt "#30333"
 msgid "Tomorrow"
-msgstr "Tomorrow"
+msgstr ""
 
 msgctxt "#30334"
 msgid "In 2 days"
-msgstr "In 2 days"
+msgstr ""
 
