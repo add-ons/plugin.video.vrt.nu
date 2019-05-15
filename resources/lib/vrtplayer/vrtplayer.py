@@ -182,7 +182,6 @@ class VRTPlayer:
         search_items, sort, ascending, content = self._apihelper.search(search_string, page=page)
         if not search_items:
             self._kodiwrapper.show_ok_dialog(self._kodiwrapper.get_localized_string(30098), self._kodiwrapper.get_localized_string(30099) % search_string)
-            return
 
         # Add 'More...' entry at the end
         if len(search_items) == 50:
