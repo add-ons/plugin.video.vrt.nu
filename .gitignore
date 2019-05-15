@@ -82,3 +82,5 @@ msbuild.wrn
 .tox/
 # Packages
 *.zip
+# Credentials
+test/credentials.json
