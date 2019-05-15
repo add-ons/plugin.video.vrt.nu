@@ -8,27 +8,27 @@ import os
 import unittest
 
 from resources.lib.vrtplayer import CHANNELS, favorites, vrtapihelper
-from test import get_localized_string, get_setting, log_notice, open_file
+from test import get_setting, localize, log_notice, open_file
 
 
 class ApiHelperTests(unittest.TestCase):
 
-    _kodiwrapper = mock.MagicMock()
-    _kodiwrapper.check_if_path_exists = mock.MagicMock(side_effect=os.path.exists)
-    _kodiwrapper.get_localized_dateshort = mock.MagicMock(return_value='%d-%m-%Y')
-    _kodiwrapper.get_localized_string = mock.MagicMock(side_effect=get_localized_string)
-    _kodiwrapper.get_proxies = mock.MagicMock(return_value=dict())
-    _kodiwrapper.get_setting = mock.MagicMock(side_effect=get_setting)
-    _kodiwrapper.get_userdata_path.return_value = './userdata/'
-    _kodiwrapper.log_notice = mock.MagicMock(side_effect=log_notice)
-    _kodiwrapper.make_dir.return_value = None
-    _kodiwrapper.open_file = mock.MagicMock(side_effect=open_file)
-    _favorites = favorites.Favorites(_kodiwrapper)
-    _apihelper = vrtapihelper.VRTApiHelper(_kodiwrapper, _favorites)
+    _kodi = mock.MagicMock()
+    _kodi.check_if_path_exists = mock.MagicMock(side_effect=os.path.exists)
+    _kodi.get_proxies = mock.MagicMock(return_value=dict())
+    _kodi.get_setting = mock.MagicMock(side_effect=get_setting)
+    _kodi.get_userdata_path.return_value = './test/userdata/'
+    _kodi.localize_dateshort = mock.MagicMock(return_value='%d-%m-%Y')
+    _kodi.localize = mock.MagicMock(side_effect=localize)
+    _kodi.log_notice = mock.MagicMock(side_effect=log_notice)
+    _kodi.make_dir.return_value = None
+    _kodi.open_file = mock.MagicMock(side_effect=open_file)
+    _favorites = favorites.Favorites(_kodi)
+    _apihelper = vrtapihelper.VRTApiHelper(_kodi, _favorites)
 
     def test_get_api_data_single_season(self):
         title_items, sort, ascending, content = self._apihelper.get_episode_items(path='/vrtnu/a-z/het-journaal.relevant/')
-        self.assertTrue(123 < len(title_items) < 129, 'We got %s items instead.' % len(title_items))
+        self.assertTrue(123 < len(title_items) < 130, 'We got %s items instead.' % len(title_items))
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')

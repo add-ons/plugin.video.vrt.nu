@@ -27,7 +27,7 @@ else:
     print('Credentials not found in credentials.json', file=sys.stderr)
 
 
-def get_localized_string(msgctxt):
+def localize(msgctxt):
     for entry in PO:
         if entry.msgctxt == '#%s' % msgctxt:
             return entry.msgstr or entry.msgid
