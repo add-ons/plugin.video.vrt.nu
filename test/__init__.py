@@ -4,8 +4,10 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 from contextlib import contextmanager
+import json
 import os
 import polib
+import sys
 
 PO = polib.pofile('resources/language/resource.language.en_gb/strings.po')
 SETTINGS = dict(
@@ -17,6 +19,12 @@ SETTINGS = dict(
     usedrm='false',
     usefavorites='false',
 )
+
+# Read credentials from credentials.json
+if os.path.exists('test/credentials.json'):
+    SETTINGS.update(json.loads(open('test/credentials.json').read()))
+else:
+    print('Credentials not found in credentials.json', file=sys.stderr)
 
 
 def get_localized_string(msgctxt):
