@@ -7,7 +7,7 @@ import mock
 import os
 import unittest
 
-from resources.lib.vrtplayer import vrtapihelper
+from resources.lib.vrtplayer import CHANNELS, favorites, vrtapihelper
 from test import get_localized_string, get_setting, log_notice, open_file
 
 
@@ -23,7 +23,8 @@ class ApiHelperTests(unittest.TestCase):
     _kodiwrapper.log_notice = mock.MagicMock(side_effect=log_notice)
     _kodiwrapper.make_dir.return_value = None
     _kodiwrapper.open_file = mock.MagicMock(side_effect=open_file)
-    _apihelper = vrtapihelper.VRTApiHelper(_kodiwrapper)
+    _favorites = favorites.Favorites(_kodiwrapper)
+    _apihelper = vrtapihelper.VRTApiHelper(_kodiwrapper, _favorites)
 
     def test_get_api_data_single_season(self):
         title_items, sort, ascending, content = self._apihelper.get_episode_items(path='/vrtnu/a-z/het-journaal.relevant/')
@@ -52,6 +53,33 @@ class ApiHelperTests(unittest.TestCase):
         self.assertEqual(sort, 'label')
         self.assertTrue(ascending)
         self.assertEqual(content, 'seasons')
+
+    def test_get_recent_episodes(self):
+        ''' Test items, sort and order '''
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=1)
+        self.assertEqual(len(episode_items), 50)
+        self.assertEqual(sort, 'dateadded')
+        self.assertFalse(ascending)
+        self.assertEqual(content, 'episodes')
+
+    def test_get_tvshows(self):
+        ''' Test items, sort and order '''
+        path = 'nieuws-en-actua'
+        tvshow_items = self._apihelper.get_tvshow_items(path)
+        self.assertTrue(tvshow_items)
+
+    def test_tvshows(self):
+        ''' Test A-Z tvshow listing and CHANNELS list '''
+        tvshow_items = self._apihelper.get_tvshow_items(category=None)
+
+        # Test we get a non-empty A-Z listing back
+        self.assertTrue(tvshow_items)
+
+        # Test every brand is a known channel studio name
+        bogus_brands = ['lang-zullen-we-lezen', 'VRT']
+        channel_studios = [c.get('studio') for c in CHANNELS] + bogus_brands
+        for tvshow in tvshow_items:
+            self.assertTrue(tvshow.video_dict['studio'] in channel_studios, '%s | %s | %s' % (tvshow.title, tvshow.video_dict['studio'], channel_studios))
 
 
 if __name__ == '__main__':

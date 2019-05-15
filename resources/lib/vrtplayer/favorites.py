@@ -22,8 +22,12 @@ class Favorites:
         self._proxies = _kodi.get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
         self._cache_file = _kodi.get_userdata_path() + 'favorites.json'
-        self._favorites = {}
-        self.get_favorites()
+        self._favorites = None
+        if _kodi.get_setting('usefavorites') == 'true' and _kodi.has_credentials():
+            self.get_favorites()
+
+    def is_activated(self):
+        return self._favorites is not None
 
     def get_favorites(self):
         if self._kodi.check_if_path_exists(self._cache_file):

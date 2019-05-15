@@ -7,7 +7,7 @@ import mock
 import os
 import unittest
 
-from resources.lib.vrtplayer import vrtapihelper
+from resources.lib.vrtplayer import favorites, vrtapihelper
 from test import get_setting, log_notice, open_file, stat_file
 
 
@@ -24,7 +24,8 @@ class TestSearch(unittest.TestCase):
     _kodiwrapper.make_dir.return_value = None
     _kodiwrapper.open_file = mock.MagicMock(side_effect=open_file)
     _kodiwrapper.stat_file = mock.MagicMock(side_effect=stat_file)
-    _apihelper = vrtapihelper.VRTApiHelper(_kodiwrapper)
+    _favorites = favorites.Favorites(_kodiwrapper)
+    _apihelper = vrtapihelper.VRTApiHelper(_kodiwrapper, _favorites)
 
     def test_search_journaal(self):
         ''' Test for journaal '''

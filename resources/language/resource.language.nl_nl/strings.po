@@ -16,186 +16,91 @@ msgstr ""
 "Language: nl\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-msgctxt "#30000"
-msgid "Interface"
-msgstr "Interface"
-
-msgctxt "#30001"
-msgid "Enable My programs"
-msgstr "Toon Mijn TV programma's"
-
-msgctxt "#30002"
-msgid "Show episode permalink in plot"
-msgstr "Toon aflevering permalink in beschrijving"
-
-msgctxt "#30003"
-msgid "Enable menu caching"
-msgstr "Gebruik menu caching"
-
+### MAIN MENU
 msgctxt "#30010"
-msgid "Credentials"
-msgstr "Inloggegevens"
-
-msgctxt "#30011"
-msgid "Email address"
-msgstr "E-mailadres"
-
-msgctxt "#30012"
-msgid "Password"
-msgstr "Wachtwoord"
-
-msgctxt "#30020"
-msgid "Video"
-msgstr "Video"
-
-msgctxt "#30021"
-msgid "Subtitles"
-msgstr "Ondertiteling"
-
-msgctxt "#30022"
-msgid "Show subtitles when available"
-msgstr "Toon ondertiteling indien beschikbaar"
-
-msgctxt "#30023"
-msgid "Streaming"
-msgstr "Streaming"
-
-msgctxt "#30024"
-msgid "Use DRM for 720p HD-quality livestreams"
-msgstr "Gebruik DRM voor de livestreams in 720p HD-kwaliteit"
-
-msgctxt "#30025"
-msgid "Maximum bandwidth (kbps)"
-msgstr "Maximale bandbreedte (kbps)"
-
-msgctxt "#30030"
-msgid "VRT Radio"
-msgstr "VRT Radio"
-
-msgctxt "#30031"
-msgid "Use VRT Radio addon (plugin.audio.vrt.radio)"
-msgstr "Gebruik VRT Radio addon (plugin.audio.vrt.radio)"
-
-msgctxt "#30040"
-msgid "Debug"
-msgstr "Debug"
-
-msgctxt "#30041"
-msgid "InputStream Adaptive settings..."
-msgstr "InputStream Adaptive instellingen..."
-
-msgctxt "#30042"
-msgid "Install Widevine (for DRM content)"
-msgstr "Installeer Widevine (voor DRM content)"
-
-msgctxt "#30047"
-msgid "Refresh favorites"
-msgstr "Ververs gevolgde programma's"
-
-msgctxt "#30048"
-msgid "Clear VRT cookies"
-msgstr "Verwijder VRT cookies"
-
-msgctxt "#30049"
-msgid "Log level"
-msgstr "Log level"
-
-msgctxt "#30051"
-msgid "Login failed!"
-msgstr "Inloggen mislukt!"
-
-msgctxt "#30052"
-msgid "Invalid email adress or password. Only VRT logins are supported, no Google or Facebook logins."
-msgstr "Ongeldig e-mailadres of wachtwoord. Alleen VRT-logins worden ondersteund, geen Google- of Facebook-logins."
-
-msgctxt "#30053"
-msgid "This program cannot be played. To view this program outside of Belgium, you first have to validate a Belgian mobile phone number on the VRT NU website."
-msgstr "Het programma kan niet afgespeeld worden. Om dit programma buiten België te bekijken moet je eerst een Belgisch gsm-nummer valideren via de VRT NU-website."
-
-msgctxt "#30054"
-msgid "Whoops something went wrong, check the kodi log for more details."
-msgstr "Oeps, er ging iets mis, check de kodi log voor meer informatie."
-
-msgctxt "#30055"
-msgid "Please fill in your email address to login."
-msgstr "Gelieve je e-mailadres in te vullen om in te loggen."
-
-msgctxt "#30056"
-msgid "Please fill in your password to login."
-msgstr "Gelieve je wachtwoord in te vullen om in te loggen."
-
-msgctxt "#30057"
-msgid "Please increase the maximum bandwidth. Maximum bandwidth is set to %s kbps, but this stream needs a minimum of %s kbps."
-msgstr "Verhoog de maximale bandbreedte alstublieft. De maximale bandbreedte is ingesteld op %s kbps, maar deze stream heeft minimum %s kbps nodig."
-
-msgctxt "#30061"
-msgid "Using a SOCKS proxy requires the PySocks library (script.module.pysocks) installed."
-msgstr "Het gebruik van SOCKS proxies vereist dat de PySocks library (script.module.pysocks) geïnstalleerd is."
-
-msgctxt "#30078"
 msgid "My programs"
 msgstr "Mijn TV programma's"
 
-msgctxt "#30079"
+msgctxt "#30011"
 msgid "Browse only the programs you follow"
 msgstr "Bekijk enkel de programma's die je volgt"
 
-msgctxt "#30080"
+msgctxt "#30012"
 msgid "A-Z"
 msgstr "A-Z"
 
-msgctxt "#30081"
+msgctxt "#30013"
 msgid "Alphabetically sorted list of TV programs"
 msgstr "Alle TV-programma's in alfabetische volgorde"
 
-msgctxt "#30082"
+msgctxt "#30014"
 msgid "Categories"
 msgstr "Categorieën"
 
-msgctxt "#30083"
+msgctxt "#30015"
 msgid "TV programs listed by category"
 msgstr "Lijst van TV-programma's per categorie"
 
-msgctxt "#30084"
+msgctxt "#30016"
 msgid "Channels"
 msgstr "Kanalen"
 
-msgctxt "#30085"
+msgctxt "#30017"
 msgid "TV programs listed by channel"
 msgstr "Lijst van TV-programma's per kanaal"
 
-msgctxt "#30086"
+msgctxt "#30018"
 msgid "Live TV"
 msgstr "Live kijken"
 
-msgctxt "#30087"
+msgctxt "#30019"
 msgid "Watch TV channels live (using Internet streaming)"
 msgstr "Bekijk TV-kanalen live (via Internet)"
 
-msgctxt "#30088"
+msgctxt "#30020"
 msgid "Most recent"
 msgstr "Meest recent"
 
-msgctxt "#30089"
+msgctxt "#30021"
 msgid "Recently published episodes of TV programs"
 msgstr "Recent gepubliceerde afleveringen van TV-programma's"
 
-msgctxt "#30090"
+msgctxt "#30022"
 msgid "TV guide"
 msgstr "TV-gids"
 
-msgctxt "#30091"
+msgctxt "#30023"
 msgid "Browse channel TV guides"
 msgstr "Doorzoek de TV-gids per kanaal"
 
-msgctxt "#30092"
+msgctxt "#30024"
 msgid "Doorzoek VRT NU"
 msgstr "Doorzoek VRT NU"
 
-msgctxt "#30093"
+msgctxt "#30025"
 msgid "Search the complete VRT NU library"
 msgstr "Doorzoek de hele VRT NU bibliotheek"
 
+
+### FAVORITES
+msgctxt "#30040"
+msgid "My A-Z"
+msgstr "Mijn TV programma's"
+
+msgctxt "#30041"
+msgid "Alphabetically sorted list of My TV programs"
+msgstr "Alle TV-programma's die je volgt in alfabetische volgorde"
+
+msgctxt "#30042"
+msgid "My recent items"
+msgstr "Mijn recente afleveringen"
+
+msgctxt "#30043"
+msgid "Recently published episodes of My TV programs"
+msgstr "Recent gepubliceerde afleveringen van TV-programma's die je volgt"
+
+
+### APPLICATION
 msgctxt "#30094"
 msgid "Season"
 msgstr "Seizoen"
@@ -292,18 +197,120 @@ msgctxt "#30416"
 msgid "We could not find any programs that were followed.\n\nEither right-click on a program or an episode to follow a program, or follow a program on the VRT NU website."
 msgstr "We konden geen programma's vonden die je volgt.\n\nJe kan een programma volgen door rechts te klikken op een programma of aflevering, of om ze op de VRT NU website to volgen."
 
-msgctxt "#30420"
-msgid "My A-Z"
-msgstr "Mijn TV programma's"
+msgctxt "#30800"
+msgid "Interface"
+msgstr "Interface"
 
-msgctxt "#30421"
-msgid "Alphabetically sorted list of My TV programs"
-msgstr "Alle TV-programma's die je volgt in alfabetische volgorde"
+msgctxt "#30801"
+msgid "Enable My programs"
+msgstr "Toon Mijn TV programma's"
 
-msgctxt "#30422"
-msgid "My recent items"
-msgstr "Mijn recente afleveringen"
+msgctxt "#30802"
+msgid "Indien actief kan de gebruiker zijn favoriete programma's volgen en apart aanroepen. Dit zorgt er wel voor dat de VRT NU addon een lijst van favoriete programma's download en aanpast op de VRT NU website."
+msgstr ""
 
-msgctxt "#30423"
-msgid "Recently published episodes of My TV programs"
-msgstr "Recent gepubliceerde afleveringen van TV-programma's die je volgt"
+msgctxt "#30803"
+msgid "Show episode permalink in plot"
+msgstr "Toon aflevering permalink in beschrijving"
+
+msgctxt "#30804"
+msgid "Indien actief zal de beschrijving van iedere video een permanent link bevatten die je rechtstreeks naar de VRT NU website brengt. Dit is handig om snel een aflevering of film to openen op een mobiel toestel."
+msgstr ""
+
+msgctxt "#30805"
+msgid "Enable menu caching"
+msgstr "Gebruik menu caching"
+
+msgctxt "#30820"
+msgid "Credentials"
+msgstr "Inloggegevens"
+
+msgctxt "#30821"
+msgid "Email address"
+msgstr "E-mailadres"
+
+msgctxt "#30823"
+msgid "Password"
+msgstr "Wachtwoord"
+
+msgctxt "#30840"
+msgid "Video"
+msgstr "Video"
+
+msgctxt "#30841"
+msgid "Subtitles"
+msgstr "Ondertiteling"
+
+msgctxt "#30843"
+msgid "Show subtitles when available"
+msgstr "Toon ondertiteling indien beschikbaar"
+
+msgctxt "#30845"
+msgid "Streaming"
+msgstr "Streaming"
+
+msgctxt "#30847"
+msgid "Use DRM for 720p HD-quality livestreams"
+msgstr "Gebruik DRM voor de livestreams in 720p HD-kwaliteit"
+
+msgctxt "#30849"
+msgid "Maximum bandwidth (kbps)"
+msgstr "Maximale bandbreedte (kbps)"
+
+msgctxt "#30060"
+msgid "Debug"
+msgstr "Debug"
+
+msgctxt "#30061"
+msgid "InputStream Adaptive settings..."
+msgstr "InputStream Adaptive instellingen..."
+
+msgctxt "#30063"
+msgid "Install Widevine (for DRM content)"
+msgstr "Installeer Widevine (voor DRM content)"
+
+msgctxt "#30065"
+msgid "Refresh favorites"
+msgstr "Ververs gevolgde programma's"
+
+msgctxt "#30067"
+msgid "Clear VRT cookies"
+msgstr "Verwijder VRT cookies"
+
+msgctxt "#30069"
+msgid "Log level"
+msgstr "Log level"
+
+
+### MESSAGES
+msgctxt "#30951"
+msgid "Login failed!"
+msgstr "Inloggen mislukt!"
+
+msgctxt "#30952"
+msgid "Invalid email adress or password. Only VRT logins are supported, no Google or Facebook logins."
+msgstr "Ongeldig e-mailadres of wachtwoord. Alleen VRT-logins worden ondersteund, geen Google- of Facebook-logins."
+
+msgctxt "#30953"
+msgid "This program cannot be played. To view this program outside of Belgium, you first have to validate a Belgian mobile phone number on the VRT NU website."
+msgstr "Het programma kan niet afgespeeld worden. Om dit programma buiten België te bekijken moet je eerst een Belgisch gsm-nummer valideren via de VRT NU-website."
+
+msgctxt "#30954"
+msgid "Whoops something went wrong, check the kodi log for more details."
+msgstr "Oeps, er ging iets mis, check de kodi log voor meer informatie."
+
+msgctxt "#30955"
+msgid "Please fill in your email address to login."
+msgstr "Gelieve je e-mailadres in te vullen om in te loggen."
+
+msgctxt "#30956"
+msgid "Please fill in your password to login."
+msgstr "Gelieve je wachtwoord in te vullen om in te loggen."
+
+msgctxt "#30957"
+msgid "Please increase the maximum bandwidth. Maximum bandwidth is set to %s kbps, but this stream needs a minimum of %s kbps."
+msgstr "Verhoog de maximale bandbreedte alstublieft. De maximale bandbreedte is ingesteld op %s kbps, maar deze stream heeft minimum %s kbps nodig."
+
+msgctxt "#30961"
+msgid "Using a SOCKS proxy requires the PySocks library (script.module.pysocks) installed."
+msgstr "Het gebruik van SOCKS proxies vereist dat de PySocks library (script.module.pysocks) geïnstalleerd is."
