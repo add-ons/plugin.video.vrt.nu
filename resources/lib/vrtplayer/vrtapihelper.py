@@ -116,7 +116,6 @@ class VRTApiHelper:
                 'from': ((page - 1) * 50) + 1,
                 'i': 'video',
                 'size': 50,
-                # 'facets[transcodingStatus]': 'AVAILABLE',
             }
 
             if filtered:
@@ -132,9 +131,9 @@ class VRTApiHelper:
         if path:
             if '.relevant/' in path:
                 params = {
+                    'facets[programUrl]': '//www.vrt.be' + path.replace('.relevant/', '/'),
                     'i': 'video',
                     'size': '150',
-                    'facets[programUrl]': '//www.vrt.be' + path.replace('.relevant/', '/'),
                 }
                 api_url = self._VRTNU_SEARCH_URL + '?' + urlencode(params)
             else:

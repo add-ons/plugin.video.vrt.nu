@@ -17,13 +17,13 @@ channels = ['een', 'canvas', 'ketnet']
 
 class TestTVGuide(unittest.TestCase):
 
-    _kodiwrapper = mock.MagicMock()
-    _kodiwrapper.get_localized_datelong = mock.MagicMock(return_value='%a %d-%m-%Y')
-    _kodiwrapper.get_proxies = mock.MagicMock(return_value=dict())
-    _kodiwrapper.get_userdata_path.return_value = './userdata/'
-    _kodiwrapper.log_notice = mock.MagicMock(side_effect=log_notice)
-    _kodiwrapper.make_dir.return_value = None
-    _tvguide = tvguide.TVGuide(_kodiwrapper)
+    _kodi = mock.MagicMock()
+    _kodi.get_proxies = mock.MagicMock(return_value=dict())
+    _kodi.get_userdata_path.return_value = './test/userdata/'
+    _kodi.localize_datelong = mock.MagicMock(return_value='%a %d-%m-%Y')
+    _kodi.log_notice = mock.MagicMock(side_effect=log_notice)
+    _kodi.make_dir.return_value = None
+    _tvguide = tvguide.TVGuide(_kodi)
 
     def test_tvguide_date_menu(self):
         ''' Test TV guide main menu '''

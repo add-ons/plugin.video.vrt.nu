@@ -12,7 +12,7 @@ import unittest
 from urllib2 import HTTPError
 
 from resources.lib.vrtplayer import CHANNELS, streamservice, tokenresolver
-from test import SETTINGS, get_setting, get_localized_string, log_notice
+from test import SETTINGS, get_setting, localize, log_notice
 
 SETTINGS['use_drm'] = 'false'
 now = datetime.now(dateutil.tz.tzlocal())
@@ -21,18 +21,18 @@ yesterday = now + timedelta(days=-1)
 
 class StreamServiceTests(unittest.TestCase):
 
-    _kodiwrapper = mock.MagicMock()
-    _kodiwrapper.check_if_path_exists.return_value = False
-    _kodiwrapper.check_inputstream_adaptive.return_value = True
-    _kodiwrapper.get_localized_dateshort = mock.MagicMock(return_value='%d-%m-%Y')
-    _kodiwrapper.get_localized_string = mock.MagicMock(side_effect=get_localized_string)
-    _kodiwrapper.get_proxies = mock.MagicMock(return_value=dict())
-    _kodiwrapper.get_setting = mock.MagicMock(side_effect=get_setting)
-    _kodiwrapper.get_userdata_path.return_value = './userdata/'
-    _kodiwrapper.log_notice = mock.MagicMock(side_effect=log_notice)
-    _kodiwrapper.make_dir.return_value = None
-    _tokenresolver = tokenresolver.TokenResolver(_kodiwrapper)
-    _streamservice = streamservice.StreamService(_kodiwrapper, _tokenresolver)
+    _kodi = mock.MagicMock()
+    _kodi.check_if_path_exists.return_value = False
+    _kodi.check_inputstream_adaptive.return_value = True
+    _kodi.get_proxies = mock.MagicMock(return_value=dict())
+    _kodi.get_setting = mock.MagicMock(side_effect=get_setting)
+    _kodi.get_userdata_path.return_value = './test/userdata/'
+    _kodi.localize_dateshort = mock.MagicMock(return_value='%d-%m-%Y')
+    _kodi.localize = mock.MagicMock(side_effect=localize)
+    _kodi.log_notice = mock.MagicMock(side_effect=log_notice)
+    _kodi.make_dir.return_value = None
+    _tokenresolver = tokenresolver.TokenResolver(_kodi)
+    _streamservice = streamservice.StreamService(_kodi, _tokenresolver)
 
     def test_get_ondemand_stream_from_invalid_url(self):
         video = dict(

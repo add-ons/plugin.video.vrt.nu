@@ -15,16 +15,16 @@ SETTINGS['usefavorites'] = 'true'
 
 class TestFavorites(unittest.TestCase):
 
-    _kodiwrapper = mock.MagicMock()
-    _kodiwrapper.check_if_path_exists = mock.MagicMock(side_effect=os.path.exists)
-    _kodiwrapper.get_proxies = mock.MagicMock(return_value=dict())
-    _kodiwrapper.get_setting = mock.MagicMock(side_effect=get_setting)
-    _kodiwrapper.get_userdata_path.return_value = './userdata/'
-    _kodiwrapper.log_notice = mock.MagicMock(side_effect=log_notice)
-    _kodiwrapper.make_dir.return_value = None
-    _kodiwrapper.open_file = mock.MagicMock(side_effect=open_file)
-    _kodiwrapper.stat_file = mock.MagicMock(side_effect=stat_file)
-    _favorites = favorites.Favorites(_kodiwrapper)
+    _kodi = mock.MagicMock()
+    _kodi.check_if_path_exists = mock.MagicMock(side_effect=os.path.exists)
+    _kodi.get_proxies = mock.MagicMock(return_value=dict())
+    _kodi.get_setting = mock.MagicMock(side_effect=get_setting)
+    _kodi.get_userdata_path.return_value = './test/userdata/'
+    _kodi.log_notice = mock.MagicMock(side_effect=log_notice)
+    _kodi.make_dir.return_value = None
+    _kodi.open_file = mock.MagicMock(side_effect=open_file)
+    _kodi.stat_file = mock.MagicMock(side_effect=stat_file)
+    _favorites = favorites.Favorites(_kodi)
 
     def test_follow_unfollow(self):
         program = 'Winteruur'

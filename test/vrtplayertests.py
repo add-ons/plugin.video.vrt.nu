@@ -16,17 +16,17 @@ from test import get_setting, log_notice, open_file
 
 class TestVRTPlayer(unittest.TestCase):
 
-    _kodiwrapper = mock.MagicMock()
-    _kodiwrapper.check_if_path_exists = mock.MagicMock(side_effect=os.path.exists)
-    _kodiwrapper.get_localized_dateshort = mock.MagicMock(return_value='%d-%m-%Y')
-    _kodiwrapper.get_proxies = mock.MagicMock(return_value=dict())
-    _kodiwrapper.get_setting = mock.MagicMock(side_effect=get_setting)
-    _kodiwrapper.get_userdata_path.return_value = './userdata/'
-    _kodiwrapper.log_notice = mock.MagicMock(side_effect=log_notice)
-    _kodiwrapper.open_file = mock.MagicMock(side_effect=open_file)
-    _favorites = favorites.Favorites(_kodiwrapper)
-    _apihelper = vrtapihelper.VRTApiHelper(_kodiwrapper, _favorites)
-    _vrtplayer = vrtplayer.VRTPlayer(_kodiwrapper, _favorites, _apihelper)
+    _kodi = mock.MagicMock()
+    _kodi.check_if_path_exists = mock.MagicMock(side_effect=os.path.exists)
+    _kodi.get_proxies = mock.MagicMock(return_value=dict())
+    _kodi.get_setting = mock.MagicMock(side_effect=get_setting)
+    _kodi.get_userdata_path.return_value = './test/userdata/'
+    _kodi.localize_dateshort = mock.MagicMock(return_value='%d-%m-%Y')
+    _kodi.log_notice = mock.MagicMock(side_effect=log_notice)
+    _kodi.open_file = mock.MagicMock(side_effect=open_file)
+    _favorites = favorites.Favorites(_kodi)
+    _apihelper = vrtapihelper.VRTApiHelper(_kodi, _favorites)
+    _vrtplayer = vrtplayer.VRTPlayer(_kodi, _favorites, _apihelper)
 
     def test_show_videos_single_episode_shows_videos(self):
         path = '/vrtnu/a-z/marathonradio.relevant/'
@@ -37,7 +37,7 @@ class TestVRTPlayer(unittest.TestCase):
         self.assertEqual(content, 'episodes')
 
         self._vrtplayer.show_episodes(path)
-        self.assertTrue(self._kodiwrapper.show_listing.called)
+        self.assertTrue(self._kodi.show_listing.called)
 
     def test_show_videos_single_season_shows_videos(self):
         path = '/vrtnu/a-z/het-weer.relevant/'
@@ -48,7 +48,7 @@ class TestVRTPlayer(unittest.TestCase):
         self.assertEqual(content, 'episodes')
 
         self._vrtplayer.show_episodes(path)
-        self.assertTrue(self._kodiwrapper.show_listing.called)
+        self.assertTrue(self._kodi.show_listing.called)
 
     def test_show_videos_multiple_seasons_shows_videos(self):
         path = '/vrtnu/a-z/pano.relevant/'
@@ -59,7 +59,7 @@ class TestVRTPlayer(unittest.TestCase):
         self.assertEqual(content, 'seasons')
 
         self._vrtplayer.show_episodes(path)
-        self.assertTrue(self._kodiwrapper.show_listing.called)
+        self.assertTrue(self._kodi.show_listing.called)
 
     def test_show_videos_specific_seasons_shows_videos(self):
         path = '/vrtnu/a-z/thuis.relevant/'
@@ -70,7 +70,7 @@ class TestVRTPlayer(unittest.TestCase):
         self.assertEqual(content, 'seasons')
 
         self._vrtplayer.show_episodes(path)
-        self.assertTrue(self._kodiwrapper.show_listing.called)
+        self.assertTrue(self._kodi.show_listing.called)
 
     def test_categories_scraping(self):
         ''' Test to ensure our hardcoded categories conforms to scraped categories '''
