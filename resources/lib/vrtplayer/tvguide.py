@@ -24,6 +24,12 @@ DATE_STRINGS = {
     '2': 30334,  # In 2 days
 }
 
+DATES = {
+    '-1': 'yesterday',
+    '0': 'today',
+    '1': 'tomorrow',
+}
+
 
 class TVGuide:
 
@@ -56,14 +62,23 @@ class TVGuide:
         for i in range(7, -31, -1):
             day = now + timedelta(days=i)
             title = self._kodi.localize_datelong(day)
+
+            # Highlight today with context of 2 days
             if str(i) in DATE_STRINGS:
                 if i == 0:
                     title = '[COLOR yellow][B]%s[/B], %s[/COLOR]' % (self._kodi.localize(DATE_STRINGS[str(i)]), title)
                 else:
                     title = '[B]%s[/B], %s' % (self._kodi.localize(DATE_STRINGS[str(i)]), title)
+
+            # Make permalinks for today, yesterday and tomorrow
+            if str(i) in DATES:
+                date = DATES[str(i)]
+            else:
+                date = day.strftime('%Y-%m-%d')
+
             date_items.append(helperobjects.TitleItem(
                 title=title,
-                url_dict=dict(action=actions.LISTING_TVGUIDE, date=day.strftime('%Y-%m-%d')),
+                url_dict=dict(action=actions.LISTING_TVGUIDE, date=date),
                 is_playable=False,
                 art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
                 video_dict=dict(plot=self._kodi.localize_datelong(day)),
@@ -71,7 +86,8 @@ class TVGuide:
         return date_items
 
     def show_channel_menu(self, date):
-        dateobj = dateutil.parser.parse(date)
+        now = datetime.now(dateutil.tz.tzlocal())
+        dateobj = self.parse(date, now)
         datelong = self._kodi.localize_datelong(dateobj)
 
         fanart_path = 'resource://resource.images.studios.white/%(studio)s.png'
@@ -98,7 +114,7 @@ class TVGuide:
 
     def show_episodes(self, date, channel):
         now = datetime.now(dateutil.tz.tzlocal())
-        dateobj = dateutil.parser.parse(date)
+        dateobj = self.parse(date, now)
         datelong = self._kodi.localize_datelong(dateobj)
         api_url = dateobj.strftime(self.VRT_TVGUIDE)
         self._kodi.log_notice('URL get: ' + api_url, 'Verbose')
@@ -154,3 +170,12 @@ class TVGuide:
                 video_dict=metadata.get_video_dict(),
             ))
         return episode_items
+
+    def parse(self, date, now):
+        if date == 'today':
+            return now
+        if date == 'yesterday':
+            return now + timedelta(days=-1)
+        if date == 'tomorrow':
+            return now + timedelta(days=1)
+        return dateutil.parser.parse(date)
