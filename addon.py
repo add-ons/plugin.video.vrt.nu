@@ -26,38 +26,38 @@ def router(params_string):
     params = dict(parse_qsl(params_string))
     action = params.get('action')
 
-    _kodiwrapper = kodiwrapper.KodiWrapper(_ADDON_HANDLE, _ADDON_URL, addon)
-    _kodiwrapper.log_access(_ADDON_URL, params_string)
+    _kodi = kodiwrapper.KodiWrapper(_ADDON_HANDLE, _ADDON_URL, addon)
+    _kodi.log_access(_ADDON_URL, params_string)
 
     if action == actions.CLEAR_COOKIES:
         from resources.lib.vrtplayer import tokenresolver
-        _tokenresolver = tokenresolver.TokenResolver(_kodiwrapper)
+        _tokenresolver = tokenresolver.TokenResolver(_kodi)
         _tokenresolver.reset_cookies()
         return
     if action == actions.LISTING_TVGUIDE:
         from resources.lib.vrtplayer import tvguide
-        _tvguide = tvguide.TVGuide(_kodiwrapper)
+        _tvguide = tvguide.TVGuide(_kodi)
         _tvguide.show_tvguide(params)
         return
     if action == actions.FOLLOW:
         from resources.lib.vrtplayer import favorites
-        _favorites = favorites.Favorites(_kodiwrapper)
+        _favorites = favorites.Favorites(_kodi)
         _favorites.follow(program=params.get('program'), path=params.get('path'))
         return
     if action == actions.UNFOLLOW:
         from resources.lib.vrtplayer import favorites
-        _favorites = favorites.Favorites(_kodiwrapper)
+        _favorites = favorites.Favorites(_kodi)
         _favorites.unfollow(program=params.get('program'), path=params.get('path'))
         return
     if action == actions.REFRESH_FAVORITES:
         from resources.lib.vrtplayer import favorites
-        _favorites = favorites.Favorites(_kodiwrapper)
+        _favorites = favorites.Favorites(_kodi)
         _favorites.update_favorites()
         return
 
     from resources.lib.vrtplayer import vrtapihelper, vrtplayer
-    _apihelper = vrtapihelper.VRTApiHelper(_kodiwrapper)
-    _vrtplayer = vrtplayer.VRTPlayer(_kodiwrapper, _apihelper)
+    _apihelper = vrtapihelper.VRTApiHelper(_kodi)
+    _vrtplayer = vrtplayer.VRTPlayer(_kodi, _apihelper)
 
     if action == actions.PLAY:
         _vrtplayer.play(params)

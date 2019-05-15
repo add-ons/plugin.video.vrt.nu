@@ -22,9 +22,9 @@ class VrtMonitor(xbmc.Monitor):
     def onSettingsChanged(self):
         ''' Handler for changes to settings '''
         addon = xbmcaddon.Addon(id='plugin.video.vrt.nu')
-        _kodiwrapper = kodiwrapper.KodiWrapper(None, None, addon)
-        _kodiwrapper.log_notice('VRT NU Addon: settings changed')
-        _tokenresolver = tokenresolver.TokenResolver(_kodiwrapper)
+        _kodi = kodiwrapper.KodiWrapper(None, None, addon)
+        _kodi.log_notice('VRT NU Addon: settings changed')
+        _tokenresolver = tokenresolver.TokenResolver(_kodi)
         _tokenresolver.reset_cookies()
 
 
