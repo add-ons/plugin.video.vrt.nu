@@ -162,6 +162,12 @@ class VRTApiHelper:
             if season_key and episode.get('seasonTitle') != season_key:
                 continue
 
+            # Support search highlights
+            highlight = episode.get('highlight')
+            if highlight:
+                for key in highlight:
+                    episode[key] = statichelper.convert_html_to_kodilabel(highlight.get(key)[0])
+
             display_options = episode.get('displayOptions', dict())
 
             # NOTE: Hard-code showing seasons because it is unreliable (i.e; Thuis or Down the Road have it disabled)
@@ -303,6 +309,7 @@ class VRTApiHelper:
             'i': 'video',
             'size': 50,
             'q': search_string,
+            'highlight': 'true',
         }
         api_url = 'https://search.vrt.be/search?' + urlencode(params)
         self._kodiwrapper.log_notice('URL get: ' + unquote(api_url), 'Verbose')
