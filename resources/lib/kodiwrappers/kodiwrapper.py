@@ -155,6 +155,9 @@ class KodiWrapper:
             if title_item.video_dict:
                 list_item.setInfo(type='video', infoLabels=title_item.video_dict)
 
+            if title_item.context_menu:
+                list_item.addContextMenuItems(title_item.context_menu)
+
             listing.append((url, list_item, not title_item.is_playable))
 
         ok = xbmcplugin.addDirectoryItems(self._handle, listing, len(listing))
@@ -199,7 +202,13 @@ class KodiWrapper:
 
     def show_ok_dialog(self, title, message):
         import xbmcgui
-        xbmcgui.Dialog().ok(self._addon.getAddonInfo('name'), title, message)
+        if not title:
+            title = self._addon.getAddonInfo('name')
+        xbmcgui.Dialog().ok(title, message)
+
+    def show_notification(self, message, time=4000):
+        import xbmcgui
+        xbmcgui.Dialog().notification(self._addon.getAddonInfo('name'), message, xbmcgui.NOTIFICATION_INFO, time)
 
     def set_locale(self):
         import locale
@@ -334,9 +343,16 @@ class KodiWrapper:
         yield f
         f.close()
 
+    def stat_file(self, path):
+        import xbmcvfs
+        return xbmcvfs.Stat(path)
+
     def delete_file(self, path):
         import xbmcvfs
         return xbmcvfs.delete(path)
+
+    def container_refresh(self):
+        xbmc.executebuiltin('Container.Refresh')
 
     def log_access(self, url, query_string, log_level='Verbose'):
         ''' Log addon access '''

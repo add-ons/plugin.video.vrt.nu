@@ -30,6 +30,12 @@ def convert_html_to_kodilabel(text):
     return unescape(text).strip()
 
 
+def unique_path(path):
+    if path.startswith('//www.vrt.be/vrtnu'):
+        return path.replace('//www.vrt.be/vrtnu/', '/vrtnu/').replace('.relevant/', '/')
+    return path
+
+
 def shorten_link(url):
     if url is None:
         return None

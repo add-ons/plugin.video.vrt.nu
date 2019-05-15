@@ -5,14 +5,18 @@
 from __future__ import absolute_import, division, unicode_literals
 
 CLEAR_COOKIES = 'clearcookies'
+FOLLOW = 'follow'
 LISTING_ALL_EPISODES = 'listingallepisodes'
 LISTING_AZ_TVSHOWS = 'listingaztvshows'
 LISTING_CATEGORIES = 'listingcategories'
 LISTING_CATEGORY_TVSHOWS = 'listingcategorytvshows'
 LISTING_CHANNELS = 'listingchannels'
 LISTING_EPISODES = 'listingepisodes'
+LISTING_FAVORITES = 'favorites'
 LISTING_LIVE = 'listinglive'
 LISTING_RECENT = 'listingrecent'
 LISTING_TVGUIDE = 'listingtvguide'
 PLAY = 'play'
+REFRESH_FAVORITES = 'refreshfavorites'
 SEARCH = 'search'
+UNFOLLOW = 'unfollow'
