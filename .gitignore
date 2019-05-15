@@ -84,3 +84,4 @@ msbuild.wrn
 *.zip
 # Credentials
 test/credentials.json
+userdata/
