@@ -81,7 +81,7 @@ class TokenResolver:
     def _get_new_playertoken(self, path, token_url, headers):
         import json
         self._kodi.log_notice('URL post: ' + unquote(token_url), 'Verbose')
-        req = Request(token_url, data='', headers=headers)
+        req = Request(token_url, data=b'', headers=headers)
         playertoken = json.loads(urlopen(req).read())
         with self._kodi.open_file(path, 'w') as f:
             json.dump(playertoken, f)
@@ -113,15 +113,16 @@ class TokenResolver:
         if not cred.are_filled_in():
             self._kodi.open_settings()
             cred.reload()
-        data = dict(
+        payload = dict(
             loginID=cred.username,
             password=cred.password,
             sessionExpiration='-1',
             APIKey=self._API_KEY,
             targetEnv='jssdk',
         )
+        data = urlencode(payload).encode('utf8')
         self._kodi.log_notice('URL post: ' + unquote(self._LOGIN_URL), 'Verbose')
-        req = Request(self._LOGIN_URL, data=urlencode(data))
+        req = Request(self._LOGIN_URL, data=data)
         logon_json = json.loads(urlopen(req).read())
         token = None
         if logon_json.get('errorCode') == 0:
@@ -133,9 +134,10 @@ class TokenResolver:
                 ts=logon_json.get('signatureTimestamp'),
                 email=cred.username,
             )
+            data = json.dumps(payload).encode('utf8')
             headers = {'Content-Type': 'application/json', 'Cookie': login_cookie}
             self._kodi.log_notice('URL post: ' + unquote(self._TOKEN_GATEWAY_URL), 'Verbose')
-            req = Request(self._TOKEN_GATEWAY_URL, data=json.dumps(payload), headers=headers)
+            req = Request(self._TOKEN_GATEWAY_URL, data=data, headers=headers)
             cookie_data = urlopen(req).info().getheader('Set-Cookie').split('X-VRT-Token=')[1].split('; ')
             xvrttoken = TokenResolver._create_token_dictionary_from_urllib(cookie_data)
             if get_roaming_token:
@@ -150,7 +152,7 @@ class TokenResolver:
 
     def _get_fav_xvrttoken(self, path):
         try:
-            from http.cookiejar import cookielib
+            import http.cookiejar as cookielib
         except ImportError:
             import cookielib
         import json
@@ -158,15 +160,16 @@ class TokenResolver:
         if not cred.are_filled_in():
             self._kodi.open_settings()
             cred.reload()
-        data = dict(
+        payload = dict(
             loginID=cred.username,
             password=cred.password,
             sessionExpiration='-1',
             APIKey=self._API_KEY,
             targetEnv='jssdk',
         )
+        data = urlencode(payload).encode('utf8')
         self._kodi.log_notice('URL post: ' + unquote(self._LOGIN_URL), 'Verbose')
-        req = Request(self._LOGIN_URL, data=urlencode(data))
+        req = Request(self._LOGIN_URL, data=data)
         logon_json = json.loads(urlopen(req).read())
         token = None
         if logon_json.get('errorCode') == 0:
@@ -177,12 +180,13 @@ class TokenResolver:
                 client_id='vrtnu-site',
                 submit='submit',
             )
+            data = urlencode(payload).encode('utf8')
             cookiejar = cookielib.CookieJar()
             opener = build_opener(HTTPCookieProcessor(cookiejar))
             self._kodi.log_notice('URL get: ' + unquote(self._FAV_TOKEN_GATEWAY_URL), 'Verbose')
             opener.open(self._FAV_TOKEN_GATEWAY_URL)
             self._kodi.log_notice('URL post: ' + unquote(self._VRT_LOGIN_URL), 'Verbose')
-            opener.open(self._VRT_LOGIN_URL, data=urlencode(payload))
+            opener.open(self._VRT_LOGIN_URL, data=data)
             xvrttoken = TokenResolver._create_token_dictionary(cookiejar)
             if xvrttoken is not None:
                 token = xvrttoken.get('X-VRT-Token')
@@ -246,7 +250,7 @@ class TokenResolver:
         import dateutil.parser
         token_dictionary = {
             'X-VRT-Token': cookie_data[0],
-            'expirationDate': dateutil.parser.parse(cookie_data[2].strip('Expires='))
+            'expirationDate': dateutil.parser.parse(cookie_data[2].strip('Expires=')).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
         }
         return token_dictionary
 

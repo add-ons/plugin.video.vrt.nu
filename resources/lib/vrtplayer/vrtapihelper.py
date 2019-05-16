@@ -235,12 +235,12 @@ class VRTApiHelper:
             # Only display when a video disappears if it is within the next 3 months
             if metadata.offtime is not None and (metadata.offtime - now).days < 93:
                 # Show date when episode is removed
-                plot_meta += self._kodi.localize(30202) % self._kodi.localize_dateshort(metadata.offtime)
+                plot_meta += self._kodi.localize(30202).format(date=self._kodi.localize_dateshort(metadata.offtime))
                 # Show the remaining days/hours the episode is still available
                 if (metadata.offtime - now).days > 0:
-                    plot_meta += self._kodi.localize(30203) % (metadata.offtime - now).days
+                    plot_meta += self._kodi.localize(30203).format(days=(metadata.offtime - now).days)
                 else:
-                    plot_meta += self._kodi.localize(30204) % int((metadata.offtime - now).seconds / 3600)
+                    plot_meta += self._kodi.localize(30204).format(hours=int((metadata.offtime - now).seconds / 3600))
 
             if plot_meta:
                 metadata.plot = '%s\n%s' % (plot_meta, metadata.plot)

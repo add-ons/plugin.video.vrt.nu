@@ -136,13 +136,13 @@ class VRTPlayer:
                 is_playable = False
             else:
                 url_dict = dict(action=action)
-                label = self._kodi.localize(30101) % channel.get('label')
+                label = self._kodi.localize(30101).format(**channel)
                 is_playable = True
                 if channel.get('name') in ['een', 'canvas', 'ketnet']:
                     fanart = self._apihelper.get_live_screenshot(channel.get('name'))
-                    plot = '%s\n\n%s' % (self._kodi.localize(30102) % channel.get('label'), _tvguide.live_description(channel.get('name')))
+                    plot = '%s\n\n%s' % (self._kodi.localize(30102).format(**channel), _tvguide.live_description(channel.get('name')))
                 else:
-                    plot = self._kodi.localize(30102) % channel.get('label')
+                    plot = self._kodi.localize(30102).format(**channel)
                 if channel.get('live_stream_url'):
                     url_dict['video_url'] = channel.get('live_stream_url')
                 elif channel.get('live_stream'):
@@ -216,7 +216,7 @@ class VRTPlayer:
 
         search_items, sort, ascending, content = self._apihelper.search(search_string, page=page)
         if not search_items:
-            self._kodi.show_ok_dialog(self._kodi.localize(30098), self._kodi.localize(30099) % search_string)
+            self._kodi.show_ok_dialog(self._kodi.localize(30098), self._kodi.localize(30099).format(keywords=search_string))
             self._kodi.end_of_directory()
             return
 
