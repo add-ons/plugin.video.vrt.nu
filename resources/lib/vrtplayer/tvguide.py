@@ -159,23 +159,23 @@ class TVGuide:
                 else:
                     metadata.title = label
             else:
-                # FIXME: Find a better solution for non-actionable items
-                url_dict = dict(action=actions.LISTING_TVGUIDE, date=date, channel=channel.get('name'))
+                # This is a non-actionable item
+                url_dict = dict()
                 if start_date < now <= end_date:  # Now playing
-                    metadata.title = '[COLOR brown]%s[/COLOR] %s' % (label, self._kodi.localize(30302))
+                    metadata.title = '[COLOR gray]%s[/COLOR] %s' % (label, self._kodi.localize(30302))
                 else:
                     metadata.title = '[COLOR gray]%s[/COLOR]' % label
             episode_items.append(helperobjects.TitleItem(
                 title=metadata.title,
                 url_dict=url_dict,
-                is_playable=bool(url),
+                is_playable=True,
                 art_dict=dict(thumb=thumb, icon='DefaultAddonVideo.png', fanart=thumb),
                 video_dict=metadata.get_video_dict(),
             ))
         return episode_items
 
     def episode_description(self, episode):
-        return '{start} - {end}\n{title}'.format(**episode)
+        return '[B]{title}[/B]\n{start} - {end}'.format(**episode)
 
     def live_description(self, channel):
         now = datetime.now(dateutil.tz.tzlocal())
@@ -193,7 +193,6 @@ class TVGuide:
             return ''
 
         description = ''
-        prev_episode = None
         while True:
             try:
                 episode = next(episodes)
@@ -202,13 +201,10 @@ class TVGuide:
             start_date = dateutil.parser.parse(episode.get('startTime'))
             end_date = dateutil.parser.parse(episode.get('endTime'))
             if start_date < now <= end_date:  # Now playing
-                if prev_episode:
-                    description += '[COLOR gray]%s[/COLOR]\n' % self.episode_description(prev_episode)
-                description += '[COLOR yellow][B]%s[/B][/COLOR]\n' % self.episode_description(episode)
+                description += '[COLOR yellow]Now: %s[/COLOR]\n' % self.episode_description(episode)
                 break
-            prev_episode = episode
         try:
-            description += '%s\n' % self.episode_description(next(episodes))
+            description += 'Next: %s\n' % self.episode_description(next(episodes))
         except StopIteration:
             pass
         return description

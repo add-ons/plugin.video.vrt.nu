@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
-    <category label="30800"> <!-- Interface -->
-        <setting label="30801" help="30802" type="bool" id="usefavorites" default="true"/>
-        <setting label="30803" help="30804" type="bool" id="usemenucaching" default="true"/>
-        <setting label="30805" help="30806" type="bool" id="showpermalink" default="false"/>
+    <category label="30800"> <!-- Credentials -->
+        <setting label="30801" help="30802" type="text" id="username"/>
+        <setting label="30803" help="30804" type="text" id="password" option="hidden"/>
     </category>
-    <category label="30820"> <!-- Credentials -->
-        <setting label="30821" help="30822" type="text" id="username"/>
-        <setting label="30823" help="30824" type="text" id="password" option="hidden"/>
+    <category label="30820"> <!-- Interface -->
+        <setting label="30821" help="30822" type="bool" id="usefavorites" default="true"/>
+        <setting label="30823" help="30824" type="bool" id="usemenucaching" default="true"/>
+        <setting label="30825" help="30826" type="bool" id="showpermalink" default="false"/>
     </category>
     <category label="30840"> <!-- Video -->
         <setting label="30841" type="lsep"/>

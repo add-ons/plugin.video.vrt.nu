@@ -19,7 +19,7 @@ msgstr ""
 ### MAIN MENU
 msgctxt "#30010"
 msgid "My programs"
-msgstr "Mijn TV programma's"
+msgstr "Mijn tv-programma's"
 
 msgctxt "#30011"
 msgid "Browse only the programs you follow"
@@ -31,7 +31,7 @@ msgstr "A-Z"
 
 msgctxt "#30013"
 msgid "Alphabetically sorted list of TV programs"
-msgstr "Alle TV-programma's in alfabetische volgorde"
+msgstr "Alle tv-programma's in alfabetische volgorde"
 
 msgctxt "#30014"
 msgid "Categories"
@@ -39,7 +39,7 @@ msgstr "Categorieën"
 
 msgctxt "#30015"
 msgid "TV programs listed by category"
-msgstr "Lijst van TV-programma's per categorie"
+msgstr "Lijst van tv-programma's per categorie"
 
 msgctxt "#30016"
 msgid "Channels"
@@ -47,7 +47,7 @@ msgstr "Kanalen"
 
 msgctxt "#30017"
 msgid "TV programs listed by channel"
-msgstr "Lijst van TV-programma's per kanaal"
+msgstr "Lijst van tv-programma's per kanaal"
 
 msgctxt "#30018"
 msgid "Live TV"
@@ -55,7 +55,7 @@ msgstr "Live kijken"
 
 msgctxt "#30019"
 msgid "Watch TV channels live (using Internet streaming)"
-msgstr "Bekijk TV-kanalen live (via Internet)"
+msgstr "Bekijk tv-kanalen live (via Internet)"
 
 msgctxt "#30020"
 msgid "Most recent"
@@ -63,15 +63,15 @@ msgstr "Meest recent"
 
 msgctxt "#30021"
 msgid "Recently published episodes of TV programs"
-msgstr "Recent gepubliceerde afleveringen van TV-programma's"
+msgstr "Recent gepubliceerde afleveringen van tv-programma's"
 
 msgctxt "#30022"
 msgid "TV guide"
-msgstr "TV-gids"
+msgstr "Tv-gids"
 
 msgctxt "#30023"
 msgid "Browse channel TV guides"
-msgstr "Doorzoek de TV-gids per kanaal"
+msgstr "Doorzoek de tv-gids per kanaal"
 
 msgctxt "#30024"
 msgid "Doorzoek VRT NU"
@@ -85,11 +85,11 @@ msgstr "Doorzoek de hele VRT NU bibliotheek"
 ### FAVORITES
 msgctxt "#30040"
 msgid "My A-Z"
-msgstr "Mijn TV programma's"
+msgstr "Mijn tv-programma's"
 
 msgctxt "#30041"
 msgid "Alphabetically sorted list of My TV programs"
-msgstr "Alle TV-programma's die je volgt in alfabetische volgorde"
+msgstr "Alle tv-programma's die je volgt in alfabetische volgorde"
 
 msgctxt "#30042"
 msgid "My recent items"
@@ -97,7 +97,7 @@ msgstr "Mijn recente afleveringen"
 
 msgctxt "#30043"
 msgid "Recently published episodes of My TV programs"
-msgstr "Recent gepubliceerde afleveringen van TV-programma's die je volgt"
+msgstr "Recent gepubliceerde afleveringen van tv-programma's die je volgt"
 
 
 ### APPLICATION
@@ -155,7 +155,7 @@ msgstr "[B][COLOR yellow]Meer...[/COLOR][/B]"
 
 msgctxt "#30301"
 msgid "[B]TV guide for channel %s[/B]"
-msgstr "[B]TV-gids for kanaal %s[/B]"
+msgstr "[B]Tv-gids for kanaal %s[/B]"
 
 msgctxt "#30302"
 msgid "[B][I]Now on live TV[/I][/B]"
@@ -197,41 +197,43 @@ msgctxt "#30416"
 msgid "We could not find any programs that were followed.\n\nEither right-click on a program or an episode to follow a program, or follow a program on the VRT NU website."
 msgstr "We konden geen programma's vonden die je volgt.\n\nJe kan een programma volgen door rechts te klikken op een programma of aflevering, of om ze op de VRT NU website to volgen."
 
+
+### SETTINGS
 msgctxt "#30800"
-msgid "Interface"
-msgstr "Interface"
-
-msgctxt "#30801"
-msgid "Enable My programs"
-msgstr "Toon Mijn TV programma's"
-
-msgctxt "#30802"
-msgid "Indien actief kan de gebruiker zijn favoriete programma's volgen en apart aanroepen. Dit zorgt er wel voor dat de VRT NU addon een lijst van favoriete programma's download en aanpast op de VRT NU website."
-msgstr ""
-
-msgctxt "#30803"
-msgid "Show episode permalink in plot"
-msgstr "Toon aflevering permalink in beschrijving"
-
-msgctxt "#30804"
-msgid "Indien actief zal de beschrijving van iedere video een permanent link bevatten die je rechtstreeks naar de VRT NU website brengt. Dit is handig om snel een aflevering of film to openen op een mobiel toestel."
-msgstr ""
-
-msgctxt "#30805"
-msgid "Enable menu caching"
-msgstr "Gebruik menu caching"
-
-msgctxt "#30820"
 msgid "Credentials"
 msgstr "Inloggegevens"
 
-msgctxt "#30821"
+msgctxt "#30801"
 msgid "Email address"
 msgstr "E-mailadres"
 
-msgctxt "#30823"
+msgctxt "#30803"
 msgid "Password"
 msgstr "Wachtwoord"
+
+msgctxt "#30820"
+msgid "Interface"
+msgstr "Interface"
+
+msgctxt "#30821"
+msgid "Enable My programs"
+msgstr "Toon Mijn tv-programma's"
+
+msgctxt "#30822"
+msgid "Indien actief kan de gebruiker zijn favoriete programma's volgen en apart aanroepen. Dit zorgt er wel voor dat de VRT NU addon een lijst van favoriete programma's download en aanpast op de VRT NU website."
+msgstr ""
+
+msgctxt "#30823"
+msgid "Show episode permalink in plot"
+msgstr "Toon aflevering permalink in beschrijving"
+
+msgctxt "#30824"
+msgid "Indien actief zal de beschrijving van iedere video een permanent link bevatten die je rechtstreeks naar de VRT NU website brengt. Dit is handig om snel een aflevering of film to openen op een mobiel toestel."
+msgstr ""
+
+msgctxt "#30825"
+msgid "Enable menu caching"
+msgstr "Gebruik menu caching"
 
 msgctxt "#30840"
 msgid "Video"

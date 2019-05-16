@@ -199,51 +199,51 @@ msgstr ""
 
 ### SETTINGS
 msgctxt "#30800"
-msgid "Interface"
-msgstr ""
-
-msgctxt "#30801"
-msgid "Enable My programs"
-msgstr ""
-
-msgctxt "#30802"
-msgid "When enabled, the user can follow their favourite programs and list these separately. In this case the VRT NU addon will download and update a list of your followed programs on the VRT NU website."
-msgstr ""
-
-msgctxt "#30803"
-msgid "Show episode permalink in plot"
-msgstr ""
-
-msgctxt "#30804"
-msgid "When enabled, the video description will include a permanent link that points to this episode. This is useful for quickly opening an episode or movie on a mobile device."
-msgstr ""
-
-msgctxt "#30805"
-msgid "Enable menu caching"
-msgstr ""
-
-msgctxt "#30806"
-msgid "When enabled, menus are being cached so they work more quickly. Only in very specific use-cases this is problematic as new episodes may not appear when they are expected."
-msgstr ""
-
-msgctxt "#30820"
 msgid "Credentials"
 msgstr ""
 
-msgctxt "#30821"
+msgctxt "#30801"
 msgid "Email address"
 msgstr ""
 
-msgctxt "#30822"
+msgctxt "#30802"
 msgid "Provide your VRT NU email address. In case this is a Google or Facebook account, please ensure that this login is enabled for normal username/password authentication. See the wiki for more information."
 msgstr ""
 
-msgctxt "#30823"
+msgctxt "#30803"
 msgid "Password"
 msgstr ""
 
-msgctxt "#30824"
+msgctxt "#30804"
 msgid "Provide your VRT NU account password."
+msgstr ""
+
+msgctxt "#30820"
+msgid "Interface"
+msgstr ""
+
+msgctxt "#30821"
+msgid "Enable My programs"
+msgstr ""
+
+msgctxt "#30822"
+msgid "When enabled, the user can follow their favourite programs and list these separately. In this case the VRT NU addon will download and update a list of your followed programs on the VRT NU website."
+msgstr ""
+
+msgctxt "#30823"
+msgid "Show episode permalink in plot"
+msgstr ""
+
+msgctxt "#30824"
+msgid "When enabled, the video description will include a permanent link that points to this episode. This is useful for quickly opening an episode or movie on a mobile device."
+msgstr ""
+
+msgctxt "#30825"
+msgid "Enable menu caching"
+msgstr ""
+
+msgctxt "#30826"
+msgid "When enabled, menus are being cached so they work more quickly. Only in very specific use-cases this is problematic as new episodes may not appear when they are expected."
 msgstr ""
 
 msgctxt "#30840"
