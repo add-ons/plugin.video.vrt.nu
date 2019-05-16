@@ -57,13 +57,13 @@ class TVGuide:
             self._kodi.show_listing(episode_items, content='episodes', cache=False)
 
     def show_date_menu(self):
-        now = datetime.now(dateutil.tz.tzlocal())
+        epg = datetime.now(dateutil.tz.tzlocal())
         # Daily EPG information shows information from 6AM until 6AM
-        if now.hour < 6:
-            now += timedelta(days=-1)
+        if epg.hour < 6:
+            epg += timedelta(days=-1)
         date_items = []
         for i in range(7, -31, -1):
-            day = now + timedelta(days=i)
+            day = epg + timedelta(days=i)
             title = self._kodi.localize_datelong(day)
 
             # Highlight today with context of 2 days
@@ -179,10 +179,11 @@ class TVGuide:
 
     def live_description(self, channel):
         now = datetime.now(dateutil.tz.tzlocal())
+        epg = now
         # Daily EPG information shows information from 6AM until 6AM
-        if now.hour < 6:
-            now += timedelta(days=-1)
-        api_url = now.strftime(self.VRT_TVGUIDE)
+        if epg.hour < 6:
+            epg += timedelta(days=-1)
+        api_url = epg.strftime(self.VRT_TVGUIDE)
         self._kodi.log_notice('URL get: ' + api_url, 'Verbose')
         schedule = json.loads(urlopen(api_url).read())
         name = channel

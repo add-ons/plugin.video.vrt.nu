@@ -130,8 +130,8 @@ msgid "{label} live"
 msgstr "{label} live"
 
 msgctxt "#30102"
-msgid "Watch {label} live TV stream (via Internet)"
-msgstr "Bekijk {label} live tv stream (via Internet)"
+msgid "Watch {label} live via Internet"
+msgstr "Bekijk {label} live via Internet"
 
 msgctxt "#30201"
 msgid "[B][COLOR red]Geo-blocked[/COLOR][/B]\n"
