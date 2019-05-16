@@ -250,11 +250,12 @@ class VRTApiHelper:
 
             program_path = statichelper.unique_path(episode.get('programUrl'))
             if self._favorites.is_activated():
+                program = episode.get('program').encode('utf-8')
                 if self._favorites.is_favorite(program_path):
-                    params = dict(action='unfollow', program=episode.get('program'), path=program_path)
+                    params = dict(action='unfollow', program=program, path=program_path)
                     context_menu = [(self._kodi.localize(30412), 'RunPlugin(plugin://plugin.video.vrt.nu?%s)' % urlencode(params))]
                 else:
-                    params = dict(action='follow', program=episode.get('program'), path=program_path)
+                    params = dict(action='follow', program=program, path=program_path)
                     context_menu = [(self._kodi.localize(30411), 'RunPlugin(plugin://plugin.video.vrt.nu?%s)' % urlencode(params))]
             else:
                 context_menu = []
