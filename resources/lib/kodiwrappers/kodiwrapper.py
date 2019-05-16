@@ -116,6 +116,7 @@ class KodiWrapper:
             cache = self._usemenucaching
 
         if content:
+            # content is one of: files, songs, artists, albums, movies, tvshows, episodes, musicvideos
             xbmcplugin.setContent(self._handle, content=content)
 
         # FIXME: Since there is no way to influence descending order, we force it here
@@ -137,20 +138,37 @@ class KodiWrapper:
 #            xbmcplugin.setProperty(handle=self._handle, key='sort.order', value=str(sort_methods['unsorted']))
 
         for title_item in list_items:
+            # Three options:
+            #  - item is a virtual directory/folder (not playable, url_dict)
+            #  - item is a playable file (playable, url_dict)
+            #  - item is non-actionable item (not playable, no url_dict)
+            is_folder = bool(not title_item.is_playable and title_item.url_dict)
+            is_playable = bool(title_item.is_playable and title_item.url_dict)
+
             list_item = xbmcgui.ListItem(label=title_item.title, thumbnailImage=title_item.art_dict.get('thumb'))
-            url = self._url + '?' + urlencode(title_item.url_dict)
-            list_item.setProperty(key='IsPlayable', value='true' if title_item.is_playable else 'false')
+
+            if is_playable:
+                list_item.setProperty(key='IsPlayable', value='true')
+
+            if is_folder:
+                list_item.setIsFolder(True)
 
             if title_item.art_dict:
                 list_item.setArt(title_item.art_dict)
 
             if title_item.video_dict:
+                # type is one of: video, music, pictures, game
                 list_item.setInfo(type='video', infoLabels=title_item.video_dict)
 
             if title_item.context_menu:
                 list_item.addContextMenuItems(title_item.context_menu)
 
-            listing.append((url, list_item, not title_item.is_playable))
+            if title_item.url_dict:
+                url = self._url + '?' + urlencode(title_item.url_dict)
+            else:
+                url = None
+
+            listing.append((url, list_item, is_folder))
 
         ok = xbmcplugin.addDirectoryItems(self._handle, listing, len(listing))
         xbmcplugin.endOfDirectory(self._handle, ok, cacheToDisc=cache)

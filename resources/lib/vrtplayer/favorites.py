@@ -60,8 +60,9 @@ class Favorites:
                 'Referer': 'https://www.vrt.be/vrtnu',
             }
             payload = dict(isFavorite=value, programUrl=path, title=program)
+            data = json.dumps(payload).encode('utf-8')
             self._kodi.log_notice('URL post: https://video-user-data.vrt.be/favorites/%s' % self.uuid(path), 'Verbose')
-            req = Request('https://video-user-data.vrt.be/favorites/%s' % self.uuid(path), data=json.dumps(payload), headers=headers)
+            req = Request('https://video-user-data.vrt.be/favorites/%s' % self.uuid(path), data=data, headers=headers)
             # TODO: Test that we get a HTTP 200, otherwise log and fail graceful
             result = urlopen(req)
             if result.getcode() != 200:

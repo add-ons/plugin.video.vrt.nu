@@ -161,6 +161,7 @@ class StreamService:
         self._kodi.log_error(video_json.get('message'))
         message = self._kodi.localize(30954)  # Whoops something went wrong
         self._kodi.show_ok_dialog('', message)
+        self._kodi.end_of_directory()
 
     @staticmethod
     def _fix_virtualsubclip(stream_dict, duration):
@@ -218,6 +219,7 @@ class StreamService:
                     return self.get_stream(video, retry=True, api_data=api_data)
                 message = self._kodi.localize(30953)  # Cannot be played
                 self._kodi.show_ok_dialog('', message)
+                self._kodi.end_of_directory()
             else:
                 self._handle_error(video_json)
 

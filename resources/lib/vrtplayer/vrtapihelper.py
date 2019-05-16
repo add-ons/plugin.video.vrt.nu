@@ -55,7 +55,6 @@ class VRTApiHelper:
             if filtered and tvshow.get('programName') not in favorite_names:
                 continue
             metadata = metadatacreator.MetadataCreator()
-            metadata.mediatype = 'tvshow'
             metadata.tvshowtitle = tvshow.get('title', '???')
             metadata.plot = statichelper.unescape(tvshow.get('description', '???'))
             metadata.brands = tvshow.get('brands')
@@ -66,11 +65,12 @@ class VRTApiHelper:
             thumbnail = statichelper.add_https_method(tvshow.get('thumbnail', 'DefaultAddonVideo.png'))
             program_path = statichelper.unique_path(tvshow.get('targetUrl'))
             if self._favorites.is_activated():
+                program = tvshow.get('title').encode('utf-8')
                 if self._favorites.is_favorite(program_path):
-                    params = dict(action='unfollow', program=tvshow.get('title'), path=program_path)
+                    params = dict(action='unfollow', program=program, path=program_path)
                     context_menu = [(self._kodi.localize(30412), 'RunPlugin(plugin://plugin.video.vrt.nu?%s)' % urlencode(params))]
                 else:
-                    params = dict(action='follow', program=tvshow.get('title'), path=program_path)
+                    params = dict(action='follow', program=program, path=program_path)
                     context_menu = [(self._kodi.localize(30411), 'RunPlugin(plugin://plugin.video.vrt.nu?%s)' % urlencode(params))]
             else:
                 context_menu = []
@@ -289,7 +289,6 @@ class VRTApiHelper:
         metadata.tvshowtitle = episode.get('program')
         metadata.plot = statichelper.convert_html_to_kodilabel(episode.get('programDescription'))
         metadata.plotoutline = statichelper.convert_html_to_kodilabel(episode.get('programDescription'))
-        metadata.mediatype = 'season'
         metadata.brands = episode.get('programBrands') or episode.get('brands')
         metadata.geolocked = episode.get('allowedRegion') == 'BE'
         metadata.season = episode.get('seasonTitle')

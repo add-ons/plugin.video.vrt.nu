@@ -27,7 +27,7 @@ class VRTPlayer:
         # Only add 'My programs' when it has been activated
         if self._favorites.is_activated():
             main_items.append(TitleItem(
-                title=self._kodi.localize(30010),
+                title=self._kodi.localize(30010),  # My programs
                 url_dict=dict(action=actions.LISTING_FAVORITES),
                 is_playable=False,
                 art_dict=dict(thumb='icons/settings/profiles.png', icon='icons/settings/profiles.png', fanart='icons/settings/profiles.png'),
@@ -35,37 +35,37 @@ class VRTPlayer:
             ))
 
         main_items.extend([
-            TitleItem(title=self._kodi.localize(30012),
+            TitleItem(title=self._kodi.localize(30012),  # A-Z listing
                       url_dict=dict(action=actions.LISTING_AZ_TVSHOWS),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultMovieTitle.png', icon='DefaultMovieTitle.png', fanart='DefaultMovieTitle.png'),
                       video_dict=dict(plot=self._kodi.localize(30013))),
-            TitleItem(title=self._kodi.localize(30014),
+            TitleItem(title=self._kodi.localize(30014),  # Categories
                       url_dict=dict(action=actions.LISTING_CATEGORIES),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultGenre.png', icon='DefaultGenre.png', fanart='DefaultGenre.png'),
                       video_dict=dict(plot=self._kodi.localize(30015))),
-            TitleItem(title=self._kodi.localize(30016),
+            TitleItem(title=self._kodi.localize(30016),  # Channels
                       url_dict=dict(action=actions.LISTING_CHANNELS),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultTags.png', icon='DefaultTags.png', fanart='DefaultTags.png'),
                       video_dict=dict(plot=self._kodi.localize(30017))),
-            TitleItem(title=self._kodi.localize(30018),
+            TitleItem(title=self._kodi.localize(30018),  # Live TV
                       url_dict=dict(action=actions.LISTING_LIVE),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultAddonPVRClient.png', icon='DefaultAddonPVRClient.png', fanart='DefaultAddonPVRClient.png'),
                       video_dict=dict(plot=self._kodi.localize(30019))),
-            TitleItem(title=self._kodi.localize(30020),
+            TitleItem(title=self._kodi.localize(30020),  # Recent items
                       url_dict=dict(action=actions.LISTING_RECENT, page='1'),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
                       video_dict=dict(plot=self._kodi.localize(30021))),
-            TitleItem(title=self._kodi.localize(30022),
+            TitleItem(title=self._kodi.localize(30022),  # TV guide
                       url_dict=dict(action=actions.LISTING_TVGUIDE),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultAddonTvInfo.png', icon='DefaultAddonTvInfo.png', fanart='DefaultAddonTvInfo.png'),
                       video_dict=dict(plot=self._kodi.localize(30023))),
-            TitleItem(title=self._kodi.localize(30024),
+            TitleItem(title=self._kodi.localize(30024),  # Search
                       url_dict=dict(action=actions.SEARCH),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultAddonsSearch.png', icon='DefaultAddonsSearch.png', fanart='DefaultAddonsSearch.png'),
@@ -75,12 +75,12 @@ class VRTPlayer:
 
     def show_favorites_menu_items(self):
         favorites_items = [
-            TitleItem(title=self._kodi.localize(30040),
+            TitleItem(title=self._kodi.localize(30040),  # My A-Z listing
                       url_dict=dict(action=actions.LISTING_AZ_TVSHOWS, filtered=True),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultMovieTitle.png', icon='DefaultMovieTitle.png', fanart='DefaultMovieTitle.png'),
                       video_dict=dict(plot=self._kodi.localize(30041))),
-            TitleItem(title=self._kodi.localize(30042),
+            TitleItem(title=self._kodi.localize(30042),  # My recent items
                       url_dict=dict(action=actions.LISTING_RECENT, page='1', filtered=True),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
@@ -140,7 +140,7 @@ class VRTPlayer:
                 is_playable = True
                 if channel.get('name') in ['een', 'canvas', 'ketnet']:
                     fanart = self._apihelper.get_live_screenshot(channel.get('name'))
-                    plot = _tvguide.live_description(channel.get('name')) or self._kodi.localize(30102) % channel.get('label')
+                    plot = '%s\n\n%s' % (self._kodi.localize(30102) % channel.get('label'), _tvguide.live_description(channel.get('name')))
                 else:
                     plot = self._kodi.localize(30102) % channel.get('label')
                 if channel.get('live_stream_url'):
@@ -230,6 +230,7 @@ class VRTPlayer:
                 video_dict=dict(),
             ))
 
+        self._kodi.container_update(replace=True)
         self._kodi.show_listing(search_items, sort=sort, ascending=ascending, content=content, cache=False)
 
     def __get_category_menu_items(self):

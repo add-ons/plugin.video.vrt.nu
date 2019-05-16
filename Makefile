@@ -37,12 +37,12 @@ pylint:
 
 unit:
 	@echo -e "$(white)=$(blue) Starting unit tests$(reset)"
-	PYTHONPATH=$(pwd) python test/vrtplayertests.py
-	#PYTHONPATH=$(pwd) python test/streamservicetests.py
-	PYTHONPATH=$(pwd) python test/apihelpertests.py
-	PYTHONPATH=$(pwd) python test/tvguidetests.py
-	PYTHONPATH=$(pwd) python test/searchtests.py
-	PYTHONPATH=$(pwd) python test/favoritestests.py
+	PYTHONPATH=$(CURDIR) python test/vrtplayertests.py
+	#PYTHONPATH=$(CURDIR) python test/streamservicetests.py
+	PYTHONPATH=$(CURDIR) python test/apihelpertests.py
+	PYTHONPATH=$(CURDIR) python test/tvguidetests.py
+	PYTHONPATH=$(CURDIR) python test/searchtests.py
+	PYTHONPATH=$(CURDIR) python test/favoritestests.py
 	@echo -e "$(white)=$(blue) Unit tests finished successfully.$(reset)"
 
 zip: test

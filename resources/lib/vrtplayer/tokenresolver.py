@@ -71,8 +71,7 @@ class TokenResolver:
         return token
 
     def get_fav_xvrttoken(self):
-        token_filename = self._FAV_XVRTTOKEN_COOKIE
-        token_path = self._kodi.get_userdata_path() + token_filename
+        token_path = self._kodi.get_userdata_path() + self._FAV_XVRTTOKEN_COOKIE
         token = self._get_cached_token(token_path, 'X-VRT-Token')
 
         if token is None:
@@ -150,7 +149,10 @@ class TokenResolver:
         return token
 
     def _get_fav_xvrttoken(self, path):
-        import cookielib
+        try:
+            from http.cookiejar import cookielib
+        except ImportError:
+            import cookielib
         import json
         cred = helperobjects.Credentials(self._kodi)
         if not cred.are_filled_in():
@@ -203,6 +205,7 @@ class TokenResolver:
         else:
             message = error_message
         self._kodi.show_ok_dialog(title, message)
+        self._kodi.end_of_directory()
 
     def _get_roaming_xvrttoken(self, xvrttoken):
         roaming_xvrttoken = None
@@ -240,22 +243,17 @@ class TokenResolver:
 
     @staticmethod
     def _create_token_dictionary_from_urllib(cookie_data):
-        token_dictionary = None
-        from datetime import datetime
-        import time
+        import dateutil.parser
         token_dictionary = {
             'X-VRT-Token': cookie_data[0],
-            'expirationDate': datetime(*time.strptime(cookie_data[2].strip('Expires='), '%a, %d %B %Y %H:%M:%S GMT')[0:6]).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+            'expirationDate': dateutil.parser.parse(cookie_data[2].strip('Expires='))
         }
         return token_dictionary
 
     def reset_cookies(self):
         user_data_path = self._kodi.get_userdata_path()
-        ondemand = user_data_path + self._ONDEMAND_COOKIE
-        live = user_data_path + self._LIVE_COOKIE
-        xvrt = user_data_path + self._XVRT_TOKEN_COOKIE
-        roaming = user_data_path + self._ROAMING_XVRTTOKEN_COOKIE
-        self._kodi.delete_file(ondemand)
-        self._kodi.delete_file(live)
-        self._kodi.delete_file(xvrt)
-        self._kodi.delete_file(roaming)
+        self._kodi.delete_file(user_data_path + self._ONDEMAND_COOKIE)
+        self._kodi.delete_file(user_data_path + self._LIVE_COOKIE)
+        self._kodi.delete_file(user_data_path + self._XVRT_TOKEN_COOKIE)
+        self._kodi.delete_file(user_data_path + self._ROAMING_XVRTTOKEN_COOKIE)
+        self._kodi.delete_file(user_data_path + self._FAV_XVRTTOKEN_COOKIE)

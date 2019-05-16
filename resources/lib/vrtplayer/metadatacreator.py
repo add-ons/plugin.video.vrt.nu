@@ -210,6 +210,7 @@ class MetadataCreator:
         #    video_dict['icon'] = self.icon
         #    video_dict['actualicon'] = self.icon
 
+        # mediatype is one of: video, movie, tvshow, season, episode or musicvideo
         if self.mediatype:
             video_dict['mediatype'] = self.mediatype
 
