@@ -45,6 +45,14 @@ class TestTVGuide(unittest.TestCase):
         episode_items = self._tvguide.show_episodes(date, channel)
         self.assertTrue(episode_items)
 
+    def test_livetv_description(self):
+        description = self._tvguide.live_description('een')
+        print(description)
+        description = self._tvguide.live_description('canvas')
+        print(description)
+        description = self._tvguide.live_description('ketnet')
+        print(description)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -113,7 +113,8 @@ class VRTPlayer:
         self.show_channels(action=actions.PLAY, channels=['een', 'canvas', 'sporza', 'ketnet-jr', 'ketnet', 'stubru', 'mnm'])
 
     def show_channels(self, action=actions.PLAY, channels=None):
-        from resources.lib.vrtplayer import CHANNELS
+        from resources.lib.vrtplayer import CHANNELS, tvguide
+        _tvguide = tvguide.TVGuide(self._kodi)
 
         fanart_path = 'resource://resource.images.studios.white/%(studio)s.png'
         icon_path = 'resource://resource.images.studios.white/%(studio)s.png'
@@ -139,8 +140,7 @@ class VRTPlayer:
                 is_playable = True
                 if channel.get('name') in ['een', 'canvas', 'ketnet']:
                     fanart = self._apihelper.get_live_screenshot(channel.get('name'))
-                    plot = '%s\n%s' % (self._kodi.localize(30201),
-                                       self._kodi.localize(30102) % channel.get('label'))
+                    plot = _tvguide.live_description(channel.get('name')) or self._kodi.localize(30102) % channel.get('label')
                 else:
                     plot = self._kodi.localize(30102) % channel.get('label')
                 if channel.get('live_stream_url'):
