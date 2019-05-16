@@ -341,7 +341,17 @@ class KodiWrapper:
         return xbmcvfs.delete(path)
 
     def container_refresh(self):
+        self.log_notice('Execute: Container.Refresh', 'Debug')
         xbmc.executebuiltin('Container.Refresh')
+
+    def container_update(self, url=None, path='', replace=False):
+        if url is None:
+            url = self._url
+        self.log_notice('Execute: Container.Update(%s%s%s)' % (url, path, ',replace' if replace else ''), 'Debug')
+        xbmc.executebuiltin('Container.Update(%s%s%s)' % (url, path, ',replace' if replace else ''))
+
+    def end_of_directory(self):
+        xbmcplugin.endOfDirectory(self._handle, False, cacheToDisc=False)
 
     def log_access(self, url, query_string, log_level='Verbose'):
         ''' Log addon access '''

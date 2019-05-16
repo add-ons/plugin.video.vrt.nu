@@ -211,11 +211,13 @@ class VRTPlayer:
             search_string = self._kodi.get_search_string()
 
         if not search_string:
+            self._kodi.end_of_directory()
             return
 
         search_items, sort, ascending, content = self._apihelper.search(search_string, page=page)
         if not search_items:
             self._kodi.show_ok_dialog(self._kodi.localize(30098), self._kodi.localize(30099) % search_string)
+            self._kodi.end_of_directory()
             return
 
         # Add 'More...' entry at the end
