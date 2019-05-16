@@ -289,7 +289,7 @@ class StreamService:
                 break
 
         if not hls_variant_url:
-            message = self._kodi.localize(30957) % (str(max_bandwidth), stream_bandwidth)
+            message = self._kodi.localize(30957).format(max=max_bandwidth, min=stream_bandwidth)
             self._kodi.show_ok_dialog('', message)
             self._kodi.open_settings()
 

@@ -146,12 +146,8 @@ class KodiWrapper:
             is_playable = bool(title_item.is_playable and title_item.url_dict)
 
             list_item = xbmcgui.ListItem(label=title_item.title, thumbnailImage=title_item.art_dict.get('thumb'))
-
-            if is_playable:
-                list_item.setProperty(key='IsPlayable', value='true')
-
-            if is_folder:
-                list_item.setIsFolder(True)
+            list_item.setProperty(key='IsPlayable', value='true' if is_playable else 'false')
+            list_item.setIsFolder(is_folder)
 
             if title_item.art_dict:
                 list_item.setArt(title_item.art_dict)
@@ -163,10 +159,9 @@ class KodiWrapper:
             if title_item.context_menu:
                 list_item.addContextMenuItems(title_item.context_menu)
 
+            url = None
             if title_item.url_dict:
                 url = self._url + '?' + urlencode(title_item.url_dict)
-            else:
-                url = None
 
             listing.append((url, list_item, is_folder))
 

@@ -105,7 +105,7 @@ class TVGuide:
 
             icon = icon_path % channel
             fanart = fanart_path % channel
-            plot = self._kodi.localize(30301) % channel.get('label') + '\n' + datelong
+            plot = '%s\n%s' % (self._kodi.localize(30301).format(**channel), datelong)
             channel_items.append(helperobjects.TitleItem(
                 title=channel.get('label'),
                 url_dict=dict(action=actions.LISTING_TVGUIDE, date=date, channel=channel.get('name')),
@@ -203,8 +203,11 @@ class TVGuide:
             if start_date < now <= end_date:  # Now playing
                 description += '[COLOR yellow]Now: %s[/COLOR]\n' % self.episode_description(episode)
                 break
+            elif now < start_date:  # Nothing playing now, but this may be next
+                description += 'Next: %s\n' % self.episode_description(episode)
+                break
         try:
-            description += 'Next: %s\n' % self.episode_description(next(episodes))
+            description += 'Next: %s' % self.episode_description(next(episodes))
         except StopIteration:
             pass
         return description
