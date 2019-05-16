@@ -129,7 +129,7 @@ msgid "{label} live"
 msgstr ""
 
 msgctxt "#30102"
-msgid "Watch {label} live TV stream (via Internet)"
+msgid "Watch {label} live via Internet"
 msgstr ""
 
 msgctxt "#30201"
