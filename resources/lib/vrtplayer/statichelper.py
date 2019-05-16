@@ -19,7 +19,8 @@ HTML_MAPPING = [
     (re.compile(r'<(/?)b(|\s[^>]+)>', re.I), '[\\1B]'),
     (re.compile(r'<em(|\s[^>]+)>', re.I), '[B][COLOR yellow]'),
     (re.compile(r'</em>', re.I), '[/COLOR][/B]'),
-    (re.compile(r'</?(div|p|span)(|\s[^>]+)>', re.I), ''),
+    (re.compile(r'<li>', re.I), '- '),
+    (re.compile(r'</?(div|li|p|span|ul)(|\s[^>]+)>', re.I), ''),
     (re.compile('<br>\n{0,1}', re.I), ' '),  # This appears to be specific formatting for VRT NU, but unwanted by us
 ]
 
