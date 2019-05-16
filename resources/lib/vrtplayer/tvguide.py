@@ -58,6 +58,9 @@ class TVGuide:
 
     def show_date_menu(self):
         now = datetime.now(dateutil.tz.tzlocal())
+        # Daily EPG information shows information from 6AM until 6AM
+        if now.hour < 6:
+            now += timedelta(days=-1)
         date_items = []
         for i in range(7, -31, -1):
             day = now + timedelta(days=i)
@@ -170,6 +173,45 @@ class TVGuide:
                 video_dict=metadata.get_video_dict(),
             ))
         return episode_items
+
+    def episode_description(self, episode):
+        return '{start} - {end}\n{title}'.format(**episode)
+
+    def live_description(self, channel):
+        now = datetime.now(dateutil.tz.tzlocal())
+        # Daily EPG information shows information from 6AM until 6AM
+        if now.hour < 6:
+            now += timedelta(days=-1)
+        api_url = now.strftime(self.VRT_TVGUIDE)
+        self._kodi.log_notice('URL get: ' + api_url, 'Verbose')
+        schedule = json.loads(urlopen(api_url).read())
+        name = channel
+        try:
+            channel = next(c for c in CHANNELS if c.get('name') == name)
+            episodes = iter(schedule[channel.get('id')])
+        except StopIteration:
+            return ''
+
+        description = ''
+        prev_episode = None
+        while True:
+            try:
+                episode = next(episodes)
+            except StopIteration:
+                break
+            start_date = dateutil.parser.parse(episode.get('startTime'))
+            end_date = dateutil.parser.parse(episode.get('endTime'))
+            if start_date < now <= end_date:  # Now playing
+                if prev_episode:
+                    description += '[COLOR gray]%s[/COLOR]\n' % self.episode_description(prev_episode)
+                description += '[COLOR yellow][B]%s[/B][/COLOR]\n' % self.episode_description(episode)
+                break
+            prev_episode = episode
+        try:
+            description += '%s\n' % self.episode_description(next(episodes))
+        except StopIteration:
+            pass
+        return description
 
     def parse(self, date, now):
         if date == 'today':
