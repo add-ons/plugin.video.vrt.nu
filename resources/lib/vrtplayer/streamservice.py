@@ -22,6 +22,7 @@ class StreamService:
     _VUPLAY_API_URL = 'https://api.vuplay.co.uk'
     _VUALTO_API_URL = 'https://media-services-public.vrt.be/vualto-video-aggregator-web/rest/external/v1'
     _CLIENT = 'vrtvideo'
+    _UPLYNK_LICENSE_URL = 'https://content.uplynk.com/wv'
 
     def __init__(self, _kodi, _tokenresolver):
         self._kodi = _kodi
@@ -30,11 +31,11 @@ class StreamService:
         self._tokenresolver = _tokenresolver
         self._create_settings_dir()
         self._can_play_drm = _kodi.can_play_drm()
-        self._license_url = None
+        self._vualto_license_url = None
 
-    def _get_license_url(self):
+    def _get_vualto_license_url(self):
+        self._vualto_license_url = json.loads(urlopen(self._VUPLAY_API_URL).read()).get('drm_providers', dict()).get('widevine', dict()).get('la_url')
         self._kodi.log_notice('URL get: ' + unquote(self._VUPLAY_API_URL), 'Verbose')
-        self._license_url = json.loads(urlopen(self._VUPLAY_API_URL).read()).get('drm_providers', dict()).get('widevine', dict()).get('la_url')
 
     def _create_settings_dir(self):
         settingsdir = self._kodi.get_userdata_path()
@@ -89,7 +90,7 @@ class StreamService:
         if video_id and publication_id:
             xvrttoken = self._tokenresolver.get_xvrttoken()
             api_data = apidata.ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, publication_id + quote('$'), xvrttoken, False)
-        # Prepare api_data for livestreams by video_id, e.g. vualto_strubru, vualto_mnm
+        # Prepare api_data for livestreams by video_id, e.g. vualto_strubru, vualto_mnm, ketnet_jr
         elif video_id and not video_url:
             api_data = apidata.ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, '', None, True)
         # Webscrape api_data with video_id fallback
@@ -137,7 +138,7 @@ class StreamService:
 
         return apidata.ApiData(client, media_api_url, video_id, publication_id, xvrttoken, is_live_stream)
 
-    def _get_video_json(self, api_data):
+    def _get_stream_json(self, api_data):
         token_url = api_data.media_api_url + '/tokens'
         if api_data.is_live_stream:
             playertoken = self._tokenresolver.get_live_playertoken(token_url, api_data.xvrttoken)
@@ -145,17 +146,17 @@ class StreamService:
             playertoken = self._tokenresolver.get_ondemand_playertoken(token_url, api_data.xvrttoken)
 
         # Construct api_url and get video json
-        video_json = None
+        stream_json = None
         if playertoken:
             api_url = api_data.media_api_url + '/videos/' + api_data.publication_id + \
                 api_data.video_id + '?vrtPlayerToken=' + playertoken + '&client=' + api_data.client
             self._kodi.log_notice('URL get: ' + unquote(api_url), 'Verbose')
             try:
-                video_json = json.loads(urlopen(api_url).read())
+                stream_json = json.loads(urlopen(api_url).read())
             except HTTPError as e:
-                video_json = json.loads(e.read())
+                stream_json = json.loads(e.read())
 
-        return video_json
+        return stream_json
 
     def _handle_error(self, video_json):
         self._kodi.log_error(video_json.get('message'))
@@ -164,7 +165,7 @@ class StreamService:
         self._kodi.end_of_directory()
 
     @staticmethod
-    def _fix_virtualsubclip(stream_dict, duration):
+    def _fix_virtualsubclip(manifest_url, duration):
         '''VRT NU uses virtual subclips to provide on demand programs (mostly current affair programs)
            already from a livestream while or shortly after live broadcasting them.
            But this feature doesn't work always as expected because Kodi doesn't play the program from
@@ -172,41 +173,78 @@ class StreamService:
            When begintime is present in the stream_url and endtime is missing, we must add endtime
            to the stream_url so Kodi treats the program as an on demand program and starts the stream
            from the beginning like a real on demand program.'''
-        from datetime import datetime, timedelta
-        import dateutil.parser
-        for key, value in stream_dict.items():
-            begin = value.split('?t=')[1] if '?t=' in value else None
-            if begin and len(begin) == 19:
-                begin_time = dateutil.parser.parse(begin)
-                end_time = begin_time + duration
-                # If on demand program is not yet broadcasted completely,
-                # use current time minus 5 seconds safety margin as endtime.
-                now = datetime.utcnow()
-                if end_time > now:
-                    end_time = now - timedelta(seconds=5)
-                stream_dict[key] = '-'.join((value, end_time.strftime('%Y-%m-%dT%H:%M:%S')))
-        return stream_dict
+        begin = manifest_url.split('?t=')[1] if '?t=' in manifest_url else None
+        if begin and len(begin) == 19:
+            from datetime import datetime, timedelta
+            import dateutil.parser
+            begin_time = dateutil.parser.parse(begin)
+            end_time = begin_time + duration
+            # If on demand program is not yet broadcasted completely,
+            # use current time minus 5 seconds safety margin as endtime.
+            now = datetime.utcnow()
+            if end_time > now:
+                end_time = now - timedelta(seconds=5)
+                manifest_url += '-' + end_time.strftime('%Y-%m-%dT%H:%M:%S')
+        return manifest_url
 
     def get_stream(self, video, retry=False, api_data=None):
         '''Main streamservice function'''
         from datetime import timedelta
-        if not video.get('video_id') and video.get('video_url'):
-            return streamurls.StreamURLS(video.get('video_url'))
         if not api_data:
             api_data = self._get_api_data(video)
 
-        vudrm_token = None
-        video_json = self._get_video_json(api_data)
-        if video_json:
-            if 'drm' in video_json:
-                vudrm_token = video_json.get('drm')
-                target_urls = video_json.get('targetUrls')
-                duration = timedelta(milliseconds=video_json.get('duration'))
-                stream_dict = self._fix_virtualsubclip(dict(list([(x.get('type'), x.get('url')) for x in target_urls])), duration)
-                return self._select_stream(stream_dict, vudrm_token)
+        stream_json = self._get_stream_json(api_data)
+        if stream_json:
+            if 'targetUrls' in stream_json:
 
-            if video_json.get('code') in ('INCOMPLETE_ROAMING_CONFIG', 'INVALID_LOCATION'):
-                self._kodi.log_error(video_json.get('message'))
+                # DRM support for ketnet junior/uplynk streaming service
+                uplynk = 'uplynk.com' in stream_json.get('targetUrls')[0].get('url')
+
+                vudrm_token = stream_json.get('drm')
+                drm_stream = (vudrm_token or uplynk)
+
+                # Select streaming protocol
+                if not drm_stream and self._kodi.has_inputstream_adaptive_installed() or drm_stream and self._can_play_drm and self._kodi.get_setting('usedrm') == 'true':
+                    protocol = 'mpeg_dash'
+                elif vudrm_token:
+                    protocol = 'hls_aes'
+                else:
+                    protocol = 'hls'
+
+                # Get stream manifest url
+                manifest_url = next(stream.get('url') for stream in stream_json.get('targetUrls') if stream.get('type') == protocol)
+
+                # Fix virtual subclip
+                duration = timedelta(milliseconds=stream_json.get('duration'))
+                manifest_url = self._fix_virtualsubclip(manifest_url, duration)
+
+                # Prepare stream for Kodi player
+                if protocol == 'mpeg_dash' and drm_stream:
+                    self._kodi.log_notice('Protocol: mpeg_dash drm', 'Verbose')
+                    if vudrm_token:
+                        if self._vualto_license_url is None:
+                            self._get_vualto_license_url()
+                        encryption_json = '{{"token":"{0}","drm_info":[D{{SSM}}],"kid":"{{KID}}"}}'.format(vudrm_token)
+                        license_key = self._get_license_key(key_url=self._vualto_license_url,
+                                                            key_type='D',
+                                                            key_value=encryption_json,
+                                                            key_headers={'Content-Type': 'text/plain;charset=UTF-8'})
+                    else:
+                        license_key = self._get_license_key(key_url=self._UPLYNK_LICENSE_URL, key_type='R')
+
+                    stream = streamurls.StreamURLS(manifest_url, license_key=license_key, use_inputstream_adaptive=True)
+                elif protocol == 'mpeg_dash':
+                    stream = streamurls.StreamURLS(manifest_url, use_inputstream_adaptive=True)
+                    self._kodi.log_notice('Protocol: ' + protocol, 'Verbose')
+                else:
+                    # Fix 720p quality for HLS livestreams
+                    manifest_url += '?hd' if '.m3u8?' not in manifest_url else '&hd'
+                    stream = streamurls.StreamURLS(*self._select_hls_substreams(manifest_url))
+                    self._kodi.log_notice('Protocol: ' + protocol, 'Verbose')
+                return stream
+
+            if stream_json.get('code') in ('INCOMPLETE_ROAMING_CONFIG', 'INVALID_LOCATION'):
+                self._kodi.log_error(stream_json.get('message'))
                 roaming_xvrttoken = self._tokenresolver.get_xvrttoken(True)
                 if not retry and roaming_xvrttoken is not None:
                     # Delete cached playertokens
@@ -221,46 +259,9 @@ class StreamService:
                 self._kodi.show_ok_dialog('', message)
                 self._kodi.end_of_directory()
             else:
-                self._handle_error(video_json)
+                self._handle_error(stream_json)
 
         return None
-
-    def _try_get_drm_stream(self, stream_dict, vudrm_token):
-        if self._license_url is None:
-            self._get_license_url()
-        protocol = 'mpeg_dash'
-        encryption_json = '{{"token":"{0}","drm_info":[D{{SSM}}],"kid":"{{KID}}"}}'.format(vudrm_token)
-        license_key = self._get_license_key(key_url=self._license_url,
-                                            key_type='D',
-                                            key_value=encryption_json,
-                                            key_headers={'Content-Type': 'text/plain;charset=UTF-8'})
-        return streamurls.StreamURLS(stream_dict[protocol], license_key=license_key, use_inputstream_adaptive=True) if protocol in stream_dict else None
-
-    def _select_stream(self, stream_dict, vudrm_token):
-        stream_url = None
-        protocol = None
-        if vudrm_token and self._can_play_drm and self._kodi.get_setting('usedrm') == 'true':
-            protocol = 'mpeg_dash drm'
-            self._kodi.log_notice('Protocol: ' + protocol, 'Verbose')
-            stream_url = self._try_get_drm_stream(stream_dict, vudrm_token)
-
-        if vudrm_token and stream_url is None:
-            protocol = 'hls_aes'
-            self._kodi.log_notice('Protocol: ' + protocol, 'Verbose')
-            stream_url = streamurls.StreamURLS(*self._select_hls_substreams(stream_dict[protocol])) if protocol in stream_dict else None
-
-        if self._kodi.has_inputstream_adaptive_installed() and stream_url is None:
-            protocol = 'mpeg_dash'
-            self._kodi.log_notice('Protocol: ' + protocol, 'Verbose')
-            stream_url = streamurls.StreamURLS(stream_dict[protocol], use_inputstream_adaptive=True) if protocol in stream_dict else None
-
-        if stream_url is None:
-            protocol = 'hls'
-            self._kodi.log_notice('Protocol: ' + protocol, 'Verbose')
-            # No if-else statement because this is the last resort stream selection
-            stream_url = streamurls.StreamURLS(*self._select_hls_substreams(stream_dict[protocol]))
-
-        return stream_url
 
     def _select_hls_substreams(self, master_hls_url):
         '''Select HLS substreams to speed up Kodi player start, workaround for slower kodi selection'''
@@ -269,42 +270,42 @@ class StreamService:
         hls_audio_id = None
         hls_subtitle_id = None
         hls_base_url = master_hls_url.split('.m3u8')[0]
-        self._kodi.log_notice('URL get: ' + unquote(master_hls_url) + '?hd', 'Verbose')
-        hls_playlist = urlopen(master_hls_url + '?hd').read()
+        self._kodi.log_notice('URL get: ' + unquote(master_hls_url), 'Verbose')
+        hls_playlist = urlopen(master_hls_url).read()
         max_bandwidth = self._kodi.get_max_bandwidth()
         stream_bandwidth = None
 
         # Get hls variant url based on max_bandwith setting
-        hls_variant_regex = re.compile(r'#EXT-X-STREAM-INF[:\w\-=,]*[:,]BANDWIDTH=([0-9]+)[\w\-=,.\"]+AUDIO=\"([\w-]+)\"[\w\-=,.\"]?(?:SUBTITLES=\"([\w]+)\")?[\w\-=,.\"]+[\r\n]([\w:\/\-.=?&]+)')
+        hls_variant_regex = re.compile(r'#EXT-X-STREAM-INF:[\w\-.,=\"]*?BANDWIDTH=(?P<BANDWIDTH>\d+),[\w\-.,=\"]+\d,(?:AUDIO=\"(?P<AUDIO>[\w\-]+)\",)?(?:SUBTITLES=\"(?P<SUBTITLES>\w+)\",)?[\w\-.,=\"]+?[\r\n](?P<URI>[\w:\/\-.=?&]+)')
         # reverse sort by bandwidth
-        for match in sorted(re.finditer(hls_variant_regex, hls_playlist), key=lambda m: int(m.group(1)), reverse=True):
-            stream_bandwidth = int(match.group(1)) // 1000
+        for match in sorted(re.finditer(hls_variant_regex, hls_playlist), key=lambda m: int(m.group('BANDWIDTH')), reverse=True):
+            stream_bandwidth = int(match.group('BANDWIDTH')) // 1000
             if max_bandwidth == 0 or stream_bandwidth < max_bandwidth:
-                if match.group(4).startswith('http'):
-                    hls_variant_url = match.group(4)
+                if match.group('URI').startswith('http'):
+                    hls_variant_url = match.group('URI')
                 else:
-                    hls_variant_url = hls_base_url + match.group(4)
-                hls_audio_id = match.group(2)
-                hls_subtitle_id = match.group(3)
+                    hls_variant_url = hls_base_url + match.group('URI')
+                hls_audio_id = match.group('AUDIO')
+                hls_subtitle_id = match.group('SUBTITLES')
                 break
 
-        if not hls_variant_url:
-            message = self._kodi.localize(30957).format(max=max_bandwidth, min=stream_bandwidth)
+        if stream_bandwidth > max_bandwidth and not hls_variant_url:
+            message = self._kodi.localize(30057).format(max=max_bandwidth, min=stream_bandwidth)
             self._kodi.show_ok_dialog('', message)
             self._kodi.open_settings()
 
         # Get audio url
         if hls_audio_id:
-            audio_regex = re.compile(r'#EXT-X-MEDIA:TYPE=AUDIO[\w\-=,\.\"\/]+GROUP-ID=\"' + hls_audio_id + r'\"[\w\-=,\.\"\/]+URI=\"([\w\-=]+)\.m3u8\"')
+            audio_regex = re.compile(r'#EXT-X-MEDIA:TYPE=AUDIO[\w\-=,\.\"\/]+?GROUP-ID=\"' + hls_audio_id + r'\"[\w\-=,\.\"\/]+?URI=\"(?P<AUDIO_URI>[\w\-=]+)\.m3u8\"')
             match_audio = re.search(audio_regex, hls_playlist)
             if match_audio:
-                hls_variant_url = hls_base_url + match_audio.group(1) + '-' + hls_variant_url.split('-')[-1]
+                hls_variant_url = hls_base_url + match_audio.group('AUDIO_URI') + '-' + hls_variant_url.split('-')[-1]
 
         # Get subtitle url, works only for on demand streams
         if self._kodi.get_setting('showsubtitles') == 'true' and '/live/' not in master_hls_url and hls_subtitle_id:
-            subtitle_regex = re.compile(r'#EXT-X-MEDIA:TYPE=SUBTITLES[\w\-=,\.\"\/]+GROUP-ID=\"' + hls_subtitle_id + r'\"[\w\-=,\.\"\/]+URI=\"([\w\-=]+)\.m3u8\"')
+            subtitle_regex = re.compile(r'#EXT-X-MEDIA:TYPE=SUBTITLES[\w\-=,\.\"\/]+?GROUP-ID=\"' + hls_subtitle_id + r'\"[\w\-=,\.\"\/]+URI=\"(?P<SUBTITLE_URI>[\w\-=]+)\.m3u8\"')
             match_subtitle = re.search(subtitle_regex, hls_playlist)
             if match_subtitle:
-                subtitle_url = hls_base_url + match_subtitle.group(1) + '.webvtt'
+                subtitle_url = hls_base_url + match_subtitle.group('SUBTITLE_URI') + '.webvtt'
 
         return hls_variant_url, subtitle_url
