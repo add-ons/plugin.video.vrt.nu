@@ -4,7 +4,7 @@
 
 from __future__ import absolute_import, division, unicode_literals
 from resources.lib.helperobjects.helperobjects import TitleItem
-from resources.lib.vrtplayer import actions
+from resources.lib.vrtplayer import actions, streamservice, tokenresolver
 
 try:
     from urllib.request import build_opener, install_opener, ProxyHandler, urlopen
@@ -143,9 +143,7 @@ class VRTPlayer:
                     plot = '%s\n\n%s' % (self._kodi.localize(30102).format(**channel), _tvguide.live_description(channel.get('name')))
                 else:
                     plot = self._kodi.localize(30102).format(**channel)
-                if channel.get('live_stream_url'):
-                    url_dict['video_url'] = channel.get('live_stream_url')
-                elif channel.get('live_stream'):
+                if channel.get('live_stream'):
                     url_dict['video_url'] = channel.get('live_stream')
                 if channel.get('live_stream_id'):
                     url_dict['video_id'] = channel.get('live_stream_id')
@@ -194,7 +192,6 @@ class VRTPlayer:
         self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content, cache=False)
 
     def play(self, params):
-        from resources.lib.vrtplayer import streamservice, tokenresolver
         _tokenresolver = tokenresolver.TokenResolver(self._kodi)
         _streamservice = streamservice.StreamService(self._kodi, _tokenresolver)
         stream = _streamservice.get_stream(params)
