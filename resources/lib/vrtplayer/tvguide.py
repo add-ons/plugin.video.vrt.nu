@@ -90,8 +90,11 @@ class TVGuide:
 
     def show_channel_menu(self, date):
         now = datetime.now(dateutil.tz.tzlocal())
-        dateobj = self.parse(date, now)
-        datelong = self._kodi.localize_datelong(dateobj)
+        epg = self.parse(date, now)
+        # Daily EPG information shows information from 6AM until 6AM
+        if epg.hour < 6:
+            epg += timedelta(days=-1)
+        datelong = self._kodi.localize_datelong(epg)
 
         fanart_path = 'resource://resource.images.studios.white/%(studio)s.png'
         icon_path = 'resource://resource.images.studios.white/%(studio)s.png'
@@ -117,9 +120,12 @@ class TVGuide:
 
     def show_episodes(self, date, channel):
         now = datetime.now(dateutil.tz.tzlocal())
-        dateobj = self.parse(date, now)
-        datelong = self._kodi.localize_datelong(dateobj)
-        api_url = dateobj.strftime(self.VRT_TVGUIDE)
+        epg = self.parse(date, now)
+        # Daily EPG information shows information from 6AM until 6AM
+        if epg.hour < 6:
+            epg += timedelta(days=-1)
+        datelong = self._kodi.localize_datelong(epg)
+        api_url = epg.strftime(self.VRT_TVGUIDE)
         self._kodi.log_notice('URL get: ' + api_url, 'Verbose')
         schedule = json.loads(urlopen(api_url).read())
         name = channel
@@ -136,10 +142,10 @@ class TVGuide:
             end = episode.get('end')
             start_date = dateutil.parser.parse(episode.get('startTime'))
             end_date = dateutil.parser.parse(episode.get('endTime'))
+            metadata.datetime = start_date
             url = episode.get('url')
             label = '%s - %s' % (start, title)
             metadata.tvshowtitle = title
-            metadata.datetime = dateobj
             # NOTE: Do not use startTime and endTime as we don't want duration with seconds granularity
             start_time = dateutil.parser.parse(start)
             end_time = dateutil.parser.parse(end)
