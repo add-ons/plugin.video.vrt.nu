@@ -147,7 +147,9 @@ class KodiWrapper:
 
             list_item = xbmcgui.ListItem(label=title_item.title, thumbnailImage=title_item.art_dict.get('thumb'))
             list_item.setProperty(key='IsPlayable', value='true' if is_playable else 'false')
-            list_item.setIsFolder(is_folder)
+
+            # FIXME: The setIsFolder is new in Kodi18, so we cannot use it just yet.
+            # list_item.setIsFolder(is_folder)
 
             if title_item.art_dict:
                 list_item.setArt(title_item.art_dict)
