@@ -45,14 +45,14 @@ class VRTApiHelper:
         api_url = self._VRTNU_SUGGEST_URL + '?' + urlencode(params)
         self._kodi.log_notice('URL get: ' + unquote(api_url), 'Verbose')
         api_json = json.loads(urlopen(api_url).read())
-        return self._map_to_tvshow_items(api_json, filtered=filtered)
+        return self._map_to_tvshow_items(api_json, filtered=statichelper.is_filtered(filtered))
 
     def _map_to_tvshow_items(self, tvshows, filtered=False):
         tvshow_items = []
-        if filtered:
+        if statichelper.is_filtered(filtered):
             favorite_names = self._favorites.names()
         for tvshow in tvshows:
-            if filtered and tvshow.get('programName') not in favorite_names:
+            if statichelper.is_filtered(filtered) and tvshow.get('programName') not in favorite_names:
                 continue
             metadata = metadatacreator.MetadataCreator()
             metadata.tvshowtitle = tvshow.get('title', '???')
@@ -111,14 +111,15 @@ class VRTApiHelper:
         ascending = True
 
         # Recent items
-        if page:
+        if page is not None:
+            page = statichelper.realpage(page)
             params = {
                 'from': ((page - 1) * 50) + 1,
                 'i': 'video',
                 'size': 50,
             }
 
-            if filtered:
+            if statichelper.is_filtered(filtered):
                 params['facets[programName]'] = '[%s]' % (','.join(self._favorites.names()))
             else:
                 params['facets[programBrands]'] = '[een,canvas,sporza,vrtnws,vrtnxt,radio1,radio2,klara,stubru,mnm]'
@@ -126,7 +127,7 @@ class VRTApiHelper:
             api_url = self._VRTNU_SEARCH_URL + '?' + urlencode(params)
             self._kodi.log_notice('URL get: ' + unquote(api_url), 'Verbose')
             api_json = json.loads(urlopen(api_url).read())
-            episode_items, sort, ascending, content = self._map_to_episode_items(api_json.get('results', []), titletype='recent', filtered=filtered)
+            episode_items, sort, ascending, content = self._map_to_episode_items(api_json.get('results', []), titletype='recent', filtered=statichelper.is_filtered(filtered))
 
         if path:
             if '.relevant/' in path:
@@ -176,7 +177,7 @@ class VRTApiHelper:
         now = datetime.now(dateutil.tz.tzlocal())
         sort = 'episode'
         ascending = True
-        if filtered:
+        if statichelper.is_filtered(filtered):
             favorite_names = self._favorites.names()
         episode_items = []
         for episode in episodes:
@@ -185,7 +186,7 @@ class VRTApiHelper:
             if season_key and episode.get('seasonTitle') != season_key:
                 continue
 
-            if filtered and episode.get('programName') not in favorite_names:
+            if statichelper.is_filtered(filtered) and episode.get('programName') not in favorite_names:
                 continue
 
             # Support search highlights
@@ -339,9 +340,10 @@ class VRTApiHelper:
             ))
         return season_items, sort, ascending, 'seasons'
 
-    def search(self, search_string, page=1):
+    def search(self, search_string, page=0):
         import json
 
+        page = statichelper.realpage(page)
         params = {
             'from': ((page - 1) * 50) + 1,
             'i': 'video',
