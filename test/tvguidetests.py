@@ -10,7 +10,7 @@ import random
 import unittest
 
 from resources.lib.vrtplayer import tvguide
-from test import log_notice
+from test import localize, log_notice
 
 channels = ['een', 'canvas', 'ketnet']
 
@@ -20,6 +20,7 @@ class TestTVGuide(unittest.TestCase):
     _kodi = mock.MagicMock()
     _kodi.get_proxies = mock.MagicMock(return_value=dict())
     _kodi.get_userdata_path.return_value = './test/userdata/'
+    _kodi.localize = mock.MagicMock(side_effect=localize)
     _kodi.localize_datelong = mock.MagicMock(return_value='%a %d-%m-%Y')
     _kodi.log_notice = mock.MagicMock(side_effect=log_notice)
     _kodi.make_dir.return_value = None

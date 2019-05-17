@@ -400,7 +400,7 @@ class VRTApiHelper:
         if titletype == 'recent':
             ascending = False
             sort = 'dateadded'
-            label = '%s - %s' % (result.get('program'), label)
+            label = '[B]%s[/B] - %s' % (result.get('program'), label)
 
         elif titletype in ('reeksaflopend', 'reeksoplopend'):
 

@@ -91,7 +91,7 @@ msgid "Alphabetically sorted list of My TV programs"
 msgstr ""
 
 msgctxt "#30042"
-msgid "My recent items"
+msgid "My most recent"
 msgstr ""
 
 msgctxt "#30043"
@@ -129,7 +129,7 @@ msgid "{label} live"
 msgstr ""
 
 msgctxt "#30102"
-msgid "Watch {label} live via Internet"
+msgid "Watch [B]{label}[/B] live via Internet"
 msgstr ""
 
 msgctxt "#30201"
@@ -194,6 +194,18 @@ msgstr ""
 
 msgctxt "#30416"
 msgid "We could not find any programs that were followed.\n\nEither right-click on a program or an episode to follow a program, or follow a program on the VRT NU website."
+msgstr ""
+
+msgctxt "#30421"
+msgid "Now:"
+msgstr ""
+
+msgctxt "#30422"
+msgid "Next:"
+msgstr ""
+
+msgctxt "#30423"
+msgid "[B]No transmission[/B]"
 msgstr ""
 
 

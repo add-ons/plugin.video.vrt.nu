@@ -92,8 +92,8 @@ msgid "Alphabetically sorted list of My TV programs"
 msgstr "Alle tv-programma's die je volgt in alfabetische volgorde"
 
 msgctxt "#30042"
-msgid "My recent items"
-msgstr "Mijn recente afleveringen"
+msgid "My most recent"
+msgstr "Mijn meest recent"
 
 msgctxt "#30043"
 msgid "Recently published episodes of My TV programs"
@@ -130,8 +130,8 @@ msgid "{label} live"
 msgstr "{label} live"
 
 msgctxt "#30102"
-msgid "Watch {label} live via Internet"
-msgstr "Bekijk {label} live via Internet"
+msgid "Watch [B]{label}[/B] live via Internet"
+msgstr "Bekijk [B]{label}[/B] live via Internet"
 
 msgctxt "#30201"
 msgid "[B][COLOR red]Geo-blocked[/COLOR][/B]\n"
@@ -196,6 +196,18 @@ msgstr "Geen programma's worden gevolgd"
 msgctxt "#30416"
 msgid "We could not find any programs that were followed.\n\nEither right-click on a program or an episode to follow a program, or follow a program on the VRT NU website."
 msgstr "We konden geen programma's vonden die je volgt.\n\nJe kan een programma volgen door rechts te klikken op een programma of aflevering, of om ze op de VRT NU website to volgen."
+
+msgctxt "#30421"
+msgid "Nu:"
+msgstr ""
+
+msgctxt "#30422"
+msgid "Straks:"
+msgstr ""
+
+msgctxt "#30423"
+msgid "[B]No transmission[/B]"
+msgstr "[B]Geen uitzending[/B]"
 
 
 ### SETTINGS
