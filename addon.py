@@ -75,9 +75,9 @@ def router(params_string):
     elif action == actions.LISTING_ALL_EPISODES:
         _vrtplayer.show_all_episodes(path=params.get('video_url'))
     elif action == actions.LISTING_RECENT:
-        _vrtplayer.show_recent(page=params.get('page', 1), filtered=params.get('filtered'))
+        _vrtplayer.show_recent(page=params.get('page'), filtered=params.get('filtered'))
     elif action == actions.SEARCH:
-        _vrtplayer.search(search_string=params.get('query'), page=params.get('page', 1))
+        _vrtplayer.search(search_string=params.get('query'), page=params.get('page'))
     else:
         _vrtplayer.show_main_menu_items()
 

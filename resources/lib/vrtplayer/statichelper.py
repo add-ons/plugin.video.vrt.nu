@@ -67,3 +67,21 @@ def distinct(sequence):
         if s not in seen:
             seen.add(s)
             yield s
+
+
+def is_filtered(filtered):
+    if filtered is True:
+        return True
+    if filtered == 'True':
+        return True
+    return False
+
+
+def realpage(page):
+    try:
+        page = int(page)
+    except TypeError:
+        return 1
+    if page < 1:
+        return 1
+    return page

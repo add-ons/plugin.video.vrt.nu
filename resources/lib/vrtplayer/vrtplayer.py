@@ -4,7 +4,7 @@
 
 from __future__ import absolute_import, division, unicode_literals
 from resources.lib.helperobjects.helperobjects import TitleItem
-from resources.lib.vrtplayer import actions, streamservice, tokenresolver
+from resources.lib.vrtplayer import actions, statichelper, streamservice, tokenresolver
 
 try:
     from urllib.request import build_opener, install_opener, ProxyHandler, urlopen
@@ -56,7 +56,7 @@ class VRTPlayer:
                       art_dict=dict(thumb='DefaultAddonPVRClient.png', icon='DefaultAddonPVRClient.png', fanart='DefaultAddonPVRClient.png'),
                       video_dict=dict(plot=self._kodi.localize(30019))),
             TitleItem(title=self._kodi.localize(30020),  # Recent items
-                      url_dict=dict(action=actions.LISTING_RECENT, page='1'),
+                      url_dict=dict(action=actions.LISTING_RECENT),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
                       video_dict=dict(plot=self._kodi.localize(30021))),
@@ -81,7 +81,7 @@ class VRTPlayer:
                       art_dict=dict(thumb='DefaultMovieTitle.png', icon='DefaultMovieTitle.png', fanart='DefaultMovieTitle.png'),
                       video_dict=dict(plot=self._kodi.localize(30041))),
             TitleItem(title=self._kodi.localize(30042),  # My recent items
-                      url_dict=dict(action=actions.LISTING_RECENT, page='1', filtered=True),
+                      url_dict=dict(action=actions.LISTING_RECENT, filtered=True),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
                       video_dict=dict(plot=self._kodi.localize(30043))),
@@ -171,12 +171,8 @@ class VRTPlayer:
         episode_items, sort, ascending, content = self._apihelper.get_episode_items(path=path, all_seasons=True)
         self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content)
 
-    def show_recent(self, page, filtered=False):
-        try:
-            page = int(page)
-        except TypeError:
-            page = 1
-
+    def show_recent(self, page=0, filtered=False):
+        page = statichelper.realpage(page)
         episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=page, filtered=filtered)
 
         # Add 'More...' entry at the end
@@ -198,11 +194,8 @@ class VRTPlayer:
         if stream is not None:
             self._kodi.play(stream)
 
-    def search(self, search_string=None, page=1):
-        try:
-            page = int(page)
-        except TypeError:
-            page = 1
+    def search(self, search_string=None, page=None):
+        page = statichelper.realpage(page)
 
         if search_string is None:
             search_string = self._kodi.get_search_string()
@@ -272,13 +265,11 @@ class VRTPlayer:
 
     @staticmethod
     def get_category_thumbnail(element):
-        from resources.lib.vrtplayer import statichelper
         raw_thumbnail = element.find(class_='media').get('data-responsive-image', 'DefaultGenre.png')
         return statichelper.add_https_method(raw_thumbnail)
 
     @staticmethod
     def get_category_title(element):
-        from resources.lib.vrtplayer import statichelper
         found_element = element.find('a')
         if found_element:
             return statichelper.strip_newlines(found_element.contents[0])

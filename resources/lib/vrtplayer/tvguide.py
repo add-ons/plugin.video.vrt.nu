@@ -207,7 +207,7 @@ class TVGuide:
                 break
             start_date = dateutil.parser.parse(episode.get('startTime'))
             end_date = dateutil.parser.parse(episode.get('endTime'))
-            if start_date < now <= end_date:  # Now playing
+            if start_date <= now <= end_date:  # Now playing
                 description = '[COLOR yellow]%s %s[/COLOR]\n' % (self._kodi.localize(30421), self.episode_description(episode))
                 try:
                     description += '%s %s' % (self._kodi.localize(30422), self.episode_description(next(episodes)))
@@ -215,7 +215,7 @@ class TVGuide:
                     break
                 break
             elif now < start_date:  # Nothing playing now, but this may be next
-                description = '[COLOR yellow]%s %s[/COLOR]\n' % (self._kodi.localize(30421), self.episode_description(episode))
+                description = '%s %s\n' % (self._kodi.localize(30422), self.episode_description(episode))
                 try:
                     description += '%s %s' % (self._kodi.localize(30422), self.episode_description(next(episodes)))
                 except StopIteration:

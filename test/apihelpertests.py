@@ -62,6 +62,22 @@ class ApiHelperTests(unittest.TestCase):
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
 
+    def test_get_recent_episodes_page1(self):
+        ''' Test items, sort and order '''
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=2)
+        self.assertEqual(len(episode_items), 50)
+        self.assertEqual(sort, 'dateadded')
+        self.assertFalse(ascending)
+        self.assertEqual(content, 'episodes')
+
+    def test_get_recent_episodes_page2(self):
+        ''' Test items, sort and order '''
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=3)
+        self.assertEqual(len(episode_items), 50)
+        self.assertEqual(sort, 'dateadded')
+        self.assertFalse(ascending)
+        self.assertEqual(content, 'episodes')
+
     def test_get_tvshows(self):
         ''' Test items, sort and order '''
         path = 'nieuws-en-actua'
