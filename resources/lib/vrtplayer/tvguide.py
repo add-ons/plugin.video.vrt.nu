@@ -181,7 +181,7 @@ class TVGuide:
         return episode_items
 
     def episode_description(self, episode):
-        return '[B]{title}[/B]\n{start} - {end}'.format(**episode)
+        return '{start} - {end}\n» [B]{title}[/B]'.format(**episode)
 
     def live_description(self, channel):
         now = datetime.now(dateutil.tz.tzlocal())
@@ -208,21 +208,21 @@ class TVGuide:
             start_date = dateutil.parser.parse(episode.get('startTime'))
             end_date = dateutil.parser.parse(episode.get('endTime'))
             if start_date <= now <= end_date:  # Now playing
-                description = '[COLOR yellow]%s %s[/COLOR]\n' % (self._kodi.localize(30421), self.episode_description(episode))
+                description = '[COLOR yellow][B]%s[/B] %s[/COLOR]\n' % (self._kodi.localize(30421), self.episode_description(episode))
                 try:
-                    description += '%s %s' % (self._kodi.localize(30422), self.episode_description(next(episodes)))
+                    description += '[B]%s[/B] %s' % (self._kodi.localize(30422), self.episode_description(next(episodes)))
                 except StopIteration:
                     break
                 break
             elif now < start_date:  # Nothing playing now, but this may be next
-                description = '%s %s\n' % (self._kodi.localize(30422), self.episode_description(episode))
+                description = '[B]%s[/B] %s\n' % (self._kodi.localize(30422), self.episode_description(episode))
                 try:
-                    description += '%s %s' % (self._kodi.localize(30422), self.episode_description(next(episodes)))
+                    description += '[B]%s[/B] %s' % (self._kodi.localize(30422), self.episode_description(next(episodes)))
                 except StopIteration:
                     break
                 break
         if not description:
-            description = '[COLOR yellow]%s %s[/COLOR]\n' % (self._kodi.localize(30421), self._kodi.localize(30423))
+            description = '[COLOR yellow][B]%s[/B] %s[/COLOR]\n' % (self._kodi.localize(30421), self._kodi.localize(30423))
         return description
 
     def parse(self, date, now):

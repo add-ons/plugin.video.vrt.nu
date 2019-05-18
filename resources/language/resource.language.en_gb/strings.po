@@ -61,22 +61,30 @@ msgid "Most recent"
 msgstr ""
 
 msgctxt "#30021"
-msgid "Recently published episodes of TV programs"
+msgid "Recently published video content"
 msgstr ""
 
 msgctxt "#30022"
-msgid "TV guide"
+msgid "Soon offline"
 msgstr ""
 
 msgctxt "#30023"
-msgid "Browse channel TV guides"
+msgid "Video content that will soon be offline"
 msgstr ""
 
 msgctxt "#30024"
-msgid "Search VRT NU"
+msgid "TV guide"
 msgstr ""
 
 msgctxt "#30025"
+msgid "Browse channel TV guides"
+msgstr ""
+
+msgctxt "#30026"
+msgid "Search VRT NU"
+msgstr ""
+
+msgctxt "#30027"
 msgid "Search the complete VRT NU library"
 msgstr ""
 
@@ -96,6 +104,14 @@ msgstr ""
 
 msgctxt "#30043"
 msgid "Recently published episodes of My TV programs"
+msgstr ""
+
+msgctxt "#30044"
+msgid "My soon offline"
+msgstr ""
+
+msgctxt "#30045"
+msgid "My video content that will soon be offline"
 msgstr ""
 
 

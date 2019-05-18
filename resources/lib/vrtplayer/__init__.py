@@ -127,6 +127,7 @@ class actions:
     LISTING_EPISODES = 'listingepisodes'
     LISTING_FAVORITES = 'favorites'
     LISTING_LIVE = 'listinglive'
+    LISTING_OFFLINE = 'listingoffline'
     LISTING_RECENT = 'listingrecent'
     LISTING_TVGUIDE = 'listingtvguide'
     PLAY = 'play'

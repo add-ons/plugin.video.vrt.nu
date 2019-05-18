@@ -56,7 +56,7 @@ class ApiHelperTests(unittest.TestCase):
 
     def test_get_recent_episodes(self):
         ''' Test items, sort and order '''
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=1)
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=1, variety='recent')
         self.assertEqual(len(episode_items), 50)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
@@ -64,7 +64,7 @@ class ApiHelperTests(unittest.TestCase):
 
     def test_get_recent_episodes_page1(self):
         ''' Test items, sort and order '''
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=2)
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=2, variety='recent')
         self.assertEqual(len(episode_items), 50)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
@@ -72,8 +72,16 @@ class ApiHelperTests(unittest.TestCase):
 
     def test_get_recent_episodes_page2(self):
         ''' Test items, sort and order '''
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=3)
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=3, variety='recent')
         self.assertEqual(len(episode_items), 50)
+        self.assertEqual(sort, 'dateadded')
+        self.assertFalse(ascending)
+        self.assertEqual(content, 'episodes')
+
+    def test_get_offline_episodes(self):
+        ''' Test items, sort and order '''
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=1, variety='offline')
+        self.assertTrue(episode_items)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
