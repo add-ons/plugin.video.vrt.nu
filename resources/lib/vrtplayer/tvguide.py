@@ -222,7 +222,7 @@ class TVGuide:
                     break
                 break
         if not description:
-            description = '[COLOR yellow][B]%s[/B] %s[/COLOR]\n' % (self._kodi.localize(30421), self._kodi.localize(30423))
+            description = '[COLOR yellow][B]%s[/B]\n» %s[/COLOR]' % (self._kodi.localize(30421), self._kodi.localize(30423))
         return description
 
     def parse(self, date, now):

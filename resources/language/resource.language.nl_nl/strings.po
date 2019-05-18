@@ -30,7 +30,7 @@ msgid "A-Z"
 msgstr "A-Z"
 
 msgctxt "#30013"
-msgid "Alphabetically sorted list of TV programs"
+msgid "Alphabetically sorted list of programs"
 msgstr "Alle tv-programma's in alfabetische volgorde"
 
 msgctxt "#30014"
@@ -54,8 +54,8 @@ msgid "Live TV"
 msgstr "Live kijken"
 
 msgctxt "#30019"
-msgid "Watch TV channels live (using Internet streaming)"
-msgstr "Bekijk tv-kanalen live (via Internet)"
+msgid "Watch TV channels live via Internet"
+msgstr "Bekijk tv-kanalen live via Internet"
 
 msgctxt "#30020"
 msgid "Most recent"
@@ -232,10 +232,14 @@ msgid "Credentials"
 msgstr "Inloggegevens"
 
 msgctxt "#30801"
+msgid "VRT NU login"
+msgstr "VRT NU login"
+
+msgctxt "#30803"
 msgid "Email address"
 msgstr "E-mailadres"
 
-msgctxt "#30803"
+msgctxt "#30805"
 msgid "Password"
 msgstr "Wachtwoord"
 
@@ -244,28 +248,36 @@ msgid "Interface"
 msgstr "Interface"
 
 msgctxt "#30821"
+msgid "Features"
+msgstr "Functionaliteit"
+
+msgctxt "#30823"
 msgid "Enable My programs"
 msgstr "Toon Mijn tv-programma's"
 
-msgctxt "#30822"
+msgctxt "#30824"
 msgid "When enabled, the user can follow their favourite programs and list these separately. In this case the VRT NU addon will download and update a list of your followed programs on the VRT NU website."
 msgstr "Indien actief kan de gebruiker zijn favoriete programma's volgen en apart aanroepen. Dit zorgt er wel voor dat de VRT NU addon een lijst van favoriete programma's download en aanpast op de VRT NU website."
 
-msgctxt "#30823"
+msgctxt "#30825"
 msgid "Show episode permalink in plot"
 msgstr "Toon aflevering permalink in beschrijving"
 
-msgctxt "#30824"
+msgctxt "#30826"
 msgid "When enabled, the video description will include a permanent link that points to this episode. This is useful for quickly opening an episode or movie on a mobile device."
 msgstr "Indien actief zal de beschrijving van iedere video een permanent link bevatten die je rechtstreeks naar de VRT NU website brengt. Dit is handig om snel een aflevering of film to openen op een mobiel toestel."
 
-msgctxt "#30825"
+msgctxt "#30827"
+msgid "Cache"
+msgstr "Cache"
+
+msgctxt "#30829"
 msgid "Enable menu caching"
 msgstr "Gebruik menu caching"
 
 msgctxt "#30840"
-msgid "Video"
-msgstr "Video"
+msgid "Playback"
+msgstr "Afspelen"
 
 msgctxt "#30841"
 msgid "Subtitles"
@@ -287,9 +299,13 @@ msgctxt "#30849"
 msgid "Maximum bandwidth (kbps)"
 msgstr "Maximale bandbreedte (kbps)"
 
+msgctxt "#30859"
+msgid "Cache"
+msgstr "Cache"
+
 msgctxt "#30060"
-msgid "Debug"
-msgstr "Debug"
+msgid "Troubleshooting"
+msgstr "Foutopsporing"
 
 msgctxt "#30061"
 msgid "InputStream Adaptive settings..."
@@ -304,8 +320,8 @@ msgid "Refresh favorites"
 msgstr "Ververs gevolgde programma's"
 
 msgctxt "#30067"
-msgid "Clear VRT cookies"
-msgstr "Verwijder VRT cookies"
+msgid "Clear VRT tokens"
+msgstr "Verwijder VRT tokens"
 
 msgctxt "#30069"
 msgid "Log level"
