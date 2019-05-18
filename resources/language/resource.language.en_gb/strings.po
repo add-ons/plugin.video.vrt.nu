@@ -29,7 +29,7 @@ msgid "A-Z"
 msgstr ""
 
 msgctxt "#30013"
-msgid "Alphabetically sorted list of TV programs"
+msgid "Alphabetically sorted list of programs"
 msgstr ""
 
 msgctxt "#30014"
@@ -53,7 +53,7 @@ msgid "Live TV"
 msgstr ""
 
 msgctxt "#30019"
-msgid "Watch TV channels live (using Internet streaming)"
+msgid "Watch TV channels live via Internet"
 msgstr ""
 
 msgctxt "#30020"
@@ -231,18 +231,22 @@ msgid "Credentials"
 msgstr ""
 
 msgctxt "#30801"
-msgid "Email address"
-msgstr ""
-
-msgctxt "#30802"
-msgid "Provide your VRT NU email address. In case this is a Google or Facebook account, please ensure that this login is enabled for normal username/password authentication. See the wiki for more information."
+msgid "VRT NU login"
 msgstr ""
 
 msgctxt "#30803"
-msgid "Password"
+msgid "Email address"
 msgstr ""
 
 msgctxt "#30804"
+msgid "Provide your VRT NU email address. In case this is a Google or Facebook account, please ensure that this login is enabled for normal username/password authentication. See the wiki for more information."
+msgstr ""
+
+msgctxt "#30805"
+msgid "Password"
+msgstr ""
+
+msgctxt "#30806"
 msgid "Provide your VRT NU account password."
 msgstr ""
 
@@ -251,31 +255,39 @@ msgid "Interface"
 msgstr ""
 
 msgctxt "#30821"
-msgid "Enable My programs"
-msgstr ""
-
-msgctxt "#30822"
-msgid "When enabled, the user can follow their favourite programs and list these separately. In this case the VRT NU addon will download and update a list of your followed programs on the VRT NU website."
+msgid "Features"
 msgstr ""
 
 msgctxt "#30823"
-msgid "Show episode permalink in plot"
+msgid "Enable My programs"
 msgstr ""
 
 msgctxt "#30824"
-msgid "When enabled, the video description will include a permanent link that points to this episode. This is useful for quickly opening an episode or movie on a mobile device."
+msgid "When enabled, the user can follow their favourite programs and list these separately. In this case the VRT NU addon will download and update a list of your followed programs on the VRT NU website."
 msgstr ""
 
 msgctxt "#30825"
-msgid "Enable menu caching"
+msgid "Show episode permalink in plot"
 msgstr ""
 
 msgctxt "#30826"
+msgid "When enabled, the video description will include a permanent link that points to this episode. This is useful for quickly opening an episode or movie on a mobile device."
+msgstr ""
+
+msgctxt "#30827"
+msgid "Cache"
+msgstr ""
+
+msgctxt "#30829"
+msgid "Enable menu caching"
+msgstr ""
+
+msgctxt "#30830"
 msgid "When enabled, menus are being cached so they work more quickly. Only in very specific use-cases this is problematic as new episodes may not appear when they are expected."
 msgstr ""
 
 msgctxt "#30840"
-msgid "Video"
+msgid "Playback"
 msgstr ""
 
 msgctxt "#30841"
@@ -310,8 +322,12 @@ msgctxt "#30850"
 msgid "In case you have limited bandwidth available, you may want to specify a maximum bandwidth so that a lower bitrate stream can be selected for playback."
 msgstr ""
 
+msgctxt "#30859"
+msgid "Cache"
+msgstr ""
+
 msgctxt "#30860"
-msgid "Debug"
+msgid "Troubleshooting"
 msgstr ""
 
 msgctxt "#30861"
@@ -336,6 +352,10 @@ msgstr ""
 
 msgctxt "#30871"
 msgid "Use InputStream Adaptive"
+msgstr ""
+
+msgctxt "#30873"
+msgid "Logging"
 msgstr ""
 
 
