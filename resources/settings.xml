@@ -22,5 +22,6 @@
         <setting label="30865" help="30866" type="action" id="refresh_favorites" action="RunPlugin(plugin://plugin.video.vrt.nu/?action=refreshfavorites)"/>
         <setting label="30867" help="30868" type="action" id="clear_tokens" action="RunPlugin(plugin://plugin.video.vrt.nu/?action=clearcookies)"/>
         <setting label="30869" help="30870" type="select" id="max_log_level" values="Quiet|Info|Verbose|Debug" default="Info"/>
+        <setting label="30871" help="30872" type="bool" id="useinputstreamadaptive" default="true"/>
     </category>
 </settings>

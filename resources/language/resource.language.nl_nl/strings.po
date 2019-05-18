@@ -311,6 +311,10 @@ msgctxt "#30069"
 msgid "Log level"
 msgstr "Log level"
 
+msgctxt "#30871"
+msgid "Use InputStream Adaptive"
+msgstr "Gebruik InputStream Adaptive"
+
 
 ### MESSAGES
 msgctxt "#30951"

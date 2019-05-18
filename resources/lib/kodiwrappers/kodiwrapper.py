@@ -312,16 +312,19 @@ class KodiWrapper:
 
         return dict(http=proxy_address, https=proxy_address)
 
-    # NOTE: InputStream Adaptive is not pre-installed on Windows and in some cases users can uninstall it
-    def has_inputstream_adaptive_installed(self):
-        return xbmc.getCondVisibility('System.HasAddon("{0}")'.format('inputstream.adaptive')) == 1
+    def has_inputstream_adaptive(self):
+        if self.get_setting('useinputstreamadaptive') == 'true':
+            return xbmc.getCondVisibility('System.HasAddon("{0}")'.format('inputstream.adaptive')) == 1
+        return False
 
     def has_credentials(self):
         return bool(self.get_setting('username') and self.get_setting('password'))
 
     def can_play_drm(self):
-        kodi_version = int(xbmc.getInfoLabel('System.BuildVersion').split('.')[0])
-        return kodi_version > 17
+        if self.get_setting('useinputstreamadaptive') == 'true':
+            kodi_version = int(xbmc.getInfoLabel('System.BuildVersion').split('.')[0])
+            return kodi_version > 17
+        return False
 
     def get_userdata_path(self):
         return xbmc.translatePath(self._addon.getAddonInfo('profile'))
