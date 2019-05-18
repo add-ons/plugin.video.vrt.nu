@@ -256,8 +256,8 @@ msgid "Enable My programs"
 msgstr "Toon Mijn tv-programma's"
 
 msgctxt "#30824"
-msgid "When enabled, the user can follow their favourite programs and list these separately. In this case the VRT NU addon will download and update a list of your followed programs on the VRT NU website."
-msgstr "Indien actief kan de gebruiker zijn favoriete programma's volgen en apart aanroepen. Dit zorgt er wel voor dat de VRT NU addon een lijst van favoriete programma's download en aanpast op de VRT NU website."
+msgid "When enabled, the user can follow their favourite programs and list these separately. In this case the VRT NU add-on will download and update a list of your followed programs on the VRT NU website."
+msgstr "Indien actief kan de gebruiker zijn favoriete programma's volgen en apart aanroepen. Dit zorgt er wel voor dat de VRT NU add-on een lijst van favoriete programma's download en aanpast op de VRT NU website."
 
 msgctxt "#30825"
 msgid "Show episode permalink in plot"
@@ -299,37 +299,45 @@ msgctxt "#30849"
 msgid "Maximum bandwidth (kbps)"
 msgstr "Maximale bandbreedte (kbps)"
 
-msgctxt "#30859"
-msgid "Cache"
-msgstr "Cache"
-
 msgctxt "#30060"
 msgid "Troubleshooting"
 msgstr "Foutopsporing"
 
-msgctxt "#30061"
-msgid "InputStream Adaptive settings..."
-msgstr "InputStream Adaptive instellingen..."
+msgctxt "#30861"
+msgid "Cache"
+msgstr "Cache"
 
 msgctxt "#30063"
-msgid "Install Widevine (for DRM content)"
-msgstr "Installeer Widevine (voor DRM content)"
+msgid "Clear VRT tokens"
+msgstr "Verwijder VRT tokens"
 
 msgctxt "#30065"
 msgid "Refresh favorites"
 msgstr "Ververs gevolgde programma's"
 
 msgctxt "#30067"
-msgid "Clear VRT tokens"
-msgstr "Verwijder VRT tokens"
+msgid "Streaming"
+msgstr "Streaming"
 
-msgctxt "#30069"
-msgid "Log level"
-msgstr "Log level"
-
-msgctxt "#30871"
+msgctxt "#30869"
 msgid "Use InputStream Adaptive"
 msgstr "Gebruik InputStream Adaptive"
+
+msgctxt "#30071"
+msgid "InputStream Adaptive settings..."
+msgstr "InputStream Adaptive instellingen..."
+
+msgctxt "#30073"
+msgid "Install Widevine... [COLOR gray][I](needed for DRM content)[/I][/COLOR]"
+msgstr "Installeer Widevine... [COLOR gray][I](nodig voor DRM content)[/I][/COLOR]"
+
+msgctxt "#30075"
+msgid "Logging"
+msgstr "Logboek"
+
+msgctxt "#30077"
+msgid "Log level"
+msgstr "Log level"
 
 
 ### MESSAGES
@@ -364,3 +372,19 @@ msgstr "Verhoog de maximale bandbreedte alstublieft. De maximale bandbreedte is 
 msgctxt "#30961"
 msgid "Using a SOCKS proxy requires the PySocks library (script.module.pysocks) installed."
 msgstr "Het gebruik van SOCKS proxies vereist dat de PySocks library (script.module.pysocks) geïnstalleerd is."
+
+msgctxt "#30971"
+msgid "Install Widevine using 'InputStream Helper' add-on"
+msgstr "Installeer Widevine met de 'InputStream Helper' add-on"
+
+msgctxt "#30972"
+msgid "Installing Widevine libraries using the 'InputStream Helper' add-on is done at your own risk and the VRT NU add-on is not responsible for any results. Nor is it guaranteed that Widevine will be (re)installed correctly."
+msgstr "Het installeren van de Widevine bestanden met de 'InputStream Helper' add-on is op eigen risico en de VRT NU add-on is niet verantwoordelijk voor enig resultaat. Ook wordt het niet gegarandeerd dat Widevine succesvol kan worden geinstalleerd."
+
+msgctxt "#30973"
+msgid "Installation of Widevine failed!"
+msgstr "Widevine installatie mislukt!"
+
+msgctxt "#30974"
+msgid "Installation of Widevine completed!"
+msgstr "Widevine installatie gelukt"

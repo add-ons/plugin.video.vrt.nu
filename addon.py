@@ -39,6 +39,9 @@ def router(params_string):
         _tvguide = tvguide.TVGuide(_kodi)
         _tvguide.show_tvguide(params)
         return
+    if action == actions.INSTALL_WIDEVINE:
+        _kodi.install_widevine()
+        return
 
     from resources.lib.vrtplayer import favorites
     _favorites = favorites.Favorites(_kodi)

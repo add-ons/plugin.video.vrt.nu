@@ -83,12 +83,12 @@ class Favorites:
         return value
 
     def follow(self, program, path):
-        self._kodi.show_notification('Follow ' + program)
+        self._kodi.show_notification(message='Follow ' + program)
         self.set_favorite(program, path, True)
         self._kodi.container_refresh()
 
     def unfollow(self, program, path):
-        self._kodi.show_notification('Unfollow ' + program)
+        self._kodi.show_notification(message='Unfollow ' + program)
         self.set_favorite(program, path, False)
         self._kodi.container_refresh()
 
