@@ -204,7 +204,7 @@ class StreamService:
                 drm_stream = (vudrm_token or uplynk)
 
                 # Select streaming protocol
-                if not drm_stream and self._kodi.has_inputstream_adaptive_installed() or drm_stream and self._can_play_drm and self._kodi.get_setting('usedrm') == 'true':
+                if not drm_stream and self._kodi.has_inputstream_adaptive() or drm_stream and self._can_play_drm and self._kodi.get_setting('usedrm') == 'true':
                     protocol = 'mpeg_dash'
                 elif vudrm_token:
                     protocol = 'hls_aes'

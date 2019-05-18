@@ -334,6 +334,10 @@ msgctxt "#30869"
 msgid "Log level"
 msgstr ""
 
+msgctxt "#30871"
+msgid "Use InputStream Adaptive"
+msgstr ""
+
 
 ### MESSAGES
 msgctxt "#30951"
