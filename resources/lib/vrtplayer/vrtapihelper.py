@@ -104,20 +104,25 @@ class VRTApiHelper:
                 pass
         return season_items, sort, ascending, content
 
-    def get_episode_items(self, path=None, page=None, all_seasons=False, filtered=False):
+    def get_episode_items(self, path=None, page=None, all_seasons=False, filtered=False, variety=None):
         import json
         episode_items = []
         sort = 'episode'
         ascending = True
 
         # Recent items
-        if page is not None:
+        if variety in ('offline', 'recent'):
             page = statichelper.realpage(page)
             params = {
                 'from': ((page - 1) * 50) + 1,
                 'i': 'video',
                 'size': 50,
             }
+
+            if variety == 'offline':
+                from datetime import datetime
+                import dateutil.tz
+                params['facets[assetOffTime]'] = datetime.now(dateutil.tz.tzlocal()).strftime('%Y-%m-%d')
 
             if statichelper.is_filtered(filtered):
                 params['facets[programName]'] = '[%s]' % (','.join(self._favorites.names()))
@@ -139,6 +144,7 @@ class VRTApiHelper:
                 api_url = self._VRTNU_SEARCH_URL + '?' + urlencode(params)
             else:
                 api_url = path
+
             self._kodi.log_notice('URL get: ' + unquote(api_url), 'Verbose')
             api_json = json.loads(urlopen(api_url).read())
 

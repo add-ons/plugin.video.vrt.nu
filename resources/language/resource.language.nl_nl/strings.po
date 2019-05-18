@@ -62,22 +62,30 @@ msgid "Most recent"
 msgstr "Meest recent"
 
 msgctxt "#30021"
-msgid "Recently published episodes of TV programs"
+msgid "Recently published video content"
 msgstr "Recent gepubliceerde afleveringen van tv-programma's"
 
 msgctxt "#30022"
+msgid "Soon offline"
+msgstr "Binnenkort verwijderd"
+
+msgctxt "#30023"
+msgid "Video content that will soon be offline"
+msgstr "Tv-afleveringen die binnenkort verdwijnen"
+
+msgctxt "#30024"
 msgid "TV guide"
 msgstr "Tv-gids"
 
-msgctxt "#30023"
+msgctxt "#30025"
 msgid "Browse channel TV guides"
 msgstr "Doorzoek de tv-gids per kanaal"
 
-msgctxt "#30024"
+msgctxt "#30026"
 msgid "Doorzoek VRT NU"
 msgstr "Doorzoek VRT NU"
 
-msgctxt "#30025"
+msgctxt "#30027"
 msgid "Search the complete VRT NU library"
 msgstr "Doorzoek de hele VRT NU bibliotheek"
 
@@ -98,6 +106,14 @@ msgstr "Mijn meest recent"
 msgctxt "#30043"
 msgid "Recently published episodes of My TV programs"
 msgstr "Recent gepubliceerde afleveringen van tv-programma's die je volgt"
+
+msgctxt "#30044"
+msgid "My soon offline"
+msgstr "Mijn binnenkort verwijderd"
+
+msgctxt "#30045"
+msgid "My video content that will soon be offline"
+msgstr "Mijn tv-afleveringen die binnenkort verdwijnen"
 
 
 ### APPLICATION

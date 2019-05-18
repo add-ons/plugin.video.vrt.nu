@@ -53,23 +53,29 @@ class VRTPlayer:
             TitleItem(title=self._kodi.localize(30018),  # Live TV
                       url_dict=dict(action=actions.LISTING_LIVE),
                       is_playable=False,
-                      art_dict=dict(thumb='DefaultAddonPVRClient.png', icon='DefaultAddonPVRClient.png', fanart='DefaultAddonPVRClient.png'),
+                      # art_dict=dict(thumb='DefaultAddonPVRClient.png', icon='DefaultAddonPVRClient.png', fanart='DefaultAddonPVRClient.png'),
+                      art_dict=dict(thumb='DefaultTVShows.png', icon='DefaultTVShows.png', fanart='DefaultTVShows.png'),
                       video_dict=dict(plot=self._kodi.localize(30019))),
             TitleItem(title=self._kodi.localize(30020),  # Recent items
                       url_dict=dict(action=actions.LISTING_RECENT),
                       is_playable=False,
-                      art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
+                      art_dict=dict(thumb='DefaultRecentlyAddedEpisodes.png', icon='DefaultRecentlyAddedEpisodes.png', fanart='DefaultRecentlyAddedEpisodes.png'),
                       video_dict=dict(plot=self._kodi.localize(30021))),
-            TitleItem(title=self._kodi.localize(30022),  # TV guide
+            TitleItem(title=self._kodi.localize(30022),  # Soon offline
+                      url_dict=dict(action=actions.LISTING_OFFLINE),
+                      is_playable=False,
+                      art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
+                      video_dict=dict(plot=self._kodi.localize(30023))),
+            TitleItem(title=self._kodi.localize(30024),  # TV guide
                       url_dict=dict(action=actions.LISTING_TVGUIDE),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultAddonTvInfo.png', icon='DefaultAddonTvInfo.png', fanart='DefaultAddonTvInfo.png'),
-                      video_dict=dict(plot=self._kodi.localize(30023))),
-            TitleItem(title=self._kodi.localize(30024),  # Search
+                      video_dict=dict(plot=self._kodi.localize(30025))),
+            TitleItem(title=self._kodi.localize(30026),  # Search
                       url_dict=dict(action=actions.SEARCH),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultAddonsSearch.png', icon='DefaultAddonsSearch.png', fanart='DefaultAddonsSearch.png'),
-                      video_dict=dict(plot=self._kodi.localize(30025))),
+                      video_dict=dict(plot=self._kodi.localize(30027))),
         ])
         self._kodi.show_listing(main_items)
 
@@ -83,8 +89,13 @@ class VRTPlayer:
             TitleItem(title=self._kodi.localize(30042),  # My recent items
                       url_dict=dict(action=actions.LISTING_RECENT, filtered=True),
                       is_playable=False,
-                      art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
+                      art_dict=dict(thumb='DefaultRecentlyAddedEpisodes.png', icon='DefaultRecentlyAddedEpisodes.png', fanart='DefaultRecentlyAddedEpisodes.png'),
                       video_dict=dict(plot=self._kodi.localize(30043))),
+            TitleItem(title=self._kodi.localize(30044),  # My soon offline
+                      url_dict=dict(action=actions.LISTING_OFFLINE, filtered=True),
+                      is_playable=False,
+                      art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
+                      video_dict=dict(plot=self._kodi.localize(30045))),
         ]
         self._kodi.show_listing(favorites_items)
 
@@ -173,13 +184,29 @@ class VRTPlayer:
 
     def show_recent(self, page=0, filtered=False):
         page = statichelper.realpage(page)
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=page, filtered=filtered)
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=page, filtered=filtered, variety='recent')
 
         # Add 'More...' entry at the end
         if len(episode_items) == 50:
             episode_items.append(TitleItem(
                 title=self._kodi.localize(30300),
                 url_dict=dict(action=actions.LISTING_RECENT, page=page + 1, filtered=filtered),
+                is_playable=False,
+                art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
+                video_dict=dict(),
+            ))
+
+        self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content, cache=False)
+
+    def show_offline(self, page=0, filtered=False):
+        page = statichelper.realpage(page)
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=page, filtered=filtered, variety='offline')
+
+        # Add 'More...' entry at the end
+        if len(episode_items) == 50:
+            episode_items.append(TitleItem(
+                title=self._kodi.localize(30300),
+                url_dict=dict(action=actions.LISTING_OFFLINE, page=page + 1, filtered=filtered),
                 is_playable=False,
                 art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
                 video_dict=dict(),
