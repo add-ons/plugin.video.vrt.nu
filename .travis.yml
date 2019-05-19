@@ -18,6 +18,8 @@ script:
 - tox -e flake8
 - pylint *.py resources/lib/ test/
 - python test/vrtplayertests.py
+#- python test/streamservicetests.py
 - python test/apihelpertests.py
 - python test/tvguidetests.py
 - python test/searchtests.py
+#- python test/favoritestests.py

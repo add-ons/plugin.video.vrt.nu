@@ -223,11 +223,11 @@ class KodiWrapper:
             search_string = keyboard.getText()
         return search_string
 
-    def show_ok_dialog(self, title, message):
+    def show_ok_dialog(self, heading='', message=''):
         import xbmcgui
-        if not title:
-            title = self._addon.getAddonInfo('name')
-        xbmcgui.Dialog().ok(title, message)
+        if not heading:
+            heading = self._addon.getAddonInfo('name')
+        xbmcgui.Dialog().ok(heading=heading, message=message)
 
     def show_notification(self, heading='', message='', icon='info', time=4000):
         import xbmcgui
