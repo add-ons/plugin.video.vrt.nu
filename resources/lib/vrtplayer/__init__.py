@@ -116,9 +116,9 @@ CHANNELS = [
 
 
 class actions:
-
     CLEAR_COOKIES = 'clearcookies'
     FOLLOW = 'follow'
+    INSTALL_WIDEVINE = 'installwidevine'
     LISTING_ALL_EPISODES = 'listingallepisodes'
     LISTING_AZ_TVSHOWS = 'listingaztvshows'
     LISTING_CATEGORIES = 'listingcategories'

@@ -263,7 +263,7 @@ msgid "Enable My programs"
 msgstr ""
 
 msgctxt "#30824"
-msgid "When enabled, the user can follow their favourite programs and list these separately. In this case the VRT NU addon will download and update a list of your followed programs on the VRT NU website."
+msgid "When enabled, the user can follow their favourite programs and list these separately. In this case the VRT NU add-on will download and update a list of your followed programs on the VRT NU website."
 msgstr ""
 
 msgctxt "#30825"
@@ -322,20 +322,16 @@ msgctxt "#30850"
 msgid "In case you have limited bandwidth available, you may want to specify a maximum bandwidth so that a lower bitrate stream can be selected for playback."
 msgstr ""
 
-msgctxt "#30859"
-msgid "Cache"
-msgstr ""
-
 msgctxt "#30860"
 msgid "Troubleshooting"
 msgstr ""
 
 msgctxt "#30861"
-msgid "InputStream Adaptive settings..."
+msgid "Cache"
 msgstr ""
 
 msgctxt "#30863"
-msgid "Install Widevine (for DRM content)"
+msgid "Clear VRT tokens"
 msgstr ""
 
 msgctxt "#30865"
@@ -343,19 +339,27 @@ msgid "Refresh favorites"
 msgstr ""
 
 msgctxt "#30867"
-msgid "Clear VRT cookies"
+msgid "Streaming"
 msgstr ""
 
 msgctxt "#30869"
-msgid "Log level"
-msgstr ""
-
-msgctxt "#30871"
 msgid "Use InputStream Adaptive"
 msgstr ""
 
+msgctxt "#30871"
+msgid "InputStream Adaptive settings..."
+msgstr ""
+
 msgctxt "#30873"
+msgid "Install Widevine... [COLOR gray][I](needed for DRM content)[/I][/COLOR]"
+msgstr ""
+
+msgctxt "#30875"
 msgid "Logging"
+msgstr ""
+
+msgctxt "#30877"
+msgid "Log level"
 msgstr ""
 
 
@@ -390,4 +394,20 @@ msgstr ""
 
 msgctxt "#30961"
 msgid "Using a SOCKS proxy requires the PySocks library (script.module.pysocks) installed."
+msgstr ""
+
+msgctxt "#30971"
+msgid "Install Widevine using 'InputStream Helper' add-on"
+msgstr ""
+
+msgctxt "#30972"
+msgid "Installing Widevine libraries using the 'InputStream Helper' add-on is done at your own risk and the VRT NU add-on is not responsible for any results. Nor is it guaranteed that Widevine will be installed correctly."
+msgstr ""
+
+msgctxt "#30973"
+msgid "Installation of Widevine failed!"
+msgstr ""
+
+msgctxt "#30974"
+msgid "Installation of Widevine completed!"
 msgstr ""

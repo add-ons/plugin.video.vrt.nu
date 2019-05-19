@@ -20,14 +20,14 @@
         <setting label="30849" help="30850" type="select" id="max_bandwidth" default="0" values="0|256|512|1024|1536|2048|2560|3072|4096|6144|8192|10240|15360|20480|25600|30720"/>
     </category>
     <category label="30860"> <!-- Troubleshooting -->
-        <setting label="30859" type="lsep"/> <!-- Cache -->
-        <!-- setting label="30863" help="30864" type="action" id="widevine_install" option="close" action="RunPlugin(plugin://plugin.video.vrt.nu?action=installwidevine)" enable="System.HasAddon(script.module.inputstreamhelper)"/ -->
-        <setting label="30867" help="30868" type="action" id="clear_tokens" action="RunPlugin(plugin://plugin.video.vrt.nu/?action=clearcookies)"/>
+        <setting label="30861" type="lsep"/> <!-- Cache -->
+        <setting label="30863" help="30864" type="action" id="clear_tokens" action="RunPlugin(plugin://plugin.video.vrt.nu/?action=clearcookies)"/>
         <setting label="30865" help="30866" type="action" id="refresh_favorites" action="RunPlugin(plugin://plugin.video.vrt.nu/?action=refreshfavorites)"/>
-        <setting label="30845" type="lsep"/> <!-- InputStream Adaptive -->
-        <setting label="30871" help="30872" type="bool" id="useinputstreamadaptive" default="true" visible="System.HasAddon(inputstream.adaptive)"/>
-        <setting label="30861" help="30862" type="action" id="adaptive_settings" option="close" action="Addon.OpenSettings(inputstream.adaptive)" visible="System.HasAddon(inputstream.adaptive)" enable="eq(-1,true)" subsetting="true"/>
-        <setting label="30873" type="lsep"/> <!-- Logging -->
-        <setting label="30869" help="30870" type="select" id="max_log_level" values="Quiet|Info|Verbose|Debug" default="Info"/>
+        <setting label="30867" type="lsep"/> <!-- InputStream Adaptive -->
+        <setting label="30869" help="30870" type="bool" id="useinputstreamadaptive" default="true" visible="System.HasAddon(inputstream.adaptive)"/>
+        <setting label="30871" help="30872" type="action" id="adaptive_settings" option="close" action="Addon.OpenSettings(inputstream.adaptive)" visible="System.HasAddon(inputstream.adaptive)" enable="eq(-1,true)" subsetting="true"/>
+        <setting label="30873" help="30874" type="action" id="widevine_install" option="close" action="RunPlugin(plugin://plugin.video.vrt.nu?action=installwidevine)" visible="System.HasAddon(inputstream.adaptive)" enable="eq(-2,true)" subsetting="true"/>
+        <setting label="30875" type="lsep"/> <!-- Logging -->
+        <setting label="30877" help="30878" type="select" id="max_log_level" values="Quiet|Info|Verbose|Debug" default="Info"/>
     </category>
 </settings>

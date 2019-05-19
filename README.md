@@ -4,13 +4,13 @@
 [![Contributors](https://img.shields.io/github/contributors/pietje666/plugin.video.vrt.nu.svg)](https://github.com/pietje666/plugin.video.vrt.nu/graphs/contributors)
 [![Donate!](https://img.shields.io/static/v1.svg?label=&message=Donate!&color=lightgrey&logo=paypal)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6C58R2PNAWTNW&source=url)
 
-# VRT NU Kodi addon
+# VRT NU Kodi add-on
 **plugin.video.vrt.nu** is a [Kodi](https://kodi.tv/) add-on for watching all live video streams *and* all video-on-demand
 content available on [VRT NU](https://vrt.be/vrtnu/).
 
 VRT NU is the video-on-demand platform of VRT, Flanders' public broadcasting service.
 
-This addon can be used to watch all video content from VRT NU.
+This Kodi add-on can be used to watch all video content from VRT NU.
 
 - List all videos alphabetically by program or by category
 - Watch live streams from Eén, Canvas and Ketnet
@@ -22,7 +22,7 @@ Some video content may be geo-blocked.
 **This project is not endorsed by VRT.**
 
 ## Installing
-In Kodi, simply search for `VRT NU`, and install the add-on.
+In Kodi, simply search for `VRT`, and install the VRT NU add-on.
 
 Alternatively, you can download a ZIP archive from the [GitHub releases](https://github.com/pietje666/plugin.video.vrt.nu/releases)
 and install it directly in Kodi using the **Install via Zip** option.
@@ -41,7 +41,7 @@ have a VRT NU account and sign in with another method, it is easy to get a passw
 You will receive an email that allows you to set a password. Use this password to enter in the plugin when
 prompted.
 
-For more information about the VRT NU Kodi addon, look at [our GitHub Wiki page](https://github.com/pietje666/plugin.video.vrt.nu/wiki).
+For more information about the VRT NU Kodi add-on, look at [our GitHub Wiki page](https://github.com/pietje666/plugin.video.vrt.nu/wiki).
 
 ## Reporting issues
 You can report issues at [our GitHub project](https://github.com/pietje666/plugin.video.vrt.nu) or

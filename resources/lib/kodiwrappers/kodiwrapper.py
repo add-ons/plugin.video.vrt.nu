@@ -108,6 +108,22 @@ class KodiWrapper:
         self._usemenucaching = self.get_setting('usemenucaching') == 'true'
         self._system_locale_works = self.set_locale()
 
+    def install_widevine(self):
+        import xbmcgui
+        ok = xbmcgui.Dialog().yesno(self.localize(30971), self.localize(30972))
+        if not ok:
+            return
+        try:
+            import inputstreamhelper
+            is_helper = inputstreamhelper.Helper('mpd', drm='com.widevine.alpha')
+            if is_helper.check_inputstream():
+                self.show_notification(heading=self.localize(30971), message=self.localize(30974), icon='info', time=5000)
+            else:
+                self.show_notification(heading=self.localize(30971), message=self.localize(30973), icon='error', time=5000)
+        except Exception:
+            self.show_notification(heading=self.localize(30971), message=self.localize(30973), icon='error', time=5000)
+        self.end_of_directory()
+
     def show_listing(self, list_items, sort='unsorted', ascending=True, content=None, cache=None):
         import xbmcgui
         listing = []
@@ -213,9 +229,11 @@ class KodiWrapper:
             title = self._addon.getAddonInfo('name')
         xbmcgui.Dialog().ok(title, message)
 
-    def show_notification(self, message, time=4000):
+    def show_notification(self, heading='', message='', icon='info', time=4000):
         import xbmcgui
-        xbmcgui.Dialog().notification(self._addon.getAddonInfo('name'), message, xbmcgui.NOTIFICATION_INFO, time)
+        if not heading:
+            heading = self._addon.getAddonInfo('name')
+        xbmcgui.Dialog().notification(heading=heading, message=message, icon=icon, time=time)
 
     def set_locale(self):
         import locale

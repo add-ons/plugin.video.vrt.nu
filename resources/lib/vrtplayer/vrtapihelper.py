@@ -122,7 +122,7 @@ class VRTApiHelper:
             if variety == 'offline':
                 from datetime import datetime
                 import dateutil.tz
-                params['facets[assetOffTime]'] = datetime.now(dateutil.tz.tzlocal()).strftime('%Y-%m-%d')
+                params['facets[assetOffTime]'] = datetime.now(dateutil.tz.gettz('Europe/Brussels')).strftime('%Y-%m-%d')
 
             if statichelper.is_filtered(filtered):
                 params['facets[programName]'] = '[%s]' % (','.join(self._favorites.names()))
