@@ -38,7 +38,7 @@ pylint:
 unit:
 	@echo -e "$(white)=$(blue) Starting unit tests$(reset)"
 	PYTHONPATH=$(CURDIR) python test/vrtplayertests.py
-	#PYTHONPATH=$(CURDIR) python test/streamservicetests.py
+	PYTHONPATH=$(CURDIR) python test/streamservicetests.py
 	PYTHONPATH=$(CURDIR) python test/apihelpertests.py
 	PYTHONPATH=$(CURDIR) python test/tvguidetests.py
 	PYTHONPATH=$(CURDIR) python test/searchtests.py

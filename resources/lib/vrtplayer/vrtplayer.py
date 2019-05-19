@@ -16,10 +16,10 @@ class VRTPlayer:
 
     def __init__(self, _kodi, _favorites, _apihelper):
         self._kodi = _kodi
-        self._proxies = _kodi.get_proxies()
-        install_opener(build_opener(ProxyHandler(self._proxies)))
         self._favorites = _favorites
         self._apihelper = _apihelper
+        self._proxies = _kodi.get_proxies()
+        install_opener(build_opener(ProxyHandler(self._proxies)))
 
     def show_main_menu_items(self):
         main_items = []
@@ -102,7 +102,7 @@ class VRTPlayer:
         # Show dialog when no favorites were found
         from resources.lib.vrtplayer import favorites
         if not favorites.Favorites(self._kodi).names():
-            self._kodi.show_ok_dialog(self._kodi.localize(30415), self._kodi.localize(30416))
+            self._kodi.show_ok_dialog(heading=self._kodi.localize(30415), message=self._kodi.localize(30416))
 
     def show_tvshow_menu_items(self, category=None, filtered=False):
         tvshow_items = self._apihelper.get_tvshow_items(category=category, filtered=filtered)
@@ -233,7 +233,7 @@ class VRTPlayer:
 
         search_items, sort, ascending, content = self._apihelper.search(search_string, page=page)
         if not search_items:
-            self._kodi.show_ok_dialog(self._kodi.localize(30098), self._kodi.localize(30099).format(keywords=search_string))
+            self._kodi.show_ok_dialog(heading=self._kodi.localize(30098), message=self._kodi.localize(30099).format(keywords=search_string))
             self._kodi.end_of_directory()
             return
 

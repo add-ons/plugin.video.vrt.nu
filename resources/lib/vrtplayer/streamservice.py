@@ -161,7 +161,7 @@ class StreamService:
     def _handle_error(self, video_json):
         self._kodi.log_error(video_json.get('message'))
         message = self._kodi.localize(30954)  # Whoops something went wrong
-        self._kodi.show_ok_dialog('', message)
+        self._kodi.show_ok_dialog(message=message)
         self._kodi.end_of_directory()
 
     @staticmethod
@@ -194,73 +194,77 @@ class StreamService:
             api_data = self._get_api_data(video)
 
         stream_json = self._get_stream_json(api_data)
-        if stream_json:
-            if 'targetUrls' in stream_json:
+        if not stream_json:
+            return None
 
-                # DRM support for ketnet junior/uplynk streaming service
-                uplynk = 'uplynk.com' in stream_json.get('targetUrls')[0].get('url')
+        if 'targetUrls' in stream_json:
 
-                vudrm_token = stream_json.get('drm')
-                drm_stream = (vudrm_token or uplynk)
+            # DRM support for ketnet junior/uplynk streaming service
+            uplynk = 'uplynk.com' in stream_json.get('targetUrls')[0].get('url')
 
-                # Select streaming protocol
-                if not drm_stream and self._kodi.has_inputstream_adaptive() or drm_stream and self._can_play_drm and self._kodi.get_setting('usedrm') == 'true':
-                    protocol = 'mpeg_dash'
-                elif vudrm_token:
-                    protocol = 'hls_aes'
-                else:
-                    protocol = 'hls'
+            vudrm_token = stream_json.get('drm')
+            drm_stream = (vudrm_token or uplynk)
 
-                # Get stream manifest url
-                manifest_url = next(stream.get('url') for stream in stream_json.get('targetUrls') if stream.get('type') == protocol)
-
-                # Fix virtual subclip
-                duration = timedelta(milliseconds=stream_json.get('duration'))
-                manifest_url = self._fix_virtualsubclip(manifest_url, duration)
-
-                # Prepare stream for Kodi player
-                if protocol == 'mpeg_dash' and drm_stream:
-                    self._kodi.log_notice('Protocol: mpeg_dash drm', 'Verbose')
-                    if vudrm_token:
-                        if self._vualto_license_url is None:
-                            self._get_vualto_license_url()
-                        encryption_json = '{{"token":"{0}","drm_info":[D{{SSM}}],"kid":"{{KID}}"}}'.format(vudrm_token)
-                        license_key = self._get_license_key(key_url=self._vualto_license_url,
-                                                            key_type='D',
-                                                            key_value=encryption_json,
-                                                            key_headers={'Content-Type': 'text/plain;charset=UTF-8'})
-                    else:
-                        license_key = self._get_license_key(key_url=self._UPLYNK_LICENSE_URL, key_type='R')
-
-                    stream = streamurls.StreamURLS(manifest_url, license_key=license_key, use_inputstream_adaptive=True)
-                elif protocol == 'mpeg_dash':
-                    stream = streamurls.StreamURLS(manifest_url, use_inputstream_adaptive=True)
-                    self._kodi.log_notice('Protocol: ' + protocol, 'Verbose')
-                else:
-                    # Fix 720p quality for HLS livestreams
-                    manifest_url += '?hd' if '.m3u8?' not in manifest_url else '&hd'
-                    stream = streamurls.StreamURLS(*self._select_hls_substreams(manifest_url))
-                    self._kodi.log_notice('Protocol: ' + protocol, 'Verbose')
-                return stream
-
-            if stream_json.get('code') in ('INCOMPLETE_ROAMING_CONFIG', 'INVALID_LOCATION'):
-                self._kodi.log_error(stream_json.get('message'))
-                roaming_xvrttoken = self._tokenresolver.get_xvrttoken(True)
-                if not retry and roaming_xvrttoken is not None:
-                    # Delete cached playertokens
-                    if api_data.is_live_stream:
-                        self._kodi.delete_file(self._kodi.get_userdata_path() + 'live_vrtPlayerToken')
-                    else:
-                        self._kodi.delete_file(self._kodi.get_userdata_path() + 'ondemand_vrtPlayerToken')
-                    # Update api_data with roaming_xvrttoken and try again
-                    api_data.xvrttoken = roaming_xvrttoken
-                    return self.get_stream(video, retry=True, api_data=api_data)
-                message = self._kodi.localize(30953)  # Cannot be played
-                self._kodi.show_ok_dialog('', message)
-                self._kodi.end_of_directory()
+            # Select streaming protocol
+            if not drm_stream and self._kodi.has_inputstream_adaptive():
+                protocol = 'mpeg_dash'
+            elif drm_stream and self._can_play_drm and self._kodi.get_setting('usedrm') == 'true':
+                protocol = 'mpeg_dash'
+            elif vudrm_token:
+                protocol = 'hls_aes'
             else:
-                self._handle_error(stream_json)
+                protocol = 'hls'
 
+            # Get stream manifest url
+            manifest_url = next(stream.get('url') for stream in stream_json.get('targetUrls') if stream.get('type') == protocol)
+
+            # Fix virtual subclip
+            duration = timedelta(milliseconds=stream_json.get('duration'))
+            manifest_url = self._fix_virtualsubclip(manifest_url, duration)
+
+            # Prepare stream for Kodi player
+            if protocol == 'mpeg_dash' and drm_stream:
+                self._kodi.log_notice('Protocol: mpeg_dash drm', 'Verbose')
+                if vudrm_token:
+                    if self._vualto_license_url is None:
+                        self._get_vualto_license_url()
+                    encryption_json = '{{"token":"{0}","drm_info":[D{{SSM}}],"kid":"{{KID}}"}}'.format(vudrm_token)
+                    license_key = self._get_license_key(key_url=self._vualto_license_url,
+                                                        key_type='D',
+                                                        key_value=encryption_json,
+                                                        key_headers={'Content-Type': 'text/plain;charset=UTF-8'})
+                else:
+                    license_key = self._get_license_key(key_url=self._UPLYNK_LICENSE_URL, key_type='R')
+
+                stream = streamurls.StreamURLS(manifest_url, license_key=license_key, use_inputstream_adaptive=True)
+            elif protocol == 'mpeg_dash':
+                stream = streamurls.StreamURLS(manifest_url, use_inputstream_adaptive=True)
+                self._kodi.log_notice('Protocol: ' + protocol, 'Verbose')
+            else:
+                # Fix 720p quality for HLS livestreams
+                manifest_url += '?hd' if '.m3u8?' not in manifest_url else '&hd'
+                stream = streamurls.StreamURLS(*self._select_hls_substreams(manifest_url))
+                self._kodi.log_notice('Protocol: ' + protocol, 'Verbose')
+            return stream
+
+        if stream_json.get('code') not in ('INCOMPLETE_ROAMING_CONFIG', 'INVALID_LOCATION'):
+            self._handle_error(stream_json)
+            return None
+
+        self._kodi.log_error(stream_json.get('message'))
+        roaming_xvrttoken = self._tokenresolver.get_xvrttoken(True)
+        if not retry and roaming_xvrttoken is not None:
+            # Delete cached playertokens
+            if api_data.is_live_stream:
+                self._kodi.delete_file(self._kodi.get_userdata_path() + 'live_vrtPlayerToken')
+            else:
+                self._kodi.delete_file(self._kodi.get_userdata_path() + 'ondemand_vrtPlayerToken')
+            # Update api_data with roaming_xvrttoken and try again
+            api_data.xvrttoken = roaming_xvrttoken
+            return self.get_stream(video, retry=True, api_data=api_data)
+        message = self._kodi.localize(30953)  # Cannot be played
+        self._kodi.show_ok_dialog(message=message)
+        self._kodi.end_of_directory()
         return None
 
     def _select_hls_substreams(self, master_hls_url):
@@ -271,7 +275,7 @@ class StreamService:
         hls_subtitle_id = None
         hls_base_url = master_hls_url.split('.m3u8')[0]
         self._kodi.log_notice('URL get: ' + unquote(master_hls_url), 'Verbose')
-        hls_playlist = urlopen(master_hls_url).read()
+        hls_playlist = urlopen(master_hls_url).read().decode('utf-8')
         max_bandwidth = self._kodi.get_max_bandwidth()
         stream_bandwidth = None
 
@@ -291,7 +295,7 @@ class StreamService:
 
         if stream_bandwidth > max_bandwidth and not hls_variant_url:
             message = self._kodi.localize(30057).format(max=max_bandwidth, min=stream_bandwidth)
-            self._kodi.show_ok_dialog('', message)
+            self._kodi.show_ok_dialog(message=message)
             self._kodi.open_settings()
 
         # Get audio url
