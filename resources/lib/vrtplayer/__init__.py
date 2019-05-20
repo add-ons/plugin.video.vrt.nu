@@ -119,6 +119,7 @@ class actions:
     CLEAR_COOKIES = 'clearcookies'
     FOLLOW = 'follow'
     INSTALL_WIDEVINE = 'installwidevine'
+    INVALIDATE_CACHES = 'invalidatecaches'
     LISTING_ALL_EPISODES = 'listingallepisodes'
     LISTING_AZ_TVSHOWS = 'listingaztvshows'
     LISTING_CATEGORIES = 'listingcategories'

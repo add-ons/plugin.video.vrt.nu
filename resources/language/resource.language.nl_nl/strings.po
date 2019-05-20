@@ -275,6 +275,10 @@ msgctxt "#30829"
 msgid "Enable menu caching"
 msgstr "Gebruik menu caching"
 
+msgctxt "#30831"
+msgid "Enable local HTTP caching"
+msgstr "Gebruik local HTTP caching"
+
 msgctxt "#30840"
 msgid "Playback"
 msgstr "Afspelen"
@@ -315,27 +319,31 @@ msgctxt "#30065"
 msgid "Refresh favorites"
 msgstr "Ververs gevolgde programma's"
 
-msgctxt "#30067"
+msgctxt "#30867"
+msgid "Invalidate local HTTP caches"
+msgstr "Invalideer local HTTP caches"
+
+msgctxt "#30069"
 msgid "Streaming"
 msgstr "Streaming"
 
-msgctxt "#30869"
+msgctxt "#30870"
 msgid "Use InputStream Adaptive"
 msgstr "Gebruik InputStream Adaptive"
 
-msgctxt "#30071"
+msgctxt "#30073"
 msgid "InputStream Adaptive settings..."
 msgstr "InputStream Adaptive instellingen..."
 
-msgctxt "#30073"
+msgctxt "#30075"
 msgid "Install Widevine... [COLOR gray][I](needed for DRM content)[/I][/COLOR]"
 msgstr "Installeer Widevine... [COLOR gray][I](nodig voor DRM content)[/I][/COLOR]"
 
-msgctxt "#30075"
+msgctxt "#30077"
 msgid "Logging"
 msgstr "Logboek"
 
-msgctxt "#30077"
+msgctxt "#30079"
 msgid "Log level"
 msgstr "Log level"
 

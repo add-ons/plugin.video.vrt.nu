@@ -106,11 +106,11 @@ class KodiWrapper:
         self._addon_id = addon.getAddonInfo('id')
         self._max_log_level = log_levels.get(self.get_setting('max_log_level'), 3)
         self._usemenucaching = self.get_setting('usemenucaching') == 'true'
+        self._cache_path = self.get_userdata_path() + 'cache/'
         self._system_locale_works = self.set_locale()
 
     def install_widevine(self):
-        import xbmcgui
-        ok = xbmcgui.Dialog().yesno(self.localize(30971), self.localize(30972))
+        ok = self.show_yesno_dialog(heading=self.localize(30971), message=self.localize(30972))
         if not ok:
             return
         try:
@@ -235,6 +235,12 @@ class KodiWrapper:
             heading = self._addon.getAddonInfo('name')
         xbmcgui.Dialog().notification(heading=heading, message=message, icon=icon, time=time)
 
+    def show_yesno_dialog(self, heading='', message=''):
+        import xbmcgui
+        if not heading:
+            heading = self._addon.getAddonInfo('name')
+        return xbmcgui.Dialog().yesno(heading=self.localize(30971), line1=self.localize(30972))
+
     def set_locale(self):
         import locale
         locale_lang = self.get_global_setting('locale.language').split('.')[-1]
@@ -243,7 +249,7 @@ class KodiWrapper:
             locale.setlocale(locale.LC_ALL, locale_lang)
             return True
         except Exception as e:
-            self.log_notice(e, 'Debug')
+            self.log_notice('Failed to set locale: %s' % e, 'Debug')
             return False
 
     def localize(self, string_id):
@@ -353,9 +359,19 @@ class KodiWrapper:
     def get_path(self, path):
         return xbmc.translatePath(path)
 
-    def make_dir(self, path):
+    def listdir(self, path):
         import xbmcvfs
-        xbmcvfs.mkdir(path)
+        return xbmcvfs.listdir(path)
+
+    def mkdir(self, path):
+        import xbmcvfs
+        self.log_notice("Create directory '%s'." % path, 'Debug')
+        return xbmcvfs.mkdir(path)
+
+    def mkdirs(self, path):
+        import xbmcvfs
+        self.log_notice("Recursively create directory '%s'." % path, 'Debug')
+        return xbmcvfs.mkdirs(path)
 
     def check_if_path_exists(self, path):
         import xbmcvfs
@@ -374,7 +390,90 @@ class KodiWrapper:
 
     def delete_file(self, path):
         import xbmcvfs
+        self.log_notice("Delete file '%s'." % path, 'Debug')
         return xbmcvfs.delete(path)
+
+    def md5(self, path):
+        import hashlib
+        with self.open_file(path) as f:
+            return hashlib.md5(f.read().encode('utf-8'))
+
+    def human_delta(self, seconds):
+        import math
+        days = int(math.floor(seconds / (24 * 60 * 60)))
+        seconds = seconds % (24 * 60 * 60)
+        hours = int(math.floor(seconds / (60 * 60)))
+        seconds = seconds % (60 * 60)
+        if days:
+            return '%d day%s and %d hour%s' % (days, 's' if days != 1 else '', hours, 's' if hours != 1 else '')
+        minutes = int(math.floor(seconds / 60))
+        seconds = seconds % 60
+        if hours:
+            return '%d hour%s and %d minute%s' % (hours, 's' if hours != 1 else '', minutes, 's' if minutes != 1 else '')
+        if minutes:
+            return '%d minute%s and %d second%s' % (minutes, 's' if minutes != 1 else '', seconds, 's' if seconds != 1 else '')
+        return '%d second%s' % (seconds, 's' if seconds != 1 else '')
+
+    def get_cache(self, path, ttl=None):
+        if self.get_setting('usehttpcaching') == 'false':
+            return None
+
+        fullpath = self._cache_path + path
+        if not self.check_if_path_exists(fullpath):
+            return None
+
+        import time
+        mtime = self.stat_file(fullpath).st_mtime()
+        now = time.mktime(time.localtime())
+        if ttl is None or now - mtime < ttl:
+            import json
+            if ttl is None:
+                self.log_notice("Cache '%s' is forced from cache." % path, 'Debug')
+            else:
+                self.log_notice("Cache '%s' is fresh, expires in %s." % (path, self.human_delta(mtime + ttl - now)), 'Debug')
+            with self.open_file(fullpath, 'r') as f:
+                try:
+                    # return json.load(f, encoding='utf-8')
+                    return json.load(f)
+                except ValueError:
+                    return None
+
+        return None
+
+    def update_cache(self, path, data):
+        if self.get_setting('usehttpcaching') == 'false':
+            return
+
+        import hashlib
+        import json
+        fullpath = self._cache_path + path
+        if self.check_if_path_exists(fullpath):
+            md5 = self.md5(fullpath)
+        else:
+            md5 = 0
+            # Create cache directory if missing
+            if not self.check_if_path_exists(self._cache_path):
+                self.mkdirs(self._cache_path)
+
+        # Avoid writes if possible (i.e. SD cards)
+        if md5 != hashlib.md5(json.dumps(data).encode('utf-8')):
+            self.log_notice("Write cache '%s'." % path, 'Debug')
+            with self.open_file(path, 'w') as f:
+                # json.dump(data, f, encoding='utf-8')
+                json.dump(data, f)
+        else:
+            # Update timestamp
+            import os
+            self.log_notice("Cache '%s' has not changed, updating mtime only." % path, 'Debug')
+            os.utime(path)
+
+    def invalidate_cache(self, path):
+        self.delete_file(self._cache_path + path)
+
+    def invalidate_caches(self):
+        _, files = self.listdir(self._cache_path)
+        for f in files:
+            self.delete_file(self._cache_path + f)
 
     def container_refresh(self):
         self.log_notice('Execute: Container.Refresh', 'Debug')

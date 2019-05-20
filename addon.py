@@ -29,6 +29,9 @@ def router(params_string):
     _kodi = kodiwrapper.KodiWrapper(_ADDON_HANDLE, _ADDON_URL, addon)
     _kodi.log_access(_ADDON_URL, params_string)
 
+    if action == actions.INVALIDATE_CACHES:
+        _kodi.invalidate_caches()
+        return
     if action == actions.CLEAR_COOKIES:
         from resources.lib.vrtplayer import tokenresolver
         _tokenresolver = tokenresolver.TokenResolver(_kodi)
@@ -52,7 +55,7 @@ def router(params_string):
         _favorites.unfollow(program=params.get('program'), path=params.get('path'))
         return
     if action == actions.REFRESH_FAVORITES:
-        _favorites.update_favorites()
+        _favorites.get_favorites(ttl=0)
         return
 
     from resources.lib.vrtplayer import vrtapihelper, vrtplayer

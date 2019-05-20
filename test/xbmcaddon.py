@@ -10,7 +10,7 @@ import sys
 
 # FIXME: Get information from addon.xml
 ADDON_INFO = {
-    'author': 'Martijn Moreels',
+    'author': 'Martijn Moreel',
     'changelog': '',
     'description': '',
     'disclaimer': '',
@@ -30,6 +30,7 @@ ADDON_INFO = {
 
 PO = polib.pofile('resources/language/resource.language.en_gb/strings.po')
 
+# FIXME: Maybe move this to test/userdata/settings.xml ?
 SETTINGS = {
     'username': 'qsdfdsq',
     'password': 'qsdfqsdfds',
@@ -43,7 +44,7 @@ SETTINGS = {
 
 # Read credentials from credentials.json
 if os.path.exists('test/credentials.json'):
-    SETTINGS.update(json.loads(open('test/credentials.json').read()))
+    SETTINGS.update(json.load(open('test/credentials.json')))
 else:
     print('Credentials not found in credentials.json', file=sys.stderr)
 

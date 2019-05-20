@@ -286,6 +286,10 @@ msgctxt "#30830"
 msgid "When enabled, menus are being cached so they work more quickly. Only in very specific use-cases this is problematic as new episodes may not appear when they are expected."
 msgstr ""
 
+msgctxt "#30831"
+msgid "Enable local HTTP caching"
+msgstr ""
+
 msgctxt "#30840"
 msgid "Playback"
 msgstr ""
@@ -339,26 +343,30 @@ msgid "Refresh favorites"
 msgstr ""
 
 msgctxt "#30867"
-msgid "Streaming"
+msgid "Invalidate local HTTP caches"
 msgstr ""
 
 msgctxt "#30869"
-msgid "Use InputStream Adaptive"
+msgid "Streaming"
 msgstr ""
 
 msgctxt "#30871"
-msgid "InputStream Adaptive settings..."
+msgid "Use InputStream Adaptive"
 msgstr ""
 
 msgctxt "#30873"
-msgid "Install Widevine... [COLOR gray][I](needed for DRM content)[/I][/COLOR]"
+msgid "InputStream Adaptive settings..."
 msgstr ""
 
 msgctxt "#30875"
-msgid "Logging"
+msgid "Install Widevine... [COLOR gray][I](needed for DRM content)[/I][/COLOR]"
 msgstr ""
 
 msgctxt "#30877"
+msgid "Logging"
+msgstr ""
+
+msgctxt "#30879"
 msgid "Log level"
 msgstr ""
 

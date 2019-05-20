@@ -89,6 +89,11 @@ class TestVRTPlayer(unittest.TestCase):
         self.assertTrue(episode_items, msg=tvshow.url_dict['video_url'])
         self.assertTrue(content in ['episodes', 'seasons'], "Content for '%s' is '%s'" % (tvshow.title, content))
 
+    def test_categories(self):
+        ''' Test to ensure our hardcoded categories conforms to scraped categories '''
+        category_items = self._vrtplayer.get_category_menu_items()
+        self.assertEqual(len(category_items), 17)
+
 
 if __name__ == '__main__':
     unittest.main()
