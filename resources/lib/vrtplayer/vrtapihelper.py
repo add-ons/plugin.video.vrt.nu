@@ -94,31 +94,19 @@ class VRTApiHelper:
             ))
         return tvshow_items
 
-    def _get_season_items(self, api_url, api_json):
-        season_items = []
-        sort = 'label'
-        ascending = True
-        content = 'seasons'
-        episodes = api_json.get('results')
-        facets = api_json.get('facets', dict()).get('facets')
-        if episodes and facets:
-            try:
-                # Check if program has seasons
-                facet = next(f for f in facets if f.get('name') == 'seasons' and len(f.get('buckets', [])) > 1)
-                # Found multiple seasons, make list of seasons
-                season_items, sort, ascending, content = self._map_to_season_items(api_url, facet.get('buckets', []), episodes)
-            except StopIteration:
-                pass
-        return season_items, sort, ascending, content
-
-    def get_episode_items(self, path=None, page=None, all_seasons=False, filtered=False, variety=None):
-        import json
+    def get_episode_items(self, path=None, page=None, show_seasons=False, filtered=False, variety=None):
+        titletype = None
+        season_key = None
+        all_items = True
         episode_items = []
         sort = 'episode'
         ascending = True
+        content = 'episodes'
 
         # Recent items
         if variety in ('offline', 'recent'):
+            titletype = 'recent'
+            all_items = False
             page = statichelper.realpage(page)
             params = {
                 'from': ((page - 1) * 50) + 1,
@@ -158,36 +146,42 @@ class VRTApiHelper:
             else:
                 api_url = path
 
-            self._kodi.log_notice('URL get: ' + unquote(api_url), 'Verbose')
-            api_json = json.load(urlopen(api_url))
-
-            episodes = api_json.get('results', [{}])
-            if episodes:
-                episode = episodes[0]
-            else:
-                episode = dict()
-            display_options = episode.get('displayOptions', dict())
-
-            # NOTE: Hard-code showing seasons because it is unreliable (i.e; Thuis or Down the Road have it disabled)
-            display_options['showSeason'] = True
-
-            # Look for seasons items if not yet done
-            season_key = None
-
-            # path = requests.utils.unquote(path)
             path = unquote(path)
-            if all_seasons is True:
-                episode_items, sort, ascending, content = self._map_to_episode_items(episodes, season_key=None)
-            elif 'facets[seasonTitle]' in path:
+            if 'facets[seasonTitle]' in path:
                 season_key = path.split('facets[seasonTitle]=')[1]
-            elif display_options.get('showSeason') is True:
-                episode_items, sort, ascending, content = self._get_season_items(api_url, api_json)
 
-            # No season items, generate episode items
-            if not episode_items:
-                episode_items, sort, ascending, content = self._map_to_episode_items(episodes, season_key=season_key)
+            results, episodes = self._get_season_episode_data(api_url, show_seasons=show_seasons, all_items=all_items)
+
+            if results.get('episodes'):
+                episode_items, sort, ascending, content = self._map_to_episode_items(results.get('episodes'), titletype=titletype, season_key=season_key, filtered=filtered)
+            elif results.get('seasons'):
+                episode_items, sort, ascending, content = self._map_to_season_items(api_url, results.get('seasons'), episodes)
 
         return episode_items, sort, ascending, content
+
+    def _get_season_data(self, api_json):
+        facets = api_json.get('facets', dict()).get('facets')
+        seasons = next((f.get('buckets', []) for f in facets if f.get('name') == 'seasons' and len(f.get('buckets', [])) > 1), None)
+        return seasons
+
+    def _get_season_episode_data(self, api_url, show_seasons, all_items=True):
+        import json
+        self._kodi.log_notice('URL get: ' + unquote(api_url), 'Verbose')
+        api_json = json.loads(urlopen(api_url).read())
+        seasons = self._get_season_data(api_json)
+        episodes = api_json.get('results', [{}])
+        if show_seasons and seasons:
+            return dict(seasons=seasons), episodes
+        pages = api_json.get('meta').get('pages').get('total')
+        page_size = api_json.get('meta').get('pages').get('size')
+        total_results = api_json.get('meta').get('total_results')
+        if all_items and total_results > page_size:
+            for page in range(1, pages):
+                page_url = api_url + '&from=' + str(page * page_size + 1)
+                self._kodi.log_notice('URL get: ' + unquote(page_url), 'Verbose')
+                page_json = json.loads(urlopen(page_url).read())
+                episodes += page_json.get('results', [{}])
+        return dict(episodes=episodes), None
 
     def _map_to_episode_items(self, episodes, titletype=None, season_key=None, filtered=False):
         from datetime import datetime

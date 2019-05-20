@@ -175,11 +175,11 @@ class VRTPlayer:
         self._kodi.show_listing(channel_items, cache=False)
 
     def show_episodes(self, path):
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(path=path)
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(path=path, show_seasons=True)
         self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content)
 
     def show_all_episodes(self, path):
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(path=path, all_seasons=True)
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(path=path)
         self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content)
 
     def show_recent(self, page=0, filtered=False):
