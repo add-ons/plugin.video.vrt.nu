@@ -5,25 +5,24 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 from datetime import datetime
 import dateutil.tz
-import mock
 import random
 import unittest
 
+from resources.lib.kodiwrappers import kodiwrapper
 from resources.lib.vrtplayer import tvguide
-from test import localize, log_notice
+
+xbmc = __import__('xbmc')
+xbmcaddon = __import__('xbmcaddon')
+xbmcgui = __import__('xbmcgui')
+xbmcplugin = __import__('xbmcplugin')
+xbmcvfs = __import__('xbmcvfs')
 
 channels = ['een', 'canvas', 'ketnet']
 
 
 class TestTVGuide(unittest.TestCase):
 
-    _kodi = mock.MagicMock()
-    _kodi.get_proxies = mock.MagicMock(return_value=dict())
-    _kodi.get_userdata_path.return_value = './test/userdata/'
-    _kodi.localize = mock.MagicMock(side_effect=localize)
-    _kodi.localize_datelong = mock.MagicMock(return_value='%a %d-%m-%Y')
-    _kodi.log_notice = mock.MagicMock(side_effect=log_notice)
-    _kodi.make_dir.return_value = None
+    _kodi = kodiwrapper.KodiWrapper(None, 'plugin.video.vrt.nu', xbmcaddon.Addon)
     _tvguide = tvguide.TVGuide(_kodi)
 
     def test_tvguide_date_menu(self):
@@ -53,6 +52,15 @@ class TestTVGuide(unittest.TestCase):
         print(description)
         description = self._tvguide.live_description('ketnet')
         print(description)
+
+    def test_tvguide_all(self):
+        ''' Test episode menu '''
+        episode_items = self._tvguide.show_episodes('yesterday', 'een')
+        self.assertTrue(episode_items)
+        episode_items = self._tvguide.show_episodes('today', 'canvas')
+        self.assertTrue(episode_items)
+        episode_items = self._tvguide.show_episodes('tomorrow', 'ketnet')
+        self.assertTrue(episode_items)
 
 
 if __name__ == '__main__':
