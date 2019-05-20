@@ -7,7 +7,6 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 from datetime import datetime, timedelta
 import dateutil.tz
-import mock
 import unittest
 
 try:
@@ -15,27 +14,23 @@ try:
 except ImportError:
     from urllib2 import HTTPError
 
+from resources.lib.kodiwrappers import kodiwrapper
 from resources.lib.vrtplayer import CHANNELS, streamservice, tokenresolver
-from test import SETTINGS, get_setting, localize, log_notice
 
-SETTINGS['use_drm'] = 'false'
+xbmc = __import__('xbmc')
+xbmcaddon = __import__('xbmcaddon')
+xbmcgui = __import__('xbmcgui')
+xbmcplugin = __import__('xbmcplugin')
+xbmcvfs = __import__('xbmcvfs')
+
+xbmcaddon.SETTINGS['use_drm'] = 'false'
 now = datetime.now(dateutil.tz.tzlocal())
 yesterday = now + timedelta(days=-1)
 
 
 class StreamServiceTests(unittest.TestCase):
 
-    _kodi = mock.MagicMock()
-    _kodi.check_if_path_exists.return_value = False
-    _kodi.check_inputstream_adaptive.return_value = True
-    _kodi.get_max_bandwidth = mock.MagicMock(return_value=0)
-    _kodi.get_proxies = mock.MagicMock(return_value=dict())
-    _kodi.get_setting = mock.MagicMock(side_effect=get_setting)
-    _kodi.get_userdata_path.return_value = './test/userdata/'
-    _kodi.localize_dateshort = mock.MagicMock(return_value='%d-%m-%Y')
-    _kodi.localize = mock.MagicMock(side_effect=localize)
-    _kodi.log_notice = mock.MagicMock(side_effect=log_notice)
-    _kodi.make_dir.return_value = None
+    _kodi = kodiwrapper.KodiWrapper(None, 'plugin://plugin.video.vrt.nu', xbmcaddon.Addon)
     _tokenresolver = tokenresolver.TokenResolver(_kodi)
     _streamservice = streamservice.StreamService(_kodi, _tokenresolver)
 
@@ -62,7 +57,7 @@ class StreamServiceTests(unittest.TestCase):
         self.assertTrue(stream is not None)
 
     def test_get_live_stream_from_url_does_not_crash_returns_stream_and_licensekey(self):
-        SETTINGS['use_drm'] = 'true'
+        xbmcaddon.SETTINGS['use_drm'] = 'true'
         video = dict(
             video_url=CHANNELS[1]['live_stream'],
             video_id=None,

@@ -3,27 +3,23 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, print_function, unicode_literals
-import mock
-import os
 import unittest
 
+from resources.lib.kodiwrappers import kodiwrapper
 from resources.lib.vrtplayer import favorites
-from test import SETTINGS, get_setting, log_notice, open_file, stat_file
 
-SETTINGS['usefavorites'] = 'true'
+xbmc = __import__('xbmc')
+xbmcaddon = __import__('xbmcaddon')
+xbmcgui = __import__('xbmcgui')
+xbmcplugin = __import__('xbmcplugin')
+xbmcvfs = __import__('xbmcvfs')
+
+xbmcaddon.SETTINGS['usefavorites'] = 'true'
 
 
 class TestFavorites(unittest.TestCase):
 
-    _kodi = mock.MagicMock()
-    _kodi.check_if_path_exists = mock.MagicMock(side_effect=os.path.exists)
-    _kodi.get_proxies = mock.MagicMock(return_value=dict())
-    _kodi.get_setting = mock.MagicMock(side_effect=get_setting)
-    _kodi.get_userdata_path.return_value = './test/userdata/'
-    _kodi.log_notice = mock.MagicMock(side_effect=log_notice)
-    _kodi.make_dir.return_value = None
-    _kodi.open_file = mock.MagicMock(side_effect=open_file)
-    _kodi.stat_file = mock.MagicMock(side_effect=stat_file)
+    _kodi = kodiwrapper.KodiWrapper(None, 'plugin://plugin.video.vrt.nu', xbmcaddon.Addon)
     _favorites = favorites.Favorites(_kodi)
 
     def test_follow_unfollow(self):
