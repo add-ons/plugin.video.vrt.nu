@@ -109,7 +109,7 @@ class VRTPlayer:
         self._kodi.show_listing(tvshow_items, sort='label', content='tvshows')
 
     def show_category_menu_items(self):
-        category_items = self.__get_category_menu_items()
+        category_items = self.get_category_menu_items()
         self._kodi.show_listing(category_items, sort='label', content='files')
 
     def show_channels_menu_items(self, channel=None):
@@ -250,13 +250,26 @@ class VRTPlayer:
         self._kodi.container_update(replace=True)
         self._kodi.show_listing(search_items, sort=sort, ascending=ascending, content=content, cache=False)
 
-    def __get_category_menu_items(self):
-        try:
-            categories = self.get_categories(self._proxies)
-        except Exception:
-            categories = []
+    def get_category_menu_items(self):
+        categories = []
 
-        # Fallback to internal categories if web-scraping fails
+        # Try the cache if it is fresh
+        categories = self._kodi.get_cache('categories.json', ttl=7 * 24 * 60 * 60)
+
+        # Try to scrape from the web
+        if not categories:
+            try:
+                categories = self.get_categories(self._proxies)
+            except Exception:
+                categories = []
+            else:
+                self._kodi.update_cache('categories.json', categories)
+
+        # Use the cache anyway (better than hard-coded)
+        if not categories:
+            categories = self._kodi.get_cache('categories.json', ttl=None)
+
+        # Fall back to internal hard-coded categories if all else fails
         if not categories:
             from resources.lib.vrtplayer import CATEGORIES
             categories = CATEGORIES

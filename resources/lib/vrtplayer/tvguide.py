@@ -126,8 +126,18 @@ class TVGuide:
             epg += timedelta(days=-1)
         datelong = self._kodi.localize_datelong(epg)
         api_url = epg.strftime(self.VRT_TVGUIDE)
-        self._kodi.log_notice('URL get: ' + api_url, 'Verbose')
-        schedule = json.loads(urlopen(api_url).read())
+
+        if date in ('today', 'yesterday', 'tomorrow'):
+            cache_file = 'schedule.%s.json' % date
+            # Try the cache if it is fresh
+            schedule = self._kodi.get_cache(cache_file, ttl=60 * 60)
+            if not schedule:
+                self._kodi.log_notice('URL get: ' + api_url, 'Verbose')
+                schedule = json.load(urlopen(api_url))
+                self._kodi.update_cache(cache_file, schedule)
+        else:
+            schedule = json.load(urlopen(api_url))
+
         name = channel
         try:
             channel = next(c for c in CHANNELS if c.get('name') == name)
@@ -160,7 +170,7 @@ class TVGuide:
             if url:
                 video_url = statichelper.add_https_method(url)
                 url_dict = dict(action=actions.PLAY, video_url=video_url)
-                if start_date < now <= end_date:  # Now playing
+                if start_date <= now <= end_date:  # Now playing
                     metadata.title = '[COLOR yellow]%s[/COLOR] %s' % (label, self._kodi.localize(30302))
                 else:
                     metadata.title = label
@@ -189,9 +199,13 @@ class TVGuide:
         # Daily EPG information shows information from 6AM until 6AM
         if epg.hour < 6:
             epg += timedelta(days=-1)
-        api_url = epg.strftime(self.VRT_TVGUIDE)
-        self._kodi.log_notice('URL get: ' + api_url, 'Verbose')
-        schedule = json.loads(urlopen(api_url).read())
+        # Try the cache if it is fresh
+        schedule = self._kodi.get_cache('schedule.today.json', ttl=60 * 60)
+        if not schedule:
+            api_url = epg.strftime(self.VRT_TVGUIDE)
+            self._kodi.log_notice('URL get: ' + api_url, 'Verbose')
+            schedule = json.load(urlopen(api_url))
+            self._kodi.update_cache('schedule.today.json', schedule)
         name = channel
         try:
             channel = next(c for c in CHANNELS if c.get('name') == name)

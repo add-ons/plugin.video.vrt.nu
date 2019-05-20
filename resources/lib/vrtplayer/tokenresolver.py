@@ -82,7 +82,7 @@ class TokenResolver:
         import json
         self._kodi.log_notice('URL post: ' + unquote(token_url), 'Verbose')
         req = Request(token_url, data=b'', headers=headers)
-        playertoken = json.loads(urlopen(req).read())
+        playertoken = json.load(urlopen(req))
         with self._kodi.open_file(path, 'w') as f:
             json.dump(playertoken, f)
         return playertoken.get('vrtPlayerToken')
@@ -100,10 +100,10 @@ class TokenResolver:
             now = datetime.now(dateutil.tz.tzlocal())
             exp = dateutil.parser.parse(token.get('expirationDate'))
             if exp > now:
-                self._kodi.log_notice('Got cached token', 'Verbose')
+                self._kodi.log_notice("Got cached token '%s'" % path, 'Verbose')
                 cached_token = token.get(token_name)
             else:
-                self._kodi.log_notice('Cached token deleted', 'Verbose')
+                self._kodi.log_notice("Cached token '%s' deleted" % path, 'Verbose')
                 self._kodi.delete_file(path)
         return cached_token
 
@@ -125,7 +125,7 @@ class TokenResolver:
         data = urlencode(payload).encode('utf8')
         self._kodi.log_notice('URL post: ' + unquote(self._LOGIN_URL), 'Verbose')
         req = Request(self._LOGIN_URL, data=data)
-        logon_json = json.loads(urlopen(req).read())
+        logon_json = json.load(urlopen(req))
         token = None
 
         if logon_json.get('errorCode') != 0:
@@ -179,7 +179,7 @@ class TokenResolver:
         data = urlencode(payload).encode('utf8')
         self._kodi.log_notice('URL post: ' + unquote(self._LOGIN_URL), 'Verbose')
         req = Request(self._LOGIN_URL, data=data)
-        logon_json = json.loads(urlopen(req).read())
+        logon_json = json.load(urlopen(req))
         token = None
 
         if logon_json.get('errorCode') != 0:

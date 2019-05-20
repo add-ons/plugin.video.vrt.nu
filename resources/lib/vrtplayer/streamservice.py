@@ -34,13 +34,13 @@ class StreamService:
         self._vualto_license_url = None
 
     def _get_vualto_license_url(self):
-        self._vualto_license_url = json.loads(urlopen(self._VUPLAY_API_URL).read()).get('drm_providers', dict()).get('widevine', dict()).get('la_url')
+        self._vualto_license_url = json.load(urlopen(self._VUPLAY_API_URL)).get('drm_providers', dict()).get('widevine', dict()).get('la_url')
         self._kodi.log_notice('URL get: ' + unquote(self._VUPLAY_API_URL), 'Verbose')
 
     def _create_settings_dir(self):
         settingsdir = self._kodi.get_userdata_path()
         if not self._kodi.check_if_path_exists(settingsdir):
-            self._kodi.make_dir(settingsdir)
+            self._kodi.mkdir(settingsdir)
 
     def _get_license_key(self, key_url, key_type='R', key_headers=None, key_value=None):
         ''' Generates a propery license key value
@@ -152,7 +152,7 @@ class StreamService:
                 api_data.video_id + '?vrtPlayerToken=' + playertoken + '&client=' + api_data.client
             self._kodi.log_notice('URL get: ' + unquote(api_url), 'Verbose')
             try:
-                stream_json = json.loads(urlopen(api_url).read())
+                stream_json = json.load(urlopen(api_url))
             except HTTPError as e:
                 stream_json = json.loads(e.read())
 

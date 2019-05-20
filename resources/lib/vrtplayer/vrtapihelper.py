@@ -34,17 +34,24 @@ class VRTApiHelper:
 
         if category:
             params['facets[categories]'] = category
+            cache_file = 'category.%s.json' % category
 
         if channel:
             params['facets[programBrands]'] = channel
+            cache_file = 'channel.%s.json' % channel
 
         # If no facet-selection is done, we return the A-Z listing
         if not category and not channel:
             params['facets[transcodingStatus]'] = 'AVAILABLE'
+            cache_file = 'programs.json'
 
-        api_url = self._VRTNU_SUGGEST_URL + '?' + urlencode(params)
-        self._kodi.log_notice('URL get: ' + unquote(api_url), 'Verbose')
-        api_json = json.loads(urlopen(api_url).read())
+        # Try the cache if it is fresh
+        api_json = self._kodi.get_cache(cache_file, ttl=60 * 60)
+        if not api_json:
+            api_url = self._VRTNU_SUGGEST_URL + '?' + urlencode(params)
+            self._kodi.log_notice('URL get: ' + unquote(api_url), 'Verbose')
+            api_json = json.load(urlopen(api_url))
+            self._kodi.update_cache(cache_file, api_json)
         return self._map_to_tvshow_items(api_json, filtered=statichelper.is_filtered(filtered))
 
     def _map_to_tvshow_items(self, tvshows, filtered=False):
@@ -126,15 +133,21 @@ class VRTApiHelper:
 
             if statichelper.is_filtered(filtered):
                 params['facets[programName]'] = '[%s]' % (','.join(self._favorites.names()))
+                cache_file = '%s-filtered.json' % variety
             else:
                 params['facets[programBrands]'] = '[een,canvas,sporza,vrtnws,vrtnxt,radio1,radio2,klara,stubru,mnm]'
+                cache_file = '%s.json' % variety
 
-            api_url = self._VRTNU_SEARCH_URL + '?' + urlencode(params)
-            self._kodi.log_notice('URL get: ' + unquote(api_url), 'Verbose')
-            api_json = json.loads(urlopen(api_url).read())
-            episode_items, sort, ascending, content = self._map_to_episode_items(api_json.get('results', []), titletype='recent', filtered=statichelper.is_filtered(filtered))
+            # Try the cache if it is fresh
+            api_json = self._kodi.get_cache(cache_file, ttl=60 * 60)
+            if not api_json:
+                api_url = self._VRTNU_SEARCH_URL + '?' + urlencode(params)
+                self._kodi.log_notice('URL get: ' + unquote(api_url), 'Verbose')
+                api_json = json.load(urlopen(api_url))
+                self._kodi.update_cache(cache_file, api_json)
+            episode_items, sort, ascending, content = self._map_to_episode_items(api_json.get('results', []), titletype=variety, filtered=statichelper.is_filtered(filtered))
 
-        if path:
+        elif path:
             if '.relevant/' in path:
                 params = {
                     'facets[programUrl]': '//www.vrt.be' + path.replace('.relevant/', '/'),
@@ -146,7 +159,7 @@ class VRTApiHelper:
                 api_url = path
 
             self._kodi.log_notice('URL get: ' + unquote(api_url), 'Verbose')
-            api_json = json.loads(urlopen(api_url).read())
+            api_json = json.load(urlopen(api_url))
 
             episodes = api_json.get('results', [{}])
             if episodes:
@@ -359,7 +372,7 @@ class VRTApiHelper:
         }
         api_url = 'https://search.vrt.be/search?' + urlencode(params)
         self._kodi.log_notice('URL get: ' + unquote(api_url), 'Verbose')
-        api_json = json.loads(urlopen(api_url).read())
+        api_json = json.load(urlopen(api_url))
 
         episodes = api_json.get('results', [{}])
         episode_items, sort, ascending, content = self._map_to_episode_items(episodes, titletype='recent')
@@ -405,7 +418,7 @@ class VRTApiHelper:
         sort = 'unsorted'
         ascending = True
 
-        if titletype == 'recent':
+        if titletype in ('offline', 'recent'):
             ascending = False
             sort = 'dateadded'
             label = '[B]%s[/B] - %s' % (result.get('program'), label)

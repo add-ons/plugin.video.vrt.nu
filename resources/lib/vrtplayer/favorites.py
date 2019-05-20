@@ -3,8 +3,6 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, unicode_literals
-import json
-import time
 
 from resources.lib.vrtplayer import tokenresolver
 
@@ -21,36 +19,38 @@ class Favorites:
         self._tokenresolver = tokenresolver.TokenResolver(_kodi)
         self._proxies = _kodi.get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
-        self._cache_file = _kodi.get_userdata_path() + 'favorites.json'
         self._favorites = None
         if _kodi.get_setting('usefavorites') == 'true' and _kodi.has_credentials():
-            self.get_favorites()
+            # Get favorites from cache if fresh
+            self.get_favorites(ttl=60 * 60)
 
     def is_activated(self):
         return self._favorites is not None
 
-    def get_favorites(self):
-        if self._kodi.check_if_path_exists(self._cache_file):
-            if self._kodi.stat_file(self._cache_file).st_mtime() > time.mktime(time.localtime()) - (2 * 60):
-                self._kodi.log_notice('CACHE: %s vs %s' % (self._kodi.stat_file(self._cache_file).st_mtime(), time.mktime(time.localtime()) - (5 * 60)), 'Debug')
-                with self._kodi.open_file(self._cache_file) as f:
-                    self._favorites = json.loads(f.read())
-                return
-        self.update_favorites()
-
-    def update_favorites(self):
-        xvrttoken = self._tokenresolver.get_fav_xvrttoken()
-        headers = {
-            'authorization': 'Bearer ' + xvrttoken,
-            'content-type': 'application/json',
-            # 'Cookie': 'X-VRT-Token=' + xvrttoken,
-            'Referer': 'https://www.vrt.be/vrtnu',
-        }
-        req = Request('https://video-user-data.vrt.be/favorites', headers=headers)
-        self._favorites = json.loads(urlopen(req).read())
-        self.write_favorites()
+    def get_favorites(self, ttl=None):
+        import json
+        api_json = self._kodi.get_cache('favorites.json', ttl)
+        if not api_json:
+            xvrttoken = self._tokenresolver.get_fav_xvrttoken()
+            headers = {
+                'authorization': 'Bearer ' + xvrttoken,
+                'content-type': 'application/json',
+                # 'Cookie': 'X-VRT-Token=' + xvrttoken,
+                'Referer': 'https://www.vrt.be/vrtnu',
+            }
+            req = Request('https://video-user-data.vrt.be/favorites', headers=headers)
+            self._kodi.log_notice('URL post: https://video-user-data.vrt.be/favorites', 'Verbose')
+            try:
+                api_json = json.load(urlopen(req))
+            except Exception:
+                # Force favorites from cache
+                api_json = self._kodi.get_cache('favorites.json', ttl=None)
+            else:
+                self._kodi.update_cache('favorites.json', api_json)
+        self._favorites = api_json
 
     def set_favorite(self, program, path, value=True):
+        import json
         if value is not self.is_favorite(path):
             xvrttoken = self._tokenresolver.get_fav_xvrttoken()
             headers = {
@@ -69,11 +69,7 @@ class Favorites:
                 self._kodi.log_error("Failed to follow program '%s' at VRT NU" % path)
             # NOTE: Updates to favorites take a longer time to take effect, so we keep our own cache and use it
             self._favorites[self.uuid(path)] = dict(value=payload)
-            self.write_favorites()
-
-    def write_favorites(self):
-        with self._kodi.open_file(self._cache_file, 'w') as f:
-            f.write(json.dumps(self._favorites))
+            self._kodi.update_cache('favorites.json', self._favorites)
 
     def is_favorite(self, path):
         value = False
@@ -103,3 +99,7 @@ class Favorites:
 
     def titles(self):
         return [p.get('value').get('title') for p in self._favorites.values() if p.get('value').get('isFavorite')]
+
+    def invalidate_cache(self):
+        self._kodi.invalidate_cache('offline-filtered.json')
+        self._kodi.invalidate_cache('recent-filtered.json')
