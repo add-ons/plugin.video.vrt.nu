@@ -29,7 +29,6 @@ class VRTApiHelper:
         self._favorites = _favorites
 
     def get_tvshow_items(self, category=None, channel=None, filtered=False):
-        import json
         params = dict()
 
         if category:
@@ -48,6 +47,7 @@ class VRTApiHelper:
         # Try the cache if it is fresh
         api_json = self._kodi.get_cache(cache_file, ttl=60 * 60)
         if not api_json:
+            import json
             api_url = self._VRTNU_SUGGEST_URL + '?' + urlencode(params)
             self._kodi.log_notice('URL get: ' + unquote(api_url), 'Verbose')
             api_json = json.load(urlopen(api_url))
@@ -129,6 +129,7 @@ class VRTApiHelper:
             # Try the cache if it is fresh
             api_json = self._kodi.get_cache(cache_file, ttl=60 * 60)
             if not api_json:
+                import json
                 api_url = self._VRTNU_SEARCH_URL + '?' + urlencode(params)
                 self._kodi.log_notice('URL get: ' + unquote(api_url), 'Verbose')
                 api_json = json.load(urlopen(api_url))
@@ -167,7 +168,7 @@ class VRTApiHelper:
     def _get_season_episode_data(self, api_url, show_seasons, all_items=True):
         import json
         self._kodi.log_notice('URL get: ' + unquote(api_url), 'Verbose')
-        api_json = json.loads(urlopen(api_url).read())
+        api_json = json.load(urlopen(api_url))
         seasons = self._get_season_data(api_json)
         episodes = api_json.get('results', [{}])
         if show_seasons and seasons:
@@ -179,7 +180,7 @@ class VRTApiHelper:
             for page in range(1, pages):
                 page_url = api_url + '&from=' + str(page * page_size + 1)
                 self._kodi.log_notice('URL get: ' + unquote(page_url), 'Verbose')
-                page_json = json.loads(urlopen(page_url).read())
+                page_json = json.load(urlopen(page_url))
                 episodes += page_json.get('results', [{}])
         return dict(episodes=episodes), None
 
