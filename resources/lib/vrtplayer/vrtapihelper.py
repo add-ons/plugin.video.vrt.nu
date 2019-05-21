@@ -25,6 +25,7 @@ class VRTApiHelper:
         self._kodi = _kodi
         self._proxies = _kodi.get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
+        self._showfanart = _kodi.get_setting('showfanart') == 'true'
         self._showpermalink = _kodi.get_setting('showpermalink') == 'true'
         self._favorites = _favorites
 
@@ -69,7 +70,10 @@ class VRTApiHelper:
             # NOTE: This adds episode_count to label, would be better as metadata
             # title = '%s  [LIGHT][COLOR yellow]%s[/COLOR][/LIGHT]' % (tvshow.get('title', '???'), tvshow.get('episode_count', '?'))
             label = tvshow.get('title', '???')
-            thumbnail = statichelper.add_https_method(tvshow.get('thumbnail', 'DefaultAddonVideo.png'))
+            if self._showfanart:
+                thumbnail = statichelper.add_https_method(tvshow.get('thumbnail', 'DefaultAddonVideo.png'))
+            else:
+                thumbnail = 'DefaultAddonVideo.png'
             program_path = statichelper.unique_path(tvshow.get('targetUrl'))
             if self._favorites.is_activated():
                 program = tvshow.get('title').encode('utf-8')
@@ -275,8 +279,12 @@ class VRTApiHelper:
             else:
                 context_menu = []
 
-            thumb = statichelper.add_https_method(episode.get('videoThumbnailUrl', 'DefaultAddonVideo.png'))
-            fanart = statichelper.add_https_method(episode.get('programImageUrl', thumb))
+            if self._showfanart:
+                thumb = statichelper.add_https_method(episode.get('videoThumbnailUrl', 'DefaultAddonVideo.png'))
+                fanart = statichelper.add_https_method(episode.get('programImageUrl', thumb))
+            else:
+                thumb = 'DefaultAddonVideo.png'
+                fanart = 'DefaultAddonVideo.png'
             video_url = statichelper.add_https_method(episode.get('url'))
             label, sort, ascending = self._make_label(episode, titletype, options=display_options)
             metadata.title = label
@@ -299,7 +307,10 @@ class VRTApiHelper:
 
         episode = random.choice(episodes)
         program_type = episode.get('programType')
-        fanart = statichelper.add_https_method(episode.get('programImageUrl', 'DefaultSets.png'))
+        if self._showfanart:
+            fanart = statichelper.add_https_method(episode.get('programImageUrl', 'DefaultSets.png'))
+        else:
+            fanart = 'DefaultSets.png'
 
         metadata = metadatacreator.MetadataCreator()
         metadata.tvshowtitle = episode.get('program')
@@ -340,8 +351,12 @@ class VRTApiHelper:
                 episode = random.choice([e for e in episodes if e.get('seasonName') == season_key])
             except IndexError:
                 episode = episodes[0]
-            fanart = statichelper.add_https_method(episode.get('programImageUrl', 'DefaultSets.png'))
-            thumbnail = statichelper.add_https_method(episode.get('videoThumbnailUrl', fanart))
+            if self._showfanart:
+                fanart = statichelper.add_https_method(episode.get('programImageUrl', 'DefaultSets.png'))
+                thumbnail = statichelper.add_https_method(episode.get('videoThumbnailUrl', fanart))
+            else:
+                fanart = 'DefaultSets.png'
+                thumbnail = 'DefaultSets.png'
             label = '%s %s' % (self._kodi.localize(30094), season_key)
             params = {'facets[seasonTitle]': season_key}
             path = api_url + '&' + urlencode(params)
