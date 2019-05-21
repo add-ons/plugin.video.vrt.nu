@@ -26,6 +26,9 @@ class VrtMonitor(xbmc.Monitor):
         _kodi.log_notice('VRT NU Addon: settings changed')
         _kodi.container_refresh()
 
+        _kodi.invalidate_caches('offline-*.json')
+        _kodi.invalidate_caches('recent-*.json')
+
         _tokenresolver = tokenresolver.TokenResolver(_kodi)
         _tokenresolver.reset_cookies()
 

@@ -331,46 +331,102 @@ msgid "In case you have limited bandwidth available, you may want to specify a m
 msgstr ""
 
 msgctxt "#30860"
-msgid "Troubleshooting"
+msgid "Channels"
 msgstr ""
 
 msgctxt "#30861"
-msgid "Cache"
+msgid "Select channels to use for 'Most recent' and 'Soon offline' listings"
 msgstr ""
 
 msgctxt "#30863"
-msgid "Clear VRT tokens"
+msgid "Eén"
+msgstr ""
+
+msgctxt "#30864"
+msgid "Canvas"
 msgstr ""
 
 msgctxt "#30865"
-msgid "Refresh favorites"
+msgid "Ketnet"
+msgstr ""
+
+msgctxt "#30866"
+msgid "Ketnet Junior"
 msgstr ""
 
 msgctxt "#30867"
-msgid "Invalidate local HTTP caches"
+msgid "Sporza"
+msgstr ""
+
+msgctxt "#30868"
+msgid "Radio 1"
 msgstr ""
 
 msgctxt "#30869"
-msgid "Streaming"
+msgid "Radio 2"
+msgstr ""
+
+msgctxt "#30870"
+msgid "Klara"
 msgstr ""
 
 msgctxt "#30871"
-msgid "Use InputStream Adaptive"
+msgid "Studio Brussel"
+msgstr ""
+
+msgctxt "#30872"
+msgid "MNM"
 msgstr ""
 
 msgctxt "#30873"
+msgid "VRT NXT"
+msgstr ""
+
+msgctxt "#30874"
+msgid "VRT NWS"
+msgstr ""
+
+msgctxt "#30900"
+msgid "Troubleshooting"
+msgstr ""
+
+msgctxt "#30901"
+msgid "Cache"
+msgstr ""
+
+msgctxt "#30903"
+msgid "Clear VRT tokens"
+msgstr ""
+
+msgctxt "#30905"
+msgid "Refresh favorites"
+msgstr ""
+
+msgctxt "#30907"
+msgid "Invalidate local HTTP caches"
+msgstr ""
+
+msgctxt "#30909"
+msgid "Streaming"
+msgstr ""
+
+msgctxt "#30911"
+msgid "Use InputStream Adaptive"
+msgstr ""
+
+msgctxt "#30913"
 msgid "InputStream Adaptive settings..."
 msgstr ""
 
-msgctxt "#30875"
+msgctxt "#30915"
 msgid "Install Widevine... [COLOR gray][I](needed for DRM content)[/I][/COLOR]"
 msgstr ""
 
-msgctxt "#30877"
+msgctxt "#30917"
 msgid "Logging"
 msgstr ""
 
-msgctxt "#30879"
+msgctxt "#30919"
 msgid "Log level"
 msgstr ""
 

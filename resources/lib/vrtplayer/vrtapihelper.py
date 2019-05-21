@@ -4,7 +4,7 @@
 
 from __future__ import absolute_import, division, unicode_literals
 from resources.lib.helperobjects.helperobjects import TitleItem
-from resources.lib.vrtplayer import actions, metadatacreator, statichelper
+from resources.lib.vrtplayer import CHANNELS, actions, metadatacreator, statichelper
 
 try:
     from urllib.parse import urlencode, unquote
@@ -28,6 +28,7 @@ class VRTApiHelper:
         self._showfanart = _kodi.get_setting('showfanart') == 'true'
         self._showpermalink = _kodi.get_setting('showpermalink') == 'true'
         self._favorites = _favorites
+        self._channel_filter = [channel.get('name') for channel in CHANNELS if _kodi.get_setting(channel.get('name')) == 'true']
 
     def get_tvshow_items(self, category=None, channel=None, filtered=False):
         params = dict()
@@ -125,10 +126,10 @@ class VRTApiHelper:
 
             if statichelper.is_filtered(filtered):
                 params['facets[programName]'] = '[%s]' % (','.join(self._favorites.names()))
-                cache_file = '%s-filtered.json' % variety
+                cache_file = 'my-%s-%s.json' % (variety, page)
             else:
-                params['facets[programBrands]'] = '[een,canvas,sporza,vrtnws,vrtnxt,radio1,radio2,klara,stubru,mnm]'
-                cache_file = '%s.json' % variety
+                params['facets[programBrands]'] = '[%s]' % ','.join(self._channel_filter)
+                cache_file = '%s-%s.json' % (variety, page)
 
             # Try the cache if it is fresh
             api_json = self._kodi.get_cache(cache_file, ttl=60 * 60)

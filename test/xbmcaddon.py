@@ -32,14 +32,33 @@ PO = polib.pofile('resources/language/resource.language.en_gb/strings.po')
 
 # FIXME: Maybe move this to test/userdata/settings.xml ?
 SETTINGS = {
+    # credentials
     'username': 'qsdfdsq',
     'password': 'qsdfqsdfds',
-    'log_level': 'Verbose',
-    'max_bandwidth': 0,
-    'showpermalink': 'true',
-    'showsubtitles': 'true',
-    'usedrm': 'false',
+    # interface
     'usefavorites': 'false',
+    'showpermalink': 'true',
+    'usemenucaching': 'true',
+    'usehttpcaching': 'true',
+    # playback
+    'showsubtitles': 'true',
+    'max_bandwidth': 0,
+    'usedrm': 'false',
+    # channels
+    'een': 'true',
+    'canvas': 'true',
+    'ketnet': 'false',
+    'ketnet-jr': 'false',
+    'sporza': 'true',
+    'radio1': 'true',
+    'radio2': 'true',
+    'klara': 'true',
+    'stubru': 'true',
+    'mnm': 'true',
+    'vrtnws': 'true',
+    'vrtnxt': 'true',
+    # troubleshooting
+    'log_level': 'Verbose',
 }
 
 # Read credentials from credentials.json
