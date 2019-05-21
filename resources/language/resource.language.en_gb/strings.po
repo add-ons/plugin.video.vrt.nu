@@ -267,26 +267,30 @@ msgid "When enabled, the user can follow their favourite programs and list these
 msgstr ""
 
 msgctxt "#30825"
-msgid "Show episode permalink in plot"
-msgstr ""
-
-msgctxt "#30826"
-msgid "When enabled, the video description will include a permanent link that points to this episode. This is useful for quickly opening an episode or movie on a mobile device."
+msgid "Show fanart"
 msgstr ""
 
 msgctxt "#30827"
-msgid "Cache"
+msgid "Show episode permalink in plot"
+msgstr ""
+
+msgctxt "#30828"
+msgid "When enabled, the video description will include a permanent link that points to this episode. This is useful for quickly opening an episode or movie on a mobile device."
 msgstr ""
 
 msgctxt "#30829"
-msgid "Enable menu caching"
-msgstr ""
-
-msgctxt "#30830"
-msgid "When enabled, menus are being cached so they work more quickly. Only in very specific use-cases this is problematic as new episodes may not appear when they are expected."
+msgid "Cache"
 msgstr ""
 
 msgctxt "#30831"
+msgid "Enable menu caching"
+msgstr ""
+
+msgctxt "#30832"
+msgid "When enabled, menus are being cached so they work more quickly. Only in very specific use-cases this is problematic as new episodes may not appear when they are expected."
+msgstr ""
+
+msgctxt "#30833"
 msgid "Enable local HTTP caching"
 msgstr ""
 

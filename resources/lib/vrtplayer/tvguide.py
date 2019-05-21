@@ -39,6 +39,7 @@ class TVGuide:
         self._kodi = _kodi
         self._proxies = _kodi.get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
+        self._showfanart = _kodi.get_setting('showfanart') == 'true'
 
     def show_tvguide(self, params):
         date = params.get('date')
@@ -165,7 +166,10 @@ class TVGuide:
             metadata.plot = '[B]%s[/B]\n%s\n%s - %s\n[I]%s[/I]' % (title, datelong, start, end, channel.get('label'))
             metadata.brands = [channel.get('studio')]
             metadata.mediatype = 'episode'
-            thumb = episode.get('image', 'DefaultAddonVideo.png')
+            if self._showfanart:
+                thumb = episode.get('image', 'DefaultAddonVideo.png')
+            else:
+                thumb = 'DefaultAddonVideo.png'
             metadata.icon = thumb
             if url:
                 video_url = statichelper.add_https_method(url)

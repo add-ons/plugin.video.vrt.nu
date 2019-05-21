@@ -260,22 +260,26 @@ msgid "When enabled, the user can follow their favourite programs and list these
 msgstr "Indien actief kan de gebruiker zijn favoriete programma's volgen en apart aanroepen. Dit zorgt er wel voor dat de VRT NU add-on een lijst van favoriete programma's download en aanpast op de VRT NU website."
 
 msgctxt "#30825"
+msgid "Show fanart"
+msgstr "Toon fanart"
+
+msgctxt "#30827"
 msgid "Show episode permalink in plot"
 msgstr "Toon aflevering permalink in beschrijving"
 
-msgctxt "#30826"
+msgctxt "#30828"
 msgid "When enabled, the video description will include a permanent link that points to this episode. This is useful for quickly opening an episode or movie on a mobile device."
 msgstr "Indien actief zal de beschrijving van iedere video een permanent link bevatten die je rechtstreeks naar de VRT NU website brengt. Dit is handig om snel een aflevering of film to openen op een mobiel toestel."
 
-msgctxt "#30827"
+msgctxt "#30829"
 msgid "Cache"
 msgstr "Cache"
 
-msgctxt "#30829"
+msgctxt "#30831"
 msgid "Enable menu caching"
 msgstr "Gebruik menu caching"
 
-msgctxt "#30831"
+msgctxt "#30833"
 msgid "Enable local HTTP caching"
 msgstr "Gebruik local HTTP caching"
 

@@ -20,6 +20,7 @@ class VRTPlayer:
         self._apihelper = _apihelper
         self._proxies = _kodi.get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
+        self._showfanart = _kodi.get_setting('showfanart') == 'true'
 
     def show_main_menu_items(self):
         main_items = []
@@ -150,7 +151,8 @@ class VRTPlayer:
                 label = self._kodi.localize(30101).format(**channel)
                 is_playable = True
                 if channel.get('name') in ['een', 'canvas', 'ketnet']:
-                    fanart = self._apihelper.get_live_screenshot(channel.get('name'))
+                    if self._showfanart:
+                        fanart = self._apihelper.get_live_screenshot(channel.get('name', fanart))
                     plot = '%s\n\n%s' % (self._kodi.localize(30102).format(**channel), _tvguide.live_description(channel.get('name')))
                 else:
                     plot = self._kodi.localize(30102).format(**channel)
@@ -276,7 +278,10 @@ class VRTPlayer:
 
         category_items = []
         for category in categories:
-            thumbnail = category.get('thumbnail', 'DefaultGenre.png')
+            if self._showfanart:
+                thumbnail = category.get('thumbnail', 'DefaultGenre.png')
+            else:
+                thumbnail = 'DefaultGenre.png'
             category_items.append(TitleItem(
                 title=category.get('name'),
                 url_dict=dict(action=actions.LISTING_CATEGORY_TVSHOWS, category=category.get('id')),
@@ -303,10 +308,11 @@ class VRTPlayer:
 
         return categories
 
-    @staticmethod
-    def get_category_thumbnail(element):
-        raw_thumbnail = element.find(class_='media').get('data-responsive-image', 'DefaultGenre.png')
-        return statichelper.add_https_method(raw_thumbnail)
+    def get_category_thumbnail(self, element):
+        if self._showfanart:
+            raw_thumbnail = element.find(class_='media').get('data-responsive-image', 'DefaultGenre.png')
+            return statichelper.add_https_method(raw_thumbnail)
+        return 'DefaultGenre.png'
 
     @staticmethod
     def get_category_title(element):
