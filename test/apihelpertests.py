@@ -22,28 +22,28 @@ class ApiHelperTests(unittest.TestCase):
     _apihelper = vrtapihelper.VRTApiHelper(_kodi, _favorites)
 
     def test_get_api_data_single_season(self):
-        title_items, sort, ascending, content = self._apihelper.get_episode_items(path='/vrtnu/a-z/het-journaal.relevant/')
+        title_items, sort, ascending, content = self._apihelper.get_episode_items(path='/vrtnu/a-z/het-journaal.relevant/', show_seasons=True)
         self.assertTrue(121 < len(title_items) < 130, 'We got %s items instead.' % len(title_items))
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
 
     def test_get_api_data_multiple_seasons(self):
-        title_items, sort, ascending, content = self._apihelper.get_episode_items(path='/vrtnu/a-z/thuis.relevant/')
+        title_items, sort, ascending, content = self._apihelper.get_episode_items(path='/vrtnu/a-z/thuis.relevant/', show_seasons=True)
         self.assertTrue(len(title_items) < 5)
         self.assertEqual(sort, 'label')
         self.assertFalse(ascending)
         self.assertEqual(content, 'seasons')
 
     def test_get_api_data_specific_season(self):
-        title_items, sort, ascending, content = self._apihelper.get_episode_items(path='/vrtnu/a-z/pano.relevant/')
+        title_items, sort, ascending, content = self._apihelper.get_episode_items(path='/vrtnu/a-z/pano.relevant/', show_seasons=True)
         self.assertEqual(len(title_items), 4)
         self.assertEqual(sort, 'label')
         self.assertFalse(ascending)
         self.assertEqual(content, 'seasons')
 
     def test_get_api_data_specific_season_without_broadcastdate(self):
-        title_items, sort, ascending, content = self._apihelper.get_episode_items(path='/vrtnu/a-z/postbus-x.relevant/')
+        title_items, sort, ascending, content = self._apihelper.get_episode_items(path='/vrtnu/a-z/postbus-x.relevant/', show_seasons=True)
         self.assertEqual(len(title_items), 3)
         self.assertEqual(sort, 'label')
         self.assertTrue(ascending)

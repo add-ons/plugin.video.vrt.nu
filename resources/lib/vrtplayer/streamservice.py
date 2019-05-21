@@ -154,7 +154,7 @@ class StreamService:
             try:
                 stream_json = json.load(urlopen(api_url))
             except HTTPError as e:
-                stream_json = json.loads(e.read())
+                stream_json = json.load(e)
 
         return stream_json
 

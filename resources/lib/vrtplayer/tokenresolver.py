@@ -96,7 +96,7 @@ class TokenResolver:
             import dateutil.tz
             import json
             with self._kodi.open_file(path) as f:
-                token = json.loads(f.read())
+                token = json.load(f)
             now = datetime.now(dateutil.tz.tzlocal())
             exp = dateutil.parser.parse(token.get('expirationDate'))
             if exp > now:
