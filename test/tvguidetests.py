@@ -3,7 +3,7 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, print_function, unicode_literals
-from datetime import datetime
+from datetime import datetime, timedelta
 import dateutil.tz
 import random
 import unittest
@@ -28,22 +28,29 @@ class TestTVGuide(unittest.TestCase):
     def test_tvguide_date_menu(self):
         ''' Test TV guide main menu '''
         date_items = self._tvguide.show_date_menu()
-        self.assertEqual(len(date_items), 38)
+        self.assertEqual(len(date_items), 37)
+        date_item = random.choice(date_items)
+        print(date_item.title, date_item.url_dict)
 
     def test_tvguide_channel_menu(self):
         ''' Test channel menu '''
-        now = datetime.now(dateutil.tz.tzlocal())
-        date = now.strftime('%Y-%m-%d')
+        date = (datetime.now(dateutil.tz.tzlocal()) + timedelta(days=-10)).strftime('%Y-%m-%d')
         channel_items = self._tvguide.show_channel_menu(date)
         self.assertTrue(channel_items)
 
     def test_tvguide_episode_menu(self):
         ''' Test episode menu '''
-        now = datetime.now(dateutil.tz.tzlocal())
-        date = now.strftime('%Y-%m-%d')
+        date = (datetime.now(dateutil.tz.tzlocal()) + timedelta(days=-10)).strftime('%Y-%m-%d')
         channel = random.choice(channels)
         episode_items = self._tvguide.show_episodes(date, channel)
         self.assertTrue(episode_items)
+
+    def test_tvguide_invalid_episode_menu(self):
+        ''' Test episode menu '''
+        date = (datetime.now(dateutil.tz.tzlocal()) + timedelta(days=-40)).strftime('%Y-%m-%d')
+        channel = random.choice(channels)
+        episode_items = self._tvguide.show_episodes(date, channel)
+        self.assertEqual(episode_items, [])
 
     def test_livetv_description(self):
         description = self._tvguide.live_description('een')
@@ -61,6 +68,11 @@ class TestTVGuide(unittest.TestCase):
         self.assertTrue(episode_items)
         episode_items = self._tvguide.show_episodes('tomorrow', 'ketnet')
         self.assertTrue(episode_items)
+
+    def test_parse(self):
+        now = datetime.now(dateutil.tz.tzlocal())
+        date = self._tvguide.parse('2019-05-11', now)
+        print(date)
 
 
 if __name__ == '__main__':
