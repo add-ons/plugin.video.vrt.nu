@@ -69,7 +69,7 @@ def getLocalizedString(msgctxt):
     for entry in PO:
         if entry.msgctxt == '#%s' % msgctxt:
             return entry.msgstr or entry.msgid
-    return 'vrttest'
+    return 'smurf'
 
 
 def getRegion(key):

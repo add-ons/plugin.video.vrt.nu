@@ -63,7 +63,7 @@ class TVGuide:
         if epg.hour < 6:
             epg += timedelta(days=-1)
         date_items = []
-        for i in range(7, -31, -1):
+        for i in range(7, -30, -1):
             day = epg + timedelta(days=i)
             title = self._kodi.localize_datelong(day)
 
@@ -92,9 +92,6 @@ class TVGuide:
     def show_channel_menu(self, date):
         now = datetime.now(dateutil.tz.tzlocal())
         epg = self.parse(date, now)
-        # Daily EPG information shows information from 6AM until 6AM
-        if epg.hour < 6:
-            epg += timedelta(days=-1)
         datelong = self._kodi.localize_datelong(epg)
 
         fanart_path = 'resource://resource.images.studios.white/%(studio)s.png'
@@ -122,9 +119,6 @@ class TVGuide:
     def show_episodes(self, date, channel):
         now = datetime.now(dateutil.tz.tzlocal())
         epg = self.parse(date, now)
-        # Daily EPG information shows information from 6AM until 6AM
-        if epg.hour < 6:
-            epg += timedelta(days=-1)
         datelong = self._kodi.localize_datelong(epg)
         api_url = epg.strftime(self.VRT_TVGUIDE)
 
@@ -137,12 +131,13 @@ class TVGuide:
                 schedule = json.load(urlopen(api_url))
                 self._kodi.update_cache(cache_file, schedule)
         else:
+            self._kodi.log_notice('URL get: ' + api_url, 'Verbose')
             schedule = json.load(urlopen(api_url))
 
         name = channel
         try:
             channel = next(c for c in CHANNELS if c.get('name') == name)
-            episodes = schedule[channel.get('id')]
+            episodes = schedule.get(channel.get('id'), [])
         except StopIteration:
             episodes = []
         episode_items = []
