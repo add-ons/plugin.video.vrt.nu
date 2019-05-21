@@ -458,7 +458,7 @@ class KodiWrapper:
         # Avoid writes if possible (i.e. SD cards)
         if md5 != hashlib.md5(json.dumps(data).encode('utf-8')):
             self.log_notice("Write cache '%s'." % path, 'Debug')
-            with self.open_file(path, 'w') as f:
+            with self.open_file(fullpath, 'w') as f:
                 # json.dump(data, f, encoding='utf-8')
                 json.dump(data, f)
         else:
