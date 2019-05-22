@@ -307,47 +307,103 @@ msgctxt "#30849"
 msgid "Maximum bandwidth (kbps)"
 msgstr "Maximale bandbreedte (kbps)"
 
-msgctxt "#30060"
+msgctxt "#30860"
+msgid "Channels"
+msgstr "Kanalen"
+
+msgctxt "#30861"
+msgid "Select channels for 'Most recent' and 'Soon offline' listings"
+msgstr "Selecteer kanalen voor de 'Meest recent' en 'Binnenkort verwijderd' lijsten"
+
+msgctxt "#30863"
+msgid "Eén"
+msgstr "Eén"
+
+msgctxt "#30864"
+msgid "Canvas"
+msgstr "Canvas"
+
+msgctxt "#30865"
+msgid "Ketnet"
+msgstr "Ketnet"
+
+msgctxt "#30866"
+msgid "Ketnet Junior"
+msgstr "Ketnet Junior"
+
+msgctxt "#30867"
+msgid "Sporza"
+msgstr "Sporza"
+
+msgctxt "#30868"
+msgid "Radio 1"
+msgstr "Radio 1"
+
+msgctxt "#30869"
+msgid "Radio 2"
+msgstr "Radio 2"
+
+msgctxt "#30870"
+msgid "Klara"
+msgstr "Klara"
+
+msgctxt "#30871"
+msgid "Studio Brussel"
+msgstr "Studio Brussel"
+
+msgctxt "#30872"
+msgid "MNM"
+msgstr "MNM"
+
+msgctxt "#30873"
+msgid "VRT NXT"
+msgstr "VRT NXT"
+
+msgctxt "#30874"
+msgid "VRT NWS"
+msgstr "VRT NWS"
+
+msgctxt "#30900"
 msgid "Troubleshooting"
 msgstr "Foutopsporing"
 
-msgctxt "#30861"
+msgctxt "#30901"
 msgid "Cache"
 msgstr "Cache"
 
-msgctxt "#30063"
+msgctxt "#30903"
 msgid "Clear VRT tokens"
 msgstr "Verwijder VRT tokens"
 
-msgctxt "#30065"
+msgctxt "#30905"
 msgid "Refresh favorites"
 msgstr "Ververs gevolgde programma's"
 
-msgctxt "#30867"
+msgctxt "#30907"
 msgid "Invalidate local HTTP caches"
 msgstr "Invalideer local HTTP caches"
 
-msgctxt "#30069"
+msgctxt "#30909"
 msgid "Streaming"
 msgstr "Streaming"
 
-msgctxt "#30870"
+msgctxt "#30911"
 msgid "Use InputStream Adaptive"
 msgstr "Gebruik InputStream Adaptive"
 
-msgctxt "#30073"
+msgctxt "#30913"
 msgid "InputStream Adaptive settings..."
 msgstr "InputStream Adaptive instellingen..."
 
-msgctxt "#30075"
+msgctxt "#30915"
 msgid "Install Widevine... [COLOR gray][I](needed for DRM content)[/I][/COLOR]"
 msgstr "Installeer Widevine... [COLOR gray][I](nodig voor DRM content)[/I][/COLOR]"
 
-msgctxt "#30077"
+msgctxt "#30917"
 msgid "Logging"
 msgstr "Logboek"
 
-msgctxt "#30079"
+msgctxt "#30919"
 msgid "Log level"
 msgstr "Log level"
 

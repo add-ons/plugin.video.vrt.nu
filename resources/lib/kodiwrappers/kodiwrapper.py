@@ -470,8 +470,11 @@ class KodiWrapper:
     def invalidate_cache(self, path):
         self.delete_file(self._cache_path + path)
 
-    def invalidate_caches(self):
+    def invalidate_caches(self, expr=None):
+        import fnmatch
         _, files = self.listdir(self._cache_path)
+        if expr:
+            files = fnmatch.filter(files, expr)
         for f in files:
             self.delete_file(self._cache_path + f)
 
