@@ -240,9 +240,15 @@ class TVGuide:
 
     def parse(self, date, now):
         if date == 'today':
+            if now.hour < 6:
+                return now + timedelta(days=-1)
             return now
         if date == 'yesterday':
+            if now.hour < 6:
+                return now + timedelta(days=-2)
             return now + timedelta(days=-1)
         if date == 'tomorrow':
+            if now.hour < 6:
+                return now
             return now + timedelta(days=1)
         return dateutil.parser.parse(date)
