@@ -67,7 +67,7 @@ msgstr "Recent gepubliceerde afleveringen van tv-programma's"
 
 msgctxt "#30022"
 msgid "Soon offline"
-msgstr "Binnenkort verwijderd"
+msgstr "Binnenkort offline"
 
 msgctxt "#30023"
 msgid "Video content that will soon be offline"
@@ -313,7 +313,7 @@ msgstr "Kanalen"
 
 msgctxt "#30861"
 msgid "Select channels for 'Most recent' and 'Soon offline' listings"
-msgstr "Selecteer kanalen voor de 'Meest recent' en 'Binnenkort verwijderd' lijsten"
+msgstr "Selecteer kanalen voor de 'Meest recent' en 'Binnenkort offline' lijsten"
 
 msgctxt "#30863"
 msgid "Eén"
