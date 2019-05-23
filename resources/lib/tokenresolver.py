@@ -3,7 +3,7 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, unicode_literals
-from resources.lib import helperobjects
+from resources.lib.helperobjects import Credentials
 
 try:
     from urllib.parse import urlencode, unquote
@@ -110,7 +110,7 @@ class TokenResolver:
     def _get_new_xvrttoken(self, path, get_roaming_token):
         import json
 
-        cred = helperobjects.Credentials(self._kodi)
+        cred = Credentials(self._kodi)
         if not cred.are_filled_in():
             self._kodi.open_settings()
             cred.reload()
@@ -164,7 +164,7 @@ class TokenResolver:
             import cookielib
         import json
 
-        cred = helperobjects.Credentials(self._kodi)
+        cred = Credentials(self._kodi)
         if not cred.are_filled_in():
             self._kodi.open_settings()
             cred.reload()

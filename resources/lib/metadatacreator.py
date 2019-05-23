@@ -8,94 +8,22 @@ from __future__ import absolute_import, division, unicode_literals
 class MetadataCreator:
 
     def __init__(self):
-        self._brands = None
-        self._datetime = None
-        self._duration = None
-        self._episode = None
-        self._geolocked = None
-        self._mediatype = None
-        self._offtime = None
-        self._ontime = None
-        self._permalink = None
+        self.brands = None
+        self.datetime = None
+        self.duration = None
+        self.episode = None
+        self.geolocked = None
+        self.mediatype = None
+        self.offtime = None
+        self.ontime = None
+        self.permalink = None
         self._plot = None
         self._plotoutline = None
-        self._season = None
-        self._subtitle = None
-        self._title = None
-        self._tvshowtitle = None
-        self._year = None
-
-    @property
-    def brands(self):
-        return self._brands
-
-    @brands.setter
-    def brands(self, value):
-        self._brands = value
-
-    @property
-    def datetime(self):
-        return self._datetime
-
-    @datetime.setter
-    def datetime(self, value):
-        self._datetime = value
-
-    @property
-    def duration(self):
-        return self._duration
-
-    @duration.setter
-    def duration(self, value):
-        self._duration = value
-
-    @property
-    def episode(self):
-        return self._episode
-
-    @episode.setter
-    def episode(self, value):
-        self._episode = value
-
-    @property
-    def geolocked(self):
-        return self._geolocked
-
-    @geolocked.setter
-    def geolocked(self, value):
-        self._geolocked = value
-
-    @property
-    def mediatype(self):
-        return self._mediatype
-
-    @mediatype.setter
-    def mediatype(self, value):
-        self._mediatype = value
-
-    @property
-    def offtime(self):
-        return self._offtime
-
-    @offtime.setter
-    def offtime(self, value):
-        self._offtime = value
-
-    @property
-    def ontime(self):
-        return self._ontime
-
-    @ontime.setter
-    def ontime(self, value):
-        self._ontime = value
-
-    @property
-    def permalink(self):
-        return self._permalink
-
-    @permalink.setter
-    def permalink(self, value):
-        self._permalink = value
+        self.season = None
+        self.subtitle = None
+        self.title = None
+        self.tvshowtitle = None
+        self.year = None
 
     @property
     def plot(self):
@@ -112,46 +40,6 @@ class MetadataCreator:
     @plotoutline.setter
     def plotoutline(self, value):
         self._plotoutline = value.strip()
-
-    @property
-    def season(self):
-        return self._season
-
-    @season.setter
-    def season(self, value):
-        self._season = value
-
-    @property
-    def subtitle(self):
-        return self._subtitle
-
-    @subtitle.setter
-    def subtitle(self, value):
-        self._subtitle = value
-
-    @property
-    def title(self):
-        return self._title
-
-    @title.setter
-    def title(self, value):
-        self._title = value
-
-    @property
-    def tvshowtitle(self):
-        return self._tvshowtitle
-
-    @tvshowtitle.setter
-    def tvshowtitle(self, value):
-        self._tvshowtitle = value
-
-    @property
-    def year(self):
-        return self._year
-
-    @year.setter
-    def year(self, value):
-        self._year = value
 
     def get_video_dict(self):
         from datetime import datetime
@@ -181,34 +69,14 @@ class MetadataCreator:
 
         if self.ontime and self.ontime != epoch:
             video_dict['dateadded'] = self.ontime.strftime('%Y-%m-%d %H:%M:%S')
-#            video_dict['startdate'] = self.ontime.strftime('%Y-%m-%d %H:%M:%S')
         elif self.datetime:
             video_dict['dateadded'] = self.datetime.strftime('%Y-%m-%d %H:%M:%S')
-#            video_dict['startdate'] = self.datetime.strftime('%Y-%m-%d %H:%M:%S')
-
-#        if self.offtime and self.offtime != epoch:
-#            video_dict['enddate'] = self.offtime.strftime('%Y-%m-%d %H:%M:%S')
-#        elif self.ontime and self.ontime != epoch:
-#            video_dict['enddate'] = self.ontime.strftime('%Y-%m-%d %H:%M:%S')
-#        elif self.datetime:
-#            video_dict['enddate'] = self.datetime.strftime('%Y-%m-%d %H:%M:%S')
 
         if self.duration:
             video_dict['duration'] = self.duration
 
         if self.episode:
             video_dict['episode'] = self.episode
-
-        # NOTE: Does not seem to have any effect
-        if self.geolocked:
-            video_dict['overlay'] = 7
-            # video_dict['overlay'] = 'OverlayLocked.png'
-        else:
-            video_dict['overlay'] = 3
-
-        # if self.icon:
-        #    video_dict['icon'] = self.icon
-        #    video_dict['actualicon'] = self.icon
 
         # mediatype is one of: video, movie, tvshow, season, episode or musicvideo
         if self.mediatype:

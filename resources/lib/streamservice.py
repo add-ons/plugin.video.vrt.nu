@@ -6,7 +6,7 @@ from __future__ import absolute_import, division, unicode_literals
 import json
 import re
 
-from resources.lib import apidata, streamurls
+from resources.lib.helperobjects import ApiData, StreamURLS
 
 try:
     from urllib.parse import quote, unquote, urlencode
@@ -89,13 +89,13 @@ class StreamService:
         # Prepare api_data for on demand streams by video_id and publication_id
         if video_id and publication_id:
             xvrttoken = self._tokenresolver.get_xvrttoken()
-            api_data = apidata.ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, publication_id + quote('$'), xvrttoken, False)
+            api_data = ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, publication_id + quote('$'), xvrttoken, False)
         # Prepare api_data for livestreams by video_id, e.g. vualto_strubru, vualto_mnm, ketnet_jr
         elif video_id and not video_url:
-            api_data = apidata.ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, '', None, True)
+            api_data = ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, '', None, True)
         # Webscrape api_data with video_id fallback
         elif video_url:
-            api_data = self._webscrape_api_data(video_url) or apidata.ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, '', None, True)
+            api_data = self._webscrape_api_data(video_url) or ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, '', None, True)
         return api_data
 
     def _webscrape_api_data(self, video_url):
@@ -136,7 +136,7 @@ class StreamService:
             self._kodi.log_error('Web scraping api data failed, required attributes missing')
             return None
 
-        return apidata.ApiData(client, media_api_url, video_id, publication_id, xvrttoken, is_live_stream)
+        return ApiData(client, media_api_url, video_id, publication_id, xvrttoken, is_live_stream)
 
     def _get_stream_json(self, api_data):
         token_url = api_data.media_api_url + '/tokens'
@@ -236,14 +236,14 @@ class StreamService:
                 else:
                     license_key = self._get_license_key(key_url=self._UPLYNK_LICENSE_URL, key_type='R')
 
-                stream = streamurls.StreamURLS(manifest_url, license_key=license_key, use_inputstream_adaptive=True)
+                stream = StreamURLS(manifest_url, license_key=license_key, use_inputstream_adaptive=True)
             elif protocol == 'mpeg_dash':
-                stream = streamurls.StreamURLS(manifest_url, use_inputstream_adaptive=True)
+                stream = StreamURLS(manifest_url, use_inputstream_adaptive=True)
                 self._kodi.log_notice('Protocol: ' + protocol, 'Verbose')
             else:
                 # Fix 720p quality for HLS livestreams
                 manifest_url += '?hd' if '.m3u8?' not in manifest_url else '&hd'
-                stream = streamurls.StreamURLS(*self._select_hls_substreams(manifest_url))
+                stream = StreamURLS(*self._select_hls_substreams(manifest_url))
                 self._kodi.log_notice('Protocol: ' + protocol, 'Verbose')
             return stream
 
