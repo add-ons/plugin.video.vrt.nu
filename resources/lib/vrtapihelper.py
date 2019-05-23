@@ -3,8 +3,8 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, unicode_literals
-from resources.lib.helperobjects.helperobjects import TitleItem
-from resources.lib.vrtplayer import CHANNELS, actions, metadatacreator, statichelper
+from resources.lib import CHANNELS, actions, metadatacreator, statichelper
+from resources.lib.helperobjects import TitleItem
 
 try:
     from urllib.parse import urlencode, unquote

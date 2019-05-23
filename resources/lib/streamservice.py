@@ -6,7 +6,7 @@ from __future__ import absolute_import, division, unicode_literals
 import json
 import re
 
-from resources.lib.helperobjects import apidata, streamurls
+from resources.lib import apidata, streamurls
 
 try:
     from urllib.parse import quote, unquote, urlencode

@@ -13,8 +13,8 @@ try:
 except ImportError:
     from urllib2 import build_opener, install_opener, ProxyHandler, urlopen
 
-from resources.lib.helperobjects import helperobjects
-from resources.lib.vrtplayer import CHANNELS, actions, metadatacreator, statichelper
+from resources.lib import helperobjects
+from resources.lib import CHANNELS, actions, metadatacreator, statichelper
 
 DATE_STRINGS = {
     '-2': 30330,  # 2 days ago

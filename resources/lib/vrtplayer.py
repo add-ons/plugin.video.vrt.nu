@@ -3,8 +3,8 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, unicode_literals
-from resources.lib.helperobjects.helperobjects import TitleItem
-from resources.lib.vrtplayer import actions, statichelper, streamservice, tokenresolver
+from resources.lib import actions, statichelper, streamservice, tokenresolver
+from resources.lib.helperobjects import TitleItem
 
 try:
     from urllib.request import build_opener, install_opener, ProxyHandler, urlopen
@@ -101,7 +101,7 @@ class VRTPlayer:
         self._kodi.show_listing(favorites_items)
 
         # Show dialog when no favorites were found
-        from resources.lib.vrtplayer import favorites
+        from resources.lib import favorites
         if not favorites.Favorites(self._kodi).names():
             self._kodi.show_ok_dialog(heading=self._kodi.localize(30415), message=self._kodi.localize(30416))
 
@@ -118,14 +118,14 @@ class VRTPlayer:
             tvshow_items = self._apihelper.get_tvshow_items(channel=channel)
             self._kodi.show_listing(tvshow_items, sort='label', content='tvshows')
         else:
-            from resources.lib.vrtplayer import CHANNELS
+            from resources.lib import CHANNELS
             self.show_channels(action=actions.LISTING_CHANNELS, channels=[c.get('name') for c in CHANNELS])
 
     def show_livestream_items(self):
         self.show_channels(action=actions.PLAY, channels=['een', 'canvas', 'sporza', 'ketnet-jr', 'ketnet', 'stubru', 'mnm'])
 
     def show_channels(self, action=actions.PLAY, channels=None):
-        from resources.lib.vrtplayer import CHANNELS, tvguide
+        from resources.lib import CHANNELS, tvguide
         _tvguide = tvguide.TVGuide(self._kodi)
 
         fanart_path = 'resource://resource.images.studios.white/%(studio)s.png'
@@ -273,7 +273,7 @@ class VRTPlayer:
 
         # Fall back to internal hard-coded categories if all else fails
         if not categories:
-            from resources.lib.vrtplayer import CATEGORIES
+            from resources.lib import CATEGORIES
             categories = CATEGORIES
 
         category_items = []

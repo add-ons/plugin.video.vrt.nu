@@ -14,8 +14,7 @@ try:
 except ImportError:
     from urllib2 import HTTPError
 
-from resources.lib.kodiwrappers import kodiwrapper
-from resources.lib.vrtplayer import CHANNELS, streamservice, tokenresolver
+from resources.lib import CHANNELS, kodiwrapper, streamservice, tokenresolver
 
 xbmc = __import__('xbmc')
 xbmcaddon = __import__('xbmcaddon')

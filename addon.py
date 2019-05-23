@@ -8,8 +8,7 @@ from __future__ import absolute_import, division, unicode_literals
 import sys
 
 import xbmcaddon
-from resources.lib.kodiwrappers import kodiwrapper
-from resources.lib.vrtplayer import actions
+from resources.lib import actions, kodiwrapper
 
 try:
     from urllib.parse import parse_qsl
@@ -33,12 +32,12 @@ def router(params_string):
         _kodi.invalidate_caches()
         return
     if action == actions.CLEAR_COOKIES:
-        from resources.lib.vrtplayer import tokenresolver
+        from resources.lib import tokenresolver
         _tokenresolver = tokenresolver.TokenResolver(_kodi)
         _tokenresolver.reset_cookies()
         return
     if action == actions.LISTING_TVGUIDE:
-        from resources.lib.vrtplayer import tvguide
+        from resources.lib import tvguide
         _tvguide = tvguide.TVGuide(_kodi)
         _tvguide.show_tvguide(params)
         return
@@ -46,7 +45,7 @@ def router(params_string):
         _kodi.install_widevine()
         return
 
-    from resources.lib.vrtplayer import favorites
+    from resources.lib import favorites
     _favorites = favorites.Favorites(_kodi)
     if action == actions.FOLLOW:
         _favorites.follow(program=params.get('program'), path=params.get('path'))
@@ -58,7 +57,7 @@ def router(params_string):
         _favorites.get_favorites(ttl=0)
         return
 
-    from resources.lib.vrtplayer import vrtapihelper, vrtplayer
+    from resources.lib import vrtapihelper, vrtplayer
     _apihelper = vrtapihelper.VRTApiHelper(_kodi, _favorites)
     _vrtplayer = vrtplayer.VRTPlayer(_kodi, _favorites, _apihelper)
 

@@ -8,8 +8,7 @@ import dateutil.tz
 import random
 import unittest
 
-from resources.lib.kodiwrappers import kodiwrapper
-from resources.lib.vrtplayer import tvguide
+from resources.lib import kodiwrapper, tvguide
 
 xbmc = __import__('xbmc')
 xbmcaddon = __import__('xbmcaddon')

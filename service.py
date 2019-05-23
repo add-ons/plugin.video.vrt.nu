@@ -8,8 +8,7 @@ from __future__ import absolute_import, division, unicode_literals
 
 import xbmc
 import xbmcaddon
-from resources.lib.kodiwrappers import kodiwrapper
-from resources.lib.vrtplayer import tokenresolver
+from resources.lib import kodiwrapper, tokenresolver
 
 
 class VrtMonitor(xbmc.Monitor):

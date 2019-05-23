@@ -8,8 +8,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import random
 import unittest
 
-from resources.lib.vrtplayer import CATEGORIES, favorites, vrtapihelper, vrtplayer
-from resources.lib.kodiwrappers import kodiwrapper
+from resources.lib import CATEGORIES, favorites, kodiwrapper, vrtapihelper, vrtplayer
 
 xbmc = __import__('xbmc')
 xbmcaddon = __import__('xbmcaddon')
