@@ -45,7 +45,7 @@ unit:
 	PYTHONPATH=$(CURDIR) python test/favoritestests.py
 	@echo -e "$(white)=$(blue) Unit tests finished successfully.$(reset)"
 
-zip: test
+zip: test clean
 	@echo -e "$(white)=$(blue) Building new package$(reset)"
 	@rm -f ../$(zip_name)
 	cd ..; zip -r $(zip_name) $(include_paths) -x $(exclude_files)
@@ -53,3 +53,4 @@ zip: test
 
 clean:
 	find . -name '*.pyc' -delete
+	find . -name '__pycache__' -delete
