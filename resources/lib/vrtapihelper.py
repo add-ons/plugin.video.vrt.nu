@@ -467,3 +467,72 @@ class VRTApiHelper:
             sort = 'label'
 
         return label, sort, ascending
+
+    def get_category_items(self):
+        categories = []
+
+        # Try the cache if it is fresh
+        categories = self._kodi.get_cache('categories.json', ttl=7 * 24 * 60 * 60)
+
+        # Try to scrape from the web
+        if not categories:
+            try:
+                categories = self.get_categories(self._proxies)
+            except Exception:
+                categories = []
+            else:
+                self._kodi.update_cache('categories.json', categories)
+
+        # Use the cache anyway (better than hard-coded)
+        if not categories:
+            categories = self._kodi.get_cache('categories.json', ttl=None)
+
+        # Fall back to internal hard-coded categories if all else fails
+        if not categories:
+            from resources.lib import CATEGORIES
+            categories = CATEGORIES
+
+        category_items = []
+        for category in categories:
+            if self._showfanart:
+                thumbnail = category.get('thumbnail', 'DefaultGenre.png')
+            else:
+                thumbnail = 'DefaultGenre.png'
+            category_items.append(TitleItem(
+                title=category.get('name'),
+                url_dict=dict(action=actions.LISTING_CATEGORY_TVSHOWS, category=category.get('id')),
+                is_playable=False,
+                art_dict=dict(thumb=thumbnail, icon='DefaultGenre.png', fanart=thumbnail),
+                video_dict=dict(plot='[B]%s[/B]' % category.get('name'), studio='VRT'),
+            ))
+        return category_items
+
+    def get_categories(self, proxies=None):
+        from bs4 import BeautifulSoup, SoupStrainer
+        self._kodi.log_notice('URL get: https://www.vrt.be/vrtnu/categorieen/', 'Verbose')
+        response = urlopen('https://www.vrt.be/vrtnu/categorieen/')
+        tiles = SoupStrainer('nui-list--content')
+        soup = BeautifulSoup(response.read(), 'html.parser', parse_only=tiles)
+
+        categories = []
+        for tile in soup.find_all('nui-tile'):
+            categories.append(dict(
+                id=tile.get('href').split('/')[-2],
+                thumbnail=self.get_category_thumbnail(tile),
+                name=self.get_category_title(tile),
+            ))
+
+        return categories
+
+    def get_category_thumbnail(self, element):
+        if self._showfanart:
+            raw_thumbnail = element.find(class_='media').get('data-responsive-image', 'DefaultGenre.png')
+            return statichelper.add_https_method(raw_thumbnail)
+        return 'DefaultGenre.png'
+
+    @staticmethod
+    def get_category_title(element):
+        found_element = element.find('a')
+        if found_element:
+            return statichelper.strip_newlines(found_element.contents[0])
+        return ''
