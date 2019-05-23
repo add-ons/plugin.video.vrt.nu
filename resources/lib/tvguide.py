@@ -4,9 +4,9 @@
 
 from __future__ import absolute_import, division, unicode_literals
 from datetime import datetime, timedelta
+import json
 import dateutil.parser
 import dateutil.tz
-import json
 
 try:
     from urllib.request import build_opener, install_opener, ProxyHandler, urlopen

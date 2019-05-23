@@ -13,7 +13,7 @@ try:
     from urllib.error import HTTPError
     from urllib.request import build_opener, install_opener, urlopen, ProxyHandler
 except ImportError:
-    from urllib import urlencode  # pylint: disable=ungrouped-imports
+    from urllib import urlencode
     from urllib2 import build_opener, install_opener, urlopen, ProxyHandler, quote, unquote, HTTPError
 
 

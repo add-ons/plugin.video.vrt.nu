@@ -6,8 +6,8 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 from datetime import datetime, timedelta
-import dateutil.tz
 import unittest
+import dateutil.tz
 
 try:
     from urllib.error import HTTPError

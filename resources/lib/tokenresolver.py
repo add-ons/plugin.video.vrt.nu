@@ -9,7 +9,7 @@ try:
     from urllib.parse import urlencode, unquote
     from urllib.request import build_opener, install_opener, ProxyHandler, HTTPCookieProcessor, HTTPErrorProcessor, urlopen, Request
 except ImportError:
-    from urllib import urlencode  # pylint: disable=ungrouped-imports
+    from urllib import urlencode
     from urllib2 import build_opener, install_opener, ProxyHandler, HTTPCookieProcessor, HTTPErrorProcessor, unquote, urlopen, Request
 
 

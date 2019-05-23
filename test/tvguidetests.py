@@ -4,9 +4,9 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 from datetime import datetime, timedelta
-import dateutil.tz
 import random
 import unittest
+import dateutil.tz
 
 from resources.lib import kodiwrapper, tvguide
 
