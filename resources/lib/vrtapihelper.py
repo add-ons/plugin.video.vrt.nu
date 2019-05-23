@@ -297,6 +297,7 @@ class VRTApiHelper:
                 video_dict=metadata.get_video_dict(),
                 context_menu=context_menu,
             ))
+
         return episode_items, sort, ascending, 'episodes'
 
     def _map_to_season_items(self, api_url, seasons, episodes):
@@ -467,6 +468,58 @@ class VRTApiHelper:
             sort = 'label'
 
         return label, sort, ascending
+
+    def get_channel_items(self, action=actions.PLAY, channels=None):
+        from resources.lib import tvguide
+        _tvguide = tvguide.TVGuide(self._kodi)
+
+        fanart_path = 'resource://resource.images.studios.white/%(studio)s.png'
+        icon_path = 'resource://resource.images.studios.white/%(studio)s.png'
+        # NOTE: Wait for resource.images.studios.coloured v0.16 to be released
+        # icon_path = 'resource://resource.images.studios.coloured/%(studio)s.png'
+
+        channel_items = []
+        for channel in CHANNELS:
+            if channel.get('name') not in channels:
+                continue
+
+            icon = icon_path % channel
+            fanart = fanart_path % channel
+
+            if action == actions.LISTING_CHANNELS:
+                url_dict = dict(action=action, channel=channel.get('name'))
+                label = channel.get('label')
+                plot = '[B]%s[/B]' % channel.get('label')
+                is_playable = False
+            else:
+                url_dict = dict(action=action)
+                label = self._kodi.localize(30101).format(**channel)
+                is_playable = True
+                if channel.get('name') in ['een', 'canvas', 'ketnet']:
+                    if self._showfanart:
+                        fanart = self.get_live_screenshot(channel.get('name', fanart))
+                    plot = '%s\n\n%s' % (self._kodi.localize(30102).format(**channel), _tvguide.live_description(channel.get('name')))
+                else:
+                    plot = self._kodi.localize(30102).format(**channel)
+                if channel.get('live_stream'):
+                    url_dict['video_url'] = channel.get('live_stream')
+                if channel.get('live_stream_id'):
+                    url_dict['video_id'] = channel.get('live_stream_id')
+
+            channel_items.append(TitleItem(
+                title=label,
+                url_dict=url_dict,
+                is_playable=is_playable,
+                art_dict=dict(thumb=icon, icon=icon, fanart=fanart),
+                video_dict=dict(
+                    title=label,
+                    plot=plot,
+                    studio=channel.get('studio'),
+                    mediatype='video',
+                ),
+            ))
+
+        return channel_items
 
     def get_category_items(self):
         categories = []
