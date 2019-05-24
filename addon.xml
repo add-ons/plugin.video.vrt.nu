@@ -20,30 +20,43 @@
         <description lang="en_GB">
 This Kodi add-on can be used to watch all video content from VRT NU.
 
-- List all videos alphabetically by program or by category
+- Track the programs you follow
+- List all videos alphabetically by program, by category or by channel
 - Watch live streams from Eén, Canvas and Ketnet
 - Discover recently added content
-- Browse the online VRT TV guides
-
-[B]This add-on is provided 'as is' without warranty of any kind, and is not endorsed by VRT.[/B]
+- Browse the online TV guides or search VRT NU
 </description>
         <disclaimer lang="en_GB">The VRT NU add-on is provided 'as is' without any warranty of any kind, and is not endorsed by VRT.</disclaimer>
         <summary lang="nl_NL">VRT NU videos bekijken.</summary>
         <description lang="nl_NL">
 Met deze Kodi add-on kan je alle video streams van VRT NU bekijken.
 
-- Raadpleeg alle videos alfabetisch geordend per programma of per categorie
+- Volg je favoriete tv-programma's
+- Raadpleeg alle videos alfabetisch geordend per programma, per categorie of per kanaal
 - Bekijk de livestreams van Eén, Canvas en Ketnet
 - Ontdekt recent toegevoegde videos
-- Doorblader de online VRT TV-gids
-
-[B]Deze add-on wordt aangeboden 'as is', zonder enige garantie, en wordt niet ondersteund door de VRT.[/B]
+- Doorblader de online tv-gids of doorzoek VRT NU
 </description>
         <disclaimer lang="nl_NL">Deze VRT NU add-on wordt aangeboden 'as is', zonder enige garantie, en wordt niet ondersteund door de VRT.</disclaimer>
         <language>en nl</language>
         <platform>all</platform>
         <license>GNU General Public License, v3</license>
         <news>
+v1.10.0 (2019-06-01)
+- Performance fixes by caching HTTP requests locally (@dagwieers)
+- Fix episode listings with more than 150 items (@mediaminister)
+- Add "Soon offline" functionality to track episodes that will be removed (@dagwieers)
+- Add TV guide schedule in Live stream metadata (@dagwieers)
+- Add "My programs" functionality to track your favorite programs (@dagwieers)
+- Improvements to stream selection logic (@mediaminister)
+- Fix localized date strings for JeOS platforms (@dagwieers)
+- Add "Search" functionality in main menu (@dagwieers)
+- Add Ketnet Junior 24/7 livestram (@dagwieers)
+- Add Kodi "* All seasons" support in season listings (@dagwieers)
+- Add 720p live stream support (without DRM) (@dagwieers)
+- Extend the "Troubleshooting" settings with logging and caching options (@dagwieers)
+- Support bandwith limitation (useful for mobile internet connections) (@mediaminister)
+
 v1.9.0 (2019-05-04)
 - Add a Channels menu (@dagwieers)
 - Add page-browsing in Recent menu, 50 items per page (@dagwieers)
@@ -63,24 +76,6 @@ v1.8.0 (2019-04-27)
 - Improved login handling (@mediaminister)
 - Improve thumbnail/fanart for menu listings (@dagwieers)
 - Fixes to remote play (@mediaminister)
-
-v1.7.1 (2019-03-28)
-- Remove the inputstream.adaptive requirement for Krypton
-
-v1.7.0 (2019-03-26)
-- Fix the categories web-scraping (@mediaminister)
-- Add full proxy support (@dagwieers)
-- Indicate when content will disappear in the next 3 months (@dagwieers)
-- Indicate when content is geo-blocked (@dagwieers)
-- Add fanart to menus (@dagwieers)
-- Fix issue related to missing sound (@mediaminister)
-- Improve main menu listing (@dagwieers)
-- Use VRT NU search API for most information gathering (@mediaminister)
-- Added Dutch translation (@mediaminister)
-- Added "Most recent" menu item (@mediaminister)
-- Fix roaming for live streams (@mediaminister)
-- Add Python 3 compatibility (@dagwieers)
-- Added automated testing using Travis CI (@dagwieers)
         </news>
         <source>https://github.com/pietje666/plugin.video.vrt.nu</source>
         <website>https://github.com/pietje666/plugin.video.vrt.nu/wiki</website>
