@@ -75,17 +75,17 @@ class VRTPlayer:
     def show_favorites_menu_items(self):
         favorites_items = [
             TitleItem(title=self._kodi.localize(30040),  # My A-Z listing
-                      url_dict=dict(action=actions.LISTING_AZ_TVSHOWS, filtered=True),
+                      url_dict=dict(action=actions.LISTING_AZ_TVSHOWS, use_favorites=True),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultMovieTitle.png', icon='DefaultMovieTitle.png', fanart='DefaultMovieTitle.png'),
                       video_dict=dict(plot=self._kodi.localize(30041))),
             TitleItem(title=self._kodi.localize(30042),  # My recent items
-                      url_dict=dict(action=actions.LISTING_RECENT, filtered=True),
+                      url_dict=dict(action=actions.LISTING_RECENT, use_favorites=True),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultRecentlyAddedEpisodes.png', icon='DefaultRecentlyAddedEpisodes.png', fanart='DefaultRecentlyAddedEpisodes.png'),
                       video_dict=dict(plot=self._kodi.localize(30043))),
             TitleItem(title=self._kodi.localize(30044),  # My soon offline
-                      url_dict=dict(action=actions.LISTING_OFFLINE, filtered=True),
+                      url_dict=dict(action=actions.LISTING_OFFLINE, use_favorites=True),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
                       video_dict=dict(plot=self._kodi.localize(30045))),
@@ -93,12 +93,11 @@ class VRTPlayer:
         self._kodi.show_listing(favorites_items)
 
         # Show dialog when no favorites were found
-        from resources.lib import favorites
-        if not favorites.Favorites(self._kodi).names():
+        if not self._favorites.names():
             self._kodi.show_ok_dialog(heading=self._kodi.localize(30415), message=self._kodi.localize(30416))
 
-    def show_tvshow_menu_items(self, category=None, filtered=False):
-        tvshow_items = self._apihelper.get_tvshow_items(category=category, filtered=filtered)
+    def show_tvshow_menu_items(self, category=None, use_favorites=False):
+        tvshow_items = self._apihelper.get_tvshow_items(category=category, use_favorites=use_favorites)
         self._kodi.show_listing(tvshow_items, sort='label', content='tvshows')
 
     def show_category_menu_items(self):
@@ -126,15 +125,15 @@ class VRTPlayer:
         episode_items, sort, ascending, content = self._apihelper.get_episode_items(path=path)
         self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content)
 
-    def show_recent(self, page=0, filtered=False):
+    def show_recent(self, page=0, use_favorites=False):
         page = statichelper.realpage(page)
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=page, filtered=filtered, variety='recent')
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=page, use_favorites=use_favorites, variety='recent')
 
         # Add 'More...' entry at the end
         if len(episode_items) == 50:
             episode_items.append(TitleItem(
                 title=self._kodi.localize(30300),
-                url_dict=dict(action=actions.LISTING_RECENT, page=page + 1, filtered=filtered),
+                url_dict=dict(action=actions.LISTING_RECENT, page=page + 1, use_favorites=use_favorites),
                 is_playable=False,
                 art_dict=dict(thumb='DefaultRecentlyAddedEpisodes.png', icon='DefaultRecentlyAddedEpisodes.png', fanart='DefaultRecentlyAddedEpisodes.png'),
                 video_dict=dict(),
@@ -142,21 +141,21 @@ class VRTPlayer:
 
         self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content, cache=False)
 
-    def show_offline(self, page=0, filtered=False):
+    def show_offline(self, page=0, use_favorites=False):
         page = statichelper.realpage(page)
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=page, filtered=filtered, variety='offline')
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=page, use_favorites=use_favorites, variety='offline')
 
         # Add 'More...' entry at the end
         if len(episode_items) == 50:
             episode_items.append(TitleItem(
                 title=self._kodi.localize(30300),
-                url_dict=dict(action=actions.LISTING_OFFLINE, page=page + 1, filtered=filtered),
+                url_dict=dict(action=actions.LISTING_OFFLINE, page=page + 1, use_favorites=use_favorites),
                 is_playable=False,
                 art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
                 video_dict=dict(),
             ))
 
-        self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content, cache=False)
+        self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content)
 
     def play(self, params):
         _tokenresolver = tokenresolver.TokenResolver(self._kodi)
