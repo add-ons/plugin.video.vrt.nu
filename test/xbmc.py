@@ -5,8 +5,8 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import json
-import polib
 import time
+import polib
 
 
 LOGERROR = 'Error'
@@ -29,11 +29,11 @@ REGIONS = {
 }
 
 
-class Keyboard():
+class Keyboard:
     pass
 
 
-class Monitor():
+class Monitor:
     def abortRequested(self):
         return
 
@@ -41,7 +41,7 @@ class Monitor():
         return
 
 
-class Player():
+class Player:
     pass
 
 

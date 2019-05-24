@@ -3,15 +3,15 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, unicode_literals
-from resources.lib.helperobjects.helperobjects import TitleItem
-from resources.lib.vrtplayer import CHANNELS, actions, metadatacreator, statichelper
+from resources.lib import CHANNELS, actions, metadatacreator, statichelper
+from resources.lib.helperobjects import TitleItem
 
 try:
     from urllib.parse import urlencode, unquote
     from urllib.request import build_opener, install_opener, ProxyHandler, urlopen
 except ImportError:
+    from urllib import urlencode
     from urllib2 import build_opener, install_opener, ProxyHandler, urlopen, unquote
-    from urllib import urlencode  # pylint: disable=ungrouped-imports
 
 
 class VRTApiHelper:
@@ -297,6 +297,7 @@ class VRTApiHelper:
                 video_dict=metadata.get_video_dict(),
                 context_menu=context_menu,
             ))
+
         return episode_items, sort, ascending, 'episodes'
 
     def _map_to_season_items(self, api_url, seasons, episodes):
@@ -467,3 +468,124 @@ class VRTApiHelper:
             sort = 'label'
 
         return label, sort, ascending
+
+    def get_channel_items(self, action=actions.PLAY, channels=None):
+        from resources.lib import tvguide
+        _tvguide = tvguide.TVGuide(self._kodi)
+
+        fanart_path = 'resource://resource.images.studios.white/%(studio)s.png'
+        icon_path = 'resource://resource.images.studios.white/%(studio)s.png'
+        # NOTE: Wait for resource.images.studios.coloured v0.16 to be released
+        # icon_path = 'resource://resource.images.studios.coloured/%(studio)s.png'
+
+        channel_items = []
+        for channel in CHANNELS:
+            if channel.get('name') not in channels:
+                continue
+
+            icon = icon_path % channel
+            fanart = fanart_path % channel
+
+            if action == actions.LISTING_CHANNELS:
+                url_dict = dict(action=action, channel=channel.get('name'))
+                label = channel.get('label')
+                plot = '[B]%s[/B]' % channel.get('label')
+                is_playable = False
+            else:
+                url_dict = dict(action=action)
+                label = self._kodi.localize(30101).format(**channel)
+                is_playable = True
+                if channel.get('name') in ['een', 'canvas', 'ketnet']:
+                    if self._showfanart:
+                        fanart = self.get_live_screenshot(channel.get('name', fanart))
+                    plot = '%s\n\n%s' % (self._kodi.localize(30102).format(**channel), _tvguide.live_description(channel.get('name')))
+                else:
+                    plot = self._kodi.localize(30102).format(**channel)
+                if channel.get('live_stream'):
+                    url_dict['video_url'] = channel.get('live_stream')
+                if channel.get('live_stream_id'):
+                    url_dict['video_id'] = channel.get('live_stream_id')
+
+            channel_items.append(TitleItem(
+                title=label,
+                url_dict=url_dict,
+                is_playable=is_playable,
+                art_dict=dict(thumb=icon, icon=icon, fanart=fanart),
+                video_dict=dict(
+                    title=label,
+                    plot=plot,
+                    studio=channel.get('studio'),
+                    mediatype='video',
+                ),
+            ))
+
+        return channel_items
+
+    def get_category_items(self):
+        categories = []
+
+        # Try the cache if it is fresh
+        categories = self._kodi.get_cache('categories.json', ttl=7 * 24 * 60 * 60)
+
+        # Try to scrape from the web
+        if not categories:
+            try:
+                categories = self.get_categories(self._proxies)
+            except Exception:
+                categories = []
+            else:
+                self._kodi.update_cache('categories.json', categories)
+
+        # Use the cache anyway (better than hard-coded)
+        if not categories:
+            categories = self._kodi.get_cache('categories.json', ttl=None)
+
+        # Fall back to internal hard-coded categories if all else fails
+        if not categories:
+            from resources.lib import CATEGORIES
+            categories = CATEGORIES
+
+        category_items = []
+        for category in categories:
+            if self._showfanart:
+                thumbnail = category.get('thumbnail', 'DefaultGenre.png')
+            else:
+                thumbnail = 'DefaultGenre.png'
+            category_items.append(TitleItem(
+                title=category.get('name'),
+                url_dict=dict(action=actions.LISTING_CATEGORY_TVSHOWS, category=category.get('id')),
+                is_playable=False,
+                art_dict=dict(thumb=thumbnail, icon='DefaultGenre.png', fanart=thumbnail),
+                video_dict=dict(plot='[B]%s[/B]' % category.get('name'), studio='VRT'),
+            ))
+        return category_items
+
+    def get_categories(self, proxies=None):
+        from bs4 import BeautifulSoup, SoupStrainer
+        self._kodi.log_notice('URL get: https://www.vrt.be/vrtnu/categorieen/', 'Verbose')
+        response = urlopen('https://www.vrt.be/vrtnu/categorieen/')
+        tiles = SoupStrainer('nui-list--content')
+        soup = BeautifulSoup(response.read(), 'html.parser', parse_only=tiles)
+
+        categories = []
+        for tile in soup.find_all('nui-tile'):
+            categories.append(dict(
+                id=tile.get('href').split('/')[-2],
+                thumbnail=self.get_category_thumbnail(tile),
+                name=self.get_category_title(tile),
+            ))
+
+        return categories
+
+    def get_category_thumbnail(self, element):
+        if self._showfanart:
+            raw_thumbnail = element.find(class_='media').get('data-responsive-image', 'DefaultGenre.png')
+            return statichelper.add_https_method(raw_thumbnail)
+        return 'DefaultGenre.png'
+
+    @staticmethod
+    def get_category_title(element):
+        found_element = element.find('a')
+        if found_element:
+            return statichelper.strip_newlines(found_element.contents[0])
+        return ''

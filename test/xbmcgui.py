@@ -5,7 +5,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 
-class Dialog():
+class Dialog:
     def notification(self, heading='', message='', icon='', time=''):
         print('GUI NOTIFICATION: [%s] %s' % (heading, message))
 
@@ -16,7 +16,7 @@ class Dialog():
         return True
 
 
-class ListItem():
+class ListItem:
     def __init__(self, label='', label2='', iconImage='', thumbnailImage='', path='', offScreen=False):
         return
 

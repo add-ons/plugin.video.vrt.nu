@@ -4,12 +4,11 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 from datetime import datetime, timedelta
-import dateutil.tz
 import random
 import unittest
+import dateutil.tz
 
-from resources.lib.kodiwrappers import kodiwrapper
-from resources.lib.vrtplayer import tvguide
+from resources.lib import kodiwrapper, tvguide
 
 xbmc = __import__('xbmc')
 xbmcaddon = __import__('xbmcaddon')

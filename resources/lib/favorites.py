@@ -4,7 +4,7 @@
 
 from __future__ import absolute_import, division, unicode_literals
 
-from resources.lib.vrtplayer import tokenresolver
+from resources.lib import tokenresolver
 
 try:
     from urllib.request import build_opener, install_opener, ProxyHandler, Request, urlopen

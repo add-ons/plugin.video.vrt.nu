@@ -32,7 +32,7 @@ tox:
 
 pylint:
 	@echo -e "$(white)=$(blue) Starting sanity pylint test$(reset)"
-	pylint *.py resources/ test/
+	pylint *.py resources/lib/ test/
 	@echo -e "$(white)=$(blue) Sanity pylint test finished successfully.$(reset)"
 
 unit:

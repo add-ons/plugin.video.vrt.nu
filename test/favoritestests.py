@@ -5,8 +5,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
 
-from resources.lib.kodiwrappers import kodiwrapper
-from resources.lib.vrtplayer import favorites
+from resources.lib import favorites, kodiwrapper
 
 xbmc = __import__('xbmc')
 xbmcaddon = __import__('xbmcaddon')

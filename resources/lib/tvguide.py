@@ -4,17 +4,17 @@
 
 from __future__ import absolute_import, division, unicode_literals
 from datetime import datetime, timedelta
+import json
 import dateutil.parser
 import dateutil.tz
-import json
 
 try:
     from urllib.request import build_opener, install_opener, ProxyHandler, urlopen
 except ImportError:
     from urllib2 import build_opener, install_opener, ProxyHandler, urlopen
 
-from resources.lib.helperobjects import helperobjects
-from resources.lib.vrtplayer import CHANNELS, actions, metadatacreator, statichelper
+from resources.lib import CHANNELS, actions, metadatacreator, statichelper
+from resources.lib.helperobjects import TitleItem
 
 DATE_STRINGS = {
     '-2': 30330,  # 2 days ago
@@ -80,7 +80,7 @@ class TVGuide:
             else:
                 date = day.strftime('%Y-%m-%d')
 
-            date_items.append(helperobjects.TitleItem(
+            date_items.append(TitleItem(
                 title=title,
                 url_dict=dict(action=actions.LISTING_TVGUIDE, date=date),
                 is_playable=False,
@@ -107,7 +107,7 @@ class TVGuide:
             icon = icon_path % channel
             fanart = fanart_path % channel
             plot = '%s\n%s' % (self._kodi.localize(30301).format(**channel), datelong)
-            channel_items.append(helperobjects.TitleItem(
+            channel_items.append(TitleItem(
                 title=channel.get('label'),
                 url_dict=dict(action=actions.LISTING_TVGUIDE, date=date, channel=channel.get('name')),
                 is_playable=False,
@@ -180,7 +180,7 @@ class TVGuide:
                     metadata.title = '[COLOR gray]%s[/COLOR] %s' % (label, self._kodi.localize(30302))
                 else:
                     metadata.title = '[COLOR gray]%s[/COLOR]' % label
-            episode_items.append(helperobjects.TitleItem(
+            episode_items.append(TitleItem(
                 title=metadata.title,
                 url_dict=url_dict,
                 is_playable=True,

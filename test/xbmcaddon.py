@@ -3,10 +3,10 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, print_function, unicode_literals
-import json
-import os
-import polib
 import sys
+import os
+import json
+import polib
 
 # FIXME: Get information from addon.xml
 ADDON_INFO = {
@@ -68,7 +68,7 @@ else:
     print('Credentials not found in credentials.json', file=sys.stderr)
 
 
-class Addon():
+class Addon:
     @staticmethod
     def __init__(id):  # pylint: disable=redefined-builtin
         pass
