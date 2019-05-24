@@ -2,7 +2,7 @@
 
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-''' This is the actual VRT Nu video plugin entry point '''
+''' This is the actual VRT NU video plugin entry point '''
 
 from __future__ import absolute_import, division, unicode_literals
 import sys
@@ -64,26 +64,34 @@ def router(params_string):
     if action == actions.PLAY:
         _vrtplayer.play(params)
     elif action == actions.LISTING_AZ_TVSHOWS:
-        _vrtplayer.show_tvshow_menu_items(filtered=params.get('filtered'))
+        _favorites.get_favorites(ttl=5 * 60)  # Update favorites more often
+        _vrtplayer.show_tvshow_menu_items(use_favorites=params.get('use_favorites'))
     elif action == actions.LISTING_CATEGORIES:
         _vrtplayer.show_category_menu_items()
     elif action == actions.LISTING_CATEGORY_TVSHOWS:
+        _favorites.get_favorites(ttl=60 * 60)
         _vrtplayer.show_tvshow_menu_items(category=params.get('category'))
     elif action == actions.LISTING_CHANNELS:
         _vrtplayer.show_channels_menu_items(channel=params.get('channel'))
     elif action == actions.LISTING_FAVORITES:
+        _favorites.get_favorites(ttl=60 * 60)
         _vrtplayer.show_favorites_menu_items()
     elif action == actions.LISTING_LIVE:
         _vrtplayer.show_livestream_items()
     elif action == actions.LISTING_EPISODES:
+        _favorites.get_favorites(ttl=60 * 60)
         _vrtplayer.show_episodes(path=params.get('video_url'))
     elif action == actions.LISTING_ALL_EPISODES:
+        _favorites.get_favorites(ttl=60 * 60)
         _vrtplayer.show_all_episodes(path=params.get('video_url'))
     elif action == actions.LISTING_OFFLINE:
-        _vrtplayer.show_offline(page=params.get('page'), filtered=params.get('filtered'))
+        _favorites.get_favorites(ttl=5 * 60)  # Update favorites more often
+        _vrtplayer.show_offline(page=params.get('page'), use_favorites=params.get('use_favorites'))
     elif action == actions.LISTING_RECENT:
-        _vrtplayer.show_recent(page=params.get('page'), filtered=params.get('filtered'))
+        _favorites.get_favorites(ttl=5 * 60)  # Update favorites more often
+        _vrtplayer.show_recent(page=params.get('page'), use_favorites=params.get('use_favorites'))
     elif action == actions.SEARCH:
+        _favorites.get_favorites(ttl=60 * 60)
         _vrtplayer.search(search_string=params.get('query'), page=params.get('page'))
     else:
         _vrtplayer.show_main_menu_items()

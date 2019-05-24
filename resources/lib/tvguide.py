@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+# Copyright: (c) 2019, Dag Wieers (@dagwieers) <dag@wieers.com>
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, unicode_literals
@@ -32,16 +33,19 @@ DATES = {
 
 
 class TVGuide:
+    ''' This implements a VRT TV-guide that offers Kodi menus and TV guide info '''
 
     VRT_TVGUIDE = 'https://www.vrt.be/bin/epg/schedule.%Y-%m-%d.json'
 
     def __init__(self, _kodi):
+        ''' Initializes TV-guide object '''
         self._kodi = _kodi
         self._proxies = _kodi.get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
         self._showfanart = _kodi.get_setting('showfanart') == 'true'
 
     def show_tvguide(self, params):
+        ''' Offer a menu depending on the information provided '''
         date = params.get('date')
         channel = params.get('channel')
 
@@ -58,6 +62,7 @@ class TVGuide:
             self._kodi.show_listing(episode_items, content='episodes', cache=False)
 
     def show_date_menu(self):
+        ''' Offer a menu to select the TV-guide date '''
         epg = datetime.now(dateutil.tz.tzlocal())
         # Daily EPG information shows information from 6AM until 6AM
         if epg.hour < 6:
@@ -90,6 +95,7 @@ class TVGuide:
         return date_items
 
     def show_channel_menu(self, date):
+        ''' Offer a menu to select the channel '''
         now = datetime.now(dateutil.tz.tzlocal())
         epg = self.parse(date, now)
         datelong = self._kodi.localize_datelong(epg)
@@ -117,6 +123,7 @@ class TVGuide:
         return channel_items
 
     def show_episodes(self, date, channel):
+        ''' Show episodes for a given date and channel '''
         now = datetime.now(dateutil.tz.tzlocal())
         epg = self.parse(date, now)
         datelong = self._kodi.localize_datelong(epg)
@@ -190,9 +197,11 @@ class TVGuide:
         return episode_items
 
     def episode_description(self, episode):
+        ''' Return a formatted description for an episode '''
         return '{start} - {end}\n» [B]{title}[/B]'.format(**episode)
 
     def live_description(self, channel):
+        ''' Return the EPG information for current and next live program '''
         now = datetime.now(dateutil.tz.tzlocal())
         epg = now
         # Daily EPG information shows information from 6AM until 6AM
@@ -240,6 +249,10 @@ class TVGuide:
         return description
 
     def parse(self, date, now):
+        ''' Parse a given string and return a datetime object
+            This supports 'today', 'yesterday' and 'tomorrow'
+            It also compensates for TV-guides covering from 6AM to 6AM
+        '''
         if date == 'today':
             if now.hour < 6:
                 return now + timedelta(days=-1)

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.vrt.nu" name="VRT NU" version="1.9.0" provider-name="Martijn Moreel, dagwieers">
+<addon id="plugin.video.vrt.nu" name="VRT NU" version="1.10.0" provider-name="Martijn Moreel, dagwieers">
     <requires>
         <import addon="resource.images.studios.white" version="0.0.21"/>
         <import addon="script.module.beautifulsoup4" version="4.5.3"/>
@@ -43,7 +43,7 @@ Met deze Kodi add-on kan je alle video streams van VRT NU bekijken.
         <license>GNU General Public License, v3</license>
         <news>
 v1.10.0 (2019-06-01)
-- Performance fixes by caching HTTP requests locally (@dagwieers)
+- Performance improvements by caching HTTP requests locally (@dagwieers)
 - Fix episode listings with more than 150 items (@mediaminister)
 - Add "Soon offline" functionality to track episodes that will be removed (@dagwieers)
 - Add TV guide schedule in Live stream metadata (@dagwieers)
@@ -55,7 +55,7 @@ v1.10.0 (2019-06-01)
 - Add Kodi "* All seasons" support in season listings (@dagwieers)
 - Add 720p live stream support (without DRM) (@dagwieers)
 - Extend the "Troubleshooting" settings with logging and caching options (@dagwieers)
-- Support bandwith limitation (useful for mobile internet connections) (@mediaminister)
+- Support bandwidth limitation (useful for mobile internet connections) (@mediaminister)
 
 v1.9.0 (2019-05-04)
 - Add a Channels menu (@dagwieers)

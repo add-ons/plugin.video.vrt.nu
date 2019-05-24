@@ -30,7 +30,7 @@ class VRTApiHelper:
         self._favorites = _favorites
         self._channel_filter = [channel.get('name') for channel in CHANNELS if _kodi.get_setting(channel.get('name')) == 'true']
 
-    def get_tvshow_items(self, category=None, channel=None, filtered=False):
+    def get_tvshow_items(self, category=None, channel=None, use_favorites=False):
         params = dict()
 
         if category:
@@ -54,14 +54,14 @@ class VRTApiHelper:
             self._kodi.log_notice('URL get: ' + unquote(api_url), 'Verbose')
             api_json = json.load(urlopen(api_url))
             self._kodi.update_cache(cache_file, api_json)
-        return self._map_to_tvshow_items(api_json, filtered=statichelper.is_filtered(filtered))
+        return self._map_to_tvshow_items(api_json, use_favorites=statichelper.boolean(use_favorites))
 
-    def _map_to_tvshow_items(self, tvshows, filtered=False):
+    def _map_to_tvshow_items(self, tvshows, use_favorites=False):
         tvshow_items = []
-        if statichelper.is_filtered(filtered):
+        if statichelper.boolean(use_favorites):
             favorite_names = self._favorites.names()
         for tvshow in tvshows:
-            if statichelper.is_filtered(filtered) and tvshow.get('programName') not in favorite_names:
+            if statichelper.boolean(use_favorites) and tvshow.get('programName') not in favorite_names:
                 continue
             metadata = metadatacreator.MetadataCreator()
             metadata.tvshowtitle = tvshow.get('title', '???')
@@ -99,7 +99,7 @@ class VRTApiHelper:
             ))
         return tvshow_items
 
-    def get_episode_items(self, path=None, page=None, show_seasons=False, filtered=False, variety=None):
+    def get_episode_items(self, path=None, page=None, show_seasons=False, use_favorites=False, variety=None):
         titletype = None
         season_key = None
         all_items = True
@@ -124,7 +124,7 @@ class VRTApiHelper:
                 import dateutil.tz
                 params['facets[assetOffTime]'] = datetime.now(dateutil.tz.gettz('Europe/Brussels')).strftime('%Y-%m-%d')
 
-            if statichelper.is_filtered(filtered):
+            if statichelper.boolean(use_favorites):
                 params['facets[programName]'] = '[%s]' % (','.join(self._favorites.names()))
                 cache_file = 'my-%s-%s.json' % (variety, page)
             else:
@@ -139,7 +139,7 @@ class VRTApiHelper:
                 self._kodi.log_notice('URL get: ' + unquote(api_url), 'Verbose')
                 api_json = json.load(urlopen(api_url))
                 self._kodi.update_cache(cache_file, api_json)
-            episode_items, sort, ascending, content = self._map_to_episode_items(api_json.get('results', []), titletype=variety, filtered=statichelper.is_filtered(filtered))
+            episode_items, sort, ascending, content = self._map_to_episode_items(api_json.get('results', []), titletype=variety, use_favorites=statichelper.boolean(use_favorites))
 
         elif path:
             if '.relevant/' in path:
@@ -159,7 +159,7 @@ class VRTApiHelper:
             results, episodes = self._get_season_episode_data(api_url, show_seasons=show_seasons, all_items=all_items)
 
             if results.get('episodes'):
-                episode_items, sort, ascending, content = self._map_to_episode_items(results.get('episodes'), titletype=titletype, season_key=season_key, filtered=filtered)
+                episode_items, sort, ascending, content = self._map_to_episode_items(results.get('episodes'), titletype=titletype, season_key=season_key, use_favorites=use_favorites)
             elif results.get('seasons'):
                 episode_items, sort, ascending, content = self._map_to_season_items(api_url, results.get('seasons'), episodes)
 
@@ -189,14 +189,14 @@ class VRTApiHelper:
                 episodes += page_json.get('results', [{}])
         return dict(episodes=episodes), None
 
-    def _map_to_episode_items(self, episodes, titletype=None, season_key=None, filtered=False):
+    def _map_to_episode_items(self, episodes, titletype=None, season_key=None, use_favorites=False):
         from datetime import datetime
         import dateutil.parser
         import dateutil.tz
         now = datetime.now(dateutil.tz.tzlocal())
         sort = 'episode'
         ascending = True
-        if statichelper.is_filtered(filtered):
+        if statichelper.boolean(use_favorites):
             favorite_names = self._favorites.names()
         episode_items = []
         for episode in episodes:
@@ -205,7 +205,7 @@ class VRTApiHelper:
             if season_key and episode.get('seasonTitle') != season_key:
                 continue
 
-            if statichelper.is_filtered(filtered) and episode.get('programName') not in favorite_names:
+            if statichelper.boolean(use_favorites) and episode.get('programName') not in favorite_names:
                 continue
 
             # Support search highlights

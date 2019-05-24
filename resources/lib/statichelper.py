@@ -68,10 +68,10 @@ def distinct(sequence):
             yield s
 
 
-def is_filtered(filtered):
-    if filtered is True:
+def boolean(value):
+    if value is True:
         return True
-    if filtered == 'True':
+    if value in ('True', 'true'):
         return True
     return False
 

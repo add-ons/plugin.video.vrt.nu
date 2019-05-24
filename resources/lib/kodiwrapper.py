@@ -98,8 +98,10 @@ def has_socks():
 
 
 class KodiWrapper:
+    ''' A wrapper around all Kodi functionality '''
 
     def __init__(self, handle, url, addon):
+        ''' Initialize the Kodi wrapper '''
         self._handle = handle
         self._url = url
         self._addon = addon
@@ -107,15 +109,16 @@ class KodiWrapper:
         self._max_log_level = log_levels.get(self.get_setting('max_log_level'), 3)
         self._usemenucaching = self.get_setting('usemenucaching') == 'true'
         self._cache_path = self.get_userdata_path() + 'cache/'
-        self._system_locale_works = self.set_locale()
+        self._system_locale_works = None
 
     def install_widevine(self):
+        ''' Install Widevine using inputstreamhelper '''
         ok = self.show_yesno_dialog(heading=self.localize(30971), message=self.localize(30972))
         if not ok:
             return
         try:
-            import inputstreamhelper
-            is_helper = inputstreamhelper.Helper('mpd', drm='com.widevine.alpha')
+            from inputstreamhelper import Helper
+            is_helper = Helper('mpd', drm='com.widevine.alpha')
             if is_helper.check_inputstream():
                 self.show_notification(heading=self.localize(30971), message=self.localize(30974), icon='info', time=5000)
             else:
@@ -125,6 +128,7 @@ class KodiWrapper:
         self.end_of_directory()
 
     def show_listing(self, list_items, sort='unsorted', ascending=True, content=None, cache=None):
+        ''' Show a virtual directory in Kodi '''
         import xbmcgui
         listing = []
 
@@ -187,6 +191,7 @@ class KodiWrapper:
         xbmcplugin.endOfDirectory(self._handle, ok, cacheToDisc=cache)
 
     def play(self, video):
+        ''' Create a virtual directory listing to play its only item '''
         import xbmcgui
         play_item = xbmcgui.ListItem(path=video.stream_url)
         play_item.setProperty('inputstream.adaptive.max_bandwidth', str(self.get_max_bandwidth() * 1000))
@@ -216,6 +221,7 @@ class KodiWrapper:
         xbmc.Player().showSubtitles(subtitles_visible)
 
     def get_search_string(self):
+        ''' Ask the user for a search string '''
         search_string = None
         keyboard = xbmc.Keyboard('', self.localize(30097))
         keyboard.doModal()
@@ -224,24 +230,28 @@ class KodiWrapper:
         return search_string
 
     def show_ok_dialog(self, heading='', message=''):
+        ''' Show Kodi's OK dialog '''
         import xbmcgui
         if not heading:
             heading = self._addon.getAddonInfo('name')
         xbmcgui.Dialog().ok(heading=heading, line1=message)
 
     def show_notification(self, heading='', message='', icon='info', time=4000):
+        ''' Show a Kodi notification '''
         import xbmcgui
         if not heading:
             heading = self._addon.getAddonInfo('name')
         xbmcgui.Dialog().notification(heading=heading, message=message, icon=icon, time=time)
 
     def show_yesno_dialog(self, heading='', message=''):
+        ''' Show Kodi's yes/no dialog '''
         import xbmcgui
         if not heading:
             heading = self._addon.getAddonInfo('name')
         return xbmcgui.Dialog().yesno(heading=self.localize(30971), line1=self.localize(30972))
 
     def set_locale(self):
+        ''' Load the proper locale for date strings '''
         import locale
         locale_lang = self.get_global_setting('locale.language').split('.')[-1]
         try:
@@ -249,13 +259,17 @@ class KodiWrapper:
             locale.setlocale(locale.LC_ALL, locale_lang)
             return True
         except Exception as e:
-            self.log_notice('Failed to set locale: %s' % e, 'Debug')
+            self.log_notice("Your system does not support locale '%s': %s" % (locale_lang, e), 'Debug')
             return False
 
     def localize(self, string_id):
+        ''' Return the translated string from the .po language files '''
         return self._addon.getLocalizedString(string_id)
 
     def localize_date(self, date, strftime):
+        ''' Return a localized date, even if the system does not support your locale '''
+        if self._system_locale_works is None:
+            self._system_locale_works = self.set_locale()
         if not self._system_locale_works:
             if '%a' in strftime:
                 strftime = strftime.replace('%a', WEEKDAY_SHORT[date.strftime('%w')])
@@ -268,21 +282,27 @@ class KodiWrapper:
         return date.strftime(strftime)
 
     def localize_dateshort(self, date):
+        ''' Return a localized short date string '''
         return self.localize_date(date, xbmc.getRegion('dateshort'))
 
     def localize_datelong(self, date):
+        ''' Return a localized long date string '''
         return self.localize_date(date, xbmc.getRegion('datelong'))
 
     def get_setting(self, setting_id):
+        ''' Get an add-on setting '''
         return self._addon.getSetting(setting_id)
 
     def set_setting(self, setting_id, setting_value):
+        ''' Set an add-on setting '''
         return self._addon.setSetting(setting_id, setting_value)
 
     def open_settings(self):
+        ''' Open the add-in settings window, shows Credentials '''
         self._addon.openSettings()
 
     def get_global_setting(self, setting):
+        ''' Get a Kodi setting '''
         import json
         json_result = xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Settings.GetSettingValue", "params": {"setting": "%s"}, "id": 1}' % setting)
         return json.loads(json_result).get('result', dict()).get('value')
@@ -299,6 +319,7 @@ class KodiWrapper:
         return 0
 
     def get_proxies(self):
+        ''' Return a usable proxies dictionary from Kodi proxy settings '''
         usehttpproxy = self.get_global_setting('network.usehttpproxy')
         if usehttpproxy is False:
             return None
@@ -313,7 +334,7 @@ class KodiWrapper:
             return None
 
         proxy_types = ['http', 'socks4', 'socks4a', 'socks5', 'socks5h']
-        if 0 <= httpproxytype <= 5:
+        if 0 <= httpproxytype < 5:
             httpproxyscheme = proxy_types[httpproxytype]
         else:
             httpproxyscheme = 'http'
@@ -337,68 +358,82 @@ class KodiWrapper:
         return dict(http=proxy_address, https=proxy_address)
 
     def has_inputstream_adaptive(self):
-        if self.get_setting('useinputstreamadaptive') == 'true':
-            return xbmc.getCondVisibility('System.HasAddon("{0}")'.format('inputstream.adaptive')) == 1
-        return False
+        ''' Whether InputStream Adaptive is installed and enabled in add-on settings '''
+        return self.get_setting('useinputstreamadaptive') == 'true' and xbmc.getCondVisibility('System.HasAddon(inputstream.adaptive)') == 1
 
     def has_credentials(self):
+        ''' Whether the add-on has credentials configured '''
         return bool(self.get_setting('username') and self.get_setting('password'))
 
+    def kodi_version(self):
+        ''' Returns major Kodi version '''
+        return int(xbmc.getInfoLabel('System.BuildVersion').split('.')[0])
+
     def can_play_drm(self):
-        if self.get_setting('useinputstreamadaptive') == 'true':
-            kodi_version = int(xbmc.getInfoLabel('System.BuildVersion').split('.')[0])
-            return kodi_version > 17
-        return False
+        ''' Whether this Kodi can do DRM using InputStream Adaptive '''
+        return self.get_setting('useinputstreamadaptive') == 'true' and self.kodi_version() > 17
 
     def get_userdata_path(self):
+        ''' Return the profile's userdata path '''
         return xbmc.translatePath(self._addon.getAddonInfo('profile'))
 
     def get_addon_path(self):
+        ''' Return the addon path '''
         return xbmc.translatePath(self._addon.getAddonInfo('path'))
 
     def get_path(self, path):
+        ''' Convert a special path '''
         return xbmc.translatePath(path)
 
     def listdir(self, path):
+        ''' Return all files in a directory (using xbmcvfs)'''
         import xbmcvfs
         return xbmcvfs.listdir(path)
 
     def mkdir(self, path):
+        ''' Create a directory (using xbmcvfs) '''
         import xbmcvfs
         self.log_notice("Create directory '%s'." % path, 'Debug')
         return xbmcvfs.mkdir(path)
 
     def mkdirs(self, path):
+        ''' Create directory including parents (using xbmcvfs) '''
         import xbmcvfs
         self.log_notice("Recursively create directory '%s'." % path, 'Debug')
         return xbmcvfs.mkdirs(path)
 
     def check_if_path_exists(self, path):
+        ''' Whether the path exists (using xbmcvfs)'''
         import xbmcvfs
         return xbmcvfs.exists(path)
 
     @contextmanager
     def open_file(self, path, flags='r'):
+        ''' Open a file (using xbmcvfs) '''
         import xbmcvfs
         f = xbmcvfs.File(path, flags)
         yield f
         f.close()
 
     def stat_file(self, path):
+        ''' Return information about a file (using xbmcvfs) '''
         import xbmcvfs
         return xbmcvfs.Stat(path)
 
     def delete_file(self, path):
+        ''' Remove a file (using xbmcvfs) '''
         import xbmcvfs
         self.log_notice("Delete file '%s'." % path, 'Debug')
         return xbmcvfs.delete(path)
 
     def md5(self, path):
+        ''' Return an MD5 checksum of a file '''
         import hashlib
         with self.open_file(path) as f:
             return hashlib.md5(f.read().encode('utf-8'))
 
     def human_delta(self, seconds):
+        ''' Return a human-readable representation of the TTL '''
         import math
         days = int(math.floor(seconds / (24 * 60 * 60)))
         seconds = seconds % (24 * 60 * 60)
@@ -415,6 +450,7 @@ class KodiWrapper:
         return '%d second%s' % (seconds, 's' if seconds != 1 else '')
 
     def get_cache(self, path, ttl=None):
+        ''' Get the content from cache, if it's still fresh '''
         if self.get_setting('usehttpcaching') == 'false':
             return None
 
@@ -441,6 +477,7 @@ class KodiWrapper:
         return None
 
     def update_cache(self, path, data):
+        ''' Update the cache, if necessary '''
         if self.get_setting('usehttpcaching') == 'false':
             return
 
@@ -468,9 +505,11 @@ class KodiWrapper:
             os.utime(path)
 
     def invalidate_cache(self, path):
+        ''' Invalidate an existing cache file '''
         self.delete_file(self._cache_path + path)
 
     def invalidate_caches(self, expr=None):
+        ''' Invalidate multiple cache files '''
         import fnmatch
         _, files = self.listdir(self._cache_path)
         if expr:
@@ -479,17 +518,20 @@ class KodiWrapper:
             self.delete_file(self._cache_path + f)
 
     def container_refresh(self):
+        ''' Refresh the current container '''
         self.log_notice('Execute: Container.Refresh', 'Debug')
         xbmc.executebuiltin('Container.Refresh')
 
     def container_update(self, url=None, path='', replace=False):
+        ''' Update the current container '''
         if url is None:
             url = self._url
         self.log_notice('Execute: Container.Update(%s%s%s)' % (url, path, ',replace' if replace else ''), 'Debug')
         xbmc.executebuiltin('Container.Update(%s%s%s)' % (url, path, ',replace' if replace else ''))
 
     def end_of_directory(self):
-        xbmcplugin.endOfDirectory(self._handle, False, cacheToDisc=False)
+        ''' Close a virtual directory, required to avoid a waiting Kodi '''
+        xbmcplugin.endOfDirectory(handle=self._handle, succeeded=False, updateListing=False, cacheToDisc=False)
 
     def log_access(self, url, query_string, log_level='Verbose'):
         ''' Log addon access '''

@@ -9,8 +9,8 @@ import re
 from resources.lib.helperobjects import ApiData, StreamURLS
 
 try:
-    from urllib.parse import quote, unquote, urlencode
     from urllib.error import HTTPError
+    from urllib.parse import quote, unquote, urlencode
     from urllib.request import build_opener, install_opener, urlopen, ProxyHandler
 except ImportError:
     from urllib import urlencode
@@ -34,8 +34,8 @@ class StreamService:
         self._vualto_license_url = None
 
     def _get_vualto_license_url(self):
-        self._vualto_license_url = json.load(urlopen(self._VUPLAY_API_URL)).get('drm_providers', dict()).get('widevine', dict()).get('la_url')
         self._kodi.log_notice('URL get: ' + unquote(self._VUPLAY_API_URL), 'Verbose')
+        self._vualto_license_url = json.load(urlopen(self._VUPLAY_API_URL)).get('drm_providers', dict()).get('widevine', dict()).get('la_url')
 
     def _create_settings_dir(self):
         settingsdir = self._kodi.get_userdata_path()
