@@ -77,6 +77,7 @@ class Favorites:
         # NOTE: Updates to favorites take a longer time to take effect, so we keep our own cache and use it
         self._favorites[self.uuid(path)] = dict(value=payload)
         self._kodi.update_cache('favorites.json', self._favorites)
+        self.invalidate_caches()
 
     def is_favorite(self, path):
         ''' Is a program a favorite ? '''
@@ -114,7 +115,7 @@ class Favorites:
         ''' Return all favorite titles '''
         return [p.get('value').get('title') for p in self._favorites.values() if p.get('value').get('isFavorite')]
 
-    def invalidate_cache(self):
+    def invalidate_caches(self):
         ''' Invalidate caches that rely on favorites '''
         self._kodi.invalidate_caches('my-offline-*.json')
         self._kodi.invalidate_caches('my-recent-*.json')

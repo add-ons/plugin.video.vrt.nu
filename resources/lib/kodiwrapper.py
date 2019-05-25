@@ -308,6 +308,7 @@ class KodiWrapper:
         return json.loads(json_result).get('result', dict()).get('value')
 
     def get_max_bandwidth(self):
+        ''' Get the max bandwidth based on Kodi and VRT NU add-on settings '''
         vrtnu_max_bandwidth = int(self.get_setting('max_bandwidth'))
         global_max_bandwidth = int(self.get_global_setting('network.bandwidth'))
         if vrtnu_max_bandwidth != 0 and global_max_bandwidth != 0:

@@ -8,13 +8,16 @@ from resources.lib.helperobjects import TitleItem
 
 
 class VRTPlayer:
+    ''' An object providing all methods for Kodi menu generation '''
 
     def __init__(self, _kodi, _favorites, _apihelper):
+        ''' Initialise object '''
         self._kodi = _kodi
         self._favorites = _favorites
         self._apihelper = _apihelper
 
     def show_main_menu_items(self):
+        ''' The VRT NU add-on main menu '''
         main_items = []
 
         # Only add 'My programs' when it has been activated
@@ -73,6 +76,7 @@ class VRTPlayer:
         self._kodi.show_listing(main_items)
 
     def show_favorites_menu_items(self):
+        ''' The VRT NU addon 'My Programs' menu '''
         favorites_items = [
             TitleItem(title=self._kodi.localize(30040),  # My A-Z listing
                       url_dict=dict(action=actions.LISTING_AZ_TVSHOWS, use_favorites=True),
@@ -97,14 +101,17 @@ class VRTPlayer:
             self._kodi.show_ok_dialog(heading=self._kodi.localize(30415), message=self._kodi.localize(30416))
 
     def show_tvshow_menu_items(self, category=None, use_favorites=False):
+        ''' The VRT NU add-on 'A-Z' listing menu '''
         tvshow_items = self._apihelper.get_tvshow_items(category=category, use_favorites=use_favorites)
         self._kodi.show_listing(tvshow_items, sort='label', content='tvshows')
 
     def show_category_menu_items(self):
+        ''' The VRT NU add-on 'Categories' listing menu '''
         category_items = self._apihelper.get_category_items()
         self._kodi.show_listing(category_items, sort='label', content='files')
 
     def show_channels_menu_items(self, channel=None):
+        ''' The VRT NU add-on 'Channels' listing menu '''
         if channel:
             tvshow_items = self._apihelper.get_tvshow_items(channel=channel)
             self._kodi.show_listing(tvshow_items, sort='label', content='tvshows')
@@ -114,18 +121,22 @@ class VRTPlayer:
             self._kodi.show_listing(channel_items, cache=False)
 
     def show_livestream_items(self):
+        ''' The VRT NU add-on 'Live TV' listing menu '''
         channel_items = self._apihelper.get_channel_items(action=actions.PLAY, channels=['een', 'canvas', 'sporza', 'ketnet-jr', 'ketnet', 'stubru', 'mnm'])
         self._kodi.show_listing(channel_items, cache=False)
 
     def show_episodes(self, path):
+        ''' The VRT NU add-on episodes listing menu '''
         episode_items, sort, ascending, content = self._apihelper.get_episode_items(path=path, show_seasons=True)
         self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content)
 
     def show_all_episodes(self, path):
+        ''' The VRT NU add-on '* All seasons' listing menu '''
         episode_items, sort, ascending, content = self._apihelper.get_episode_items(path=path)
         self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content)
 
     def show_recent(self, page=0, use_favorites=False):
+        ''' The VRT NU add-on 'Most recent' and 'My most recent' listing menu '''
         page = statichelper.realpage(page)
         episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=page, use_favorites=use_favorites, variety='recent')
 
@@ -142,6 +153,7 @@ class VRTPlayer:
         self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content, cache=False)
 
     def show_offline(self, page=0, use_favorites=False):
+        ''' The VRT NU add-on 'Soon offline' and 'My soon offline' listing menu '''
         page = statichelper.realpage(page)
         episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=page, use_favorites=use_favorites, variety='offline')
 
@@ -157,14 +169,8 @@ class VRTPlayer:
 
         self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content)
 
-    def play(self, params):
-        _tokenresolver = tokenresolver.TokenResolver(self._kodi)
-        _streamservice = streamservice.StreamService(self._kodi, _tokenresolver)
-        stream = _streamservice.get_stream(params)
-        if stream is not None:
-            self._kodi.play(stream)
-
     def search(self, search_string=None, page=None):
+        ''' The VRT NU add-on Search functionality and results '''
         page = statichelper.realpage(page)
 
         if search_string is None:
@@ -192,3 +198,11 @@ class VRTPlayer:
 
         self._kodi.container_update(replace=True)
         self._kodi.show_listing(search_items, sort=sort, ascending=ascending, content=content, cache=False)
+
+    def play(self, params):
+        ''' A wrapper for playing video items '''
+        _tokenresolver = tokenresolver.TokenResolver(self._kodi)
+        _streamservice = streamservice.StreamService(self._kodi, _tokenresolver)
+        stream = _streamservice.get_stream(params)
+        if stream is not None:
+            self._kodi.play(stream)

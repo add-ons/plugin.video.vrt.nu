@@ -75,8 +75,8 @@ class VRTApiHelper:
                 thumbnail = statichelper.add_https_method(tvshow.get('thumbnail', 'DefaultAddonVideo.png'))
             else:
                 thumbnail = 'DefaultAddonVideo.png'
-            program_path = statichelper.unique_path(tvshow.get('targetUrl'))
             if self._favorites.is_activated():
+                program_path = statichelper.unique_path(tvshow.get('targetUrl'))
                 program = tvshow.get('title').encode('utf-8')
                 if self._favorites.is_favorite(program_path):
                     params = dict(action='unfollow', program=program, path=program_path)
@@ -268,8 +268,8 @@ class VRTApiHelper:
             if self._showpermalink and metadata.permalink:
                 metadata.plot = '%s\n\n[COLOR yellow]%s[/COLOR]' % (metadata.plot, metadata.permalink)
 
-            program_path = statichelper.unique_path(episode.get('programUrl'))
             if self._favorites.is_activated():
+                program_path = statichelper.unique_path(episode.get('programUrl'))
                 program = episode.get('program').encode('utf-8')
                 if self._favorites.is_favorite(program_path):
                     params = dict(action='unfollow', program=program, path=program_path)

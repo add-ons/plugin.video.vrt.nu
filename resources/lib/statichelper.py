@@ -11,6 +11,7 @@ except ImportError:
     from HTMLParser import HTMLParser
 
     def unescape(s):
+        ''' Expose HTMLParser's unescape '''
         return HTMLParser().unescape(s)
 
 HTML_MAPPING = [
@@ -25,18 +26,21 @@ HTML_MAPPING = [
 
 
 def convert_html_to_kodilabel(text):
+    ''' Convert VRT HTML content into Kodit formatted text '''
     for (k, v) in HTML_MAPPING:
         text = k.sub(v, text)
     return unescape(text).strip()
 
 
 def unique_path(path):
+    ''' Create a unique path to be used in VRT favorites '''
     if path.startswith('//www.vrt.be/vrtnu'):
         return path.replace('//www.vrt.be/vrtnu/', '/vrtnu/').replace('.relevant/', '/')
     return path
 
 
 def shorten_link(url):
+    ''' Create a link that is as short as possible '''
     if url is None:
         return None
     if url.startswith('https://www.vrt.be/vrtnu/'):
@@ -49,10 +53,12 @@ def shorten_link(url):
 
 
 def strip_newlines(text):
+    ''' Strip newlines and whitespaces '''
     return text.replace('\n', '').strip()
 
 
 def add_https_method(url):
+    ''' Add HTTPS protocol to URL that lacks it '''
     if url.startswith('//'):
         return 'https:' + url
     if url.startswith('/'):
@@ -61,6 +67,7 @@ def add_https_method(url):
 
 
 def distinct(sequence):
+    ''' Create a unique list that has no duplicates '''
     seen = set()
     for s in sequence:
         if s not in seen:
@@ -69,6 +76,7 @@ def distinct(sequence):
 
 
 def boolean(value):
+    ''' Verify if a URL parameter values is a boolean '''
     if value is True:
         return True
     if value in ('True', 'true'):
@@ -77,6 +85,7 @@ def boolean(value):
 
 
 def realpage(page):
+    ''' Convert a URL parameter page value into an integer '''
     try:
         page = int(page)
     except TypeError:
