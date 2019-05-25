@@ -6,8 +6,10 @@ from __future__ import absolute_import, division, unicode_literals
 
 
 class MetadataCreator:
+    ''' This class collects and creates an appropriate infoLabels dictionary for Kodi '''
 
     def __init__(self):
+        ''' Initialize an empty Metadata object '''
         self.brands = None
         self.datetime = None
         self.duration = None
@@ -17,31 +19,16 @@ class MetadataCreator:
         self.offtime = None
         self.ontime = None
         self.permalink = None
-        self._plot = None
-        self._plotoutline = None
+        self.plot = None
+        self.plotoutline = None
         self.season = None
         self.subtitle = None
         self.title = None
         self.tvshowtitle = None
         self.year = None
 
-    @property
-    def plot(self):
-        return self._plot
-
-    @plot.setter
-    def plot(self, value):
-        self._plot = value.strip()
-
-    @property
-    def plotoutline(self):
-        return self._plotoutline
-
-    @plotoutline.setter
-    def plotoutline(self, value):
-        self._plotoutline = value.strip()
-
     def get_video_dict(self):
+        ''' Return an infoLabels dictionary for Kodi '''
         from datetime import datetime
         import dateutil.tz
         from resources.lib import CHANNELS
@@ -86,10 +73,10 @@ class MetadataCreator:
             video_dict['showlink'] = [self.permalink]
 
         if self.plot:
-            video_dict['plot'] = self.plot
+            video_dict['plot'] = self.plot.strip()
 
         if self.plotoutline:
-            video_dict['plotoutline'] = self.plotoutline
+            video_dict['plotoutline'] = self.plotoutline.strip()
 
         if self.season:
             video_dict['season'] = self.season
