@@ -69,9 +69,12 @@ def router(params_string):
     elif action == actions.LISTING_CATEGORIES:
         _vrtplayer.show_category_menu_items()
     elif action == actions.LISTING_CATEGORY_TVSHOWS:
-        _favorites.get_favorites(ttl=60 * 60)
+        if params.get('category'):
+            _favorites.get_favorites(ttl=60 * 60)
         _vrtplayer.show_tvshow_menu_items(category=params.get('category'))
     elif action == actions.LISTING_CHANNELS:
+        if params.get('channel'):
+            _favorites.get_favorites(ttl=60 * 60)
         _vrtplayer.show_channels_menu_items(channel=params.get('channel'))
     elif action == actions.LISTING_FAVORITES:
         _favorites.get_favorites(ttl=60 * 60)
