@@ -40,7 +40,7 @@ def addSortMethod(handle, sortMethod):
     return
 
 
-def endOfDirectory(handle, ok, cacheToDisc):
+def endOfDirectory(handle, succeeded=True, updateListing=True, cacheToDisc=True):
     return
 
 
