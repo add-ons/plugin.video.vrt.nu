@@ -356,12 +356,12 @@ msgid "MNM"
 msgstr "MNM"
 
 msgctxt "#30873"
-msgid "VRT NXT"
-msgstr "VRT NXT"
-
-msgctxt "#30874"
 msgid "VRT NWS"
 msgstr "VRT NWS"
+
+msgctxt "#30874"
+msgid "VRT NXT"
+msgstr "VRT NXT"
 
 msgctxt "#30900"
 msgid "Troubleshooting"

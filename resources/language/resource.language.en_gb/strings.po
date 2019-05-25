@@ -379,11 +379,11 @@ msgid "MNM"
 msgstr ""
 
 msgctxt "#30873"
-msgid "VRT NXT"
+msgid "VRT NWS"
 msgstr ""
 
 msgctxt "#30874"
-msgid "VRT NWS"
+msgid "VRT NXT"
 msgstr ""
 
 msgctxt "#30900"
