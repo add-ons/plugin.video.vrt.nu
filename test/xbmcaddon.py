@@ -87,3 +87,7 @@ class Addon:
     @staticmethod
     def getSetting(key):
         return SETTINGS.get(key)
+
+    @staticmethod
+    def setSetting(key, value):
+        pass
