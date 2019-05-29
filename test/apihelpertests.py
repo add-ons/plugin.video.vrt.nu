@@ -22,7 +22,7 @@ class ApiHelperTests(unittest.TestCase):
 
     def test_get_api_data_single_season(self):
         title_items, sort, ascending, content = self._apihelper.get_episode_items(path='/vrtnu/a-z/het-journaal.relevant/', show_seasons=True)
-        self.assertTrue(121 < len(title_items) < 130, 'We got %s items instead.' % len(title_items))
+        self.assertTrue(121 < len(title_items) < 140, 'We got %s items instead.' % len(title_items))
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
