@@ -22,7 +22,7 @@ class Favorites:
         self._proxies = _kodi.get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
         # This is our internal representation
-        self._favorites = None
+        self._favorites = dict()
 
     def is_activated(self):
         ''' Is favorites activated in the menu and do we have credentials ? '''
@@ -30,6 +30,8 @@ class Favorites:
 
     def get_favorites(self, ttl=None):
         ''' Get a cached copy or a newer favorites from VRT, or fall back to a cached file '''
+        if not self.is_activated():
+            return
         import json
         api_json = self._kodi.get_cache('favorites.json', ttl)
         if not api_json:
