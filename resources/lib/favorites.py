@@ -34,20 +34,21 @@ class Favorites:
         api_json = self._kodi.get_cache('favorites.json', ttl)
         if not api_json:
             xvrttoken = self._tokenresolver.get_fav_xvrttoken()
-            headers = {
-                'authorization': 'Bearer ' + xvrttoken,
-                'content-type': 'application/json',
-                'Referer': 'https://www.vrt.be/vrtnu',
-            }
-            req = Request('https://video-user-data.vrt.be/favorites', headers=headers)
-            self._kodi.log_notice('URL post: https://video-user-data.vrt.be/favorites', 'Verbose')
-            try:
-                api_json = json.load(urlopen(req))
-            except Exception:
-                # Force favorites from cache
-                api_json = self._kodi.get_cache('favorites.json', ttl=None)
-            else:
-                self._kodi.update_cache('favorites.json', api_json)
+            if xvrttoken:
+                headers = {
+                    'authorization': 'Bearer ' + xvrttoken,
+                    'content-type': 'application/json',
+                    'Referer': 'https://www.vrt.be/vrtnu',
+                }
+                req = Request('https://video-user-data.vrt.be/favorites', headers=headers)
+                self._kodi.log_notice('URL post: https://video-user-data.vrt.be/favorites', 'Verbose')
+                try:
+                    api_json = json.load(urlopen(req))
+                except Exception:
+                    # Force favorites from cache
+                    api_json = self._kodi.get_cache('favorites.json', ttl=None)
+                else:
+                    self._kodi.update_cache('favorites.json', api_json)
         self._favorites = api_json
 
     def set_favorite(self, program, path, value=True):
