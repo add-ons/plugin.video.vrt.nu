@@ -14,7 +14,7 @@ This Kodi add-on can be used to watch all video content from VRT NU.
 
 - Track the programs you follow
 - List all videos alphabetically by program, by category or by channel
-- Watch live streams from Eén, Canvas, Ketnet en Ketnet Junior
+- Watch live streams from Eén, Canvas, Ketnet and Ketnet Junior
 - Discover recently added or soon offline content
 - Browse the online TV guides or search VRT NU
 
