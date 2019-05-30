@@ -12,14 +12,15 @@ VRT NU is the video-on-demand platform of VRT, Flanders' public broadcasting ser
 
 This Kodi add-on can be used to watch all video content from VRT NU.
 
-- List all videos alphabetically by program or by category
-- Watch live streams from Eén, Canvas and Ketnet
-- Discover recently added content
-- Browse the online VRT TV guides
+- Track the programs you follow
+- List all videos alphabetically by program, by category or by channel
+- Watch live streams from Eén, Canvas, Ketnet en Ketnet Junior
+- Discover recently added or soon offline content
+- Browse the online TV guides or search VRT NU
 
 Some video content may be geo-blocked.
 
-**This project is not endorsed by VRT.**
+**The VRT NU add-on is provided 'as is' without any warranty of any kind, and is not endorsed by VRT.**
 
 ## Installing
 In Kodi, simply search for `VRT`, and install the VRT NU add-on.
