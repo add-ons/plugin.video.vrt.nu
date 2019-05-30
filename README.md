@@ -50,6 +50,21 @@ you can send a message to [our Facebook page](https://facebook.com/kodivrtnu/).
 
 ## Releases
 
+#### v1.10.0 (2019-05-30)
+- Performance improvements by caching HTTP requests locally (@dagwieers)
+- Fix episode listings with more than 150 items (@mediaminister)
+- Add "Soon offline" functionality to track episodes that will be removed (@dagwieers)
+- Add TV guide schedule in live stream metadata (@dagwieers)
+- Add "My programs" functionality to track your favorite programs (@dagwieers)
+- Improvements to stream selection logic (@mediaminister)
+- Fix localized date strings for JeOS platforms (@dagwieers)
+- Add "Search" functionality in main menu (@dagwieers)
+- Add Ketnet Junior 24/7 live stream (@dagwieers)
+- Add Kodi "* All seasons" support in season listings (@dagwieers)
+- Add 720p live stream support (without DRM) (@dagwieers)
+- Extend the "Troubleshooting" settings with logging and caching options (@dagwieers)
+- Support bandwidth limitation (useful for mobile internet connections) (@mediaminister)
+
 #### v1.9.0 (2019-05-04)
 - Add a Channels menu (@dagwieers)
 - Add page-browsing in Recent menu, 50 items per page (@dagwieers)

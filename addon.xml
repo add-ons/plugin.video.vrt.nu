@@ -46,7 +46,7 @@ Met deze Kodi add-on kan je alle video streams van VRT NU bekijken.
         <platform>all</platform>
         <license>GNU General Public License, v3</license>
         <news>
-v1.10.0 (2019-06-01)
+v1.10.0 (2019-05-30)
 - Performance improvements by caching HTTP requests locally (@dagwieers)
 - Fix episode listings with more than 150 items (@mediaminister)
 - Add "Soon offline" functionality to track episodes that will be removed (@dagwieers)
