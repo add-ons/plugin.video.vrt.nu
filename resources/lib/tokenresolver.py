@@ -5,10 +5,10 @@
 from __future__ import absolute_import, division, unicode_literals
 from resources.lib.helperobjects import Credentials
 
-try:
+try:  # Python 3
     from urllib.parse import urlencode, unquote
     from urllib.request import build_opener, install_opener, ProxyHandler, HTTPCookieProcessor, HTTPErrorProcessor, urlopen, Request
-except ImportError:
+except ImportError:  # Python 2
     from urllib import urlencode
     from urllib2 import build_opener, install_opener, ProxyHandler, HTTPCookieProcessor, HTTPErrorProcessor, unquote, urlopen, Request
 

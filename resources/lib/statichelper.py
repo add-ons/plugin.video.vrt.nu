@@ -5,9 +5,9 @@
 from __future__ import absolute_import, division, unicode_literals
 import re
 
-try:
+try:  # Python 3
     from html import unescape
-except ImportError:
+except ImportError:  # Python 2
     from HTMLParser import HTMLParser
 
     def unescape(s):

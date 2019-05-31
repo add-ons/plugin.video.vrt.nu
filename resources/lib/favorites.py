@@ -6,9 +6,9 @@
 from __future__ import absolute_import, division, unicode_literals
 from resources.lib import tokenresolver
 
-try:
+try:  # Python 3
     from urllib.request import build_opener, install_opener, ProxyHandler, Request, urlopen
-except ImportError:
+except ImportError:  # Python 2
     from urllib2 import build_opener, install_opener, ProxyHandler, Request, urlopen
 
 
@@ -120,5 +120,6 @@ class Favorites:
 
     def invalidate_caches(self):
         ''' Invalidate caches that rely on favorites '''
+        self._kodi.invalidate_caches('favorites.json')
         self._kodi.invalidate_caches('my-offline-*.json')
         self._kodi.invalidate_caches('my-recent-*.json')

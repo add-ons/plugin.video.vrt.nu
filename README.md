@@ -159,7 +159,7 @@ you can send a message to [our Facebook page](https://facebook.com/kodivrtnu/).
 #### v1.1.2 (2018-06-14)
 - New stream links for live streaming (@yorickps)
 
-#### v1.1.1 (2017-03-13)
+#### v1.1.1 (2018-03-13)
 - Fixed bug where seasons do not show when there is one malfunctioning
 
 #### v1.1.0 (2017-12-15)

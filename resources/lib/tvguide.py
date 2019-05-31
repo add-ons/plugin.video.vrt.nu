@@ -9,9 +9,9 @@ import json
 import dateutil.parser
 import dateutil.tz
 
-try:
+try:  # Python 3
     from urllib.request import build_opener, install_opener, ProxyHandler, urlopen
-except ImportError:
+except ImportError:  # Python 2
     from urllib2 import build_opener, install_opener, ProxyHandler, urlopen
 
 from resources.lib import CHANNELS, actions, metadatacreator, statichelper
