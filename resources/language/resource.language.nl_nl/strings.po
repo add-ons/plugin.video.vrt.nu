@@ -82,7 +82,7 @@ msgid "Browse channel TV guides"
 msgstr "Doorzoek de tv-gids per kanaal"
 
 msgctxt "#30026"
-msgid "Doorzoek VRT NU"
+msgid "Search VRT NU"
 msgstr "Doorzoek VRT NU"
 
 msgctxt "#30027"
