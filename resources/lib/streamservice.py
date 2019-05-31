@@ -8,11 +8,11 @@ import re
 
 from resources.lib.helperobjects import ApiData, StreamURLS
 
-try:
+try:  # Python 3
     from urllib.error import HTTPError
     from urllib.parse import quote, unquote, urlencode
     from urllib.request import build_opener, install_opener, urlopen, ProxyHandler
-except ImportError:
+except ImportError:  # Python 2
     from urllib import urlencode
     from urllib2 import build_opener, install_opener, urlopen, ProxyHandler, quote, unquote, HTTPError
 

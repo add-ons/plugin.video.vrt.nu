@@ -8,9 +8,9 @@ from contextlib import contextmanager
 import xbmc
 import xbmcplugin
 
-try:
+try:  # Python 3
     from urllib.parse import urlencode, unquote
-except ImportError:
+except ImportError:  # Python 2
     from urllib import urlencode
     from urllib2 import unquote
 
