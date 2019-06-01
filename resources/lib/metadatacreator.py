@@ -10,7 +10,7 @@ class MetadataCreator:
 
     def __init__(self):
         ''' Initialize an empty Metadata object '''
-        self.brands = None
+        self.brands = []
         self.datetime = None
         self.duration = None
         self.episode = None
