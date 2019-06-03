@@ -2,6 +2,8 @@
 
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
+''' Implements a VRTPlayer class '''
+
 from __future__ import absolute_import, division, unicode_literals
 from resources.lib import actions, statichelper, streamservice, tokenresolver
 from resources.lib.helperobjects import TitleItem

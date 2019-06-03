@@ -127,7 +127,7 @@ you can send a message to [our Facebook page](https://facebook.com/kodivrtnu/).
 - Livestreams working again
 
 #### v1.4.2 (2018-10-11)
-- Changed way of working with urls when a season is refering to href="#"
+- Changed way of working with urls when a season is referring to href="#"
 
 #### v1.4.1 (2018-09-24)
 - Adapted plugin to new vrtnu layout for showing multiple seasons
