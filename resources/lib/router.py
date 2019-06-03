@@ -2,7 +2,7 @@
 
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-''' This is the router module '''
+''' Implements a router function as entrypoint for the add-on '''
 
 from __future__ import absolute_import, division, unicode_literals
 

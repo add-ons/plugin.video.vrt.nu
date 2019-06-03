@@ -2,6 +2,8 @@
 
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
+''' All functionality that requires Kodi imports '''
+
 from __future__ import absolute_import, division, unicode_literals
 from contextlib import contextmanager
 
@@ -259,6 +261,8 @@ class KodiWrapper:
             locale.setlocale(locale.LC_ALL, locale_lang)
             return True
         except Exception as e:
+            if locale_lang == 'en_gb':
+                return True
             self.log_notice("Your system does not support locale '%s': %s" % (locale_lang, e), 'Debug')
             return False
 
