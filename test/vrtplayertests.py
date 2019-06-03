@@ -19,7 +19,7 @@ xbmcvfs = __import__('xbmcvfs')
 
 class TestVRTPlayer(unittest.TestCase):
 
-    _kodi = kodiwrapper.KodiWrapper(None, 'plugin://plugin.video.vrt.nu', xbmcaddon.Addon)
+    _kodi = kodiwrapper.KodiWrapper(None, 'plugin://plugin.video.vrt.nu')
     _tokenresolver = tokenresolver.TokenResolver(_kodi)
     _favorites = favorites.Favorites(_kodi, _tokenresolver)
     _apihelper = vrtapihelper.VRTApiHelper(_kodi, _favorites)

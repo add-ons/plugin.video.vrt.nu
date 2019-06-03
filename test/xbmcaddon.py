@@ -70,7 +70,7 @@ else:
 
 class Addon:
     @staticmethod
-    def __init__(id):  # pylint: disable=redefined-builtin
+    def __init__(id=None):  # pylint: disable=redefined-builtin
         pass
 
     @staticmethod

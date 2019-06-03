@@ -29,7 +29,7 @@ yesterday = now + timedelta(days=-1)
 
 class StreamServiceTests(unittest.TestCase):
 
-    _kodi = kodiwrapper.KodiWrapper(None, 'plugin://plugin.video.vrt.nu', xbmcaddon.Addon)
+    _kodi = kodiwrapper.KodiWrapper(None, 'plugin://plugin.video.vrt.nu')
     _tokenresolver = tokenresolver.TokenResolver(_kodi)
     _streamservice = streamservice.StreamService(_kodi, _tokenresolver)
 

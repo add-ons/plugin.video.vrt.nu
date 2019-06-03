@@ -9,6 +9,7 @@ from contextlib import contextmanager
 
 import xbmc
 import xbmcplugin
+import xbmcaddon
 
 try:  # Python 3
     from urllib.parse import urlencode, unquote
@@ -102,12 +103,12 @@ def has_socks():
 class KodiWrapper:
     ''' A wrapper around all Kodi functionality '''
 
-    def __init__(self, handle, url, addon):
+    def __init__(self, handle, url):
         ''' Initialize the Kodi wrapper '''
         self._handle = handle
         self._url = url
-        self._addon = addon
-        self._addon_id = addon.getAddonInfo('id')
+        self._addon = xbmcaddon.Addon()
+        self._addon_id = self._addon.getAddonInfo('id')
         self._max_log_level = log_levels.get(self.get_setting('max_log_level'), 3)
         self._usemenucaching = self.get_setting('usemenucaching') == 'true'
         self._cache_path = self.get_userdata_path() + 'cache/'
