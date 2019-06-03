@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import random
 import unittest
 
-from resources.lib import CATEGORIES, favorites, kodiwrapper, vrtapihelper, vrtplayer
+from resources.lib import CATEGORIES, favorites, kodiwrapper, tokenresolver, vrtapihelper, vrtplayer
 
 xbmc = __import__('xbmc')
 xbmcaddon = __import__('xbmcaddon')
@@ -20,7 +20,8 @@ xbmcvfs = __import__('xbmcvfs')
 class TestVRTPlayer(unittest.TestCase):
 
     _kodi = kodiwrapper.KodiWrapper(None, 'plugin://plugin.video.vrt.nu', xbmcaddon.Addon)
-    _favorites = favorites.Favorites(_kodi)
+    _tokenresolver = tokenresolver.TokenResolver(_kodi)
+    _favorites = favorites.Favorites(_kodi, _tokenresolver)
     _apihelper = vrtapihelper.VRTApiHelper(_kodi, _favorites)
     _vrtplayer = vrtplayer.VRTPlayer(_kodi, _favorites, _apihelper)
 

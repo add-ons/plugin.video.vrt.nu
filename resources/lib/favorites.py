@@ -6,7 +6,6 @@
 ''' Implementation of Favorites class '''
 
 from __future__ import absolute_import, division, unicode_literals
-from resources.lib import tokenresolver
 
 try:  # Python 3
     from urllib.request import build_opener, install_opener, ProxyHandler, Request, urlopen
@@ -17,10 +16,10 @@ except ImportError:  # Python 2
 class Favorites:
     ''' Track, cache and manage VRT favorites '''
 
-    def __init__(self, _kodi):
+    def __init__(self, _kodi, _tokenresolver):
         ''' Initialize favorites, relies on XBMC vfs and a special VRT token '''
         self._kodi = _kodi
-        self._tokenresolver = tokenresolver.TokenResolver(_kodi)
+        self._tokenresolver = _tokenresolver
         self._proxies = _kodi.get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
         # This is our internal representation
@@ -37,7 +36,7 @@ class Favorites:
         import json
         api_json = self._kodi.get_cache('favorites.json', ttl)
         if not api_json:
-            xvrttoken = self._tokenresolver.get_fav_xvrttoken()
+            xvrttoken = self._tokenresolver.get_xvrttoken(token_variant='user')
             if xvrttoken:
                 headers = {
                     'authorization': 'Bearer ' + xvrttoken,
@@ -64,7 +63,7 @@ class Favorites:
             # Already followed/unfollowed, nothing to do
             return
 
-        xvrttoken = self._tokenresolver.get_fav_xvrttoken()
+        xvrttoken = self._tokenresolver.get_xvrttoken(token_variant='user')
         headers = {
             'authorization': 'Bearer ' + xvrttoken,
             'content-type': 'application/json',
