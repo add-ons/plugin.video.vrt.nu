@@ -7,12 +7,11 @@ from __future__ import absolute_import, division, unicode_literals
 
 class ApiData:
 
-    def __init__(self, client, media_api_url, video_id, publication_id, xvrttoken, is_live_stream):
+    def __init__(self, client, media_api_url, video_id, publication_id, is_live_stream):
         self.client = client
         self.media_api_url = media_api_url
         self.video_id = video_id
         self.publication_id = publication_id
-        self.xvrttoken = xvrttoken
         self.is_live_stream = is_live_stream
 
 

@@ -119,7 +119,7 @@ CHANNELS = [
 
 class actions:
     ''' A list of add-on actions '''
-    CLEAR_COOKIES = 'clearcookies'
+    DELETE_TOKENS = 'deletetokens'
     FOLLOW = 'follow'
     INSTALL_WIDEVINE = 'installwidevine'
     INVALIDATE_CACHES = 'invalidatecaches'

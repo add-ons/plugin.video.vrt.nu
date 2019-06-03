@@ -7,7 +7,7 @@
 from __future__ import absolute_import, division, unicode_literals
 
 import xbmcaddon
-from resources.lib import actions, kodiwrapper
+from resources.lib import actions, kodiwrapper, tokenresolver
 
 try:  # Python 3
     from urllib.parse import parse_qsl
@@ -27,16 +27,15 @@ def router(argv):
     action = params.get('action')
 
     _kodi = kodiwrapper.KodiWrapper(addon_handle, addon_url, addon)
+    _tokenresolver = tokenresolver.TokenResolver(_kodi)
     _kodi.log_access(addon_url, params_string)
 
     # Actions that only require _kodi
     if action == actions.INVALIDATE_CACHES:
         _kodi.invalidate_caches()
         return
-    if action == actions.CLEAR_COOKIES:
-        from resources.lib import tokenresolver
-        _tokenresolver = tokenresolver.TokenResolver(_kodi)
-        _tokenresolver.reset_cookies()
+    if action == actions.DELETE_TOKENS:
+        _tokenresolver.delete_tokens()
         return
     if action == actions.LISTING_TVGUIDE:
         from resources.lib import tvguide
@@ -48,7 +47,7 @@ def router(argv):
         return
 
     from resources.lib import favorites
-    _favorites = favorites.Favorites(_kodi)
+    _favorites = favorites.Favorites(_kodi, _tokenresolver)
 
     # Actions requiring _favorites as well
     if action == actions.FOLLOW:

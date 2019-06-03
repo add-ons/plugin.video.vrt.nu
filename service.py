@@ -29,7 +29,7 @@ class VrtMonitor(xbmc.Monitor):
         _kodi.invalidate_caches('recent-*.json')
 
         _tokenresolver = tokenresolver.TokenResolver(_kodi)
-        _tokenresolver.reset_cookies()
+        _tokenresolver.delete_tokens()
 
 
 if __name__ == '__main__':
