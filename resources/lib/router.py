@@ -6,7 +6,6 @@
 
 from __future__ import absolute_import, division, unicode_literals
 
-import xbmcaddon
 from resources.lib import actions, kodiwrapper, tokenresolver
 
 try:  # Python 3
@@ -22,11 +21,10 @@ def router(argv):
     addon_handle = int(argv[1])
     params_string = argv[2][1:]
 
-    addon = xbmcaddon.Addon()
     params = dict(parse_qsl(params_string))
     action = params.get('action')
 
-    _kodi = kodiwrapper.KodiWrapper(addon_handle, addon_url, addon)
+    _kodi = kodiwrapper.KodiWrapper(addon_handle, addon_url)
     _tokenresolver = tokenresolver.TokenResolver(_kodi)
     _kodi.log_access(addon_url, params_string)
 

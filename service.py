@@ -7,7 +7,6 @@
 from __future__ import absolute_import, division, unicode_literals
 
 import xbmc
-import xbmcaddon
 from resources.lib import kodiwrapper, tokenresolver
 
 
@@ -20,8 +19,7 @@ class VrtMonitor(xbmc.Monitor):
 
     def onSettingsChanged(self):
         ''' Handler for changes to settings '''
-        addon = xbmcaddon.Addon(id='plugin.video.vrt.nu')
-        _kodi = kodiwrapper.KodiWrapper(None, None, addon)
+        _kodi = kodiwrapper.KodiWrapper(None, None)
         _kodi.log_notice('VRT NU Addon: settings changed')
         _kodi.container_refresh()
 
