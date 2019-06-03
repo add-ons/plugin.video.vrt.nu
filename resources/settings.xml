@@ -38,7 +38,7 @@
     </category>
     <category label="30900"> <!-- Troubleshooting -->
         <setting label="30901" type="lsep"/> <!-- Cache -->
-        <setting label="30903" help="30904" type="action" id="clear_tokens" action="RunPlugin(plugin://plugin.video.vrt.nu/?action=clearcookies)"/>
+        <setting label="30903" help="30904" type="action" id="delete_tokens" action="RunPlugin(plugin://plugin.video.vrt.nu/?action=deletetokens)"/>
         <setting label="30905" help="30906" type="action" id="refresh_favorites" action="RunPlugin(plugin://plugin.video.vrt.nu/?action=refreshfavorites)"/>
         <setting label="30907" help="30908" type="action" id="invalidate_caches" action="RunPlugin(plugin://plugin.video.vrt.nu/?action=invalidatecaches)"/>
         <setting label="30909" type="lsep"/> <!-- InputStream Adaptive -->
