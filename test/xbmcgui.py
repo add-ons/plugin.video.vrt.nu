@@ -18,7 +18,9 @@ class Dialog:
 
 class ListItem:
     def __init__(self, label='', label2='', iconImage='', thumbnailImage='', path='', offScreen=False):
-        return
+        self.label = label
+        self.label2 = label2
+        self.path = path
 
     def addContextMenuItems(self, items, replaceItems=False):
         return

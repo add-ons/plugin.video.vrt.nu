@@ -109,7 +109,7 @@ msgstr "Recent gepubliceerde afleveringen van tv-programma's die je volgt"
 
 msgctxt "#30044"
 msgid "My soon offline"
-msgstr "Mijn binnenkort verwijderd"
+msgstr "Mijn binnenkort offline"
 
 msgctxt "#30045"
 msgid "My video content that will soon be offline"

@@ -61,47 +61,55 @@ class Favorites:
         self.get_favorites(ttl=60 * 60)
         if value is self.is_favorite(path):
             # Already followed/unfollowed, nothing to do
-            return
+            return True
 
         xvrttoken = self._tokenresolver.get_xvrttoken(token_variant='user')
+        if xvrttoken is None:
+            self._kodi.show_notification(message='Failed to get favorites roken from VRT NU')
+            self._kodi.log_error('Failed to get favorites token from VRT NU')
+            return False
+
         headers = {
             'authorization': 'Bearer ' + xvrttoken,
             'content-type': 'application/json',
-            # 'Cookie': 'X-VRT-Token=' + xvrttoken,
             'Referer': 'https://www.vrt.be/vrtnu',
         }
         payload = dict(isFavorite=value, programUrl=path, title=program)
         data = json.dumps(payload).encode('utf-8')
         self._kodi.log_notice('URL post: https://video-user-data.vrt.be/favorites/%s' % self.uuid(path), 'Verbose')
         req = Request('https://video-user-data.vrt.be/favorites/%s' % self.uuid(path), data=data, headers=headers)
-        # TODO: Test that we get a HTTP 200, otherwise log and fail graceful
         result = urlopen(req)
         if result.getcode() != 200:
-            self._kodi.log_error("Failed to follow program '%s' at VRT NU" % path)
+            self._kodi.show_notification(message="Failed to (un)follow program '%s' at VRT NU" % path)
+            self._kodi.log_error("Failed to (un)follow program '%s' at VRT NU" % path)
+            return False
         # NOTE: Updates to favorites take a longer time to take effect, so we keep our own cache and use it
         self._favorites[self.uuid(path)] = dict(value=payload)
         self._kodi.update_cache('favorites.json', self._favorites)
         self.invalidate_caches()
+        return True
 
     def is_favorite(self, path):
         ''' Is a program a favorite ? '''
         value = False
         favorite = self._favorites.get(self.uuid(path))
-        if favorite:
+        if favorite is not None:
             value = favorite.get('value', dict(isFavorite=False)).get('isFavorite', False)
         return value
 
     def follow(self, program, path):
         ''' Follow your favorite program '''
-        self._kodi.show_notification(message='Follow ' + program)
-        self.set_favorite(program, path, True)
-        self._kodi.container_refresh()
+        ok = self.set_favorite(program, path, True)
+        if ok:
+            self._kodi.show_notification(message='Follow ' + program)
+            self._kodi.container_refresh()
 
     def unfollow(self, program, path):
         ''' Unfollow your favorite program '''
-        self._kodi.show_notification(message='Unfollow ' + program)
-        self.set_favorite(program, path, False)
-        self._kodi.container_refresh()
+        ok = self.set_favorite(program, path, False)
+        if ok:
+            self._kodi.show_notification(message='Unfollow ' + program)
+            self._kodi.container_refresh()
 
     def uuid(self, path):
         ''' Return a favorite uuid, used for lookups in favorites dict '''
@@ -109,7 +117,11 @@ class Favorites:
 
     def name(self, path):
         ''' Return the favorite name '''
-        return path.replace('.relevant/', '/').split('/')[-2]
+        try:
+            return path.replace('.relevant/', '/').split('/')[-2]
+        except IndexError:
+            # FIXME: Investigate when this fails !
+            return path
 
     def names(self):
         ''' Return all favorite names '''
@@ -121,6 +133,7 @@ class Favorites:
 
     def invalidate_caches(self):
         ''' Invalidate caches that rely on favorites '''
-        self._kodi.invalidate_caches('favorites.json')
+        # NOTE/ Do not invalidate favorites cache as we manage it ourselves
+        # self._kodi.invalidate_caches('favorites.json')
         self._kodi.invalidate_caches('my-offline-*.json')
         self._kodi.invalidate_caches('my-recent-*.json')
