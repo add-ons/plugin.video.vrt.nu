@@ -469,7 +469,7 @@ msgid "Install Widevine using 'InputStream Helper' add-on"
 msgstr ""
 
 msgctxt "#30972"
-msgid "Installing Widevine libraries using the 'InputStream Helper' add-on is done at your own risk and the VRT NU add-on is not responsible for any results. Nor is it guaranteed that Widevine will be installed correctly."
+msgid "Installing Widevine libraries using the 'InputStream Helper' add-on is done at your own risk and the VRT NU add-on is not responsible for any results. Nor is it guaranteed that Widevine will be (re)installed correctly."
 msgstr ""
 
 msgctxt "#30973"
