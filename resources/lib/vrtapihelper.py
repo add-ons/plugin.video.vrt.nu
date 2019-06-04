@@ -384,7 +384,7 @@ class VRTApiHelper:
             'q': search_string,
             'highlight': 'true',
         }
-        api_url = 'https://search.vrt.be/search?' + urlencode(params)
+        api_url = self._VRTNU_SEARCH_URL + '?' + urlencode(params)
         self._kodi.log_notice('URL get: ' + unquote(api_url), 'Verbose')
         api_json = json.load(urlopen(api_url))
 

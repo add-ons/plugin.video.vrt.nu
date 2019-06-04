@@ -22,7 +22,10 @@ def Stat(path):
 
 
 def delete(path):
-    return os.remove(path)
+    try:
+        os.remove(path)
+    except OSError:
+        pass
 
 
 def exists(path):

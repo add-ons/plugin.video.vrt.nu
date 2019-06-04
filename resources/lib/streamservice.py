@@ -300,16 +300,16 @@ class StreamService:
 
         # Get audio url
         if hls_audio_id:
-            audio_regex = re.compile(r'#EXT-X-MEDIA:TYPE=AUDIO[\w\-=,\.\"\/]+?GROUP-ID=\"' + hls_audio_id
-                                     + r'\"[\w\-=,\.\"\/]+?URI=\"(?P<AUDIO_URI>[\w\-=]+)\.m3u8\"')
+            audio_regex = re.compile(r'#EXT-X-MEDIA:TYPE=AUDIO[\w\-=,\.\"\/]+?GROUP-ID=\"' + hls_audio_id + ''
+                                     r'\"[\w\-=,\.\"\/]+?URI=\"(?P<AUDIO_URI>[\w\-=]+)\.m3u8\"')
             match_audio = re.search(audio_regex, hls_playlist)
             if match_audio:
                 hls_variant_url = hls_base_url + match_audio.group('AUDIO_URI') + '-' + hls_variant_url.split('-')[-1]
 
         # Get subtitle url, works only for on demand streams
         if self._kodi.get_setting('showsubtitles') == 'true' and '/live/' not in master_hls_url and hls_subtitle_id:
-            subtitle_regex = re.compile(r'#EXT-X-MEDIA:TYPE=SUBTITLES[\w\-=,\.\"\/]+?GROUP-ID=\"' + hls_subtitle_id
-                                        + r'\"[\w\-=,\.\"\/]+URI=\"(?P<SUBTITLE_URI>[\w\-=]+)\.m3u8\"')
+            subtitle_regex = re.compile(r'#EXT-X-MEDIA:TYPE=SUBTITLES[\w\-=,\.\"\/]+?GROUP-ID=\"' + hls_subtitle_id + ''
+                                        r'\"[\w\-=,\.\"\/]+URI=\"(?P<SUBTITLE_URI>[\w\-=]+)\.m3u8\"')
             match_subtitle = re.search(subtitle_regex, hls_playlist)
             if match_subtitle:
                 subtitle_url = hls_base_url + match_subtitle.group('SUBTITLE_URI') + '.webvtt'

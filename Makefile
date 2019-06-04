@@ -42,6 +42,7 @@ unit:
 	PYTHONPATH=$(CURDIR) python test/apihelpertests.py
 	PYTHONPATH=$(CURDIR) python test/tvguidetests.py
 	PYTHONPATH=$(CURDIR) python test/searchtests.py
+	PYTHONPATH=$(CURDIR) python test/routertests.py
 	PYTHONPATH=$(CURDIR) python test/favoritestests.py
 	@echo -e "$(white)=$(blue) Unit tests finished successfully.$(reset)"
 
@@ -52,5 +53,5 @@ zip: test clean
 	@echo -e "$(white)=$(blue) Successfully wrote package as: $(white)../$(zip_name)$(reset)"
 
 clean:
-	find . -name '*.pyc' -delete
-	find . -name '__pycache__' -delete
+	find . -name '*.pyc' -type f -delete
+	find resources -name '__pycache__' -type d -delete

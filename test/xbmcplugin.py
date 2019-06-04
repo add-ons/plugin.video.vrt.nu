@@ -33,6 +33,8 @@ SORT_METHOD_DATE_TAKEN = 44
 
 
 def addDirectoryItems(handle, listing, length):
+    for item in listing:
+        print('* {label} -> {path}'.format(label=item[1].label, path=item[0]))
     return True
 
 

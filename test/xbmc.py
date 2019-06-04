@@ -29,8 +29,18 @@ REGIONS = {
 }
 
 
-class Keyboard:
-    pass
+class Keyboard():
+    def __init__(self, line='', heading=''):
+        pass
+
+    def doModal(self, autoclose=0):
+        pass
+
+    def isConfirmed(self):
+        return True
+
+    def getText(self):
+        return 'unittest'
 
 
 class Monitor:

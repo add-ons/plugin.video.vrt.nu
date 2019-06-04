@@ -22,4 +22,5 @@ script:
 - python test/apihelpertests.py
 - python test/tvguidetests.py
 - python test/searchtests.py
+- python test/routertests.py
 #- python test/favoritestests.py
