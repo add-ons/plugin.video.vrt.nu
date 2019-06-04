@@ -36,21 +36,11 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
-# Visual Studio cache/options directory
-.vs/
-
-*.pyc
-
-
 *.swp
 *.*~
 project.lock.json
 .DS_Store
-*.pyc
 nupkg/
-
-# Visual Studio Code
-.vscode
 
 # User-specific files
 *.suo
@@ -74,14 +64,20 @@ msbuild.log
 msbuild.err
 msbuild.wrn
 
-# Visual Studio 2015
+# Visual Studio
+#plugin.video.vrt.nu.pyproj
+#plugin.video.vrt.nu.sln
 .vs/
+.vscode
 
 # Test caches
+*.pyc
 .pytest_cache/
 .tox/
+
 # Packages
 *.zip
+
 # Credentials
 test/credentials.json
 test/userdata/
