@@ -69,6 +69,9 @@ def router(argv):
     if action == actions.PLAY:
         _vrtplayer.play(params)
         return
+    if action == actions.PLAY_LATEST_EPISODE:
+        _vrtplayer.play_latest_episode(params)
+        return
     if action == actions.LISTING_CATEGORIES:
         _vrtplayer.show_category_menu_items()
         return
