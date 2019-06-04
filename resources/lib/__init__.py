@@ -135,6 +135,7 @@ class actions:
     LISTING_RECENT = 'listingrecent'
     LISTING_TVGUIDE = 'listingtvguide'
     PLAY = 'play'
+    PLAY_LATEST_EPISODE = 'playlatestepisode'
     REFRESH_FAVORITES = 'refreshfavorites'
     SEARCH = 'search'
     UNFOLLOW = 'unfollow'

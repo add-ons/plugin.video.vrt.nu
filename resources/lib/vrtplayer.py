@@ -201,6 +201,15 @@ class VRTPlayer:
         self._kodi.container_update(replace=True)
         self._kodi.show_listing(search_items, sort=sort, ascending=ascending, content=content, cache=False)
 
+    def play_latest_episode(self, params):
+        video = self._apihelper.get_latest_episode(params.get('tvshow'))
+        if not video:
+            self._kodi.log_error('Play latest episode failed, params %s' % params)
+            self._kodi.show_ok_dialog(message=self._kodi.localize(30954))
+            self._kodi.end_of_directory()
+            return
+        self.play(video)
+
     def play(self, params):
         ''' A wrapper for playing video items '''
         _tokenresolver = tokenresolver.TokenResolver(self._kodi)

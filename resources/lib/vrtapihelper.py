@@ -101,6 +101,22 @@ class VRTApiHelper:
             ))
         return tvshow_items
 
+    def get_latest_episode(self, tvshow):
+        import json
+        video = None
+        params = {
+            'facets[programName]': tvshow,
+            'i': 'video',
+            'size': '1',
+        }
+        api_url = self._VRTNU_SEARCH_URL + '?' + urlencode(params)
+        self._kodi.log_notice('URL get: ' + unquote(api_url), 'Verbose')
+        api_json = json.load(urlopen(api_url))
+        if api_json.get('meta', {}).get('total_results') != 0:
+            episode = list(api_json.get('results'))[0]
+            video = dict(video_id=episode.get('videoId'), publication_id=episode.get('publicationId'))
+        return video
+
     def get_episode_items(self, path=None, page=None, show_seasons=False, use_favorites=False, variety=None):
         titletype = None
         season_key = None
