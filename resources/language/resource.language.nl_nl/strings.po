@@ -300,8 +300,8 @@ msgid "Streaming"
 msgstr "Streaming"
 
 msgctxt "#30847"
-msgid "Use DRM for 720p HD-quality livestreams"
-msgstr "Gebruik DRM voor de livestreams in 720p HD-kwaliteit"
+msgid "Use DRM for 720p HD-quality live streams"
+msgstr "Gebruik DRM voor de live streams in 720p HD-kwaliteit"
 
 msgctxt "#30849"
 msgid "Maximum bandwidth (kbps)"
@@ -312,7 +312,7 @@ msgid "Channels"
 msgstr "Kanalen"
 
 msgctxt "#30861"
-msgid "Select channels for 'Most recent' and 'Soon offline' listings"
+msgid "Select channels to use for 'Most recent' and 'Soon offline' listings"
 msgstr "Selecteer kanalen voor de 'Meest recent' en 'Binnenkort offline' lijsten"
 
 msgctxt "#30863"
