@@ -110,8 +110,9 @@ class VRTApiHelper:
             'size': '1',
         }
         api_url = self._VRTNU_SEARCH_URL + '?' + urlencode(params)
+        self._kodi.log_notice('URL get: ' + unquote(api_url), 'Verbose')
         api_json = json.load(urlopen(api_url))
-        if api_json.get('meta').get('total_results') != 0:
+        if api_json.get('meta', {}).get('total_results') != 0:
             episode = list(api_json.get('results'))[0]
             video = dict(video_id=episode.get('videoId'), publication_id=episode.get('publicationId'))
         return video
