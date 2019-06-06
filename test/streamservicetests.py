@@ -22,7 +22,7 @@ xbmcgui = __import__('xbmcgui')
 xbmcplugin = __import__('xbmcplugin')
 xbmcvfs = __import__('xbmcvfs')
 
-xbmcaddon.SETTINGS['use_drm'] = 'false'
+xbmcaddon.ADDON_SETTINGS['use_drm'] = 'false'
 now = datetime.now(dateutil.tz.tzlocal())
 yesterday = now + timedelta(days=-1)
 
@@ -56,7 +56,7 @@ class StreamServiceTests(unittest.TestCase):
         self.assertTrue(stream is not None)
 
     def test_get_live_stream_from_url_does_not_crash_returns_stream_and_licensekey(self):
-        xbmcaddon.SETTINGS['use_drm'] = 'true'
+        xbmcaddon.ADDON_SETTINGS['use_drm'] = 'true'
         video = dict(
             video_url=CHANNELS[1]['live_stream'],
             video_id=None,

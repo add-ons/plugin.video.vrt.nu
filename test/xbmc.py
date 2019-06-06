@@ -4,6 +4,7 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+import sys
 import json
 import time
 import polib
@@ -11,11 +12,6 @@ import polib
 
 LOGERROR = 'Error'
 LOGNOTICE = 'Notice'
-
-GLOBAL_SETTINGS = {
-    'locale.language': 'resource.language.en_gb',
-    'network.bandwidth': 0,
-}
 
 INFO_LABELS = {
     'System.BuildVersion': '18.2',
@@ -27,6 +23,14 @@ REGIONS = {
     'datelong': '%A, %e %B %Y',
     'dateshort': '%Y-%m-%d',
 }
+
+# Use the global_settings file
+try:
+    with open('test/userdata/global_settings.json') as f:
+        GLOBAL_SETTINGS = json.load(f)
+except Exception as e:
+    print("Error using 'test/userdata/addon_settings.json' : %s" % e, file=sys.stderr)
+    GLOBAL_SETTINGS = {}
 
 
 class Keyboard():

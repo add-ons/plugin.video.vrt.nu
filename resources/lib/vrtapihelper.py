@@ -146,7 +146,7 @@ class VRTApiHelper:
                 params['facets[programName]'] = '[%s]' % (','.join(self._favorites.names()))
                 cache_file = 'my-%s-%s.json' % (variety, page)
             else:
-                params['facets[programBrands]'] = '[%s]' % ','.join(self._channel_filter)
+                params['facets[programBrands]'] = '[%s]' % (','.join(self._channel_filter))
                 cache_file = '%s-%s.json' % (variety, page)
 
             # Try the cache if it is fresh

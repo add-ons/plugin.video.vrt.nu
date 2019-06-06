@@ -79,5 +79,6 @@ msbuild.wrn
 *.zip
 
 # Credentials
-test/credentials.json
-test/userdata/
+test/userdata/cache/
+test/userdata/credentials.json
+test/userdata/*.tkn

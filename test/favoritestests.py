@@ -13,7 +13,7 @@ xbmcgui = __import__('xbmcgui')
 xbmcplugin = __import__('xbmcplugin')
 xbmcvfs = __import__('xbmcvfs')
 
-xbmcaddon.SETTINGS['usefavorites'] = 'true'
+xbmcaddon.ADDON_SETTINGS['usefavorites'] = 'true'
 
 
 class TestFavorites(unittest.TestCase):
