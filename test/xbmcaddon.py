@@ -4,68 +4,60 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 import sys
-import os
 import json
+import xml.etree.ElementTree as ET
 import polib
-
-# FIXME: Get information from addon.xml
-ADDON_INFO = {
-    'author': 'Martijn Moreel',
-    'changelog': '',
-    'description': '',
-    'disclaimer': '',
-    'fanart': '',
-    'icon': '',
-    'id': 'plugin.video.vrt.nu',
-    'name': 'VRT NU',
-    # 'path': '/storage/.kodi/addons/plugin.video.vrt.nu',
-    'path': './',
-    # 'profile': 'special://profile/addon_data/plugin.video.vrt.nu/',
-    'profile': 'test/userdata/',
-    'stars': '',
-    'summary': '',
-    'type': 'xbmc.python.pluginsource',
-    'version': '1.10.0',
-}
 
 PO = polib.pofile('resources/language/resource.language.en_gb/strings.po')
 
-# FIXME: Maybe move this to test/userdata/settings.xml ?
-SETTINGS = {
-    # credentials
-    'username': 'qsdfdsq',
-    'password': 'qsdfqsdfds',
-    # interface
-    'usefavorites': 'false',
-    'showpermalink': 'true',
-    'usemenucaching': 'true',
-    'usehttpcaching': 'true',
-    # playback
-    'showsubtitles': 'true',
-    'max_bandwidth': 0,
-    'usedrm': 'false',
-    # channels
-    'een': 'true',
-    'canvas': 'true',
-    'ketnet': 'false',
-    'ketnet-jr': 'false',
-    'sporza': 'true',
-    'radio1': 'true',
-    'radio2': 'true',
-    'klara': 'true',
-    'stubru': 'true',
-    'mnm': 'true',
-    'vrtnws': 'true',
-    'vrtnxt': 'true',
-    # troubleshooting
-    'log_level': 'Verbose',
-}
+# Use the addon_settings file
+try:
+    with open('test/userdata/addon_settings.json') as f:
+        ADDON_SETTINGS = json.load(f)
+except Exception as e:
+    print("Error using 'test/userdata/addon_settings.json': %s" % e, file=sys.stderr)
+    ADDON_SETTINGS = {}
 
 # Read credentials from credentials.json
-if os.path.exists('test/credentials.json'):
-    SETTINGS.update(json.load(open('test/credentials.json')))
-else:
-    print('Credentials not found in credentials.json', file=sys.stderr)
+try:
+    with open('test/userdata/credentials.json') as f:
+        ADDON_SETTINGS.update(json.load(f))
+except Exception as e:
+    print("Error using 'test/userdata/credentials.json': %s" % e, file=sys.stderr)
+
+
+def read_addon_xml(path):
+    info = dict(
+        path='./',  # '/storage/.kodi/addons/plugin.video.vrt.nu',
+        profile='./test/userdata/',  # 'special://profile/addon_data/plugin.video.vrt.nu/',
+        type='xbmc.python.pluginsource',
+    )
+
+    tree = ET.parse(path)
+    root = tree.getroot()
+
+    info.update(root.attrib)  # Add 'id', 'name' and 'version'
+    info['author'] = info.pop('provider-name')
+
+    for child in root:
+        if child.attrib.get('point') != 'xbmc.addon.metadata':
+            continue
+        for grandchild in child:
+            # Handle assets differently
+            if grandchild.tag == 'assets':
+                for asset in grandchild:
+                    info[asset.tag] = asset.text
+                continue
+            # Not in English ?  Drop it
+            if grandchild.attrib.get('lang', 'en_GB') != 'en_GB':
+                continue
+            # Add metadata
+            info[grandchild.tag] = grandchild.text
+
+    return info
+
+
+ADDON_INFO = read_addon_xml('addon.xml')
 
 
 class Addon:
@@ -86,7 +78,7 @@ class Addon:
 
     @staticmethod
     def getSetting(key):
-        return SETTINGS.get(key)
+        return ADDON_SETTINGS.get(key)
 
     @staticmethod
     def setSetting(key, value):
