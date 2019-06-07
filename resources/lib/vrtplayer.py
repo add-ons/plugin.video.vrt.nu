@@ -57,7 +57,9 @@ class VRTPlayer:
             TitleItem(title=self._kodi.localize(30020),  # Recent items
                       url_dict=dict(action=actions.LISTING_RECENT),
                       is_playable=False,
-                      art_dict=dict(thumb='DefaultRecentlyAddedEpisodes.png', icon='DefaultRecentlyAddedEpisodes.png', fanart='DefaultRecentlyAddedEpisodes.png'),
+                      art_dict=dict(thumb='DefaultRecentlyAddedEpisodes.png',
+                                    icon='DefaultRecentlyAddedEpisodes.png',
+                                    fanart='DefaultRecentlyAddedEpisodes.png'),
                       video_dict=dict(plot=self._kodi.localize(30021))),
             TitleItem(title=self._kodi.localize(30022),  # Soon offline
                       url_dict=dict(action=actions.LISTING_OFFLINE),
@@ -88,7 +90,9 @@ class VRTPlayer:
             TitleItem(title=self._kodi.localize(30042),  # My recent items
                       url_dict=dict(action=actions.LISTING_RECENT, use_favorites=True),
                       is_playable=False,
-                      art_dict=dict(thumb='DefaultRecentlyAddedEpisodes.png', icon='DefaultRecentlyAddedEpisodes.png', fanart='DefaultRecentlyAddedEpisodes.png'),
+                      art_dict=dict(thumb='DefaultRecentlyAddedEpisodes.png',
+                                    icon='DefaultRecentlyAddedEpisodes.png',
+                                    fanart='DefaultRecentlyAddedEpisodes.png'),
                       video_dict=dict(plot=self._kodi.localize(30043))),
             TitleItem(title=self._kodi.localize(30044),  # My soon offline
                       url_dict=dict(action=actions.LISTING_OFFLINE, use_favorites=True),

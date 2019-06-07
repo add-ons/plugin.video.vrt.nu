@@ -29,10 +29,10 @@ class VRTApiHelper:
         self._kodi = _kodi
         self._proxies = _kodi.get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
-        self._showfanart = _kodi.get_setting('showfanart') == 'true'
-        self._showpermalink = _kodi.get_setting('showpermalink') == 'true'
+        self._showfanart = _kodi.get_setting('showfanart', 'true') == 'true'
+        self._showpermalink = _kodi.get_setting('showpermalink', 'false') == 'true'
         self._favorites = _favorites
-        self._channel_filter = [channel.get('name') for channel in CHANNELS if _kodi.get_setting(channel.get('name')) == 'true']
+        self._channel_filter = [channel.get('name') for channel in CHANNELS if _kodi.get_setting(channel.get('name'), 'true') == 'true']
 
     def get_tvshow_items(self, category=None, channel=None, use_favorites=False):
         ''' Get all TV shows for a given category or channel, optionally filtered by favorites '''
@@ -131,6 +131,7 @@ class VRTApiHelper:
         sort = 'episode'
         ascending = True
         content = 'episodes'
+        use_favorites = statichelper.boolean(use_favorites)
 
         # Recent items
         if variety in ('offline', 'recent'):
@@ -163,9 +164,9 @@ class VRTApiHelper:
                 self._kodi.log_notice('URL get: ' + unquote(api_url), 'Verbose')
                 api_json = json.load(urlopen(api_url))
                 self._kodi.update_cache(cache_file, api_json)
-            episode_items, sort, ascending, content = self._map_to_episode_items(api_json.get('results', []), titletype=variety, use_favorites=statichelper.boolean(use_favorites))
+            return self._map_to_episode_items(api_json.get('results', []), titletype=variety, use_favorites=use_favorites)
 
-        elif path:
+        if path:
             if '.relevant/' in path:
                 params = {
                     'facets[programUrl]': '//www.vrt.be' + path.replace('.relevant/', '/'),
@@ -183,9 +184,9 @@ class VRTApiHelper:
             results, episodes = self._get_season_episode_data(api_url, show_seasons=show_seasons, all_items=all_items)
 
             if results.get('episodes'):
-                episode_items, sort, ascending, content = self._map_to_episode_items(results.get('episodes'), titletype=titletype, season_key=season_key, use_favorites=use_favorites)
-            elif results.get('seasons'):
-                episode_items, sort, ascending, content = self._map_to_season_items(api_url, results.get('seasons'), episodes)
+                return self._map_to_episode_items(results.get('episodes', []), titletype=titletype, season_key=season_key, use_favorites=use_favorites)
+            if results.get('seasons'):
+                return self._map_to_season_items(api_url, results.get('seasons'), episodes)
 
         return episode_items, sort, ascending, content
 
@@ -416,8 +417,7 @@ class VRTApiHelper:
         api_json = json.load(urlopen(api_url))
 
         episodes = api_json.get('results', [{}])
-        episode_items, sort, ascending, content = self._map_to_episode_items(episodes, titletype='recent')
-        return episode_items, sort, ascending, content
+        return self._map_to_episode_items(episodes, titletype='recent')
 
     def get_live_screenshot(self, channel):
         ''' Get a live screenshot for a given channel, only supports Eén, Canvas and Ketnet '''

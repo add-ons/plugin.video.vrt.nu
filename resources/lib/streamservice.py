@@ -207,7 +207,7 @@ class StreamService:
             # Select streaming protocol
             if not drm_stream and self._kodi.has_inputstream_adaptive():
                 protocol = 'mpeg_dash'
-            elif drm_stream and self._can_play_drm and self._kodi.get_setting('usedrm') == 'true':
+            elif drm_stream and self._can_play_drm and self._kodi.get_setting('usedrm', 'true') == 'true':
                 protocol = 'mpeg_dash'
             elif vudrm_token:
                 protocol = 'hls_aes'
@@ -307,7 +307,7 @@ class StreamService:
                 hls_variant_url = hls_base_url + match_audio.group('AUDIO_URI') + '-' + hls_variant_url.split('-')[-1]
 
         # Get subtitle url, works only for on demand streams
-        if self._kodi.get_setting('showsubtitles') == 'true' and '/live/' not in master_hls_url and hls_subtitle_id:
+        if self._kodi.get_setting('showsubtitles', 'true') == 'true' and '/live/' not in master_hls_url and hls_subtitle_id:
             subtitle_regex = re.compile(r'#EXT-X-MEDIA:TYPE=SUBTITLES[\w\-=,\.\"\/]+?GROUP-ID=\"' + hls_subtitle_id + ''
                                         r'\"[\w\-=,\.\"\/]+URI=\"(?P<SUBTITLE_URI>[\w\-=]+)\.m3u8\"')
             match_subtitle = re.search(subtitle_regex, hls_playlist)
