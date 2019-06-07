@@ -8,8 +8,10 @@ from __future__ import absolute_import, division, unicode_literals
 
 
 class ApiData:
+    ''' This helper object holds all media information '''
 
     def __init__(self, client, media_api_url, video_id, publication_id, is_live_stream):
+        ''' The constructor for the ApiData class '''
         self.client = client
         self.media_api_url = media_api_url
         self.video_id = video_id
@@ -18,27 +20,34 @@ class ApiData:
 
 
 class Credentials:
+    ''' This helper object holds all credential information '''
 
     def __init__(self, _kodi):
+        ''' The constructor for the Credentials class '''
         self._kodi = _kodi
         self.username = _kodi.get_setting('username')
         self.password = _kodi.get_setting('password')
 
     def are_filled_in(self):
+        ''' Whether the credentials have been filled in and are stored in the settings '''
         return bool(self.username and self.password)
 
     def reload(self):
+        ''' Reload the credentials from the settings '''
         self.username = self._kodi.get_setting('username')
         self.password = self._kodi.get_setting('password')
 
     def reset(self):
+        ''' Reset the credentials in the settings '''
         self.username = self._kodi.set_setting('username', None)
         self.password = self._kodi.set_setting('password', None)
 
 
 class StreamURLS:
+    ''' This helper object holds all information to be used when playing streams '''
 
     def __init__(self, stream_url, subtitle_url=None, license_key=None, use_inputstream_adaptive=False):
+        ''' The constructor for the StreamURLS class '''
         self.stream_url = stream_url
         self.subtitle_url = subtitle_url
         self.license_key = license_key
@@ -47,8 +56,10 @@ class StreamURLS:
 
 
 class TitleItem:
+    ''' This helper object holds all information to be used with Kodi xbmc's ListItem object '''
 
     def __init__(self, title, url_dict, is_playable, art_dict=None, video_dict=None, context_menu=None):
+        ''' The constructor for the TitleItem class '''
         self.title = title
         self.url_dict = url_dict
         self.is_playable = is_playable

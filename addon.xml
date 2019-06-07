@@ -15,19 +15,6 @@
     </extension>
     <extension point="xbmc.service" library="service.py"/>
 
-    <extension point="kodi.context.item">
-        <menu id="kodi.core.main">
-            <item library="resources/menus/follow.py">
-                <label>30411</label>
-                <visible>IsEqual(ListItem.Property(Favorite),False)</visible>
-            </item>
-            <item library="resources/menus/unfollow.py">
-                <label>30412</label>
-                <visible>IsEqual(ListItem.Property(Favorite),True)</visible>
-            </item>
-        </menu>
-    </extension>
-
     <extension point="xbmc.addon.metadata">
         <summary lang="en_GB">Watch videos from VRT NU</summary>
         <description lang="en_GB">
