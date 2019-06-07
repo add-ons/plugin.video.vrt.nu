@@ -109,8 +109,8 @@ class KodiWrapper:
         self._url = url
         self._addon = xbmcaddon.Addon()
         self._addon_id = self._addon.getAddonInfo('id')
-        self._max_log_level = log_levels.get(self.get_setting('max_log_level'), 3)
-        self._usemenucaching = self.get_setting('usemenucaching') == 'true'
+        self._max_log_level = log_levels.get(self.get_setting('max_log_level', 'Debug'), 3)
+        self._usemenucaching = self.get_setting('usemenucaching', 'true') == 'true'
         self._cache_path = self.get_userdata_path() + 'cache/'
         self._system_locale_works = None
 
@@ -211,7 +211,7 @@ class KodiWrapper:
                     play_item.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')
                     play_item.setProperty('inputstream.adaptive.license_key', video.license_key)
 
-        subtitles_visible = self.get_setting('showsubtitles') == 'true'
+        subtitles_visible = self.get_setting('showsubtitles', 'true') == 'true'
         # Separate subtitle url for hls-streams
         if subtitles_visible and video.subtitle_url is not None:
             self.log_notice('Subtitle URL: ' + unquote(video.subtitle_url), 'Verbose')
@@ -294,9 +294,12 @@ class KodiWrapper:
         ''' Return a localized long date string '''
         return self.localize_date(date, xbmc.getRegion('datelong'))
 
-    def get_setting(self, setting_id):
+    def get_setting(self, setting_id, default=None):
         ''' Get an add-on setting '''
-        return self._addon.getSetting(setting_id)
+        value = self._addon.getSetting(setting_id)
+        if value == '' and default is not None:
+            return default
+        return value
 
     def set_setting(self, setting_id, setting_value):
         ''' Set an add-on setting '''
@@ -314,7 +317,7 @@ class KodiWrapper:
 
     def get_max_bandwidth(self):
         ''' Get the max bandwidth based on Kodi and VRT NU add-on settings '''
-        vrtnu_max_bandwidth = int(self.get_setting('max_bandwidth'))
+        vrtnu_max_bandwidth = int(self.get_setting('max_bandwidth', '0'))
         global_max_bandwidth = int(self.get_global_setting('network.bandwidth'))
         if vrtnu_max_bandwidth != 0 and global_max_bandwidth != 0:
             return min(vrtnu_max_bandwidth, global_max_bandwidth)
@@ -365,7 +368,7 @@ class KodiWrapper:
 
     def has_inputstream_adaptive(self):
         ''' Whether InputStream Adaptive is installed and enabled in add-on settings '''
-        return self.get_setting('useinputstreamadaptive') == 'true' and xbmc.getCondVisibility('System.HasAddon(inputstream.adaptive)') == 1
+        return self.get_setting('useinputstreamadaptive', 'true') == 'true' and xbmc.getCondVisibility('System.HasAddon(inputstream.adaptive)') == 1
 
     def has_credentials(self):
         ''' Whether the add-on has credentials configured '''
@@ -377,7 +380,7 @@ class KodiWrapper:
 
     def can_play_drm(self):
         ''' Whether this Kodi can do DRM using InputStream Adaptive '''
-        return self.get_setting('useinputstreamadaptive') == 'true' and self.kodi_version() > 17
+        return self.get_setting('useinputstreamadaptive', 'true') == 'true' and self.kodi_version() > 17
 
     def get_userdata_path(self):
         ''' Return the profile's userdata path '''
@@ -457,7 +460,7 @@ class KodiWrapper:
 
     def get_cache(self, path, ttl=None):
         ''' Get the content from cache, if it's still fresh '''
-        if self.get_setting('usehttpcaching') == 'false':
+        if self.get_setting('usehttpcaching', 'true') == 'false':
             return None
 
         fullpath = self._cache_path + path
@@ -484,7 +487,7 @@ class KodiWrapper:
 
     def update_cache(self, path, data):
         ''' Update the cache, if necessary '''
-        if self.get_setting('usehttpcaching') == 'false':
+        if self.get_setting('usehttpcaching', 'true') == 'false':
             return
 
         import hashlib

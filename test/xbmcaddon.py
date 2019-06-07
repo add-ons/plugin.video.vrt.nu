@@ -86,7 +86,7 @@ class Addon:
     @staticmethod
     def getSetting(key):
         ''' A working implementation for the xbmcaddon Addon class getSetting() method '''
-        return ADDON_SETTINGS.get(key)
+        return ADDON_SETTINGS.get(key, '')
 
     @staticmethod
     def setSetting(key, value):
