@@ -2,6 +2,8 @@
 
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
+''' This file implements the Kodi xbmcplugin module, either using stubs or alternative functionality '''
+
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 SORT_METHOD_NONE = 0
@@ -33,18 +35,22 @@ SORT_METHOD_DATE_TAKEN = 44
 
 
 def addDirectoryItems(handle, listing, length):
+    ''' A reimplementation of the xbmcplugin addDirectoryItems() function '''
     for item in listing:
         print('* {label} -> {path}'.format(label=item[1].label, path=item[0]))
     return True
 
 
 def addSortMethod(handle, sortMethod):
+    ''' A stub implementation of the xbmcplugin addSortMethod() function '''
     return
 
 
 def endOfDirectory(handle, succeeded=True, updateListing=True, cacheToDisc=True):
+    ''' A stub implementation of the xbmcplugin endOfDirectory() function '''
     return
 
 
 def setContent(self, content):
+    ''' A stub implementation of the xbmcplugin setContent() function '''
     return

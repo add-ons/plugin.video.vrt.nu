@@ -17,6 +17,7 @@ except ImportError:  # Python 2
 
 
 class VRTApiHelper:
+    ''' A class with common VRT NU API functionality '''
 
     _VRT_BASE = 'https://www.vrt.be'
     _VRTNU_SEARCH_URL = 'https://vrtnu-api.vrt.be/search'
@@ -24,6 +25,7 @@ class VRTApiHelper:
     _VRTNU_SCREENSHOT_URL = 'https://vrtnu-api.vrt.be/screenshots'
 
     def __init__(self, _kodi, _favorites):
+        ''' Constructor for the VRTApiHelper class '''
         self._kodi = _kodi
         self._proxies = _kodi.get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
@@ -33,6 +35,7 @@ class VRTApiHelper:
         self._channel_filter = [channel.get('name') for channel in CHANNELS if _kodi.get_setting(channel.get('name')) == 'true']
 
     def get_tvshow_items(self, category=None, channel=None, use_favorites=False):
+        ''' Get all TV shows for a given category or channel, optionally filtered by favorites '''
         params = dict()
 
         if category:
@@ -59,6 +62,7 @@ class VRTApiHelper:
         return self._map_to_tvshow_items(api_json, use_favorites=statichelper.boolean(use_favorites))
 
     def _map_to_tvshow_items(self, tvshows, use_favorites=False):
+        ''' Construct a list of TV show TitleItems based on Suggests API query and filtered by favorites '''
         tvshow_items = []
         if statichelper.boolean(use_favorites):
             favorite_names = self._favorites.names()
@@ -102,6 +106,7 @@ class VRTApiHelper:
         return tvshow_items
 
     def get_latest_episode(self, tvshow):
+        ''' Get the latest episode of a program '''
         import json
         video = None
         params = {
@@ -118,6 +123,7 @@ class VRTApiHelper:
         return video
 
     def get_episode_items(self, path=None, page=None, show_seasons=False, use_favorites=False, variety=None):
+        ''' Construct a list of TV show episodes TitleItems based on API query and filtered by favorites '''
         titletype = None
         season_key = None
         all_items = True
@@ -184,11 +190,13 @@ class VRTApiHelper:
         return episode_items, sort, ascending, content
 
     def _get_season_data(self, api_json):
+        ''' Return a list of seasons '''
         facets = api_json.get('facets', dict()).get('facets')
         seasons = next((f.get('buckets', []) for f in facets if f.get('name') == 'seasons' and len(f.get('buckets', [])) > 1), None)
         return seasons
 
     def _get_season_episode_data(self, api_url, show_seasons, all_items=True):
+        ''' Return a list of episodes for a given season '''
         import json
         self._kodi.log_notice('URL get: ' + unquote(api_url), 'Verbose')
         api_json = json.load(urlopen(api_url))
@@ -208,6 +216,7 @@ class VRTApiHelper:
         return dict(episodes=episodes), None
 
     def _map_to_episode_items(self, episodes, titletype=None, season_key=None, use_favorites=False):
+        ''' Construct a list of TV show episodes TitleItems based on Search API query and filtered by favorites '''
         from datetime import datetime
         import dateutil.parser
         import dateutil.tz
@@ -319,6 +328,7 @@ class VRTApiHelper:
         return episode_items, sort, ascending, 'episodes'
 
     def _map_to_season_items(self, api_url, seasons, episodes):
+        ''' Construct a list of TV show season TitleItems based on Search API query and filtered by favorites '''
         import random
 
         season_items = []
@@ -390,6 +400,7 @@ class VRTApiHelper:
         return season_items, sort, ascending, 'seasons'
 
     def search(self, search_string, page=0):
+        ''' Search VRT NU content for a given string '''
         import json
 
         page = statichelper.realpage(page)
@@ -409,11 +420,13 @@ class VRTApiHelper:
         return episode_items, sort, ascending, content
 
     def get_live_screenshot(self, channel):
+        ''' Get a live screenshot for a given channel, only supports Eén, Canvas and Ketnet '''
         url = '%s/%s.jpg' % (self._VRTNU_SCREENSHOT_URL, channel)
         self.__delete_cached_thumbnail(url)
         return url
 
     def __delete_cached_thumbnail(self, url):
+        ''' Remove a cached thumbnail from Kodi in an attempt to get a realtime live screenshot '''
         crc = self.__get_crc32(url)
         ext = url.split('.')[-1]
         path = 'special://thumbnails/%s/%s.%s' % (crc[0], crc, ext)
@@ -421,6 +434,7 @@ class VRTApiHelper:
 
     @staticmethod
     def __get_crc32(string):
+        ''' Return the CRC32 checksum for a given string '''
         string = string.lower()
         string_bytes = bytearray(string.encode())
         crc = 0xffffffff
@@ -435,6 +449,7 @@ class VRTApiHelper:
         return '%08x' % crc
 
     def _make_label(self, result, titletype, options=None):
+        ''' Return an appropriate label matching the type of listing and VRT NU provided displayOptions '''
         if options is None:
             options = dict()
 
@@ -488,6 +503,7 @@ class VRTApiHelper:
         return label, sort, ascending
 
     def get_channel_items(self, action=actions.PLAY, channels=None):
+        ''' Construct a list of channel ListItems, either for Live TV or the TV Guide listing '''
         from resources.lib import tvguide
         _tvguide = tvguide.TVGuide(self._kodi)
 
@@ -540,6 +556,7 @@ class VRTApiHelper:
         return channel_items
 
     def get_category_items(self):
+        ''' Construct a list of category ListItems '''
         categories = []
 
         # Try the cache if it is fresh
@@ -579,6 +596,7 @@ class VRTApiHelper:
         return category_items
 
     def get_categories(self, proxies=None):
+        ''' Return a list of categories by scraping the website '''
         from bs4 import BeautifulSoup, SoupStrainer
         self._kodi.log_notice('URL get: https://www.vrt.be/vrtnu/categorieen/', 'Verbose')
         response = urlopen('https://www.vrt.be/vrtnu/categorieen/')
@@ -596,6 +614,7 @@ class VRTApiHelper:
         return categories
 
     def get_category_thumbnail(self, element):
+        ''' Return a category thumbnail, if available '''
         if self._showfanart:
             raw_thumbnail = element.find(class_='media').get('data-responsive-image', 'DefaultGenre.png')
             return statichelper.add_https_method(raw_thumbnail)
@@ -603,7 +622,9 @@ class VRTApiHelper:
 
     @staticmethod
     def get_category_title(element):
+        ''' Return a category title, if available '''
         found_element = element.find('a')
         if found_element:
             return statichelper.strip_newlines(found_element.contents[0])
+        # FIXME: We should probably fall back to something sensible here, or raise an exception instead
         return ''

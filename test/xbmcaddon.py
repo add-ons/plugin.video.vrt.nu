@@ -2,6 +2,8 @@
 
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
+''' This file implements the Kodi xbmcaddon module, either using stubs or alternative functionality '''
+
 from __future__ import absolute_import, division, print_function, unicode_literals
 import sys
 import json
@@ -26,7 +28,8 @@ except Exception as e:
     print("Error using 'test/userdata/credentials.json': %s" % e, file=sys.stderr)
 
 
-def read_addon_xml(path):
+def __read_addon_xml(path):
+    ''' Parse the addon.xml and return an info dictionary '''
     info = dict(
         path='./',  # '/storage/.kodi/addons/plugin.video.vrt.nu',
         profile='./test/userdata/',  # 'special://profile/addon_data/plugin.video.vrt.nu/',
@@ -57,20 +60,24 @@ def read_addon_xml(path):
     return info
 
 
-ADDON_INFO = read_addon_xml('addon.xml')
+ADDON_INFO = __read_addon_xml('addon.xml')
 
 
 class Addon:
+    ''' A reimplementation of the xbmcaddon Addon class '''
+
     @staticmethod
     def __init__():
-        pass
+        ''' A stub constructor for the xbmcaddon Addon class '''
 
     @staticmethod
     def getAddonInfo(key):
+        ''' A working implementation for the xbmcaddon Addon class getAddonInfo() method '''
         return ADDON_INFO.get(key)
 
     @staticmethod
     def getLocalizedString(msgctxt):
+        ''' A working implementation for the xbmcaddon Addon class getLocalizedString() method '''
         for entry in PO:
             if entry.msgctxt == '#%s' % msgctxt:
                 return entry.msgstr or entry.msgid
@@ -78,8 +85,9 @@ class Addon:
 
     @staticmethod
     def getSetting(key):
+        ''' A working implementation for the xbmcaddon Addon class getSetting() method '''
         return ADDON_SETTINGS.get(key)
 
     @staticmethod
     def setSetting(key, value):
-        pass
+        ''' A stub implementation for the xbmcaddon Addon class setSetting() method '''

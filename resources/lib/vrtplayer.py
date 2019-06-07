@@ -202,6 +202,7 @@ class VRTPlayer:
         self._kodi.show_listing(search_items, sort=sort, ascending=ascending, content=content, cache=False)
 
     def play_latest_episode(self, params):
+        ''' A hidden feature in the VRT NU add-on to play the latest episode of a program '''
         video = self._apihelper.get_latest_episode(params.get('tvshow'))
         if not video:
             self._kodi.log_error('Play latest episode failed, params %s' % params)
