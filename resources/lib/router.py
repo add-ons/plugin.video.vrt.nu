@@ -49,10 +49,10 @@ def router(argv):
 
     # Actions requiring _favorites as well
     if action == actions.FOLLOW:
-        _favorites.follow(program=params.get('program'), path=params.get('path'))
+        _favorites.follow(title=params.get('title'), program=params.get('program'))
         return
     if action == actions.UNFOLLOW:
-        _favorites.unfollow(program=params.get('program'), path=params.get('path'))
+        _favorites.unfollow(title=params.get('title'), program=params.get('program'))
         return
     if action == actions.REFRESH_FAVORITES:
         _favorites.get_favorites(ttl=0)
@@ -109,11 +109,11 @@ def router(argv):
         return
     if action == actions.LISTING_EPISODES:
         _favorites.get_favorites(ttl=60 * 60)
-        _vrtplayer.show_episodes(path=params.get('video_url'))
+        _vrtplayer.show_episodes(program=params.get('program'), season=params.get('season'))
         return
     if action == actions.LISTING_ALL_EPISODES:
         _favorites.get_favorites(ttl=60 * 60)
-        _vrtplayer.show_all_episodes(path=params.get('video_url'))
+        _vrtplayer.show_all_episodes(program=params.get('program'))
         return
     if action == actions.SEARCH:
         _favorites.get_favorites(ttl=60 * 60)

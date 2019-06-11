@@ -65,9 +65,10 @@ class VRTApiHelper:
         ''' Construct a list of TV show TitleItems based on Suggests API query and filtered by favorites '''
         tvshow_items = []
         if statichelper.boolean(use_favorites):
-            favorite_names = self._favorites.names()
+            programs = self._favorites.programs()
         for tvshow in tvshows:
-            if statichelper.boolean(use_favorites) and tvshow.get('programName') not in favorite_names:
+            program = statichelper.url_to_program(tvshow.get('targetUrl'))
+            if statichelper.boolean(use_favorites) and program not in programs:
                 continue
             metadata = metadatacreator.MetadataCreator()
             metadata.tvshowtitle = tvshow.get('title', '???')
@@ -82,22 +83,18 @@ class VRTApiHelper:
             else:
                 thumbnail = 'DefaultAddonVideo.png'
             if self._favorites.is_activated():
-                program_path = statichelper.unique_path(tvshow.get('targetUrl'))
-                program = tvshow.get('title').encode('utf-8')
-                if self._favorites.is_favorite(program_path):
-                    params = dict(action='unfollow', program=program, path=program_path)
+                title = tvshow.get('title').encode('utf-8')
+                if self._favorites.is_favorite(program):
+                    params = dict(action='unfollow', title=title, program=program)
                     context_menu = [(self._kodi.localize(30412), 'RunPlugin(plugin://plugin.video.vrt.nu?%s)' % urlencode(params))]
                 else:
-                    params = dict(action='follow', program=program, path=program_path)
+                    params = dict(action='follow', title=title, program=program)
                     context_menu = [(self._kodi.localize(30411), 'RunPlugin(plugin://plugin.video.vrt.nu?%s)' % urlencode(params))]
             else:
                 context_menu = []
-            # Cut vrtbase url off since it will be added again when searching for episodes
-            # (with a-z we dont have the full url)
-            video_url = statichelper.add_https_method(tvshow.get('targetUrl')).replace(self._VRT_BASE, '')
             tvshow_items.append(TitleItem(
                 title=label,
-                url_dict=dict(action=actions.LISTING_EPISODES, video_url=video_url),
+                url_dict=dict(action=actions.LISTING_EPISODES, program=program),
                 is_playable=False,
                 art_dict=dict(thumb=thumbnail, icon='DefaultAddonVideo.png', fanart=thumbnail),
                 video_dict=metadata.get_video_dict(),
@@ -105,12 +102,12 @@ class VRTApiHelper:
             ))
         return tvshow_items
 
-    def get_latest_episode(self, tvshow):
+    def get_latest_episode(self, program):
         ''' Get the latest episode of a program '''
         import json
         video = None
         params = {
-            'facets[programName]': tvshow,
+            'facets[programUrl]': statichelper.program_to_url(program, 'long'),
             'i': 'video',
             'size': '1',
         }
@@ -122,10 +119,9 @@ class VRTApiHelper:
             video = dict(video_id=episode.get('videoId'), publication_id=episode.get('publicationId'))
         return video
 
-    def get_episode_items(self, path=None, page=None, show_seasons=False, use_favorites=False, variety=None):
+    def get_episode_items(self, program=None, season=None, page=None, show_seasons=False, use_favorites=False, variety=None):
         ''' Construct a list of TV show episodes TitleItems based on API query and filtered by favorites '''
         titletype = None
-        season_key = None
         all_items = True
         episode_items = []
         sort = 'episode'
@@ -150,7 +146,8 @@ class VRTApiHelper:
                 params['facets[assetOffTime]'] = datetime.now(dateutil.tz.gettz('Europe/Brussels')).strftime('%Y-%m-%d')
 
             if statichelper.boolean(use_favorites):
-                params['facets[programName]'] = '[%s]' % (','.join(self._favorites.names()))
+                program_urls = [statichelper.program_to_url(p, 'long') for p in self._favorites.programs()]
+                params['facets[programUrl]'] = '[%s]' % (','.join(program_urls))
                 cache_file = 'my-%s-%s.json' % (variety, page)
             else:
                 params['facets[programBrands]'] = '[%s]' % (','.join(self._channel_filter))
@@ -165,28 +162,23 @@ class VRTApiHelper:
                 api_json = json.load(urlopen(api_url))
                 self._kodi.update_cache(cache_file, api_json)
             return self._map_to_episode_items(api_json.get('results', []), titletype=variety, use_favorites=use_favorites)
+        if program:
+            params = {
+                'facets[programUrl]': statichelper.program_to_url(program, 'long'),
+                'i': 'video',
+                'size': '150',
+            }
+            if season:
+                params.update({'facets[seasonTitle]': season})
 
-        if path:
-            if '.relevant/' in path:
-                params = {
-                    'facets[programUrl]': '//www.vrt.be' + path.replace('.relevant/', '/'),
-                    'i': 'video',
-                    'size': '150',
-                }
-                api_url = self._VRTNU_SEARCH_URL + '?' + urlencode(params)
-            else:
-                api_url = path
-
-            path = unquote(path)
-            if 'facets[seasonTitle]' in path:
-                season_key = path.split('facets[seasonTitle]=')[1]
+            api_url = self._VRTNU_SEARCH_URL + '?' + urlencode(params)
 
             results, episodes = self._get_season_episode_data(api_url, show_seasons=show_seasons, all_items=all_items)
 
             if results.get('episodes'):
-                return self._map_to_episode_items(results.get('episodes', []), titletype=titletype, season_key=season_key, use_favorites=use_favorites)
+                return self._map_to_episode_items(results.get('episodes', []), titletype=titletype, season=season, use_favorites=use_favorites)
             if results.get('seasons'):
-                return self._map_to_season_items(api_url, results.get('seasons'), episodes)
+                return self._map_to_season_items(program, results.get('seasons'), episodes)
 
         return episode_items, sort, ascending, content
 
@@ -216,7 +208,7 @@ class VRTApiHelper:
                 episodes += page_json.get('results', [{}])
         return dict(episodes=episodes), None
 
-    def _map_to_episode_items(self, episodes, titletype=None, season_key=None, use_favorites=False):
+    def _map_to_episode_items(self, episodes, titletype=None, season=None, use_favorites=False):
         ''' Construct a list of TV show episodes TitleItems based on Search API query and filtered by favorites '''
         from datetime import datetime
         import dateutil.parser
@@ -225,15 +217,16 @@ class VRTApiHelper:
         sort = 'episode'
         ascending = True
         if statichelper.boolean(use_favorites):
-            favorite_names = self._favorites.names()
+            programs = self._favorites.programs()
         episode_items = []
         for episode in episodes:
             # VRT API workaround: seasonTitle facet behaves as a partial match regex,
             # so we have to filter out the episodes from seasons that don't exactly match.
-            if season_key and episode.get('seasonTitle') != season_key:
+            if season and episode.get('seasonTitle') != season:
                 continue
 
-            if statichelper.boolean(use_favorites) and episode.get('programName') not in favorite_names:
+            program = statichelper.url_to_program(episode.get('programUrl'))
+            if statichelper.boolean(use_favorites) and program not in programs:
                 continue
 
             # Support search highlights
@@ -297,13 +290,12 @@ class VRTApiHelper:
                 metadata.plot = '%s\n\n[COLOR yellow]%s[/COLOR]' % (metadata.plot, metadata.permalink)
 
             if self._favorites.is_activated():
-                program_path = statichelper.unique_path(episode.get('programUrl'))
-                program = episode.get('program').encode('utf-8')
-                if self._favorites.is_favorite(program_path):
-                    params = dict(action='unfollow', program=program, path=program_path)
+                program_title = episode.get('program').encode('utf-8')
+                if self._favorites.is_favorite(program):
+                    params = dict(action='unfollow', title=program_title, program=program)
                     context_menu = [(self._kodi.localize(30412), 'RunPlugin(plugin://plugin.video.vrt.nu?%s)' % urlencode(params))]
                 else:
-                    params = dict(action='follow', program=program, path=program_path)
+                    params = dict(action='follow', title=program_title, program=program)
                     context_menu = [(self._kodi.localize(30411), 'RunPlugin(plugin://plugin.video.vrt.nu?%s)' % urlencode(params))]
             else:
                 context_menu = []
@@ -328,7 +320,7 @@ class VRTApiHelper:
 
         return episode_items, sort, ascending, 'episodes'
 
-    def _map_to_season_items(self, api_url, seasons, episodes):
+    def _map_to_season_items(self, program, seasons, episodes):
         ''' Construct a list of TV show season TitleItems based on Search API query and filtered by favorites '''
         import random
 
@@ -366,7 +358,7 @@ class VRTApiHelper:
         if self._kodi.get_global_setting('videolibrary.showallitems') is True:
             season_items.append(TitleItem(
                 title=self._kodi.localize(30096),
-                url_dict=dict(action=actions.LISTING_ALL_EPISODES, video_url=api_url),
+                url_dict=dict(action=actions.LISTING_ALL_EPISODES, program=program),
                 is_playable=False,
                 art_dict=dict(thumb=fanart, icon='DefaultSets.png', fanart=fanart),
                 video_dict=metadata.get_video_dict(),
@@ -389,11 +381,9 @@ class VRTApiHelper:
                 fanart = 'DefaultSets.png'
                 thumbnail = 'DefaultSets.png'
             label = '%s %s' % (self._kodi.localize(30094), season_key)
-            params = {'facets[seasonTitle]': season_key}
-            path = api_url + '&' + urlencode(params)
             season_items.append(TitleItem(
                 title=label,
-                url_dict=dict(action=actions.LISTING_EPISODES, video_url=path),
+                url_dict=dict(action=actions.LISTING_EPISODES, program=program, season=season_key),
                 is_playable=False,
                 art_dict=dict(thumb=thumbnail, icon='DefaultSets.png', fanart=fanart),
                 video_dict=metadata.get_video_dict(),

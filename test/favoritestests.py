@@ -25,21 +25,27 @@ class TestFavorites(unittest.TestCase):
     _favorites = favorites.Favorites(_kodi, _tokenresolver)
 
     def test_follow_unfollow(self):
-        program = 'Winteruur'
-        program_path = '/vrtnu/a-z/winteruur/'
-        self._favorites.follow(program, program_path)
-        self.assertTrue(self._favorites.is_favorite(program_path))
+        programs = [
+            {'program_title': 'Winteruur', 'program': 'winteruur'},
+            {'program_title': 'De Campus Cup', 'program': 'de-campus-cup'},
+            {'program_title': 'De Afspraak op vrijdag', 'program': 'de-afspraak-op-vrijdag'}
+        ]
+        for program_item in programs:
+            program_title = program_item.get('program_title')
+            program = program_item.get('program')
+            self._favorites.follow(title=program_title, program=program)
+            self.assertTrue(self._favorites.is_favorite(program))
 
-        self._favorites.unfollow(program, program_path)
-        self.assertFalse(self._favorites.is_favorite(program_path))
+            self._favorites.unfollow(title=program_title, program=program)
+            self.assertFalse(self._favorites.is_favorite(program))
 
-        self._favorites.follow(program, program_path)
-        self.assertTrue(self._favorites.is_favorite(program_path))
+            self._favorites.follow(title=program_title, program=program)
+            self.assertTrue(self._favorites.is_favorite(program))
 
-    def test_names(self):
-        names = self._favorites.names()
-        self.assertTrue(names)
-        print(names)
+    def test_programs(self):
+        programs = self._favorites.programs()
+        self.assertTrue(programs)
+        print(programs)
 
     def test_titles(self):
         titles = self._favorites.titles()

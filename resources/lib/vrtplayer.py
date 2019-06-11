@@ -103,7 +103,7 @@ class VRTPlayer:
         self._kodi.show_listing(favorites_items)
 
         # Show dialog when no favorites were found
-        if not self._favorites.names():
+        if not self._favorites.titles():
             self._kodi.show_ok_dialog(heading=self._kodi.localize(30415), message=self._kodi.localize(30416))
 
     def show_tvshow_menu_items(self, category=None, use_favorites=False):
@@ -131,14 +131,14 @@ class VRTPlayer:
         channel_items = self._apihelper.get_channel_items(action=actions.PLAY, channels=['een', 'canvas', 'sporza', 'ketnet-jr', 'ketnet', 'stubru', 'mnm'])
         self._kodi.show_listing(channel_items, cache=False)
 
-    def show_episodes(self, path):
+    def show_episodes(self, program, season=None):
         ''' The VRT NU add-on episodes listing menu '''
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(path=path, show_seasons=True)
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(program=program, season=season, show_seasons=True)
         self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content)
 
-    def show_all_episodes(self, path):
+    def show_all_episodes(self, program):
         ''' The VRT NU add-on '* All seasons' listing menu '''
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(path=path)
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(program=program)
         self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content)
 
     def show_recent(self, page=0, use_favorites=False):
@@ -207,7 +207,7 @@ class VRTPlayer:
 
     def play_latest_episode(self, params):
         ''' A hidden feature in the VRT NU add-on to play the latest episode of a program '''
-        video = self._apihelper.get_latest_episode(params.get('tvshow'))
+        video = self._apihelper.get_latest_episode(params.get('program'))
         if not video:
             self._kodi.log_error('Play latest episode failed, params %s' % params)
             self._kodi.show_ok_dialog(message=self._kodi.localize(30954))
