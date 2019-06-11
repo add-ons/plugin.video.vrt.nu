@@ -67,7 +67,7 @@ class VRTApiHelper:
         if statichelper.boolean(use_favorites):
             favorite_names = self._favorites.names()
         for tvshow in tvshows:
-            if statichelper.boolean(use_favorites) and tvshow.get('programName') not in favorite_names:
+            if statichelper.boolean(use_favorites) and statichelper.url_to_program(tvshow.get('targetUrl')) not in favorite_names:
                 continue
             metadata = metadatacreator.MetadataCreator()
             metadata.tvshowtitle = tvshow.get('title', '???')
@@ -110,7 +110,7 @@ class VRTApiHelper:
         import json
         video = None
         params = {
-            'facets[programName]': tvshow,
+            'facets[programUrl]': statichelper.program_to_url(tvshow, 'long'),
             'i': 'video',
             'size': '1',
         }
@@ -150,7 +150,8 @@ class VRTApiHelper:
                 params['facets[assetOffTime]'] = datetime.now(dateutil.tz.gettz('Europe/Brussels')).strftime('%Y-%m-%d')
 
             if statichelper.boolean(use_favorites):
-                params['facets[programName]'] = '[%s]' % (','.join(self._favorites.names()))
+                program_urls = [statichelper.program_to_url(p, 'long') for p in self._favorites.names()]
+                params['facets[programUrl]'] = '[%s]' % (','.join(program_urls))
                 cache_file = 'my-%s-%s.json' % (variety, page)
             else:
                 params['facets[programBrands]'] = '[%s]' % (','.join(self._channel_filter))
@@ -233,7 +234,7 @@ class VRTApiHelper:
             if season_key and episode.get('seasonTitle') != season_key:
                 continue
 
-            if statichelper.boolean(use_favorites) and episode.get('programName') not in favorite_names:
+            if statichelper.boolean(use_favorites) and statichelper.url_to_program(episode.get('programUrl')) not in favorite_names:
                 continue
 
             # Support search highlights
