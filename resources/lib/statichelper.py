@@ -41,6 +41,38 @@ def unique_path(path):
     return path
 
 
+def program_to_url(program, url_type):
+    ''' Convert a program url component (e.g. de-campus-cup) to a short programUrl (e.g. /vrtnu/a-z/de-campus-cup/)
+        or to a long programUrl (e.g. //www.vrt.be/vrtnu/a-z/de-campus-cup/)
+    '''
+    url = None
+    if program:
+        # short programUrl
+        if url_type == 'short':
+            url = '/vrtnu/a-z/' + program + '/'
+        # long programUrl
+        elif url_type == 'long':
+            url = '//www.vrt.be/vrtnu/a-z/' + program + '/'
+    return url
+
+
+def url_to_program(url):
+    ''' Convert a targetUrl (e.g. //www.vrt.be/vrtnu/a-z/de-campus-cup.relevant/), a short programUrl (e.g. /vrtnu/a-z/de-campus-cup/)
+        or a long programUrl (e.g. //www.vrt.be/vrtnu/a-z/de-campus-cup/) to a program url component (e.g. de-campus-cup)
+    '''
+    program = None
+    # targetUrl
+    if url.startswith('//www.vrt.be/vrtnu/a-z/') and url.endswith('.relevant/'):
+        program = url.replace('//www.vrt.be/vrtnu/a-z/', '').replace('.relevant/', '')
+    # short programUrl
+    elif url.startswith('/vrtnu/a-z/'):
+        program = url.replace('/vrtnu/a-z/', '').rstrip('/')
+    # long programUrl
+    elif url.startswith('//www.vrt.be/vrtnu/a-z/'):
+        program = url.replace('//www.vrt.be/vrtnu/a-z/', '').rstrip('/')
+    return program
+
+
 def shorten_link(url):
     ''' Create a link that is as short as possible '''
     if url is None:
