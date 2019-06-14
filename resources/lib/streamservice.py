@@ -242,7 +242,7 @@ class StreamService:
             else:
                 # Fix 720p quality for HLS livestreams
                 manifest_url += '?hd' if '.m3u8?' not in manifest_url else '&hd'
-                stream = StreamURLS(*self._select_hls_substreams(manifest_url))
+                stream = self._select_hls_substreams(manifest_url)
                 self._kodi.log_notice('Protocol: ' + protocol, 'Verbose')
             return stream
 
@@ -253,15 +253,26 @@ class StreamService:
                 return self.get_stream(video, roaming=True, api_data=api_data)
 
             message = self._kodi.localize(30953)  # Geoblock error: Cannot be played, need Belgian phone number validation
-            return self._handle_stream_error(stream_json, message)
+            return self._handle_stream_api_error(stream_json, message)
 
         # Failed to get stream, handle error
         message = self._kodi.localize(30954)  # Whoops something went wrong
-        return self._handle_stream_error(stream_json, message)
+        return self._handle_stream_api_error(stream_json, message)
 
-    def _handle_stream_error(self, video_json, message):
-        ''' Show localized stream error messages in Kodi GUI'''
+    def _handle_stream_api_error(self, video_json, message):
+        ''' Show localized stream api error messages in Kodi GUI '''
         self._kodi.log_error(video_json.get('message'))
+        self._kodi.show_ok_dialog(message=message)
+        self._kodi.end_of_directory()
+
+    def _handle_bad_stream_error(self, stream_type):
+        ''' Show a localized error message in Kodi GUI for a failing VRT NU stream based on stream type: HLS/MPEG-DASH)
+            message: VRT NU stream <stream_type> problem, try again with InputStream Adaptive enabled/disabled: 30959=disabled, 30960=enabled
+        '''
+        if self._kodi.has_inputstream_adaptive():
+            message = self._kodi.localize(30958) % (stream_type, self._kodi.localize(30959))
+        else:
+            message = self._kodi.localize(30958) % (stream_type, self._kodi.localize(30960))
         self._kodi.show_ok_dialog(message=message)
         self._kodi.end_of_directory()
 
@@ -273,7 +284,12 @@ class StreamService:
         hls_subtitle_id = None
         hls_base_url = master_hls_url.split('.m3u8')[0]
         self._kodi.log_notice('URL get: ' + unquote(master_hls_url), 'Verbose')
-        hls_playlist = urlopen(master_hls_url).read().decode('utf-8')
+        try:
+            hls_playlist = urlopen(master_hls_url).read().decode('utf-8')
+        except HTTPError as e:
+            if e.code == 415:
+                self._handle_bad_stream_error('HLS')
+                return None
         max_bandwidth = self._kodi.get_max_bandwidth()
         stream_bandwidth = None
 
@@ -314,4 +330,4 @@ class StreamService:
             if match_subtitle:
                 subtitle_url = hls_base_url + match_subtitle.group('SUBTITLE_URI') + '.webvtt'
 
-        return hls_variant_url, subtitle_url
+        return StreamURLS(hls_variant_url, subtitle_url)

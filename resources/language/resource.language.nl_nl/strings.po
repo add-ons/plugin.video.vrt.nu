@@ -437,6 +437,18 @@ msgctxt "#30957"
 msgid "Please increase the maximum bandwidth. Maximum bandwidth is set to {max} kbps, but this stream needs a minimum of {min} kbps."
 msgstr "Verhoog de maximale bandbreedte alstublieft. De maximale bandbreedte is ingesteld op {max} kbps, maar deze stream heeft minimum {min} kbps nodig."
 
+msgctxt "#30958"
+msgid "There is a problem with this VRT NU %s stream. Try again with InputStream Adaptive %s or try to play this program from the VRT NU website. Please report this problem at https://www.vrt.be/vrtnu/help/"
+msgstr "Er is een probleem met deze VRT NU %s-stream. Probeer het opnieuw met InputStream Adaptive %s of probeer dit programma af te spelen vanaf de VRT NU-website. Meld dit probleem op https://www.vrt.be/vrtnu/help/"
+
+msgctxt "#30959"
+msgid "disabled"
+msgstr "uitgeschakeld"
+
+msgctxt "#30960"
+msgid "enabled"
+msgstr "ingeschakeld"
+
 msgctxt "#30961"
 msgid "Using a SOCKS proxy requires the PySocks library (script.module.pysocks) installed."
 msgstr "Het gebruik van SOCKS proxies vereist dat de PySocks library (script.module.pysocks) geïnstalleerd is."
