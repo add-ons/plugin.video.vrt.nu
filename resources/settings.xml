@@ -42,10 +42,11 @@
         <setting label="30905" help="30906" type="action" id="refresh_favorites" action="RunPlugin(plugin://plugin.video.vrt.nu/?action=refreshfavorites)"/>
         <setting label="30907" help="30908" type="action" id="invalidate_caches" action="RunPlugin(plugin://plugin.video.vrt.nu/?action=invalidatecaches)"/>
         <setting label="30909" type="lsep"/> <!-- InputStream Adaptive -->
-        <setting label="30911" help="30912" type="bool" id="useinputstreamadaptive" default="true" visible="System.HasAddon(inputstream.adaptive)"/>
-        <setting label="30913" help="30914" type="action" id="adaptive_settings" option="close" action="Addon.OpenSettings(inputstream.adaptive)" visible="System.HasAddon(inputstream.adaptive)" enable="eq(-1,true)" subsetting="true"/>
-        <setting label="30915" help="30916" type="action" id="widevine_install" option="close" action="RunPlugin(plugin://plugin.video.vrt.nu?action=installwidevine)" visible="System.HasAddon(inputstream.adaptive)" enable="eq(-2,true)" subsetting="true"/>
-        <setting label="30917" type="lsep"/> <!-- Logging -->
-        <setting label="30919" help="30920" type="select" id="max_log_level" values="Quiet|Info|Verbose|Debug" default="Info"/>
+        <setting label="30911" visible="!System.HasAddon(inputstream.adaptive)"/>
+        <setting label="30913" help="30914" type="bool" id="useinputstreamadaptive" default="true" visible="System.HasAddon(inputstream.adaptive)"/>
+        <setting label="30915" help="30916" type="action" id="adaptive_settings" option="close" action="Addon.OpenSettings(inputstream.adaptive)" visible="System.HasAddon(inputstream.adaptive)" enable="eq(-1,true)" subsetting="true"/>
+        <setting label="30917" help="30918" type="action" id="widevine_install" option="close" action="RunPlugin(plugin://plugin.video.vrt.nu?action=installwidevine)" visible="System.HasAddon(inputstream.adaptive)" enable="eq(-2,true)" subsetting="true"/>
+        <setting label="30919" type="lsep"/> <!-- Logging -->
+        <setting label="30921" help="30922" type="select" id="max_log_level" values="Quiet|Info|Verbose|Debug" default="Info"/>
     </category>
 </settings>

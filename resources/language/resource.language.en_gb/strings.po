@@ -411,22 +411,26 @@ msgid "Streaming"
 msgstr ""
 
 msgctxt "#30911"
-msgid "Use InputStream Adaptive"
+msgid "Please install or enable InputStream Adaptive to use this setting"
 msgstr ""
 
 msgctxt "#30913"
-msgid "InputStream Adaptive settings..."
+msgid "Use InputStream Adaptive"
 msgstr ""
 
 msgctxt "#30915"
-msgid "Install Widevine... [COLOR gray][I](needed for DRM content)[/I][/COLOR]"
+msgid "InputStream Adaptive settings..."
 msgstr ""
 
 msgctxt "#30917"
-msgid "Logging"
+msgid "Install Widevine... [COLOR gray][I](needed for DRM content)[/I][/COLOR]"
 msgstr ""
 
 msgctxt "#30919"
+msgid "Logging"
+msgstr ""
+
+msgctxt "#30921"
 msgid "Log level"
 msgstr ""
 
