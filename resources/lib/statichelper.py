@@ -34,13 +34,6 @@ def convert_html_to_kodilabel(text):
     return unescape(text).strip()
 
 
-def unique_path(path):
-    ''' Create a unique path to be used in VRT favorites '''
-    if path.startswith('//www.vrt.be/vrtnu'):
-        return path.replace('//www.vrt.be/vrtnu/', '/vrtnu/').replace('.relevant/', '/')
-    return path
-
-
 def program_to_url(program, url_type):
     ''' Convert a program url component (e.g. de-campus-cup) to a short programUrl (e.g. /vrtnu/a-z/de-campus-cup/)
         or to a long programUrl (e.g. //www.vrt.be/vrtnu/a-z/de-campus-cup/)

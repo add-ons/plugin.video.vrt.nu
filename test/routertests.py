@@ -35,11 +35,11 @@ class TestRouter(unittest.TestCase):
 
     # LISTING_EPISODES = 'listingepisodes'
     def test_episodes_menu(self):
-        router.router(['plugin://plugin.video.vrt.nu', '0', '?action=listingepisodes&video_url=/vrtnu/a-z/het-journaal.relevant/'])
+        router.router(['plugin://plugin.video.vrt.nu', '0', '?action=listingepisodes&program=het-journaal'])
 
     # LISTING_ALL_EPISODES = 'listingallepisodes'
     def test_all_episodes_menu(self):
-        router.router(['plugin://plugin.video.vrt.nu', '0', '?action=listingallepisodes&video_url=/vrtnu/a-z/thuis.relevant/'])
+        router.router(['plugin://plugin.video.vrt.nu', '0', '?action=listingallepisodes&program=thuis'])
 
     # LISTING_CATEGORIES = 'listingcategories'
     def test_categories_menu(self):
@@ -80,11 +80,11 @@ class TestRouter(unittest.TestCase):
 
     # FOLLOW = 'follow'
     def test_follow_action(self):
-        router.router(['plugin://plugin.video.vrt.nu', '0', '?action=follow&program=Thuis&path=thuis'])
+        router.router(['plugin://plugin.video.vrt.nu', '0', '?action=follow&title=Thuis&program=thuis'])
 
     # UNFOLLOW = 'unfollow'
     def test_unfollow_action(self):
-        router.router(['plugin://plugin.video.vrt.nu', '0', '?action=unfollow&program=Thuis&path=thuis'])
+        router.router(['plugin://plugin.video.vrt.nu', '0', '?action=unfollow&title=Thuis&program=thuis'])
 
     # CLEAR_COOKIES = 'deletetokens'
     def test_clear_cookies_action(self):
