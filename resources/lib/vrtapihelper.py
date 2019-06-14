@@ -201,7 +201,7 @@ class VRTApiHelper:
         import json
         self._kodi.log_notice('URL get: ' + unquote(api_url), 'Verbose')
         api_json = json.load(urlopen(api_url))
-        seasons = self._get_season_data(api_json)
+        seasons = self._get_season_data(api_json) if 'facets[seasonTitle]' not in unquote(api_url) else None
         episodes = api_json.get('results', [{}])
         if show_seasons and seasons:
             return dict(seasons=seasons), episodes
