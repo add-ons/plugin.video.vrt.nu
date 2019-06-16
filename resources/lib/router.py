@@ -6,7 +6,7 @@
 
 from __future__ import absolute_import, division, unicode_literals
 
-from resources.lib import actions, kodiwrapper, tokenresolver
+from resources.lib import actions, kodiwrapper
 
 try:  # Python 3
     from urllib.parse import parse_qsl
@@ -24,16 +24,15 @@ def router(argv):
     params = dict(parse_qsl(params_string))
     action = params.get('action')
 
-    _kodi = kodiwrapper.KodiWrapper(addon_handle, addon_url)
-    _tokenresolver = tokenresolver.TokenResolver(_kodi)
+    _kodi = kodiwrapper.KodiWrapper(addon_handle, addon_url, params)
     _kodi.log_access(addon_url, params_string)
 
     # Actions that only require _kodi
+    if params.get('refresh') == 'true':
+        _kodi.refresh_caches(params)
+        return
     if action == actions.INVALIDATE_CACHES:
         _kodi.invalidate_caches()
-        return
-    if action == actions.DELETE_TOKENS:
-        _tokenresolver.delete_tokens()
         return
     if action == actions.LISTING_TVGUIDE:
         from resources.lib import tvguide
@@ -42,6 +41,14 @@ def router(argv):
         return
     if action == actions.INSTALL_WIDEVINE:
         _kodi.install_widevine()
+        return
+
+    from resources.lib import tokenresolver
+    _tokenresolver = tokenresolver.TokenResolver(_kodi)
+
+    # Actions requiring _tokenresolver as well
+    if action == actions.DELETE_TOKENS:
+        _tokenresolver.delete_tokens()
         return
 
     from resources.lib import favorites

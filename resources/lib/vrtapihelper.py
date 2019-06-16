@@ -92,6 +92,7 @@ class VRTApiHelper:
                     context_menu = [(self._kodi.localize(30411), 'RunPlugin(plugin://plugin.video.vrt.nu?%s)' % urlencode(params))]
             else:
                 context_menu = []
+            context_menu.append(('Refresh', 'RunPlugin(%s)' % self._kodi.container_url(refresh='true')))
             # Cut vrtbase url off since it will be added again when searching for episodes
             # (with a-z we dont have the full url)
             video_url = statichelper.add_https_method(tvshow.get('targetUrl')).replace(self._VRT_BASE, '')
@@ -308,6 +309,7 @@ class VRTApiHelper:
                     context_menu = [(self._kodi.localize(30411), 'RunPlugin(plugin://plugin.video.vrt.nu?%s)' % urlencode(params))]
             else:
                 context_menu = []
+            context_menu.append(('Refresh', 'RunPlugin(%s)' % self._kodi.container_url(refresh='true')))
 
             if self._showfanart:
                 thumb = statichelper.add_https_method(episode.get('videoThumbnailUrl', 'DefaultAddonVideo.png'))
@@ -526,6 +528,7 @@ class VRTApiHelper:
                 label = channel.get('label')
                 plot = '[B]%s[/B]' % channel.get('label')
                 is_playable = False
+                context_menu = []
             else:
                 url_dict = dict(action=action)
                 label = self._kodi.localize(30101).format(**channel)
@@ -540,6 +543,7 @@ class VRTApiHelper:
                     url_dict['video_url'] = channel.get('live_stream')
                 if channel.get('live_stream_id'):
                     url_dict['video_id'] = channel.get('live_stream_id')
+                context_menu = [('Refresh', 'RunPlugin(%s)' % self._kodi.container_url(refresh='true'))]
 
             channel_items.append(TitleItem(
                 title=label,
@@ -552,6 +556,7 @@ class VRTApiHelper:
                     studio=channel.get('studio'),
                     mediatype='video',
                 ),
+                context_menu=context_menu,
             ))
 
         return channel_items

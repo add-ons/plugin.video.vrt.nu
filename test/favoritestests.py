@@ -20,7 +20,7 @@ xbmcaddon.ADDON_SETTINGS['usefavorites'] = 'true'
 
 class TestFavorites(unittest.TestCase):
 
-    _kodi = kodiwrapper.KodiWrapper(None, 'plugin://plugin.video.vrt.nu')
+    _kodi = kodiwrapper.KodiWrapper(None, 'plugin://plugin.video.vrt.nu', dict())
     _tokenresolver = tokenresolver.TokenResolver(_kodi)
     _favorites = favorites.Favorites(_kodi, _tokenresolver)
 
