@@ -290,6 +290,7 @@ class StreamService:
             if e.code == 415:
                 self._handle_bad_stream_error('HLS')
                 return None
+            raise
         max_bandwidth = self._kodi.get_max_bandwidth()
         stream_bandwidth = None
 
