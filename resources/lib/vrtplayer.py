@@ -119,16 +119,17 @@ class VRTPlayer:
     def show_channels_menu_items(self, channel=None):
         ''' The VRT NU add-on 'Channels' listing menu '''
         if channel:
+            # Add Live TV channel entry
+            channel_item = self._apihelper.get_channel_items(action=actions.PLAY, channels=[channel])
             tvshow_items = self._apihelper.get_tvshow_items(channel=channel)
-            self._kodi.show_listing(tvshow_items, sort='label', content='tvshows')
+            self._kodi.show_listing(channel_item + tvshow_items, sort='unsorted', content='tvshows')
         else:
-            from resources.lib import CHANNELS
-            channel_items = self._apihelper.get_channel_items(action=actions.LISTING_CHANNELS, channels=[c.get('name') for c in CHANNELS])
+            channel_items = self._apihelper.get_channel_items(action=actions.LISTING_CHANNELS)
             self._kodi.show_listing(channel_items, cache=False)
 
     def show_livestream_items(self):
         ''' The VRT NU add-on 'Live TV' listing menu '''
-        channel_items = self._apihelper.get_channel_items(action=actions.PLAY, channels=['een', 'canvas', 'sporza', 'ketnet-jr', 'ketnet', 'stubru', 'mnm'])
+        channel_items = self._apihelper.get_channel_items(action=actions.PLAY)
         self._kodi.show_listing(channel_items, cache=False)
 
     def show_episodes(self, path):

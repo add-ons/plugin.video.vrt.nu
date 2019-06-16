@@ -2,7 +2,6 @@
 
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-# pylint: disable=unused-variable
 # pylint: disable=missing-docstring
 
 from __future__ import absolute_import, division, print_function, unicode_literals
@@ -88,6 +87,8 @@ class TestVRTPlayer(unittest.TestCase):
         tvshow = random.choice(tvshow_items)
         episode_items, sort, ascending, content = self._apihelper.get_episode_items(tvshow.url_dict['video_url'])
         self.assertTrue(episode_items, msg=tvshow.url_dict['video_url'])
+        self.assertTrue(sort in ['dateadded', 'episode', 'label', 'unsorted'])
+        self.assertTrue(ascending is True or ascending is False)
         self.assertTrue(content in ['episodes', 'seasons'], "Content for '%s' is '%s'" % (tvshow.title, content))
 
     def test_categories(self):
