@@ -9,9 +9,10 @@ from __future__ import absolute_import, division, unicode_literals
 from resources.lib import statichelper
 
 try:  # Python 3
+    from urllib.parse import unquote
     from urllib.request import build_opener, install_opener, ProxyHandler, Request, urlopen
 except ImportError:  # Python 2
-    from urllib2 import build_opener, install_opener, ProxyHandler, Request, urlopen
+    from urllib2 import build_opener, install_opener, ProxyHandler, Request, unquote, urlopen
 
 
 class Favorites:
@@ -102,14 +103,14 @@ class Favorites:
         ''' Follow your favorite program '''
         ok = self.set_favorite(title, program, True)
         if ok:
-            self._kodi.show_notification(message='Follow ' + title)
+            self._kodi.show_notification(message='Follow ' + unquote(title))
             self._kodi.container_refresh()
 
     def unfollow(self, title, program):
         ''' Unfollow your favorite program '''
         ok = self.set_favorite(title, program, False)
         if ok:
-            self._kodi.show_notification(message='Unfollow ' + title)
+            self._kodi.show_notification(message='Unfollow ' + unquote(title))
             self._kodi.container_refresh()
 
     def uuid(self, program):

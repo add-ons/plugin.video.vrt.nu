@@ -6,12 +6,20 @@
 
 from __future__ import absolute_import, division, unicode_literals
 
-from resources.lib import actions, kodiwrapper
+from resources.lib import routes, kodiwrapper, tokenresolver
 
-try:  # Python 3
-    from urllib.parse import parse_qsl
-except ImportError:  # Python 2
-    from urlparse import parse_qsl
+
+def get_params(path, route, params_length):
+    ''' Get a fixed size list of parameters '''
+    max_split = -1
+    params_data = path.split(route, 1)[1]
+    params = []
+    if params_data != '':
+        if params_data.startswith('/url'):
+            max_split = 1
+        params = params_data.lstrip('/').split('/', max_split)
+    params.extend([None] * (params_length - len(params)))
+    return params
 
 
 def router(argv):
@@ -19,113 +27,153 @@ def router(argv):
 
     addon_url = argv[0]
     addon_handle = int(argv[1])
-    params_string = argv[2][1:]
+    path = '/' + addon_url.split('/', 3)[3]
 
-    params = dict(parse_qsl(params_string))
-    action = params.get('action')
+    _kodi = kodiwrapper.KodiWrapper(addon_handle, addon_url)
+    _tokenresolver = tokenresolver.TokenResolver(_kodi)
+    _kodi.log_access(addon_url)
 
-    _kodi = kodiwrapper.KodiWrapper(addon_handle, addon_url, params)
-    _kodi.log_access(addon_url, params_string)
-
-    # Actions that only require _kodi
-    if params.get('refresh') == 'true':
-        _kodi.refresh_caches(params)
-        return
-    if action == actions.INVALIDATE_CACHES:
+    # Cache delete method
+    if path.startswith(routes.CACHE_DELETE):
+        params = get_params(path, routes.CACHE_DELETE, 1)
+        if params[0]:
+            _kodi.refresh_caches(params[0])
+            return
         _kodi.invalidate_caches()
         return
-    if action == actions.LISTING_TVGUIDE:
-        from resources.lib import tvguide
-        _tvguide = tvguide.TVGuide(_kodi)
-        _tvguide.show_tvguide(params)
-        return
-    if action == actions.INSTALL_WIDEVINE:
-        _kodi.install_widevine()
-        return
 
-    from resources.lib import tokenresolver
-    _tokenresolver = tokenresolver.TokenResolver(_kodi)
-
-    # Actions requiring _tokenresolver as well
-    if action == actions.DELETE_TOKENS:
+    # Tokens delete method
+    if path == 'routes.TOKENS_DELETE':
         _tokenresolver.delete_tokens()
+        return
+
+    # Widevine install method
+    if path == routes.WIDEVINE_INSTALL:
+        _kodi.install_widevine()
         return
 
     from resources.lib import favorites
     _favorites = favorites.Favorites(_kodi, _tokenresolver)
 
-    # Actions requiring _favorites as well
-    if action == actions.FOLLOW:
-        _favorites.follow(title=params.get('title'), program=params.get('program'))
+    # Follow method
+    if path.startswith(routes.FOLLOW):
+        params = get_params(path, routes.FOLLOW, 2)
+        _favorites.follow(title=params[0], program=params[1])
         return
-    if action == actions.UNFOLLOW:
-        _favorites.unfollow(title=params.get('title'), program=params.get('program'))
-        return
-    if action == actions.REFRESH_FAVORITES:
-        _favorites.get_favorites(ttl=0)
+
+    # Unfollow method
+    if path.startswith(routes.UNFOLLOW):
+        params = get_params(path, routes.UNFOLLOW, 2)
+        _favorites.unfollow(title=params[0], program=params[1])
         return
 
     from resources.lib import vrtapihelper, vrtplayer
     _apihelper = vrtapihelper.VRTApiHelper(_kodi, _favorites)
     _vrtplayer = vrtplayer.VRTPlayer(_kodi, _favorites, _apihelper)
 
-    # Actions requiring menu's or playback, but not favorites
-    if not action:
+    # Play methods
+    if path.startswith(routes.PLAY):
+        params = get_params(path, routes.PLAY, 3)
+        if params[0] == 'id':
+            if params[2]:
+                video = dict(publication_id=params[1], video_id=params[2])
+            else:
+                video = dict(video_id=params[1])
+            _vrtplayer.play(video)
+        elif params[0] == 'url':
+            video = dict(video_url=params[1])
+            _vrtplayer.play(video)
+        elif params[0] == 'latestepisode':
+            _vrtplayer.play_latest_episode(params[1])
+        return
+
+    # Main menu
+    if path == routes.MAIN:
         _vrtplayer.show_main_menu_items()
         return
-    if action == actions.PLAY:
-        _vrtplayer.play(params)
+
+    # Favorites menu
+    if path.startswith(routes.FAVORITES):
+        params = get_params(path, routes.FAVORITES, 2)
+        if not params[0]:
+            _favorites.get_favorites(ttl=60 * 60)
+            _vrtplayer.show_favorites_menu_items()
+            return
+        if params[0] == 'programs':
+            # My programs menus may need more up-to-date favorites
+            _favorites.get_favorites(ttl=5 * 60)
+            _vrtplayer.show_tvshow_menu_items(use_favorites=True)
+            return
+        if params[0] == 'offline':
+            # My programs menus may need more up-to-date favorites
+            _favorites.get_favorites(ttl=5 * 60)
+            _vrtplayer.show_offline(use_favorites=True, page=params[1])
+            return
+        if params[0] == 'recent':
+            # My programs menus may need more up-to-date favorites
+            _favorites.get_favorites(ttl=5 * 60)
+            _vrtplayer.show_recent(use_favorites=True, page=params[1])
+            return
+        if params[0] == 'refresh':
+            _favorites.get_favorites(ttl=0)
+            return
+
+    # A-Z menu, episode and season menu
+    if path.startswith(routes.PROGRAMS):
+        params = get_params(path, routes.PROGRAMS, 2)
+        if params[0]:
+            _favorites.get_favorites(ttl=60 * 60)
+            _vrtplayer.show_episodes(params[0], params[1])
+        else:
+            _vrtplayer.show_tvshow_menu_items()
         return
-    if action == actions.PLAY_LATEST_EPISODE:
-        _vrtplayer.play_latest_episode(params)
-        return
-    if action == actions.LISTING_CATEGORIES:
+
+    # Categories menu
+    if path.startswith(routes.CATEGORIES):
+        params = get_params(path, routes.CATEGORIES, 1)
+        if params[0]:
+            _favorites.get_favorites(ttl=60 * 60)
+            _vrtplayer.show_tvshow_menu_items(category=params[0])
+            return
         _vrtplayer.show_category_menu_items()
         return
-    if action == actions.LISTING_LIVE:
+
+    # Channels menu
+    if path.startswith(routes.CHANNELS):
+        params = get_params(path, routes.CHANNELS, 1)
+        if params[0]:
+            _favorites.get_favorites(ttl=60 * 60)
+        _vrtplayer.show_channels_menu_items(params[0])
+        return
+
+    # Live TV menu
+    if path == routes.LIVETV:
         _vrtplayer.show_livestream_items()
         return
 
-    # My programs menus may need more up-to-date favorites
-    if params.get('use_favorites'):
-        _favorites.get_favorites(ttl=5 * 60)
-    elif params.get('category') or params.get('channel'):
-        _favorites.get_favorites(ttl=60 * 60)
-
-    # Actions that optionally use favorites
-    if action == actions.LISTING_AZ_TVSHOWS:
-        _vrtplayer.show_tvshow_menu_items(use_favorites=params.get('use_favorites'))
-        return
-    if action == actions.LISTING_OFFLINE:
-        _vrtplayer.show_offline(page=params.get('page'), use_favorites=params.get('use_favorites'))
-        return
-    if action == actions.LISTING_RECENT:
-        _vrtplayer.show_recent(page=params.get('page'), use_favorites=params.get('use_favorites'))
-        return
-    if action == actions.LISTING_CATEGORY_TVSHOWS:
-        _vrtplayer.show_tvshow_menu_items(category=params.get('category'))
-        return
-    if action == actions.LISTING_CHANNELS:
-        _vrtplayer.show_channels_menu_items(channel=params.get('channel'))
+    # Most recent menu
+    if path.startswith(routes.RECENT):
+        params = get_params(path, routes.RECENT, 1)
+        _vrtplayer.show_recent(page=params[0])
         return
 
-    # Actions that expose follow/unfollow context menus
-    if action == actions.LISTING_FAVORITES:
-        _favorites.get_favorites(ttl=60 * 60)
-        _vrtplayer.show_favorites_menu_items()
-        return
-    if action == actions.LISTING_EPISODES:
-        _favorites.get_favorites(ttl=60 * 60)
-        _vrtplayer.show_episodes(program=params.get('program'), season=params.get('season'))
-        return
-    if action == actions.LISTING_ALL_EPISODES:
-        _favorites.get_favorites(ttl=60 * 60)
-        _vrtplayer.show_all_episodes(program=params.get('program'))
-        return
-    if action == actions.SEARCH:
-        _favorites.get_favorites(ttl=60 * 60)
-        _vrtplayer.search(search_string=params.get('query'), page=params.get('page'))
+    # Soon offline menu
+    if path.startswith(routes.OFFLINE):
+        params = get_params(path, routes.OFFLINE, 1)
+        _vrtplayer.show_offline(page=params[0])
         return
 
-    # Show main menu, if nothing else
-    _vrtplayer.show_main_menu_items()
+    # TV guide menu
+    if path.startswith(routes.TVGUIDE):
+        from resources.lib import tvguide
+        _tvguide = tvguide.TVGuide(_kodi)
+        params = get_params(path, routes.TVGUIDE, 2)
+        _tvguide.show_tvguide(params[0], params[1])
+        return
+
+    # Search VRT NU menu
+    if path.startswith(routes.SEARCH):
+        params = get_params(path, routes.SEARCH, 2)
+        _favorites.get_favorites(ttl=60 * 60)
+        _vrtplayer.search(search_string=params[0], page=params[1])
+        return

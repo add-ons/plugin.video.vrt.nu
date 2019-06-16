@@ -54,3 +54,8 @@ def endOfDirectory(handle, succeeded=True, updateListing=True, cacheToDisc=True)
 def setContent(self, content):
     ''' A stub implementation of the xbmcplugin setContent() function '''
     return
+
+
+def setResolvedUrl(handle, succeeded, listitem):
+    ''' A stub implementation of the xbmcplugin setResolvedUrl() function '''
+    return
