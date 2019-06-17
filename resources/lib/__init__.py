@@ -117,38 +117,32 @@ CHANNELS = [
 ]
 
 
-class actions:
-    ''' A list of add-on actions '''
-    DELETE_TOKENS = 'deletetokens'
-    FOLLOW = 'follow'
-    INSTALL_WIDEVINE = 'installwidevine'
-    INVALIDATE_CACHES = 'invalidatecaches'
-    LISTING_ALL_EPISODES = 'listingallepisodes'
-    LISTING_AZ_TVSHOWS = 'listingaztvshows'
-    LISTING_CATEGORIES = 'listingcategories'
-    LISTING_CATEGORY_TVSHOWS = 'listingcategorytvshows'
-    LISTING_CHANNELS = 'listingchannels'
-    LISTING_EPISODES = 'listingepisodes'
-    LISTING_FAVORITES = 'favorites'
-    LISTING_LIVE = 'listinglive'
-    LISTING_OFFLINE = 'listingoffline'
-    LISTING_RECENT = 'listingrecent'
-    LISTING_TVGUIDE = 'listingtvguide'
-    PLAY = 'play'
-    PLAY_LATEST_EPISODE = 'playlatestepisode'
-    REFRESH_FAVORITES = 'refreshfavorites'
-    SEARCH = 'search'
-    UNFOLLOW = 'unfollow'
+class routes:
+    ''' A list of add-on routes '''
 
+    # Menus
+    MAIN = '/'
+    FAVORITES = '/favorites'
+    FAVORITES_PROGRAMS = '/favorites/programs'
+    FAVORITES_RECENT = '/favorites/recent'
+    FAVORITES_OFFLINE = '/favorites/offline'
+    FAVORITES_REFRESH = '/favorites/refresh'
+    PROGRAMS = '/programs'
+    CATEGORIES = '/categories'
+    CHANNELS = '/channels'
+    LIVETV = '/livetv'
+    RECENT = '/recent'
+    OFFLINE = '/offline'
+    SEARCH = '/search'
+    TVGUIDE = '/tvguide'
 
-CACHES = dict(
-    listingallepisodes=[],  # Refresh, but no cache
-    listingaztvshows=['programs.json'],
-    listingcategorytvshows=['category.{category}.json'],
-    listingchannels=['channel.{channel}.json'],
-    listingepisodes=[],  # Refresh, but no cache
-    listinglive=[],  # Refresh, but no cache
-    listingoffline=['{prefix}offline-{page}.json'],
-    listingrecent=['{prefix}recent-{page}.json'],
-    listingtvguide=['schedule.{date}.json'],
-)
+    # Methods
+    PLAY = '/play'
+    PLAY_URL = '/play/url'
+    PLAY_ID = '/play/id'
+    FOLLOW = '/follow'
+    UNFOLLOW = '/unfollow'
+    WIDEVINE_INSTALL = '/widevine/install'
+    TOKENS_DELETE = '/tokens/delete'
+    CACHE_DELETE = '/cache/delete'
+    ALLSEASONS = '/allseasons'

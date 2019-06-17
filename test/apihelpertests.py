@@ -18,34 +18,34 @@ xbmcvfs = __import__('xbmcvfs')
 
 class ApiHelperTests(unittest.TestCase):
 
-    _kodi = kodiwrapper.KodiWrapper(None, 'plugin://plugin.video.vrt.nu', dict())
+    _kodi = kodiwrapper.KodiWrapper(None, 'plugin://plugin.video.vrt.nu')
     _tokenresolver = tokenresolver.TokenResolver(_kodi)
     _favorites = favorites.Favorites(_kodi, _tokenresolver)
     _apihelper = vrtapihelper.VRTApiHelper(_kodi, _favorites)
 
     def test_get_api_data_single_season(self):
-        title_items, sort, ascending, content = self._apihelper.get_episode_items(path='/vrtnu/a-z/het-journaal.relevant/', show_seasons=True)
+        title_items, sort, ascending, content = self._apihelper.get_episode_items(program='het-journaal')
         self.assertTrue(121 < len(title_items) < 140, 'We got %s items instead.' % len(title_items))
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
 
     def test_get_api_data_multiple_seasons(self):
-        title_items, sort, ascending, content = self._apihelper.get_episode_items(path='/vrtnu/a-z/thuis.relevant/', show_seasons=True)
+        title_items, sort, ascending, content = self._apihelper.get_episode_items(program='thuis')
         self.assertTrue(len(title_items) < 5)
         self.assertEqual(sort, 'label')
         self.assertFalse(ascending)
         self.assertEqual(content, 'seasons')
 
     def test_get_api_data_specific_season(self):
-        title_items, sort, ascending, content = self._apihelper.get_episode_items(path='/vrtnu/a-z/pano.relevant/', show_seasons=True)
+        title_items, sort, ascending, content = self._apihelper.get_episode_items(program='pano')
         self.assertEqual(len(title_items), 4)
         self.assertEqual(sort, 'label')
         self.assertFalse(ascending)
         self.assertEqual(content, 'seasons')
 
     def test_get_api_data_specific_season_without_broadcastdate(self):
-        title_items, sort, ascending, content = self._apihelper.get_episode_items(path='/vrtnu/a-z/postbus-x.relevant/', show_seasons=True)
+        title_items, sort, ascending, content = self._apihelper.get_episode_items(program='postbus-x')
         self.assertEqual(len(title_items), 3)
         self.assertEqual(sort, 'label')
         self.assertTrue(ascending)
@@ -85,8 +85,8 @@ class ApiHelperTests(unittest.TestCase):
 
     def test_get_tvshows(self):
         ''' Test items, sort and order '''
-        path = 'nieuws-en-actua'
-        tvshow_items = self._apihelper.get_tvshow_items(path)
+        category = 'nieuws-en-actua'
+        tvshow_items = self._apihelper.get_tvshow_items(category=category)
         self.assertTrue(tvshow_items)
 
     def test_tvshows(self):
@@ -101,6 +101,12 @@ class ApiHelperTests(unittest.TestCase):
         channel_studios = [c.get('studio') for c in CHANNELS] + bogus_brands
         for tvshow in tvshow_items:
             self.assertTrue(tvshow.video_dict['studio'] in channel_studios, '%s | %s | %s' % (tvshow.title, tvshow.video_dict['studio'], channel_studios))
+
+    def test_get_latest_episode(self):
+        video = self._apihelper.get_latest_episode(program='het-journaal')
+        self.assertTrue(len(video) == 2)
+        self.assertTrue(video.get('video_id') is not None)
+        self.assertTrue(video.get('publication_id') is not None)
 
 
 if __name__ == '__main__':

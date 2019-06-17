@@ -16,7 +16,7 @@ try:  # Python 3
 except ImportError:  # Python 2
     from urllib2 import build_opener, install_opener, ProxyHandler, urlopen
 
-from resources.lib import CHANNELS, actions, metadatacreator, statichelper
+from resources.lib import CHANNELS, routes, metadatacreator, statichelper
 from resources.lib.helperobjects import TitleItem
 
 DATE_STRINGS = {
@@ -46,10 +46,8 @@ class TVGuide:
         install_opener(build_opener(ProxyHandler(self._proxies)))
         self._showfanart = _kodi.get_setting('showfanart', 'true') == 'true'
 
-    def show_tvguide(self, params):
+    def show_tvguide(self, date=None, channel=None):
         ''' Offer a menu depending on the information provided '''
-        date = params.get('date')
-        channel = params.get('channel')
 
         if not date:
             date_items = self.show_date_menu()
@@ -86,14 +84,14 @@ class TVGuide:
                 date = DATES[str(i)]
             else:
                 date = day.strftime('%Y-%m-%d')
-
+            cache_file = 'schedule.%s.json' % date
             date_items.append(TitleItem(
                 title=title,
-                url_dict=dict(action=actions.LISTING_TVGUIDE, date=date),
+                path=routes.TVGUIDE + '/' + date,
                 is_playable=False,
                 art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
                 video_dict=dict(plot=self._kodi.localize_datelong(day)),
-                context_menu=[('Refresh', 'RunPlugin(%s)' % self._kodi.container_url(refresh='true'))],
+                context_menu=[('Refresh', 'RunPlugin(%s%s)' % ('plugin://plugin.video.vrt.nu/cache/delete/', cache_file))],
             ))
         return date_items
 
@@ -118,7 +116,7 @@ class TVGuide:
             plot = '%s\n%s' % (self._kodi.localize(30301).format(**channel), datelong)
             channel_items.append(TitleItem(
                 title=channel.get('label'),
-                url_dict=dict(action=actions.LISTING_TVGUIDE, date=date, channel=channel.get('name')),
+                path=routes.TVGUIDE + '/' + date + '/' + channel.get('name'),
                 is_playable=False,
                 art_dict=dict(thumb=icon, icon=icon, fanart=fanart),
                 video_dict=dict(plot=plot, studio=channel.get('studio')),
@@ -178,21 +176,21 @@ class TVGuide:
             metadata.icon = thumb
             if url:
                 video_url = statichelper.add_https_method(url)
-                url_dict = dict(action=actions.PLAY, video_url=video_url)
+                path = routes.PLAY_URL + '/' + video_url
                 if start_date <= now <= end_date:  # Now playing
                     metadata.title = '[COLOR yellow]%s[/COLOR] %s' % (label, self._kodi.localize(30302))
                 else:
                     metadata.title = label
             else:
                 # This is a non-actionable item
-                url_dict = dict()
+                path = None
                 if start_date < now <= end_date:  # Now playing
                     metadata.title = '[COLOR gray]%s[/COLOR] %s' % (label, self._kodi.localize(30302))
                 else:
                     metadata.title = '[COLOR gray]%s[/COLOR]' % label
             episode_items.append(TitleItem(
                 title=metadata.title,
-                url_dict=url_dict,
+                path=path,
                 is_playable=True,
                 art_dict=dict(thumb=thumb, icon='DefaultAddonVideo.png', fanart=thumb),
                 video_dict=metadata.get_video_dict(),

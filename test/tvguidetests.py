@@ -23,7 +23,7 @@ channels = ['een', 'canvas', 'ketnet']
 
 class TestTVGuide(unittest.TestCase):
 
-    _kodi = kodiwrapper.KodiWrapper(None, 'plugin.video.vrt.nu', dict())
+    _kodi = kodiwrapper.KodiWrapper(None, 'plugin.video.vrt.nu')
     _tvguide = tvguide.TVGuide(_kodi)
 
     def test_tvguide_date_menu(self):
@@ -31,7 +31,7 @@ class TestTVGuide(unittest.TestCase):
         date_items = self._tvguide.show_date_menu()
         self.assertEqual(len(date_items), 37)
         date_item = random.choice(date_items)
-        print(date_item.title, date_item.url_dict)
+        print(date_item.title, date_item.path)
 
     def test_tvguide_channel_menu(self):
         ''' Test channel menu '''

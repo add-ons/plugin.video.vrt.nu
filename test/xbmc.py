@@ -68,6 +68,14 @@ class Monitor:
 class Player:
     ''' A stub implementation of the xbmc Player class '''
 
+    def isPlaying(self):
+        ''' A stub implementation for the xbmc Player class isPlaying() method '''
+        return True
+
+    def showSubtitles(self, bVisible):
+        ''' A stub implementation for the xbmc Player class showSubtitles() method '''
+        return
+
 
 def executebuiltin(s):
     ''' A stub implementation of the xbmc executebuiltin() function '''

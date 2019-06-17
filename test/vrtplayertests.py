@@ -19,54 +19,54 @@ xbmcvfs = __import__('xbmcvfs')
 
 class TestVRTPlayer(unittest.TestCase):
 
-    _kodi = kodiwrapper.KodiWrapper(None, 'plugin://plugin.video.vrt.nu', dict())
+    _kodi = kodiwrapper.KodiWrapper(None, 'plugin://plugin.video.vrt.nu')
     _tokenresolver = tokenresolver.TokenResolver(_kodi)
     _favorites = favorites.Favorites(_kodi, _tokenresolver)
     _apihelper = vrtapihelper.VRTApiHelper(_kodi, _favorites)
     _vrtplayer = vrtplayer.VRTPlayer(_kodi, _favorites, _apihelper)
 
     def test_show_videos_single_episode_shows_videos(self):
-        path = '/vrtnu/a-z/marathonradio.relevant/'
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(path=path)
-        self.assertTrue(episode_items, msg=path)
+        program = 'marathonradio'
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(program=program)
+        self.assertTrue(episode_items, msg=program)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
 
-        self._vrtplayer.show_episodes(path)
+        self._vrtplayer.show_episodes(program)
         # self.assertTrue(self._kodi.show_listing.called)
 
     def test_show_videos_single_season_shows_videos(self):
-        path = '/vrtnu/a-z/het-weer.relevant/'
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(path=path)
-        self.assertTrue(episode_items, msg=path)
+        program = 'het-weer'
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(program=program)
+        self.assertTrue(episode_items, msg=program)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
 
-        self._vrtplayer.show_episodes(path)
+        self._vrtplayer.show_episodes(program)
         # self.assertTrue(self._kodi.show_listing.called)
 
     def test_show_videos_multiple_seasons_shows_videos(self):
-        path = '/vrtnu/a-z/pano.relevant/'
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(path=path, show_seasons=True)
+        program = 'pano'
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(program=program)
         self.assertTrue(episode_items)
         self.assertEqual(sort, 'label')
         self.assertFalse(ascending)
         self.assertEqual(content, 'seasons')
 
-        self._vrtplayer.show_episodes(path)
+        self._vrtplayer.show_episodes(program)
         # self.assertTrue(self._kodi.show_listing.called)
 
     def test_show_videos_specific_seasons_shows_videos(self):
-        path = '/vrtnu/a-z/thuis.relevant/'
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(path=path, show_seasons=True)
-        self.assertTrue(episode_items, msg=path)
+        program = 'thuis'
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(program=program)
+        self.assertTrue(episode_items, msg=program)
         self.assertEqual(sort, 'label')
         self.assertFalse(ascending)
         self.assertEqual(content, 'seasons')
 
-        self._vrtplayer.show_episodes(path)
+        self._vrtplayer.show_episodes(program)
         # self.assertTrue(self._kodi.show_listing.called)
 
     def test_categories_scraping(self):
@@ -85,8 +85,8 @@ class TestVRTPlayer(unittest.TestCase):
         self.assertTrue(tvshow_items, msg=category['id'])
 
         tvshow = random.choice(tvshow_items)
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(tvshow.url_dict['video_url'])
-        self.assertTrue(episode_items, msg=tvshow.url_dict['video_url'])
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(tvshow.path.split('/')[2])
+        self.assertTrue(episode_items, msg=tvshow.path.split('/')[2])
         self.assertTrue(sort in ['dateadded', 'episode', 'label', 'unsorted'])
         self.assertTrue(ascending is True or ascending is False)
         self.assertTrue(content in ['episodes', 'seasons'], "Content for '%s' is '%s'" % (tvshow.title, content))

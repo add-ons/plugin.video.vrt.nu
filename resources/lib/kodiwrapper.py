@@ -12,9 +12,8 @@ import xbmcplugin
 import xbmcaddon
 
 try:  # Python 3
-    from urllib.parse import urlencode, unquote
+    from urllib.parse import unquote
 except ImportError:  # Python 2
-    from urllib import urlencode
     from urllib2 import unquote
 
 sort_methods = dict(
@@ -104,11 +103,10 @@ def has_socks():
 class KodiWrapper:
     ''' A wrapper around all Kodi functionality '''
 
-    def __init__(self, handle, url, params):
+    def __init__(self, handle, url):
         ''' Initialize the Kodi wrapper '''
         self._handle = handle
         self._url = url
-        self._params = params
         self._addon = xbmcaddon.Addon()
         self._addon_id = self._addon.getAddonInfo('id')
         self._max_log_level = log_levels.get(self.get_setting('max_log_level', 'Debug'), 3)
@@ -164,11 +162,11 @@ class KodiWrapper:
 
         for title_item in list_items:
             # Three options:
-            #  - item is a virtual directory/folder (not playable, url_dict)
-            #  - item is a playable file (playable, url_dict)
-            #  - item is non-actionable item (not playable, no url_dict)
-            is_folder = bool(not title_item.is_playable and title_item.url_dict)
-            is_playable = bool(title_item.is_playable and title_item.url_dict)
+            #  - item is a virtual directory/folder (not playable, path)
+            #  - item is a playable file (playable, path)
+            #  - item is non-actionable item (not playable, no path)
+            is_folder = bool(not title_item.is_playable and title_item.path)
+            is_playable = bool(title_item.is_playable and title_item.path)
 
             list_item = xbmcgui.ListItem(label=title_item.title, thumbnailImage=title_item.art_dict.get('thumb'))
             list_item.setProperty(key='IsPlayable', value='true' if is_playable else 'false')
@@ -187,8 +185,8 @@ class KodiWrapper:
                 list_item.addContextMenuItems(title_item.context_menu)
 
             url = None
-            if title_item.url_dict:
-                url = self._url + '?' + urlencode(title_item.url_dict)
+            if title_item.path:
+                url = 'plugin://' + self._addon_id + title_item.path
 
             listing.append((url, list_item, is_folder))
 
@@ -392,6 +390,10 @@ class KodiWrapper:
         ''' Return the addon path '''
         return xbmc.translatePath(self._addon.getAddonInfo('path'))
 
+    def get_addon_id(self):
+        ''' Return the addon id '''
+        return self._addon_id
+
     def get_path(self, path):
         ''' Convert a special path '''
         return xbmc.translatePath(path)
@@ -515,26 +517,10 @@ class KodiWrapper:
             self.log_notice("Cache '%s' has not changed, updating mtime only." % path, 'Debug')
             os.utime(path)
 
-    def refresh_caches(self, params):
+    def refresh_caches(self, url):
         ''' Invalidate the needed caches and refresh container '''
-        from resources.lib import CACHES, statichelper
-
-        prefix = ''
-        use_favorites = statichelper.boolean(params.get('use_favorites'))
-        if use_favorites:
-            prefix = 'my-'
-            # self.invalidate_cache(path='favorites.json')
-
-        if 'page' not in params:
-            params['page'] = 1
-
-        action = params.get('action')
-        if action in CACHES:
-            for cache in CACHES[action]:
-                self.invalidate_caches(expr=cache.format(prefix=prefix, **params))
-            self.container_refresh()
-        else:
-            self.log_notice("No caches found for action '%s'" % action)
+        self.invalidate_caches(expr=url)
+        self.container_refresh()
 
     def invalidate_cache(self, path):
         ''' Invalidate a existing cache file '''
@@ -548,12 +534,6 @@ class KodiWrapper:
             files = fnmatch.filter(files, expr)
         for f in files:
             self.delete_file(self._cache_path + f)
-
-    def container_url(self, **params):
-        ''' Return an updated URL for this container '''
-        new_params = self._params
-        new_params.update(params)
-        return self._url + '?' + urlencode(new_params)
 
     def container_refresh(self):
         ''' Refresh the current container '''
@@ -571,10 +551,10 @@ class KodiWrapper:
         ''' Close a virtual directory, required to avoid a waiting Kodi '''
         xbmcplugin.endOfDirectory(handle=self._handle, succeeded=False, updateListing=False, cacheToDisc=False)
 
-    def log_access(self, url, query_string, log_level='Verbose'):
+    def log_access(self, url, query_string=None, log_level='Verbose'):
         ''' Log addon access '''
         if log_levels.get(log_level, 0) <= self._max_log_level:
-            message = url + ('?' if query_string else '') + query_string
+            message = url + ('?' + query_string if query_string else '')
             xbmc.log(msg='[%s] Access: %s' % (self._addon_id, unquote(message)), level=xbmc.LOGNOTICE)
 
     def log_notice(self, message, log_level='Info'):
