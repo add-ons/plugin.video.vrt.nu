@@ -517,7 +517,7 @@ class VRTApiHelper:
 
         channel_items = []
         for channel in CHANNELS:
-            if channel.get('name') not in channels:
+            if channels and channel.get('name') not in channels:
                 continue
 
             icon = icon_path % channel
@@ -529,9 +529,12 @@ class VRTApiHelper:
                 plot = '[B]%s[/B]' % channel.get('label')
                 is_playable = False
                 context_menu = []
-            else:
-                url_dict = dict(action=action)
+            elif channel.get('live_stream') or channel.get('live_stream_id'):
                 label = self._kodi.localize(30101).format(**channel)
+                # A single Live channel means it is the entry for channel's TV Show listing, so make it stand out
+                if channels and len(channels) == 1:
+                    label = '«%s»' % label
+                url_dict = dict(action=action)
                 is_playable = True
                 if channel.get('name') in ['een', 'canvas', 'ketnet']:
                     if self._showfanart:
@@ -544,6 +547,9 @@ class VRTApiHelper:
                 if channel.get('live_stream_id'):
                     url_dict['video_id'] = channel.get('live_stream_id')
                 context_menu = [('Refresh', 'RunPlugin(%s)' % self._kodi.container_url(refresh='true'))]
+            else:
+                # Not a playable channel
+                continue
 
             channel_items.append(TitleItem(
                 title=label,

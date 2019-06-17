@@ -23,7 +23,8 @@ sort_methods = dict(
     duration=xbmcplugin.SORT_METHOD_DURATION,
     episode=xbmcplugin.SORT_METHOD_EPISODE,
     # genre=xbmcplugin.SORT_METHOD_GENRE,
-    label=xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE,
+    # label=xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE,
+    label=xbmcplugin.SORT_METHOD_LABEL,
     # none=xbmcplugin.SORT_METHOD_UNSORTED,
     # FIXME: We would like to be able to sort by unprefixed title (ignore date/episode prefix)
     # title=xbmcplugin.SORT_METHOD_TITLE_IGNORE_THE,

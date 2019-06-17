@@ -19,6 +19,8 @@ reset = \e[0m
 
 .PHONY: test
 
+all: test zip
+
 package: zip
 
 test: sanity unit
@@ -46,7 +48,7 @@ unit:
 	PYTHONPATH=$(CURDIR) python test/favoritestests.py
 	@echo -e "$(white)=$(blue) Unit tests finished successfully.$(reset)"
 
-zip: test clean
+zip: clean
 	@echo -e "$(white)=$(blue) Building new package$(reset)"
 	@rm -f ../$(zip_name)
 	cd ..; zip -r $(zip_name) $(include_paths) -x $(exclude_files)
