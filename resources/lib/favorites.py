@@ -6,7 +6,7 @@
 ''' Implementation of Favorites class '''
 
 from __future__ import absolute_import, division, unicode_literals
-from resources.lib import statichelper
+from resources.lib import statichelper, tokenresolver
 
 try:  # Python 3
     from urllib.parse import unquote
@@ -18,10 +18,10 @@ except ImportError:  # Python 2
 class Favorites:
     ''' Track, cache and manage VRT favorites '''
 
-    def __init__(self, _kodi, _tokenresolver):
+    def __init__(self, _kodi):
         ''' Initialize favorites, relies on XBMC vfs and a special VRT token '''
         self._kodi = _kodi
-        self._tokenresolver = _tokenresolver
+        self._tokenresolver = tokenresolver.TokenResolver(_kodi)
         self._proxies = _kodi.get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
         # This is our internal representation
@@ -67,7 +67,7 @@ class Favorites:
 
         xvrttoken = self._tokenresolver.get_xvrttoken(token_variant='user')
         if xvrttoken is None:
-            self._kodi.show_notification(message='Failed to get favorites roken from VRT NU')
+            self._kodi.show_notification(message='Failed to get favorites token from VRT NU')
             self._kodi.log_error('Failed to get favorites token from VRT NU')
             return False
 

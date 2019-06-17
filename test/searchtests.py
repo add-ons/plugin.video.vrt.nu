@@ -7,7 +7,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
 
-from resources.lib import favorites, kodiwrapper, tokenresolver, vrtapihelper
+from resources.lib import favorites, kodiwrapper, vrtapihelper
 
 xbmc = __import__('xbmc')
 xbmcaddon = __import__('xbmcaddon')
@@ -18,9 +18,8 @@ xbmcvfs = __import__('xbmcvfs')
 
 class TestSearch(unittest.TestCase):
 
-    _kodi = kodiwrapper.KodiWrapper(None, 'plugin.video.vrt.nu')
-    _tokenresolver = tokenresolver.TokenResolver(_kodi)
-    _favorites = favorites.Favorites(_kodi, _tokenresolver)
+    _kodi = kodiwrapper.KodiWrapper(None)
+    _favorites = favorites.Favorites(_kodi)
     _apihelper = vrtapihelper.VRTApiHelper(_kodi, _favorites)
 
     def test_search_journaal(self):

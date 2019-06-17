@@ -12,6 +12,7 @@ import time
 import polib
 
 
+LOGDEBUG = 'Debug'
 LOGERROR = 'Error'
 LOGNOTICE = 'Notice'
 

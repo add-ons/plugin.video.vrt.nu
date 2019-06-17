@@ -5,21 +5,22 @@
 ''' Implements a VRTPlayer class '''
 
 from __future__ import absolute_import, division, unicode_literals
-from resources.lib import routes, statichelper, streamservice, tokenresolver
+from resources.lib import favorites, routes, statichelper, streamservice, tokenresolver, vrtapihelper
 from resources.lib.helperobjects import TitleItem
 
 
 class VRTPlayer:
     ''' An object providing all methods for Kodi menu generation '''
 
-    def __init__(self, _kodi, _favorites, _apihelper):
+    def __init__(self, _kodi):
         ''' Initialise object '''
         self._kodi = _kodi
-        self._favorites = _favorites
-        self._apihelper = _apihelper
+        self._favorites = favorites.Favorites(_kodi)
+        self._apihelper = vrtapihelper.VRTApiHelper(_kodi, self._favorites)
 
     def show_main_menu_items(self):
         ''' The VRT NU add-on main menu '''
+        self._favorites.get_favorites(ttl=60 * 60)
         main_items = []
 
         # Only add 'My programs' when it has been activated
@@ -81,6 +82,7 @@ class VRTPlayer:
 
     def show_favorites_menu_items(self):
         ''' The VRT NU addon 'My Programs' menu '''
+        self._favorites.get_favorites(ttl=60 * 60)
         favorites_items = [
             TitleItem(title=self._kodi.localize(30040),  # My A-Z listing
                       path=routes.FAVORITES_PROGRAMS,
@@ -108,6 +110,11 @@ class VRTPlayer:
 
     def show_tvshow_menu_items(self, category=None, use_favorites=False):
         ''' The VRT NU add-on 'A-Z' listing menu '''
+        if use_favorites:
+            # My programs menus may need more up-to-date favorites
+            self._favorites.get_favorites(ttl=5 * 60)
+        else:
+            self._favorites.get_favorites(ttl=60 * 60)
         tvshow_items = self._apihelper.get_tvshow_items(category=category, use_favorites=use_favorites)
         self._kodi.show_listing(tvshow_items, sort='label', content='tvshows')
 
@@ -119,6 +126,7 @@ class VRTPlayer:
     def show_channels_menu_items(self, channel=None):
         ''' The VRT NU add-on 'Channels' listing menu '''
         if channel:
+            self._favorites.get_favorites(ttl=60 * 60)
             # Add Live TV channel entry
             channel_item = self._apihelper.get_channel_items(channels=[channel])
             tvshow_items = self._apihelper.get_tvshow_items(channel=channel)
@@ -134,11 +142,17 @@ class VRTPlayer:
 
     def show_episodes(self, program, season=None):
         ''' The VRT NU add-on episodes listing menu '''
+        self._favorites.get_favorites(ttl=60 * 60)
         episode_items, sort, ascending, content = self._apihelper.get_episode_items(program=program, season=season)
         self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content)
 
     def show_recent(self, page=0, use_favorites=False):
         ''' The VRT NU add-on 'Most recent' and 'My most recent' listing menu '''
+        if use_favorites:
+            # My programs menus may need more up-to-date favorites
+            self._favorites.get_favorites(ttl=5 * 60)
+        else:
+            self._favorites.get_favorites(ttl=60 * 60)
         page = statichelper.realpage(page)
         episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=page, use_favorites=use_favorites, variety='recent')
 
@@ -160,6 +174,11 @@ class VRTPlayer:
 
     def show_offline(self, page=0, use_favorites=False):
         ''' The VRT NU add-on 'Soon offline' and 'My soon offline' listing menu '''
+        if use_favorites:
+            # My programs menus may need more up-to-date favorites
+            self._favorites.get_favorites(ttl=5 * 60)
+        else:
+            self._favorites.get_favorites(ttl=60 * 60)
         page = statichelper.realpage(page)
         episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=page, use_favorites=use_favorites, variety='offline')
 
@@ -181,6 +200,7 @@ class VRTPlayer:
 
     def search(self, search_string=None, page=None):
         ''' The VRT NU add-on Search functionality and results '''
+        self._favorites.get_favorites(ttl=60 * 60)
         page = statichelper.realpage(page)
 
         if search_string is None:

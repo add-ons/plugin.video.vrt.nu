@@ -67,6 +67,14 @@ CHANNELS = [
         live_stream_id='vualto_sporza_geo',
     ),
     dict(
+        id='13',
+        name='vrtnws',
+        label='VRT NWS',
+        studio='VRT NWS',
+        live_stream_id='vualto_nieuws',
+        # live_stream_id='vualto_journaal',
+    ),
+    dict(
         id='11',
         name='radio1',
         label='Radio 1',
@@ -105,14 +113,6 @@ CHANNELS = [
         name='vrtnxt',
         label='VRT NXT',
         studio='VRT NXT',
-    ),
-    dict(
-        id='13',
-        name='vrtnws',
-        label='VRT NWS',
-        studio='VRT NWS',
-        live_stream_id='vualto_nieuws',
-        # live_stream_id='vualto_journaal',
     ),
 ]
 

@@ -204,6 +204,10 @@ msgctxt "#30412"
 msgid "Unfollow"
 msgstr ""
 
+msgctxt "#30413"
+msgid "Refresh"
+msgstr ""
+
 msgctxt "#30415"
 msgid "No followed programs found"
 msgstr ""

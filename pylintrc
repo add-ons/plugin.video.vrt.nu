@@ -1,5 +1,6 @@
 [MESSAGES CONTROL]
 disable=
+    bad-option-value,
     broad-except,
     duplicate-code,
     fixme,
