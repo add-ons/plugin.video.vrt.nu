@@ -19,7 +19,7 @@ class VrtMonitor(xbmc.Monitor):
 
     def onSettingsChanged(self):
         ''' Handler for changes to settings '''
-        _kodi = kodiwrapper.KodiWrapper(None, None)
+        _kodi = kodiwrapper.KodiWrapper(None, None, dict())
         _kodi.log_notice('VRT NU Addon: settings changed')
         _kodi.container_refresh()
 

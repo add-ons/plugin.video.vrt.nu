@@ -139,3 +139,16 @@ class actions:
     REFRESH_FAVORITES = 'refreshfavorites'
     SEARCH = 'search'
     UNFOLLOW = 'unfollow'
+
+
+CACHES = dict(
+    listingallepisodes=[],  # Refresh, but no cache
+    listingaztvshows=['programs.json'],
+    listingcategorytvshows=['category.{category}.json'],
+    listingchannels=['channel.{channel}.json'],
+    listingepisodes=[],  # Refresh, but no cache
+    listinglive=[],  # Refresh, but no cache
+    listingoffline=['{prefix}offline-{page}.json'],
+    listingrecent=['{prefix}recent-{page}.json'],
+    listingtvguide=['schedule.{date}.json'],
+)

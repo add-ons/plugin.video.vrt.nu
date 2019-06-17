@@ -93,6 +93,7 @@ class TVGuide:
                 is_playable=False,
                 art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
                 video_dict=dict(plot=self._kodi.localize_datelong(day)),
+                context_menu=[('Refresh', 'RunPlugin(%s)' % self._kodi.container_url(refresh='true'))],
             ))
         return date_items
 

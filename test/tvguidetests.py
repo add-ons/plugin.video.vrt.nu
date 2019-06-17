@@ -23,7 +23,7 @@ channels = ['een', 'canvas', 'ketnet']
 
 class TestTVGuide(unittest.TestCase):
 
-    _kodi = kodiwrapper.KodiWrapper(None, 'plugin.video.vrt.nu')
+    _kodi = kodiwrapper.KodiWrapper(None, 'plugin.video.vrt.nu', dict())
     _tvguide = tvguide.TVGuide(_kodi)
 
     def test_tvguide_date_menu(self):

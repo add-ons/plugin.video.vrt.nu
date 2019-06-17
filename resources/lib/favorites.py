@@ -133,7 +133,7 @@ class Favorites:
 
     def invalidate_caches(self):
         ''' Invalidate caches that rely on favorites '''
-        # NOTE/ Do not invalidate favorites cache as we manage it ourselves
+        # NOTE: Do not invalidate favorites cache as we manage it ourselves
         # self._kodi.invalidate_caches('favorites.json')
         self._kodi.invalidate_caches('my-offline-*.json')
         self._kodi.invalidate_caches('my-recent-*.json')
