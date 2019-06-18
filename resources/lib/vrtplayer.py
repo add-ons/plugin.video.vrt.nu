@@ -5,7 +5,7 @@
 ''' Implements a VRTPlayer class '''
 
 from __future__ import absolute_import, division, unicode_literals
-from resources.lib import favorites, routes, statichelper, streamservice, tokenresolver, vrtapihelper
+from resources.lib import favorites, statichelper, streamservice, tokenresolver, vrtapihelper
 from resources.lib.helperobjects import TitleItem
 
 
@@ -27,7 +27,7 @@ class VRTPlayer:
         if self._favorites.is_activated():
             main_items.append(TitleItem(
                 title=self._kodi.localize(30010),  # My programs
-                path=routes.FAVORITES,
+                path=self._kodi.url_for('favorites_menu'),
                 is_playable=False,
                 art_dict=dict(thumb='icons/settings/profiles.png', icon='icons/settings/profiles.png', fanart='icons/settings/profiles.png'),
                 video_dict=dict(plot=self._kodi.localize(30011))
@@ -35,45 +35,45 @@ class VRTPlayer:
 
         main_items.extend([
             TitleItem(title=self._kodi.localize(30012),  # A-Z listing
-                      path=routes.PROGRAMS,
+                      path=self._kodi.url_for('programs'),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultMovieTitle.png', icon='DefaultMovieTitle.png', fanart='DefaultMovieTitle.png'),
                       video_dict=dict(plot=self._kodi.localize(30013))),
             TitleItem(title=self._kodi.localize(30014),  # Categories
-                      path=routes.CATEGORIES,
+                      path=self._kodi.url_for('categories'),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultGenre.png', icon='DefaultGenre.png', fanart='DefaultGenre.png'),
                       video_dict=dict(plot=self._kodi.localize(30015))),
             TitleItem(title=self._kodi.localize(30016),  # Channels
                       is_playable=False,
-                      path=routes.CHANNELS,
+                      path=self._kodi.url_for('channels'),
                       art_dict=dict(thumb='DefaultTags.png', icon='DefaultTags.png', fanart='DefaultTags.png'),
                       video_dict=dict(plot=self._kodi.localize(30017))),
             TitleItem(title=self._kodi.localize(30018),  # Live TV
-                      path=routes.LIVETV,
+                      path=self._kodi.url_for('livetv'),
                       is_playable=False,
                       # art_dict=dict(thumb='DefaultAddonPVRClient.png', icon='DefaultAddonPVRClient.png', fanart='DefaultAddonPVRClient.png'),
                       art_dict=dict(thumb='DefaultTVShows.png', icon='DefaultTVShows.png', fanart='DefaultTVShows.png'),
                       video_dict=dict(plot=self._kodi.localize(30019))),
             TitleItem(title=self._kodi.localize(30020),  # Recent items
-                      path=routes.RECENT,
+                      path=self._kodi.url_for('recent'),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultRecentlyAddedEpisodes.png',
                                     icon='DefaultRecentlyAddedEpisodes.png',
                                     fanart='DefaultRecentlyAddedEpisodes.png'),
                       video_dict=dict(plot=self._kodi.localize(30021))),
             TitleItem(title=self._kodi.localize(30022),  # Soon offline
-                      path=routes.OFFLINE,
+                      path=self._kodi.url_for('offline'),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
                       video_dict=dict(plot=self._kodi.localize(30023))),
             TitleItem(title=self._kodi.localize(30024),  # TV guide
-                      path=routes.TVGUIDE,
+                      path=self._kodi.url_for('tv_guide'),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultAddonTvInfo.png', icon='DefaultAddonTvInfo.png', fanart='DefaultAddonTvInfo.png'),
                       video_dict=dict(plot=self._kodi.localize(30025))),
             TitleItem(title=self._kodi.localize(30026),  # Search
-                      path=routes.SEARCH,
+                      path=self._kodi.url_for('search'),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultAddonsSearch.png', icon='DefaultAddonsSearch.png', fanart='DefaultAddonsSearch.png'),
                       video_dict=dict(plot=self._kodi.localize(30027))),
@@ -85,19 +85,19 @@ class VRTPlayer:
         self._favorites.get_favorites(ttl=60 * 60)
         favorites_items = [
             TitleItem(title=self._kodi.localize(30040),  # My A-Z listing
-                      path=routes.FAVORITES_PROGRAMS,
+                      path=self._kodi.url_for('favorites_programs'),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultMovieTitle.png', icon='DefaultMovieTitle.png', fanart='DefaultMovieTitle.png'),
                       video_dict=dict(plot=self._kodi.localize(30041))),
             TitleItem(title=self._kodi.localize(30042),  # My recent items
-                      path=routes.FAVORITES_RECENT,
+                      path=self._kodi.url_for('favorites_recent'),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultRecentlyAddedEpisodes.png',
                                     icon='DefaultRecentlyAddedEpisodes.png',
                                     fanart='DefaultRecentlyAddedEpisodes.png'),
                       video_dict=dict(plot=self._kodi.localize(30043))),
             TitleItem(title=self._kodi.localize(30044),  # My soon offline
-                      path=routes.FAVORITES_OFFLINE,
+                      path=self._kodi.url_for('favorites_offline'),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
                       video_dict=dict(plot=self._kodi.localize(30045))),
@@ -110,11 +110,8 @@ class VRTPlayer:
 
     def show_tvshow_menu_items(self, category=None, use_favorites=False):
         ''' The VRT NU add-on 'A-Z' listing menu '''
-        if use_favorites:
-            # My programs menus may need more up-to-date favorites
-            self._favorites.get_favorites(ttl=5 * 60)
-        else:
-            self._favorites.get_favorites(ttl=60 * 60)
+        # My programs menus may need more up-to-date favorites
+        self._favorites.get_favorites(ttl=5 * 60 if use_favorites else 60 * 60)
         tvshow_items = self._apihelper.get_tvshow_items(category=category, use_favorites=use_favorites)
         self._kodi.show_listing(tvshow_items, sort='label', content='tvshows')
 
@@ -148,23 +145,20 @@ class VRTPlayer:
 
     def show_recent(self, page=0, use_favorites=False):
         ''' The VRT NU add-on 'Most recent' and 'My most recent' listing menu '''
-        if use_favorites:
-            # My programs menus may need more up-to-date favorites
-            self._favorites.get_favorites(ttl=5 * 60)
-        else:
-            self._favorites.get_favorites(ttl=60 * 60)
+        # My programs menus may need more up-to-date favorites
+        self._favorites.get_favorites(ttl=5 * 60 if use_favorites else 60 * 60)
         page = statichelper.realpage(page)
         episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=page, use_favorites=use_favorites, variety='recent')
 
         # Add 'More...' entry at the end
         if len(episode_items) == 50:
             if use_favorites:
-                path = routes.FAVORITES_RECENT
+                recent = 'favorites_recent'
             else:
-                path = routes.RECENT
+                recent = 'recent'
             episode_items.append(TitleItem(
                 title=self._kodi.localize(30300),
-                path=path + '/' + str(page + 1),
+                path=self._kodi.url_for(recent, page=page + 1),
                 is_playable=False,
                 art_dict=dict(thumb='DefaultRecentlyAddedEpisodes.png', icon='DefaultRecentlyAddedEpisodes.png', fanart='DefaultRecentlyAddedEpisodes.png'),
                 video_dict=dict(),
@@ -174,23 +168,20 @@ class VRTPlayer:
 
     def show_offline(self, page=0, use_favorites=False):
         ''' The VRT NU add-on 'Soon offline' and 'My soon offline' listing menu '''
-        if use_favorites:
-            # My programs menus may need more up-to-date favorites
-            self._favorites.get_favorites(ttl=5 * 60)
-        else:
-            self._favorites.get_favorites(ttl=60 * 60)
+        # My programs menus may need more up-to-date favorites
+        self._favorites.get_favorites(ttl=5 * 60 if use_favorites else 60 * 60)
         page = statichelper.realpage(page)
         episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=page, use_favorites=use_favorites, variety='offline')
 
         # Add 'More...' entry at the end
         if len(episode_items) == 50:
             if use_favorites:
-                path = routes.FAVORITES_OFFLINE
+                offline = 'favorites_offline'
             else:
-                path = routes.OFFLINE
+                offline = 'offline'
             episode_items.append(TitleItem(
                 title=self._kodi.localize(30300),
-                path=path + '/' + str(page + 1),
+                path=self._kodi.url_for(offline, page=page + 1),
                 is_playable=False,
                 art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
                 video_dict=dict(),
@@ -220,7 +211,7 @@ class VRTPlayer:
         if len(search_items) == 50:
             search_items.append(TitleItem(
                 title=self._kodi.localize(30300),
-                path=routes.SEARCH + '/' + search_string + '/' + str(page + 1),
+                path=self._kodi.url_for('search', search_string=search_string, page=page + 1),
                 is_playable=False,
                 art_dict=dict(thumb='DefaultAddonSearch.png', icon='DefaultAddonSearch.png', fanart='DefaultAddonSearch.png'),
                 video_dict=dict(),

@@ -5,7 +5,7 @@
 ''' Implements a VRTApiHelper class with common VRT NU API functionality '''
 
 from __future__ import absolute_import, division, unicode_literals
-from resources.lib import CHANNELS, routes, metadatacreator, statichelper
+from resources.lib import CHANNELS, metadatacreator, statichelper
 from resources.lib.helperobjects import TitleItem
 
 try:  # Python 3
@@ -64,7 +64,6 @@ class VRTApiHelper:
     def _map_to_tvshow_items(self, tvshows, use_favorites=False, cache_file=None):
         ''' Construct a list of TV show TitleItems based on Suggests API query and filtered by favorites '''
         tvshow_items = []
-        plugin_url = 'plugin://' + self._kodi.get_addon_id()
         if statichelper.boolean(use_favorites):
             programs = self._favorites.programs()
         for tvshow in tvshows:
@@ -86,16 +85,15 @@ class VRTApiHelper:
             if self._favorites.is_activated():
                 program_title = tvshow.get('title').encode('utf-8')
                 if self._favorites.is_favorite(program):
-                    context_menu = [(self._kodi.localize(30412), 'RunPlugin(%s%s/%s/%s)' % (plugin_url, routes.UNFOLLOW, quote(program_title), program))]
+                    context_menu = [(self._kodi.localize(30412), 'RunPlugin(%s)' % self._kodi.url_for('unfollow', title=quote(program_title), program=program))]
                 else:
-                    context_menu = [(self._kodi.localize(30411), 'RunPlugin(%s%s/%s/%s)' % (plugin_url, routes.FOLLOW, quote(program_title), program))]
+                    context_menu = [(self._kodi.localize(30411), 'RunPlugin(%s)' % self._kodi.url_for('follow', title=quote(program_title), program=program))]
             else:
                 context_menu = []
-            refresh_url = plugin_url + routes.CACHE_DELETE
-            context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s/%s)' % (refresh_url, cache_file)))
+            context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file)))
             tvshow_items.append(TitleItem(
                 title=label,
-                path=routes.PROGRAMS + '/' + program,
+                path=self._kodi.url_for('programs', program=program),
                 is_playable=False,
                 art_dict=dict(thumb=thumbnail, icon='DefaultAddonVideo.png', fanart=thumbnail),
                 video_dict=metadata.get_video_dict(),
@@ -216,7 +214,6 @@ class VRTApiHelper:
         import dateutil.parser
         import dateutil.tz
         now = datetime.now(dateutil.tz.tzlocal())
-        plugin_url = 'plugin://' + self._kodi.get_addon_id()
         sort = 'episode'
         ascending = True
         if statichelper.boolean(use_favorites):
@@ -295,13 +292,12 @@ class VRTApiHelper:
             if self._favorites.is_activated():
                 program_title = episode.get('program').encode('utf-8')
                 if self._favorites.is_favorite(program):
-                    context_menu = [(self._kodi.localize(30412), 'RunPlugin(%s%s/%s/%s)' % (plugin_url, routes.UNFOLLOW, quote(program_title), program))]
+                    context_menu = [(self._kodi.localize(30412), 'RunPlugin(%s)' % self._kodi.url_for('unfollow', title=quote(program_title), program=program))]
                 else:
-                    context_menu = [(self._kodi.localize(30411), 'RunPlugin(%s%s/%s/%s)' % (plugin_url, routes.FOLLOW, quote(program_title), program))]
+                    context_menu = [(self._kodi.localize(30411), 'RunPlugin(%s)' % self._kodi.url_for('follow', title=quote(program_title), program=program))]
             else:
                 context_menu = []
-            refresh_url = plugin_url + routes.CACHE_DELETE
-            context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s/%s)' % (refresh_url, cache_file)))
+            context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file)))
 
             if self._showfanart:
                 thumb = statichelper.add_https_method(episode.get('videoThumbnailUrl', 'DefaultAddonVideo.png'))
@@ -311,10 +307,9 @@ class VRTApiHelper:
                 fanart = 'DefaultAddonVideo.png'
             label, sort, ascending = self._make_label(episode, titletype, options=display_options)
             metadata.title = label
-            path = routes.PLAY_ID + '/' + episode.get('publicationId') + '/' + episode.get('videoId')
             episode_items.append(TitleItem(
                 title=label,
-                path=path,
+                path=self._kodi.url_for('play_id', publication_id=episode.get('publicationId'), video_id=episode.get('videoId')),
                 is_playable=True,
                 art_dict=dict(thumb=thumb, icon='DefaultAddonVideo.png', fanart=fanart),
                 video_dict=metadata.get_video_dict(),
@@ -361,7 +356,7 @@ class VRTApiHelper:
         if self._kodi.get_global_setting('videolibrary.showallitems') is True:
             season_items.append(TitleItem(
                 title=self._kodi.localize(30096),
-                path=routes.PROGRAMS + '/' + program + routes.ALLSEASONS,
+                path=self._kodi.url_for('programs', program=program, season='allseasons'),
                 is_playable=False,
                 art_dict=dict(thumb=fanart, icon='DefaultSets.png', fanart=fanart),
                 video_dict=metadata.get_video_dict(),
@@ -371,7 +366,7 @@ class VRTApiHelper:
         seasons = sorted(seasons, key=lambda k: k['key'], reverse=not ascending)
 
         for season in seasons:
-            season_key = season['key']
+            season_key = season.get('key', '')
             try:
                 # If more than 150 episodes exist, we may end up with an empty season (Winteruur)
                 episode = random.choice([e for e in episodes if e.get('seasonName') == season_key])
@@ -386,7 +381,7 @@ class VRTApiHelper:
             label = '%s %s' % (self._kodi.localize(30094), season_key)
             season_items.append(TitleItem(
                 title=label,
-                path=routes.PROGRAMS + '/' + program + ('/' + season_key if season_key else ''),
+                path=self._kodi.url_for('programs', program=program, season=season_key),
                 is_playable=False,
                 art_dict=dict(thumb=thumbnail, icon='DefaultSets.png', fanart=fanart),
                 video_dict=metadata.get_video_dict(),
@@ -514,16 +509,16 @@ class VRTApiHelper:
             fanart = fanart_path % channel
 
             if not live:
-                path = routes.CHANNELS + '/' + channel.get('name')
+                path = self._kodi.url_for('channels', channel=channel.get('name'))
                 label = channel.get('label')
                 plot = '[B]%s[/B]' % channel.get('label')
                 is_playable = False
                 context_menu = []
             elif channel.get('live_stream') or channel.get('live_stream_id'):
                 if channel.get('live_stream_id'):
-                    path = routes.PLAY_ID + '/' + channel.get('live_stream_id')
+                    path = self._kodi.url_for('play_id', video_id=channel.get('live_stream_id'))
                 elif channel.get('live_stream'):
-                    path = routes.PLAY_URL + '/' + channel.get('live_stream')
+                    path = self._kodi.url_for('play_url', video_url=channel.get('live_stream'))
                 label = self._kodi.localize(30101).format(**channel)
                 # A single Live channel means it is the entry for channel's TV Show listing, so make it stand out
                 if channels and len(channels) == 1:
@@ -535,9 +530,7 @@ class VRTApiHelper:
                     plot = '%s\n\n%s' % (self._kodi.localize(30102).format(**channel), _tvguide.live_description(channel.get('name')))
                 else:
                     plot = self._kodi.localize(30102).format(**channel)
-                refresh_url = 'plugin://' + self._kodi.get_addon_id() + routes.CACHE_DELETE
-                cache_file = 'channel.%s.json' % channel
-                context_menu = [(self._kodi.localize(30413), 'RunPlugin(%s/%s)' % (refresh_url, cache_file))]
+                context_menu = [(self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file='channel.%s.json' % channel))]
             else:
                 # Not a playable channel
                 continue
@@ -591,7 +584,7 @@ class VRTApiHelper:
                 thumbnail = 'DefaultGenre.png'
             category_items.append(TitleItem(
                 title=category.get('name'),
-                path=routes.CATEGORIES + '/' + category.get('id'),
+                path=self._kodi.url_for('categories', category=category.get('id')),
                 is_playable=False,
                 art_dict=dict(thumb=thumbnail, icon='DefaultGenre.png', fanart=thumbnail),
                 video_dict=dict(plot='[B]%s[/B]' % category.get('name'), studio='VRT'),

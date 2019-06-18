@@ -12,13 +12,13 @@ import routing
 from resources.lib import kodiwrapper
 
 plugin = routing.Plugin()
-_kodi = kodiwrapper.KodiWrapper(plugin)
+kodi = kodiwrapper.KodiWrapper(globals())
 
 
 @plugin.route('/')
 def main_menu():
     from resources.lib import vrtplayer
-    _vrtplayer = vrtplayer.VRTPlayer(_kodi)
+    _vrtplayer = vrtplayer.VRTPlayer(kodi)
     _vrtplayer.show_main_menu_items()
 
 
@@ -26,34 +26,34 @@ def main_menu():
 @plugin.route('/cache/delete/<cache_file>')
 def delete_cache(cache_file=None):
     if cache_file:
-        _kodi.refresh_caches(cache_file)
+        kodi.refresh_caches(cache_file)
         return
-    _kodi.invalidate_caches()
+    kodi.invalidate_caches()
 
 
 @plugin.route('/widevine/install')
 def install_widevine():
-    _kodi.install_widevine()
+    kodi.install_widevine()
 
 
 @plugin.route('/tokens/delete')
 def delete_tokens():
     from resources.lib import tokenresolver
-    _tokenresolver = tokenresolver.TokenResolver(_kodi)
+    _tokenresolver = tokenresolver.TokenResolver(kodi)
     _tokenresolver.delete_tokens()
 
 
 @plugin.route('/follow/<title>/<program>')
 def follow(title, program):
     from resources.lib import favorites
-    _favorites = favorites.Favorites(_kodi)
+    _favorites = favorites.Favorites(kodi)
     _favorites.follow(title=title, program=program)
 
 
 @plugin.route('/unfollow/<title>/<program>')
 def unfollow(title, program):
     from resources.lib import favorites
-    _favorites = favorites.Favorites(_kodi)
+    _favorites = favorites.Favorites(kodi)
     _favorites.unfollow(title=title, program=program)
 
 
@@ -61,7 +61,7 @@ def unfollow(title, program):
 @plugin.route('/play/id/<publication_id>/<video_id>')
 def play_id(video_id, publication_id=None):
     from resources.lib import vrtplayer
-    _vrtplayer = vrtplayer.VRTPlayer(_kodi)
+    _vrtplayer = vrtplayer.VRTPlayer(kodi)
 
     if video_id and publication_id:
         _vrtplayer.play(dict(publication_id=publication_id, video_id=video_id))
@@ -72,28 +72,28 @@ def play_id(video_id, publication_id=None):
 @plugin.route('/play/url/<path:video_url>')
 def play_url(video_url):
     from resources.lib import vrtplayer
-    _vrtplayer = vrtplayer.VRTPlayer(_kodi)
+    _vrtplayer = vrtplayer.VRTPlayer(kodi)
     _vrtplayer.play(dict(video_url=video_url))
 
 
 @plugin.route('/play/lastepisode/<program>')
 def play_last(program):
     from resources.lib import vrtplayer
-    _vrtplayer = vrtplayer.VRTPlayer(_kodi)
+    _vrtplayer = vrtplayer.VRTPlayer(kodi)
     _vrtplayer.play_latest_episode(program)
 
 
 @plugin.route('/favorites')
 def favorites_menu():
     from resources.lib import vrtplayer
-    _vrtplayer = vrtplayer.VRTPlayer(_kodi)
+    _vrtplayer = vrtplayer.VRTPlayer(kodi)
     _vrtplayer.show_favorites_menu_items()
 
 
 @plugin.route('/favorites/programs')
 def favorites_programs():
     from resources.lib import vrtplayer
-    _vrtplayer = vrtplayer.VRTPlayer(_kodi)
+    _vrtplayer = vrtplayer.VRTPlayer(kodi)
     _vrtplayer.show_tvshow_menu_items(use_favorites=True)
 
 
@@ -101,7 +101,7 @@ def favorites_programs():
 @plugin.route('/favorites/recent/<page>')
 def favorites_recent(page=1):
     from resources.lib import vrtplayer
-    _vrtplayer = vrtplayer.VRTPlayer(_kodi)
+    _vrtplayer = vrtplayer.VRTPlayer(kodi)
     _vrtplayer.show_recent(page=page, use_favorites=True)
 
 
@@ -109,14 +109,14 @@ def favorites_recent(page=1):
 @plugin.route('/favorites/offline/<page>')
 def favorites_offline(page=1):
     from resources.lib import vrtplayer
-    _vrtplayer = vrtplayer.VRTPlayer(_kodi)
+    _vrtplayer = vrtplayer.VRTPlayer(kodi)
     _vrtplayer.show_offline(page=page, use_favorites=True)
 
 
 @plugin.route('/favorites/refresh')
 def favorites_refresh():
     from resources.lib import favorites
-    _favorites = favorites.Favorites(_kodi)
+    _favorites = favorites.Favorites(kodi)
     _favorites.get_favorites(ttl=0)
 
 
@@ -125,7 +125,7 @@ def favorites_refresh():
 @plugin.route('/programs/<program>/<season>')
 def programs(program=None, season=None):
     from resources.lib import vrtplayer
-    _vrtplayer = vrtplayer.VRTPlayer(_kodi)
+    _vrtplayer = vrtplayer.VRTPlayer(kodi)
     if program:
         _vrtplayer.show_episodes(program, season)
         return
@@ -136,7 +136,7 @@ def programs(program=None, season=None):
 @plugin.route('/categories/<category>')
 def categories(category=None):
     from resources.lib import vrtplayer
-    _vrtplayer = vrtplayer.VRTPlayer(_kodi)
+    _vrtplayer = vrtplayer.VRTPlayer(kodi)
     if category:
         _vrtplayer.show_tvshow_menu_items(category=category)
         return
@@ -147,14 +147,14 @@ def categories(category=None):
 @plugin.route('/channels/<channel>')
 def channels(channel=None):
     from resources.lib import vrtplayer
-    _vrtplayer = vrtplayer.VRTPlayer(_kodi)
+    _vrtplayer = vrtplayer.VRTPlayer(kodi)
     _vrtplayer.show_channels_menu_items(channel=channel)
 
 
 @plugin.route('/livetv')
 def livetv():
     from resources.lib import vrtplayer
-    _vrtplayer = vrtplayer.VRTPlayer(_kodi)
+    _vrtplayer = vrtplayer.VRTPlayer(kodi)
     _vrtplayer.show_livestream_items()
 
 
@@ -162,7 +162,7 @@ def livetv():
 @plugin.route('/recent/<page>')
 def recent(page=1):
     from resources.lib import vrtplayer
-    _vrtplayer = vrtplayer.VRTPlayer(_kodi)
+    _vrtplayer = vrtplayer.VRTPlayer(kodi)
     _vrtplayer.show_recent(page=page)
 
 
@@ -170,7 +170,7 @@ def recent(page=1):
 @plugin.route('/offline/<page>')
 def offline(page=1):
     from resources.lib import vrtplayer
-    _vrtplayer = vrtplayer.VRTPlayer(_kodi)
+    _vrtplayer = vrtplayer.VRTPlayer(kodi)
     _vrtplayer.show_offline(page=page)
 
 
@@ -179,7 +179,7 @@ def offline(page=1):
 @plugin.route('/tvguide/<date>/<channel>')
 def tv_guide(date=None, channel=None):
     from resources.lib import tvguide
-    _tvguide = tvguide.TVGuide(_kodi)
+    _tvguide = tvguide.TVGuide(kodi)
     _tvguide.show_tvguide(date=date, channel=channel)
 
 
@@ -188,7 +188,7 @@ def tv_guide(date=None, channel=None):
 @plugin.route('/search/<search_string>/<page>')
 def search(search_string=None, page=1):
     from resources.lib import vrtplayer
-    _vrtplayer = vrtplayer.VRTPlayer(_kodi)
+    _vrtplayer = vrtplayer.VRTPlayer(kodi)
     _vrtplayer.search(search_string=search_string, page=page)
 
 
@@ -197,5 +197,5 @@ def test(path):
 
 
 if __name__ == '__main__':
-    _kodi.log_access(sys.argv[0])
+    kodi.log_access(sys.argv[0])
     plugin.run(sys.argv)
