@@ -44,7 +44,7 @@ unit:
 	PYTHONPATH=$(CURDIR) python test/apihelpertests.py
 	PYTHONPATH=$(CURDIR) python test/tvguidetests.py
 	PYTHONPATH=$(CURDIR) python test/searchtests.py
-	PYTHONPATH=$(CURDIR) python test/routertests.py
+	PYTHONPATH=$(CURDIR) python test/routingtests.py
 	PYTHONPATH=$(CURDIR) python test/favoritestests.py
 	@echo -e "$(white)=$(blue) Unit tests finished successfully.$(reset)"
 

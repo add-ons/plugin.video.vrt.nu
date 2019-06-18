@@ -91,7 +91,7 @@ class TVGuide:
                 is_playable=False,
                 art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
                 video_dict=dict(plot=self._kodi.localize_datelong(day)),
-                context_menu=[('Refresh', 'RunPlugin(%s%s)' % ('plugin://plugin.video.vrt.nu/cache/delete/', cache_file))],
+                context_menu=[(self._kodi.localize(30413), 'RunPlugin(%s%s)' % ('plugin://plugin.video.vrt.nu/cache/delete/', cache_file))],
             ))
         return date_items
 

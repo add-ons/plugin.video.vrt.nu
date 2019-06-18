@@ -92,7 +92,7 @@ class VRTApiHelper:
             else:
                 context_menu = []
             refresh_url = plugin_url + routes.CACHE_DELETE
-            context_menu.append(('Refresh', 'RunPlugin(%s/%s)' % (refresh_url, cache_file)))
+            context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s/%s)' % (refresh_url, cache_file)))
             tvshow_items.append(TitleItem(
                 title=label,
                 path=routes.PROGRAMS + '/' + program,
@@ -301,7 +301,7 @@ class VRTApiHelper:
             else:
                 context_menu = []
             refresh_url = plugin_url + routes.CACHE_DELETE
-            context_menu.append(('Refresh', 'RunPlugin(%s/%s)' % (refresh_url, cache_file)))
+            context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s/%s)' % (refresh_url, cache_file)))
 
             if self._showfanart:
                 thumb = statichelper.add_https_method(episode.get('videoThumbnailUrl', 'DefaultAddonVideo.png'))
@@ -527,7 +527,7 @@ class VRTApiHelper:
                 label = self._kodi.localize(30101).format(**channel)
                 # A single Live channel means it is the entry for channel's TV Show listing, so make it stand out
                 if channels and len(channels) == 1:
-                    label = '«%s»' % label
+                    label = '[B]%s[/B]' % label
                 is_playable = True
                 if channel.get('name') in ['een', 'canvas', 'ketnet']:
                     if self._showfanart:
@@ -537,7 +537,7 @@ class VRTApiHelper:
                     plot = self._kodi.localize(30102).format(**channel)
                 refresh_url = 'plugin://' + self._kodi.get_addon_id() + routes.CACHE_DELETE
                 cache_file = 'channel.%s.json' % channel
-                context_menu = [('Refresh', 'RunPlugin(%s/%s)' % (refresh_url, cache_file))]
+                context_menu = [(self._kodi.localize(30413), 'RunPlugin(%s/%s)' % (refresh_url, cache_file))]
             else:
                 # Not a playable channel
                 continue

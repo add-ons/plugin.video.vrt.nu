@@ -7,7 +7,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
 
-from resources.lib import favorites, kodiwrapper, tokenresolver
+from resources.lib import favorites, kodiwrapper
 
 xbmc = __import__('xbmc')
 xbmcaddon = __import__('xbmcaddon')
@@ -20,9 +20,8 @@ xbmcaddon.ADDON_SETTINGS['usefavorites'] = 'true'
 
 class TestFavorites(unittest.TestCase):
 
-    _kodi = kodiwrapper.KodiWrapper(None, 'plugin://plugin.video.vrt.nu')
-    _tokenresolver = tokenresolver.TokenResolver(_kodi)
-    _favorites = favorites.Favorites(_kodi, _tokenresolver)
+    _kodi = kodiwrapper.KodiWrapper(None)
+    _favorites = favorites.Favorites(_kodi)
 
     def test_follow_unfollow(self):
         programs = [

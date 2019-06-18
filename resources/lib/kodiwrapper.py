@@ -103,10 +103,11 @@ def has_socks():
 class KodiWrapper:
     ''' A wrapper around all Kodi functionality '''
 
-    def __init__(self, handle, url):
+    def __init__(self, plugin):
         ''' Initialize the Kodi wrapper '''
-        self._handle = handle
-        self._url = url
+        self._plugin = plugin
+        self._handle = plugin.handle if plugin else -1
+        self._url = plugin.base_url if plugin else 'plugin://plugin.video.vrt.nu'
         self._addon = xbmcaddon.Addon()
         self._addon_id = self._addon.getAddonInfo('id')
         self._max_log_level = log_levels.get(self.get_setting('max_log_level', 'Debug'), 3)
