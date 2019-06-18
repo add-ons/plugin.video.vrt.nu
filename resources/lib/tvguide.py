@@ -16,7 +16,7 @@ try:  # Python 3
 except ImportError:  # Python 2
     from urllib2 import build_opener, install_opener, ProxyHandler, urlopen
 
-from resources.lib import CHANNELS, routes, metadatacreator, statichelper
+from resources.lib import CHANNELS, metadatacreator, statichelper
 from resources.lib.helperobjects import TitleItem
 
 DATE_STRINGS = {
@@ -87,11 +87,11 @@ class TVGuide:
             cache_file = 'schedule.%s.json' % date
             date_items.append(TitleItem(
                 title=title,
-                path=routes.TVGUIDE + '/' + date,
+                path=self._kodi.url_for('tv_guide', date=date),
                 is_playable=False,
                 art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
                 video_dict=dict(plot=self._kodi.localize_datelong(day)),
-                context_menu=[(self._kodi.localize(30413), 'RunPlugin(%s%s)' % ('plugin://plugin.video.vrt.nu/cache/delete/', cache_file))],
+                context_menu=[(self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file))],
             ))
         return date_items
 
@@ -116,7 +116,7 @@ class TVGuide:
             plot = '%s\n%s' % (self._kodi.localize(30301).format(**channel), datelong)
             channel_items.append(TitleItem(
                 title=channel.get('label'),
-                path=routes.TVGUIDE + '/' + date + '/' + channel.get('name'),
+                path=self._kodi.url_for('tv_guide', date=date, channel=channel.get('name')),
                 is_playable=False,
                 art_dict=dict(thumb=icon, icon=icon, fanart=fanart),
                 video_dict=dict(plot=plot, studio=channel.get('studio')),
@@ -176,7 +176,7 @@ class TVGuide:
             metadata.icon = thumb
             if url:
                 video_url = statichelper.add_https_method(url)
-                path = routes.PLAY_URL + '/' + video_url
+                path = self._kodi.url_for('play_url', video_url=video_url)
                 if start_date <= now <= end_date:  # Now playing
                     metadata.title = '[COLOR yellow]%s[/COLOR] %s' % (label, self._kodi.localize(30302))
                 else:

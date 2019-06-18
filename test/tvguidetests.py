@@ -10,7 +10,8 @@ import random
 import unittest
 import dateutil.tz
 
-from resources.lib import kodiwrapper, tvguide
+from resources.lib import tvguide
+import addon
 
 xbmc = __import__('xbmc')
 xbmcaddon = __import__('xbmcaddon')
@@ -23,8 +24,7 @@ channels = ['een', 'canvas', 'ketnet']
 
 class TestTVGuide(unittest.TestCase):
 
-    _kodi = kodiwrapper.KodiWrapper(None)
-    _tvguide = tvguide.TVGuide(_kodi)
+    _tvguide = tvguide.TVGuide(addon.kodi)
 
     def test_tvguide_date_menu(self):
         ''' Test TV guide main menu '''

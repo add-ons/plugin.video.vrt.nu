@@ -103,17 +103,22 @@ def has_socks():
 class KodiWrapper:
     ''' A wrapper around all Kodi functionality '''
 
-    def __init__(self, plugin):
+    def __init__(self, addon):
         ''' Initialize the Kodi wrapper '''
-        self._plugin = plugin
-        self._handle = plugin.handle if plugin else -1
-        self._url = plugin.base_url if plugin else 'plugin://plugin.video.vrt.nu'
+        self.addon = addon
+        self.plugin = addon['plugin']
+        self._handle = self.plugin.handle
+        self._url = self.plugin.base_url
         self._addon = xbmcaddon.Addon()
         self._addon_id = self._addon.getAddonInfo('id')
         self._max_log_level = log_levels.get(self.get_setting('max_log_level', 'Debug'), 3)
         self._usemenucaching = self.get_setting('usemenucaching', 'true') == 'true'
         self._cache_path = self.get_userdata_path() + 'cache/'
         self._system_locale_works = None
+
+    def url_for(self, name, *args, **kwargs):
+        ''' Wrapper for routing.url_for() to lookup by name '''
+        return self.plugin.url_for(self.addon[name], *args, **kwargs)
 
     def install_widevine(self):
         ''' Install Widevine using inputstreamhelper '''
@@ -187,7 +192,7 @@ class KodiWrapper:
 
             url = None
             if title_item.path:
-                url = 'plugin://' + self._addon_id + title_item.path
+                url = title_item.path
 
             listing.append((url, list_item, is_folder))
 

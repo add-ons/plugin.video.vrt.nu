@@ -14,7 +14,8 @@ try:
 except ImportError:
     from urllib2 import HTTPError
 
-from resources.lib import CHANNELS, kodiwrapper, streamservice, tokenresolver
+from resources.lib import CHANNELS, streamservice, tokenresolver
+import addon
 
 xbmc = __import__('xbmc')
 xbmcaddon = __import__('xbmcaddon')
@@ -29,9 +30,8 @@ yesterday = now + timedelta(days=-1)
 
 class StreamServiceTests(unittest.TestCase):
 
-    _kodi = kodiwrapper.KodiWrapper(None)
-    _tokenresolver = tokenresolver.TokenResolver(_kodi)
-    _streamservice = streamservice.StreamService(_kodi, _tokenresolver)
+    _tokenresolver = tokenresolver.TokenResolver(addon.kodi)
+    _streamservice = streamservice.StreamService(addon.kodi, _tokenresolver)
 
     def test_get_ondemand_stream_from_invalid_url(self):
         video = dict(

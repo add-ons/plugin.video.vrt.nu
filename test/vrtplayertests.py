@@ -8,7 +8,8 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import random
 import unittest
 
-from resources.lib import CATEGORIES, favorites, kodiwrapper, vrtapihelper, vrtplayer
+from resources.lib import CATEGORIES, favorites, vrtapihelper, vrtplayer
+import addon
 
 xbmc = __import__('xbmc')
 xbmcaddon = __import__('xbmcaddon')
@@ -19,10 +20,9 @@ xbmcvfs = __import__('xbmcvfs')
 
 class TestVRTPlayer(unittest.TestCase):
 
-    _kodi = kodiwrapper.KodiWrapper(None)
-    _favorites = favorites.Favorites(_kodi)
-    _apihelper = vrtapihelper.VRTApiHelper(_kodi, _favorites)
-    _vrtplayer = vrtplayer.VRTPlayer(_kodi)
+    _favorites = favorites.Favorites(addon.kodi)
+    _apihelper = vrtapihelper.VRTApiHelper(addon.kodi, _favorites)
+    _vrtplayer = vrtplayer.VRTPlayer(addon.kodi)
 
     def test_show_videos_single_episode_shows_videos(self):
         program = 'marathonradio'
@@ -84,8 +84,8 @@ class TestVRTPlayer(unittest.TestCase):
         self.assertTrue(tvshow_items, msg=category['id'])
 
         tvshow = random.choice(tvshow_items)
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(tvshow.path.split('/')[2])
-        self.assertTrue(episode_items, msg=tvshow.path.split('/')[2])
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(tvshow.path.split('/')[4])
+        self.assertTrue(episode_items, msg=tvshow.path.split('/')[4])
         self.assertTrue(sort in ['dateadded', 'episode', 'label', 'unsorted'])
         self.assertTrue(ascending is True or ascending is False)
         self.assertTrue(content in ['episodes', 'seasons'], "Content for '%s' is '%s'" % (tvshow.title, content))

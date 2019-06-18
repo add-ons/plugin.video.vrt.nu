@@ -7,7 +7,8 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
 
-from resources.lib import CHANNELS, favorites, kodiwrapper, vrtapihelper
+from resources.lib import CHANNELS, favorites, vrtapihelper
+import addon
 
 xbmc = __import__('xbmc')
 xbmcaddon = __import__('xbmcaddon')
@@ -18,9 +19,8 @@ xbmcvfs = __import__('xbmcvfs')
 
 class ApiHelperTests(unittest.TestCase):
 
-    _kodi = kodiwrapper.KodiWrapper(None)
-    _favorites = favorites.Favorites(_kodi)
-    _apihelper = vrtapihelper.VRTApiHelper(_kodi, _favorites)
+    _favorites = favorites.Favorites(addon.kodi)
+    _apihelper = vrtapihelper.VRTApiHelper(addon.kodi, _favorites)
 
     def test_get_api_data_single_season(self):
         title_items, sort, ascending, content = self._apihelper.get_episode_items(program='het-journaal')

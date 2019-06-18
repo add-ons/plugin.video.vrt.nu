@@ -115,34 +115,3 @@ CHANNELS = [
         studio='VRT NXT',
     ),
 ]
-
-
-class routes:
-    ''' A list of add-on routes '''
-
-    # Menus
-    MAIN = '/'
-    FAVORITES = '/favorites'
-    FAVORITES_PROGRAMS = '/favorites/programs'
-    FAVORITES_RECENT = '/favorites/recent'
-    FAVORITES_OFFLINE = '/favorites/offline'
-    FAVORITES_REFRESH = '/favorites/refresh'
-    PROGRAMS = '/programs'
-    CATEGORIES = '/categories'
-    CHANNELS = '/channels'
-    LIVETV = '/livetv'
-    RECENT = '/recent'
-    OFFLINE = '/offline'
-    SEARCH = '/search'
-    TVGUIDE = '/tvguide'
-
-    # Methods
-    PLAY = '/play'
-    PLAY_URL = '/play/url'
-    PLAY_ID = '/play/id'
-    FOLLOW = '/follow'
-    UNFOLLOW = '/unfollow'
-    WIDEVINE_INSTALL = '/widevine/install'
-    TOKENS_DELETE = '/tokens/delete'
-    CACHE_DELETE = '/cache/delete'
-    ALLSEASONS = '/allseasons'
