@@ -123,7 +123,11 @@ class VRTPlayer:
 
     def show_category_menu_items(self, category=None):
         ''' The VRT NU add-on 'Categories' listing menu '''
-        if category:
+        if category == 'films':
+            self._favorites.get_favorites(ttl=60 * 60)
+            episode_items, sort, ascending, content = self._apihelper.get_episode_items(category=category, season='allseasons')
+            self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content)
+        elif category:
             self._favorites.get_favorites(ttl=60 * 60)
             tvshow_items = self._apihelper.get_tvshow_items(category=category)
             self._kodi.show_listing(tvshow_items, sort='label', content='tvshows')
@@ -145,7 +149,11 @@ class VRTPlayer:
 
     def show_featured_menu_items(self, feature=None):
         ''' The VRT NU add-on 'Featured content' listing menu '''
-        if feature:
+        if feature == 'kortfilm':
+            self._favorites.get_favorites(ttl=60 * 60)
+            episode_items, sort, ascending, content = self._apihelper.get_episode_items(feature=feature, season='allseasons')
+            self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content)
+        elif feature:
             self._favorites.get_favorites(ttl=60 * 60)
             tvshow_items = self._apihelper.get_tvshow_items(feature=feature)
             self._kodi.show_listing(tvshow_items, sort='label', content='tvshows')
