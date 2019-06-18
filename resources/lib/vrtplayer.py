@@ -5,8 +5,9 @@
 ''' Implements a VRTPlayer class '''
 
 from __future__ import absolute_import, division, unicode_literals
-from resources.lib import favorites, statichelper, streamservice, tokenresolver, vrtapihelper
+from resources.lib import favorites, vrtapihelper
 from resources.lib.helperobjects import TitleItem
+from resources.lib.statichelper import realpage
 
 
 class VRTPlayer:
@@ -147,7 +148,7 @@ class VRTPlayer:
         ''' The VRT NU add-on 'Most recent' and 'My most recent' listing menu '''
         # My programs menus may need more up-to-date favorites
         self._favorites.get_favorites(ttl=5 * 60 if use_favorites else 60 * 60)
-        page = statichelper.realpage(page)
+        page = realpage(page)
         episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=page, use_favorites=use_favorites, variety='recent')
 
         # Add 'More...' entry at the end
@@ -170,7 +171,7 @@ class VRTPlayer:
         ''' The VRT NU add-on 'Soon offline' and 'My soon offline' listing menu '''
         # My programs menus may need more up-to-date favorites
         self._favorites.get_favorites(ttl=5 * 60 if use_favorites else 60 * 60)
-        page = statichelper.realpage(page)
+        page = realpage(page)
         episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=page, use_favorites=use_favorites, variety='offline')
 
         # Add 'More...' entry at the end
@@ -192,7 +193,7 @@ class VRTPlayer:
     def search(self, search_string=None, page=None):
         ''' The VRT NU add-on Search functionality and results '''
         self._favorites.get_favorites(ttl=60 * 60)
-        page = statichelper.realpage(page)
+        page = realpage(page)
 
         if search_string is None:
             search_string = self._kodi.get_search_string()
@@ -232,6 +233,7 @@ class VRTPlayer:
 
     def play(self, params):
         ''' A wrapper for playing video items '''
+        from resources.lib import streamservice, tokenresolver
         _tokenresolver = tokenresolver.TokenResolver(self._kodi)
         _streamservice = streamservice.StreamService(self._kodi, _tokenresolver)
         stream = _streamservice.get_stream(params)
