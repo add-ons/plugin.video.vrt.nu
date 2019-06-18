@@ -34,8 +34,8 @@ class VRTApiHelper:
         self._favorites = _favorites
         self._channel_filter = [channel.get('name') for channel in CHANNELS if _kodi.get_setting(channel.get('name'), 'true') == 'true']
 
-    def get_tvshow_items(self, category=None, channel=None, use_favorites=False):
-        ''' Get all TV shows for a given category or channel, optionally filtered by favorites '''
+    def get_tvshow_items(self, category=None, channel=None, feature=None, use_favorites=False):
+        ''' Get all TV shows for a given category, channel or feature, optionally filtered by favorites '''
         params = dict()
 
         if category:
@@ -46,8 +46,12 @@ class VRTApiHelper:
             params['facets[programBrands]'] = channel
             cache_file = 'channel.%s.json' % channel
 
+        if feature:
+            params['facets[programTags.title]'] = feature
+            cache_file = 'featured.%s.json' % feature
+
         # If no facet-selection is done, we return the A-Z listing
-        if not category and not channel:
+        if not category and not channel and not feature:
             params['facets[transcodingStatus]'] = 'AVAILABLE'
             cache_file = 'programs.json'
 
@@ -550,6 +554,21 @@ class VRTApiHelper:
             ))
 
         return channel_items
+
+    def get_featured_items(self):
+        ''' Construct a list of featured Listitems '''
+        from resources.lib import FEATURED
+
+        featured_items = []
+        for feature in FEATURED:
+            featured_items.append(TitleItem(
+                title=feature.get('name'),
+                path=self._kodi.url_for('featured', feature=feature.get('id')),
+                is_playable=False,
+                art_dict=dict(thumb='DefaultCountry.png', icon='DefaultCountry.png', fanart='DefaultCountry.png'),
+                video_dict=dict(plot='[B]%s[/B]' % feature.get('name'), studio='VRT'),
+            ))
+        return featured_items
 
     def get_category_items(self):
         ''' Construct a list of category ListItems '''

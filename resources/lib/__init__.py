@@ -8,23 +8,23 @@ from __future__ import absolute_import, division, unicode_literals
 
 # Fallback list of categories so we don't depend on web scraping only
 CATEGORIES = [
-    dict(name='Audiodescriptie', id='met-audiodescriptie'),
-    dict(name='Cultuur', id='cultuur'),
-    dict(name='Docu', id='docu'),
-    dict(name='Entertainment', id='entertainment'),
-    dict(name='Films', id='films'),
-    dict(name='Human interest', id='human-interest'),
-    dict(name='Humor', id='humor'),
-    dict(name='Kinderen', id='voor-kinderen'),
-    dict(name='Koken', id='koken'),
-    dict(name='Lifestyle', id='lifestyle'),
-    dict(name='Muziek', id='muziek'),
-    dict(name='Nieuws en actua', id='nieuws-en-actua'),
-    dict(name='Series', id='series'),
-    dict(name='Sport', id='sport'),
-    dict(name='Talkshows', id='talkshows'),
-    dict(name='Vlaamse Gebarentaal', id='met-gebarentaal'),
-    dict(name='Wetenschap en natuur', id='wetenschap-en-natuur'),
+    dict(name='Audiodescriptie', id='met-audiodescriptie', msgctxt=''),
+    dict(name='Cultuur', id='cultuur', msgctxt=''),
+    dict(name='Docu', id='docu', msgctxt=''),
+    dict(name='Entertainment', id='entertainment', msgctxt=''),
+    dict(name='Films', id='films', msgctxt=''),
+    dict(name='Human interest', id='human-interest', msgctxt=''),
+    dict(name='Humor', id='humor', msgctxt=''),
+    dict(name='Kinderen', id='voor-kinderen', msgctxt=''),
+    dict(name='Koken', id='koken', msgctxt=''),
+    dict(name='Lifestyle', id='lifestyle', msgctxt=''),
+    dict(name='Muziek', id='muziek', msgctxt=''),
+    dict(name='Nieuws en actua', id='nieuws-en-actua', msgctxt=''),
+    dict(name='Series', id='series', msgctxt=''),
+    dict(name='Sport', id='sport', msgctxt=''),
+    dict(name='Talkshows', id='talkshows', msgctxt=''),
+    dict(name='Vlaamse Gebarentaal', id='met-gebarentaal', msgctxt=''),
+    dict(name='Wetenschap en natuur', id='wetenschap-en-natuur', msgctxt=''),
 ]
 
 CHANNELS = [
@@ -114,4 +114,16 @@ CHANNELS = [
         label='VRT NXT',
         studio='VRT NXT',
     ),
+]
+
+FEATURED = [
+    # Tijdsgerelateerd
+    dict(name='Exclusief online', id='exclusief-online', msgctxt=''),
+    dict(name='Laatste aflevering', id='laatste-aflevering', msgctxt=''),
+    dict(name='Laatste kans', id='laatste-kans', msgctxt=''),
+    dict(name='Nieuw', id='Nieuw', msgctxt=''),
+    dict(name='Volledige reeks', id='volledige-reeks', msgctxt=''),
+    dict(name='Volledige seizoen', id='volledig-seizoen', msgctxt=''),
+    # Inhoudsgerelateerd
+    dict(name='Kortfilm', id='kortfilm', msgctxt=''),
 ]
