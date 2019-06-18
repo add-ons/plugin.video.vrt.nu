@@ -123,7 +123,7 @@ FEATURED = [
     dict(name='Laatste kans', id='laatste-kans', msgctxt=''),
     dict(name='Nieuw', id='Nieuw', msgctxt=''),
     dict(name='Volledige reeks', id='volledige-reeks', msgctxt=''),
-    dict(name='Volledige seizoen', id='volledig-seizoen', msgctxt=''),
+    dict(name='Volledig seizoen', id='volledig-seizoen', msgctxt=''),
     # Inhoudsgerelateerd
     dict(name='Kortfilm', id='kortfilm', msgctxt=''),
 ]
