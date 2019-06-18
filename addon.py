@@ -101,7 +101,7 @@ def programs(program=None, season=None):
     ''' The programs A-Z / seasons / episode listing '''
     from resources.lib import vrtplayer
     if program:
-        vrtplayer.VRTPlayer(kodi).show_episodes(program, season)
+        vrtplayer.VRTPlayer(kodi).show_episodes(program=program, season=season)
     else:
         vrtplayer.VRTPlayer(kodi).show_tvshow_menu_items()
 
@@ -111,10 +111,7 @@ def programs(program=None, season=None):
 def categories(category=None):
     ''' The categories menu and listing '''
     from resources.lib import vrtplayer
-    if category:
-        vrtplayer.VRTPlayer(kodi).show_tvshow_menu_items(category=category)
-    else:
-        vrtplayer.VRTPlayer(kodi).show_category_menu_items()
+    vrtplayer.VRTPlayer(kodi).show_category_menu_items(category=category)
 
 
 @plugin.route('/channels')
@@ -143,9 +140,17 @@ def recent(page=1):
 @plugin.route('/offline')
 @plugin.route('/offline/<page>')
 def offline(page=1):
-    ''' The soon ogline listing '''
+    ''' The soon offline listing '''
     from resources.lib import vrtplayer
     vrtplayer.VRTPlayer(kodi).show_offline(page=page)
+
+
+@plugin.route('/featured')
+@plugin.route('/featured/<feature>')
+def featured(feature=None):
+    ''' The featured menu and listing '''
+    from resources.lib import vrtplayer
+    vrtplayer.VRTPlayer(kodi).show_featured_menu_items(feature=feature)
 
 
 @plugin.route('/tvguide')
@@ -188,7 +193,7 @@ def play_url(video_url):
 def play_last(program):
     ''' The API interface to play the latest episode of a program '''
     from resources.lib import vrtplayer
-    vrtplayer.VRTPlayer(kodi).play_latest_episode(program)
+    vrtplayer.VRTPlayer(kodi).play_latest_episode(program=program)
 
 
 if __name__ == '__main__':

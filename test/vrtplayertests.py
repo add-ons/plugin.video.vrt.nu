@@ -71,8 +71,9 @@ class TestVRTPlayer(unittest.TestCase):
     def test_categories_scraping(self):
         ''' Test to ensure our hardcoded categories conforms to scraped categories '''
         # Remove thumbnails from scraped categories first
-        categories = [dict(id=c['id'], name=c['name']) for c in self._apihelper.get_categories()]
-        self.assertEqual(categories, CATEGORIES)
+        categories_scraped = [dict(id=c['id'], name=c['name']) for c in self._apihelper.get_categories()]
+        categories_stored = [dict(id=c['id'], name=c['name']) for c in CATEGORIES]
+        self.assertEqual(categories_scraped, categories_stored)
 
     def test_random_tvshow_episodes(self):
         ''' Rest episode from a random tvshow in a random category '''
@@ -94,6 +95,11 @@ class TestVRTPlayer(unittest.TestCase):
         ''' Test to ensure our hardcoded categories conforms to scraped categories '''
         category_items = self._apihelper.get_category_items()
         self.assertEqual(len(category_items), 17)
+
+    def test_featured(self):
+        ''' Test to ensure our hardcoded categories conforms to scraped categories '''
+        featured_items = self._apihelper.get_featured_items()
+        self.assertEqual(len(featured_items), 7)
 
 
 if __name__ == '__main__':

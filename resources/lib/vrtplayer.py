@@ -68,16 +68,21 @@ class VRTPlayer:
                       is_playable=False,
                       art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
                       video_dict=dict(plot=self._kodi.localize(30023))),
-            TitleItem(title=self._kodi.localize(30024),  # TV guide
+            TitleItem(title=self._kodi.localize(30024),  # Featured content
+                      path=self._kodi.url_for('featured'),
+                      is_playable=False,
+                      art_dict=dict(thumb='DefaultCountry.png', icon='DefaultCountry.png', fanart='DefaultCountry.png'),
+                      video_dict=dict(plot=self._kodi.localize(30025))),
+            TitleItem(title=self._kodi.localize(30026),  # TV guide
                       path=self._kodi.url_for('tv_guide'),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultAddonTvInfo.png', icon='DefaultAddonTvInfo.png', fanart='DefaultAddonTvInfo.png'),
-                      video_dict=dict(plot=self._kodi.localize(30025))),
-            TitleItem(title=self._kodi.localize(30026),  # Search
+                      video_dict=dict(plot=self._kodi.localize(30027))),
+            TitleItem(title=self._kodi.localize(30028),  # Search
                       path=self._kodi.url_for('search'),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultAddonsSearch.png', icon='DefaultAddonsSearch.png', fanart='DefaultAddonsSearch.png'),
-                      video_dict=dict(plot=self._kodi.localize(30027))),
+                      video_dict=dict(plot=self._kodi.localize(30029))),
         ])
         self._kodi.show_listing(main_items)
 
@@ -109,17 +114,22 @@ class VRTPlayer:
         if not self._favorites.titles():
             self._kodi.show_ok_dialog(heading=self._kodi.localize(30415), message=self._kodi.localize(30416))
 
-    def show_tvshow_menu_items(self, category=None, use_favorites=False):
+    def show_tvshow_menu_items(self, use_favorites=False):
         ''' The VRT NU add-on 'A-Z' listing menu '''
         # My programs menus may need more up-to-date favorites
         self._favorites.get_favorites(ttl=5 * 60 if use_favorites else 60 * 60)
-        tvshow_items = self._apihelper.get_tvshow_items(category=category, use_favorites=use_favorites)
+        tvshow_items = self._apihelper.get_tvshow_items(use_favorites=use_favorites)
         self._kodi.show_listing(tvshow_items, sort='label', content='tvshows')
 
-    def show_category_menu_items(self):
+    def show_category_menu_items(self, category=None):
         ''' The VRT NU add-on 'Categories' listing menu '''
-        category_items = self._apihelper.get_category_items()
-        self._kodi.show_listing(category_items, sort='label', content='files')
+        if category:
+            self._favorites.get_favorites(ttl=60 * 60)
+            tvshow_items = self._apihelper.get_tvshow_items(category=category)
+            self._kodi.show_listing(tvshow_items, sort='label', content='tvshows')
+        else:
+            category_items = self._apihelper.get_category_items()
+            self._kodi.show_listing(category_items, sort='label', content='files')
 
     def show_channels_menu_items(self, channel=None):
         ''' The VRT NU add-on 'Channels' listing menu '''
@@ -132,6 +142,16 @@ class VRTPlayer:
         else:
             channel_items = self._apihelper.get_channel_items(live=False)
             self._kodi.show_listing(channel_items, cache=False)
+
+    def show_featured_menu_items(self, feature=None):
+        ''' The VRT NU add-on 'Featured content' listing menu '''
+        if feature:
+            self._favorites.get_favorites(ttl=60 * 60)
+            tvshow_items = self._apihelper.get_tvshow_items(feature=feature)
+            self._kodi.show_listing(tvshow_items, sort='label', content='tvshows')
+        else:
+            featured_items = self._apihelper.get_featured_items()
+            self._kodi.show_listing(featured_items, sort='label', content='files')
 
     def show_livestream_items(self):
         ''' The VRT NU add-on 'Live TV' listing menu '''

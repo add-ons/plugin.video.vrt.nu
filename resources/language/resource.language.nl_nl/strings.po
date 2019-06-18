@@ -74,18 +74,26 @@ msgid "Video content that will soon be offline"
 msgstr "Tv-afleveringen die binnenkort verdwijnen"
 
 msgctxt "#30024"
+msgid "Featured content"
+msgstr "Uitgelicht aanbod"
+
+msgctxt "#30025"
+msgid "Highlighted movies and programs"
+msgstr "Aanbevolen films en tvprogramma's"
+
+msgctxt "#30026"
 msgid "TV guide"
 msgstr "Tv-gids"
 
-msgctxt "#30025"
+msgctxt "#30027"
 msgid "Browse channel TV guides"
 msgstr "Doorzoek de tv-gids per kanaal"
 
-msgctxt "#30026"
+msgctxt "#30028"
 msgid "Search VRT NU"
 msgstr "Doorzoek VRT NU"
 
-msgctxt "#30027"
+msgctxt "#30029"
 msgid "Search the complete VRT NU library"
 msgstr "Doorzoek de hele VRT NU bibliotheek"
 
