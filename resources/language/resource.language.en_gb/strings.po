@@ -99,7 +99,7 @@ msgstr ""
 
 ### FAVORITES
 msgctxt "#30040"
-msgid "My A-Z"
+msgid "My favourite programs"
 msgstr ""
 
 msgctxt "#30041"

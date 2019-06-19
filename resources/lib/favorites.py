@@ -35,7 +35,6 @@ class Favorites:
         ''' Get a cached copy or a newer favorites from VRT, or fall back to a cached file '''
         if not self.is_activated():
             return
-        import json
         api_json = self._kodi.get_cache('favorites.json', ttl)
         if not api_json:
             xvrttoken = self._tokenresolver.get_xvrttoken(token_variant='user')
@@ -47,6 +46,7 @@ class Favorites:
                 }
                 req = Request('https://video-user-data.vrt.be/favorites', headers=headers)
                 self._kodi.log_notice('URL post: https://video-user-data.vrt.be/favorites', 'Verbose')
+                import json
                 try:
                     api_json = json.load(urlopen(req))
                 except Exception:
@@ -58,7 +58,6 @@ class Favorites:
 
     def set_favorite(self, title, program, value=True):
         ''' Set a program as favorite, and update local copy '''
-        import json
 
         self.get_favorites(ttl=60 * 60)
         if value is self.is_favorite(program):
@@ -77,6 +76,7 @@ class Favorites:
             'Referer': 'https://www.vrt.be/vrtnu',
         }
         payload = dict(isFavorite=value, programUrl=statichelper.program_to_url(program, 'short'), title=title)
+        import json
         data = json.dumps(payload).encode('utf-8')
         self._kodi.log_notice('URL post: https://video-user-data.vrt.be/favorites/%s' % self.uuid(program), 'Verbose')
         req = Request('https://video-user-data.vrt.be/favorites/%s' % self.uuid(program), data=data, headers=headers)

@@ -100,9 +100,8 @@ class VRTApiHelper:
             tvshow_items.append(TitleItem(
                 title=label,
                 path=self._kodi.url_for('programs', program=program),
-                is_playable=False,
                 art_dict=dict(thumb=thumbnail, icon='DefaultAddonVideo.png', fanart=thumbnail),
-                video_dict=metadata.get_video_dict(),
+                info_dict=metadata.get_info_dict(),
                 context_menu=context_menu,
             ))
         return tvshow_items
@@ -327,10 +326,10 @@ class VRTApiHelper:
             episode_items.append(TitleItem(
                 title=label,
                 path=self._kodi.url_for('play_id', publication_id=episode.get('publicationId'), video_id=episode.get('videoId')),
-                is_playable=True,
                 art_dict=dict(thumb=thumb, icon='DefaultAddonVideo.png', fanart=fanart),
-                video_dict=metadata.get_video_dict(),
+                info_dict=metadata.get_info_dict(),
                 context_menu=context_menu,
+                is_playable=True,
             ))
 
         return episode_items, sort, ascending, 'episodes'
@@ -374,9 +373,8 @@ class VRTApiHelper:
             season_items.append(TitleItem(
                 title=self._kodi.localize(30096),
                 path=self._kodi.url_for('programs', program=program, season='allseasons'),
-                is_playable=False,
                 art_dict=dict(thumb=fanart, icon='DefaultSets.png', fanart=fanart),
-                video_dict=metadata.get_video_dict(),
+                info_dict=metadata.get_info_dict(),
             ))
 
         # NOTE: Sort the episodes ourselves, because Kodi does not allow to set to 'ascending'
@@ -399,9 +397,8 @@ class VRTApiHelper:
             season_items.append(TitleItem(
                 title=label,
                 path=self._kodi.url_for('programs', program=program, season=season_key),
-                is_playable=False,
                 art_dict=dict(thumb=thumbnail, icon='DefaultSets.png', fanart=fanart),
-                video_dict=metadata.get_video_dict(),
+                info_dict=metadata.get_info_dict(),
             ))
         return season_items, sort, ascending, 'seasons'
 
@@ -531,6 +528,7 @@ class VRTApiHelper:
                 label = channel.get('label')
                 plot = '[B]%s[/B]' % channel.get('label')
                 is_playable = False
+                info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video')
                 context_menu = []
             elif channel.get('live_stream') or channel.get('live_stream_id'):
                 if channel.get('live_stream_id'):
@@ -548,6 +546,8 @@ class VRTApiHelper:
                     plot = '%s\n\n%s' % (self._kodi.localize(30102).format(**channel), _tvguide.live_description(channel.get('name')))
                 else:
                     plot = self._kodi.localize(30102).format(**channel)
+                # NOTE: Playcount is required to not have live streams as "Watched"
+                info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video', playcount=0)
                 context_menu = [(self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file='channel.%s.json' % channel))]
             else:
                 # Not a playable channel
@@ -556,15 +556,10 @@ class VRTApiHelper:
             channel_items.append(TitleItem(
                 title=label,
                 path=path,
-                is_playable=is_playable,
                 art_dict=dict(thumb=icon, icon=icon, fanart=fanart),
-                video_dict=dict(
-                    title=label,
-                    plot=plot,
-                    studio=channel.get('studio'),
-                    mediatype='video',
-                ),
+                info_dict=info_dict,
                 context_menu=context_menu,
+                is_playable=is_playable,
             ))
 
         return channel_items
@@ -579,9 +574,8 @@ class VRTApiHelper:
             featured_items.append(TitleItem(
                 title=featured_name,
                 path=self._kodi.url_for('featured', feature=feature.get('id')),
-                is_playable=False,
                 art_dict=dict(thumb='DefaultCountry.png', icon='DefaultCountry.png', fanart='DefaultCountry.png'),
-                video_dict=dict(plot='[B]%s[/B]' % featured_name, studio='VRT'),
+                info_dict=dict(plot='[B]%s[/B]' % featured_name, studio='VRT'),
             ))
         return featured_items
 
@@ -619,9 +613,8 @@ class VRTApiHelper:
             category_items.append(TitleItem(
                 title=category_name,
                 path=self._kodi.url_for('categories', category=category.get('id')),
-                is_playable=False,
                 art_dict=dict(thumb=thumbnail, icon='DefaultGenre.png', fanart=thumbnail),
-                video_dict=dict(plot='[B]%s[/B]' % category_name, studio='VRT'),
+                info_dict=dict(plot='[B]%s[/B]' % category_name, studio='VRT'),
             ))
         return category_items
 

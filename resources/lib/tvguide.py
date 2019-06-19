@@ -88,9 +88,8 @@ class TVGuide:
             date_items.append(TitleItem(
                 title=title,
                 path=self._kodi.url_for('tv_guide', date=date),
-                is_playable=False,
                 art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
-                video_dict=dict(plot=self._kodi.localize_datelong(day)),
+                info_dict=dict(plot=self._kodi.localize_datelong(day)),
                 context_menu=[(self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file))],
             ))
         return date_items
@@ -117,9 +116,8 @@ class TVGuide:
             channel_items.append(TitleItem(
                 title=channel.get('label'),
                 path=self._kodi.url_for('tv_guide', date=date, channel=channel.get('name')),
-                is_playable=False,
                 art_dict=dict(thumb=icon, icon=icon, fanart=fanart),
-                video_dict=dict(plot=plot, studio=channel.get('studio')),
+                info_dict=dict(plot=plot, studio=channel.get('studio')),
             ))
         return channel_items
 
@@ -191,9 +189,9 @@ class TVGuide:
             episode_items.append(TitleItem(
                 title=metadata.title,
                 path=path,
-                is_playable=True,
                 art_dict=dict(thumb=thumb, icon='DefaultAddonVideo.png', fanart=thumb),
-                video_dict=metadata.get_video_dict(),
+                info_dict=metadata.get_info_dict(),
+                is_playable=True,
             ))
         return episode_items
 

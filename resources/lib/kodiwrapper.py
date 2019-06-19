@@ -184,9 +184,9 @@ class KodiWrapper:
             if title_item.art_dict:
                 list_item.setArt(title_item.art_dict)
 
-            if title_item.video_dict:
+            if title_item.info_dict:
                 # type is one of: video, music, pictures, game
-                list_item.setInfo(type='video', infoLabels=title_item.video_dict)
+                list_item.setInfo(type='video', infoLabels=title_item.info_dict)
 
             if title_item.context_menu:
                 list_item.addContextMenuItems(title_item.context_menu)
@@ -531,9 +531,9 @@ class KodiWrapper:
             self.log_notice("Cache '%s' has not changed, updating mtime only." % path, 'Debug')
             os.utime(path)
 
-    def refresh_caches(self, url):
+    def refresh_caches(self, cache_file=None):
         ''' Invalidate the needed caches and refresh container '''
-        self.invalidate_caches(expr=url)
+        self.invalidate_caches(expr=cache_file)
         self.container_refresh()
 
     def invalidate_cache(self, path):
