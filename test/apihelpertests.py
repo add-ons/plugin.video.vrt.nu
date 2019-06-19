@@ -99,7 +99,7 @@ class ApiHelperTests(unittest.TestCase):
         bogus_brands = ['lang-zullen-we-lezen', 'VRT']
         channel_studios = [c.get('studio') for c in CHANNELS] + bogus_brands
         for tvshow in tvshow_items:
-            self.assertTrue(tvshow.video_dict['studio'] in channel_studios, '%s | %s | %s' % (tvshow.title, tvshow.video_dict['studio'], channel_studios))
+            self.assertTrue(tvshow.info_dict['studio'] in channel_studios, '%s | %s | %s' % (tvshow.title, tvshow.info_dict['studio'], channel_studios))
 
     def test_get_latest_episode(self):
         video = self._apihelper.get_latest_episode(program='het-journaal')

@@ -24,10 +24,7 @@ def main_menu():
 @plugin.route('/cache/delete/<cache_file>')
 def delete_cache(cache_file=None):
     ''' The API interface to delete caches '''
-    if cache_file:
-        kodi.refresh_caches(cache_file)
-    else:
-        kodi.invalidate_caches()
+    kodi.refresh_caches(cache_file=cache_file)
 
 
 @plugin.route('/tokens/delete')

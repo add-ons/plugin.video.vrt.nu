@@ -100,8 +100,8 @@ msgstr "Doorzoek de hele VRT NU bibliotheek"
 
 ### FAVORITES
 msgctxt "#30040"
-msgid "My A-Z"
-msgstr "Mijn tv-programma's"
+msgid "My favourite programs"
+msgstr "Mijn favoriete tv-programma's"
 
 msgctxt "#30041"
 msgid "Alphabetically sorted list of My TV programs"
