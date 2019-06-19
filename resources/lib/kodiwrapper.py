@@ -301,6 +301,13 @@ class KodiWrapper:
         ''' Return a localized long date string '''
         return self.localize_date(date, xbmc.getRegion('datelong'))
 
+    def localize_from_data(self, name, data):
+        ''' Return a localized name string from a Dutch data object '''
+        # Return if Kodi language is Dutch
+        if self.get_global_setting('locale.language') == 'resource.language.nl_nl':
+            return name
+        return next((self.localize(int(item.get('msgctxt'))) for item in data if item.get('name') == name), name)
+
     def get_setting(self, setting_id, default=None):
         ''' Get an add-on setting '''
         value = self._addon.getSetting(setting_id)

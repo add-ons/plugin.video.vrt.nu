@@ -5,7 +5,7 @@
 ''' Implements a VRTApiHelper class with common VRT NU API functionality '''
 
 from __future__ import absolute_import, division, unicode_literals
-from resources.lib import CHANNELS, metadatacreator, statichelper
+from resources.lib import CHANNELS, CATEGORIES, metadatacreator, statichelper
 from resources.lib.helperobjects import TitleItem
 
 try:  # Python 3
@@ -575,12 +575,13 @@ class VRTApiHelper:
 
         featured_items = []
         for feature in FEATURED:
+            featured_name = self._kodi.localize_from_data(feature.get('name'), FEATURED)
             featured_items.append(TitleItem(
-                title=feature.get('name'),
+                title=featured_name,
                 path=self._kodi.url_for('featured', feature=feature.get('id')),
                 is_playable=False,
                 art_dict=dict(thumb='DefaultCountry.png', icon='DefaultCountry.png', fanart='DefaultCountry.png'),
-                video_dict=dict(plot='[B]%s[/B]' % feature.get('name'), studio='VRT'),
+                video_dict=dict(plot='[B]%s[/B]' % featured_name, studio='VRT'),
             ))
         return featured_items
 
@@ -606,7 +607,6 @@ class VRTApiHelper:
 
         # Fall back to internal hard-coded categories if all else fails
         if not categories:
-            from resources.lib import CATEGORIES
             categories = CATEGORIES
 
         category_items = []
@@ -615,12 +615,13 @@ class VRTApiHelper:
                 thumbnail = category.get('thumbnail', 'DefaultGenre.png')
             else:
                 thumbnail = 'DefaultGenre.png'
+            category_name = self._kodi.localize_from_data(category.get('name'), CATEGORIES)
             category_items.append(TitleItem(
-                title=category.get('name'),
+                title=category_name,
                 path=self._kodi.url_for('categories', category=category.get('id')),
                 is_playable=False,
                 art_dict=dict(thumb=thumbnail, icon='DefaultGenre.png', fanart=thumbnail),
-                video_dict=dict(plot='[B]%s[/B]' % category.get('name'), studio='VRT'),
+                video_dict=dict(plot='[B]%s[/B]' % category_name, studio='VRT'),
             ))
         return category_items
 
