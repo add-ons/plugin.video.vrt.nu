@@ -8,23 +8,23 @@ from __future__ import absolute_import, division, unicode_literals
 
 # Fallback list of categories so we don't depend on web scraping only
 CATEGORIES = [
-    dict(name='Audiodescriptie', id='met-audiodescriptie', msgctxt=''),
-    dict(name='Cultuur', id='cultuur', msgctxt=''),
-    dict(name='Docu', id='docu', msgctxt=''),
-    dict(name='Entertainment', id='entertainment', msgctxt=''),
-    dict(name='Films', id='films', msgctxt=''),
-    dict(name='Human interest', id='human-interest', msgctxt=''),
-    dict(name='Humor', id='humor', msgctxt=''),
-    dict(name='Kinderen', id='voor-kinderen', msgctxt=''),
-    dict(name='Koken', id='koken', msgctxt=''),
-    dict(name='Lifestyle', id='lifestyle', msgctxt=''),
-    dict(name='Muziek', id='muziek', msgctxt=''),
-    dict(name='Nieuws en actua', id='nieuws-en-actua', msgctxt=''),
-    dict(name='Series', id='series', msgctxt=''),
-    dict(name='Sport', id='sport', msgctxt=''),
-    dict(name='Talkshows', id='talkshows', msgctxt=''),
-    dict(name='Vlaamse Gebarentaal', id='met-gebarentaal', msgctxt=''),
-    dict(name='Wetenschap en natuur', id='wetenschap-en-natuur', msgctxt=''),
+    dict(name='Audiodescriptie', id='met-audiodescriptie', msgctxt='30070'),
+    dict(name='Cultuur', id='cultuur', msgctxt='30071'),
+    dict(name='Docu', id='docu', msgctxt='30072'),
+    dict(name='Entertainment', id='entertainment', msgctxt='30073'),
+    dict(name='Films', id='films', msgctxt='30074'),
+    dict(name='Human interest', id='human-interest', msgctxt='30075'),
+    dict(name='Humor', id='humor', msgctxt='30076'),
+    dict(name='Kinderen', id='voor-kinderen', msgctxt='30077'),
+    dict(name='Koken', id='koken', msgctxt='30078'),
+    dict(name='Lifestyle', id='lifestyle', msgctxt='30079'),
+    dict(name='Muziek', id='muziek', msgctxt='30080'),
+    dict(name='Nieuws en actua', id='nieuws-en-actua', msgctxt='30081'),
+    dict(name='Series', id='series', msgctxt='30082'),
+    dict(name='Sport', id='sport', msgctxt='30083'),
+    dict(name='Talkshows', id='talkshows', msgctxt='30084'),
+    dict(name='Vlaamse Gebarentaal', id='met-gebarentaal', msgctxt='30085'),
+    dict(name='Wetenschap en natuur', id='wetenschap-en-natuur', msgctxt='30086'),
 ]
 
 CHANNELS = [
@@ -118,12 +118,12 @@ CHANNELS = [
 
 FEATURED = [
     # Tijdsgerelateerd
-    dict(name='Exclusief online', id='exclusief-online', msgctxt=''),
-    dict(name='Laatste aflevering', id='laatste-aflevering', msgctxt=''),
-    dict(name='Laatste kans', id='laatste-kans', msgctxt=''),
-    dict(name='Nieuw', id='Nieuw', msgctxt=''),
-    dict(name='Volledige reeks', id='volledige-reeks', msgctxt=''),
-    dict(name='Volledig seizoen', id='volledig-seizoen', msgctxt=''),
+    dict(name='Exclusief online', id='exclusief-online', msgctxt='30087'),
+    dict(name='Laatste aflevering', id='laatste-aflevering', msgctxt='30088'),
+    dict(name='Laatste kans', id='laatste-kans', msgctxt='30089'),
+    dict(name='Nieuw', id='Nieuw', msgctxt='30090'),
+    dict(name='Volledig seizoen', id='volledig-seizoen', msgctxt='30091'),
+    dict(name='Volledige reeks', id='volledige-reeks', msgctxt='30092'),
     # Inhoudsgerelateerd
-    dict(name='Kortfilm', id='kortfilm', msgctxt=''),
+    dict(name='Kortfilm', id='kortfilm', msgctxt='30093'),
 ]

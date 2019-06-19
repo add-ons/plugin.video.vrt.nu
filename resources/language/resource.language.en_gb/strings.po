@@ -138,6 +138,103 @@ msgctxt "#30049"
 msgid "My video content that will soon be offline"
 msgstr ""
 
+### CATEGORIES
+msgctxt "#30070"
+msgid "Audio description"
+msgstr ""
+
+msgctxt "#30071"
+msgid "Culture"
+msgstr ""
+
+msgctxt "#30072"
+msgid "Docu"
+msgstr ""
+
+msgctxt "#30073"
+msgid "Entertainment"
+msgstr ""
+
+msgctxt "#30074"
+msgid "Films"
+msgstr ""
+
+msgctxt "#30075"
+msgid "Human interest"
+msgstr ""
+
+msgctxt "#30076"
+msgid "Comedy"
+msgstr ""
+
+msgctxt "#30077"
+msgid "Children"
+msgstr ""
+
+msgctxt "#30078"
+msgid "Cooking"
+msgstr ""
+
+msgctxt "#30079"
+msgid "Lifestyle"
+msgstr ""
+
+msgctxt "#30080"
+msgid "Music"
+msgstr ""
+
+msgctxt "#30081"
+msgid "News and current affairs"
+msgstr ""
+
+msgctxt "#30082"
+msgid "Series"
+msgstr ""
+
+msgctxt "#30083"
+msgid "Sports"
+msgstr ""
+
+msgctxt "#30084"
+msgid "Talk shows"
+msgstr ""
+
+msgctxt "#30085"
+msgid "Flemish Sign Language"
+msgstr ""
+
+msgctxt "#30086"
+msgid "Science and nature"
+msgstr ""
+
+### FEATURED
+msgctxt "#30087"
+msgid "Online exclusive"
+msgstr ""
+
+msgctxt "#30088"
+msgid "Last episode"
+msgstr ""
+
+msgctxt "#30089"
+msgid "Last chance"
+msgstr ""
+
+msgctxt "#30090"
+msgid "New"
+msgstr ""
+
+msgctxt "#30091"
+msgid "Full season"
+msgstr ""
+
+msgctxt "#30092"
+msgid "Complete series"
+msgstr ""
+
+msgctxt "#30093"
+msgid "Short film"
+msgstr ""
 
 ### APPLICATION
 msgctxt "#30094"
