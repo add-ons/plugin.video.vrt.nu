@@ -107,18 +107,34 @@ msgid "Alphabetically sorted list of My TV programs"
 msgstr ""
 
 msgctxt "#30042"
-msgid "My most recent"
+msgid "My movies"
 msgstr ""
 
 msgctxt "#30043"
-msgid "Recently published episodes of My TV programs"
+msgid "All movies available on VRT NU"
 msgstr ""
 
 msgctxt "#30044"
-msgid "My soon offline"
+msgid "My documentaries"
 msgstr ""
 
 msgctxt "#30045"
+msgid "All [I]oneoff[/I] documentaries on VRT NU"
+msgstr ""
+
+msgctxt "#30046"
+msgid "My most recent"
+msgstr ""
+
+msgctxt "#30047"
+msgid "Recently published episodes of My TV programs"
+msgstr ""
+
+msgctxt "#30048"
+msgid "My soon offline"
+msgstr ""
+
+msgctxt "#30049"
 msgid "My video content that will soon be offline"
 msgstr ""
 
@@ -279,30 +295,38 @@ msgid "When enabled, the user can follow their favourite programs and list these
 msgstr ""
 
 msgctxt "#30825"
-msgid "Show fanart"
+msgid "Add My movies"
 msgstr ""
 
 msgctxt "#30827"
-msgid "Show episode permalink in plot"
-msgstr ""
-
-msgctxt "#30828"
-msgid "When enabled, the video description will include a permanent link that points to this episode. This is useful for quickly opening an episode or movie on a mobile device."
+msgid "Add My documentaries"
 msgstr ""
 
 msgctxt "#30829"
-msgid "Cache"
+msgid "Show fanart"
 msgstr ""
 
 msgctxt "#30831"
-msgid "Enable menu caching"
+msgid "Show episode permalink in plot"
 msgstr ""
 
 msgctxt "#30832"
-msgid "When enabled, menus are being cached so they work more quickly. Only in very specific use-cases this is problematic as new episodes may not appear when they are expected."
+msgid "When enabled, the video description will include a permanent link that points to this episode. This is useful for quickly opening an episode or movie on a mobile device."
 msgstr ""
 
 msgctxt "#30833"
+msgid "Cache"
+msgstr ""
+
+msgctxt "#30835"
+msgid "Enable menu caching"
+msgstr ""
+
+msgctxt "#30836"
+msgid "When enabled, menus are being cached so they work more quickly. Only in very specific use-cases this is problematic as new episodes may not appear when they are expected."
+msgstr ""
+
+msgctxt "#30837"
 msgid "Enable local HTTP caching"
 msgstr ""
 

@@ -105,10 +105,11 @@ class KodiWrapper:
 
     def __init__(self, addon):
         ''' Initialize the Kodi wrapper '''
-        self.addon = addon
-        self.plugin = addon['plugin']
-        self._handle = self.plugin.handle
-        self._url = self.plugin.base_url
+        if addon:
+            self.addon = addon
+            self.plugin = addon['plugin']
+            self._handle = self.plugin.handle
+            self._url = self.plugin.base_url
         self._addon = xbmcaddon.Addon()
         self._addon_id = self._addon.getAddonInfo('id')
         self._max_log_level = log_levels.get(self.get_setting('max_log_level', 'Debug'), 3)

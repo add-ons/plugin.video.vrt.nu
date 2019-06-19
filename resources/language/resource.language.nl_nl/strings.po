@@ -108,18 +108,34 @@ msgid "Alphabetically sorted list of My TV programs"
 msgstr "Alle tv-programma's die je volgt in alfabetische volgorde"
 
 msgctxt "#30042"
+msgid "My movies"
+msgstr "Mijn films"
+
+msgctxt "#30043"
+msgid "All movies available on VRT NU"
+msgstr "Alle films beschikbaar op VRT NU"
+
+msgctxt "#30044"
+msgid "My documentaries"
+msgstr "Mijn documentaires"
+
+msgctxt "#30045"
+msgid "All [I]oneoff[/I] documentaries on VRT NU"
+msgstr "Alle [I]oneoff[/I] documentaires op VRT NU"
+
+msgctxt "#30046"
 msgid "My most recent"
 msgstr "Mijn meest recent"
 
-msgctxt "#30043"
+msgctxt "#30047"
 msgid "Recently published episodes of My TV programs"
 msgstr "Recent gepubliceerde afleveringen van tv-programma's die je volgt"
 
-msgctxt "#30044"
+msgctxt "#30048"
 msgid "My soon offline"
 msgstr "Mijn binnenkort offline"
 
-msgctxt "#30045"
+msgctxt "#30049"
 msgid "My video content that will soon be offline"
 msgstr "Mijn tv-afleveringen die binnenkort verdwijnen"
 
@@ -270,6 +286,14 @@ msgstr "Toon Mijn tv-programma's"
 msgctxt "#30824"
 msgid "When enabled, the user can follow their favourite programs and list these separately. In this case the VRT NU add-on will download and update a list of your followed programs on the VRT NU website."
 msgstr "Indien actief kan de gebruiker zijn favoriete programma's volgen en apart aanroepen. Dit zorgt er wel voor dat de VRT NU add-on een lijst van favoriete programma's download en aanpast op de VRT NU website."
+
+msgctxt "#30825"
+msgid "Add My movies"
+msgstr "Toon Mijn films"
+
+msgctxt "#30827"
+msgid "Add My documentaries"
+msgstr "Toon Mijn documentaires"
 
 msgctxt "#30825"
 msgid "Show fanart"
