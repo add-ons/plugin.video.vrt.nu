@@ -27,11 +27,13 @@ class VRTApiHelper:
     def __init__(self, _kodi, _favorites):
         ''' Constructor for the VRTApiHelper class '''
         self._kodi = _kodi
+        self._favorites = _favorites
+
         self._proxies = _kodi.get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
+
         self._showfanart = _kodi.get_setting('showfanart', 'true') == 'true'
         self._showpermalink = _kodi.get_setting('showpermalink', 'false') == 'true'
-        self._favorites = _favorites
         self._channel_filter = [channel.get('name') for channel in CHANNELS if _kodi.get_setting(channel.get('name'), 'true') == 'true']
 
     def get_tvshow_items(self, category=None, channel=None, feature=None, use_favorites=False):
@@ -122,7 +124,7 @@ class VRTApiHelper:
             video = dict(video_id=episode.get('videoId'), publication_id=episode.get('publicationId'))
         return video
 
-    def get_episode_items(self, program=None, season=None, category=None, feature=None, page=None, use_favorites=False, variety=None):
+    def get_episode_items(self, program=None, season=None, category=None, feature=None, programtype=None, page=None, use_favorites=False, variety=None):
         ''' Construct a list of TV show episodes TitleItems based on API query and filtered by favorites '''
         titletype = None
         all_items = True
@@ -181,6 +183,9 @@ class VRTApiHelper:
 
         if feature:
             params['facets[programTags.title]'] = feature
+
+        if programtype:
+            params['facets[programType]'] = programtype
 
         api_url = self._VRTNU_SEARCH_URL + '?' + urlencode(params)
         results, episodes = self._get_season_episode_data(api_url, season, all_items=all_items)

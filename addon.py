@@ -71,6 +71,13 @@ def favorites_programs():
     vrtplayer.VRTPlayer(kodi).show_tvshow_menu_items(use_favorites=True)
 
 
+@plugin.route('/favorites/docu')
+def favorites_docu():
+    ''' The favorites docu listing '''
+    from resources.lib import vrtplayer
+    vrtplayer.VRTPlayer(kodi).show_favorites_docu_menu_items()
+
+
 @plugin.route('/favorites/recent')
 @plugin.route('/favorites/recent/<page>')
 def favorites_recent(page=1):

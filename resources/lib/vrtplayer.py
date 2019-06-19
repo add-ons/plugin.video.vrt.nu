@@ -19,6 +19,9 @@ class VRTPlayer:
         self._favorites = favorites.Favorites(_kodi)
         self._apihelper = vrtapihelper.VRTApiHelper(_kodi, self._favorites)
 
+        self._addmymovies = _kodi.get_setting('addmymovies', 'true') == 'true'
+        self._addmydocu = _kodi.get_setting('addmydocu', 'true') == 'true'
+
     def show_main_menu_items(self):
         ''' The VRT NU add-on main menu '''
         self._favorites.get_favorites(ttl=60 * 60)
@@ -95,24 +98,52 @@ class VRTPlayer:
                       is_playable=False,
                       art_dict=dict(thumb='DefaultMovieTitle.png', icon='DefaultMovieTitle.png', fanart='DefaultMovieTitle.png'),
                       video_dict=dict(plot=self._kodi.localize(30041))),
-            TitleItem(title=self._kodi.localize(30042),  # My recent items
+        ]
+
+        if self._addmymovies:
+            favorites_items.append(
+                TitleItem(title=self._kodi.localize(30042),  # My movies
+                          path=self._kodi.url_for('categories', category='films'),
+                          is_playable=False,
+                          art_dict=dict(thumb='DefaultAddonVideo.png', icon='DefaultAddonVideo.png', fanart='DefaultAddonVideo.png'),
+                          video_dict=dict(plot=self._kodi.localize(30043))),
+            )
+
+        if self._addmydocu:
+            favorites_items.append(
+                TitleItem(title=self._kodi.localize(30044),  # My documentaries
+                          path=self._kodi.url_for('favorites_docu'),
+                          is_playable=False,
+                          art_dict=dict(thumb='DefaultMovies.png', icon='DefaultMovies.png', fanart='DefaultMovies.png'),
+                          video_dict=dict(plot=self._kodi.localize(30045))),
+            )
+
+        favorites_items.extend([
+            TitleItem(title=self._kodi.localize(30046),  # My recent items
                       path=self._kodi.url_for('favorites_recent'),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultRecentlyAddedEpisodes.png',
                                     icon='DefaultRecentlyAddedEpisodes.png',
                                     fanart='DefaultRecentlyAddedEpisodes.png'),
-                      video_dict=dict(plot=self._kodi.localize(30043))),
-            TitleItem(title=self._kodi.localize(30044),  # My soon offline
+                      video_dict=dict(plot=self._kodi.localize(30047))),
+            TitleItem(title=self._kodi.localize(30048),  # My soon offline
                       path=self._kodi.url_for('favorites_offline'),
                       is_playable=False,
                       art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
-                      video_dict=dict(plot=self._kodi.localize(30045))),
-        ]
+                      video_dict=dict(plot=self._kodi.localize(30049))),
+        ])
+
         self._kodi.show_listing(favorites_items)
 
         # Show dialog when no favorites were found
         if not self._favorites.titles():
             self._kodi.show_ok_dialog(heading=self._kodi.localize(30415), message=self._kodi.localize(30416))
+
+    def show_favorites_docu_menu_items(self):
+        ''' The VRT NU add-on 'My documentaries' listing menu '''
+        self._favorites.get_favorites(ttl=60 * 60)
+        episode_items, sort, ascending, content = self._apihelper.get_episode_items(category='docu', season='allseasons', programtype='oneoff')
+        self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content)
 
     def show_tvshow_menu_items(self, use_favorites=False):
         ''' The VRT NU add-on 'A-Z' listing menu '''
