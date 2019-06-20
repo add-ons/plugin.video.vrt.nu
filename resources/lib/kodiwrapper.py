@@ -353,7 +353,7 @@ class KodiWrapper:
         if httpproxytype != 0 and not socks_supported:
             # Only open the dialog the first time (to avoid multiple popups)
             if socks_supported is None:
-                self.show_ok_dialog('', self.localize(30961))  # Requires PySocks
+                self.show_ok_dialog('', self.localize(30962))  # Requires PySocks
             return None
 
         proxy_types = ['http', 'socks4', 'socks4a', 'socks5', 'socks5h']
