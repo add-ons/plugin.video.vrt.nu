@@ -39,7 +39,8 @@ class Credentials:
 
     def reset(self):
         ''' Reset the credentials in the settings '''
-        self.username = self._kodi.set_setting('username', None)
+        # NOTE: Do not reset the username, this can be edited by the user and doesn't need to be retyped
+        # self.username = self._kodi.set_setting('username', None)
         self.password = self._kodi.set_setting('password', None)
 
 
