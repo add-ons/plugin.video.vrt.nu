@@ -32,13 +32,13 @@ class TestFavorites(unittest.TestCase):
         for program_item in programs:
             program_title = program_item.get('program_title')
             program = program_item.get('program')
-            self._favorites.follow(title=program_title, program=program)
+            self._favorites.follow(program=program, title=program_title)
             self.assertTrue(self._favorites.is_favorite(program))
 
-            self._favorites.unfollow(title=program_title, program=program)
+            self._favorites.unfollow(program=program, title=program_title)
             self.assertFalse(self._favorites.is_favorite(program))
 
-            self._favorites.follow(title=program_title, program=program)
+            self._favorites.follow(program=program, title=program_title)
             self.assertTrue(self._favorites.is_favorite(program))
 
     def test_programs(self):

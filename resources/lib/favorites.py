@@ -56,7 +56,7 @@ class Favorites:
                     self._kodi.update_cache('favorites.json', api_json)
         self._favorites = api_json
 
-    def set_favorite(self, title, program, value=True):
+    def set_favorite(self, program, title, value=True):
         ''' Set a program as favorite, and update local copy '''
 
         self.get_favorites(ttl=60 * 60)
@@ -99,16 +99,16 @@ class Favorites:
             value = favorite.get('value', dict(isFavorite=False)).get('isFavorite', False)
         return value
 
-    def follow(self, title, program):
+    def follow(self, program, title):
         ''' Follow your favorite program '''
-        ok = self.set_favorite(title, program, True)
+        ok = self.set_favorite(program, title, True)
         if ok:
             self._kodi.show_notification(message='Follow ' + unquote(title))
             self._kodi.container_refresh()
 
-    def unfollow(self, title, program):
+    def unfollow(self, program, title):
         ''' Unfollow your favorite program '''
-        ok = self.set_favorite(title, program, False)
+        ok = self.set_favorite(program, title, False)
         if ok:
             self._kodi.show_notification(message='Unfollow ' + unquote(title))
             self._kodi.container_refresh()
