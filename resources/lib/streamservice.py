@@ -241,7 +241,7 @@ class StreamService:
             else:
                 # Fix 720p quality for HLS livestreams
                 manifest_url += '?hd' if '.m3u8?' not in manifest_url else '&hd'
-                stream = self._select_hls_substreams(manifest_url)
+                stream = self._select_hls_substreams(manifest_url, protocol)
                 self._kodi.log_notice('Protocol: ' + protocol, 'Verbose')
             return stream
 
@@ -264,18 +264,23 @@ class StreamService:
         self._kodi.show_ok_dialog(message=message)
         self._kodi.end_of_directory()
 
-    def _handle_bad_stream_error(self, stream_type):
-        ''' Show a localized error message in Kodi GUI for a failing VRT NU stream based on stream type: HLS/MPEG-DASH)
-            message: VRT NU stream <stream_type> problem, try again with InputStream Adaptive enabled/disabled: 30959=disabled, 30960=enabled
+    def _handle_bad_stream_error(self, protocol):
+        ''' Show a localized error message in Kodi GUI for a failing VRT NU stream based on protocol: hls, hls_aes, mpeg_dash)
+            message: VRT NU stream <stream_type> problem, try again with (InputStream Adaptive) (and) (DRM) enabled/disabled: 30959=and DRM, 30960=disabled, 30961=enabled
         '''
-        if self._kodi.has_inputstream_adaptive():
-            message = self._kodi.localize(30958) % (stream_type, self._kodi.localize(30959))
+        # HLS AES DRM failed
+        if protocol == 'hls_aes' and not self._kodi.has_inputstream_adaptive() and self._kodi.get_setting('usedrm', 'true') == 'false':
+            message = self._kodi.localize(30958) % (protocol.upper(), 'InputStream Adaptive', self._kodi.localize(30959), self._kodi.localize(30961))
+        elif protocol == 'hls_aes' and self._kodi.has_inputstream_adaptive():
+            message = self._kodi.localize(30958) % (protocol.upper(), 'DRM', '', self._kodi.localize(30961))
+        elif protocol == 'hls_aes' and self._kodi.get_setting('usedrm', 'true') == 'true':
+            message = self._kodi.localize(30958) % (protocol.upper(), 'InputStream Adaptive', '', self._kodi.localize(30961))
         else:
-            message = self._kodi.localize(30958) % (stream_type, self._kodi.localize(30960))
+            message = self._kodi.localize(30958) % (protocol.upper(), 'InputStream Adaptive', '', self._kodi.localize(30960))
         self._kodi.show_ok_dialog(message=message)
         self._kodi.end_of_directory()
 
-    def _select_hls_substreams(self, master_hls_url):
+    def _select_hls_substreams(self, master_hls_url, protocol):
         ''' Select HLS substreams to speed up Kodi player start, workaround for slower kodi selection '''
         hls_variant_url = None
         subtitle_url = None
@@ -287,7 +292,7 @@ class StreamService:
             hls_playlist = urlopen(master_hls_url).read().decode('utf-8')
         except HTTPError as e:
             if e.code == 415:
-                self._handle_bad_stream_error('HLS')
+                self._handle_bad_stream_error(protocol)
                 return None
             raise
         max_bandwidth = self._kodi.get_max_bandwidth()

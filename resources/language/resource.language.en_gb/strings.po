@@ -598,18 +598,22 @@ msgid "Please increase the maximum bandwidth. Maximum bandwidth is set to {max} 
 msgstr ""
 
 msgctxt "#30958"
-msgid "There is a problem with this VRT NU %s stream. Try again with InputStream Adaptive %s or try to play this program from the VRT NU website. Please report this problem at https://www.vrt.be/vrtnu/help/"
+msgid "There is a problem with this VRT NU %s stream. Try again with %s %s %s or try to play this program from the VRT NU website. Please report this problem at https://www.vrt.be/vrtnu/help/"
 msgstr ""
 
 msgctxt "#30959"
-msgid "disabled"
+msgid "and DRM"
 msgstr ""
 
 msgctxt "#30960"
-msgid "enabled"
+msgid "disabled"
 msgstr ""
 
 msgctxt "#30961"
+msgid "enabled"
+msgstr ""
+
+msgctxt "#30962"
 msgid "Using a SOCKS proxy requires the PySocks library (script.module.pysocks) installed."
 msgstr ""
 
