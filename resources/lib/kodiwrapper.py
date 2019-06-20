@@ -153,6 +153,10 @@ class KodiWrapper:
         if not ascending:
             sort = 'unsorted'
 
+        # NOTE: When showing tvshow listings and 'showoneoff' was set, force 'unsorted'
+        if self.get_setting('showoneoff', 'true') == 'true' and sort == 'label':
+            sort = 'unsorted'
+
         # Add all sort methods to GUI (start with preferred)
         xbmcplugin.addSortMethod(handle=self._handle, sortMethod=sort_methods[sort])
         for key in sorted(sort_methods):
@@ -533,7 +537,9 @@ class KodiWrapper:
 
     def refresh_caches(self, cache_file=None):
         ''' Invalidate the needed caches and refresh container '''
+        from resources.lib.statichelper import oneoff_filename
         self.invalidate_caches(expr=cache_file)
+        self.invalidate_caches(expr=oneoff_filename(cache_file))
         self.container_refresh()
 
     def invalidate_cache(self, path):

@@ -19,9 +19,6 @@ class VRTPlayer:
         self._favorites = favorites.Favorites(_kodi)
         self._apihelper = vrtapihelper.VRTApiHelper(_kodi, self._favorites)
 
-        self._addmymovies = _kodi.get_setting('addmymovies', 'true') == 'true'
-        self._addmydocu = _kodi.get_setting('addmydocu', 'true') == 'true'
-
     def show_main_menu_items(self):
         ''' The VRT NU add-on main menu '''
         self._favorites.get_favorites(ttl=60 * 60)
@@ -99,7 +96,7 @@ class VRTPlayer:
                       info_dict=dict(plot=self._kodi.localize(30049))),
         ]
 
-        if self._addmymovies:
+        if self._kodi.get_setting('addmymovies', 'true') == 'true':
             favorites_items.append(
                 TitleItem(title=self._kodi.localize(30042),  # My movies
                           path=self._kodi.url_for('categories', category='films'),
@@ -107,7 +104,7 @@ class VRTPlayer:
                           info_dict=dict(plot=self._kodi.localize(30043))),
             )
 
-        if self._addmydocu:
+        if self._kodi.get_setting('addmydocu', 'true') == 'true':
             favorites_items.append(
                 TitleItem(title=self._kodi.localize(30044),  # My documentaries
                           path=self._kodi.url_for('favorites_docu'),
@@ -136,17 +133,13 @@ class VRTPlayer:
 
     def show_category_menu_items(self, category=None):
         ''' The VRT NU add-on 'Categories' listing menu '''
-        if category == 'films':
-            self._favorites.get_favorites(ttl=60 * 60)
-            episode_items, sort, ascending, content = self._apihelper.get_episode_items(category=category, season='allseasons')
-            self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content)
-        elif category:
+        if category:
             self._favorites.get_favorites(ttl=60 * 60)
             tvshow_items = self._apihelper.get_tvshow_items(category=category)
             self._kodi.show_listing(tvshow_items, sort='label', content='tvshows')
         else:
             category_items = self._apihelper.get_category_items()
-            self._kodi.show_listing(category_items, sort='label', content='files')
+            self._kodi.show_listing(category_items, sort='unsorted', content='files')
 
     def show_channels_menu_items(self, channel=None):
         ''' The VRT NU add-on 'Channels' listing menu '''
@@ -162,11 +155,7 @@ class VRTPlayer:
 
     def show_featured_menu_items(self, feature=None):
         ''' The VRT NU add-on 'Featured content' listing menu '''
-        if feature == 'kortfilm':
-            self._favorites.get_favorites(ttl=60 * 60)
-            episode_items, sort, ascending, content = self._apihelper.get_episode_items(feature=feature, season='allseasons')
-            self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content)
-        elif feature:
+        if feature:
             self._favorites.get_favorites(ttl=60 * 60)
             tvshow_items = self._apihelper.get_tvshow_items(feature=feature)
             self._kodi.show_listing(tvshow_items, sort='label', content='tvshows')

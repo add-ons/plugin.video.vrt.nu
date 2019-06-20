@@ -120,8 +120,8 @@ msgid "My documentaries"
 msgstr "Mijn documentaires"
 
 msgctxt "#30045"
-msgid "All [I]oneoff[/I] documentaries on VRT NU"
-msgstr "Alle [I]oneoff[/I] documentaires op VRT NU"
+msgid "All [I]one-off[/I] documentaries on VRT NU"
+msgstr "Alle [I]one-off[/I] documentaires op VRT NU"
 
 msgctxt "#30046"
 msgid "My most recent"
@@ -295,107 +295,111 @@ msgctxt "#30827"
 msgid "Add My documentaries"
 msgstr "Toon Mijn documentaires"
 
-msgctxt "#30825"
+msgctxt "#30829"
+msgid "Show one-off videos in between program folders"
+msgstr "Toon one-off videos tussen tv-programmafolders"
+
+msgctxt "#30831"
 msgid "Show fanart"
 msgstr "Toon fanart"
 
-msgctxt "#30827"
+msgctxt "#30833"
 msgid "Show episode permalink in plot"
 msgstr "Toon aflevering permalink in beschrijving"
 
-msgctxt "#30828"
+msgctxt "#30834"
 msgid "When enabled, the video description will include a permanent link that points to this episode. This is useful for quickly opening an episode or movie on a mobile device."
 msgstr "Indien actief zal de beschrijving van iedere video een permanent link bevatten die je rechtstreeks naar de VRT NU website brengt. Dit is handig om snel een aflevering of film to openen op een mobiel toestel."
 
-msgctxt "#30829"
+msgctxt "#30835"
 msgid "Cache"
 msgstr "Cache"
 
-msgctxt "#30831"
+msgctxt "#30837"
 msgid "Enable menu caching"
 msgstr "Gebruik menu caching"
 
-msgctxt "#30833"
+msgctxt "#30839"
 msgid "Enable local HTTP caching"
 msgstr "Gebruik local HTTP caching"
 
-msgctxt "#30840"
+msgctxt "#30880"
 msgid "Playback"
 msgstr "Afspelen"
 
-msgctxt "#30841"
+msgctxt "#30881"
 msgid "Subtitles"
 msgstr "Ondertiteling"
 
-msgctxt "#30843"
+msgctxt "#30883"
 msgid "Show subtitles when available"
 msgstr "Toon ondertiteling indien beschikbaar"
 
-msgctxt "#30845"
+msgctxt "#30885"
 msgid "Streaming"
 msgstr "Streaming"
 
-msgctxt "#30847"
+msgctxt "#30887"
 msgid "Use DRM [COLOR gray][I](needed for protected content)[/I][/COLOR]"
 msgstr "Gebruik DRM [COLOR gray][I](nodig voor beschermde video's)[/I][/COLOR]"
 
-msgctxt "#30849"
+msgctxt "#30889"
 msgid "Maximum bandwidth (kbps)"
 msgstr "Maximale bandbreedte (kbps)"
 
-msgctxt "#30860"
+msgctxt "#30880"
 msgid "Channels"
 msgstr "Kanalen"
 
-msgctxt "#30861"
+msgctxt "#30881"
 msgid "Select channels to use for 'Most recent' and 'Soon offline' listings"
 msgstr "Selecteer kanalen voor de 'Meest recent' en 'Binnenkort offline' lijsten"
 
-msgctxt "#30863"
+msgctxt "#30883"
 msgid "Eén"
 msgstr "Eén"
 
-msgctxt "#30864"
+msgctxt "#30884"
 msgid "Canvas"
 msgstr "Canvas"
 
-msgctxt "#30865"
+msgctxt "#30885"
 msgid "Ketnet"
 msgstr "Ketnet"
 
-msgctxt "#30866"
+msgctxt "#30886"
 msgid "Ketnet Junior"
 msgstr "Ketnet Junior"
 
-msgctxt "#30867"
+msgctxt "#30887"
 msgid "Sporza"
 msgstr "Sporza"
 
-msgctxt "#30868"
+msgctxt "#30888"
 msgid "Radio 1"
 msgstr "Radio 1"
 
-msgctxt "#30869"
+msgctxt "#30889"
 msgid "Radio 2"
 msgstr "Radio 2"
 
-msgctxt "#30870"
+msgctxt "#30890"
 msgid "Klara"
 msgstr "Klara"
 
-msgctxt "#30871"
+msgctxt "#30891"
 msgid "Studio Brussel"
 msgstr "Studio Brussel"
 
-msgctxt "#30872"
+msgctxt "#30892"
 msgid "MNM"
 msgstr "MNM"
 
-msgctxt "#30873"
+msgctxt "#30893"
 msgid "VRT NXT"
 msgstr "VRT NXT"
 
-msgctxt "#30874"
+msgctxt "#30894"
 msgid "VRT NWS"
 msgstr "VRT NWS"
 

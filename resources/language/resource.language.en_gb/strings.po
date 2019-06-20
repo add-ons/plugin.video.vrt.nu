@@ -119,7 +119,7 @@ msgid "My documentaries"
 msgstr ""
 
 msgctxt "#30045"
-msgid "All [I]oneoff[/I] documentaries on VRT NU"
+msgid "All [I]one-off[/I] documentaries on VRT NU"
 msgstr ""
 
 msgctxt "#30046"
@@ -400,122 +400,126 @@ msgid "Add My documentaries"
 msgstr ""
 
 msgctxt "#30829"
-msgid "Show fanart"
+msgid "Show one-off videos in between program folders"
 msgstr ""
 
 msgctxt "#30831"
-msgid "Show episode permalink in plot"
-msgstr ""
-
-msgctxt "#30832"
-msgid "When enabled, the video description will include a permanent link that points to this episode. This is useful for quickly opening an episode or movie on a mobile device."
+msgid "Show fanart"
 msgstr ""
 
 msgctxt "#30833"
-msgid "Cache"
+msgid "Show episode permalink in plot"
+msgstr ""
+
+msgctxt "#30834"
+msgid "When enabled, the video description will include a permanent link that points to this episode. This is useful for quickly opening an episode or movie on a mobile device."
 msgstr ""
 
 msgctxt "#30835"
-msgid "Enable menu caching"
-msgstr ""
-
-msgctxt "#30836"
-msgid "When enabled, menus are being cached so they work more quickly. Only in very specific use-cases this is problematic as new episodes may not appear when they are expected."
+msgid "Cache"
 msgstr ""
 
 msgctxt "#30837"
+msgid "Enable menu caching"
+msgstr ""
+
+msgctxt "#30838"
+msgid "When enabled, menus are being cached so they work more quickly. Only in very specific use-cases this is problematic as new episodes may not appear when they are expected."
+msgstr ""
+
+msgctxt "#30839"
 msgid "Enable local HTTP caching"
 msgstr ""
 
-msgctxt "#30840"
+msgctxt "#30860"
 msgid "Playback"
 msgstr ""
 
-msgctxt "#30841"
+msgctxt "#30861"
 msgid "Subtitles"
 msgstr ""
 
-msgctxt "#30843"
+msgctxt "#30863"
 msgid "Show subtitles when available"
 msgstr ""
 
-msgctxt "#30844"
+msgctxt "#30864"
 msgid "This enables subtitles by default for all content that includes substitles."
 msgstr ""
 
-msgctxt "#30845"
+msgctxt "#30865"
 msgid "Streaming"
 msgstr ""
 
-msgctxt "#30847"
+msgctxt "#30867"
 msgid "Use DRM [COLOR gray][I](needed for protected content)[/I][/COLOR]"
 msgstr ""
 
-msgctxt "#30848"
+msgctxt "#30868"
 msgid "Most live streams are available in 720p HD-quality, but may require DRM to be enabled."
 msgstr ""
 
-msgctxt "#30849"
+msgctxt "#30869"
 msgid "Maximum bandwidth (kbps)"
 msgstr ""
 
-msgctxt "#30850"
+msgctxt "#30890"
 msgid "In case you have limited bandwidth available, you may want to specify a maximum bandwidth so that a lower bitrate stream can be selected for playback."
 msgstr ""
 
-msgctxt "#30860"
+msgctxt "#30880"
 msgid "Channels"
 msgstr ""
 
-msgctxt "#30861"
+msgctxt "#30881"
 msgid "Select channels to use for 'Most recent' and 'Soon offline' listings"
 msgstr ""
 
-msgctxt "#30863"
+msgctxt "#30883"
 msgid "Eén"
 msgstr ""
 
-msgctxt "#30864"
+msgctxt "#30884"
 msgid "Canvas"
 msgstr ""
 
-msgctxt "#30865"
+msgctxt "#30885"
 msgid "Ketnet"
 msgstr ""
 
-msgctxt "#30866"
+msgctxt "#30886"
 msgid "Ketnet Junior"
 msgstr ""
 
-msgctxt "#30867"
+msgctxt "#30887"
 msgid "Sporza"
 msgstr ""
 
-msgctxt "#30868"
+msgctxt "#30888"
 msgid "Radio 1"
 msgstr ""
 
-msgctxt "#30869"
+msgctxt "#30889"
 msgid "Radio 2"
 msgstr ""
 
-msgctxt "#30870"
+msgctxt "#30890"
 msgid "Klara"
 msgstr ""
 
-msgctxt "#30871"
+msgctxt "#30891"
 msgid "Studio Brussel"
 msgstr ""
 
-msgctxt "#30872"
+msgctxt "#30892"
 msgid "MNM"
 msgstr ""
 
-msgctxt "#30873"
+msgctxt "#30893"
 msgid "VRT NXT"
 msgstr ""
 
-msgctxt "#30874"
+msgctxt "#30894"
 msgid "VRT NWS"
 msgstr ""
 

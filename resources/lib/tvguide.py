@@ -126,19 +126,19 @@ class TVGuide:
         now = datetime.now(dateutil.tz.tzlocal())
         epg = self.parse(date, now)
         datelong = self._kodi.localize_datelong(epg)
-        api_url = epg.strftime(self.VRT_TVGUIDE)
+        epg_url = epg.strftime(self.VRT_TVGUIDE)
 
         if date in ('today', 'yesterday', 'tomorrow'):
             cache_file = 'schedule.%s.json' % date
             # Try the cache if it is fresh
             schedule = self._kodi.get_cache(cache_file, ttl=60 * 60)
             if not schedule:
-                self._kodi.log_notice('URL get: ' + api_url, 'Verbose')
-                schedule = json.load(urlopen(api_url))
+                self._kodi.log_notice('URL get: ' + epg_url, 'Verbose')
+                schedule = json.load(urlopen(epg_url))
                 self._kodi.update_cache(cache_file, schedule)
         else:
-            self._kodi.log_notice('URL get: ' + api_url, 'Verbose')
-            schedule = json.load(urlopen(api_url))
+            self._kodi.log_notice('URL get: ' + epg_url, 'Verbose')
+            schedule = json.load(urlopen(epg_url))
 
         name = channel
         try:
@@ -209,9 +209,9 @@ class TVGuide:
         # Try the cache if it is fresh
         schedule = self._kodi.get_cache('schedule.today.json', ttl=60 * 60)
         if not schedule:
-            api_url = epg.strftime(self.VRT_TVGUIDE)
-            self._kodi.log_notice('URL get: ' + api_url, 'Verbose')
-            schedule = json.load(urlopen(api_url))
+            epg_url = epg.strftime(self.VRT_TVGUIDE)
+            self._kodi.log_notice('URL get: ' + epg_url, 'Verbose')
+            schedule = json.load(urlopen(epg_url))
             self._kodi.update_cache('schedule.today.json', schedule)
         name = channel
         try:

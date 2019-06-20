@@ -120,3 +120,9 @@ def realpage(page):
     if page < 1:
         return 1
     return page
+
+
+def oneoff_filename(filename):
+    ''' Create a oneoff filename alternative '''
+    import os.path
+    return '%s-oneoff%s' % os.path.splitext(os.path.basename(filename))

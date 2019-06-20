@@ -35,8 +35,8 @@ class Favorites:
         ''' Get a cached copy or a newer favorites from VRT, or fall back to a cached file '''
         if not self.is_activated():
             return
-        api_json = self._kodi.get_cache('favorites.json', ttl)
-        if not api_json:
+        favorites_json = self._kodi.get_cache('favorites.json', ttl)
+        if not favorites_json:
             xvrttoken = self._tokenresolver.get_xvrttoken(token_variant='user')
             if xvrttoken:
                 headers = {
@@ -48,13 +48,13 @@ class Favorites:
                 self._kodi.log_notice('URL post: https://video-user-data.vrt.be/favorites', 'Verbose')
                 import json
                 try:
-                    api_json = json.load(urlopen(req))
+                    favorites_json = json.load(urlopen(req))
                 except Exception:
                     # Force favorites from cache
-                    api_json = self._kodi.get_cache('favorites.json', ttl=None)
+                    favorites_json = self._kodi.get_cache('favorites.json', ttl=None)
                 else:
-                    self._kodi.update_cache('favorites.json', api_json)
-        self._favorites = api_json
+                    self._kodi.update_cache('favorites.json', favorites_json)
+        self._favorites = favorites_json
 
     def set_favorite(self, program, title, value=True):
         ''' Set a program as favorite, and update local copy '''
