@@ -40,18 +40,18 @@ def install_widevine():
     kodi.install_widevine()
 
 
-@plugin.route('/follow/<title>/<program>')
-def follow(title, program):
+@plugin.route('/follow/<program>/<title>')
+def follow(program, title):
     ''' The API interface to follow a program used by the context menu '''
     from resources.lib import favorites
-    favorites.Favorites(kodi).follow(title=title, program=program)
+    favorites.Favorites(kodi).follow(program=program, title=title)
 
 
-@plugin.route('/unfollow/<title>/<program>')
-def unfollow(title, program):
+@plugin.route('/unfollow/<program>/<title>')
+def unfollow(program, title):
     ''' The API interface to unfollow a program used by the context menu '''
     from resources.lib import favorites
-    favorites.Favorites(kodi).unfollow(title=title, program=program)
+    favorites.Favorites(kodi).unfollow(program=program, title=title)
 
 
 @plugin.route('/favorites')

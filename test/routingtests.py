@@ -108,15 +108,15 @@ class TestRouter(unittest.TestCase):
         plugin.run(['plugin://plugin.video.vrt.nu/search/dag/2', '0', ''])
         self.assertEqual(plugin.url_for(addon.search, search_string='dag', page=2), 'plugin://plugin.video.vrt.nu/search/dag/2')
 
-    # Follow method: '/follow/<program_title>/<program>'
+    # Follow method: '/follow/<program>/<title>'
     def test_follow_route(self):
-        plugin.run(['plugin://plugin.video.vrt.nu/follow/Thuis/thuis', '0', ''])
-        self.assertEqual(plugin.url_for(addon.follow, title='Thuis', program='thuis'), 'plugin://plugin.video.vrt.nu/follow/Thuis/thuis')
+        plugin.run(['plugin://plugin.video.vrt.nu/follow/thuis/Thuis', '0', ''])
+        self.assertEqual(plugin.url_for(addon.follow, program='thuis', title='Thuis'), 'plugin://plugin.video.vrt.nu/follow/thuis/Thuis')
 
-    # Unfollow method: '/unfollow/<program_title>/<program>'
+    # Unfollow method: '/unfollow/<program>/<title>'
     def test_unfollow_route(self):
-        plugin.run(['plugin://plugin.video.vrt.nu/unfollow/Thuis/thuis', '0', ''])
-        self.assertEqual(plugin.url_for(addon.unfollow, title='Thuis', program='thuis'), 'plugin://plugin.video.vrt.nu/unfollow/Thuis/thuis')
+        plugin.run(['plugin://plugin.video.vrt.nu/unfollow/thuis/Thuis', '0', ''])
+        self.assertEqual(plugin.url_for(addon.unfollow, program='thuis', title='Thuis'), 'plugin://plugin.video.vrt.nu/unfollow/thuis/Thuis')
 
     # Delete tokens method: '/tokens/delete'
     def test_clear_cookies_route(self):

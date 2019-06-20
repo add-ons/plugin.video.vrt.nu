@@ -91,9 +91,9 @@ class VRTApiHelper:
             if self._favorites.is_activated():
                 program_title = tvshow.get('title').encode('utf-8')
                 if self._favorites.is_favorite(program):
-                    context_menu = [(self._kodi.localize(30412), 'RunPlugin(%s)' % self._kodi.url_for('unfollow', title=quote(program_title), program=program))]
+                    context_menu = [(self._kodi.localize(30412), 'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=quote(program_title, '')))]
                 else:
-                    context_menu = [(self._kodi.localize(30411), 'RunPlugin(%s)' % self._kodi.url_for('follow', title=quote(program_title), program=program))]
+                    context_menu = [(self._kodi.localize(30411), 'RunPlugin(%s)' % self._kodi.url_for('follow', program=program, title=quote(program_title, '')))]
             else:
                 context_menu = []
             context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file)))
@@ -308,9 +308,9 @@ class VRTApiHelper:
             if self._favorites.is_activated():
                 program_title = episode.get('program').encode('utf-8')
                 if self._favorites.is_favorite(program):
-                    context_menu = [(self._kodi.localize(30412), 'RunPlugin(%s)' % self._kodi.url_for('unfollow', title=quote(program_title), program=program))]
+                    context_menu = [(self._kodi.localize(30412), 'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=quote(program_title, '')))]
                 else:
-                    context_menu = [(self._kodi.localize(30411), 'RunPlugin(%s)' % self._kodi.url_for('follow', title=quote(program_title), program=program))]
+                    context_menu = [(self._kodi.localize(30411), 'RunPlugin(%s)' % self._kodi.url_for('follow', program=program, title=quote(program_title, '')))]
             else:
                 context_menu = []
             context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file)))
