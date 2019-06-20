@@ -448,7 +448,7 @@ msgid "Streaming"
 msgstr ""
 
 msgctxt "#30847"
-msgid "Use DRM for 720p HD-quality live streams"
+msgid "Use DRM [COLOR gray][I](needed for protected content)[/I][/COLOR]"
 msgstr ""
 
 msgctxt "#30848"
@@ -556,7 +556,7 @@ msgid "InputStream Adaptive settings..."
 msgstr ""
 
 msgctxt "#30917"
-msgid "Install Widevine... [COLOR gray][I](needed for DRM content)[/I][/COLOR]"
+msgid "Install Widevine CDM... [COLOR gray][I](needed for protected content)[/I][/COLOR]"
 msgstr ""
 
 msgctxt "#30919"

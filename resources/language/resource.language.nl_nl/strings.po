@@ -336,8 +336,8 @@ msgid "Streaming"
 msgstr "Streaming"
 
 msgctxt "#30847"
-msgid "Use DRM for 720p HD-quality live streams"
-msgstr "Gebruik DRM voor de live streams in 720p HD-kwaliteit"
+msgid "Use DRM [COLOR gray][I](needed for protected content)[/I][/COLOR]"
+msgstr "Gebruik DRM [COLOR gray][I](nodig voor beschermde video's)[/I][/COLOR]"
 
 msgctxt "#30849"
 msgid "Maximum bandwidth (kbps)"
@@ -436,8 +436,8 @@ msgid "InputStream Adaptive settings..."
 msgstr "InputStream Adaptive instellingen..."
 
 msgctxt "#30917"
-msgid "Install Widevine... [COLOR gray][I](needed for DRM content)[/I][/COLOR]"
-msgstr "Installeer Widevine... [COLOR gray][I](nodig voor DRM content)[/I][/COLOR]"
+msgid "Install Widevine CDM... [COLOR gray][I](needed for protected content)[/I][/COLOR]"
+msgstr "Installeer Widevine CDM... [COLOR gray][I](nodig voor beschermde video's)[/I][/COLOR]"
 
 msgctxt "#30919"
 msgid "Logging"
