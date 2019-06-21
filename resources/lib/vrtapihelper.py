@@ -67,11 +67,14 @@ class VRTApiHelper:
 
         # Get oneoffs
         if self._kodi.get_setting('showoneoff', 'true') == 'true':
-            oneoff_cache = statichelper.oneoff_filename(cache_file)
-            search_json = self._kodi.get_cache(oneoff_cache, ttl=60 * 60)  # Try the cache if it is fresh
+            oneoff_cache = 'oneoff.json'
+            search_json = self._kodi.get_cache(oneoff_cache, ttl=30 * 60)  # Try the cache if it is fresh
             if not search_json:
                 import json
-                params['facets[programType]'] = 'oneoff'
+                params = {
+                    'facets[programType]': 'oneoff',
+                    'size': '300',
+                }
                 search_url = self._VRTNU_SEARCH_URL + '?' + urlencode(params)
                 self._kodi.log_notice('URL get: ' + unquote(search_url), 'Verbose')
                 search_json = json.load(urlopen(search_url))
@@ -266,6 +269,9 @@ class VRTApiHelper:
 
         if use_favorites:
             favorite_programs = self._favorites.programs()
+
+        # NOTE: Sort the episodes ourselves, because Kodi does not allow to set to 'ascending'
+        episodes = sorted(episodes, key=lambda k: k['title'])
 
         episode_items = []
         for episode in episodes:

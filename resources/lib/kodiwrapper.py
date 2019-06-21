@@ -537,9 +537,7 @@ class KodiWrapper:
 
     def refresh_caches(self, cache_file=None):
         ''' Invalidate the needed caches and refresh container '''
-        from resources.lib.statichelper import oneoff_filename
         self.invalidate_caches(expr=cache_file)
-        self.invalidate_caches(expr=oneoff_filename(cache_file))
         self.container_refresh()
 
     def invalidate_cache(self, path):
@@ -554,6 +552,7 @@ class KodiWrapper:
             files = fnmatch.filter(files, expr)
         for f in files:
             self.delete_file(self._cache_path + f)
+        self.delete_file(self._cache_path + 'oneoff.json')
 
     def container_refresh(self):
         ''' Refresh the current container '''
