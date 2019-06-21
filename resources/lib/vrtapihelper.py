@@ -79,7 +79,7 @@ class VRTApiHelper:
                 self._kodi.log_notice('URL get: ' + unquote(search_url), 'Verbose')
                 search_json = json.load(urlopen(search_url))
                 self._kodi.update_cache(oneoff_cache, search_json)
-            oneoffs = search_json['results']
+            oneoffs = search_json.get('results', [])
         else:
             # Return empty list
             oneoffs = []
@@ -94,7 +94,7 @@ class VRTApiHelper:
             favorite_programs = self._favorites.programs()
 
         # Create list of oneoff programs from oneoff episodes
-        oneoff_programs = [statichelper.url_to_program(e['programUrl']) for e in oneoffs]
+        oneoff_programs = [statichelper.url_to_program(episode.get('programUrl')) for episode in oneoffs]
 
         for tvshow in tvshows:
             program = statichelper.url_to_program(tvshow.get('targetUrl'))
@@ -103,9 +103,9 @@ class VRTApiHelper:
                 continue
 
             if program in oneoff_programs:
-                # Add the oneoff listitem
-                # FIXME: Could there be more than one ?
-                items.append(self.episode_to_listitem(oneoffs[oneoff_programs.index(program)], program, cache_file, titletype='oneoff')[0])
+                # Add the oneoff listitem(s), yes, we can't guarantee there's only one per program so attempt to list all
+                for index in [n for n, o in enumerate(oneoff_programs) if o == program]:
+                    items.append(self.episode_to_listitem(oneoffs[index], program, cache_file, titletype='oneoff')[0])
             else:
                 # Add the tvshow listitem
                 items.append(self.tvshow_to_listitem(tvshow, program, cache_file))
@@ -130,6 +130,7 @@ class VRTApiHelper:
             program_title = tvshow.get('title').encode('utf-8')
             if self._favorites.is_favorite(program):
                 context_menu = [(self._kodi.localize(30412), 'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=quote(program_title, '')))]
+                label += ' [COLOR yellow]°[/COLOR]'
             else:
                 context_menu = [(self._kodi.localize(30411), 'RunPlugin(%s)' % self._kodi.url_for('follow', program=program, title=quote(program_title, '')))]
         else:
@@ -270,9 +271,6 @@ class VRTApiHelper:
         if use_favorites:
             favorite_programs = self._favorites.programs()
 
-        # NOTE: Sort the episodes ourselves, because Kodi does not allow to set to 'ascending'
-        episodes = sorted(episodes, key=lambda k: k['title'])
-
         episode_items = []
         for episode in episodes:
             # VRT API workaround: seasonTitle facet behaves as a partial match regex,
@@ -357,10 +355,12 @@ class VRTApiHelper:
         if self._showpermalink and metadata.permalink:
             metadata.plot = '%s\n\n[COLOR yellow]%s[/COLOR]' % (metadata.plot, metadata.permalink)
 
+        label, sort, ascending = self._make_label(episode, titletype, options=display_options)
         if self._favorites.is_activated():
             program_title = episode.get('program').encode('utf-8')
             if self._favorites.is_favorite(program):
                 context_menu = [(self._kodi.localize(30412), 'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=quote(program_title, '')))]
+                label += ' [COLOR yellow]°[/COLOR]'
             else:
                 context_menu = [(self._kodi.localize(30411), 'RunPlugin(%s)' % self._kodi.url_for('follow', program=program, title=quote(program_title, '')))]
         else:
@@ -373,7 +373,6 @@ class VRTApiHelper:
         else:
             thumb = 'DefaultAddonVideo.png'
             fanart = 'DefaultAddonVideo.png'
-        label, sort, ascending = self._make_label(episode, titletype, options=display_options)
         metadata.title = label
 
         return TitleItem(
