@@ -266,7 +266,8 @@ class StreamService:
 
     def _handle_bad_stream_error(self, protocol):
         ''' Show a localized error message in Kodi GUI for a failing VRT NU stream based on protocol: hls, hls_aes, mpeg_dash)
-            message: VRT NU stream <stream_type> problem, try again with (InputStream Adaptive) (and) (DRM) enabled/disabled: 30959=and DRM, 30960=disabled, 30961=enabled
+            message: VRT NU stream <stream_type> problem, try again with (InputStream Adaptive) (and) (DRM) enabled/disabled:
+                30959=and DRM, 30960=disabled, 30961=enabled
         '''
         # HLS AES DRM failed
         if protocol == 'hls_aes' and not self._kodi.has_inputstream_adaptive() and self._kodi.get_setting('usedrm', 'true') == 'false':

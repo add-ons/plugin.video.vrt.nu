@@ -85,11 +85,18 @@ class TestVRTPlayer(unittest.TestCase):
         self.assertTrue(tvshow_items, msg=category['id'])
 
         tvshow = random.choice(tvshow_items)
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(tvshow.path.split('/')[4])
-        self.assertTrue(episode_items, msg=tvshow.path.split('/')[4])
-        self.assertTrue(sort in ['dateadded', 'episode', 'label', 'unsorted'])
-        self.assertTrue(ascending is True or ascending is False)
-        self.assertTrue(content in ['episodes', 'seasons'], "Content for '%s' is '%s'" % (tvshow.title, content))
+        if tvshow.path.startswith('plugin://plugin.video.vrt.nu/programs/'):
+            # When random program has episodes
+            episode_items, sort, ascending, content = self._apihelper.get_episode_items(tvshow.path.split('/')[4])
+            self.assertTrue(episode_items, msg=tvshow.path.split('/')[4])
+            self.assertTrue(sort in ['dateadded', 'episode', 'label', 'unsorted'])
+            self.assertTrue(ascending is True or ascending is False)
+            self.assertTrue(content in ['episodes', 'seasons'], "Content for '%s' is '%s'" % (tvshow.title, content))
+        elif tvshow.path.startswith('plugin://plugin.video.vrt.nu/play/id/'):
+            # When random program is playable item
+            pass
+        else:
+            self.fail('We did not expect this, either we find episodes or it is a playable item')
 
     def test_categories(self):
         ''' Test to ensure our hardcoded categories conforms to scraped categories '''

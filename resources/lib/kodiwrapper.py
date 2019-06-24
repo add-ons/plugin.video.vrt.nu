@@ -153,6 +153,10 @@ class KodiWrapper:
         if not ascending:
             sort = 'unsorted'
 
+        # NOTE: When showing tvshow listings and 'showoneoff' was set, force 'unsorted'
+        if self.get_setting('showoneoff', 'true') == 'true' and sort == 'label':
+            sort = 'unsorted'
+
         # Add all sort methods to GUI (start with preferred)
         xbmcplugin.addSortMethod(handle=self._handle, sortMethod=sort_methods[sort])
         for key in sorted(sort_methods):
@@ -548,6 +552,7 @@ class KodiWrapper:
             files = fnmatch.filter(files, expr)
         for f in files:
             self.delete_file(self._cache_path + f)
+        self.delete_file(self._cache_path + 'oneoff.json')
 
     def container_refresh(self):
         ''' Refresh the current container '''
