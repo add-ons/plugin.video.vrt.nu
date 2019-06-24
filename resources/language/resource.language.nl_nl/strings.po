@@ -558,8 +558,8 @@ msgid "Failed to (un)follow program '%s' at VRT NU"
 msgstr "Het programma '%s' op VRT NU volgen of vergeten is mislukt"
 
 msgctxt "#30978"
-msgid "A new major version was installed"
-msgstr "Een nieuwe belangrijke versie werd geïnstalleerd"
+msgid "Welcome to VRT NU add-on v2.0.0"
+msgstr "Welkom bij VRT NU add-on v2.0.0"
 
 msgctxt "#30979"
 msgid "Because of important internal changes, existing Kodi favourites and watched history from VRT NU no longer work.\n[B]Please recreate all your VRT NU favourites.[/B]"
