@@ -91,7 +91,7 @@ class TVGuide:
             date_items.append(TitleItem(
                 title=title,
                 path=self._kodi.url_for('tv_guide', date=date),
-                art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
+                art_dict=dict(thumb='DefaultYear.png', fanart='DefaultYear.png'),
                 info_dict=dict(plot=self._kodi.localize_datelong(day)),
                 context_menu=[(self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file))],
             ))
@@ -103,23 +103,18 @@ class TVGuide:
         epg = self.parse(date, now)
         datelong = self._kodi.localize_datelong(epg)
 
-        fanart_path = 'resource://resource.images.studios.white/%(studio)s.png'
-        icon_path = 'resource://resource.images.studios.white/%(studio)s.png'
-        # NOTE: Wait for resource.images.studios.coloured v0.16 to be released
-        # icon_path = 'resource://resource.images.studios.coloured/%(studio)s.png'
-
         channel_items = []
         for channel in CHANNELS:
             if channel.get('name') not in ('een', 'canvas', 'ketnet'):
                 continue
 
-            icon = icon_path % channel
-            fanart = fanart_path % channel
+            fanart = 'resource://resource.images.studios.coloured/%(studio)s.png' % channel
+            thumb = 'resource://resource.images.studios.white/%(studio)s.png' % channel
             plot = '%s\n%s' % (self._kodi.localize(30301).format(**channel), datelong)
             channel_items.append(TitleItem(
                 title=channel.get('label'),
                 path=self._kodi.url_for('tv_guide', date=date, channel=channel.get('name')),
-                art_dict=dict(thumb=icon, icon=icon, fanart=fanart),
+                art_dict=dict(thumb=thumb, fanart=fanart),
                 info_dict=dict(plot=plot, studio=channel.get('studio')),
             ))
         return channel_items
@@ -161,7 +156,6 @@ class TVGuide:
             end_date = dateutil.parser.parse(episode.get('endTime'))
             metadata.datetime = start_date
             url = episode.get('url')
-            metadata.title = title
             metadata.tvshowtitle = title
             label = '%s - %s' % (start, title)
             # NOTE: Do not use startTime and endTime as we don't want duration with seconds granularity
@@ -200,6 +194,7 @@ class TVGuide:
                 else:
                     label = '[COLOR gray]%s[/COLOR]' % label
             context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file)))
+            metadata.title = label
             episode_items.append(TitleItem(
                 title=label,
                 path=path,

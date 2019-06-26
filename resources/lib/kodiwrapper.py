@@ -154,7 +154,7 @@ class KodiWrapper:
             sort = 'unsorted'
 
         # NOTE: When showing tvshow listings and 'showoneoff' was set, force 'unsorted'
-        if self.get_setting('showoneoff', 'true') == 'true' and sort == 'label':
+        if self.get_setting('showoneoff', 'true') == 'true' and sort == 'label' and content == 'tvshows':
             sort = 'unsorted'
 
         # Add all sort methods to GUI (start with preferred)

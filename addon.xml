@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.vrt.nu" name="VRT NU" version="2.0.0" provider-name="Martijn Moreel, dagwieers">
     <requires>
+        <import addon="resource.images.studios.coloured" version="0.0.16" optional="true"/>
         <import addon="resource.images.studios.white" version="0.0.21"/>
         <import addon="script.module.beautifulsoup4" version="4.5.3"/>
         <import addon="script.module.dateutil" version="2.6.0"/>

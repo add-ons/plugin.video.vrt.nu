@@ -517,8 +517,8 @@ class VRTApiHelper:
 
         if titletype in ('offline', 'recent'):
             ascending = False
-            sort = 'dateadded'
             label = '[B]%s[/B] - %s' % (result.get('program'), label)
+            sort = 'dateadded'
 
         elif titletype in ('reeksaflopend', 'reeksoplopend'):
 
@@ -528,30 +528,29 @@ class VRTApiHelper:
             # NOTE: This is disable on purpose as 'showSeason' is not reliable
             if options.get('showSeason') is False and options.get('showEpisodeNumber') and result.get('seasonName') and result.get('episodeNumber'):
                 try:
-                    sort = 'dateadded'
                     label = 'S%02dE%02d: %s' % (int(result.get('seasonName')), int(result.get('episodeNumber')), label)
+                    sort = 'dateadded'
                 except Exception:
                     # Season may not always be a perfect number
                     sort = 'episode'
             elif options.get('showEpisodeNumber') and result.get('episodeNumber') and ascending:
-                # NOTE: Sort the episodes ourselves, because Kodi does not allow to set to 'descending'
-                # sort = 'episode'
-                sort = 'label'
-                label = '%s %s: %s' % (self._kodi.localize(30095), result.get('episodeNumber'), label)
+                # NOTE: Do not prefix with "Episode X" when sorting by episode
+                # label = '%s %s: %s' % (self._kodi.localize(30095), result.get('episodeNumber'), label)
+                sort = 'episode'
             elif options.get('showBroadcastDate') and result.get('formattedBroadcastShortDate'):
-                sort = 'dateadded'
                 label = '%s - %s' % (result.get('formattedBroadcastShortDate'), label)
+                sort = 'dateadded'
             else:
                 sort = 'dateadded'
 
         elif titletype == 'daily':
             ascending = False
-            sort = 'dateadded'
             label = '%s - %s' % (result.get('formattedBroadcastShortDate'), label)
+            sort = 'dateadded'
 
         elif titletype == 'oneoff':
-            sort = 'label'
             label = result.get('program', label)
+            sort = 'label'
 
         return label, sort, ascending
 
@@ -560,18 +559,13 @@ class VRTApiHelper:
         from resources.lib import tvguide
         _tvguide = tvguide.TVGuide(self._kodi)
 
-        fanart_path = 'resource://resource.images.studios.white/%(studio)s.png'
-        icon_path = 'resource://resource.images.studios.white/%(studio)s.png'
-        # NOTE: Wait for resource.images.studios.coloured v0.16 to be released
-        # icon_path = 'resource://resource.images.studios.coloured/%(studio)s.png'
-
         channel_items = []
         for channel in CHANNELS:
             if channels and channel.get('name') not in channels:
                 continue
 
-            icon = icon_path % channel
-            fanart = fanart_path % channel
+            fanart = 'resource://resource.images.studios.coloured/%(studio)s.png' % channel
+            thumb = 'resource://resource.images.studios.white/%(studio)s.png' % channel
 
             if not live:
                 path = self._kodi.url_for('channels', channel=channel.get('name'))
@@ -606,7 +600,7 @@ class VRTApiHelper:
             channel_items.append(TitleItem(
                 title=label,
                 path=path,
-                art_dict=dict(thumb=icon, icon=icon, fanart=fanart),
+                art_dict=dict(thumb=thumb, fanart=fanart),
                 info_dict=info_dict,
                 context_menu=context_menu,
                 is_playable=is_playable,
@@ -624,7 +618,7 @@ class VRTApiHelper:
             featured_items.append(TitleItem(
                 title=featured_name,
                 path=self._kodi.url_for('featured', feature=feature.get('id')),
-                art_dict=dict(thumb='DefaultCountry.png', icon='DefaultCountry.png', fanart='DefaultCountry.png'),
+                art_dict=dict(thumb='DefaultCountry.png', fanart='DefaultCountry.png'),
                 info_dict=dict(plot='[B]%s[/B]' % featured_name, studio='VRT'),
             ))
         return featured_items

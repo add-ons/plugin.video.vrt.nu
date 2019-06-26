@@ -29,49 +29,47 @@ class VRTPlayer:
             main_items.append(TitleItem(
                 title=self._kodi.localize(30010),  # My programs
                 path=self._kodi.url_for('favorites_menu'),
-                art_dict=dict(thumb='icons/settings/profiles.png', icon='icons/settings/profiles.png', fanart='icons/settings/profiles.png'),
+                art_dict=dict(thumb='icons/settings/profiles.png', fanart='icons/settings/profiles.png'),
                 info_dict=dict(plot=self._kodi.localize(30011))
             ))
 
         main_items.extend([
             TitleItem(title=self._kodi.localize(30012),  # A-Z listing
                       path=self._kodi.url_for('programs'),
-                      art_dict=dict(thumb='DefaultMovieTitle.png', icon='DefaultMovieTitle.png', fanart='DefaultMovieTitle.png'),
+                      art_dict=dict(thumb='DefaultMovieTitle.png', fanart='DefaultMovieTitle.png'),
                       info_dict=dict(plot=self._kodi.localize(30013))),
             TitleItem(title=self._kodi.localize(30014),  # Categories
                       path=self._kodi.url_for('categories'),
-                      art_dict=dict(thumb='DefaultGenre.png', icon='DefaultGenre.png', fanart='DefaultGenre.png'),
+                      art_dict=dict(thumb='DefaultGenre.png', fanart='DefaultGenre.png'),
                       info_dict=dict(plot=self._kodi.localize(30015))),
             TitleItem(title=self._kodi.localize(30016),  # Channels
                       path=self._kodi.url_for('channels'),
-                      art_dict=dict(thumb='DefaultTags.png', icon='DefaultTags.png', fanart='DefaultTags.png'),
+                      art_dict=dict(thumb='DefaultTags.png', fanart='DefaultTags.png'),
                       info_dict=dict(plot=self._kodi.localize(30017))),
             TitleItem(title=self._kodi.localize(30018),  # Live TV
                       path=self._kodi.url_for('livetv'),
-                      # art_dict=dict(thumb='DefaultAddonPVRClient.png', icon='DefaultAddonPVRClient.png', fanart='DefaultAddonPVRClient.png'),
-                      art_dict=dict(thumb='DefaultTVShows.png', icon='DefaultTVShows.png', fanart='DefaultTVShows.png'),
+                      # art_dict=dict(thumb='DefaultAddonPVRClient.png', fanart='DefaultAddonPVRClient.png'),
+                      art_dict=dict(thumb='DefaultTVShows.png', fanart='DefaultTVShows.png'),
                       info_dict=dict(plot=self._kodi.localize(30019))),
             TitleItem(title=self._kodi.localize(30020),  # Recent items
                       path=self._kodi.url_for('recent'),
-                      art_dict=dict(thumb='DefaultRecentlyAddedEpisodes.png',
-                                    icon='DefaultRecentlyAddedEpisodes.png',
-                                    fanart='DefaultRecentlyAddedEpisodes.png'),
+                      art_dict=dict(thumb='DefaultRecentlyAddedEpisodes.png', fanart='DefaultRecentlyAddedEpisodes.png'),
                       info_dict=dict(plot=self._kodi.localize(30021))),
             TitleItem(title=self._kodi.localize(30022),  # Soon offline
                       path=self._kodi.url_for('offline'),
-                      art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
+                      art_dict=dict(thumb='DefaultYear.png', fanart='DefaultYear.png'),
                       info_dict=dict(plot=self._kodi.localize(30023))),
             TitleItem(title=self._kodi.localize(30024),  # Featured content
                       path=self._kodi.url_for('featured'),
-                      art_dict=dict(thumb='DefaultCountry.png', icon='DefaultCountry.png', fanart='DefaultCountry.png'),
+                      art_dict=dict(thumb='DefaultCountry.png', fanart='DefaultCountry.png'),
                       info_dict=dict(plot=self._kodi.localize(30025))),
             TitleItem(title=self._kodi.localize(30026),  # TV guide
                       path=self._kodi.url_for('tv_guide'),
-                      art_dict=dict(thumb='DefaultAddonTvInfo.png', icon='DefaultAddonTvInfo.png', fanart='DefaultAddonTvInfo.png'),
+                      art_dict=dict(thumb='DefaultAddonTvInfo.png', fanart='DefaultAddonTvInfo.png'),
                       info_dict=dict(plot=self._kodi.localize(30027))),
             TitleItem(title=self._kodi.localize(30028),  # Search
                       path=self._kodi.url_for('search'),
-                      art_dict=dict(thumb='DefaultAddonsSearch.png', icon='DefaultAddonsSearch.png', fanart='DefaultAddonsSearch.png'),
+                      art_dict=dict(thumb='DefaultAddonsSearch.png', fanart='DefaultAddonsSearch.png'),
                       info_dict=dict(plot=self._kodi.localize(30029))),
         ])
         self._kodi.show_listing(main_items)
@@ -82,17 +80,15 @@ class VRTPlayer:
         favorites_items = [
             TitleItem(title=self._kodi.localize(30040),  # My A-Z listing
                       path=self._kodi.url_for('favorites_programs'),
-                      art_dict=dict(thumb='DefaultMovieTitle.png', icon='DefaultMovieTitle.png', fanart='DefaultMovieTitle.png'),
+                      art_dict=dict(thumb='DefaultMovieTitle.png', fanart='DefaultMovieTitle.png'),
                       info_dict=dict(plot=self._kodi.localize(30041))),
             TitleItem(title=self._kodi.localize(30046),  # My recent items
                       path=self._kodi.url_for('favorites_recent'),
-                      art_dict=dict(thumb='DefaultRecentlyAddedEpisodes.png',
-                                    icon='DefaultRecentlyAddedEpisodes.png',
-                                    fanart='DefaultRecentlyAddedEpisodes.png'),
+                      art_dict=dict(thumb='DefaultRecentlyAddedEpisodes.png', fanart='DefaultRecentlyAddedEpisodes.png'),
                       info_dict=dict(plot=self._kodi.localize(30047))),
             TitleItem(title=self._kodi.localize(30048),  # My soon offline
                       path=self._kodi.url_for('favorites_offline'),
-                      art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
+                      art_dict=dict(thumb='DefaultYear.png', fanart='DefaultYear.png'),
                       info_dict=dict(plot=self._kodi.localize(30049))),
         ]
 
@@ -100,7 +96,7 @@ class VRTPlayer:
             favorites_items.append(
                 TitleItem(title=self._kodi.localize(30042),  # My movies
                           path=self._kodi.url_for('categories', category='films'),
-                          art_dict=dict(thumb='DefaultAddonVideo.png', icon='DefaultAddonVideo.png', fanart='DefaultAddonVideo.png'),
+                          art_dict=dict(thumb='DefaultAddonVideo.png', fanart='DefaultAddonVideo.png'),
                           info_dict=dict(plot=self._kodi.localize(30043))),
             )
 
@@ -108,7 +104,7 @@ class VRTPlayer:
             favorites_items.append(
                 TitleItem(title=self._kodi.localize(30044),  # My documentaries
                           path=self._kodi.url_for('favorites_docu'),
-                          art_dict=dict(thumb='DefaultMovies.png', icon='DefaultMovies.png', fanart='DefaultMovies.png'),
+                          art_dict=dict(thumb='DefaultMovies.png', fanart='DefaultMovies.png'),
                           info_dict=dict(plot=self._kodi.localize(30045))),
             )
 
@@ -190,7 +186,7 @@ class VRTPlayer:
             episode_items.append(TitleItem(
                 title=self._kodi.localize(30300),
                 path=self._kodi.url_for(recent, page=page + 1),
-                art_dict=dict(thumb='DefaultRecentlyAddedEpisodes.png', icon='DefaultRecentlyAddedEpisodes.png', fanart='DefaultRecentlyAddedEpisodes.png'),
+                art_dict=dict(thumb='DefaultRecentlyAddedEpisodes.png', fanart='DefaultRecentlyAddedEpisodes.png'),
                 info_dict=dict(),
             ))
 
@@ -212,7 +208,7 @@ class VRTPlayer:
             episode_items.append(TitleItem(
                 title=self._kodi.localize(30300),
                 path=self._kodi.url_for(offline, page=page + 1),
-                art_dict=dict(thumb='DefaultYear.png', icon='DefaultYear.png', fanart='DefaultYear.png'),
+                art_dict=dict(thumb='DefaultYear.png', fanart='DefaultYear.png'),
                 info_dict=dict(),
             ))
 
@@ -241,7 +237,7 @@ class VRTPlayer:
             search_items.append(TitleItem(
                 title=self._kodi.localize(30300),
                 path=self._kodi.url_for('search', search_string=search_string, page=page + 1),
-                art_dict=dict(thumb='DefaultAddonSearch.png', icon='DefaultAddonSearch.png', fanart='DefaultAddonSearch.png'),
+                art_dict=dict(thumb='DefaultAddonSearch.png', fanart='DefaultAddonSearch.png'),
                 info_dict=dict(),
             ))
 
