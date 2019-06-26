@@ -206,7 +206,7 @@ class StreamService:
             # Select streaming protocol
             if not drm_stream and self._kodi.has_inputstream_adaptive():
                 protocol = 'mpeg_dash'
-            elif drm_stream and self._can_play_drm and self._kodi.get_setting('usedrm', 'true') == 'true':
+            elif drm_stream and self._can_play_drm:
                 protocol = 'mpeg_dash'
             elif vudrm_token:
                 protocol = 'hls_aes'
@@ -270,10 +270,12 @@ class StreamService:
                 30959=and DRM, 30960=disabled, 30961=enabled
         '''
         # HLS AES DRM failed
-        if protocol == 'hls_aes' and not self._kodi.has_inputstream_adaptive() and self._kodi.get_setting('usedrm', 'true') == 'false':
+        if protocol == 'hls_aes' and not self._kodi.supports_drm():
+            message = self._kodi.localize(30962) % (protocol.upper(), self._kodi.kodi_version())
+        elif protocol == 'hls_aes' and not self._kodi.has_inputstream_adaptive() and self._kodi.get_setting('usedrm', 'true') == 'false':
             message = self._kodi.localize(30958) % (protocol.upper(), 'InputStream Adaptive', self._kodi.localize(30959), self._kodi.localize(30961))
         elif protocol == 'hls_aes' and self._kodi.has_inputstream_adaptive():
-            message = self._kodi.localize(30958) % (protocol.upper(), 'DRM', '', self._kodi.localize(30961))
+            message = self._kodi.localize(30958) % (protocol.upper(), 'Widevine DRM', '', self._kodi.localize(30961))
         elif protocol == 'hls_aes' and self._kodi.get_setting('usedrm', 'true') == 'true':
             message = self._kodi.localize(30958) % (protocol.upper(), 'InputStream Adaptive', '', self._kodi.localize(30961))
         else:

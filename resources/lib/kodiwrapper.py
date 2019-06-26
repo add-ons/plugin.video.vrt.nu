@@ -357,7 +357,7 @@ class KodiWrapper:
         if httpproxytype != 0 and not socks_supported:
             # Only open the dialog the first time (to avoid multiple popups)
             if socks_supported is None:
-                self.show_ok_dialog('', self.localize(30962))  # Requires PySocks
+                self.show_ok_dialog('', self.localize(30965))  # Requires PySocks
             return None
 
         proxy_types = ['http', 'socks4', 'socks4a', 'socks5', 'socks5h']
@@ -398,7 +398,11 @@ class KodiWrapper:
 
     def can_play_drm(self):
         ''' Whether this Kodi can do DRM using InputStream Adaptive '''
-        return self.get_setting('useinputstreamadaptive', 'true') == 'true' and self.kodi_version() > 17
+        return self.get_setting('usedrm', 'true') == 'true' and self.get_setting('useinputstreamadaptive', 'true') == 'true' and self.supports_drm()
+
+    def supports_drm(self):
+        ''' Whether this Kodi version supports DRM decryption using InputStream Adaptive '''
+        return self.kodi_version() > 17
 
     def get_userdata_path(self):
         ''' Return the profile's userdata path '''
