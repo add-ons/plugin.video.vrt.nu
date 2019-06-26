@@ -452,7 +452,7 @@ msgid "Streaming"
 msgstr ""
 
 msgctxt "#30867"
-msgid "Use DRM [COLOR gray][I](needed for protected content)[/I][/COLOR]"
+msgid "Use Widevine DRM [COLOR gray][I](for protected content)[/I][/COLOR]"
 msgstr ""
 
 msgctxt "#30868"
@@ -463,7 +463,7 @@ msgctxt "#30869"
 msgid "Maximum bandwidth (kbps)"
 msgstr ""
 
-msgctxt "#30890"
+msgctxt "#30870"
 msgid "In case you have limited bandwidth available, you may want to specify a maximum bandwidth so that a lower bitrate stream can be selected for playback."
 msgstr ""
 
@@ -560,7 +560,7 @@ msgid "InputStream Adaptive settings..."
 msgstr ""
 
 msgctxt "#30917"
-msgid "Install Widevine CDM... [COLOR gray][I](needed for protected content)[/I][/COLOR]"
+msgid "Install Widevine CDM... [COLOR gray][I](for protected content)[/I][/COLOR]"
 msgstr ""
 
 msgctxt "#30919"
@@ -606,7 +606,7 @@ msgid "There is a problem with this VRT NU %s stream. Try again with %s %s %s or
 msgstr ""
 
 msgctxt "#30959"
-msgid "and DRM"
+msgid "and Widevine DRM"
 msgstr ""
 
 msgctxt "#30960"
@@ -618,6 +618,10 @@ msgid "enabled"
 msgstr ""
 
 msgctxt "#30962"
+msgid "There is a problem with this VRT NU %s stream and Kodi %s doesn't support the alternative stream. Please upgrade to a newer Kodi version or try to play this program from the VRT NU website. Please report this problem at https://www.vrt.be/vrtnu/help/"
+msgstr ""
+
+msgctxt "#30965"
 msgid "Using a SOCKS proxy requires the PySocks library (script.module.pysocks) installed."
 msgstr ""
 
