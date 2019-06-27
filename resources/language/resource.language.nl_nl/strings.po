@@ -532,3 +532,11 @@ msgstr "Widevine installatie mislukt!"
 msgctxt "#30974"
 msgid "Installation of Widevine completed!"
 msgstr "Widevine installatie gelukt"
+
+msgctxt "#30975"
+msgid "Failed to get favorites token from VRT NU"
+msgstr "Ophalen van het favorieten token van VRT NU is mislukt"
+
+msgctxt "#30976"
+msgid "Failed to (un)follow program '%s' at VRT NU"
+msgstr "Het programma '%s' op VRT NU volgen of vergeten is mislukt"

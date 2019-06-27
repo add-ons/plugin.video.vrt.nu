@@ -640,3 +640,11 @@ msgstr ""
 msgctxt "#30974"
 msgid "Installation of Widevine completed!"
 msgstr ""
+
+msgctxt "#30975"
+msgid "Failed to get favorites token from VRT NU"
+msgstr ""
+
+msgctxt "#30976"
+msgid "Failed to (un)follow program '%s' at VRT NU"
+msgstr ""
