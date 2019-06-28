@@ -664,3 +664,11 @@ msgstr ""
 msgctxt "#30976"
 msgid "Failed to (un)follow program '%s' at VRT NU"
 msgstr ""
+
+msgctxt "#30978"
+msgid "New major VRT NU version installed."
+msgstr ""
+
+msgctxt "#30979"
+msgid "Because of an important change to how everything is addressed within the VRT NU add-on, existing VRT NU favourites will fail to work and the add-on no longer knows what has been watched already.\n\nThe best way forward is to replace existing favourites with new ones, and if needed, tag everything already watched as such."
+msgstr ""

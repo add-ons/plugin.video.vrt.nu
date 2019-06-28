@@ -556,3 +556,11 @@ msgstr "Ophalen van het favorieten token van VRT NU is mislukt"
 msgctxt "#30976"
 msgid "Failed to (un)follow program '%s' at VRT NU"
 msgstr "Het programma '%s' op VRT NU volgen of vergeten is mislukt"
+
+msgctxt "#30978"
+msgid "A new major VRT NU version was installed."
+msgstr "Een nieuwe belangrijke VRT NU versie werd geïnstalleerd."
+
+msgctxt "#30979"
+msgid "Because of an important change to how everything is addressed within the VRT NU add-on, existing VRT NU favourites will fail to work and the add-on no longer knows what has been watched already.\n\nThe best way forward is to replace existing favourites with new ones, and if needed, tag everything already watched as such."
+msgstr "Omwille van een belangrijk verandering aan de interne werking van de VRT NU add-on werken bestaande VRT NU favorieten niet leer en toont de add-on ook niet wat rreds werd bekeken.\n\nHet is aan te raden om alle bestaande VRT NU favorieten te vervangen door nieuwe favorieten, en indien gewenst, alle bekeken afleveringen opnieuw aan te duiden als bekeken."

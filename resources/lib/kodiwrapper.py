@@ -412,6 +412,10 @@ class KodiWrapper:
         ''' Return the addon path '''
         return xbmc.translatePath(self._addon.getAddonInfo('path'))
 
+    def get_addon_info(self, key):
+        ''' Return addon information '''
+        return self._addon.getAddonInfo(key)
+
     def get_addon_id(self):
         ''' Return the addon id '''
         return self._addon_id
