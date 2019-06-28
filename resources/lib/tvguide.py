@@ -180,7 +180,7 @@ class TVGuide:
                     label = '[COLOR yellow]%s[/COLOR] %s' % (label, self._kodi.localize(30302))
                 program = statichelper.url_to_program(episode.get('url'))
                 if self._favorites.is_activated():
-                    program_title = quote(title, '')
+                    program_title = quote(title.encode('utf-8'), '')
                     if self._favorites.is_favorite(program):
                         context_menu = [(self._kodi.localize(30412), 'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=program_title))]
                         label += ' [COLOR yellow]°[/COLOR]'
