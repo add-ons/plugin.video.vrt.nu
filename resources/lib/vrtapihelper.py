@@ -452,7 +452,7 @@ class VRTApiHelper:
             ))
         return season_items, sort, ascending, 'seasons'
 
-    def search(self, search_string, page=0):
+    def get_search_items(self, keywords, page=0):
         ''' Search VRT NU content for a given string '''
         import json
 
@@ -461,7 +461,7 @@ class VRTApiHelper:
             'from': ((page - 1) * 50) + 1,
             'i': 'video',
             'size': 50,
-            'q': search_string,
+            'q': keywords,
             'highlight': 'true',
         }
         search_url = self._VRTNU_SEARCH_URL + '?' + urlencode(params)

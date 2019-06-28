@@ -93,20 +93,20 @@ class TestRouter(unittest.TestCase):
     # TV guide menu: '/tvguide/<date>/<channel>'
     def test_tvguide_date_menu(self):
         plugin.run(['plugin://plugin.video.vrt.nu/tvguide', '0', ''])
-        self.assertEqual(plugin.url_for(addon.tv_guide), 'plugin://plugin.video.vrt.nu/tvguide')
+        self.assertEqual(plugin.url_for(addon.tvguide), 'plugin://plugin.video.vrt.nu/tvguide')
         plugin.run(['plugin://plugin.video.vrt.nu/tvguide/today', '0', ''])
-        self.assertEqual(plugin.url_for(addon.tv_guide, date='today'), 'plugin://plugin.video.vrt.nu/tvguide/today')
+        self.assertEqual(plugin.url_for(addon.tvguide, date='today'), 'plugin://plugin.video.vrt.nu/tvguide/today')
         plugin.run(['plugin://plugin.video.vrt.nu/tvguide/today/canvas', '0', ''])
-        self.assertEqual(plugin.url_for(addon.tv_guide, date='today', channel='canvas'), 'plugin://plugin.video.vrt.nu/tvguide/today/canvas')
+        self.assertEqual(plugin.url_for(addon.tvguide, date='today', channel='canvas'), 'plugin://plugin.video.vrt.nu/tvguide/today/canvas')
 
-    # Search VRT NU menu: '/search/<search_string>/<page>'
+    # Search VRT NU menu: '/search/query/<keywords>/<page>'
     def test_search_menu(self):
-        plugin.run(['plugin://plugin.video.vrt.nu/search', '0', ''])
-        self.assertEqual(plugin.url_for(addon.search), 'plugin://plugin.video.vrt.nu/search')
-        plugin.run(['plugin://plugin.video.vrt.nu/search/dag', '0', ''])
-        self.assertEqual(plugin.url_for(addon.search, search_string='dag'), 'plugin://plugin.video.vrt.nu/search/dag')
-        plugin.run(['plugin://plugin.video.vrt.nu/search/dag/2', '0', ''])
-        self.assertEqual(plugin.url_for(addon.search, search_string='dag', page=2), 'plugin://plugin.video.vrt.nu/search/dag/2')
+        plugin.run(['plugin://plugin.video.vrt.nu/search/query', '0', ''])
+        self.assertEqual(plugin.url_for(addon.search_query), 'plugin://plugin.video.vrt.nu/search/query')
+        plugin.run(['plugin://plugin.video.vrt.nu/search/query/dag', '0', ''])
+        self.assertEqual(plugin.url_for(addon.search_query, keywords='dag'), 'plugin://plugin.video.vrt.nu/search/query/dag')
+        plugin.run(['plugin://plugin.video.vrt.nu/search/query/dag/2', '0', ''])
+        self.assertEqual(plugin.url_for(addon.search_query, keywords='dag', page=2), 'plugin://plugin.video.vrt.nu/search/query/dag/2')
 
     # Follow method: '/follow/<program>/<title>'
     def test_follow_route(self):

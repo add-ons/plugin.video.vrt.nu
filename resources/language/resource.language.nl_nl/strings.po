@@ -253,6 +253,22 @@ msgctxt "#30423"
 msgid "[B]No transmission[/B]"
 msgstr "[B]Geen uitzending[/B]"
 
+msgctxt "#30424"
+msgid "[B]New search...[/B]"
+msgstr "[B]Nieuwe zoekopdracht...[/B]"
+
+msgctxt "#30425"
+msgid "Perform a new search on VRT NU content"
+msgstr "Geef een nieuwe zoekopdracht in"
+
+msgctxt "#30426"
+msgid "[B]Clear search history[/B]"
+msgstr "[B]Verwijder oude zoekopdrachten[/B]"
+
+msgctxt "#30427"
+msgid "Clear the search history"
+msgstr "Verwijder alle oude zoekopdrachten"
+
 
 ### SETTINGS
 msgctxt "#30800"

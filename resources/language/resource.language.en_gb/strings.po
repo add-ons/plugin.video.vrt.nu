@@ -349,6 +349,22 @@ msgctxt "#30423"
 msgid "[B]No transmission[/B]"
 msgstr ""
 
+msgctxt "#30424"
+msgid "[B]New search...[/B]"
+msgstr ""
+
+msgctxt "#30425"
+msgid "Perform a new search on VRT NU content"
+msgstr ""
+
+msgctxt "#30426"
+msgid "[B]Clear search history[/B]"
+msgstr ""
+
+msgctxt "#30427"
+msgid "Clear the search history"
+msgstr ""
+
 
 ### SETTINGS
 msgctxt "#30800"
