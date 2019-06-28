@@ -119,11 +119,11 @@ class Favorites:
 
     def titles(self):
         ''' Return all favorite titles '''
-        return [p.get('value').get('title') for p in self._favorites.values() if p.get('value').get('isFavorite')]
+        return [p.get('value').get('title') for p in list(self._favorites.values()) if p.get('value').get('isFavorite')]
 
     def programs(self):
         ''' Return all favorite programs '''
-        return [statichelper.url_to_program(p.get('value').get('programUrl')) for p in self._favorites.values() if p.get('value').get('isFavorite')]
+        return [statichelper.url_to_program(p.get('value').get('programUrl')) for p in list(self._favorites.values()) if p.get('value').get('isFavorite')]
 
     def invalidate_caches(self):
         ''' Invalidate caches that rely on favorites '''
