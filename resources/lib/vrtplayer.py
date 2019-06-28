@@ -64,7 +64,7 @@ class VRTPlayer:
                       art_dict=dict(thumb='DefaultCountry.png', fanart='DefaultCountry.png'),
                       info_dict=dict(plot=self._kodi.localize(30025))),
             TitleItem(title=self._kodi.localize(30026),  # TV guide
-                      path=self._kodi.url_for('tv_guide'),
+                      path=self._kodi.url_for('tvguide'),
                       art_dict=dict(thumb='DefaultAddonTvInfo.png', fanart='DefaultAddonTvInfo.png'),
                       info_dict=dict(plot=self._kodi.localize(30027))),
             TitleItem(title=self._kodi.localize(30028),  # Search
@@ -213,36 +213,6 @@ class VRTPlayer:
             ))
 
         self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content)
-
-    def search(self, search_string=None, page=None):
-        ''' The VRT NU add-on Search functionality and results '''
-        self._favorites.get_favorites(ttl=60 * 60)
-        page = realpage(page)
-
-        if search_string is None:
-            search_string = self._kodi.get_search_string()
-
-        if not search_string:
-            self._kodi.end_of_directory()
-            return
-
-        search_items, sort, ascending, content = self._apihelper.search(search_string, page=page)
-        if not search_items:
-            self._kodi.show_ok_dialog(heading=self._kodi.localize(30098), message=self._kodi.localize(30099).format(keywords=search_string))
-            self._kodi.end_of_directory()
-            return
-
-        # Add 'More...' entry at the end
-        if len(search_items) == 50:
-            search_items.append(TitleItem(
-                title=self._kodi.localize(30300),
-                path=self._kodi.url_for('search', search_string=search_string, page=page + 1),
-                art_dict=dict(thumb='DefaultAddonSearch.png', fanart='DefaultAddonSearch.png'),
-                info_dict=dict(),
-            ))
-
-        self._kodi.container_update(replace=True)
-        self._kodi.show_listing(search_items, sort=sort, ascending=ascending, content=content, cache=False)
 
     def play_latest_episode(self, program):
         ''' A hidden feature in the VRT NU add-on to play the latest episode of a program '''

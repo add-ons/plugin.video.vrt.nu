@@ -90,7 +90,7 @@ class TVGuide:
             cache_file = 'schedule.%s.json' % date
             date_items.append(TitleItem(
                 title=title,
-                path=self._kodi.url_for('tv_guide', date=date),
+                path=self._kodi.url_for('tvguide', date=date),
                 art_dict=dict(thumb='DefaultYear.png', fanart='DefaultYear.png'),
                 info_dict=dict(plot=self._kodi.localize_datelong(day)),
                 context_menu=[(self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file))],
@@ -113,7 +113,7 @@ class TVGuide:
             plot = '%s\n%s' % (self._kodi.localize(30301).format(**channel), datelong)
             channel_items.append(TitleItem(
                 title=channel.get('label'),
-                path=self._kodi.url_for('tv_guide', date=date, channel=channel.get('name')),
+                path=self._kodi.url_for('tvguide', date=date, channel=channel.get('name')),
                 art_dict=dict(thumb=thumb, fanart=fanart),
                 info_dict=dict(plot=plot, studio=channel.get('studio')),
             ))

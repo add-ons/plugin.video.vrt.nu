@@ -160,19 +160,33 @@ def featured(feature=None):
 @plugin.route('/tvguide')
 @plugin.route('/tvguide/<date>')
 @plugin.route('/tvguide/<date>/<channel>')
-def tv_guide(date=None, channel=None):
+def tvguide(date=None, channel=None):
     ''' The TV guide menu and listings '''
-    from resources.lib import tvguide
-    tvguide.TVGuide(kodi).show_tvguide(date=date, channel=channel)
+    from resources.lib import tvguide as tvguide_module
+    tvguide_module.TVGuide(kodi).show_tvguide(date=date, channel=channel)
 
 
 @plugin.route('/search')
-@plugin.route('/search/<search_string>')
-@plugin.route('/search/<search_string>/<page>')
-def search(search_string=None, page=1):
+def search():
+    ''' The Search menu and history '''
+    from resources.lib import search as search_module
+    search_module.Search(kodi).search_menu()
+
+
+@plugin.route('/search/clear')
+def clear_search():
+    ''' Clear the search history '''
+    from resources.lib import search as search_module
+    search_module.Search(kodi).clear()
+
+
+@plugin.route('/search/query')
+@plugin.route('/search/query/<keywords>')
+@plugin.route('/search/query/<keywords>/<page>')
+def search_query(keywords=None, page=1):
     ''' The Search interface and query listing '''
-    from resources.lib import vrtplayer
-    vrtplayer.VRTPlayer(kodi).search(search_string=search_string, page=page)
+    from resources.lib import search as search_module
+    search_module.Search(kodi).search(keywords=keywords, page=page)
 
 
 @plugin.route('/play/id/<video_id>')
