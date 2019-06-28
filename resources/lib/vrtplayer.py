@@ -74,6 +74,15 @@ class VRTPlayer:
         ])
         self._kodi.show_listing(main_items)
 
+        # NOTE: In the future we can implement a LooseVersion check, now we can simply check if version is empty (pre-2.0.0)
+        # from distutils.version import LooseVersion
+        settings_version = self._kodi.get_setting('version', '')
+        if settings_version == '' and self._kodi.has_credentials():  # New major version, favourites and what-was-watched will break
+            self._kodi.show_ok_dialog(self._kodi.localize(30978), self._kodi.localize(30979))
+        addon_version = self._kodi.get_addon_info('version')
+        if settings_version != addon_version:
+            self._kodi.set_setting('version', addon_version)
+
     def show_favorites_menu_items(self):
         ''' The VRT NU addon 'My Programs' menu '''
         self._favorites.get_favorites(ttl=60 * 60)

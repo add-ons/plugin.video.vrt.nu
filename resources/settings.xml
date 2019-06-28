@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
+    <setting id="version" default="" visible="false"/>
     <category label="30800"> <!-- Credentials -->
         <setting label="30801" type="lsep"/> <!-- VRT NU login -->
         <setting label="30803" help="30804" type="text" id="username"/>
