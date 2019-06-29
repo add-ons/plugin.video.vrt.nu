@@ -89,5 +89,9 @@ class Addon:
         return ADDON_SETTINGS.get(key, '')
 
     @staticmethod
+    def openSettings():
+        ''' A stub implementation for the xbmcaddon Addon class openSettings() method '''
+
+    @staticmethod
     def setSetting(key, value):
         ''' A stub implementation for the xbmcaddon Addon class setSetting() method '''

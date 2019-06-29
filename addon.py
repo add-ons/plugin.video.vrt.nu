@@ -8,6 +8,7 @@ from __future__ import absolute_import, division, unicode_literals
 import sys
 import routing
 from resources.lib import kodiwrapper
+from resources.lib.statichelper import to_unicode
 
 plugin = routing.Plugin()
 kodi = kodiwrapper.KodiWrapper(globals())
@@ -215,5 +216,6 @@ def play_last(program):
 
 
 if __name__ == '__main__':
-    kodi.log_access(sys.argv[0])
-    plugin.run(sys.argv)
+    argv = [to_unicode(arg) for arg in sys.argv]
+    kodi.log_access(argv[0])
+    plugin.run(argv)
