@@ -562,5 +562,6 @@ msgid "A new major version was installed"
 msgstr "Een nieuwe belangrijke versie werd geïnstalleerd"
 
 msgctxt "#30979"
-msgid "Because of important internal changes, existing favourites from VRT NU no longer work, and the add-on no longer knows what was watched.\n[B]Please recreate all your VRT NU favourites.[/B]"
-msgstr "Omwille van belangrijk interne veranderingen werken bestaande favorieten vanuit VRT NU niet meer en toont de add-on ook niet wat reeds werd bekeken.\n[B]Gelieve all VRT NU favourites opnieuw aan te maken.[/B]"
+msgid "Because of important internal changes, existing Kodi favourites and watched history from VRT NU no longer work.\n[B]Please recreate all your VRT NU favourites.[/B]"
+msgstr "Wegens belangrijke interne wijzigingen werken bestaande Kodi-favorieten en kijkgeschiedenis van VRT NU niet meer.\n[B]Gelieve al uw VRT NU-favorieten opnieuw aan te maken.[/B]"
+
