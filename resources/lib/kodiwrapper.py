@@ -6,12 +6,10 @@
 
 from __future__ import absolute_import, division, unicode_literals
 from contextlib import contextmanager
-
-from resources.lib.statichelper import to_unicode, from_unicode
-
 import xbmc
 import xbmcplugin
 import xbmcaddon
+from resources.lib.statichelper import to_unicode, from_unicode
 
 try:  # Python 3
     from urllib.parse import unquote

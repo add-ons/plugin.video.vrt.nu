@@ -81,7 +81,10 @@ class MetadataCreator:
             info_dict['plotoutline'] = self.plotoutline.strip()
 
         if self.season:
-            info_dict['season'] = self.season
+            try:
+                info_dict['season'] = int(self.season)
+            except ValueError:
+                info_dict['season'] = self.season
 
         # NOTE: Does not seem to have any effect
         if self.subtitle:

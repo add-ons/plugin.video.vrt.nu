@@ -136,11 +136,11 @@ class TestRouter(unittest.TestCase):
     # Play on demand by id = '/play/id/<publication_id>/<video_id>'
     # Achterflap episode 8 available until 31/12/2025
     def test_play_on_demand_by_id_route(self):
-        plugin.run(['plugin://plugin.video.vrt.nu/play/id/pbs-pub-1a170972-dea3-4ea3-8c27-62d2442ee8a3/vid-f80fa527-6759-45a7-908d-ec6f0a7b164e', '0', ''])
+        plugin.run(['plugin://plugin.video.vrt.nu/play/id/vid-f80fa527-6759-45a7-908d-ec6f0a7b164e/pbs-pub-1a170972-dea3-4ea3-8c27-62d2442ee8a3', '0', ''])
         self.assertEqual(plugin.url_for(addon.play_id,
                                         publication_id='pbs-pub-1a170972-dea3-4ea3-8c27-62d2442ee8a3',
                                         video_id='vid-f80fa527-6759-45a7-908d-ec6f0a7b164e'),
-                         'plugin://plugin.video.vrt.nu/play/id/pbs-pub-1a170972-dea3-4ea3-8c27-62d2442ee8a3/vid-f80fa527-6759-45a7-908d-ec6f0a7b164e')
+                         'plugin://plugin.video.vrt.nu/play/id/vid-f80fa527-6759-45a7-908d-ec6f0a7b164e/pbs-pub-1a170972-dea3-4ea3-8c27-62d2442ee8a3')
 
     # Play livestream by id = '/play/id/<video_id>'
     # Canvas livestream
@@ -165,9 +165,9 @@ class TestRouter(unittest.TestCase):
                          'plugin://plugin.video.vrt.nu/play/url/https://www.vrt.be/vrtnu/kanalen/canvas/')
 
     # Play last episode method = '/play/lastepisode/<program>'
-    def test_play_lastepisode_route(self):
-        plugin.run(['plugin://plugin.video.vrt.nu/play/lastepisode/het-journaal', '0', ''])
-        self.assertEqual(plugin.url_for(addon.play_last, program='het-journaal'), 'plugin://plugin.video.vrt.nu/play/lastepisode/het-journaal')
+    def test_play_latestepisode_route(self):
+        plugin.run(['plugin://plugin.video.vrt.nu/play/latest/het-journaal', '0', ''])
+        self.assertEqual(plugin.url_for(addon.play_latest, program='het-journaal'), 'plugin://plugin.video.vrt.nu/play/latest/het-journaal')
 
 
 if __name__ == '__main__':

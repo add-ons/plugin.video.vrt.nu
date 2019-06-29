@@ -9,11 +9,11 @@ from resources.lib import CHANNELS, CATEGORIES, metadatacreator, statichelper
 from resources.lib.helperobjects import TitleItem
 
 try:  # Python 3
-    from urllib.parse import urlencode, unquote
+    from urllib.parse import quote, unquote, urlencode
     from urllib.request import build_opener, install_opener, ProxyHandler, urlopen
 except ImportError:  # Python 2
     from urllib import urlencode
-    from urllib2 import build_opener, install_opener, ProxyHandler, urlopen, unquote
+    from urllib2 import build_opener, install_opener, ProxyHandler, quote, unquote, urlopen
 
 
 class VRTApiHelper:
@@ -127,7 +127,7 @@ class VRTApiHelper:
         else:
             thumbnail = 'DefaultAddonVideo.png'
         if self._favorites.is_activated():
-            program_title = tvshow.get('title')
+            program_title = quote(tvshow.get('title'), '')  # We need to ensure forward slashes are quoted
             if self._favorites.is_favorite(program):
                 context_menu = [(self._kodi.localize(30412), 'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=program_title))]
                 label += ' [COLOR yellow]°[/COLOR]'
@@ -357,7 +357,7 @@ class VRTApiHelper:
 
         label, sort, ascending = self._make_label(episode, titletype, options=display_options)
         if self._favorites.is_activated():
-            program_title = episode.get('program')
+            program_title = quote(episode.get('program'), '')  # We need to ensure forward slashes are quoted
             if self._favorites.is_favorite(program):
                 context_menu = [(self._kodi.localize(30412), 'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=program_title))]
                 label += ' [COLOR yellow]°[/COLOR]'
@@ -377,7 +377,7 @@ class VRTApiHelper:
 
         return TitleItem(
             title=label,
-            path=self._kodi.url_for('play_id', publication_id=episode.get('publicationId'), video_id=episode.get('videoId')),
+            path=self._kodi.url_for('play_id', video_id=episode.get('videoId'), publication_id=episode.get('publicationId')),
             art_dict=dict(thumb=thumb, icon='DefaultAddonVideo.png', fanart=fanart),
             info_dict=metadata.get_info_dict(),
             context_menu=context_menu,
