@@ -191,14 +191,11 @@ def search_query(keywords=None, page=1):
 
 
 @plugin.route('/play/id/<video_id>')
-@plugin.route('/play/id/<publication_id>/<video_id>')
+@plugin.route('/play/id/<video_id>/<publication_id>')
 def play_id(video_id, publication_id=None):
     ''' The API interface to play a video by video_id and/or publication_id '''
     from resources.lib import vrtplayer
-    if video_id and publication_id:
-        vrtplayer.VRTPlayer(kodi).play(dict(publication_id=publication_id, video_id=video_id))
-    elif video_id:
-        vrtplayer.VRTPlayer(kodi).play(dict(video_id=video_id))
+    vrtplayer.VRTPlayer(kodi).play(dict(video_id=video_id, publication_id=publication_id))
 
 
 @plugin.route('/play/url/<path:video_url>')
@@ -208,8 +205,8 @@ def play_url(video_url):
     vrtplayer.VRTPlayer(kodi).play(dict(video_url=video_url))
 
 
-@plugin.route('/play/lastepisode/<program>')
-def play_last(program):
+@plugin.route('/play/latest/<program>')
+def play_latest(program):
     ''' The API interface to play the latest episode of a program '''
     from resources.lib import vrtplayer
     vrtplayer.VRTPlayer(kodi).play_latest_episode(program=program)
