@@ -7,6 +7,8 @@
 from __future__ import absolute_import, division, unicode_literals
 from contextlib import contextmanager
 
+from resources.lib.statichelper import to_unicode, from_unicode
+
 import xbmc
 import xbmcplugin
 import xbmcaddon
@@ -111,7 +113,7 @@ class KodiWrapper:
             self._handle = self.plugin.handle
             self._url = self.plugin.base_url
         self._addon = xbmcaddon.Addon()
-        self._addon_id = self._addon.getAddonInfo('id')
+        self._addon_id = to_unicode(self._addon.getAddonInfo('id'))
         self._max_log_level = log_levels.get(self.get_setting('max_log_level', 'Debug'), 3)
         self._usemenucaching = self.get_setting('usemenucaching', 'true') == 'true'
         self._cache_path = self.get_userdata_path() + 'cache/'
@@ -581,14 +583,16 @@ class KodiWrapper:
     def log_access(self, url, query_string=None, log_level='Verbose'):
         ''' Log addon access '''
         if log_levels.get(log_level, 0) <= self._max_log_level:
-            message = url + ('?' + query_string if query_string else '')
-            xbmc.log(msg='[%s] Access: %s' % (self._addon_id, unquote(message)), level=xbmc.LOGNOTICE)
+            message = '[%s] Access: %s' % (self._addon_id, url + ('?' + query_string if query_string else ''))
+            xbmc.log(msg=from_unicode(message), level=xbmc.LOGNOTICE)
 
     def log_notice(self, message, log_level='Info'):
         ''' Log info messages to Kodi '''
         if log_levels.get(log_level, 0) <= self._max_log_level:
-            xbmc.log(msg='[%s] %s' % (self._addon_id, message), level=xbmc.LOGNOTICE)
+            message = '[%s] %s' % (self._addon_id, message)
+            xbmc.log(msg=from_unicode(message), level=xbmc.LOGNOTICE)
 
     def log_error(self, message, log_level='Info'):
         ''' Log error messages to Kodi '''
-        xbmc.log(msg='[%s] %s' % (self._addon_id, message), level=xbmc.LOGERROR)
+        message = '[%s] %s' % (self._addon_id, message)
+        xbmc.log(msg=from_unicode(message), level=xbmc.LOGERROR)

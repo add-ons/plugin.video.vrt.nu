@@ -70,6 +70,19 @@ def url_to_program(url):
     return program
 
 
+def to_unicode(text, encoding='utf-8'):
+    ''' Force text to unicode '''
+    return text.decode(encoding) if isinstance(text, bytes) else text
+
+
+def from_unicode(text, encoding='utf-8'):
+    ''' Force unicode to text '''
+    import sys
+    if sys.version_info.major == 2 and isinstance(text, unicode):  # pylint: disable=undefined-variable
+        return text.encode(encoding)
+    return text
+
+
 def shorten_link(url):
     ''' Create a link that is as short as possible '''
     if url is None:

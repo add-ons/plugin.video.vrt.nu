@@ -9,11 +9,11 @@ from resources.lib import CHANNELS, CATEGORIES, metadatacreator, statichelper
 from resources.lib.helperobjects import TitleItem
 
 try:  # Python 3
-    from urllib.parse import urlencode, quote, unquote
+    from urllib.parse import urlencode, unquote
     from urllib.request import build_opener, install_opener, ProxyHandler, urlopen
 except ImportError:  # Python 2
     from urllib import urlencode
-    from urllib2 import build_opener, install_opener, ProxyHandler, urlopen, quote, unquote
+    from urllib2 import build_opener, install_opener, ProxyHandler, urlopen, unquote
 
 
 class VRTApiHelper:
@@ -127,7 +127,7 @@ class VRTApiHelper:
         else:
             thumbnail = 'DefaultAddonVideo.png'
         if self._favorites.is_activated():
-            program_title = quote(tvshow.get('title').encode('utf-8'), safe=':/'.encode('utf-8'))
+            program_title = tvshow.get('title')
             if self._favorites.is_favorite(program):
                 context_menu = [(self._kodi.localize(30412), 'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=program_title))]
                 label += ' [COLOR yellow]°[/COLOR]'
@@ -357,7 +357,7 @@ class VRTApiHelper:
 
         label, sort, ascending = self._make_label(episode, titletype, options=display_options)
         if self._favorites.is_activated():
-            program_title = quote(episode.get('program').encode('utf-8'), safe=':/'.encode('utf-8'))
+            program_title = episode.get('program')
             if self._favorites.is_favorite(program):
                 context_menu = [(self._kodi.localize(30412), 'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=program_title))]
                 label += ' [COLOR yellow]°[/COLOR]'

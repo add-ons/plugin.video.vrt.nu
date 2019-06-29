@@ -27,7 +27,7 @@ class TestFavorites(unittest.TestCase):
         programs = [
             {'program_title': 'Winteruur', 'program': 'winteruur'},
             {'program_title': 'De Campus Cup', 'program': 'de-campus-cup'},
-            {'program_title': 'De Afspraak op vrijdag', 'program': 'de-afspraak-op-vrijdag'}
+            {'program_title': 'Terug naar Siberië', 'program': 'terug-naar-siberie'}
         ]
         for program_item in programs:
             program_title = program_item.get('program_title')

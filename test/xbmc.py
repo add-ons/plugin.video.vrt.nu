@@ -33,7 +33,10 @@ try:
         GLOBAL_SETTINGS = json.load(f)
 except Exception as e:
     print("Error using 'test/userdata/addon_settings.json' : %s" % e, file=sys.stderr)
-    GLOBAL_SETTINGS = {}
+    GLOBAL_SETTINGS = {
+        'locale.language': 'resource.language.en_gb',
+        'network.bandwidth': 0,
+    }
 
 
 class Keyboard:
