@@ -35,6 +35,17 @@ def delete_tokens():
     tokenresolver.TokenResolver(kodi).delete_tokens()
 
 
+@plugin.route('/tokens/check-credentials')
+def check_credentials():
+    ''' Check if the credentials are correct '''
+    from resources.lib import tokenresolver
+    if tokenresolver.TokenResolver(kodi).check_credentials():
+        kodi.show_ok_dialog(message=kodi.localize(30980))
+    else:
+        kodi.show_ok_dialog(message=kodi.localize(30952))
+    kodi.open_settings()
+
+
 @plugin.route('/widevine/install')
 def install_widevine():
     ''' The API interface to install Widevine '''

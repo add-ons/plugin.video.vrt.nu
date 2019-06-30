@@ -287,6 +287,14 @@ msgctxt "#30805"
 msgid "Password"
 msgstr "Wachtwoord"
 
+msgctxt "#30807"
+msgid "Check credentials"
+msgstr "Controleer inloggegevens"
+
+msgctxt "#30808"
+msgid "Check if your VRT NU credentials are correct."
+msgstr "Controleer of je VRT NU inloggegevens correct zijn."
+
 msgctxt "#30820"
 msgid "Interface"
 msgstr "Interface"
@@ -565,3 +573,6 @@ msgctxt "#30979"
 msgid "Because of important internal changes, existing Kodi favourites and watched history from VRT NU no longer work.\n[B]Please recreate all your VRT NU favourites.[/B]"
 msgstr "Wegens belangrijke interne wijzigingen werken bestaande Kodi-favorieten en kijkgeschiedenis van VRT NU niet meer.\n[B]Gelieve al uw VRT NU-favorieten opnieuw aan te maken.[/B]"
 
+msgctxt "#30980"
+msgid "Login successful!"
+msgstr "Inloggen gelukt!"

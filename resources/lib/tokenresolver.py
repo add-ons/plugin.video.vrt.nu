@@ -80,6 +80,26 @@ class TokenResolver:
                 token = self._get_new_xvrttoken(token_variant)
         return token
 
+    def check_credentials(self):
+        ''' Check the credentials '''
+        cred = Credentials(self._kodi)
+        if not cred.are_filled_in():
+            return False
+
+        payload = dict(
+            loginID=cred.username,
+            password=cred.password,
+            sessionExpiration='-1',
+            APIKey=self._API_KEY,
+            targetEnv='jssdk',
+        )
+        data = urlencode(payload).encode('utf8')
+        self._kodi.log_notice('URL post: ' + unquote(self._LOGIN_URL), 'Verbose')
+        req = Request(self._LOGIN_URL, data=data)
+        logon_json = json.load(urlopen(req))
+
+        return logon_json.get('errorCode') == 0
+
     def _get_token_path(self, token_name, token_variant):
         ''' Create token path following predefined file naming rules '''
         prefix = token_variant + '_' if token_variant else ''
