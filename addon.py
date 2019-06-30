@@ -10,6 +10,11 @@ import routing
 from resources.lib import kodiwrapper
 from resources.lib.statichelper import to_unicode
 
+try:  # Python 3
+    from urllib.parse import unquote_plus
+except ImportError:  # Python 2
+    from urllib import unquote_plus
+
 plugin = routing.Plugin()
 kodi = kodiwrapper.KodiWrapper(globals())
 
@@ -45,14 +50,14 @@ def install_widevine():
 def follow(program, title):
     ''' The API interface to follow a program used by the context menu '''
     from resources.lib import favorites
-    favorites.Favorites(kodi).follow(program=program, title=title)
+    favorites.Favorites(kodi).follow(program=program, title=to_unicode(unquote_plus(title)))
 
 
 @plugin.route('/unfollow/<program>/<title>')
 def unfollow(program, title):
     ''' The API interface to unfollow a program used by the context menu '''
     from resources.lib import favorites
-    favorites.Favorites(kodi).unfollow(program=program, title=title)
+    favorites.Favorites(kodi).unfollow(program=program, title=to_unicode(unquote_plus(title)))
 
 
 @plugin.route('/favorites')
@@ -213,6 +218,5 @@ def play_latest(program):
 
 
 if __name__ == '__main__':
-    argv = [to_unicode(arg) for arg in sys.argv]
-    kodi.log_access(argv[0])
-    plugin.run(argv)
+    kodi.log_access(to_unicode(sys.argv[0]))
+    plugin.run(sys.argv)

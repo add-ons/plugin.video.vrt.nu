@@ -9,11 +9,11 @@ from resources.lib import CHANNELS, CATEGORIES, metadatacreator, statichelper
 from resources.lib.helperobjects import TitleItem
 
 try:  # Python 3
-    from urllib.parse import quote, unquote, urlencode
+    from urllib.parse import quote_plus, unquote, urlencode
     from urllib.request import build_opener, install_opener, ProxyHandler, urlopen
 except ImportError:  # Python 2
-    from urllib import urlencode
-    from urllib2 import build_opener, install_opener, ProxyHandler, quote, unquote, urlopen
+    from urllib import urlencode, quote_plus
+    from urllib2 import build_opener, install_opener, ProxyHandler, unquote, urlopen
 
 
 class VRTApiHelper:
@@ -127,7 +127,7 @@ class VRTApiHelper:
         else:
             thumbnail = 'DefaultAddonVideo.png'
         if self._favorites.is_activated():
-            program_title = quote(tvshow.get('title'), '')  # We need to ensure forward slashes are quoted
+            program_title = quote_plus(statichelper.from_unicode(tvshow.get('title')))  # We need to ensure forward slashes are quoted
             if self._favorites.is_favorite(program):
                 context_menu = [(self._kodi.localize(30412), 'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=program_title))]
                 label += ' [COLOR yellow]°[/COLOR]'
@@ -357,7 +357,7 @@ class VRTApiHelper:
 
         label, sort, ascending = self._make_label(episode, titletype, options=display_options)
         if self._favorites.is_activated():
-            program_title = quote(episode.get('program'), '')  # We need to ensure forward slashes are quoted
+            program_title = quote_plus(statichelper.from_unicode(episode.get('program')))  # We need to ensure forward slashes are quoted
             if self._favorites.is_favorite(program):
                 context_menu = [(self._kodi.localize(30412), 'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=program_title))]
                 label += ' [COLOR yellow]°[/COLOR]'
