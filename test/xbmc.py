@@ -32,7 +32,7 @@ try:
     with open('test/userdata/global_settings.json') as f:
         GLOBAL_SETTINGS = json.load(f)
 except Exception as e:
-    print("Error using 'test/userdata/addon_settings.json' : %s" % e, file=sys.stderr)
+    print("Error using 'test/userdata/global_settings.json' : %s" % e, file=sys.stderr)
     GLOBAL_SETTINGS = {
         'locale.language': 'resource.language.en_gb',
         'network.bandwidth': 0,

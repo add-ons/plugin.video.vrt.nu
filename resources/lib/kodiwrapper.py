@@ -9,7 +9,7 @@ from contextlib import contextmanager
 import xbmc
 import xbmcplugin
 import xbmcaddon
-from resources.lib.statichelper import to_unicode, from_unicode
+from resources.lib.statichelper import from_unicode, to_unicode
 
 try:  # Python 3
     from urllib.parse import unquote
