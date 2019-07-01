@@ -666,7 +666,7 @@ msgid "Failed to (un)follow program '%s' at VRT NU"
 msgstr ""
 
 msgctxt "#30978"
-msgid "A new major version was installed"
+msgid "Welcome to VRT NU add-on v2.0.0"
 msgstr ""
 
 msgctxt "#30979"
