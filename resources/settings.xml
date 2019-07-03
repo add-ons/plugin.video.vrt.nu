@@ -5,6 +5,7 @@
         <setting label="30801" type="lsep"/> <!-- VRT NU login -->
         <setting label="30803" help="30804" type="text" id="username"/>
         <setting label="30805" help="30806" type="text" id="password" option="hidden"/>
+        <setting label="30807" help="30808" type="action" id="check_credentials" option="close" action="RunPlugin(plugin://plugin.video.vrt.nu/tokens/check-credentials)" subsetting="true"  enable="!eq(-2,) + !eq(-1,)"/>
     </category>
     <category label="30820"> <!-- Interface -->
         <setting label="30821" type="lsep"/> <!-- Features -->

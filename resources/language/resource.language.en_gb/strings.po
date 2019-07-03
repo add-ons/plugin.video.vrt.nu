@@ -391,6 +391,14 @@ msgctxt "#30806"
 msgid "Provide your VRT NU account password."
 msgstr ""
 
+msgctxt "#30807"
+msgid "Check credentials"
+msgstr ""
+
+msgctxt "#30808"
+msgid "Check if your VRT NU credentials are correct."
+msgstr ""
+
 msgctxt "#30820"
 msgid "Interface"
 msgstr ""
@@ -671,4 +679,8 @@ msgstr ""
 
 msgctxt "#30979"
 msgid "Because of important internal changes, existing Kodi favourites and watched history from VRT NU no longer work.\n[B]Please recreate all your VRT NU favourites.[/B]"
+msgstr ""
+
+msgctxt "#30980"
+msgid "Login successful!"
 msgstr ""
