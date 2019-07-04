@@ -12,7 +12,7 @@ class Dialog:
 
     def notification(self, heading='', message='', icon='', time=''):
         ''' A working implementation for the xbmcgui Dialog class notification() method '''
-        print('GUI NOTIFICATION: [%s] %s' % (heading, message))
+        print('[37;100mNOTIFICATION:[35;0m [%s] [35;0m%s[0m' % (heading, message))
 
     def ok(self, heading='', line1=''):
         ''' A stub implementation for the xbmcgui Dialog class ok() method '''

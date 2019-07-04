@@ -130,7 +130,7 @@ class VRTApiHelper:
             program_title = quote_plus(statichelper.from_unicode(tvshow.get('title')))  # We need to ensure forward slashes are quoted
             if self._favorites.is_favorite(program):
                 context_menu = [(self._kodi.localize(30412), 'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=program_title))]
-                label += '[COLOR yellow]°[/COLOR]'
+                label += '[COLOR yellow]ᵛ[/COLOR]'
             else:
                 context_menu = [(self._kodi.localize(30411), 'RunPlugin(%s)' % self._kodi.url_for('follow', program=program, title=program_title))]
         else:
@@ -360,7 +360,7 @@ class VRTApiHelper:
             program_title = quote_plus(statichelper.from_unicode(episode.get('program')))  # We need to ensure forward slashes are quoted
             if self._favorites.is_favorite(program):
                 context_menu = [(self._kodi.localize(30412), 'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=program_title))]
-                label += '[COLOR yellow]°[/COLOR]'
+                label += '[COLOR yellow]ᵛ[/COLOR]'
             else:
                 context_menu = [(self._kodi.localize(30411), 'RunPlugin(%s)' % self._kodi.url_for('follow', program=program, title=program_title))]
         else:
