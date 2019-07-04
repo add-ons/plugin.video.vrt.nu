@@ -17,10 +17,10 @@ script:
 - tox
 - tox -e flake8
 - pylint *.py resources/lib/ test/
-- python test/vrtplayertests.py
-#- python test/streamservicetests.py
-- python test/apihelpertests.py
-- python test/tvguidetests.py
-- python test/searchtests.py
-- python test/routingtests.py
-#- python test/favoritestests.py
+- python test/test_vrtplayer.py
+#- python test/test_streamservice.py
+- python test/test_apihelper.py
+- python test/test_tvguide.py
+- python test/test_search.py
+- python test/test_routing.py
+#- python test/test_favorites.py

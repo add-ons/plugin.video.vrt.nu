@@ -30,23 +30,14 @@ sanity: tox pylint
 tox:
 	@echo -e "$(white)=$(blue) Starting sanity tox test$(reset)"
 	tox -q -e $(ENVS)
-	@echo -e "$(white)=$(blue) Sanity tox test finished successfully.$(reset)"
 
 pylint:
 	@echo -e "$(white)=$(blue) Starting sanity pylint test$(reset)"
 	pylint *.py resources/lib/ test/
-	@echo -e "$(white)=$(blue) Sanity pylint test finished successfully.$(reset)"
 
 unit:
 	@echo -e "$(white)=$(blue) Starting unit tests$(reset)"
-	PYTHONPATH=$(CURDIR) python test/vrtplayertests.py
-	PYTHONPATH=$(CURDIR) python test/streamservicetests.py
-	PYTHONPATH=$(CURDIR) python test/apihelpertests.py
-	PYTHONPATH=$(CURDIR) python test/tvguidetests.py
-	PYTHONPATH=$(CURDIR) python test/searchtests.py
-	PYTHONPATH=$(CURDIR) python test/routingtests.py
-	PYTHONPATH=$(CURDIR) python test/favoritestests.py
-	@echo -e "$(white)=$(blue) Unit tests finished successfully.$(reset)"
+	PYTHONPATH=$(CURDIR):$(CURDIR)/test python -m unittest discover
 
 zip: clean
 	@echo -e "$(white)=$(blue) Building new package$(reset)"
