@@ -79,6 +79,7 @@ CHANNELS = [
         name='radio1',
         label='Radio 1',
         studio='Radio 1',
+        live_stream_id='vualto_events3_geo',
     ),
     dict(
         id='24',
