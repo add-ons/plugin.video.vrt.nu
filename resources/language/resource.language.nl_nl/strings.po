@@ -576,3 +576,23 @@ msgstr "Wegens belangrijke interne wijzigingen werken bestaande Kodi-favorieten 
 msgctxt "#30980"
 msgid "Login successful!"
 msgstr "Inloggen gelukt!"
+
+msgctxt "#30981"
+msgid "Successfully invalidated caches."
+msgstr "Caches werden ongeldig gemaakt."
+
+msgctxt "#30982"
+msgid "Successfully refreshed favorites."
+msgstr "Favoriete programmma's werden verversd."
+
+msgctxt "#30983"
+msgid "Successfully verified credentials."
+msgstr "Inloggegevens werken correct."
+
+msgctxt "#30984"
+msgid "Credentials failed, please fix and retry."
+msgstr "Inloggegevens zijn niet correct, verifieer en probeer opnieuw."
+
+msgctxt "#30985"
+msgid "Successfully cleared VRT tokens."
+msgstr "VRT tokens werden verwijderd."

@@ -84,7 +84,8 @@ class TokenResolver:
         ''' Check the credentials '''
         cred = Credentials(self._kodi)
         if not cred.are_filled_in():
-            return False
+            # If credentials are not filled out, do nothing
+            return
 
         payload = dict(
             loginID=cred.username,
@@ -98,7 +99,10 @@ class TokenResolver:
         req = Request(self._LOGIN_URL, data=data)
         logon_json = json.load(urlopen(req))
 
-        return logon_json.get('errorCode') == 0
+        if logon_json.get('errorCode') == 0:
+            self._kodi.show_notification(message=self._kodi.localize(30983))
+        else:
+            self._kodi.show_notification(message=self._kodi.localize(30984))
 
     def _get_token_path(self, token_name, token_variant):
         ''' Create token path following predefined file naming rules '''
@@ -326,3 +330,4 @@ class TokenResolver:
         for item in files:
             if item.endswith('.tkn'):
                 self._kodi.delete_file(self._kodi.get_userdata_path() + item)
+        self._kodi.show_notification(message=self._kodi.localize(30985))

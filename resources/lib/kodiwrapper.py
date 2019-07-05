@@ -547,6 +547,7 @@ class KodiWrapper:
         ''' Invalidate the needed caches and refresh container '''
         self.invalidate_caches(expr=cache_file)
         self.container_refresh()
+        self.show_notification(message=self.localize(30981))
 
     def invalidate_cache(self, path):
         ''' Invalidate a existing cache file '''
