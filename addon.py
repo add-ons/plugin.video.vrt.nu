@@ -44,11 +44,7 @@ def delete_tokens():
 def check_credentials():
     ''' Check if the credentials are correct '''
     from resources.lib import tokenresolver
-    if tokenresolver.TokenResolver(kodi).check_credentials():
-        kodi.show_ok_dialog(message=kodi.localize(30980))
-    else:
-        kodi.show_ok_dialog(message=kodi.localize(30952))
-    kodi.open_settings()
+    tokenresolver.TokenResolver(kodi).check_credentials()
 
 
 @plugin.route('/widevine/install')
@@ -112,7 +108,7 @@ def favorites_offline(page=1):
 def favorites_refresh():
     ''' The API interface to refresh the favorites cache '''
     from resources.lib import favorites
-    favorites.Favorites(kodi).get_favorites(ttl=0)
+    favorites.Favorites(kodi).refresh_favorites()
 
 
 @plugin.route('/programs')

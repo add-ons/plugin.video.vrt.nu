@@ -684,3 +684,23 @@ msgstr ""
 msgctxt "#30980"
 msgid "Login successful!"
 msgstr ""
+
+msgctxt "#30981"
+msgid "Successfully invalidated caches."
+msgstr ""
+
+msgctxt "#30982"
+msgid "Successfully refreshed favorites."
+msgstr ""
+
+msgctxt "#30983"
+msgid "Successfully verified credentials."
+msgstr ""
+
+msgctxt "#30984"
+msgid "Credentials failed, please fix and retry."
+msgstr ""
+
+msgctxt "#30985"
+msgid "Successfully cleared VRT tokens."
+msgstr ""
