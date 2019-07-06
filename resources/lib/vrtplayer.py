@@ -152,8 +152,9 @@ class VRTPlayer:
             self._favorites.get_favorites(ttl=60 * 60)
             # Add Live TV channel entry
             channel_item = self._apihelper.get_channel_items(channels=[channel])
+            youtube_item = self._apihelper.get_youtube_items(channels=[channel])
             tvshow_items = self._apihelper.get_tvshow_items(channel=channel)
-            self._kodi.show_listing(channel_item + tvshow_items, sort='unsorted', content='tvshows')
+            self._kodi.show_listing(channel_item + youtube_item + tvshow_items, sort='unsorted', content='tvshows')
         else:
             channel_items = self._apihelper.get_channel_items(live=False)
             self._kodi.show_listing(channel_items, cache=False)

@@ -269,6 +269,14 @@ msgctxt "#30102"
 msgid "Watch [B]{label}[/B] live via Internet"
 msgstr ""
 
+msgctxt "#30103"
+msgid "{label} on YouTube"
+msgstr ""
+
+msgctxt "#30104"
+msgid "Watch [B]{label}[/B] on YouTube"
+msgstr ""
+
 msgctxt "#30201"
 msgid "[B][COLOR red]Geo-blocked[/COLOR][/B]\n"
 msgstr ""
@@ -432,26 +440,30 @@ msgid "Show fanart"
 msgstr ""
 
 msgctxt "#30833"
-msgid "Show episode permalink in plot"
-msgstr ""
-
-msgctxt "#30834"
-msgid "When enabled, the video description will include a permanent link that points to this episode. This is useful for quickly opening an episode or movie on a mobile device."
+msgid "Show youtube channel information"
 msgstr ""
 
 msgctxt "#30835"
-msgid "Cache"
+msgid "Show episode permalink in plot"
+msgstr ""
+
+msgctxt "#30836"
+msgid "When enabled, the video description will include a permanent link that points to this episode. This is useful for quickly opening an episode or movie on a mobile device."
 msgstr ""
 
 msgctxt "#30837"
-msgid "Enable menu caching"
+msgid "Cache"
 msgstr ""
 
 msgctxt "#30838"
-msgid "When enabled, menus are being cached so they work more quickly. Only in very specific use-cases this is problematic as new episodes may not appear when they are expected."
+msgid "Enable menu caching"
 msgstr ""
 
 msgctxt "#30839"
+msgid "When enabled, menus are being cached so they work more quickly. Only in very specific use-cases this is problematic as new episodes may not appear when they are expected."
+msgstr ""
+
+msgctxt "#30840"
 msgid "Enable local HTTP caching"
 msgstr ""
 

@@ -608,6 +608,46 @@ class VRTApiHelper:
 
         return channel_items
 
+    def get_youtube_items(self, channels=None, live=True):
+        ''' Construct a list of channel ListItems, either for Live TV or the TV Guide listing '''
+
+        youtube_items = []
+
+        if self._kodi.get_cond_visibility('System.HasAddon(plugin.video.youtube)') == 0:
+            return youtube_items
+
+        for channel in CHANNELS:
+            if channels and channel.get('name') not in channels:
+                continue
+
+            fanart = 'resource://resource.images.studios.coloured/%(studio)s.png' % channel
+            thumb = 'resource://resource.images.studios.white/%(studio)s.png' % channel
+
+            if channel.get('youtube'):
+                path = channel.get('youtube')
+                label = self._kodi.localize(30103).format(**channel)
+                # A single Live channel means it is the entry for channel's TV Show listing, so make it stand out
+                if channels and len(channels) == 1:
+                    label = '[B]%s[/B]' % label
+                plot = self._kodi.localize(30104).format(**channel)
+                # NOTE: Playcount is required to not have live streams as "Watched"
+                info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video', playcount=0)
+                context_menu = [(self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file='channel.%s.json' % channel))]
+            else:
+                # Not a playable channel
+                continue
+
+            youtube_items.append(TitleItem(
+                title=label,
+                path=path,
+                art_dict=dict(thumb=thumb, fanart=fanart),
+                info_dict=info_dict,
+                context_menu=context_menu,
+                is_playable=False,
+            ))
+
+        return youtube_items
+
     def get_featured_items(self):
         ''' Construct a list of featured Listitems '''
         from resources.lib import FEATURED

@@ -384,6 +384,10 @@ class KodiWrapper:
 
         return dict(http=proxy_address, https=proxy_address)
 
+    def get_cond_visibility(self, condition):
+        ''' Test a condition in XBMC '''
+        return xbmc.getCondVisibility(condition)
+
     def has_inputstream_adaptive(self):
         ''' Whether InputStream Adaptive is installed and enabled in add-on settings '''
         return self.get_setting('useinputstreamadaptive', 'true') == 'true' and xbmc.getCondVisibility('System.HasAddon(inputstream.adaptive)') == 1
