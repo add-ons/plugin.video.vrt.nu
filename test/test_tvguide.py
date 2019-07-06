@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 import random
 import unittest
 import dateutil.tz
+from xbmcextra import kodi_to_ansi, uri_to_path
 
 from resources.lib import tvguide
 import addon
@@ -31,7 +32,7 @@ class TestTVGuide(unittest.TestCase):
         date_items = self._tvguide.show_date_menu()
         self.assertEqual(len(date_items), 37)
         date_item = random.choice(date_items)
-        print(date_item.title, date_item.path)
+        print('- %s%s' % (date_item.title, uri_to_path(date_item.path)))
 
     def test_tvguide_channel_menu(self):
         ''' Test channel menu '''
@@ -55,11 +56,11 @@ class TestTVGuide(unittest.TestCase):
 
     def test_livetv_description(self):
         description = self._tvguide.live_description('een')
-        print(description)
+        print(kodi_to_ansi(description))
         description = self._tvguide.live_description('canvas')
-        print(description)
+        print(kodi_to_ansi(description))
         description = self._tvguide.live_description('ketnet')
-        print(description)
+        print(kodi_to_ansi(description))
 
     def test_tvguide_all(self):
         ''' Test episode menu '''

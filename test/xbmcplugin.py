@@ -5,6 +5,7 @@
 ''' This file implements the Kodi xbmcplugin module, either using stubs or alternative functionality '''
 
 from __future__ import absolute_import, division, print_function, unicode_literals
+from xbmcextra import kodi_to_ansi, uri_to_path
 
 SORT_METHOD_NONE = 0
 SORT_METHOD_LABEL = 1
@@ -37,7 +38,9 @@ SORT_METHOD_DATE_TAKEN = 44
 def addDirectoryItems(handle, listing, length):
     ''' A reimplementation of the xbmcplugin addDirectoryItems() function '''
     for item in listing:
-        print('* {label} -> {path}'.format(label=item[1].label, path=item[0]))
+        label = kodi_to_ansi(item[1].label)
+        path = uri_to_path(item[0])
+        print('- %s%s' % (label, path if path else ''))
     return True
 
 

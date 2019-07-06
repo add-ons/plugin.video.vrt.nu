@@ -135,4 +135,4 @@ def translatePath(path):
 
 def log(msg, level):
     ''' A reimplementation of the xbmc log() function '''
-    print('%s: %s' % (level, msg))
+    print('[32;1m%s: [32;0m%s[0m' % (level, msg))

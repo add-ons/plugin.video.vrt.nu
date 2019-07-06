@@ -8,6 +8,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import unittest
 
 from resources.lib import CHANNELS, favorites, vrtapihelper
+from xbmcextra import kodi_to_ansi
 import addon
 
 xbmc = __import__('xbmc')
@@ -106,6 +107,14 @@ class ApiHelperTests(unittest.TestCase):
         self.assertTrue(len(video) == 2)
         self.assertTrue(video.get('video_id') is not None)
         self.assertTrue(video.get('publication_id') is not None)
+
+    def test_episode_plot(self):
+        title_items, sort, ascending, content = self._apihelper.get_episode_items(program='thuis', season='allseasons')
+        self.assertEqual(sort, 'dateadded')
+        self.assertFalse(ascending)
+        self.assertEqual(content, 'episodes')
+        plot = title_items[0].info_dict['plot']
+        print(kodi_to_ansi(plot))
 
 
 if __name__ == '__main__':
