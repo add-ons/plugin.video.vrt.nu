@@ -336,8 +336,8 @@ msgid "Show fanart"
 msgstr "Toon fanart"
 
 msgctxt "#30833"
-msgid "Show youtube channel information"
-msgstr ""
+msgid "Show YouTube channel content"
+msgstr "Toon YouTube kanaal video's"
 
 msgctxt "#30835"
 msgid "Show episode permalink in plot"
@@ -351,11 +351,11 @@ msgctxt "#30837"
 msgid "Cache"
 msgstr "Cache"
 
-msgctxt "#30838"
+msgctxt "#30839"
 msgid "Enable menu caching"
 msgstr "Gebruik menu caching"
 
-msgctxt "#30840"
+msgctxt "#30841"
 msgid "Enable local HTTP caching"
 msgstr "Gebruik local HTTP caching"
 

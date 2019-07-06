@@ -440,7 +440,7 @@ msgid "Show fanart"
 msgstr ""
 
 msgctxt "#30833"
-msgid "Show youtube channel information"
+msgid "Show YouTube channel content"
 msgstr ""
 
 msgctxt "#30835"
@@ -455,15 +455,15 @@ msgctxt "#30837"
 msgid "Cache"
 msgstr ""
 
-msgctxt "#30838"
+msgctxt "#30839"
 msgid "Enable menu caching"
 msgstr ""
 
-msgctxt "#30839"
+msgctxt "#30840"
 msgid "When enabled, menus are being cached so they work more quickly. Only in very specific use-cases this is problematic as new episodes may not appear when they are expected."
 msgstr ""
 
-msgctxt "#30840"
+msgctxt "#30841"
 msgid "Enable local HTTP caching"
 msgstr ""
 
