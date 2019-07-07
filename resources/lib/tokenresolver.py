@@ -74,8 +74,8 @@ class TokenResolver:
         if token is None:
             # Try to refresh if we have a cached refresh token (vrtlogin-rt)
             refresh_token = self._get_cached_token('vrtlogin-rt')
-            if refresh_token:
-                token = self._get_fresh_token(refresh_token, 'X-VRT-Token', token_variant='user')
+            if refresh_token and token_variant != 'roaming':
+                token = self._get_fresh_token(refresh_token, 'X-VRT-Token', token_variant=token_variant)
             else:
                 token = self._get_new_xvrttoken(token_variant)
         return token
