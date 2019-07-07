@@ -223,6 +223,13 @@ def play_latest(program):
     from resources.lib import vrtplayer
     vrtplayer.VRTPlayer(kodi).play_latest_episode(program=program)
 
+@plugin.route('/play/airdate/<channel>/<start_date>')
+@plugin.route('/play/airdate/<channel>/<start_date>/<end_date>')
+def play_by_air_date(channel, start_date, end_date=None):
+    ''' The API interface to play an episode of a program given the channel and the air date in iso format (2019-07-06T19:35:00) '''
+    from resources.lib import vrtplayer
+    vrtplayer.VRTPlayer(kodi).play_episode_by_air_date(channel, start_date, end_date)
+
 
 if __name__ == '__main__':
     kodi.log_access(to_unicode(sys.argv[0]))
