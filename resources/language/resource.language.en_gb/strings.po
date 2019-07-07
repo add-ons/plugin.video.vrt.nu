@@ -716,3 +716,7 @@ msgstr ""
 msgctxt "#30985"
 msgid "Successfully cleared VRT tokens."
 msgstr ""
+
+msgctxt "#30986"
+msgid "No on demand stream available for %s."
+msgstr ""

@@ -161,6 +161,53 @@ class VRTApiHelper:
             video = dict(video_id=episode.get('videoId'), publication_id=episode.get('publicationId'))
         return video
 
+    def get_episode_by_air_date(self, channel_name, start_date, end_date=None):
+        ''' Get an episode of a program given the channel and the air date in iso format (2019-07-06T19:35:00) '''
+        import json
+        from datetime import datetime
+        import dateutil.parser
+        import dateutil.tz
+        offairdate = None
+        try:
+            channel = next(c for c in CHANNELS if c.get('name') == channel_name)
+        except StopIteration:
+            return None
+        try:
+            onairdate = dateutil.parser.parse(start_date, default=datetime.now(dateutil.tz.gettz('Europe/Brussels')))
+        except ValueError:
+            return None
+
+        if end_date:
+            try:
+                offairdate = dateutil.parser.parse(end_date, default=datetime.now(dateutil.tz.gettz('Europe/Brussels')))
+            except ValueError:
+                return None
+        video = None
+        episode_guess_off = None
+        now = datetime.now(dateutil.tz.gettz('Europe/Brussels'))
+        if onairdate < now:
+            onairdate_isostr = onairdate.isoformat()
+            url = 'https://www.vrt.be/bin/epg/schedule.%s.json' % onairdate_isostr.split('T')[0]
+            schedule_json = json.load(urlopen(url))
+            episodes = schedule_json.get(channel.get('id'), [])
+            episode = None
+            if offairdate:
+                mindate = min(abs(offairdate - dateutil.parser.parse(episode.get('endTime'))) for episode in episodes)
+                episode_guess_off = next((episode for episode in episodes if abs(offairdate - dateutil.parser.parse(episode.get('endTime'))) == mindate), None)
+
+            mindate = min(abs(onairdate - dateutil.parser.parse(episode.get('startTime'))) for episode in episodes)
+            episode_guess_on = next((episode for episode in episodes if abs(onairdate - dateutil.parser.parse(episode.get('startTime'))) == mindate), None)
+            if episode_guess_off and episode_guess_on.get('vrt.whatson-id') == episode_guess_off.get('vrt.whatson-id') or (not episode_guess_off and episode_guess_on):
+                if episode_guess_on.get('url'):
+                    video_url = statichelper.add_https_method(episode_guess_on.get('url'))
+                    video = dict(video_url=video_url)
+                else:
+                    video_title = episode_guess_on.get('title')
+                    video = dict(video_title=video_title)
+        else:
+            video = dict(video_id=channel.get('live_stream_id'))
+        return video
+
     def get_episode_items(self, program=None, season=None, category=None, feature=None, programtype=None, page=None, use_favorites=False, variety=None):
         ''' Construct a list of TV show episodes TitleItems based on API query and filtered by favorites '''
         titletype = None

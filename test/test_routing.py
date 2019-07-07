@@ -170,6 +170,11 @@ class TestRouter(unittest.TestCase):
         plugin.run(['plugin://plugin.video.vrt.nu/play/latest/het-journaal', '0', ''])
         self.assertEqual(plugin.url_for(addon.play_latest, program='het-journaal'), 'plugin://plugin.video.vrt.nu/play/latest/het-journaal')
 
+    # Play episode by air date method = '/play/airdate/<channel>/<start_date>'
+    def test_play_airdateepisode_route(self):
+        plugin.run(['plugin://plugin.video.vrt.nu/play/airdate/canvas/2019-07-06T20:40:00', '0', ''])
+        self.assertEqual(plugin.url_for(addon.play_by_air_date, channel='canvas', start_date='2019-07-06T20:40:00'), 'plugin://plugin.video.vrt.nu/play/airdate/canvas/2019-07-06T20:40:00')
+
 
 if __name__ == '__main__':
     unittest.main()
