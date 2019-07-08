@@ -36,6 +36,10 @@ class ListItem:
         ''' A stub implementation for the xbmcgui ListItem class addContextMenuItems() method '''
         return
 
+    def addStreamInfo(self, stream_type, stream_values):
+        ''' A stub implementation for the xbmcgui LitItem class addStreamInfo() method '''
+        return
+
     def setArt(self, key):
         ''' A stub implementation for the xbmcgui ListItem class setArt() method '''
         return

@@ -192,6 +192,10 @@ class KodiWrapper:
                 # type is one of: video, music, pictures, game
                 list_item.setInfo(type='video', infoLabels=title_item.info_dict)
 
+            if title_item.stream_dict:
+                # type is one of: video, audio, subtitle
+                list_item.addStreamInfo('video', title_item.stream_dict)
+
             if title_item.context_menu:
                 list_item.addContextMenuItems(title_item.context_menu)
 
