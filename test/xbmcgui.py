@@ -26,7 +26,7 @@ class Dialog:
 class ListItem:
     ''' A reimplementation of the xbmcgui ListItem class '''
 
-    def __init__(self, label='', label2='', iconImage='', thumbnailImage='', path='', offScreen=False):
+    def __init__(self, label='', label2='', iconImage='', thumbnailImage='', path='', offscreen=False):
         ''' A stub constructor for the xbmcgui ListItem class '''
         self.label = label
         self.label2 = label2

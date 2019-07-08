@@ -190,7 +190,6 @@ class VRTApiHelper:
             url = 'https://www.vrt.be/bin/epg/schedule.%s.json' % onairdate_isostr.split('T')[0]
             schedule_json = json.load(urlopen(url))
             episodes = schedule_json.get(channel.get('id'), [])
-            episode = None
             if offairdate:
                 mindate = min(abs(offairdate - dateutil.parser.parse(episode.get('endTime'))) for episode in episodes)
                 episode_guess_off = next((episode for episode in episodes if abs(offairdate - dateutil.parser.parse(episode.get('endTime'))) == mindate), None)
@@ -660,7 +659,7 @@ class VRTApiHelper:
 
         youtube_items = []
 
-        if self._kodi.get_cond_visibility('System.HasAddon(plugin.video.youtube)') == 0:
+        if self._kodi.get_cond_visibility('System.HasAddon(plugin.video.youtube)') == 0 or self._kodi.get_setting('showyoutube') == 'false':
             return youtube_items
 
         for channel in CHANNELS:
