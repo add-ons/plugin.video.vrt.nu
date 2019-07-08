@@ -26,7 +26,7 @@ class Dialog:
 class ListItem:
     ''' A reimplementation of the xbmcgui ListItem class '''
 
-    def __init__(self, label='', label2='', iconImage='', thumbnailImage='', path='', offScreen=False):
+    def __init__(self, label='', label2='', iconImage='', thumbnailImage='', path='', offscreen=False):
         ''' A stub constructor for the xbmcgui ListItem class '''
         self.label = label
         self.label2 = label2
@@ -34,6 +34,10 @@ class ListItem:
 
     def addContextMenuItems(self, items, replaceItems=False):
         ''' A stub implementation for the xbmcgui ListItem class addContextMenuItems() method '''
+        return
+
+    def addStreamInfo(self, stream_type, stream_values):
+        ''' A stub implementation for the xbmcgui LitItem class addStreamInfo() method '''
         return
 
     def setArt(self, key):

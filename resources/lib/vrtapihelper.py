@@ -190,7 +190,6 @@ class VRTApiHelper:
             url = 'https://www.vrt.be/bin/epg/schedule.%s.json' % onairdate_isostr.split('T')[0]
             schedule_json = json.load(urlopen(url))
             episodes = schedule_json.get(channel.get('id'), [])
-            episode = None
             if offairdate:
                 mindate = min(abs(offairdate - dateutil.parser.parse(episode.get('endTime'))) for episode in episodes)
                 episode_guess_off = next((episode for episode in episodes if abs(offairdate - dateutil.parser.parse(episode.get('endTime'))) == mindate), None)
@@ -620,6 +619,7 @@ class VRTApiHelper:
                 plot = '[B]%s[/B]' % channel.get('label')
                 is_playable = False
                 info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video')
+                stream_dict = []
                 context_menu = []
             elif channel.get('live_stream') or channel.get('live_stream_id'):
                 if channel.get('live_stream_id'):
@@ -638,7 +638,8 @@ class VRTApiHelper:
                 else:
                     plot = self._kodi.localize(30102).format(**channel)
                 # NOTE: Playcount is required to not have live streams as "Watched"
-                info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video', playcount=0)
+                info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video', playcount=0, duration=0)
+                stream_dict = dict(duration=0)
                 context_menu = [(self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file='channel.%s.json' % channel))]
             else:
                 # Not a playable channel
@@ -649,6 +650,7 @@ class VRTApiHelper:
                 path=path,
                 art_dict=dict(thumb=thumb, fanart=fanart),
                 info_dict=info_dict,
+                stream_dict=stream_dict,
                 context_menu=context_menu,
                 is_playable=is_playable,
             ))
@@ -660,7 +662,7 @@ class VRTApiHelper:
 
         youtube_items = []
 
-        if self._kodi.get_cond_visibility('System.HasAddon(plugin.video.youtube)') == 0:
+        if self._kodi.get_cond_visibility('System.HasAddon(plugin.video.youtube)') == 0 or self._kodi.get_setting('showyoutube') == 'false':
             return youtube_items
 
         for channel in CHANNELS:

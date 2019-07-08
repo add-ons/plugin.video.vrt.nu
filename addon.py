@@ -223,6 +223,7 @@ def play_latest(program):
     from resources.lib import vrtplayer
     vrtplayer.VRTPlayer(kodi).play_latest_episode(program=program)
 
+
 @plugin.route('/play/airdate/<channel>/<start_date>')
 @plugin.route('/play/airdate/<channel>/<start_date>/<end_date>')
 def play_by_air_date(channel, start_date, end_date=None):
