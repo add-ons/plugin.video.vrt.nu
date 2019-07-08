@@ -607,6 +607,14 @@ msgctxt "#30921"
 msgid "Log level"
 msgstr ""
 
+msgctxt "#30930"
+msgid "About"
+msgstr ""
+
+msgctxt "#30931"
+msgid "Show disclaimer..."
+msgstr ""
+
 
 ### MESSAGES
 msgctxt "#30951"
@@ -719,4 +727,8 @@ msgstr ""
 
 msgctxt "#30986"
 msgid "No on demand stream available for %s."
+msgstr ""
+
+msgctxt "#30987"
+msgid "The VRT NU add-on is provided 'as is' without any warranty of any kind, and is not endorsed by VRT.\n\nBy using the VRT NU Kodi add-on you agree to VRT NU terms of use and VRT's privacy policy.\n\nThe authors and contributors to this plugin are not responsible for the use of this add-on.\n\nFor more information, read: [COLOR yellow]vrt.be/nl/info/gebruiksvoorwaarden/[/COLOR]"
 msgstr ""

@@ -231,6 +231,13 @@ def play_by_air_date(channel, start_date, end_date=None):
     vrtplayer.VRTPlayer(kodi).play_episode_by_air_date(channel, start_date, end_date)
 
 
+@plugin.route('/show/disclaimer')
+def show_disclaimer():
+    ''' Show the disclaimer '''
+    from resources.lib import vrtplayer
+    vrtplayer.VRTPlayer(kodi).show_disclaimer()
+
+
 if __name__ == '__main__':
     kodi.log_access(to_unicode(sys.argv[0]))
     plugin.run(sys.argv)

@@ -5,6 +5,7 @@
 ''' This file implements the Kodi xbmcgui module, either using stubs or alternative functionality '''
 
 from __future__ import absolute_import, division, print_function, unicode_literals
+from xbmcextra import kodi_to_ansi
 
 
 class Dialog:
@@ -12,11 +13,15 @@ class Dialog:
 
     def notification(self, heading='', message='', icon='', time=''):
         ''' A working implementation for the xbmcgui Dialog class notification() method '''
-        print('[37;100mNOTIFICATION:[35;0m [%s] [35;0m%s[0m' % (heading, message))
+        print('[37;100mNOTIFICATION:[35;0m [%s] [35;0m%s[0m' % (kodi_to_ansi(heading), kodi_to_ansi(message)))
 
     def ok(self, heading='', line1=''):
         ''' A stub implementation for the xbmcgui Dialog class ok() method '''
-        return
+        print('[37;100mOK:[35;0m [%s]\n[35;0m%s[0m' % (kodi_to_ansi(heading), kodi_to_ansi(line1)))
+
+    def textviewer(self, heading='', text='', usemono=False):
+        ''' A stub implementation for the xbmcgui Dialog class textviewer() method '''
+        print('[37;100mTEXT:[35;0m [%s]\n[35;0m%s[0m' % (kodi_to_ansi(heading), kodi_to_ansi(text)))
 
     def yesno(self, heading='', line1=''):
         ''' A stub implementation for the xbmcgui Dialog class yesno() method '''

@@ -55,4 +55,7 @@
         <setting label="30919" type="lsep"/> <!-- Logging -->
         <setting label="30921" help="30922" type="select" id="max_log_level" values="Quiet|Info|Verbose|Debug" default="Info"/>
     </category>
+    <category label="30930"> <!-- About -->
+        <setting label="30931" help="30932" type="action" id="show_disclaimer" action="RunPlugin(plugin://plugin.video.vrt.nu/show/disclaimer)"/>
+    </category>
 </settings>

@@ -248,9 +248,15 @@ class KodiWrapper:
         import xbmcgui
         if not heading:
             heading = self._addon.getAddonInfo('name')
-        dialog = xbmcgui.Dialog()
-        ok = dialog.ok(heading=heading, line1=message)
+        ok = xbmcgui.Dialog().ok(heading=heading, line1=message)
         return ok
+
+    def show_text_dialog(self, heading='', message='', usemono=False):
+        ''' Show Kodi's Text dialog '''
+        import xbmcgui
+        if not heading:
+            heading = self._addon.getAddonInfo('name')
+        xbmcgui.Dialog().textviewer(heading=heading, text=message, usemono=usemono)
 
     def show_notification(self, heading='', message='', icon='info', time=4000):
         ''' Show a Kodi notification '''

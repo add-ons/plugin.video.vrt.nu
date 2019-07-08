@@ -499,6 +499,14 @@ msgctxt "#30921"
 msgid "Log level"
 msgstr "Log level"
 
+msgctxt "#30930"
+msgid "Over"
+msgstr ""
+
+msgctxt "#30931"
+msgid "Toon disclaimer..."
+msgstr ""
+
 
 ### MESSAGES
 msgctxt "#30951"
@@ -612,3 +620,7 @@ msgstr "VRT tokens werden verwijderd."
 msgctxt "#30986"
 msgid "No on demand stream available for %s."
 msgstr "Geen on demand stream beschikbaar voor %s"
+
+msgctxt "#30987"
+msgid "Deze VRT NU add-on wordt aangeboden 'as is', zonder enige garantie, en wordt niet ondersteund door de VRT.\n\nDoor de VRT NU Kodi add-on te gebruiken ga je akkoord met de VRT NU gebruikersvoorwaarden en VRT's privacybeleid.\n\nDe auteurs en bijdragers tot deze add-on zijn niet verantwoordelijke voor het gebruik van deze add-on.\n\nVoor meer informatie, lees: [COLOR yellow]vrt.be/nl/info/gebruiksvoorwaarden/[/COLOR]"
+msgstr ""
