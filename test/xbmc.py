@@ -72,6 +72,10 @@ class Monitor:
 class Player:
     ''' A stub implementation of the xbmc Player class '''
 
+    def play(self, item='', listitem=None, windowed=False, startpos=-1):
+        ''' A stub implementation for the xbmc Player class play() method '''
+        return
+
     def isPlaying(self):
         ''' A stub implementation for the xbmc Player class isPlaying() method '''
         return True

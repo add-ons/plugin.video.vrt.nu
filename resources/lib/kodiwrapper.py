@@ -233,7 +233,14 @@ class KodiWrapper:
             play_item.setSubtitles([video.subtitle_url])
 
         self.log_notice('Play: %s' % unquote(video.stream_url), 'Info')
-        xbmcplugin.setResolvedUrl(self._handle, bool(video.stream_url), listitem=play_item)
+
+        # To support video playback directly from RunPlugin() we need to use xbmc.Player().play instead of
+        # setResolvedUrl that only works with PlayMedia() or with internal playable menu items
+        if self._handle != -1:
+            xbmcplugin.setResolvedUrl(self._handle, bool(video.stream_url), listitem=play_item)
+        else:
+            xbmc.Player().play(item=video.stream_url, listitem=play_item)
+
         while not xbmc.Player().isPlaying() and not xbmc.Monitor().abortRequested():
             xbmc.sleep(100)
         xbmc.Player().showSubtitles(subtitles_visible)
