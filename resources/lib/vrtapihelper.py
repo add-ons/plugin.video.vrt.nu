@@ -366,7 +366,7 @@ class VRTApiHelper:
         metadata.duration = (episode.get('duration', 0) * 60)  # Minutes to seconds
         metadata.plot = statichelper.convert_html_to_kodilabel(episode.get('description'))
         metadata.brands.extend(episode.get('programBrands', []) or episode.get('brands', []))
-        metadata.geolocked = episode.get('allowedRegion') == 'BE'
+        metadata.geoblocked = episode.get('allowedRegion') == 'BE'
         if display_options.get('showShortDescription'):
             short_description = statichelper.convert_html_to_kodilabel(episode.get('shortDescription'))
             metadata.plotoutline = short_description
@@ -385,8 +385,8 @@ class VRTApiHelper:
 
         # Add additional metadata to plot
         plot_meta = ''
-        if metadata.geolocked:
-            # Show Geo-locked
+        if metadata.geoblocked:
+            # Show Geo-blocked
             plot_meta += self._kodi.localize(30201)
 
         # Only display when a video disappears if it is within the next 3 months
@@ -454,13 +454,13 @@ class VRTApiHelper:
         metadata.plot = statichelper.convert_html_to_kodilabel(episode.get('programDescription'))
         metadata.plotoutline = statichelper.convert_html_to_kodilabel(episode.get('programDescription'))
         metadata.brands.extend(episode.get('programBrands', []) or episode.get('brands', []))
-        metadata.geolocked = episode.get('allowedRegion') == 'BE'
+        metadata.geoblocked = episode.get('allowedRegion') == 'BE'
         metadata.season = episode.get('seasonTitle')
 
         # Add additional metadata to plot
         plot_meta = ''
-        if metadata.geolocked:
-            # Show Geo-locked
+        if metadata.geoblocked:
+            # Show Geo-blocked
             plot_meta += self._kodi.localize(30201) + '\n'
         metadata.plot = '%s[B]%s[/B]\n%s' % (plot_meta, episode.get('program'), metadata.plot)
 
