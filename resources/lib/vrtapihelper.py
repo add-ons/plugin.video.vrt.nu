@@ -428,7 +428,7 @@ class VRTApiHelper:
         return TitleItem(
             title=label,
             path=self._kodi.url_for('play_id', video_id=episode.get('videoId'), publication_id=episode.get('publicationId')),
-            art_dict=dict(thumb=thumb, icon='DefaultAddonVideo.png', fanart=fanart),
+            art_dict=dict(thumb=thumb, icon='DefaultAddonVideo.png', fanart=fanart, banner=fanart),
             info_dict=metadata.get_info_dict(),
             context_menu=context_menu,
             is_playable=True,
