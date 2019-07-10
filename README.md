@@ -50,7 +50,7 @@ you can send a message to [our Facebook page](https://facebook.com/kodivrtnu/).
 
 ## Releases
 
-### v2.1.0 (2019-07-15)
+### v2.1.0 (2019-07-11)
 - Fix an issue with roaming VRT tokens (@mediaminister)
 - Start a video by channel/start time (@mediaminister)
 - Use notifications for various events related to tokens/cache/credentials (@dagwieers)
