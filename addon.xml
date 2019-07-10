@@ -48,7 +48,7 @@ Met deze Kodi add-on kan je alle video streams van VRT NU bekijken.
         <platform>all</platform>
         <license>GNU General Public License, v3</license>
         <news>
-v2.1.0 (2019-07-15)
+v2.1.0 (2019-07-11)
 - Fix an issue with roaming VRT tokens (@mediaminister)
 - Start a video by channel/start time (@mediaminister)
 - Use notifications for various events related to tokens/cache/credentials (@dagwieers)
@@ -83,15 +83,6 @@ v1.10.0 (2019-05-30)
 - Add 720p live stream support (without DRM) (@dagwieers)
 - Extend the "Troubleshooting" settings with logging and caching options (@dagwieers)
 - Support bandwidth limitation (useful for mobile internet connections) (@mediaminister)
-
-v1.9.0 (2019-05-04)
-- Add a Channels menu (@dagwieers)
-- Add page-browsing in Recent menu, 50 items per page (@dagwieers)
-- Fix general performance issue on Raspberry Pi (@mediaminister)
-- Add icon support to channel listings (@dagwieers)
-- Improvements to streamservice (@mediaminister)
-- Add fallback code for web scraping logic (@dagwieers)
-- Add Studio Brussel and MNM live streams (@dagwieers)
         </news>
         <source>https://github.com/pietje666/plugin.video.vrt.nu</source>
         <website>https://github.com/pietje666/plugin.video.vrt.nu/wiki</website>
