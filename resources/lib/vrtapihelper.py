@@ -189,7 +189,6 @@ class VRTApiHelper:
         url = 'https://www.vrt.be/bin/epg/schedule.%s.json' % onairdate_isostr.split('T')[0]
         schedule_json = json.load(urlopen(url))
         episodes = schedule_json.get(channel.get('id'), [])
-        episode = None
         if offairdate:
             mindate = min(abs(offairdate - dateutil.parser.parse(episode.get('endTime'))) for episode in episodes)
             episode_guess_off = next((episode for episode in episodes if abs(offairdate - dateutil.parser.parse(episode.get('endTime'))) == mindate), None)
@@ -197,15 +196,24 @@ class VRTApiHelper:
         mindate = min(abs(onairdate - dateutil.parser.parse(episode.get('startTime'))) for episode in episodes)
         episode_guess_on = next((episode for episode in episodes if abs(onairdate - dateutil.parser.parse(episode.get('startTime'))) == mindate), None)
         offairdate_guess = dateutil.parser.parse(episode_guess_on.get('endTime'))
-        if episode_guess_off and episode_guess_on.get('vrt.whatson-id') == episode_guess_off.get('vrt.whatson-id') or (not episode_guess_off and episode_guess_on):
+        if (episode_guess_off and episode_guess_on.get('vrt.whatson-id') == episode_guess_off.get('vrt.whatson-id')
+                or (not episode_guess_off and episode_guess_on)):
             if episode_guess_on.get('url'):
                 video_url = statichelper.add_https_method(episode_guess_on.get('url'))
                 video = dict(video_url=video_url)
             # Airdate live2vod feature
-            elif now-timedelta(hours=24) <= dateutil.parser.parse(episode_guess_on.get('endTime')) <= now:
-                video = dict(video_id=channel.get('live_stream_id'), start_date=onairdate.astimezone(dateutil.tz.UTC).isoformat()[0:19], end_date=offairdate_guess.astimezone(dateutil.tz.UTC).isoformat()[0:19])
-            elif offairdate and now-timedelta(hours=24) <= offairdate <= now:
-                video = dict(video_id=channel.get('live_stream_id'), start_date=onairdate.astimezone(dateutil.tz.UTC).isoformat()[0:19], end_date=offairdate.astimezone(dateutil.tz.UTC).isoformat()[0:19])
+            elif now - timedelta(hours=24) <= dateutil.parser.parse(episode_guess_on.get('endTime')) <= now:
+                video = dict(
+                    video_id=channel.get('live_stream_id'),
+                    start_date=onairdate.astimezone(dateutil.tz.UTC).isoformat()[0:19],
+                    end_date=offairdate_guess.astimezone(dateutil.tz.UTC).isoformat()[0:19],
+                )
+            elif offairdate and now - timedelta(hours=24) <= offairdate <= now:
+                video = dict(
+                    video_id=channel.get('live_stream_id'),
+                    start_date=onairdate.astimezone(dateutil.tz.UTC).isoformat()[0:19],
+                    end_date=offairdate.astimezone(dateutil.tz.UTC).isoformat()[0:19],
+                )
             else:
                 video_title = episode_guess_on.get('title')
                 video = dict(video_title=video_title)
