@@ -282,9 +282,10 @@ class TokenResolver:
         req_info = opener.open(req).info()
         try:  # Python 3
             cookie_value += '; state=' + req_info.get('Set-Cookie').split('state=')[1].split('; ')[0]
+            url = req_info.get('Location')
         except AttributeError:  # Python 2
             cookie_value += '; state=' + req_info.getheader('Set-Cookie').split('state=')[1].split('; ')[0]
-        url = req_info.getheader('Location')
+            url = req_info.getheader('Location')
         self._kodi.log_notice('URL get: ' + unquote(url), 'Verbose')
         try:  # Python 3
             url = opener.open(url).info().get('Location')
