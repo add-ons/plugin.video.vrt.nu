@@ -25,7 +25,10 @@ class StreamService:
     _VUALTO_API_URL = 'https://media-services-public.vrt.be/vualto-video-aggregator-web/rest/external/v1'
     _CLIENT = 'vrtvideo'
     _UPLYNK_LICENSE_URL = 'https://content.uplynk.com/wv'
-    _GEOBLOCK_ERROR_CODES = ('INCOMPLETE_ROAMING_CONFIG', 'INVALID_LOCATION')
+    _INVALID_LOCATION = 'INVALID_LOCATION'
+    _INCOMPLETE_ROAMING_CONFIG = 'INCOMPLETE_ROAMING_CONFIG'
+    _GEOBLOCK_ERROR_CODES = (_INCOMPLETE_ROAMING_CONFIG, _INVALID_LOCATION)
+
 
     def __init__(self, _kodi, _tokenresolver):
         ''' Initialize Stream Service class '''
@@ -192,8 +195,16 @@ class StreamService:
             api_data = self._get_api_data(video)
 
         stream_json = self._get_stream_json(api_data, roaming)
+
         if not stream_json:
-            return None
+
+            # Roaming token failed
+            if roaming:
+                message = self._kodi.localize(30990)  # Geoblock error: Cannot be played, need Belgian phone number validation
+                return self._handle_stream_api_error(message)
+
+            message = self._kodi.localize(30954)  # Whoops something went wrong
+            return self._handle_stream_api_error(message)
 
         if 'targetUrls' in stream_json:
 
@@ -255,16 +266,21 @@ class StreamService:
             if not roaming:
                 return self.get_stream(video, roaming=True, api_data=api_data)
 
-            message = self._kodi.localize(30953)  # Geoblock error: Cannot be played, need Belgian phone number validation
-            return self._handle_stream_api_error(stream_json, message)
+            if stream_json.get('code') == self._INVALID_LOCATION:
+                message = self._kodi.localize(30991)  # Geoblock error: Blocked on your geographical location based on your IP address
+                return self._handle_stream_api_error(message, stream_json)
+
+            message = self._kodi.localize(30990)  # Geoblock error: Cannot be played, need Belgian phone number validation
+            return self._handle_stream_api_error(message, stream_json)
 
         # Failed to get stream, handle error
         message = self._kodi.localize(30954)  # Whoops something went wrong
-        return self._handle_stream_api_error(stream_json, message)
+        return self._handle_stream_api_error(message, stream_json)
 
-    def _handle_stream_api_error(self, video_json, message):
+    def _handle_stream_api_error(self, message, video_json=None):
         ''' Show localized stream api error messages in Kodi GUI '''
-        self._kodi.log_error(video_json.get('message'))
+        if video_json:
+            self._kodi.log_error(video_json.get('message'))
         self._kodi.show_ok_dialog(message=message)
         self._kodi.end_of_directory()
 
