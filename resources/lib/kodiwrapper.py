@@ -527,7 +527,7 @@ class KodiWrapper:
                 try:
                     # return json.load(f, encoding='utf-8')
                     return json.load(f)
-                except ValueError:
+                except (ValueError, TypeError):
                     return None
 
         return None
