@@ -129,10 +129,16 @@ class VRTApiHelper:
         if self._favorites.is_activated():
             program_title = quote_plus(statichelper.from_unicode(tvshow.get('title')))  # We need to ensure forward slashes are quoted
             if self._favorites.is_favorite(program):
-                context_menu = [(self._kodi.localize(30412), 'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=program_title))]
+                context_menu = [(
+                    self._kodi.localize(30412),  # Unfollow
+                    'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=program_title)
+                )]
                 label += '[COLOR yellow]ᵛ[/COLOR]'
             else:
-                context_menu = [(self._kodi.localize(30411), 'RunPlugin(%s)' % self._kodi.url_for('follow', program=program, title=program_title))]
+                context_menu = [(
+                    self._kodi.localize(30411),  # Follow
+                    'RunPlugin(%s)' % self._kodi.url_for('follow', program=program, title=program_title)
+                )]
         else:
             context_menu = []
         context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file)))
@@ -417,10 +423,16 @@ class VRTApiHelper:
         if self._favorites.is_activated():
             program_title = quote_plus(statichelper.from_unicode(episode.get('program')))  # We need to ensure forward slashes are quoted
             if self._favorites.is_favorite(program):
-                context_menu = [(self._kodi.localize(30412), 'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=program_title))]
+                context_menu = [(
+                    self._kodi.localize(30412) + (' ' + self._kodi.localize(30410) if titletype != 'oneoff' else ''),  # Unfollow program
+                    'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=program_title)
+                )]
                 label += '[COLOR yellow]ᵛ[/COLOR]'
             else:
-                context_menu = [(self._kodi.localize(30411), 'RunPlugin(%s)' % self._kodi.url_for('follow', program=program, title=program_title))]
+                context_menu = [(
+                    self._kodi.localize(30411) + (' ' + self._kodi.localize(30410) if titletype != 'oneoff' else ''),  # Follow program
+                    'RunPlugin(%s)' % self._kodi.url_for('follow', program=program, title=program_title)
+                )]
         else:
             context_menu = []
         context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file)))

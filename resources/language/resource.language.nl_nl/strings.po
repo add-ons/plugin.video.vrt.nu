@@ -229,6 +229,10 @@ msgctxt "#30334"
 msgid "In 2 days"
 msgstr "Overmorgen"
 
+msgctxt "#30410"
+msgid "program"
+msgstr "programma"
+
 msgctxt "#30411"
 msgid "Follow"
 msgstr "Volg"
