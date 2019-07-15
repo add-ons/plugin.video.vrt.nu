@@ -65,8 +65,8 @@ class Favorites:
 
         xvrttoken = self._tokenresolver.get_xvrttoken(token_variant='user')
         if xvrttoken is None:
-            self._kodi.show_notification(message=self._kodi.localize(30975))
             self._kodi.log_error('Failed to get favorites token from VRT NU')
+            self._kodi.show_notification(message=self._kodi.localize(30975))
             return False
 
         headers = {
@@ -81,8 +81,8 @@ class Favorites:
         req = Request('https://video-user-data.vrt.be/favorites/%s' % self.uuid(program), data=data, headers=headers)
         result = urlopen(req)
         if result.getcode() != 200:
-            self._kodi.show_notification(message=self._kodi.localize(30976) % program)
-            self._kodi.log_error("Failed to (un)follow program '%s' at VRT NU" % program)
+            self._kodi.log_error("Failed to (un)follow program '{program}' at VRT NU".format(program=program))
+            self._kodi.show_notification(message=self._kodi.localize(30976, program=program))
             return False
         # NOTE: Updates to favorites take a longer time to take effect, so we keep our own cache and use it
         self._favorites[self.uuid(program)] = dict(value=payload)

@@ -400,12 +400,12 @@ class VRTApiHelper:
         # Only display when a video disappears if it is within the next 3 months
         if metadata.offtime is not None and (metadata.offtime - now).days < 93:
             # Show date when episode is removed
-            plot_meta += self._kodi.localize(30202).format(date=self._kodi.localize_dateshort(metadata.offtime))
+            plot_meta += self._kodi.localize(30202, date=self._kodi.localize_dateshort(metadata.offtime))
             # Show the remaining days/hours the episode is still available
             if (metadata.offtime - now).days > 0:
-                plot_meta += self._kodi.localize(30203).format(days=(metadata.offtime - now).days)
+                plot_meta += self._kodi.localize(30203, days=(metadata.offtime - now).days)
             else:
-                plot_meta += self._kodi.localize(30204).format(hours=int((metadata.offtime - now).seconds / 3600))
+                plot_meta += self._kodi.localize(30204, hours=int((metadata.offtime - now).seconds / 3600))
 
         if plot_meta:
             metadata.plot = '%s\n%s' % (plot_meta, metadata.plot)
@@ -638,7 +638,7 @@ class VRTApiHelper:
                     path = self._kodi.url_for('play_id', video_id=channel.get('live_stream_id'))
                 elif channel.get('live_stream'):
                     path = self._kodi.url_for('play_url', video_url=channel.get('live_stream'))
-                label = self._kodi.localize(30101).format(**channel)
+                label = self._kodi.localize(30101, **channel)
                 # A single Live channel means it is the entry for channel's TV Show listing, so make it stand out
                 if channels and len(channels) == 1:
                     label = '[B]%s[/B]' % label
@@ -646,9 +646,9 @@ class VRTApiHelper:
                 if channel.get('name') in ['een', 'canvas', 'ketnet']:
                     if self._showfanart:
                         fanart = self.get_live_screenshot(channel.get('name', fanart))
-                    plot = '%s\n\n%s' % (self._kodi.localize(30102).format(**channel), _tvguide.live_description(channel.get('name')))
+                    plot = '%s\n\n%s' % (self._kodi.localize(30102, **channel), _tvguide.live_description(channel.get('name')))
                 else:
-                    plot = self._kodi.localize(30102).format(**channel)
+                    plot = self._kodi.localize(30102, **channel)
                 # NOTE: Playcount is required to not have live streams as "Watched"
                 info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video', playcount=0, duration=0)
                 stream_dict = dict(duration=0)
@@ -686,11 +686,11 @@ class VRTApiHelper:
 
             if channel.get('youtube'):
                 path = channel.get('youtube')
-                label = self._kodi.localize(30103).format(**channel)
+                label = self._kodi.localize(30103, **channel)
                 # A single Live channel means it is the entry for channel's TV Show listing, so make it stand out
                 if channels and len(channels) == 1:
                     label = '[B]%s[/B]' % label
-                plot = self._kodi.localize(30104).format(**channel)
+                plot = self._kodi.localize(30104, **channel)
                 # NOTE: Playcount is required to not have live streams as "Watched"
                 info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video', playcount=0)
                 context_menu = [(self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file='channel.%s.json' % channel))]

@@ -110,7 +110,7 @@ class TVGuide:
 
             fanart = 'resource://resource.images.studios.coloured/%(studio)s.png' % channel
             thumb = 'resource://resource.images.studios.white/%(studio)s.png' % channel
-            plot = '%s\n%s' % (self._kodi.localize(30301).format(**channel), datelong)
+            plot = '%s\n%s' % (self._kodi.localize(30301, **channel), datelong)
             channel_items.append(TitleItem(
                 title=channel.get('label'),
                 path=self._kodi.url_for('tvguide', date=date, channel=channel.get('name')),
