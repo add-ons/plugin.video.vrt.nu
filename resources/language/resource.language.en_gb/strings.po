@@ -918,6 +918,30 @@ msgctxt "#30967"
 msgid "Could not retrieve this program list. VRT Search API url is too long. Unfollowing some favorite programs will reduce url length and may fix this problem."
 msgstr ""
 
+msgctxt "#30968"
+msgid "There is a problem connecting to the Internet. This could be related to Kodi, your network, your ISP or VRT NU.\n\nError: {error}\nURL: {url}"
+msgstr ""
+
+msgctxt "#30969"
+msgid "Unable to open URL"
+msgstr ""
+
+msgctxt "#30971"
+msgid "Install Widevine using 'InputStream Helper' add-on"
+msgstr ""
+
+msgctxt "#30972"
+msgid "Installing Widevine libraries using the 'InputStream Helper' add-on is done at your own risk and the VRT NU add-on is not responsible for any results. Nor is it guaranteed that Widevine will be (re)installed correctly."
+msgstr ""
+
+msgctxt "#30973"
+msgid "Installation of Widevine failed!"
+msgstr ""
+
+msgctxt "#30974"
+msgid "Installation of Widevine completed!"
+msgstr ""
+
 msgctxt "#30975"
 msgid "Failed to get user token from VRT NU"
 msgstr ""

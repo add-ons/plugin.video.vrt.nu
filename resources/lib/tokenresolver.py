@@ -11,11 +11,12 @@ from utils import from_unicode
 
 try:  # Python 3
     import http.cookiejar as cookielib
-    from urllib.parse import urlencode, unquote
-    from urllib.request import build_opener, install_opener, ProxyHandler, HTTPCookieProcessor, HTTPErrorProcessor, urlopen, Request
+    from urllib.error import URLError
+    from urllib.parse import unquote, urlencode
+    from urllib.request import HTTPCookieProcessor, HTTPErrorProcessor, ProxyHandler, Request, build_opener, install_opener, urlopen
 except ImportError:  # Python 2
     from urllib import urlencode
-    from urllib2 import build_opener, install_opener, ProxyHandler, HTTPCookieProcessor, HTTPErrorProcessor, unquote, urlopen, Request
+    from urllib2 import HTTPCookieProcessor, HTTPErrorProcessor, ProxyHandler, Request, URLError, build_opener, install_opener, unquote, urlopen
     import cookielib
 
 
@@ -234,9 +235,17 @@ class TokenResolver:
         cookiejar = cookielib.CookieJar()
         opener = build_opener(HTTPCookieProcessor(cookiejar), ProxyHandler(self._proxies))
         log(2, 'URL get: {url}', url=unquote(self._USER_TOKEN_GATEWAY_URL))
-        opener.open(self._USER_TOKEN_GATEWAY_URL)
+        try:
+            opener.open(self._USER_TOKEN_GATEWAY_URL)
+        except URLError as exc:
+            ok_dialog(heading=localize(30963), message=localize(30964, error=exc, url=unquote(self._USER_TOKEN_GATEWAY_URL)))
+            raise
         log(2, 'URL post: {url}', url=unquote(self._VRT_LOGIN_URL))
-        opener.open(self._VRT_LOGIN_URL, data=data)
+        try:
+            opener.open(self._VRT_LOGIN_URL, data=data)
+        except URLError as exc:
+            ok_dialog(heading=localize(30963), message=localize(30964, error=exc, url=unquote(self._VRT_LOGIN_URL)))
+            raise
         xvrttoken = TokenResolver._create_token_dictionary(cookiejar)
         refreshtoken = TokenResolver._create_token_dictionary(cookiejar, cookie_name='vrtlogin-rt')
         if xvrttoken is None:
@@ -256,7 +265,11 @@ class TokenResolver:
         opener = build_opener(HTTPCookieProcessor(cookiejar), ProxyHandler(self._proxies))
         log(2, 'URL get: {url}', url=refresh_url)
         req = Request(refresh_url, headers=headers)
-        opener.open(req)
+        try:
+            opener.open(req)
+        except URLError as exc:
+            ok_dialog(heading=localize(30963), message=localize(30964, error=exc, url=req.full_url))
+            raise
         token = TokenResolver._create_token_dictionary(cookiejar, token_name)
         if token is None:
             return None
@@ -270,7 +283,11 @@ class TokenResolver:
         opener = build_opener(NoRedirection, ProxyHandler(self._proxies))
         log(2, 'URL get: {url}', url=unquote(self._ROAMING_TOKEN_GATEWAY_URL))
         req = Request(self._ROAMING_TOKEN_GATEWAY_URL, headers=headers)
-        req_info = opener.open(req).info()
+        try:
+            req_info = opener.open(req).info()
+        except URLError as exc:
+            ok_dialog(heading=localize(30963), message=localize(30964, error=exc, url=req.full_url))
+            raise
         try:  # Python 3
             cookie_value += '; state=' + req_info.get('Set-Cookie').split('state=')[1].split('; ')[0]
         except AttributeError:  # Python 2
@@ -279,20 +296,29 @@ class TokenResolver:
         else:
             url = req_info.get('Location')
         log(2, 'URL get: {url}', url=unquote(url))
-        try:  # Python 3
-            url = opener.open(url).info().get('Location')
-        except AttributeError:  # Python 2
-            url = opener.open(url).info().getheader('Location')
-        headers = {'Cookie': cookie_value}
+        try:
+            try:  # Python 3
+                url = opener.open(url).info().get('Location')
+            except AttributeError:  # Python 2
+                url = opener.open(url).info().getheader('Location')
+        except URLError as exc:
+            ok_dialog(heading=localize(30963), message=localize(30964, error=exc, url=url))
+            raise
+
         if url is None:
             return None
 
+        headers = {'Cookie': cookie_value}
         log(2, 'URL get: {url}', url=unquote(url))
         req = Request(url, headers=headers)
-        try:  # Python 3
-            setcookie_header = opener.open(req).info().get('Set-Cookie')
-        except AttributeError:  # Python 2
-            setcookie_header = opener.open(req).info().getheader('Set-Cookie')
+        try:
+            try:  # Python 3
+                setcookie_header = opener.open(req).info().get('Set-Cookie')
+            except AttributeError:  # Python 2
+                setcookie_header = opener.open(req).info().getheader('Set-Cookie')
+        except URLError as exc:
+            ok_dialog(heading=localize(30963), message=localize(30964, error=exc, url=req.full_url))
+            raise
         return TokenResolver._create_token_dictionary(setcookie_header)
 
     @staticmethod
