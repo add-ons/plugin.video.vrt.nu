@@ -100,6 +100,13 @@ def has_socks():
     return has_socks.installed
 
 
+class SafeDict(dict):
+    ''' A safe dictionary implementation that does not break down on missing keys '''
+    def __missing__(self, key):
+        ''' Replace missing keys with the original placeholder '''
+        return '{' + key + '}'
+
+
 class KodiWrapper:
     ''' A wrapper around all Kodi functionality '''
 
@@ -291,8 +298,12 @@ class KodiWrapper:
             self.log_notice("Your system does not support locale '%s': %s" % (locale_lang, e), 'Debug')
             return False
 
-    def localize(self, string_id):
-        ''' Return the translated string from the .po language files '''
+    def localize(self, string_id, **kwargs):
+        ''' Return the translated string from the .po language files, optionally translating variables '''
+        if kwargs:
+            import string
+            return string.Formatter().vformat(self._addon.getLocalizedString(string_id), (), SafeDict(**kwargs))
+
         return self._addon.getLocalizedString(string_id)
 
     def localize_date(self, date, strftime):

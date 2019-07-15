@@ -74,7 +74,7 @@ class Search:
         self.add(keywords)
         search_items, sort, ascending, content = self._apihelper.get_search_items(keywords, page=page)
         if not search_items:
-            self._kodi.show_ok_dialog(heading=self._kodi.localize(30098), message=self._kodi.localize(30099).format(keywords=keywords))
+            self._kodi.show_ok_dialog(heading=self._kodi.localize(30098), message=self._kodi.localize(30099, keywords=keywords))
             self._kodi.end_of_directory()
             return
 

@@ -291,15 +291,15 @@ class StreamService:
         '''
         # HLS AES DRM failed
         if protocol == 'hls_aes' and not self._kodi.supports_drm():
-            message = self._kodi.localize(30962) % (protocol.upper(), self._kodi.kodi_version())
+            message = self._kodi.localize(30962, protocol=protocol.upper(), version=self._kodi.kodi_version())
         elif protocol == 'hls_aes' and not self._kodi.has_inputstream_adaptive() and self._kodi.get_setting('usedrm', 'true') == 'false':
-            message = self._kodi.localize(30958) % (protocol.upper(), 'InputStream Adaptive', self._kodi.localize(30959), self._kodi.localize(30961))
+            message = self._kodi.localize(30958, protocol=protocol.upper(), component=self._kodi.localize(30959), state=self._kodi.localize(30961))
         elif protocol == 'hls_aes' and self._kodi.has_inputstream_adaptive():
-            message = self._kodi.localize(30958) % (protocol.upper(), 'Widevine DRM', '', self._kodi.localize(30961))
+            message = self._kodi.localize(30958, protocol=protocol.upper(), component='Widevine DRM', state=self._kodi.localize(30961))
         elif protocol == 'hls_aes' and self._kodi.get_setting('usedrm', 'true') == 'true':
-            message = self._kodi.localize(30958) % (protocol.upper(), 'InputStream Adaptive', '', self._kodi.localize(30961))
+            message = self._kodi.localize(30958, protocol=protocol.upper(), component='InputStream Adaptive', state=self._kodi.localize(30961))
         else:
-            message = self._kodi.localize(30958) % (protocol.upper(), 'InputStream Adaptive', '', self._kodi.localize(30960))
+            message = self._kodi.localize(30958, protocol=protocol.upper(), component='InputStream Adaptive', state=self._kodi.localize(30960))
         self._kodi.show_ok_dialog(message=message)
         self._kodi.end_of_directory()
 
@@ -338,7 +338,7 @@ class StreamService:
                 break
 
         if stream_bandwidth > max_bandwidth and not hls_variant_url:
-            message = self._kodi.localize(30057).format(max=max_bandwidth, min=stream_bandwidth)
+            message = self._kodi.localize(30057, max=max_bandwidth, min=stream_bandwidth)
             self._kodi.show_ok_dialog(message=message)
             self._kodi.open_settings()
 
