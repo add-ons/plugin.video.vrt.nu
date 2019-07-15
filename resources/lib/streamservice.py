@@ -29,7 +29,6 @@ class StreamService:
     _INCOMPLETE_ROAMING_CONFIG = 'INCOMPLETE_ROAMING_CONFIG'
     _GEOBLOCK_ERROR_CODES = (_INCOMPLETE_ROAMING_CONFIG, _INVALID_LOCATION)
 
-
     def __init__(self, _kodi, _tokenresolver):
         ''' Initialize Stream Service class '''
         self._kodi = _kodi
