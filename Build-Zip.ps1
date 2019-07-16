@@ -2,7 +2,7 @@
 
 Set-StrictMode -Version 5.0
 
-$include_files = @( 'addon.py', 'addon.xml', 'LICENSE', 'README.md', 'service.py' )
+$include_files = @( 'addon.xml', 'LICENSE', 'README.md' )
 $include_paths = @( 'resources/' )
 $exclude_files = @( '*.new', '*.orig', '*.pyc' )
 
@@ -10,8 +10,9 @@ $exclude_files = @( '*.new', '*.orig', '*.pyc' )
 [xml]$XmlDocument = Get-Content -LiteralPath 'addon.xml'
 $name = $XmlDocument.addon.id
 $version = $XmlDocument.addon.version
+$git_branch = Invoke-Expression 'git rev-parse --abbrev-ref HEAD'
 $git_hash = Invoke-Expression 'git rev-parse --short HEAD'
-$zip_name = "$name-$version-$git_hash.zip"
+$zip_name = "$name-$version-$git_branch-$git_hash.zip"
 
 # Remove file if it exists
 if (Test-Path -LiteralPath $zip_name) {

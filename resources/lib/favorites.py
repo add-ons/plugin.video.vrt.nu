@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
-
 # Copyright: (c) 2019, Dag Wieers (@dagwieers) <dag@wieers.com>
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-
 ''' Implementation of Favorites class '''
 
 from __future__ import absolute_import, division, unicode_literals
-from resources.lib import statichelper, tokenresolver
 
 try:  # Python 3
     from urllib.request import build_opener, install_opener, ProxyHandler, Request, urlopen
@@ -20,7 +17,6 @@ class Favorites:
     def __init__(self, _kodi):
         ''' Initialize favorites, relies on XBMC vfs and a special VRT token '''
         self._kodi = _kodi
-        self._tokenresolver = tokenresolver.TokenResolver(_kodi)
         self._proxies = _kodi.get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
         # This is our internal representation
@@ -36,7 +32,8 @@ class Favorites:
             return
         favorites_json = self._kodi.get_cache('favorites.json', ttl)
         if not favorites_json:
-            xvrttoken = self._tokenresolver.get_xvrttoken(token_variant='user')
+            from tokenresolver import TokenResolver
+            xvrttoken = TokenResolver(self._kodi).get_xvrttoken(token_variant='user')
             if xvrttoken:
                 headers = {
                     'authorization': 'Bearer ' + xvrttoken,
@@ -63,7 +60,8 @@ class Favorites:
             # Already followed/unfollowed, nothing to do
             return True
 
-        xvrttoken = self._tokenresolver.get_xvrttoken(token_variant='user')
+        from tokenresolver import TokenResolver
+        xvrttoken = TokenResolver(self._kodi).get_xvrttoken(token_variant='user')
         if xvrttoken is None:
             self._kodi.log_error('Failed to get favorites token from VRT NU')
             self._kodi.show_notification(message=self._kodi.localize(30975))
@@ -74,7 +72,9 @@ class Favorites:
             'content-type': 'application/json',
             'Referer': 'https://www.vrt.be/vrtnu',
         }
-        payload = dict(isFavorite=value, programUrl=statichelper.program_to_url(program, 'short'), title=title)
+
+        from statichelper import program_to_url
+        payload = dict(isFavorite=value, programUrl=program_to_url(program, 'short'), title=title)
         import json
         data = json.dumps(payload).encode('utf-8')
         self._kodi.log_notice('URL post: https://video-user-data.vrt.be/favorites/%s' % self.uuid(program), 'Verbose')
@@ -122,7 +122,8 @@ class Favorites:
 
     def programs(self):
         ''' Return all favorite programs '''
-        return [statichelper.url_to_program(p.get('value').get('programUrl')) for p in list(self._favorites.values()) if p.get('value').get('isFavorite')]
+        from statichelper import url_to_program
+        return [url_to_program(p.get('value').get('programUrl')) for p in list(self._favorites.values()) if p.get('value').get('isFavorite')]
 
     def invalidate_caches(self):
         ''' Invalidate caches that rely on favorites '''

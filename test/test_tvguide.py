@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+# Copyright: (c) 2019, Dag Wieers (@dagwieers) <dag@wieers.com>
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 # pylint: disable=missing-docstring
@@ -11,8 +11,8 @@ import unittest
 import dateutil.tz
 from xbmcextra import kodi_to_ansi, uri_to_path
 
-from resources.lib import tvguide
-import addon
+from addon import kodi
+from tvguide import TVGuide
 
 xbmc = __import__('xbmc')
 xbmcaddon = __import__('xbmcaddon')
@@ -25,7 +25,7 @@ channels = ['een', 'canvas', 'ketnet']
 
 class TestTVGuide(unittest.TestCase):
 
-    _tvguide = tvguide.TVGuide(addon.kodi)
+    _tvguide = TVGuide(kodi)
 
     def test_tvguide_date_menu(self):
         ''' Test TV guide main menu '''

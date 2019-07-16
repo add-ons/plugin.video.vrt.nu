@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
-
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 # pylint: disable=missing-docstring
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
-
-from resources.lib import CHANNELS, favorites, vrtapihelper
+from addon import kodi
+from apihelper import ApiHelper
+from data import CHANNELS
+from favorites import Favorites
 from xbmcextra import kodi_to_ansi
-import addon
 
 xbmc = __import__('xbmc')
 xbmcaddon = __import__('xbmcaddon')
@@ -20,8 +20,8 @@ xbmcvfs = __import__('xbmcvfs')
 
 class ApiHelperTests(unittest.TestCase):
 
-    _favorites = favorites.Favorites(addon.kodi)
-    _apihelper = vrtapihelper.VRTApiHelper(addon.kodi, _favorites)
+    _favorites = Favorites(kodi)
+    _apihelper = ApiHelper(kodi, _favorites)
 
     def test_get_api_data_single_season(self):
         title_items, sort, ascending, content = self._apihelper.get_episode_items(program='het-journaal')

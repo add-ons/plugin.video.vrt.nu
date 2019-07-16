@@ -1,4 +1,5 @@
 bs4
+kodi-addon-checker
 polib
 python-dateutil
 pylint

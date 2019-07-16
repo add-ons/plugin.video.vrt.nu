@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
-
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-
-''' Implements a VRTApiHelper class with common VRT NU API functionality '''
+''' Implements an ApiHelper class with common VRT NU API functionality '''
 
 from __future__ import absolute_import, division, unicode_literals
-from resources.lib import CHANNELS, CATEGORIES, metadatacreator, statichelper
-from resources.lib.helperobjects import TitleItem
 
 try:  # Python 3
     from urllib.parse import quote_plus, unquote, urlencode
@@ -15,8 +11,13 @@ except ImportError:  # Python 2
     from urllib import quote_plus, urlencode
     from urllib2 import build_opener, install_opener, ProxyHandler, unquote, urlopen
 
+import statichelper
+from data import CHANNELS
+from helperobjects import TitleItem
+from metadatacreator import MetadataCreator
 
-class VRTApiHelper:
+
+class ApiHelper:
     ''' A class with common VRT NU API functionality '''
 
     _VRT_BASE = 'https://www.vrt.be'
@@ -25,7 +26,7 @@ class VRTApiHelper:
     _VRTNU_SCREENSHOT_URL = 'https://vrtnu-api.vrt.be/screenshots'
 
     def __init__(self, _kodi, _favorites):
-        ''' Constructor for the VRTApiHelper class '''
+        ''' Constructor for the ApiHelper class '''
         self._kodi = _kodi
         self._favorites = _favorites
 
@@ -114,7 +115,7 @@ class VRTApiHelper:
 
     def tvshow_to_listitem(self, tvshow, program, cache_file):
         ''' Return a ListItem based on a Suggests API result '''
-        metadata = metadatacreator.MetadataCreator()
+        metadata = MetadataCreator()
         metadata.tvshowtitle = tvshow.get('title', '???')
         metadata.plot = statichelper.unescape(tvshow.get('description', '???'))
         metadata.brands.extend(tvshow.get('brands', []))
@@ -369,10 +370,11 @@ class VRTApiHelper:
         # NOTE: Hard-code showing seasons because it is unreliable (i.e; Thuis or Down the Road have it disabled)
         display_options['showSeason'] = True
 
+        program_type = episode.get('programType')
         if titletype is None:
-            titletype = episode.get('programType')
+            titletype = program_type
 
-        metadata = metadatacreator.MetadataCreator()
+        metadata = MetadataCreator()
         metadata.tvshowtitle = episode.get('program')
         if episode.get('broadcastDate') != -1:
             metadata.datetime = datetime.fromtimestamp(episode.get('broadcastDate', 0) / 1000, dateutil.tz.UTC)
@@ -426,13 +428,13 @@ class VRTApiHelper:
             program_title = quote_plus(statichelper.from_unicode(episode.get('program')))  # We need to ensure forward slashes are quoted
             if self._favorites.is_favorite(program):
                 context_menu.append((
-                    self._kodi.localize(30412) + (' ' + self._kodi.localize(30410) if titletype != 'oneoff' else ''),  # Unfollow program
+                    self._kodi.localize(30412) + (' ' + self._kodi.localize(30410) if program_type != 'oneoff' else ''),  # Unfollow program
                     'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=program_title)
                 ))
                 label += '[COLOR yellow]ᵛ[/COLOR]'
             else:
                 context_menu.append((
-                    self._kodi.localize(30411) + (' ' + self._kodi.localize(30410) if titletype != 'oneoff' else ''),  # Follow program
+                    self._kodi.localize(30411) + (' ' + self._kodi.localize(30410) if program_type != 'oneoff' else ''),  # Follow program
                     'RunPlugin(%s)' % self._kodi.url_for('follow', program=program, title=program_title)
                 ))
         context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file)))
@@ -469,7 +471,7 @@ class VRTApiHelper:
         else:
             fanart = 'DefaultSets.png'
 
-        metadata = metadatacreator.MetadataCreator()
+        metadata = MetadataCreator()
         metadata.tvshowtitle = episode.get('program')
         metadata.plot = statichelper.convert_html_to_kodilabel(episode.get('programDescription'))
         metadata.plotoutline = statichelper.convert_html_to_kodilabel(episode.get('programDescription'))
@@ -626,8 +628,8 @@ class VRTApiHelper:
 
     def get_channel_items(self, channels=None, live=True):
         ''' Construct a list of channel ListItems, either for Live TV or the TV Guide listing '''
-        from resources.lib import tvguide
-        _tvguide = tvguide.TVGuide(self._kodi)
+        from tvguide import TVGuide
+        _tvguide = TVGuide(self._kodi)
 
         channel_items = []
         for channel in CHANNELS:
@@ -725,7 +727,7 @@ class VRTApiHelper:
 
     def get_featured_items(self):
         ''' Construct a list of featured Listitems '''
-        from resources.lib import FEATURED
+        from data import FEATURED
 
         featured_items = []
         for feature in FEATURED:
@@ -759,6 +761,7 @@ class VRTApiHelper:
             categories = self._kodi.get_cache('categories.json', ttl=None)
 
         # Fall back to internal hard-coded categories if all else fails
+        from data import CATEGORIES
         if not categories:
             categories = CATEGORIES
 

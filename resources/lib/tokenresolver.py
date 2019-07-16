@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
-
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-
 ''' This module contains all functionality for VRT NU API authentication. '''
 
 from __future__ import absolute_import, division, unicode_literals
 import json
-from resources.lib.helperobjects import Credentials
 
 try:  # Python 3
     import http.cookiejar as cookielib
@@ -16,6 +13,8 @@ except ImportError:  # Python 2
     from urllib import urlencode
     from urllib2 import build_opener, install_opener, ProxyHandler, HTTPCookieProcessor, HTTPErrorProcessor, unquote, urlopen, Request
     import cookielib
+
+from helperobjects import Credentials
 
 
 class NoRedirection(HTTPErrorProcessor):

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 # pylint: disable=missing-docstring
@@ -7,9 +6,11 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 import random
 import unittest
-
-from resources.lib import CATEGORIES, favorites, vrtapihelper, vrtplayer
-import addon
+from addon import kodi
+from apihelper import ApiHelper
+from data import CATEGORIES
+from favorites import Favorites
+from vrtplayer import VRTPlayer
 
 xbmc = __import__('xbmc')
 xbmcaddon = __import__('xbmcaddon')
@@ -20,9 +21,9 @@ xbmcvfs = __import__('xbmcvfs')
 
 class TestVRTPlayer(unittest.TestCase):
 
-    _favorites = favorites.Favorites(addon.kodi)
-    _apihelper = vrtapihelper.VRTApiHelper(addon.kodi, _favorites)
-    _vrtplayer = vrtplayer.VRTPlayer(addon.kodi)
+    _favorites = Favorites(kodi)
+    _apihelper = ApiHelper(kodi, _favorites)
+    _vrtplayer = VRTPlayer(kodi)
 
     def test_show_videos_single_episode_shows_videos(self):
         program = 'marathonradio'
@@ -32,8 +33,7 @@ class TestVRTPlayer(unittest.TestCase):
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
 
-        self._vrtplayer.show_episodes(program)
-        # self.assertTrue(self._kodi.show_listing.called)
+        self._vrtplayer.show_episodes_menu(program)
 
     def test_show_videos_single_season_shows_videos(self):
         program = 'het-weer'
@@ -43,8 +43,7 @@ class TestVRTPlayer(unittest.TestCase):
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
 
-        self._vrtplayer.show_episodes(program)
-        # self.assertTrue(self._kodi.show_listing.called)
+        self._vrtplayer.show_episodes_menu(program)
 
     def test_show_videos_multiple_seasons_shows_videos(self):
         program = 'pano'
@@ -54,8 +53,7 @@ class TestVRTPlayer(unittest.TestCase):
         self.assertFalse(ascending)
         self.assertEqual(content, 'seasons')
 
-        self._vrtplayer.show_episodes(program)
-        # self.assertTrue(self._kodi.show_listing.called)
+        self._vrtplayer.show_episodes_menu(program)
 
     def test_show_videos_specific_seasons_shows_videos(self):
         program = 'thuis'
@@ -65,8 +63,7 @@ class TestVRTPlayer(unittest.TestCase):
         self.assertFalse(ascending)
         self.assertEqual(content, 'seasons')
 
-        self._vrtplayer.show_episodes(program)
-        # self.assertTrue(self._kodi.show_listing.called)
+        self._vrtplayer.show_episodes_menu(program)
 
     def test_categories_scraping(self):
         ''' Test to ensure our hardcoded categories conforms to scraped categories '''
