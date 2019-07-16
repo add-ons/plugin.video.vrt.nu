@@ -193,6 +193,20 @@ def clear_search():
     search_module.Search(kodi).clear()
 
 
+@plugin.route('/search/add/<keywords>')
+def add_search(keywords):
+    ''' Add to search history '''
+    from resources.lib import search as search_module
+    search_module.Search(kodi).add(keywords)
+
+
+@plugin.route('/search/remove/<keywords>')
+def remove_search(keywords):
+    ''' Remove from search history '''
+    from resources.lib import search as search_module
+    search_module.Search(kodi).remove(keywords)
+
+
 @plugin.route('/search/query')
 @plugin.route('/search/query/<keywords>')
 @plugin.route('/search/query/<keywords>/<page>')

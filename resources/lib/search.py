@@ -47,6 +47,7 @@ class Search:
                 path=self._kodi.url_for('search_query', keywords=keywords),
                 art_dict=dict(thumb='DefaultAddonsSearch.png', fanart='DefaultAddonsSearch.png'),
                 is_playable=False,
+                context_menu=[(self._kodi.localize(30030), 'RunPlugin(%s)' % self._kodi.url_for('remove_search', keywords=keywords))]
             ))
 
         if history:
@@ -98,17 +99,38 @@ class Search:
 
     def add(self, keywords):
         ''' Add new keywords to search history '''
-        from collections import OrderedDict
         try:
             with self._kodi.open_file(self._search_history, 'r') as f:
                 history = json.load(f)
         except Exception:
             history = []
 
+        # Remove if keywords already was listed
+        try:
+            history.remove(keywords)
+        except ValueError:
+            pass
+
         history.insert(0, keywords)
 
-        # Remove duplicates while preserving order
-        history = list(OrderedDict((element, None) for element in history))
+        with self._kodi.open_file(self._search_history, 'w') as f:
+            json.dump(history, f)
 
+    def remove(self, keywords):
+        ''' Remove existing keywords from search history '''
+        try:
+            with self._kodi.open_file(self._search_history, 'r') as f:
+                history = json.load(f)
+        except Exception:
+            history = []
+
+        try:
+            history.remove(keywords)
+        except ValueError:
+            return
+
+        self._kodi.container_refresh()
+
+        # If keywords was successfully removed, write to disk
         with self._kodi.open_file(self._search_history, 'w') as f:
             json.dump(history, f)
