@@ -97,6 +97,10 @@ msgctxt "#30029"
 msgid "Search the complete VRT NU library"
 msgstr "Doorzoek de hele VRT NU-bibliotheek"
 
+msgctxt "#30030"
+msgid "Remove"
+msgstr "Verwijder"
+
 
 ### FAVORITES
 msgctxt "#30040"

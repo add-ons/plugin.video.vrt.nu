@@ -126,21 +126,21 @@ class VRTApiHelper:
             thumbnail = statichelper.add_https_method(tvshow.get('thumbnail', 'DefaultAddonVideo.png'))
         else:
             thumbnail = 'DefaultAddonVideo.png'
+
+        context_menu = []
         if self._favorites.is_activated():
             program_title = quote_plus(statichelper.from_unicode(tvshow.get('title')))  # We need to ensure forward slashes are quoted
             if self._favorites.is_favorite(program):
-                context_menu = [(
+                context_menu.append((
                     self._kodi.localize(30412),  # Unfollow
                     'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=program_title)
-                )]
+                ))
                 label += '[COLOR yellow]ᵛ[/COLOR]'
             else:
-                context_menu = [(
+                context_menu.append((
                     self._kodi.localize(30411),  # Follow
                     'RunPlugin(%s)' % self._kodi.url_for('follow', program=program, title=program_title)
-                )]
-        else:
-            context_menu = []
+                ))
         context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file)))
         return TitleItem(
             title=label,
@@ -420,21 +420,21 @@ class VRTApiHelper:
             metadata.plot = '%s\n\n[COLOR yellow]%s[/COLOR]' % (metadata.plot, metadata.permalink)
 
         label, sort, ascending = self._make_label(episode, titletype, options=display_options)
+
+        context_menu = []
         if self._favorites.is_activated():
             program_title = quote_plus(statichelper.from_unicode(episode.get('program')))  # We need to ensure forward slashes are quoted
             if self._favorites.is_favorite(program):
-                context_menu = [(
+                context_menu.append((
                     self._kodi.localize(30412) + (' ' + self._kodi.localize(30410) if titletype != 'oneoff' else ''),  # Unfollow program
                     'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=program_title)
-                )]
+                ))
                 label += '[COLOR yellow]ᵛ[/COLOR]'
             else:
-                context_menu = [(
+                context_menu.append((
                     self._kodi.localize(30411) + (' ' + self._kodi.localize(30410) if titletype != 'oneoff' else ''),  # Follow program
                     'RunPlugin(%s)' % self._kodi.url_for('follow', program=program, title=program_title)
-                )]
-        else:
-            context_menu = []
+                ))
         context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file)))
 
         if self._showfanart:
@@ -636,6 +636,7 @@ class VRTApiHelper:
 
             fanart = 'resource://resource.images.studios.coloured/%(studio)s.png' % channel
             thumb = 'resource://resource.images.studios.white/%(studio)s.png' % channel
+            context_menu = []
 
             if not live:
                 path = self._kodi.url_for('channels', channel=channel.get('name'))
@@ -644,7 +645,6 @@ class VRTApiHelper:
                 is_playable = False
                 info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video')
                 stream_dict = []
-                context_menu = []
             elif channel.get('live_stream') or channel.get('live_stream_id'):
                 if channel.get('live_stream_id'):
                     path = self._kodi.url_for('play_id', video_id=channel.get('live_stream_id'))
@@ -664,7 +664,7 @@ class VRTApiHelper:
                 # NOTE: Playcount is required to not have live streams as "Watched"
                 info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video', playcount=0, duration=0)
                 stream_dict = dict(duration=0)
-                context_menu = [(self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file='channel.%s.json' % channel))]
+                context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file='channel.%s.json' % channel)))
             else:
                 # Not a playable channel
                 continue
@@ -696,6 +696,8 @@ class VRTApiHelper:
             fanart = 'resource://resource.images.studios.coloured/%(studio)s.png' % channel
             thumb = 'resource://resource.images.studios.white/%(studio)s.png' % channel
 
+            context_menu = []
+
             if channel.get('youtube'):
                 path = channel.get('youtube')
                 label = self._kodi.localize(30103, **channel)
@@ -705,7 +707,7 @@ class VRTApiHelper:
                 plot = self._kodi.localize(30104, **channel)
                 # NOTE: Playcount is required to not have live streams as "Watched"
                 info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video', playcount=0)
-                context_menu = [(self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file='channel.%s.json' % channel))]
+                context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file='channel.%s.json' % channel)))
             else:
                 # Not a playable channel
                 continue

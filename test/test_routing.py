@@ -100,6 +100,25 @@ class TestRouter(unittest.TestCase):
         plugin.run(['plugin://plugin.video.vrt.nu/tvguide/today/canvas', '0', ''])
         self.assertEqual(plugin.url_for(addon.tvguide, date='today', channel='canvas'), 'plugin://plugin.video.vrt.nu/tvguide/today/canvas')
 
+    # Clear search history: '/search/clear'
+    def test_clear_search(self):
+        plugin.run(['plugin://plugin.video.vrt.nu/search/clear', '0', ''])
+        self.assertEqual(plugin.url_for(addon.clear_search), 'plugin://plugin.video.vrt.nu/search/clear')
+
+    # Add search keyword: '/search/add/<keywords>'
+    def test_add_search(self):
+        plugin.run(['plugin://plugin.video.vrt.nu/search/add/foobar', '0', ''])
+        self.assertEqual(plugin.url_for(addon.add_search, keywords='foobar'), 'plugin://plugin.video.vrt.nu/search/add/foobar')
+        plugin.run(['plugin://plugin.video.vrt.nu/search/query/foobar', '0', ''])
+        self.assertEqual(plugin.url_for(addon.add_search, keywords='foobar'), 'plugin://plugin.video.vrt.nu/search/add/foobar')
+
+    # Remove search keyword: '/search/remove/<keywords>'
+    def test_remove_search(self):
+        plugin.run(['plugin://plugin.video.vrt.nu/search/remove/foobar', '0', ''])
+        self.assertEqual(plugin.url_for(addon.remove_search, keywords='foobar'), 'plugin://plugin.video.vrt.nu/search/remove/foobar')
+        plugin.run(['plugin://plugin.video.vrt.nu/search/remove/foobar', '0', ''])
+        self.assertEqual(plugin.url_for(addon.remove_search, keywords='foobar'), 'plugin://plugin.video.vrt.nu/search/remove/foobar')
+
     # Search VRT NU menu: '/search/query/<keywords>/<page>'
     def test_search_menu(self):
         plugin.run(['plugin://plugin.video.vrt.nu/search/query', '0', ''])
