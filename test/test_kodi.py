@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
-
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 # pylint: disable=missing-docstring
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
-
-from resources.lib import kodiwrapper
+from kodiwrapper import KodiWrapper
 
 xbmc = __import__('xbmc')
 xbmcaddon = __import__('xbmcaddon')
@@ -18,7 +16,7 @@ xbmcvfs = __import__('xbmcvfs')
 
 class KodiTests(unittest.TestCase):
 
-    _kodi = kodiwrapper.KodiWrapper(None)
+    _kodi = KodiWrapper(None)
 
     def test_localize(self):
         msg = self._kodi.localize(30958)

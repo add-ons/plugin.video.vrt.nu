@@ -1,38 +1,32 @@
 # -*- coding: utf-8 -*-
-
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-
 ''' This is the actual VRT NU service entry point '''
 
+# pylint: disable=non-parent-init-called,no-member,too-many-function-args
+
 from __future__ import absolute_import, division, unicode_literals
+from xbmc import Monitor
+from kodiwrapper import KodiWrapper
+from tokenresolver import TokenResolver
 
-import xbmc
-from resources.lib import kodiwrapper, tokenresolver
 
-
-class VrtMonitor(xbmc.Monitor):
+class VrtMonitor(Monitor):
     ''' This is the class that monitors Kodi for the VRT NU video plugin '''
 
     def __init__(self):
         ''' VRT Monitor initialisiation '''
-        xbmc.Monitor.__init__(self)
+        Monitor.__init__(self)
+        while not self.abortRequested():
+            if self.waitForAbort(10):
+                break
 
     def onSettingsChanged(self):
         ''' Handler for changes to settings '''
-        _kodi = kodiwrapper.KodiWrapper(None)
+        _kodi = KodiWrapper(None)
         _kodi.log_notice('VRT NU Addon: settings changed')
-        _kodi.container_refresh()
 
         _kodi.invalidate_caches('offline-*.json')
         _kodi.invalidate_caches('recent-*.json')
 
-        _tokenresolver = tokenresolver.TokenResolver(_kodi)
-        _tokenresolver.delete_tokens()
-
-
-if __name__ == '__main__':
-    monitor = VrtMonitor()
-
-    while not monitor.abortRequested():
-        if monitor.waitForAbort(10):
-            break
+        TokenResolver(_kodi).delete_tokens()
+        _kodi.container_refresh()

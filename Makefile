@@ -1,14 +1,15 @@
 ENVS := flake8,py27,py36
-
-addon_xml = addon.xml
+export PYTHONPATH := $(CURDIR)/resources/lib:$(CURDIR)/test
+addon_xml := addon.xml
 
 # Collect information to build as sensible package name
 name = $(shell xmllint --xpath 'string(/addon/@id)' $(addon_xml))
 version = $(shell xmllint --xpath 'string(/addon/@version)' $(addon_xml))
+git_branch = $(shell git rev-parse --abbrev-ref HEAD)
 git_hash = $(shell git rev-parse --short HEAD)
 
-zip_name = $(name)-$(version)-$(git_hash).zip
-include_files = addon.py addon.xml LICENSE README.md resources/ service.py
+zip_name = $(name)-$(version)-$(git_branch)-$(git_hash).zip
+include_files = addon.xml LICENSE README.md resources/
 include_paths = $(patsubst %,$(name)/%,$(include_files))
 exclude_files = \*.new \*.orig \*.pyc
 zip_dir = $(name)/
@@ -33,11 +34,16 @@ tox:
 
 pylint:
 	@echo -e "$(white)=$(blue) Starting sanity pylint test$(reset)"
-	pylint *.py resources/lib/ test/
+	pylint resources/lib/ test/
+
+addon: clean
+	@echo -e "$(white)=$(blue) Starting sanity addon tests$(reset)"
+	kodi-addon-checker . --branch=krypton
+	kodi-addon-checker . --branch=leia
 
 unit:
 	@echo -e "$(white)=$(blue) Starting unit tests$(reset)"
-	PYTHONPATH=$(CURDIR):$(CURDIR)/test python -m unittest discover
+	python -m unittest discover
 
 zip: clean
 	@echo -e "$(white)=$(blue) Building new package$(reset)"
@@ -46,5 +52,6 @@ zip: clean
 	@echo -e "$(white)=$(blue) Successfully wrote package as: $(white)../$(zip_name)$(reset)"
 
 clean:
-	find . -name '*.pyc' -type f -delete
-	find resources -name '__pycache__' -type d -delete
+	find resources/ test/ -name '*.pyc' -type f -delete
+	find resources/ test/ -name '__pycache__' -type d -delete
+	rm -rf .pytest_cache/ .tox/ *.log

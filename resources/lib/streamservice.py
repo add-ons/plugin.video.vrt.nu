@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
-
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-
 ''' This module collects and prepares stream info for Kodi Player. '''
 
 from __future__ import absolute_import, division, unicode_literals
 import json
 import re
-from resources.lib.helperobjects import ApiData, StreamURLS
 
 try:  # Python 3
     from urllib.error import HTTPError
@@ -16,6 +13,8 @@ try:  # Python 3
 except ImportError:  # Python 2
     from urllib import urlencode
     from urllib2 import build_opener, install_opener, urlopen, ProxyHandler, quote, unquote, HTTPError
+
+from helperobjects import ApiData, StreamURLS
 
 
 class StreamService:

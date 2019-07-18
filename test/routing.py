@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# pylint: disable=dangerous-default-value,missing-docstring,useless-object-inheritance
+# pylint: disable=dangerous-default-value,missing-docstring,too-many-function-args,useless-object-inheritance
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 

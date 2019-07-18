@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-
 # Copyright: (c) 2019, Dag Wieers (@dagwieers) <dag@wieers.com>
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-
 ''' Implements a VRT NU TV guide '''
 
 from __future__ import absolute_import, division, unicode_literals
@@ -12,13 +10,15 @@ import dateutil.parser
 import dateutil.tz
 
 try:  # Python 3
-    from urllib.parse import quote
+    from urllib.parse import quote_plus
     from urllib.request import build_opener, install_opener, ProxyHandler, urlopen
 except ImportError:  # Python 2
-    from urllib2 import build_opener, install_opener, ProxyHandler, urlopen, quote
+    from urllib import quote_plus
+    from urllib2 import build_opener, install_opener, ProxyHandler, urlopen
 
-from resources.lib import CHANNELS, favorites, metadatacreator, statichelper
-from resources.lib.helperobjects import TitleItem
+from data import CHANNELS
+from favorites import Favorites
+from helperobjects import TitleItem
 
 DATE_STRINGS = {
     '-2': 30330,  # 2 days ago
@@ -43,7 +43,7 @@ class TVGuide:
     def __init__(self, _kodi):
         ''' Initializes TV-guide object '''
         self._kodi = _kodi
-        self._favorites = favorites.Favorites(_kodi)
+        self._favorites = Favorites(_kodi)
 
         self._proxies = _kodi.get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
@@ -121,6 +121,8 @@ class TVGuide:
 
     def show_episodes(self, date, channel):
         ''' Show episodes for a given date and channel '''
+        from metadatacreator import MetadataCreator
+
         now = datetime.now(dateutil.tz.tzlocal())
         epg = self.parse(date, now)
         datelong = self._kodi.localize_datelong(epg)
@@ -148,7 +150,7 @@ class TVGuide:
             episodes = []
         episode_items = []
         for episode in episodes:
-            metadata = metadatacreator.MetadataCreator()
+            metadata = MetadataCreator()
             title = episode.get('title', 'Untitled')
             start = episode.get('start')
             end = episode.get('end')
@@ -174,13 +176,14 @@ class TVGuide:
             metadata.icon = thumb
             context_menu = []
             if url:
-                video_url = statichelper.add_https_method(url)
+                from statichelper import add_https_method, url_to_program
+                video_url = add_https_method(url)
                 path = self._kodi.url_for('play_url', video_url=video_url)
                 if start_date <= now <= end_date:  # Now playing
                     label = '[COLOR yellow]%s[/COLOR] %s' % (label, self._kodi.localize(30302))
-                program = statichelper.url_to_program(episode.get('url'))
+                program = url_to_program(episode.get('url'))
                 if self._favorites.is_activated():
-                    program_title = quote(title.encode('utf-8'), '')
+                    program_title = quote_plus(title.encode('utf-8'))
                     if self._favorites.is_favorite(program):
                         context_menu = [(
                             self._kodi.localize(30412) + ' ' + self._kodi.localize(30410),  # Unfollow program
