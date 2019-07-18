@@ -206,12 +206,16 @@ msgid "[B][COLOR yellow]More...[/COLOR][/B]"
 msgstr "[B][COLOR yellow]Meer...[/COLOR][/B]"
 
 msgctxt "#30301"
-msgid "[B]TV guide for channel {label}[/B]"
-msgstr "[B]Tv-gids for kanaal {label}[/B]"
-
-msgctxt "#30302"
 msgid "[B][I]Now on live TV[/I][/B]"
 msgstr "[B][I]Speelt nu op TV[/I][/B]"
+
+msgctxt "#30302"
+msgid "TV guide for channel [B]{label}[/B]"
+msgstr "Tv-gids for kanaal [B]{label}[/B]"
+
+msgctxt "#30303"
+msgid "[B]{label} TV guide[/B]"
+msgstr "[B]{label} tv-gids[/B]"
 
 msgctxt "#30330"
 msgid "2 days ago"

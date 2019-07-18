@@ -147,12 +147,13 @@ class VRTPlayer:
     def show_channels_menu(self, channel=None):
         ''' The VRT NU add-on 'Channels' listing menu '''
         if channel:
+            from tvguide import TVGuide
             self._favorites.get_favorites(ttl=60 * 60)
-            # Add Live TV channel entry
-            channel_item = self._apihelper.get_channel_items(channels=[channel])
+            livetv_item = self._apihelper.get_channel_items(channels=[channel])
+            tvguide_item = TVGuide(self._kodi).get_channel_items(channel=channel)
             youtube_item = self._apihelper.get_youtube_items(channels=[channel])
             tvshow_items = self._apihelper.get_tvshow_items(channel=channel)
-            self._kodi.show_listing(channel_item + youtube_item + tvshow_items, sort='unsorted', content='tvshows')
+            self._kodi.show_listing(livetv_item + tvguide_item + youtube_item + tvshow_items, sort='unsorted', content='tvshows')
         else:
             channel_items = self._apihelper.get_channel_items(live=False)
             self._kodi.show_listing(channel_items, cache=False)

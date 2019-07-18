@@ -29,29 +29,40 @@ class TestTVGuide(unittest.TestCase):
 
     def test_tvguide_date_menu(self):
         ''' Test TV guide main menu '''
-        date_items = self._tvguide.show_date_menu()
+        date_items = self._tvguide.get_date_items()
+        self.assertEqual(len(date_items), 37)
+        date_item = random.choice(date_items)
+        print('- %s%s' % (date_item.title, uri_to_path(date_item.path)))
+        date_items = self._tvguide.get_date_items('today')
         self.assertEqual(len(date_items), 37)
         date_item = random.choice(date_items)
         print('- %s%s' % (date_item.title, uri_to_path(date_item.path)))
 
     def test_tvguide_channel_menu(self):
         ''' Test channel menu '''
-        date = (datetime.now(dateutil.tz.tzlocal()) + timedelta(days=-10)).strftime('%Y-%m-%d')
-        channel_items = self._tvguide.show_channel_menu(date)
+        channel_items = self._tvguide.get_channel_items(channel='een')
         self.assertTrue(channel_items)
+        channel_item = random.choice(channel_items)
+        print('- %s%s' % (channel_item.title, uri_to_path(channel_item.path)))
+
+        date = (datetime.now(dateutil.tz.tzlocal()) + timedelta(days=-10)).strftime('%Y-%m-%d')
+        channel_items = self._tvguide.get_channel_items(date=date)
+        self.assertTrue(channel_items)
+        channel_item = random.choice(channel_items)
+        print('- %s%s' % (channel_item.title, uri_to_path(channel_item.path)))
 
     def test_tvguide_episode_menu(self):
         ''' Test episode menu '''
         date = (datetime.now(dateutil.tz.tzlocal()) + timedelta(days=-10)).strftime('%Y-%m-%d')
         channel = random.choice(channels)
-        episode_items = self._tvguide.show_episodes(date, channel)
+        episode_items = self._tvguide.get_episode_items(date, channel)
         self.assertTrue(episode_items)
 
     def test_tvguide_invalid_episode_menu(self):
         ''' Test episode menu '''
         date = (datetime.now(dateutil.tz.tzlocal()) + timedelta(days=-40)).strftime('%Y-%m-%d')
         channel = random.choice(channels)
-        episode_items = self._tvguide.show_episodes(date, channel)
+        episode_items = self._tvguide.get_episode_items(date, channel)
         self.assertEqual(episode_items, [])
 
     def test_livetv_description(self):
@@ -64,11 +75,11 @@ class TestTVGuide(unittest.TestCase):
 
     def test_tvguide_all(self):
         ''' Test episode menu '''
-        episode_items = self._tvguide.show_episodes('yesterday', 'een')
+        episode_items = self._tvguide.get_episode_items('yesterday', 'een')
         self.assertTrue(episode_items)
-        episode_items = self._tvguide.show_episodes('today', 'canvas')
+        episode_items = self._tvguide.get_episode_items('today', 'canvas')
         self.assertTrue(episode_items)
-        episode_items = self._tvguide.show_episodes('tomorrow', 'ketnet')
+        episode_items = self._tvguide.get_episode_items('tomorrow', 'ketnet')
         self.assertTrue(episode_items)
 
     def test_parse(self):
