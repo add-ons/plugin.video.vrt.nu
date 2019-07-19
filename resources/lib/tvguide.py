@@ -52,20 +52,25 @@ class TVGuide:
     def show_tvguide(self, date=None, channel=None):
         ''' Offer a menu depending on the information provided '''
 
-        if not date:
-            date_items = self.show_date_menu()
+        if not date and not channel:
+            date_items = self.get_date_items()
             self._kodi.show_listing(date_items, content='files')
 
         elif not channel:
-            channel_items = self.show_channel_menu(date)
+            channel_items = self.get_channel_items(date=date)
             self._kodi.show_listing(channel_items)
 
+        elif not date:
+            date_items = self.get_date_items(channel=channel)
+            self._kodi.show_listing(date_items, content='files')
+
         else:
-            episode_items = self.show_episodes(date, channel)
+            episode_items = self.get_episode_items(date, channel)
             self._kodi.show_listing(episode_items, content='episodes', cache=False)
 
-    def show_date_menu(self):
+    def get_date_items(self, channel=None):
         ''' Offer a menu to select the TV-guide date '''
+
         epg = datetime.now(dateutil.tz.tzlocal())
         # Daily EPG information shows information from 6AM until 6AM
         if epg.hour < 6:
@@ -87,39 +92,61 @@ class TVGuide:
                 date = DATES[str(i)]
             else:
                 date = day.strftime('%Y-%m-%d')
+
+            # Show channel list or channel episodes
+            if channel:
+                path = self._kodi.url_for('tvguide', date=date, channel=channel)
+            else:
+                path = self._kodi.url_for('tvguide', date=date)
+
             cache_file = 'schedule.%s.json' % date
             date_items.append(TitleItem(
                 title=title,
-                path=self._kodi.url_for('tvguide', date=date),
+                path=path,
                 art_dict=dict(thumb='DefaultYear.png', fanart='DefaultYear.png'),
                 info_dict=dict(plot=self._kodi.localize_datelong(day)),
                 context_menu=[(self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file))],
             ))
         return date_items
 
-    def show_channel_menu(self, date):
+    def get_channel_items(self, date=None, channel=None):
         ''' Offer a menu to select the channel '''
-        now = datetime.now(dateutil.tz.tzlocal())
-        epg = self.parse(date, now)
-        datelong = self._kodi.localize_datelong(epg)
+        if date:
+            now = datetime.now(dateutil.tz.tzlocal())
+            epg = self.parse(date, now)
+            datelong = self._kodi.localize_datelong(epg)
 
         channel_items = []
-        for channel in CHANNELS:
-            if channel.get('name') not in ('een', 'canvas', 'ketnet'):
+        for chan in CHANNELS:
+            # Only some channels are supported
+            if not chan.get('has_tvguide'):
                 continue
 
-            fanart = 'resource://resource.images.studios.coloured/%(studio)s.png' % channel
-            thumb = 'resource://resource.images.studios.white/%(studio)s.png' % channel
-            plot = '%s\n%s' % (self._kodi.localize(30301, **channel), datelong)
+            # If a channel is requested, stop processing if it is no match
+            if channel and channel != chan.get('name'):
+                continue
+
+            fanart = 'resource://resource.images.studios.coloured/%(studio)s.png' % chan
+            thumb = 'resource://resource.images.studios.white/%(studio)s.png' % chan
+
+            if date:
+                title = chan.get('label')
+                path = self._kodi.url_for('tvguide', date=date, channel=chan.get('name'))
+                plot = '%s\n%s' % (self._kodi.localize(30302, **chan), datelong)
+            else:
+                title = self._kodi.localize(30303, **chan)
+                path = self._kodi.url_for('tvguide_channel', channel=chan.get('name'))
+                plot = '%s\n\n%s' % (self._kodi.localize(30302, **chan), self.live_description(chan.get('name')))
+
             channel_items.append(TitleItem(
-                title=channel.get('label'),
-                path=self._kodi.url_for('tvguide', date=date, channel=channel.get('name')),
+                title=title,
+                path=path,
                 art_dict=dict(thumb=thumb, fanart=fanart),
-                info_dict=dict(plot=plot, studio=channel.get('studio')),
+                info_dict=dict(plot=plot, studio=chan.get('studio')),
             ))
         return channel_items
 
-    def show_episodes(self, date, channel):
+    def get_episode_items(self, date, channel):
         ''' Show episodes for a given date and channel '''
         from metadatacreator import MetadataCreator
 
@@ -180,7 +207,7 @@ class TVGuide:
                 video_url = add_https_method(url)
                 path = self._kodi.url_for('play_url', video_url=video_url)
                 if start_date <= now <= end_date:  # Now playing
-                    label = '[COLOR yellow]%s[/COLOR] %s' % (label, self._kodi.localize(30302))
+                    label = '[COLOR yellow]%s[/COLOR] %s' % (label, self._kodi.localize(30301))
                 program = url_to_program(episode.get('url'))
                 if self._favorites.is_activated():
                     program_title = quote_plus(title.encode('utf-8'))
@@ -199,7 +226,7 @@ class TVGuide:
                 # This is a non-actionable item
                 path = None
                 if start_date < now <= end_date:  # Now playing
-                    label = '[COLOR gray]%s[/COLOR] %s' % (label, self._kodi.localize(30302))
+                    label = '[COLOR gray]%s[/COLOR] %s' % (label, self._kodi.localize(30301))
                 else:
                     label = '[COLOR gray]%s[/COLOR]' % label
             context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file)))

@@ -38,6 +38,7 @@ CHANNELS = [
         live_stream_id='vualto_een_geo',
         # Eén: https://www.youtube.com/user/welkombijeen
         youtube='plugin://plugin.video.youtube/user/welkombijeen/',
+        has_tvguide=True,
     ),
     dict(
         id='1H',
@@ -48,6 +49,7 @@ CHANNELS = [
         live_stream_id='vualto_canvas_geo',
         # Canvas: https://www.youtube.com/user/CanvasTV
         youtube='plugin://plugin.video.youtube/user/CanvasTV/',
+        has_tvguide=True,
     ),
     dict(
         id='O9',
@@ -59,6 +61,7 @@ CHANNELS = [
         # Ketnet: https://www.youtube.com/user/KetnetVideo
         # Ketnet Musical: https://www.youtube.com/channel/UCB90ZMfqVLgGtp3Z99h4GWg
         youtube='plugin://plugin.video.youtube/user/KetnetVideo/',
+        has_tvguide=True,
     ),
     dict(
         id='1H',
