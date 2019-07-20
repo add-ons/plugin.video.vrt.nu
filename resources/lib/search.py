@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
-
 # Copyright: (c) 2019, Dag Wieers (@dagwieers) <dag@wieers.com>
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-
 ''' Implementation of Search class '''
 
 from __future__ import absolute_import, division, unicode_literals
 import json
-from resources.lib import favorites, vrtapihelper
-from resources.lib.helperobjects import TitleItem
-from resources.lib.statichelper import realpage
+from favorites import Favorites
+from helperobjects import TitleItem
 
 
 class Search:
@@ -18,8 +15,7 @@ class Search:
     def __init__(self, _kodi):
         ''' Initialize searchtes, relies on XBMC vfs '''
         self._kodi = _kodi
-        self._favorites = favorites.Favorites(_kodi)
-        self._apihelper = vrtapihelper.VRTApiHelper(_kodi, self._favorites)
+        self._favorites = Favorites(_kodi)
 
         self._search_history = _kodi.get_userdata_path() + 'search_history.json'
 
@@ -47,6 +43,7 @@ class Search:
                 path=self._kodi.url_for('search_query', keywords=keywords),
                 art_dict=dict(thumb='DefaultAddonsSearch.png', fanart='DefaultAddonsSearch.png'),
                 is_playable=False,
+                context_menu=[(self._kodi.localize(30030), 'RunPlugin(%s)' % self._kodi.url_for('remove_search', keywords=keywords))]
             ))
 
         if history:
@@ -69,12 +66,15 @@ class Search:
             self._kodi.end_of_directory()
             return
 
+        from statichelper import realpage
         page = realpage(page)
 
         self.add(keywords)
-        search_items, sort, ascending, content = self._apihelper.get_search_items(keywords, page=page)
+
+        from apihelper import ApiHelper
+        search_items, sort, ascending, content = ApiHelper(self._kodi, self._favorites).get_search_items(keywords, page=page)
         if not search_items:
-            self._kodi.show_ok_dialog(heading=self._kodi.localize(30098), message=self._kodi.localize(30099).format(keywords=keywords))
+            self._kodi.show_ok_dialog(heading=self._kodi.localize(30098), message=self._kodi.localize(30099, keywords=keywords))
             self._kodi.end_of_directory()
             return
 
@@ -98,17 +98,38 @@ class Search:
 
     def add(self, keywords):
         ''' Add new keywords to search history '''
-        from collections import OrderedDict
         try:
             with self._kodi.open_file(self._search_history, 'r') as f:
                 history = json.load(f)
         except Exception:
             history = []
 
+        # Remove if keywords already was listed
+        try:
+            history.remove(keywords)
+        except ValueError:
+            pass
+
         history.insert(0, keywords)
 
-        # Remove duplicates while preserving order
-        history = list(OrderedDict((element, None) for element in history))
+        with self._kodi.open_file(self._search_history, 'w') as f:
+            json.dump(history, f)
 
+    def remove(self, keywords):
+        ''' Remove existing keywords from search history '''
+        try:
+            with self._kodi.open_file(self._search_history, 'r') as f:
+                history = json.load(f)
+        except Exception:
+            history = []
+
+        try:
+            history.remove(keywords)
+        except ValueError:
+            return
+
+        self._kodi.container_refresh()
+
+        # If keywords was successfully removed, write to disk
         with self._kodi.open_file(self._search_history, 'w') as f:
             json.dump(history, f)

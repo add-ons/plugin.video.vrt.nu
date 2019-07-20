@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 # pylint: disable=missing-docstring
@@ -95,10 +94,33 @@ class TestRouter(unittest.TestCase):
     def test_tvguide_date_menu(self):
         plugin.run(['plugin://plugin.video.vrt.nu/tvguide', '0', ''])
         self.assertEqual(plugin.url_for(addon.tvguide), 'plugin://plugin.video.vrt.nu/tvguide')
-        plugin.run(['plugin://plugin.video.vrt.nu/tvguide/today', '0', ''])
-        self.assertEqual(plugin.url_for(addon.tvguide, date='today'), 'plugin://plugin.video.vrt.nu/tvguide/today')
-        plugin.run(['plugin://plugin.video.vrt.nu/tvguide/today/canvas', '0', ''])
-        self.assertEqual(plugin.url_for(addon.tvguide, date='today', channel='canvas'), 'plugin://plugin.video.vrt.nu/tvguide/today/canvas')
+        plugin.run(['plugin://plugin.video.vrt.nu/tvguide/date/today', '0', ''])
+        self.assertEqual(plugin.url_for(addon.tvguide, date='today'), 'plugin://plugin.video.vrt.nu/tvguide/date/today')
+        plugin.run(['plugin://plugin.video.vrt.nu/tvguide/date/today/canvas', '0', ''])
+        self.assertEqual(plugin.url_for(addon.tvguide, date='today', channel='canvas'), 'plugin://plugin.video.vrt.nu/tvguide/date/today/canvas')
+        plugin.run(['plugin://plugin.video.vrt.nu/tvguide/channel/canvas', '0', ''])
+        self.assertEqual(plugin.url_for(addon.tvguide_channel, channel='canvas'), 'plugin://plugin.video.vrt.nu/tvguide/channel/canvas')
+        plugin.run(['plugin://plugin.video.vrt.nu/tvguide/channel/canvas/today', '0', ''])
+        self.assertEqual(plugin.url_for(addon.tvguide_channel, channel='canvas', date='today'), 'plugin://plugin.video.vrt.nu/tvguide/channel/canvas/today')
+
+    # Clear search history: '/search/clear'
+    def test_clear_search(self):
+        plugin.run(['plugin://plugin.video.vrt.nu/search/clear', '0', ''])
+        self.assertEqual(plugin.url_for(addon.clear_search), 'plugin://plugin.video.vrt.nu/search/clear')
+
+    # Add search keyword: '/search/add/<keywords>'
+    def test_add_search(self):
+        plugin.run(['plugin://plugin.video.vrt.nu/search/add/foobar', '0', ''])
+        self.assertEqual(plugin.url_for(addon.add_search, keywords='foobar'), 'plugin://plugin.video.vrt.nu/search/add/foobar')
+        plugin.run(['plugin://plugin.video.vrt.nu/search/query/foobar', '0', ''])
+        self.assertEqual(plugin.url_for(addon.add_search, keywords='foobar'), 'plugin://plugin.video.vrt.nu/search/add/foobar')
+
+    # Remove search keyword: '/search/remove/<keywords>'
+    def test_remove_search(self):
+        plugin.run(['plugin://plugin.video.vrt.nu/search/remove/foobar', '0', ''])
+        self.assertEqual(plugin.url_for(addon.remove_search, keywords='foobar'), 'plugin://plugin.video.vrt.nu/search/remove/foobar')
+        plugin.run(['plugin://plugin.video.vrt.nu/search/remove/foobar', '0', ''])
+        self.assertEqual(plugin.url_for(addon.remove_search, keywords='foobar'), 'plugin://plugin.video.vrt.nu/search/remove/foobar')
 
     # Search VRT NU menu: '/search/query/<keywords>/<page>'
     def test_search_menu(self):

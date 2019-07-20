@@ -12,10 +12,11 @@
         <import addon="xbmc.python" version="2.25.0"/>
     </requires>
 
-    <extension point="xbmc.python.pluginsource" library="addon.py">
+    <extension point="xbmc.python.module" library="resources/lib/"/>
+    <extension point="xbmc.python.pluginsource" library="resources/lib/addon_plugin.py">
         <provides>video</provides>
     </extension>
-    <extension point="xbmc.service" library="service.py"/>
+    <extension point="xbmc.service" library="resources/lib/addon_service.py"/>
 
     <extension point="xbmc.addon.metadata">
         <summary lang="en_GB">Watch videos from VRT NU</summary>
@@ -71,21 +72,6 @@ v2.0.0 (2019-06-30)
 - Improvements to the add-on settings and error messages (@mediaminister)
 - Store previous search queries (@dagwieers)
 - Small performance/efficiency improvements (@mediaminister)
-
-v1.10.0 (2019-05-30)
-- Performance improvements by caching HTTP requests locally (@dagwieers)
-- Fix episode listings with more than 150 items (@mediaminister)
-- Add "Soon offline" functionality to track episodes that will be removed (@dagwieers)
-- Add TV guide schedule in live stream metadata (@dagwieers)
-- Add "My programs" functionality to track your favorite programs (@dagwieers)
-- Improvements to stream selection logic (@mediaminister)
-- Fix localized date strings for JeOS platforms (@dagwieers)
-- Add "Search" functionality in main menu (@dagwieers)
-- Add Ketnet Junior 24/7 live stream (@dagwieers)
-- Add Kodi "* All seasons" support in season listings (@dagwieers)
-- Add 720p live stream support (without DRM) (@dagwieers)
-- Extend the "Troubleshooting" settings with logging and caching options (@dagwieers)
-- Support bandwidth limitation (useful for mobile internet connections) (@mediaminister)
         </news>
         <source>https://github.com/pietje666/plugin.video.vrt.nu</source>
         <website>https://github.com/pietje666/plugin.video.vrt.nu/wiki</website>

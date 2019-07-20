@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
-
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-
-''' Implements a VRTApiHelper class with common VRT NU API functionality '''
+''' Implements an ApiHelper class with common VRT NU API functionality '''
 
 from __future__ import absolute_import, division, unicode_literals
-from resources.lib import CHANNELS, CATEGORIES, metadatacreator, statichelper
-from resources.lib.helperobjects import TitleItem
 
 try:  # Python 3
     from urllib.parse import quote_plus, unquote, urlencode
@@ -15,8 +11,13 @@ except ImportError:  # Python 2
     from urllib import quote_plus, urlencode
     from urllib2 import build_opener, install_opener, ProxyHandler, unquote, urlopen
 
+import statichelper
+from data import CHANNELS
+from helperobjects import TitleItem
+from metadatacreator import MetadataCreator
 
-class VRTApiHelper:
+
+class ApiHelper:
     ''' A class with common VRT NU API functionality '''
 
     _VRT_BASE = 'https://www.vrt.be'
@@ -25,7 +26,7 @@ class VRTApiHelper:
     _VRTNU_SCREENSHOT_URL = 'https://vrtnu-api.vrt.be/screenshots'
 
     def __init__(self, _kodi, _favorites):
-        ''' Constructor for the VRTApiHelper class '''
+        ''' Constructor for the ApiHelper class '''
         self._kodi = _kodi
         self._favorites = _favorites
 
@@ -114,7 +115,7 @@ class VRTApiHelper:
 
     def tvshow_to_listitem(self, tvshow, program, cache_file):
         ''' Return a ListItem based on a Suggests API result '''
-        metadata = metadatacreator.MetadataCreator()
+        metadata = MetadataCreator()
         metadata.tvshowtitle = tvshow.get('title', '???')
         metadata.plot = statichelper.unescape(tvshow.get('description', '???'))
         metadata.brands.extend(tvshow.get('brands', []))
@@ -126,15 +127,21 @@ class VRTApiHelper:
             thumbnail = statichelper.add_https_method(tvshow.get('thumbnail', 'DefaultAddonVideo.png'))
         else:
             thumbnail = 'DefaultAddonVideo.png'
+
+        context_menu = []
         if self._favorites.is_activated():
             program_title = quote_plus(statichelper.from_unicode(tvshow.get('title')))  # We need to ensure forward slashes are quoted
             if self._favorites.is_favorite(program):
-                context_menu = [(self._kodi.localize(30412), 'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=program_title))]
+                context_menu.append((
+                    self._kodi.localize(30412),  # Unfollow
+                    'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=program_title)
+                ))
                 label += '[COLOR yellow]ᵛ[/COLOR]'
             else:
-                context_menu = [(self._kodi.localize(30411), 'RunPlugin(%s)' % self._kodi.url_for('follow', program=program, title=program_title))]
-        else:
-            context_menu = []
+                context_menu.append((
+                    self._kodi.localize(30411),  # Follow
+                    'RunPlugin(%s)' % self._kodi.url_for('follow', program=program, title=program_title)
+                ))
         context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file)))
         return TitleItem(
             title=label,
@@ -363,10 +370,11 @@ class VRTApiHelper:
         # NOTE: Hard-code showing seasons because it is unreliable (i.e; Thuis or Down the Road have it disabled)
         display_options['showSeason'] = True
 
+        program_type = episode.get('programType')
         if titletype is None:
-            titletype = episode.get('programType')
+            titletype = program_type
 
-        metadata = metadatacreator.MetadataCreator()
+        metadata = MetadataCreator()
         metadata.tvshowtitle = episode.get('program')
         if episode.get('broadcastDate') != -1:
             metadata.datetime = datetime.fromtimestamp(episode.get('broadcastDate', 0) / 1000, dateutil.tz.UTC)
@@ -400,12 +408,12 @@ class VRTApiHelper:
         # Only display when a video disappears if it is within the next 3 months
         if metadata.offtime is not None and (metadata.offtime - now).days < 93:
             # Show date when episode is removed
-            plot_meta += self._kodi.localize(30202).format(date=self._kodi.localize_dateshort(metadata.offtime))
+            plot_meta += self._kodi.localize(30202, date=self._kodi.localize_dateshort(metadata.offtime))
             # Show the remaining days/hours the episode is still available
             if (metadata.offtime - now).days > 0:
-                plot_meta += self._kodi.localize(30203).format(days=(metadata.offtime - now).days)
+                plot_meta += self._kodi.localize(30203, days=(metadata.offtime - now).days)
             else:
-                plot_meta += self._kodi.localize(30204).format(hours=int((metadata.offtime - now).seconds / 3600))
+                plot_meta += self._kodi.localize(30204, hours=int((metadata.offtime - now).seconds / 3600))
 
         if plot_meta:
             metadata.plot = '%s\n%s' % (plot_meta, metadata.plot)
@@ -414,15 +422,21 @@ class VRTApiHelper:
             metadata.plot = '%s\n\n[COLOR yellow]%s[/COLOR]' % (metadata.plot, metadata.permalink)
 
         label, sort, ascending = self._make_label(episode, titletype, options=display_options)
+
+        context_menu = []
         if self._favorites.is_activated():
             program_title = quote_plus(statichelper.from_unicode(episode.get('program')))  # We need to ensure forward slashes are quoted
             if self._favorites.is_favorite(program):
-                context_menu = [(self._kodi.localize(30412), 'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=program_title))]
+                context_menu.append((
+                    self._kodi.localize(30412) + (' ' + self._kodi.localize(30410) if program_type != 'oneoff' else ''),  # Unfollow program
+                    'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=program_title)
+                ))
                 label += '[COLOR yellow]ᵛ[/COLOR]'
             else:
-                context_menu = [(self._kodi.localize(30411), 'RunPlugin(%s)' % self._kodi.url_for('follow', program=program, title=program_title))]
-        else:
-            context_menu = []
+                context_menu.append((
+                    self._kodi.localize(30411) + (' ' + self._kodi.localize(30410) if program_type != 'oneoff' else ''),  # Follow program
+                    'RunPlugin(%s)' % self._kodi.url_for('follow', program=program, title=program_title)
+                ))
         context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file)))
 
         if self._showfanart:
@@ -457,7 +471,7 @@ class VRTApiHelper:
         else:
             fanart = 'DefaultSets.png'
 
-        metadata = metadatacreator.MetadataCreator()
+        metadata = MetadataCreator()
         metadata.tvshowtitle = episode.get('program')
         metadata.plot = statichelper.convert_html_to_kodilabel(episode.get('programDescription'))
         metadata.plotoutline = statichelper.convert_html_to_kodilabel(episode.get('programDescription'))
@@ -614,8 +628,8 @@ class VRTApiHelper:
 
     def get_channel_items(self, channels=None, live=True):
         ''' Construct a list of channel ListItems, either for Live TV or the TV Guide listing '''
-        from resources.lib import tvguide
-        _tvguide = tvguide.TVGuide(self._kodi)
+        from tvguide import TVGuide
+        _tvguide = TVGuide(self._kodi)
 
         channel_items = []
         for channel in CHANNELS:
@@ -624,6 +638,7 @@ class VRTApiHelper:
 
             fanart = 'resource://resource.images.studios.coloured/%(studio)s.png' % channel
             thumb = 'resource://resource.images.studios.white/%(studio)s.png' % channel
+            context_menu = []
 
             if not live:
                 path = self._kodi.url_for('channels', channel=channel.get('name'))
@@ -632,13 +647,12 @@ class VRTApiHelper:
                 is_playable = False
                 info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video')
                 stream_dict = []
-                context_menu = []
             elif channel.get('live_stream') or channel.get('live_stream_id'):
                 if channel.get('live_stream_id'):
                     path = self._kodi.url_for('play_id', video_id=channel.get('live_stream_id'))
                 elif channel.get('live_stream'):
                     path = self._kodi.url_for('play_url', video_url=channel.get('live_stream'))
-                label = self._kodi.localize(30101).format(**channel)
+                label = self._kodi.localize(30101, **channel)
                 # A single Live channel means it is the entry for channel's TV Show listing, so make it stand out
                 if channels and len(channels) == 1:
                     label = '[B]%s[/B]' % label
@@ -646,13 +660,13 @@ class VRTApiHelper:
                 if channel.get('name') in ['een', 'canvas', 'ketnet']:
                     if self._showfanart:
                         fanart = self.get_live_screenshot(channel.get('name', fanart))
-                    plot = '%s\n\n%s' % (self._kodi.localize(30102).format(**channel), _tvguide.live_description(channel.get('name')))
+                    plot = '%s\n\n%s' % (self._kodi.localize(30102, **channel), _tvguide.live_description(channel.get('name')))
                 else:
-                    plot = self._kodi.localize(30102).format(**channel)
+                    plot = self._kodi.localize(30102, **channel)
                 # NOTE: Playcount is required to not have live streams as "Watched"
                 info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video', playcount=0, duration=0)
                 stream_dict = dict(duration=0)
-                context_menu = [(self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file='channel.%s.json' % channel))]
+                context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file='channel.%s.json' % channel)))
             else:
                 # Not a playable channel
                 continue
@@ -684,16 +698,18 @@ class VRTApiHelper:
             fanart = 'resource://resource.images.studios.coloured/%(studio)s.png' % channel
             thumb = 'resource://resource.images.studios.white/%(studio)s.png' % channel
 
+            context_menu = []
+
             if channel.get('youtube'):
                 path = channel.get('youtube')
-                label = self._kodi.localize(30103).format(**channel)
+                label = self._kodi.localize(30103, **channel)
                 # A single Live channel means it is the entry for channel's TV Show listing, so make it stand out
                 if channels and len(channels) == 1:
                     label = '[B]%s[/B]' % label
-                plot = self._kodi.localize(30104).format(**channel)
+                plot = self._kodi.localize(30104, **channel)
                 # NOTE: Playcount is required to not have live streams as "Watched"
                 info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video', playcount=0)
-                context_menu = [(self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file='channel.%s.json' % channel))]
+                context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file='channel.%s.json' % channel)))
             else:
                 # Not a playable channel
                 continue
@@ -711,7 +727,7 @@ class VRTApiHelper:
 
     def get_featured_items(self):
         ''' Construct a list of featured Listitems '''
-        from resources.lib import FEATURED
+        from data import FEATURED
 
         featured_items = []
         for feature in FEATURED:
@@ -745,6 +761,7 @@ class VRTApiHelper:
             categories = self._kodi.get_cache('categories.json', ttl=None)
 
         # Fall back to internal hard-coded categories if all else fails
+        from data import CATEGORIES
         if not categories:
             categories = CATEGORIES
 

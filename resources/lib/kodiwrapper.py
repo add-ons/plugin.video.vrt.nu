@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
-
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-
 ''' All functionality that requires Kodi imports '''
+
+# pylint: disable=too-many-function-args
 
 from __future__ import absolute_import, division, unicode_literals
 from contextlib import contextmanager
 import xbmc
 import xbmcplugin
-import xbmcaddon
-from resources.lib.statichelper import from_unicode, to_unicode
+from xbmcaddon import Addon
+from statichelper import from_unicode, to_unicode
 
 try:  # Python 3
     from urllib.parse import unquote
@@ -100,6 +100,13 @@ def has_socks():
     return has_socks.installed
 
 
+class SafeDict(dict):
+    ''' A safe dictionary implementation that does not break down on missing keys '''
+    def __missing__(self, key):
+        ''' Replace missing keys with the original placeholder '''
+        return '{' + key + '}'
+
+
 class KodiWrapper:
     ''' A wrapper around all Kodi functionality '''
 
@@ -110,7 +117,7 @@ class KodiWrapper:
             self.plugin = addon['plugin']
             self._handle = self.plugin.handle
             self._url = self.plugin.base_url
-        self._addon = xbmcaddon.Addon()
+        self._addon = Addon()
         self._addon_id = to_unicode(self._addon.getAddonInfo('id'))
         self._max_log_level = log_levels.get(self.get_setting('max_log_level', 'Debug'), 3)
         self._usemenucaching = self.get_setting('usemenucaching', 'true') == 'true'
@@ -139,7 +146,7 @@ class KodiWrapper:
 
     def show_listing(self, list_items, sort='unsorted', ascending=True, content=None, cache=None):
         ''' Show a virtual directory in Kodi '''
-        import xbmcgui
+        from xbmcgui import ListItem
         listing = []
 
         if cache is None:
@@ -179,7 +186,7 @@ class KodiWrapper:
             is_folder = bool(not title_item.is_playable and title_item.path)
             is_playable = bool(title_item.is_playable and title_item.path)
 
-            list_item = xbmcgui.ListItem(label=title_item.title)
+            list_item = ListItem(label=title_item.title)
             list_item.setProperty(key='IsPlayable', value='true' if is_playable else 'false')
 
             # FIXME: The setIsFolder is new in Kodi18, so we cannot use it just yet.
@@ -210,8 +217,8 @@ class KodiWrapper:
 
     def play(self, video):
         ''' Create a virtual directory listing to play its only item '''
-        import xbmcgui
-        play_item = xbmcgui.ListItem(path=video.stream_url)
+        from xbmcgui import ListItem
+        play_item = ListItem(path=video.stream_url)
         play_item.setProperty('inputstream.adaptive.max_bandwidth', str(self.get_max_bandwidth() * 1000))
         play_item.setProperty('network.bandwidth', str(self.get_max_bandwidth() * 1000))
         if video.stream_url is not None and video.use_inputstream_adaptive:
@@ -256,26 +263,25 @@ class KodiWrapper:
 
     def show_ok_dialog(self, heading='', message=''):
         ''' Show Kodi's OK dialog '''
-        import xbmcgui
+        from xbmcgui import Dialog
         if not heading:
             heading = self._addon.getAddonInfo('name')
-        dialog = xbmcgui.Dialog()
-        ok = dialog.ok(heading=heading, line1=message)
-        return ok
+        dialog = Dialog()
+        dialog.ok(heading=heading, line1=message)
 
     def show_notification(self, heading='', message='', icon='info', time=4000):
         ''' Show a Kodi notification '''
-        import xbmcgui
+        from xbmcgui import Dialog
         if not heading:
             heading = self._addon.getAddonInfo('name')
-        xbmcgui.Dialog().notification(heading=heading, message=message, icon=icon, time=time)
+        Dialog().notification(heading=heading, message=message, icon=icon, time=time)
 
     def show_yesno_dialog(self, heading='', message=''):
         ''' Show Kodi's yes/no dialog '''
-        import xbmcgui
+        from xbmcgui import Dialog
         if not heading:
             heading = self._addon.getAddonInfo('name')
-        return xbmcgui.Dialog().yesno(heading=self.localize(30971), line1=self.localize(30972))
+        return Dialog().yesno(heading=self.localize(30971), line1=self.localize(30972))
 
     def set_locale(self):
         ''' Load the proper locale for date strings '''
@@ -291,8 +297,12 @@ class KodiWrapper:
             self.log_notice("Your system does not support locale '%s': %s" % (locale_lang, e), 'Debug')
             return False
 
-    def localize(self, string_id):
-        ''' Return the translated string from the .po language files '''
+    def localize(self, string_id, **kwargs):
+        ''' Return the translated string from the .po language files, optionally translating variables '''
+        if kwargs:
+            import string
+            return string.Formatter().vformat(self._addon.getLocalizedString(string_id), (), SafeDict(**kwargs))
+
         return self._addon.getLocalizedString(string_id)
 
     def localize_date(self, date, strftime):
@@ -443,44 +453,44 @@ class KodiWrapper:
 
     def listdir(self, path):
         ''' Return all files in a directory (using xbmcvfs)'''
-        import xbmcvfs
-        return xbmcvfs.listdir(path)
+        from xbmcvfs import listdir
+        return listdir(path)
 
     def mkdir(self, path):
         ''' Create a directory (using xbmcvfs) '''
-        import xbmcvfs
+        from xbmcvfs import mkdir
         self.log_notice("Create directory '%s'." % path, 'Debug')
-        return xbmcvfs.mkdir(path)
+        return mkdir(path)
 
     def mkdirs(self, path):
         ''' Create directory including parents (using xbmcvfs) '''
-        import xbmcvfs
+        from xbmcvfs import mkdirs
         self.log_notice("Recursively create directory '%s'." % path, 'Debug')
-        return xbmcvfs.mkdirs(path)
+        return mkdirs(path)
 
     def check_if_path_exists(self, path):
         ''' Whether the path exists (using xbmcvfs)'''
-        import xbmcvfs
-        return xbmcvfs.exists(path)
+        from xbmcvfs import exists
+        return exists(path)
 
     @contextmanager
     def open_file(self, path, flags='r'):
         ''' Open a file (using xbmcvfs) '''
-        import xbmcvfs
-        f = xbmcvfs.File(path, flags)
+        from xbmcvfs import File
+        f = File(path, flags)
         yield f
         f.close()
 
     def stat_file(self, path):
         ''' Return information about a file (using xbmcvfs) '''
-        import xbmcvfs
-        return xbmcvfs.Stat(path)
+        from xbmcvfs import Stat
+        return Stat(path)
 
     def delete_file(self, path):
         ''' Remove a file (using xbmcvfs) '''
-        import xbmcvfs
+        from xbmcvfs import delete
         self.log_notice("Delete file '%s'." % path, 'Debug')
-        return xbmcvfs.delete(path)
+        return delete(path)
 
     def md5(self, path):
         ''' Return an MD5 checksum of a file '''
@@ -490,14 +500,14 @@ class KodiWrapper:
 
     def human_delta(self, seconds):
         ''' Return a human-readable representation of the TTL '''
-        import math
-        days = int(math.floor(seconds / (24 * 60 * 60)))
+        from math import floor
+        days = int(floor(seconds / (24 * 60 * 60)))
         seconds = seconds % (24 * 60 * 60)
-        hours = int(math.floor(seconds / (60 * 60)))
+        hours = int(floor(seconds / (60 * 60)))
         seconds = seconds % (60 * 60)
         if days:
             return '%d day%s and %d hour%s' % (days, 's' if days != 1 else '', hours, 's' if hours != 1 else '')
-        minutes = int(math.floor(seconds / 60))
+        minutes = int(floor(seconds / 60))
         seconds = seconds % 60
         if hours:
             return '%d hour%s and %d minute%s' % (hours, 's' if hours != 1 else '', minutes, 's' if minutes != 1 else '')
@@ -527,7 +537,7 @@ class KodiWrapper:
                 try:
                     # return json.load(f, encoding='utf-8')
                     return json.load(f)
-                except ValueError:
+                except (ValueError, TypeError):
                     return None
 
         return None

@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-
 ''' Implements a class for video metadata '''
 
 from __future__ import absolute_import, division, unicode_literals
@@ -33,7 +31,7 @@ class MetadataCreator:
         ''' Return an infoLabels dictionary for Kodi '''
         from datetime import datetime
         import dateutil.tz
-        from resources.lib import CHANNELS
+        from data import CHANNELS
 
         epoch = datetime.fromtimestamp(0, dateutil.tz.UTC)
         info_dict = dict()

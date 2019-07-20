@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 # pylint: disable=missing-docstring
@@ -14,8 +13,10 @@ try:
 except ImportError:
     from urllib2 import HTTPError
 
-from resources.lib import CHANNELS, streamservice, tokenresolver
-import addon
+from addon import kodi
+from data import CHANNELS
+from streamservice import StreamService
+from tokenresolver import TokenResolver
 
 xbmc = __import__('xbmc')
 xbmcaddon = __import__('xbmcaddon')
@@ -30,8 +31,8 @@ yesterday = now + timedelta(days=-1)
 
 class StreamServiceTests(unittest.TestCase):
 
-    _tokenresolver = tokenresolver.TokenResolver(addon.kodi)
-    _streamservice = streamservice.StreamService(addon.kodi, _tokenresolver)
+    _tokenresolver = TokenResolver(kodi)
+    _streamservice = StreamService(kodi, _tokenresolver)
 
     def test_get_ondemand_stream_from_invalid_url(self):
         video = dict(
