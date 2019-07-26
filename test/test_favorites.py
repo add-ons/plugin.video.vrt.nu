@@ -26,7 +26,7 @@ class TestFavorites(unittest.TestCase):
 
     def test_get_recent_episodes(self):
         ''' Test items, sort and order '''
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=1, variety='recent')
+        episode_items, sort, ascending, content = self._apihelper.list_episodes(page=1, variety='recent')
         self.assertEqual(len(episode_items), 50)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
@@ -34,7 +34,7 @@ class TestFavorites(unittest.TestCase):
 
     def test_get_offline_episodes(self):
         ''' Test items, sort and order '''
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=1, variety='offline')
+        episode_items, sort, ascending, content = self._apihelper.list_episodes(page=1, variety='offline')
         self.assertTrue(episode_items)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)

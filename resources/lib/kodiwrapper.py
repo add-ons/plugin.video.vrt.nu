@@ -215,38 +215,42 @@ class KodiWrapper:
         ok = xbmcplugin.addDirectoryItems(self._handle, listing, len(listing))
         xbmcplugin.endOfDirectory(self._handle, ok, cacheToDisc=cache)
 
-    def play(self, video):
+    def play(self, stream, video=None):
         ''' Create a virtual directory listing to play its only item '''
         from xbmcgui import ListItem
-        play_item = ListItem(path=video.stream_url)
+        play_item = ListItem(path=stream.stream_url)
+        if video and video.info_dict:
+            play_item.setProperty('subtitle', video.title)
+            play_item.setArt(video.art_dict)
+            play_item.setInfo(
+                type='video',
+                infoLabels=video.info_dict
+            )
         play_item.setProperty('inputstream.adaptive.max_bandwidth', str(self.get_max_bandwidth() * 1000))
         play_item.setProperty('network.bandwidth', str(self.get_max_bandwidth() * 1000))
-        if video.stream_url is not None and video.use_inputstream_adaptive:
+        if stream.stream_url is not None and stream.use_inputstream_adaptive:
             play_item.setProperty('inputstreamaddon', 'inputstream.adaptive')
             play_item.setProperty('inputstream.adaptive.manifest_type', 'mpd')
             play_item.setMimeType('application/dash+xml')
             play_item.setContentLookup(False)
-            if video.license_key is not None:
+            if stream.license_key is not None:
                 import inputstreamhelper
                 is_helper = inputstreamhelper.Helper('mpd', drm='com.widevine.alpha')
                 if is_helper.check_inputstream():
                     play_item.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')
-                    play_item.setProperty('inputstream.adaptive.license_key', video.license_key)
+                    play_item.setProperty('inputstream.adaptive.license_key', stream.license_key)
 
         subtitles_visible = self.get_setting('showsubtitles', 'true') == 'true'
         # Separate subtitle url for hls-streams
-        if subtitles_visible and video.subtitle_url is not None:
-            self.log_notice('Subtitle URL: ' + unquote(video.subtitle_url), 'Verbose')
-            play_item.setSubtitles([video.subtitle_url])
+        if subtitles_visible and stream.subtitle_url is not None:
+            self.log_notice('Subtitle URL: ' + unquote(stream.subtitle_url), 'Verbose')
+            play_item.setSubtitles([stream.subtitle_url])
 
-        self.log_notice('Play: %s' % unquote(video.stream_url), 'Info')
+        self.log_notice('Play: %s' % unquote(stream.stream_url), 'Info')
 
         # To support video playback directly from RunPlugin() we need to use xbmc.Player().play instead of
         # setResolvedUrl that only works with PlayMedia() or with internal playable menu items
-        if self._handle != -1:
-            xbmcplugin.setResolvedUrl(self._handle, bool(video.stream_url), listitem=play_item)
-        else:
-            xbmc.Player().play(item=video.stream_url, listitem=play_item)
+        xbmcplugin.setResolvedUrl(self._handle, bool(stream.stream_url), listitem=play_item)
 
         while not xbmc.Player().isPlaying() and not xbmc.Monitor().abortRequested():
             xbmc.sleep(100)

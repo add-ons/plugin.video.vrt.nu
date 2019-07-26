@@ -72,7 +72,7 @@ class Search:
         self.add(keywords)
 
         from apihelper import ApiHelper
-        search_items, sort, ascending, content = ApiHelper(self._kodi, self._favorites).get_search_items(keywords, page=page)
+        search_items, sort, ascending, content = ApiHelper(self._kodi, self._favorites).list_search(keywords, page=page)
         if not search_items:
             self._kodi.show_ok_dialog(heading=self._kodi.localize(30098), message=self._kodi.localize(30099, keywords=keywords))
             self._kodi.end_of_directory()
@@ -82,7 +82,7 @@ class Search:
         if len(search_items) == 50:
             search_items.append(TitleItem(
                 title=self._kodi.localize(30300),
-                path=self._kodi.url_for('search', keywords=keywords, page=page + 1),
+                path=self._kodi.url_for('search_query', keywords=keywords, page=page + 1),
                 art_dict=dict(thumb='DefaultAddonSearch.png', fanart='DefaultAddonSearch.png'),
                 info_dict=dict(),
             ))

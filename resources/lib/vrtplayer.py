@@ -124,24 +124,24 @@ class VRTPlayer:
     def show_favorites_docu_menu(self):
         ''' The VRT NU add-on 'My documentaries' listing menu '''
         self._favorites.get_favorites(ttl=60 * 60)
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(category='docu', season='allseasons', programtype='oneoff')
+        episode_items, sort, ascending, content = self._apihelper.list_episodes(category='docu', season='allseasons', programtype='oneoff')
         self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content)
 
     def show_tvshow_menu(self, use_favorites=False):
         ''' The VRT NU add-on 'A-Z' listing menu '''
         # My programs menus may need more up-to-date favorites
         self._favorites.get_favorites(ttl=5 * 60 if use_favorites else 60 * 60)
-        tvshow_items = self._apihelper.get_tvshow_items(use_favorites=use_favorites)
+        tvshow_items = self._apihelper.list_tvshows(use_favorites=use_favorites)
         self._kodi.show_listing(tvshow_items, sort='label', content='tvshows')
 
     def show_category_menu(self, category=None):
         ''' The VRT NU add-on 'Categories' listing menu '''
         if category:
             self._favorites.get_favorites(ttl=60 * 60)
-            tvshow_items = self._apihelper.get_tvshow_items(category=category)
+            tvshow_items = self._apihelper.list_tvshows(category=category)
             self._kodi.show_listing(tvshow_items, sort='label', content='tvshows')
         else:
-            category_items = self._apihelper.get_category_items()
+            category_items = self._apihelper.list_categories()
             self._kodi.show_listing(category_items, sort='unsorted', content='files')
 
     def show_channels_menu(self, channel=None):
@@ -149,34 +149,34 @@ class VRTPlayer:
         if channel:
             from tvguide import TVGuide
             self._favorites.get_favorites(ttl=60 * 60)
-            livetv_item = self._apihelper.get_channel_items(channels=[channel])
+            livetv_item = self._apihelper.list_channels(channels=[channel])
             tvguide_item = TVGuide(self._kodi).get_channel_items(channel=channel)
-            youtube_item = self._apihelper.get_youtube_items(channels=[channel])
-            tvshow_items = self._apihelper.get_tvshow_items(channel=channel)
+            youtube_item = self._apihelper.list_youtube(channels=[channel])
+            tvshow_items = self._apihelper.list_tvshows(channel=channel)
             self._kodi.show_listing(livetv_item + tvguide_item + youtube_item + tvshow_items, sort='unsorted', content='tvshows')
         else:
-            channel_items = self._apihelper.get_channel_items(live=False)
+            channel_items = self._apihelper.list_channels(live=False)
             self._kodi.show_listing(channel_items, cache=False)
 
     def show_featured_menu(self, feature=None):
         ''' The VRT NU add-on 'Featured content' listing menu '''
         if feature:
             self._favorites.get_favorites(ttl=60 * 60)
-            tvshow_items = self._apihelper.get_tvshow_items(feature=feature)
+            tvshow_items = self._apihelper.list_tvshows(feature=feature)
             self._kodi.show_listing(tvshow_items, sort='label', content='tvshows')
         else:
-            featured_items = self._apihelper.get_featured_items()
+            featured_items = self._apihelper.list_featured()
             self._kodi.show_listing(featured_items, sort='label', content='files')
 
     def show_livetv_menu(self):
         ''' The VRT NU add-on 'Live TV' listing menu '''
-        channel_items = self._apihelper.get_channel_items()
+        channel_items = self._apihelper.list_channels()
         self._kodi.show_listing(channel_items, cache=False)
 
     def show_episodes_menu(self, program, season=None):
         ''' The VRT NU add-on episodes listing menu '''
         self._favorites.get_favorites(ttl=60 * 60)
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(program=program, season=season)
+        episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program, season=season)
         self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content)
 
     def show_recent_menu(self, page=0, use_favorites=False):
@@ -186,7 +186,7 @@ class VRTPlayer:
         # My programs menus may need more up-to-date favorites
         self._favorites.get_favorites(ttl=5 * 60 if use_favorites else 60 * 60)
         page = realpage(page)
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=page, use_favorites=use_favorites, variety='recent')
+        episode_items, sort, ascending, content = self._apihelper.list_episodes(page=page, use_favorites=use_favorites, variety='recent')
 
         # Add 'More...' entry at the end
         if len(episode_items) == 50:
@@ -210,7 +210,7 @@ class VRTPlayer:
         # My programs menus may need more up-to-date favorites
         self._favorites.get_favorites(ttl=5 * 60 if use_favorites else 60 * 60)
         page = realpage(page)
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=page, use_favorites=use_favorites, variety='offline')
+        episode_items, sort, ascending, content = self._apihelper.list_episodes(page=page, use_favorites=use_favorites, variety='offline')
 
         # Add 'More...' entry at the end
         if len(episode_items) == 50:
@@ -240,8 +240,8 @@ class VRTPlayer:
     def play_episode_by_air_date(self, channel, start_date, end_date):
         ''' Play an episode of a program given the channel and the air date in iso format (2019-07-06T19:35:00) '''
         video = self._apihelper.get_episode_by_air_date(channel, start_date, end_date)
-        if video and video.get('video_title'):
-            self._kodi.show_ok_dialog(message=self._kodi.localize(30986, title=video.get('video_title')))
+        if video and video.get('errorlabel'):
+            self._kodi.show_ok_dialog(message=self._kodi.localize(30986, title=video.get('errorlabel')))
             self._kodi.end_of_directory()
             return
         if not video:
@@ -251,11 +251,12 @@ class VRTPlayer:
             return
         self.play(video)
 
-    def play(self, params):
+    def play(self, video):
         ''' A wrapper for playing video items '''
         from tokenresolver import TokenResolver
         from streamservice import StreamService
         _tokenresolver = TokenResolver(self._kodi)
-        stream = StreamService(self._kodi, _tokenresolver).get_stream(params)
+        _streamservice = StreamService(self._kodi, _tokenresolver)
+        stream = _streamservice.get_stream(video)
         if stream is not None:
-            self._kodi.play(stream)
+            self._kodi.play(stream, video.get('listitem'))
