@@ -95,6 +95,7 @@ class MetadataCreator:
             info_dict['tvshowtitle'] = self.tvshowtitle
             info_dict['set'] = self.tvshowtitle
 
+        # NOTE: Estuary skin is using premiered/aired year, which is incorrect
         if self.year:
             info_dict['year'] = self.year
 
