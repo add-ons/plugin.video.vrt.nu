@@ -49,6 +49,8 @@ You can report issues at [our GitHub project](https://github.com/pietje666/plugi
 you can send a message to [our Facebook page](https://facebook.com/kodivrtnu/).
 
 ## Releases
+### v2.1.1 (2019-07-20)
+- Fix issue on Kodi v17 (@dagwieers)
 
 ### v2.1.0 (2019-07-11)
 - Fix an issue with roaming VRT tokens (@mediaminister)
