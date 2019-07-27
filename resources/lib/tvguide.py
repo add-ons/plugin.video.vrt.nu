@@ -10,15 +10,14 @@ import dateutil.parser
 import dateutil.tz
 
 try:  # Python 3
-    from urllib.parse import quote_plus
     from urllib.request import build_opener, install_opener, ProxyHandler, urlopen
 except ImportError:  # Python 2
-    from urllib import quote_plus
     from urllib2 import build_opener, install_opener, ProxyHandler, urlopen
 
 from data import CHANNELS
 from favorites import Favorites
 from helperobjects import TitleItem
+from metadata import Metadata
 
 DATE_STRINGS = {
     '-2': 30330,  # 2 days ago
@@ -44,6 +43,7 @@ class TVGuide:
         ''' Initializes TV-guide object '''
         self._kodi = _kodi
         self._favorites = Favorites(_kodi)
+        self._metadata = Metadata(self._kodi, self._favorites)
 
         self._proxies = _kodi.get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
@@ -148,11 +148,8 @@ class TVGuide:
 
     def get_episode_items(self, date, channel):
         ''' Show episodes for a given date and channel '''
-        from metadatacreator import MetadataCreator
-
         now = datetime.now(dateutil.tz.tzlocal())
         epg = self.parse(date, now)
-        datelong = self._kodi.localize_datelong(epg)
         epg_url = epg.strftime(self.VRT_TVGUIDE)
 
         self._favorites.get_favorites(ttl=60 * 60)
@@ -177,65 +174,27 @@ class TVGuide:
             episodes = []
         episode_items = []
         for episode in episodes:
-            metadata = MetadataCreator()
-            title = episode.get('title', 'Untitled')
-            start = episode.get('start')
-            end = episode.get('end')
-            start_date = dateutil.parser.parse(episode.get('startTime'))
-            end_date = dateutil.parser.parse(episode.get('endTime'))
-            metadata.datetime = start_date
-            url = episode.get('url')
-            metadata.tvshowtitle = title
-            label = '%s - %s' % (start, title)
-            # NOTE: Do not use startTime and endTime as we don't want duration with seconds granularity
-            start_time = dateutil.parser.parse(start)
-            end_time = dateutil.parser.parse(end)
-            if end_time < start_time:
-                end_time = end_time + timedelta(days=1)
-            metadata.duration = (end_time - start_time).total_seconds()
-            metadata.plot = '[B]%s[/B]\n%s\n%s - %s\n[I]%s[/I]' % (title, datelong, start, end, channel.get('label'))
-            metadata.brands.append(channel.get('studio'))
-            metadata.mediatype = 'episode'
-            if self._showfanart:
-                thumb = episode.get('image', 'DefaultAddonVideo.png')
-            else:
-                thumb = 'DefaultAddonVideo.png'
-            metadata.icon = thumb
+
+            label = self._metadata.get_label(episode)
+
             context_menu = []
-            if url:
+            path = None
+            if episode.get('url'):
                 from statichelper import add_https_method, url_to_program
-                video_url = add_https_method(url)
+                video_url = add_https_method(episode.get('url'))
                 path = self._kodi.url_for('play_url', video_url=video_url)
-                if start_date <= now <= end_date:  # Now playing
-                    label = '[COLOR yellow]%s[/COLOR] %s' % (label, self._kodi.localize(30301))
                 program = url_to_program(episode.get('url'))
-                if self._favorites.is_activated():
-                    program_title = quote_plus(title.encode('utf-8'))
-                    if self._favorites.is_favorite(program):
-                        context_menu = [(
-                            self._kodi.localize(30412) + ' ' + self._kodi.localize(30410),  # Unfollow program
-                            'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=program_title)
-                        )]
-                        label += '[COLOR yellow]ᵛ[/COLOR]'
-                    else:
-                        context_menu = [(
-                            self._kodi.localize(30411) + ' ' + self._kodi.localize(30410),  # Follow program
-                            'RunPlugin(%s)' % self._kodi.url_for('follow', program=program, title=program_title)
-                        )]
-            else:
-                # This is a non-actionable item
-                path = None
-                if start_date < now <= end_date:  # Now playing
-                    label = '[COLOR gray]%s[/COLOR] %s' % (label, self._kodi.localize(30301))
-                else:
-                    label = '[COLOR gray]%s[/COLOR]' % label
-            context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file)))
-            metadata.title = label
+                context_menu, favorite_marker = self._metadata.get_context_menu(episode, program, cache_file)
+                label += favorite_marker
+
+            info_labels = self._metadata.get_info_labels(episode, date=date, channel=channel)
+            info_labels['title'] = label
+
             episode_items.append(TitleItem(
                 title=label,
                 path=path,
-                art_dict=dict(thumb=thumb, icon='DefaultAddonVideo.png', fanart=thumb),
-                info_dict=metadata.get_info_dict(),
+                art_dict=self._metadata.get_art(episode),
+                info_dict=info_labels,
                 is_playable=True,
                 context_menu=context_menu,
             ))

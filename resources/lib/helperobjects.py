@@ -57,7 +57,7 @@ class StreamURLS:
 class TitleItem:
     ''' This helper object holds all information to be used with Kodi xbmc's ListItem object '''
 
-    def __init__(self, title, path, art_dict=None, info_dict=None, stream_dict=None, context_menu=None, is_playable=False):
+    def __init__(self, title, path=None, art_dict=None, info_dict=None, stream_dict=None, context_menu=None, is_playable=False):
         ''' The constructor for the TitleItem class '''
         self.title = title
         self.path = path

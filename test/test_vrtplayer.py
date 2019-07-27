@@ -27,7 +27,7 @@ class TestVRTPlayer(unittest.TestCase):
 
     def test_show_videos_single_episode_shows_videos(self):
         program = 'marathonradio'
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(program=program)
+        episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program)
         self.assertTrue(episode_items, msg=program)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
@@ -37,7 +37,7 @@ class TestVRTPlayer(unittest.TestCase):
 
     def test_show_videos_single_season_shows_videos(self):
         program = 'het-weer'
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(program=program)
+        episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program)
         self.assertTrue(episode_items, msg=program)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
@@ -47,7 +47,7 @@ class TestVRTPlayer(unittest.TestCase):
 
     def test_show_videos_multiple_seasons_shows_videos(self):
         program = 'pano'
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(program=program)
+        episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program)
         self.assertTrue(episode_items)
         self.assertEqual(sort, 'label')
         self.assertFalse(ascending)
@@ -57,7 +57,7 @@ class TestVRTPlayer(unittest.TestCase):
 
     def test_show_videos_specific_seasons_shows_videos(self):
         program = 'thuis'
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(program=program)
+        episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program)
         self.assertTrue(episode_items, msg=program)
         self.assertEqual(sort, 'label')
         self.assertFalse(ascending)
@@ -78,13 +78,13 @@ class TestVRTPlayer(unittest.TestCase):
         self.assertTrue(categories)
 
         category = random.choice(categories)
-        tvshow_items = self._apihelper.get_tvshow_items(category['id'])
+        tvshow_items = self._apihelper.list_tvshows(category['id'])
         self.assertTrue(tvshow_items, msg=category['id'])
 
         tvshow = random.choice(tvshow_items)
         if tvshow.path.startswith('plugin://plugin.video.vrt.nu/programs/'):
             # When random program has episodes
-            episode_items, sort, ascending, content = self._apihelper.get_episode_items(tvshow.path.split('/')[4].replace('.relevant', ''))
+            episode_items, sort, ascending, content = self._apihelper.list_episodes(tvshow.path.split('/')[4].replace('.relevant', ''))
             self.assertTrue(episode_items, msg=tvshow.path.split('/')[4])
             self.assertTrue(sort in ['dateadded', 'episode', 'label', 'unsorted'])
             self.assertTrue(ascending is True or ascending is False)
@@ -97,12 +97,12 @@ class TestVRTPlayer(unittest.TestCase):
 
     def test_categories(self):
         ''' Test to ensure our hardcoded categories conforms to scraped categories '''
-        category_items = self._apihelper.get_category_items()
+        category_items = self._apihelper.list_categories()
         self.assertEqual(len(category_items), 17)
 
     def test_featured(self):
         ''' Test to ensure our hardcoded categories conforms to scraped categories '''
-        featured_items = self._apihelper.get_featured_items()
+        featured_items = self._apihelper.list_featured()
         self.assertEqual(len(featured_items), 7)
 
 

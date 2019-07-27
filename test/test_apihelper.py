@@ -24,28 +24,28 @@ class ApiHelperTests(unittest.TestCase):
     _apihelper = ApiHelper(kodi, _favorites)
 
     def test_get_api_data_single_season(self):
-        title_items, sort, ascending, content = self._apihelper.get_episode_items(program='het-journaal')
+        title_items, sort, ascending, content = self._apihelper.list_episodes(program='het-journaal')
         self.assertTrue(110 <= len(title_items) <= 140, 'We got %s items instead.' % len(title_items))
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
 
     def test_get_api_data_multiple_seasons(self):
-        title_items, sort, ascending, content = self._apihelper.get_episode_items(program='thuis')
+        title_items, sort, ascending, content = self._apihelper.list_episodes(program='thuis')
         self.assertTrue(len(title_items) < 5)
         self.assertEqual(sort, 'label')
         self.assertFalse(ascending)
         self.assertEqual(content, 'seasons')
 
     def test_get_api_data_specific_season(self):
-        title_items, sort, ascending, content = self._apihelper.get_episode_items(program='pano')
+        title_items, sort, ascending, content = self._apihelper.list_episodes(program='pano')
         self.assertEqual(len(title_items), 4)
         self.assertEqual(sort, 'label')
         self.assertFalse(ascending)
         self.assertEqual(content, 'seasons')
 
     def test_get_api_data_specific_season_without_broadcastdate(self):
-        title_items, sort, ascending, content = self._apihelper.get_episode_items(program='postbus-x')
+        title_items, sort, ascending, content = self._apihelper.list_episodes(program='postbus-x')
         self.assertEqual(len(title_items), 3)
         self.assertEqual(sort, 'label')
         self.assertTrue(ascending)
@@ -53,7 +53,7 @@ class ApiHelperTests(unittest.TestCase):
 
     def test_get_recent_episodes(self):
         ''' Test items, sort and order '''
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=1, variety='recent')
+        episode_items, sort, ascending, content = self._apihelper.list_episodes(page=1, variety='recent')
         self.assertEqual(len(episode_items), 50)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
@@ -61,7 +61,7 @@ class ApiHelperTests(unittest.TestCase):
 
     def test_get_recent_episodes_page1(self):
         ''' Test items, sort and order '''
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=2, variety='recent')
+        episode_items, sort, ascending, content = self._apihelper.list_episodes(page=2, variety='recent')
         self.assertEqual(len(episode_items), 50)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
@@ -69,7 +69,7 @@ class ApiHelperTests(unittest.TestCase):
 
     def test_get_recent_episodes_page2(self):
         ''' Test items, sort and order '''
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=3, variety='recent')
+        episode_items, sort, ascending, content = self._apihelper.list_episodes(page=3, variety='recent')
         self.assertEqual(len(episode_items), 50)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
@@ -77,21 +77,21 @@ class ApiHelperTests(unittest.TestCase):
 
     def test_get_offline_episodes(self):
         ''' Test items, sort and order '''
-        episode_items, sort, ascending, content = self._apihelper.get_episode_items(page=1, variety='offline')
+        episode_items, sort, ascending, content = self._apihelper.list_episodes(page=1, variety='offline')
         self.assertTrue(episode_items)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
 
-    def test_get_tvshows(self):
+    def test_list_tvshows(self):
         ''' Test items, sort and order '''
         category = 'nieuws-en-actua'
-        tvshow_items = self._apihelper.get_tvshow_items(category=category)
+        tvshow_items = self._apihelper.list_tvshows(category=category)
         self.assertTrue(tvshow_items)
 
     def test_tvshows(self):
         ''' Test A-Z tvshow listing and CHANNELS list '''
-        tvshow_items = self._apihelper.get_tvshow_items(category=None)
+        tvshow_items = self._apihelper.list_tvshows(category=None)
 
         # Test we get a non-empty A-Z listing back
         self.assertTrue(tvshow_items)
@@ -104,12 +104,12 @@ class ApiHelperTests(unittest.TestCase):
 
     def test_get_latest_episode(self):
         video = self._apihelper.get_latest_episode(program='het-journaal')
-        self.assertTrue(len(video) == 2)
+        self.assertTrue(video.get('listitem') is not None)
         self.assertTrue(video.get('video_id') is not None)
         self.assertTrue(video.get('publication_id') is not None)
 
     def test_episode_plot(self):
-        title_items, sort, ascending, content = self._apihelper.get_episode_items(program='thuis', season='allseasons')
+        title_items, sort, ascending, content = self._apihelper.list_episodes(program='thuis', season='allseasons')
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
