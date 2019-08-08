@@ -4,8 +4,11 @@
 # pylint: disable=missing-docstring
 
 from __future__ import absolute_import, division, print_function, unicode_literals
+from datetime import datetime, timedelta
 import unittest
+import dateutil.tz
 import addon
+
 
 xbmc = __import__('xbmc')
 xbmcaddon = __import__('xbmcaddon')
@@ -14,6 +17,8 @@ xbmcplugin = __import__('xbmcplugin')
 xbmcvfs = __import__('xbmcvfs')
 
 plugin = addon.plugin
+now = datetime.now(dateutil.tz.tzlocal())
+lastweek = now + timedelta(days=-7)
 
 
 class TestRouter(unittest.TestCase):
@@ -194,11 +199,11 @@ class TestRouter(unittest.TestCase):
 
     # Play episode by air date method = '/play/airdate/<channel>/<start_date>'
     def test_play_airdateepisode_route(self):
-        plugin.run(['plugin://plugin.video.vrt.nu/play/airdate/canvas/2019-07-06T20:40:00', '0', ''])
+        plugin.run([lastweek.strftime('plugin://plugin.video.vrt.nu/play/airdate/canvas/%Y-%m-%dT20:00:00'), '0', ''])
         self.assertEqual(plugin.url_for(addon.play_by_air_date,
                                         channel='canvas',
-                                        start_date='2019-07-06T20:40:00'),
-                         'plugin://plugin.video.vrt.nu/play/airdate/canvas/2019-07-06T20:40:00')
+                                        start_date=lastweek.strftime('%Y-%m-%dT20:00:00')),
+                         lastweek.strftime('plugin://plugin.video.vrt.nu/play/airdate/canvas/%Y-%m-%dT20:00:00'))
 
 
 if __name__ == '__main__':

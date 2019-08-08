@@ -22,7 +22,7 @@ class StreamService:
 
     _VUPLAY_API_URL = 'https://api.vuplay.co.uk'
     _VUALTO_API_URL = 'https://media-services-public.vrt.be/vualto-video-aggregator-web/rest/external/v1'
-    _CLIENT = 'vrtvideo'
+    _CLIENT = 'vrtvideo@PROD'
     _UPLYNK_LICENSE_URL = 'https://content.uplynk.com/wv'
     _INVALID_LOCATION = 'INVALID_LOCATION'
     _INCOMPLETE_ROAMING_CONFIG = 'INCOMPLETE_ROAMING_CONFIG'
@@ -109,10 +109,10 @@ class StreamService:
         from bs4 import BeautifulSoup, SoupStrainer
         self._kodi.log_notice('URL get: ' + unquote(video_url), 'Verbose')
         html_page = urlopen(video_url).read()
-        strainer = SoupStrainer('div', {'class': 'cq-dd-vrtvideo'})
+        strainer = SoupStrainer('div', {'class': ['left', 'livestream__player']})
         soup = BeautifulSoup(html_page, 'html.parser', parse_only=strainer)
         try:
-            video_data = soup.find(lambda tag: tag.name == 'div' and tag.get('class') == ['vrtvideo']).attrs
+            video_data = soup.find(lambda tag: tag.name == 'nui-media').attrs
         except Exception as e:
             # Web scraping failed, log error
             self._kodi.log_error('Web scraping api data failed: %s' % e)
@@ -124,14 +124,14 @@ class StreamService:
             return None
 
         # Store required html data attributes
-        client = video_data.get('data-client')
-        media_api_url = video_data.get('data-mediaapiurl')
-        video_id = video_data.get('data-videoid')
-        publication_id = video_data.get('data-publicationid', '')
+        client = video_data.get('client') or self._CLIENT
+        media_api_url = video_data.get('mediaapiurl')
+        video_id = video_data.get('videoid')
+        publication_id = video_data.get('publicationid', '')
         # Live stream or on demand
         if video_id is None:
             is_live_stream = True
-            video_id = video_data.get('data-livestream')
+            video_id = video_data.get('livestream')
         else:
             is_live_stream = False
             publication_id += quote('$')
