@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import sys
 
 # Add current working directory to import paths
-sys.path.insert(0, '.')
+sys.path.insert(0, 'resources/lib')
 import addon  # noqa: E402  pylint: disable=wrong-import-position
 
 xbmc = __import__('xbmc')

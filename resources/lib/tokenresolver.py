@@ -141,7 +141,6 @@ class TokenResolver:
             message = login_json.get('errorDetails')
             self._kodi.log_notice('Login failed: %s' % message)
             if message == 'invalid loginID or password':
-                self._kodi.set_setting('password', None)
                 message = self._kodi.localize(30953)  # Invalid login!
             elif message == 'loginID must be provided':
                 message = self._kodi.localize(30955)  # Please fill in username

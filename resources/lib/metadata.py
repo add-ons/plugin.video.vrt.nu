@@ -123,7 +123,6 @@ class Metadata:
         if api_data.get('vrt.whatson-id'):
             from datetime import timedelta
             import dateutil.parser
-            import dateutil.tz
             start_time = dateutil.parser.parse(api_data.get('startTime'))
             end_time = dateutil.parser.parse(api_data.get('endTime'))
             if end_time < start_time:
@@ -211,10 +210,10 @@ class Metadata:
                 return plotoutline
 
             if api_data.get('displayOptions', dict()).get('showShortDescription'):
-                short_description = statichelper.convert_html_to_kodilabel(api_data.get('shortDescription'))
-                plotoutline = short_description
-            else:
-                plotoutline = api_data.get('subtitle')
+                plotoutline = statichelper.convert_html_to_kodilabel(api_data.get('shortDescription'))
+                return plotoutline
+
+            plotoutline = api_data.get('subtitle')
             return plotoutline
 
         # VRT NU Suggest API
@@ -300,7 +299,6 @@ class Metadata:
         # VRT NU Search API
         if api_data.get('type') == 'episode':
             from datetime import datetime
-            import dateutil.parser
             import dateutil.tz
             aired = ''
             if api_data.get('broadcastDate'):
@@ -461,7 +459,7 @@ class Metadata:
                 season=self.get_season(api_data),
                 plot=self.get_plot(api_data, season=season),
                 plotoutline=self.get_plotoutline(api_data, season=season),
-                tagline=episode_label,
+                tagline=self.get_plotoutline(api_data, season=season),
                 duration=self.get_duration(api_data),
                 mediatype=api_data.get('type', 'episode'),
                 studio=self.get_studio(api_data),

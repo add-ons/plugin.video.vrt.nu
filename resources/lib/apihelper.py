@@ -54,7 +54,7 @@ class ApiHelper:
 
         # If no facet-selection is done, we return the A-Z listing
         if not category and not channel and not feature:
-            params['facets[transcodingStatus]'] = 'AVAILABLE'
+            params['facets[transcodingStatus]'] = 'AVAILABLE'  # Required for getting results in Suggests API
             cache_file = 'programs.json'
 
         # Get programs
@@ -474,9 +474,21 @@ class ApiHelper:
             if channels and channel.get('name') not in channels:
                 continue
 
-            fanart = 'resource://resource.images.studios.coloured/%(studio)s.png' % channel
-            thumb = 'resource://resource.images.studios.white/%(studio)s.png' % channel
             context_menu = []
+
+            # Try to use the white icons for thumbnails (used for icons as well)
+            if self._kodi.get_cond_visibility('System.HasAddon(resource.images.studios.white)') == 1:
+                thumb = 'resource://resource.images.studios.white/{studio}.png'.format(**channel)
+            else:
+                thumb = 'DefaultTags.png'
+
+            # Try to use the coloured icons for fanart
+            if self._kodi.get_cond_visibility('System.HasAddon(resource.images.studios.coloured)') == 1:
+                fanart = 'resource://resource.images.studios.coloured/{studio}.png'.format(**channel)
+            elif self._kodi.get_cond_visibility('System.HasAddon(resource.images.studios.white)') == 1:
+                fanart = 'resource://resource.images.studios.white/{studio}.png'.format(**channel)
+            else:
+                fanart = 'DefaultTags.png'
 
             if not live:
                 path = self._kodi.url_for('channels', channel=channel.get('name'))
@@ -533,10 +545,21 @@ class ApiHelper:
             if channels and channel.get('name') not in channels:
                 continue
 
-            fanart = 'resource://resource.images.studios.coloured/%(studio)s.png' % channel
-            thumb = 'resource://resource.images.studios.white/%(studio)s.png' % channel
-
             context_menu = []
+
+            # Try to use the white icons for thumbnails (used for icons as well)
+            if self._kodi.get_cond_visibility('System.HasAddon(resource.images.studios.white)') == 1:
+                thumb = 'resource://resource.images.studios.white/{studio}.png'.format(**channel)
+            else:
+                thumb = 'DefaultTags.png'
+
+            # Try to use the coloured icons for fanart
+            if self._kodi.get_cond_visibility('System.HasAddon(resource.images.studios.coloured)') == 1:
+                fanart = 'resource://resource.images.studios.coloured/{studio}.png'.format(**channel)
+            elif self._kodi.get_cond_visibility('System.HasAddon(resource.images.studios.white)') == 1:
+                fanart = 'resource://resource.images.studios.white/{studio}.png'.format(**channel)
+            else:
+                fanart = 'DefaultTags.png'
 
             if channel.get('youtube'):
                 path = channel.get('youtube')

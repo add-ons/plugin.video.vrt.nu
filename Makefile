@@ -24,7 +24,7 @@ all: test zip
 
 package: zip
 
-test: sanity unit
+test: sanity unit run
 
 sanity: tox pylint
 
@@ -44,6 +44,10 @@ addon: clean
 unit:
 	@echo -e "$(white)=$(blue) Starting unit tests$(reset)"
 	python -m unittest discover
+
+run:
+	@echo -e "$(white)=$(blue) Run CLI$(reset)"
+	python test/run.py /
 
 zip: clean
 	@echo -e "$(white)=$(blue) Building new package$(reset)"

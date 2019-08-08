@@ -39,7 +39,11 @@ def addDirectoryItems(handle, listing, length):
     for item in listing:
         label = kodi_to_ansi(item[1].label)
         path = uri_to_path(item[0])
-        print('- %s%s' % (label, path if path else ''))
+        # perma = kodi_to_ansi(item[1].label)  # FIXME: Add permalink
+        if item[2]:
+            print('» %s%s' % (label, path if path else ''))
+        else:
+            print('· %s%s' % (label, path if path else ''))
     return True
 
 
