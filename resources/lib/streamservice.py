@@ -200,8 +200,8 @@ class StreamService:
             if roaming:
                 message = self._kodi.localize(30990)  # Geoblock error: Cannot be played, need Belgian phone number validation
                 return self._handle_stream_api_error(message)
-
-            message = self._kodi.localize(30954)  # Whoops something went wrong
+            # X-VRT-Token failed
+            message = self._kodi.localize(30963)  # You need a VRT NU account to play this stream.
             return self._handle_stream_api_error(message)
 
         if 'targetUrls' in stream_json:

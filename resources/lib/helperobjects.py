@@ -17,31 +17,6 @@ class ApiData:
         self.is_live_stream = is_live_stream
 
 
-class Credentials:
-    ''' This helper object holds all credential information '''
-
-    def __init__(self, _kodi):
-        ''' The constructor for the Credentials class '''
-        self._kodi = _kodi
-        self.username = _kodi.get_setting('username')
-        self.password = _kodi.get_setting('password')
-
-    def are_filled_in(self):
-        ''' Whether the credentials have been filled in and are stored in the settings '''
-        return bool(self.username and self.password)
-
-    def reload(self):
-        ''' Reload the credentials from the settings '''
-        self.username = self._kodi.get_setting('username')
-        self.password = self._kodi.get_setting('password')
-
-    def reset(self):
-        ''' Reset the credentials in the settings '''
-        # NOTE: Do not reset the username, this can be edited by the user and doesn't need to be retyped
-        # self.username = self._kodi.set_setting('username', None)
-        self.password = self._kodi.set_setting('password', None)
-
-
 class StreamURLS:
     ''' This helper object holds all information to be used when playing streams '''
 

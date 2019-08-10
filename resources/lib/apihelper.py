@@ -461,31 +461,8 @@ class ApiHelper:
     def get_live_screenshot(self, channel):
         ''' Get a live screenshot for a given channel, only supports Eén, Canvas and Ketnet '''
         url = '%s/%s.jpg' % (self._VRTNU_SCREENSHOT_URL, channel)
-        self.__delete_cached_thumbnail(url)
+        self._kodi.delete_cached_thumbnail(url)
         return url
-
-    def __delete_cached_thumbnail(self, url):
-        ''' Remove a cached thumbnail from Kodi in an attempt to get a realtime live screenshot '''
-        crc = self.__get_crc32(url)
-        ext = url.split('.')[-1]
-        path = 'special://thumbnails/%s/%s.%s' % (crc[0], crc, ext)
-        self._kodi.delete_file(path)
-
-    @staticmethod
-    def __get_crc32(string):
-        ''' Return the CRC32 checksum for a given string '''
-        string = string.lower()
-        string_bytes = bytearray(string.encode())
-        crc = 0xffffffff
-        for b in string_bytes:
-            crc = crc ^ (b << 24)
-            for _ in range(8):
-                if crc & 0x80000000:
-                    crc = (crc << 1) ^ 0x04C11DB7
-                else:
-                    crc = crc << 1
-            crc = crc & 0xFFFFFFFF
-        return '%08x' % crc
 
     def list_channels(self, channels=None, live=True):
         ''' Construct a list of channel ListItems, either for Live TV or the TV Guide listing '''

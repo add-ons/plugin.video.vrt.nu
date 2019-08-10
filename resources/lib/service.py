@@ -20,13 +20,18 @@ class VrtMonitor(Monitor):
             if self.waitForAbort(10):
                 break
 
+    def onNotification(self, sender, method, data):
+        ''' Handler for notifications '''
+        _kodi = KodiWrapper(None)
+        _kodi.log_notice('Got a notification: %s, %s, %s' % (sender, method, data), 'Verbose')
+
     def onSettingsChanged(self):
         ''' Handler for changes to settings '''
         _kodi = KodiWrapper(None)
-        _kodi.log_notice('VRT NU Addon: settings changed')
+        _kodi.log_notice('Settings changed')
 
         _kodi.invalidate_caches('offline-*.json')
         _kodi.invalidate_caches('recent-*.json')
 
-        TokenResolver(_kodi).delete_tokens()
+        TokenResolver(_kodi).refresh_login()
         _kodi.container_refresh()

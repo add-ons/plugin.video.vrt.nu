@@ -354,6 +354,10 @@ class KodiWrapper:
         ''' Open the add-in settings window, shows Credentials '''
         self._addon.openSettings()
 
+    def notify(self, method, data):
+        ''' Send a notification to Kodi '''
+        xbmc.executebuiltin('NotifyAll(%s, %s, %s)' % (self._addon_id, method, data))
+
     def get_global_setting(self, setting):
         ''' Get a Kodi setting '''
         import json
@@ -419,9 +423,13 @@ class KodiWrapper:
         ''' Whether InputStream Adaptive is installed and enabled in add-on settings '''
         return self.get_setting('useinputstreamadaptive', 'true') == 'true' and xbmc.getCondVisibility('System.HasAddon(inputstream.adaptive)') == 1
 
-    def has_credentials(self):
-        ''' Whether the add-on has credentials configured '''
+    def credentials_filled_in(self):
+        ''' Whether the add-on has credentials filled in '''
         return bool(self.get_setting('username') and self.get_setting('password'))
+
+    def credentials_incomplete(self):
+        ''' Whether the add-on credentials are incomplete '''
+        return bool(self.get_setting('username') or self.get_setting('password'))
 
     def kodi_version(self):
         ''' Returns major Kodi version '''
@@ -496,11 +504,33 @@ class KodiWrapper:
         self.log_notice("Delete file '%s'." % path, 'Debug')
         return delete(path)
 
-    def md5(self, path):
-        ''' Return an MD5 checksum of a file '''
+    def delete_cached_thumbnail(self, url):
+        ''' Remove a cached thumbnail from Kodi in an attempt to get a realtime live screenshot '''
+        crc = self.crc32(url)
+        ext = url.split('.')[-1]
+        path = 'special://thumbnails/%s/%s.%s' % (crc[0], crc, ext)
+        self.delete_file(path)
+
+    @staticmethod
+    def crc32(string):
+        ''' Return the CRC32 checksum for a given string '''
+        string = string.lower()
+        string_bytes = bytearray(string.encode())
+        crc = 0xffffffff
+        for b in string_bytes:
+            crc = crc ^ (b << 24)
+            for _ in range(8):
+                if crc & 0x80000000:
+                    crc = (crc << 1) ^ 0x04C11DB7
+                else:
+                    crc = crc << 1
+            crc = crc & 0xFFFFFFFF
+        return '%08x' % crc
+
+    def md5(self, data):
+        ''' Return an MD5 checksum '''
         import hashlib
-        with self.open_file(path) as f:
-            return hashlib.md5(f.read().encode('utf-8'))
+        return hashlib.md5(data)
 
     def human_delta(self, seconds):
         ''' Return a human-readable representation of the TTL '''
@@ -555,7 +585,9 @@ class KodiWrapper:
         import json
         fullpath = self._cache_path + path
         if self.check_if_path_exists(fullpath):
-            md5 = self.md5(fullpath)
+            with self.open_file(fullpath) as f:
+                cachefile = f.read().encode('utf-8')
+            md5 = self.md5(cachefile)
         else:
             md5 = 0
             # Create cache directory if missing

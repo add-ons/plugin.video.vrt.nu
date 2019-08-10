@@ -38,13 +38,6 @@ def delete_tokens():
     TokenResolver(kodi).delete_tokens()
 
 
-@plugin.route('/tokens/check-credentials')
-def check_credentials():
-    ''' Check if the credentials are correct '''
-    from tokenresolver import TokenResolver
-    TokenResolver(kodi).check_credentials()
-
-
 @plugin.route('/widevine/install')
 def install_widevine():
     ''' The API interface to install Widevine '''
