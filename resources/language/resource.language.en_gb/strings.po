@@ -411,14 +411,6 @@ msgctxt "#30806"
 msgid "Provide your VRT NU account password."
 msgstr ""
 
-msgctxt "#30807"
-msgid "Check credentials"
-msgstr ""
-
-msgctxt "#30808"
-msgid "Check if your VRT NU credentials are correct."
-msgstr ""
-
 msgctxt "#30820"
 msgid "Interface"
 msgstr ""
@@ -626,6 +618,10 @@ msgid "Login failed!"
 msgstr ""
 
 msgctxt "#30952"
+msgid "Login succeeded."
+msgstr ""
+
+msgctxt "#30953"
 msgid "Invalid email adress or password. Only VRT logins are supported, no Google or Facebook logins."
 msgstr ""
 
@@ -665,6 +661,10 @@ msgctxt "#30962"
 msgid "There is a problem with this VRT NU {protocol} stream and Kodi {version} does not support the alternative stream. Please upgrade to a newer Kodi version or try to play this program from the VRT NU website. Please report this problem at https://www.vrt.be/vrtnu/help/"
 msgstr ""
 
+msgctxt "#30963"
+msgid "You need a VRT account to play this stream. Please register at https://www.vrt.be/vrtnu/"
+msgstr ""
+
 msgctxt "#30965"
 msgid "Using a SOCKS proxy requires the PySocks library (script.module.pysocks) installed."
 msgstr ""
@@ -701,24 +701,12 @@ msgctxt "#30979"
 msgid "Because of important internal changes, existing Kodi favourites and watched history from VRT NU no longer work.\n[B]Please recreate all your VRT NU favourites.[/B]"
 msgstr ""
 
-msgctxt "#30980"
-msgid "Login successful!"
-msgstr ""
-
 msgctxt "#30981"
 msgid "Successfully invalidated caches."
 msgstr ""
 
 msgctxt "#30982"
 msgid "Successfully refreshed favorites."
-msgstr ""
-
-msgctxt "#30983"
-msgid "Successfully verified credentials."
-msgstr ""
-
-msgctxt "#30984"
-msgid "Credentials failed, please fix and retry."
 msgstr ""
 
 msgctxt "#30985"

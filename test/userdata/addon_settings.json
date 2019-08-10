@@ -1,6 +1,7 @@
 {
-    "username": "do-not-add-username-here",
-    "password": "do-not-add-password-here",
+    "_comment": "do-not-add-username-and-password-here",
+    "username": "",
+    "password": "",
     "usefavorites": "false",
     "showpermalink": "true",
     "usemenucaching": "true",

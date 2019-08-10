@@ -307,14 +307,6 @@ msgctxt "#30805"
 msgid "Password"
 msgstr "Wachtwoord"
 
-msgctxt "#30807"
-msgid "Check credentials"
-msgstr "Controleer inloggegevens"
-
-msgctxt "#30808"
-msgid "Check if your VRT NU credentials are correct."
-msgstr "Controleer of je VRT NU inloggegevens correct zijn."
-
 msgctxt "#30820"
 msgid "Interface"
 msgstr "Interface"
@@ -518,6 +510,10 @@ msgid "Login failed!"
 msgstr "Inloggen mislukt!"
 
 msgctxt "#30952"
+msgid "Login succeeded."
+msgstr "Inloggen gelukt."
+
+msgctxt "#30953"
 msgid "Invalid email adress or password. Only VRT logins are supported, no Google or Facebook logins."
 msgstr "Ongeldig e-mailadres of wachtwoord. Alleen VRT-logins worden ondersteund, geen Google- of Facebook-logins."
 
@@ -557,6 +553,10 @@ msgctxt "#30962"
 msgid "There is a problem with this VRT NU {protocol} stream and Kodi {version} does not support the alternative stream. Please upgrade to a newer Kodi version or try to play this program from the VRT NU website. Please report this problem at https://www.vrt.be/vrtnu/help/"
 msgstr "Er is een probleem met deze VRT NU {protocol}-stream en Kodi {version} ondersteunt de alternatieve stream niet. Schakel over op een nieuwere versie van Kodi of probeer dit programma af te spelen vanaf de VRT NU-website. Meld dit probleem op https://www.vrt.be/vrtnu/help/"
 
+msgctxt "#30963"
+msgid "You need a VRT account to play this stream. Please register at https://www.vrt.be/vrtnu/"
+msgstr "Je hebt een VRT-account nodig om deze stream af te spelen. Registreer je op https://www.vrt.be/vrtnu/"
+
 msgctxt "#30965"
 msgid "Using a SOCKS proxy requires the PySocks library (script.module.pysocks) installed."
 msgstr "Het gebruik van SOCKS proxies vereist dat de PySocks library (script.module.pysocks) geïnstalleerd is."
@@ -593,10 +593,6 @@ msgctxt "#30979"
 msgid "Because of important internal changes, existing Kodi favourites and watched history from VRT NU no longer work.\n[B]Please recreate all your VRT NU favourites.[/B]"
 msgstr "Wegens belangrijke interne wijzigingen werken bestaande Kodi-favorieten en kijkgeschiedenis van VRT NU niet meer.\n[B]Gelieve al uw VRT NU-favorieten opnieuw aan te maken.[/B]"
 
-msgctxt "#30980"
-msgid "Login successful!"
-msgstr "Inloggen gelukt!"
-
 msgctxt "#30981"
 msgid "Successfully invalidated caches."
 msgstr "Caches werden ongeldig gemaakt."
@@ -604,14 +600,6 @@ msgstr "Caches werden ongeldig gemaakt."
 msgctxt "#30982"
 msgid "Successfully refreshed favorites."
 msgstr "Favoriete programmma's werden verversd."
-
-msgctxt "#30983"
-msgid "Successfully verified credentials."
-msgstr "Inloggegevens werken correct."
-
-msgctxt "#30984"
-msgid "Credentials failed, please fix and retry."
-msgstr "Inloggegevens zijn niet correct, verifieer en probeer opnieuw."
 
 msgctxt "#30985"
 msgid "Successfully cleared VRT tokens."

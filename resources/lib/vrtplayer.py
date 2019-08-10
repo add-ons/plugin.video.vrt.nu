@@ -71,15 +71,33 @@ class VRTPlayer:
                       info_dict=dict(plot=self._kodi.localize(30029))),
         ])
         self._kodi.show_listing(main_items)
+        self._version_check()
 
-        # NOTE: In the future we can implement a LooseVersion check, now we can simply check if version is empty (pre-2.0.0)
-        # from distutils.version import LooseVersion
+    def _version_check(self):
+        first_run, settings_version, addon_version = self._first_run()  # pylint: disable=unused-variable
+        if first_run:
+            if settings_version == '' and self._kodi.credentials_filled_in():  # New major version, favourites and what-was-watched will break
+                self._kodi.show_ok_dialog(self._kodi.localize(30978), self._kodi.localize(30979))
+
+    def _first_run(self):
+        '''Check if this add-on version is run for the first time'''
+
+        # Get version from settings.xml
         settings_version = self._kodi.get_setting('version', '')
-        if settings_version == '' and self._kodi.has_credentials():  # New major version, favourites and what-was-watched will break
-            self._kodi.show_ok_dialog(self._kodi.localize(30978), self._kodi.localize(30979))
+
+        # Get version from addon.xml
         addon_version = self._kodi.get_addon_info('version')
-        if settings_version != addon_version:
+
+        # Compare versions (settings_version was not present in version 1.10.0 and older)
+        settings_comp = tuple(map(int, settings_version.split('.'))) if settings_version != '' else (1, 10, 0)
+        addon_comp = tuple(map(int, addon_version.split('.')))
+
+        if addon_comp > settings_comp:
+            # New version found, save addon version to settings
             self._kodi.set_setting('version', addon_version)
+            return True, settings_version, addon_version
+
+        return False, settings_version, addon_version
 
     def show_favorites_menu(self):
         ''' The VRT NU addon 'My Programs' menu '''
