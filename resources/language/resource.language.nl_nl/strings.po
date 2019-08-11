@@ -554,10 +554,18 @@ msgid "There is a problem with this VRT NU {protocol} stream and Kodi {version} 
 msgstr "Er is een probleem met deze VRT NU {protocol}-stream en Kodi {version} ondersteunt de alternatieve stream niet. Schakel over op een nieuwere versie van Kodi of probeer dit programma af te spelen vanaf de VRT NU-website. Meld dit probleem op https://www.vrt.be/vrtnu/help/"
 
 msgctxt "#30963"
-msgid "You need a VRT account to play this stream. Please register at https://www.vrt.be/vrtnu/"
-msgstr "Je hebt een VRT-account nodig om deze stream af te spelen. Registreer je op https://www.vrt.be/vrtnu/"
+msgid "This program cannot be played. You need a VRT account to play this program. Please register at https://www.vrt.be/vrtnu/"
+msgstr "Dit programma kan niet afgespeeld worden. Je hebt een VRT-account nodig om deze stream af te spelen. Registreer je op https://www.vrt.be/vrtnu/"
+
+msgctxt "#30964"
+msgid "This program cannot be played. To view this program outside of Belgium, a Belgian mobile phone number must be linked to your VRT account at https://www.vrt.be/vrtnu/"
+msgstr "Dit programma kan niet afgespeeld worden. Om dit programma buiten België te bekijken moet er een Belgisch gsm-nummer aan je VRT-account gekoppeld zijn op https://www.vrt.be/vrtnu/"
 
 msgctxt "#30965"
+msgid "This program cannot be played. It is blocked on your geographical location based on your IP address. More info at https://www.vrt.be/vrtnu/help/country/"
+msgstr "Dit programma kan niet afgespeeld worden. Het wordt geblokkeerd op jouw geografische locatie op basis van je IP-adres. Meer info op https://www.vrt.be/vrtnu/help/country/"
+
+msgctxt "#30966"
 msgid "Using a SOCKS proxy requires the PySocks library (script.module.pysocks) installed."
 msgstr "Het gebruik van SOCKS proxies vereist dat de PySocks library (script.module.pysocks) geïnstalleerd is."
 
@@ -608,11 +616,3 @@ msgstr "VRT tokens werden verwijderd."
 msgctxt "#30986"
 msgid "No on demand stream available for {title}."
 msgstr "Geen on demand stream beschikbaar voor {title}"
-
-msgctxt "#30990"
-msgid "This program cannot be played. To view this program outside of Belgium, you first have to validate a Belgian mobile phone number on the VRT NU website."
-msgstr "Dit programma kan niet afgespeeld worden. Om dit programma buiten België te bekijken moet je eerst een Belgisch gsm-nummer valideren via de VRT NU-website."
-
-msgctxt "#30991"
-msgid "This program cannot be played. It is blocked on your geographical location based on your IP address. More info at https://www.vrt.be/vrtnu/help/country/"
-msgstr "Dit programma kan niet afgespeeld worden. Het wordt geblokkeerd op jouw geografische locatie op basis van je IP-adres. Meer info op https://www.vrt.be/vrtnu/help/country/"
