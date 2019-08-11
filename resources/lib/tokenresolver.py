@@ -151,7 +151,7 @@ class TokenResolver:
             if refresh:
                 return self._kodi.open_settings()
             self._kodi.open_settings()
-            if not self._credentials_changed() and not self._kodi.credentials_filled_in():
+            if not self._credentials_changed():
                 return None
             login_json = self._get_login_json()
 
