@@ -4,8 +4,8 @@
 ''' Implements a VRT NU TV guide '''
 
 from __future__ import absolute_import, division, unicode_literals
-from datetime import datetime, timedelta
 import json
+from datetime import datetime, timedelta
 import dateutil.parser
 import dateutil.tz
 
@@ -202,7 +202,7 @@ class TVGuide:
 
     def episode_description(self, episode):
         ''' Return a formatted description for an episode '''
-        return '{start} - {end}\n» [B]{title}[/B]'.format(**episode)
+        return '{start} - {end}\n» {title}'.format(**episode)
 
     def live_description(self, channel):
         ''' Return the EPG information for current and next live program '''
@@ -269,4 +269,5 @@ class TVGuide:
             if now.hour < 6:
                 return now
             return now + timedelta(days=1)
+
         return dateutil.parser.parse(date)

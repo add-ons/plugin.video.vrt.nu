@@ -282,19 +282,19 @@ msgid "Watch [B]{label}[/B] on YouTube"
 msgstr ""
 
 msgctxt "#30201"
-msgid "[B][COLOR red]Geo-blocked[/COLOR][/B]\n"
+msgid "[COLOR red]Geo-blocked[/COLOR]\n"
 msgstr ""
 
 msgctxt "#30202"
-msgid "[B][COLOR blue]Available until {date}[/COLOR][/B]\n"
+msgid "[COLOR blue]Available until {date}[/COLOR]\n"
 msgstr ""
 
 msgctxt "#30203"
-msgid "[B][COLOR green]({days} days left)[/COLOR][/B]\n"
+msgid "[COLOR gray]({days} days left)[/COLOR]\n"
 msgstr ""
 
 msgctxt "#30204"
-msgid "[B][COLOR green]({hours} hours left)[/COLOR][/B]\n"
+msgid "[COLOR gray]({hours} hours left)[/COLOR]\n"
 msgstr ""
 
 msgctxt "#30300"
@@ -310,7 +310,7 @@ msgid "TV guide for channel [B]{label}[/B]"
 msgstr ""
 
 msgctxt "#30303"
-msgid "[B]{label} TV guide[/B]"
+msgid "[B]{label}[/B] TV guide"
 msgstr ""
 
 msgctxt "#30330"
@@ -366,7 +366,7 @@ msgid "Next:"
 msgstr ""
 
 msgctxt "#30423"
-msgid "[B]No transmission[/B]"
+msgid "No transmission"
 msgstr ""
 
 msgctxt "#30424"

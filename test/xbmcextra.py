@@ -26,4 +26,4 @@ def uri_to_path(uri):
     ''' Shorten a plugin URI to just the path '''
     if uri is None:
         return None
-    return ' [33m-> [34m%s[0m' % uri.replace('plugin://plugin.video.vrt.nu', '')
+    return ' [33m→ [34m%s[0m' % uri.replace('plugin://plugin.video.vrt.nu', '')
