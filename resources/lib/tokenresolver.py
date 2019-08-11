@@ -288,7 +288,7 @@ class TokenResolver:
         token_dictionary = None
         if isinstance(cookie_data, cookielib.CookieJar):
             # Get token dict from cookiejar
-            token_cookie = next(cookie for cookie in cookie_data if cookie.name == cookie_name)
+            token_cookie = next((cookie for cookie in cookie_data if cookie.name == cookie_name), None)
             if token_cookie:
                 from datetime import datetime
                 token_dictionary = {
