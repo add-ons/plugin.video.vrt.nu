@@ -162,10 +162,11 @@ def featured(feature=None):
 
 
 @plugin.route('/tvguide')
+@plugin.route('/tvguide/date')
 @plugin.route('/tvguide/date/<date>')
 @plugin.route('/tvguide/date/<date>/<channel>')
 def tvguide(date=None, channel=None):
-    ''' The TV guide menu and listings '''
+    ''' The TV guide menu and listings by date '''
     from tvguide import TVGuide
     TVGuide(kodi).show_tvguide(date=date, channel=channel)
 
@@ -174,9 +175,9 @@ def tvguide(date=None, channel=None):
 @plugin.route('/tvguide/channel/<channel>')
 @plugin.route('/tvguide/channel/<channel>/<date>')
 def tvguide_channel(channel=None, date=None):
-    ''' The TV guide menu and listings '''
+    ''' The TV guide menu and listings by channel '''
     from tvguide import TVGuide
-    TVGuide(kodi).show_tvguide(channel=channel)
+    TVGuide(kodi).show_tvguide(channel=channel, date=date)
 
 
 @plugin.route('/search')

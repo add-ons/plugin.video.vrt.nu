@@ -4,7 +4,7 @@ Set-StrictMode -Version 5.0
 
 $include_files = @( 'addon.xml', 'LICENSE', 'README.md' )
 $include_paths = @( 'resources/' )
-$exclude_files = @( '*.new', '*.orig', '*.pyc' )
+$exclude_files = @( '*.new', '*.orig', '*.pyc', '*.pyo' )
 
 # Get addon metadata
 [xml]$XmlDocument = Get-Content -LiteralPath 'addon.xml'

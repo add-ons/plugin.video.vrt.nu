@@ -475,20 +475,19 @@ class ApiHelper:
                 continue
 
             context_menu = []
+            art_dict = dict()
 
             # Try to use the white icons for thumbnails (used for icons as well)
             if self._kodi.get_cond_visibility('System.HasAddon(resource.images.studios.white)') == 1:
-                thumb = 'resource://resource.images.studios.white/{studio}.png'.format(**channel)
+                art_dict['thumb'] = 'resource://resource.images.studios.white/{studio}.png'.format(**channel)
             else:
-                thumb = 'DefaultTags.png'
+                art_dict['thumb'] = 'DefaultTags.png'
 
             # Try to use the coloured icons for fanart
             if self._kodi.get_cond_visibility('System.HasAddon(resource.images.studios.coloured)') == 1:
-                fanart = 'resource://resource.images.studios.coloured/{studio}.png'.format(**channel)
+                art_dict['fanart'] = 'resource://resource.images.studios.coloured/{studio}.png'.format(**channel)
             elif self._kodi.get_cond_visibility('System.HasAddon(resource.images.studios.white)') == 1:
-                fanart = 'resource://resource.images.studios.white/{studio}.png'.format(**channel)
-            else:
-                fanart = 'DefaultTags.png'
+                art_dict['fanart'] = 'resource://resource.images.studios.white/{studio}.png'.format(**channel)
 
             if not live:
                 path = self._kodi.url_for('channels', channel=channel.get('name'))
@@ -509,7 +508,7 @@ class ApiHelper:
                 is_playable = True
                 if channel.get('name') in ['een', 'canvas', 'ketnet']:
                     if self._showfanart:
-                        fanart = self.get_live_screenshot(channel.get('name', fanart))
+                        art_dict['fanart'] = self.get_live_screenshot(channel.get('name', art_dict.get('fanart')))
                     plot = '%s\n\n%s' % (self._kodi.localize(30102, **channel), _tvguide.live_description(channel.get('name')))
                 else:
                     plot = self._kodi.localize(30102, **channel)
@@ -524,7 +523,7 @@ class ApiHelper:
             channel_items.append(TitleItem(
                 title=label,
                 path=path,
-                art_dict=dict(thumb=thumb, fanart=fanart),
+                art_dict=art_dict,
                 info_dict=info_dict,
                 stream_dict=stream_dict,
                 context_menu=context_menu,
@@ -546,20 +545,19 @@ class ApiHelper:
                 continue
 
             context_menu = []
+            art_dict = dict()
 
             # Try to use the white icons for thumbnails (used for icons as well)
             if self._kodi.get_cond_visibility('System.HasAddon(resource.images.studios.white)') == 1:
-                thumb = 'resource://resource.images.studios.white/{studio}.png'.format(**channel)
+                art_dict['thumb'] = 'resource://resource.images.studios.white/{studio}.png'.format(**channel)
             else:
-                thumb = 'DefaultTags.png'
+                art_dict['thumb'] = 'DefaultTags.png'
 
             # Try to use the coloured icons for fanart
             if self._kodi.get_cond_visibility('System.HasAddon(resource.images.studios.coloured)') == 1:
-                fanart = 'resource://resource.images.studios.coloured/{studio}.png'.format(**channel)
+                art_dict['fanart'] = 'resource://resource.images.studios.coloured/{studio}.png'.format(**channel)
             elif self._kodi.get_cond_visibility('System.HasAddon(resource.images.studios.white)') == 1:
-                fanart = 'resource://resource.images.studios.white/{studio}.png'.format(**channel)
-            else:
-                fanart = 'DefaultTags.png'
+                art_dict['fanart'] = 'resource://resource.images.studios.white/{studio}.png'.format(**channel)
 
             if channel.get('youtube'):
                 path = channel.get('youtube')
@@ -578,7 +576,7 @@ class ApiHelper:
             youtube_items.append(TitleItem(
                 title=label,
                 path=path,
-                art_dict=dict(thumb=thumb, fanart=fanart),
+                art_dict=art_dict,
                 info_dict=info_dict,
                 context_menu=context_menu,
                 is_playable=False,
@@ -596,7 +594,7 @@ class ApiHelper:
             featured_items.append(TitleItem(
                 title=featured_name,
                 path=self._kodi.url_for('featured', feature=feature.get('id')),
-                art_dict=dict(thumb='DefaultCountry.png', fanart='DefaultCountry.png'),
+                art_dict=dict(thumb='DefaultCountry.png'),
                 info_dict=dict(plot='[B]%s[/B]' % featured_name, studio='VRT'),
             ))
         return featured_items
@@ -636,7 +634,7 @@ class ApiHelper:
             category_items.append(TitleItem(
                 title=category_name,
                 path=self._kodi.url_for('categories', category=category.get('id')),
-                art_dict=dict(thumb=thumbnail, icon='DefaultGenre.png', fanart=thumbnail),
+                art_dict=dict(thumb=thumbnail, icon='DefaultGenre.png'),
                 info_dict=dict(plot='[B]%s[/B]' % category_name, studio='VRT'),
             ))
         return category_items

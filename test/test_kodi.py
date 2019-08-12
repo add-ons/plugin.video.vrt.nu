@@ -21,15 +21,12 @@ class KodiTests(unittest.TestCase):
     def test_localize(self):
         msg = self._kodi.localize(30958)
         self.assertEqual(msg, "There is a problem with this VRT NU {protocol} stream. Try again with {component} {state} or try to play this program from the VRT NU website. Please report this problem at https://www.vrt.be/vrtnu/help/")  # noqa
-        print(msg)
 
         msg = self._kodi.localize(30958, component='Widevine DRM', state='enabled')
         self.assertEqual(msg, "There is a problem with this VRT NU {protocol} stream. Try again with Widevine DRM enabled or try to play this program from the VRT NU website. Please report this problem at https://www.vrt.be/vrtnu/help/")  # noqa
-        print(msg)
 
         msg = self._kodi.localize(30958, protocol='MPEG-DASH', component='Widevine DRM', state='enabled')
         self.assertEqual(msg, "There is a problem with this VRT NU MPEG-DASH stream. Try again with Widevine DRM enabled or try to play this program from the VRT NU website. Please report this problem at https://www.vrt.be/vrtnu/help/")  # noqa
-        print(msg)
 
 
 if __name__ == '__main__':

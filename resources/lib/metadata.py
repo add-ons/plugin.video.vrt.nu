@@ -367,80 +367,50 @@ class Metadata:
 
     def get_art(self, api_data, season=False):
         ''' Get art dict from single item json api data '''
+        art_dict = dict()
 
         # VRT NU Search API
         if api_data.get('type') == 'episode':
             if season:
                 if self._showfanart:
-                    fanart = statichelper.add_https_method(api_data.get('programImageUrl', 'DefaultSets.png'))
-                    thumb = statichelper.add_https_method(api_data.get('videoThumbnailUrl', fanart)) if season != 'allseasons' else fanart
+                    art_dict['fanart'] = statichelper.add_https_method(api_data.get('programImageUrl', 'DefaultSets.png'))
+                    if season != 'allseasons':
+                        art_dict['thumb'] = statichelper.add_https_method(api_data.get('videoThumbnailUrl', art_dict.get('fanart')))
+                    else:
+                        art_dict['thumb'] = art_dict.get('fanart')
                 else:
-                    thumb = 'DefaultSets.png'
-                    fanart = 'DefaultSets.png'
+                    art_dict['thumb'] = 'DefaultSets.png'
             else:
                 if self._showfanart:
-                    thumb = statichelper.add_https_method(api_data.get('videoThumbnailUrl', 'DefaultAddonVideo.png'))
-                    fanart = statichelper.add_https_method(api_data.get('programImageUrl', thumb))
+                    art_dict['thumb'] = statichelper.add_https_method(api_data.get('videoThumbnailUrl', 'DefaultAddonVideo.png'))
+                    art_dict['fanart'] = statichelper.add_https_method(api_data.get('programImageUrl', art_dict.get('thumb')))
                 else:
-                    thumb = 'DefaultAddonVideo.png'
-                    fanart = 'DefaultAddonVideo.png'
+                    art_dict['thumb'] = 'DefaultAddonVideo.png'
 
-            art = dict(
-                thumb=thumb,
-                poster='',
-                banner=fanart,
-                fanart=fanart,
-                clearart='',
-                clearlogo='',
-                landscape='',
-                icon='DefaultAddonVideo.png'
-            )
-            return art
+            return art_dict
 
         # VRT NU Suggest API
         if api_data.get('type') == 'program':
             if self._showfanart:
-                thumb = statichelper.add_https_method(api_data.get('thumbnail', 'DefaultAddonVideo.png'))
-                fanart = thumb
+                art_dict['thumb'] = statichelper.add_https_method(api_data.get('thumbnail', 'DefaultAddonVideo.png'))
+                art_dict['fanart'] = art_dict.get('thumb')
             else:
-                thumb = 'DefaultAddonVideo.png'
-                fanart = 'DefaultAddonVideo.png'
+                art_dict['thumb'] = 'DefaultAddonVideo.png'
 
-            art = dict(
-                thumb=thumb,
-                poster='',
-                banner=fanart,
-                fanart=fanart,
-                clearart='',
-                clearlogo='',
-                landscape='',
-                icon='DefaultAddonVideo.png'
-            )
-            return art
+            return art_dict
 
         # VRT NU Schedule API
         if api_data.get('vrt.whatson-id'):
             if self._showfanart:
-                thumb = api_data.get('image', 'DefaultAddonVideo.png')
-                fanart = thumb
+                art_dict['thumb'] = api_data.get('image', 'DefaultAddonVideo.png')
+                art_dict['fanart'] = art_dict.get('thumb')
             else:
-                thumb = 'DefaultAddonVideo.png'
-                fanart = 'DefaultAddonVideo.png'
+                art_dict['thumb'] = 'DefaultAddonVideo.png'
 
-            art = dict(
-                thumb=thumb,
-                poster='',
-                banner=fanart,
-                fanart=fanart,
-                clearart='',
-                clearlogo='',
-                landscape='',
-                icon='DefaultAddonVideo.png'
-            )
-            return art
+            return art_dict
 
         # Not Found
-        return dict()
+        return art_dict
 
     def get_info_labels(self, api_data, season=False, date=None, channel=None):
         ''' Get infoLabels dict from single item json api data '''

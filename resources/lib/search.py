@@ -25,7 +25,7 @@ class Search:
             TitleItem(
                 title=self._kodi.localize(30424),  # New search...
                 path=self._kodi.url_for('search_query'),
-                art_dict=dict(thumb='DefaultAddonsSearch.png', fanart='DefaultAddonsSearch.png'),
+                art_dict=dict(thumb='DefaultAddonsSearch.png'),
                 info_dict=dict(plot=self._kodi.localize(30425)),
                 is_playable=False,
             )
@@ -41,7 +41,7 @@ class Search:
             menu_items.append(TitleItem(
                 title=keywords,
                 path=self._kodi.url_for('search_query', keywords=keywords),
-                art_dict=dict(thumb='DefaultAddonsSearch.png', fanart='DefaultAddonsSearch.png'),
+                art_dict=dict(thumb='DefaultAddonsSearch.png'),
                 is_playable=False,
                 context_menu=[(self._kodi.localize(30030), 'RunPlugin(%s)' % self._kodi.url_for('remove_search', keywords=keywords))]
             ))
@@ -51,7 +51,7 @@ class Search:
                 title=self._kodi.localize(30426),  # Clear search history
                 path=self._kodi.url_for('clear_search'),
                 info_dict=dict(plot=self._kodi.localize(30427)),
-                art_dict=dict(thumb='icons/infodialogs/uninstall.png', fanart='icons/infodialogs/uninstall.png'),
+                art_dict=dict(thumb='icons/infodialogs/uninstall.png'),
                 is_playable=False,
             ))
 
@@ -83,7 +83,7 @@ class Search:
             search_items.append(TitleItem(
                 title=self._kodi.localize(30300),
                 path=self._kodi.url_for('search_query', keywords=keywords, page=page + 1),
-                art_dict=dict(thumb='DefaultAddonSearch.png', fanart='DefaultAddonSearch.png'),
+                art_dict=dict(thumb='DefaultAddonSearch.png'),
                 info_dict=dict(),
             ))
 

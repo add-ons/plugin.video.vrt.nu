@@ -119,6 +119,7 @@ class KodiWrapper:
             self._url = self.plugin.base_url
         self._addon = Addon()
         self._addon_id = to_unicode(self._addon.getAddonInfo('id'))
+        self._addon_fanart = to_unicode(self._addon.getAddonInfo('fanart'))
         self._max_log_level = log_levels.get(self.get_setting('max_log_level', 'Debug'), 3)
         self._usemenucaching = self.get_setting('usemenucaching', 'true') == 'true'
         self._cache_path = self.get_userdata_path() + 'cache/'
@@ -193,6 +194,7 @@ class KodiWrapper:
             # list_item.setIsFolder(is_folder)
 
             if title_item.art_dict:
+                list_item.setArt(dict(fanart=self._addon_fanart))
                 list_item.setArt(title_item.art_dict)
 
             if title_item.info_dict:

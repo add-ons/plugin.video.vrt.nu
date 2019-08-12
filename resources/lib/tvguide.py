@@ -103,7 +103,7 @@ class TVGuide:
             date_items.append(TitleItem(
                 title=title,
                 path=path,
-                art_dict=dict(thumb='DefaultYear.png', fanart='DefaultYear.png'),
+                art_dict=dict(thumb='DefaultYear.png'),
                 info_dict=dict(plot=self._kodi.localize_datelong(day)),
                 context_menu=[(self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file))],
             ))
@@ -126,8 +126,19 @@ class TVGuide:
             if channel and channel != chan.get('name'):
                 continue
 
-            fanart = 'resource://resource.images.studios.coloured/%(studio)s.png' % chan
-            thumb = 'resource://resource.images.studios.white/%(studio)s.png' % chan
+            art_dict = {}
+
+            # Try to use the white icons for thumbnails (used for icons as well)
+            if self._kodi.get_cond_visibility('System.HasAddon(resource.images.studios.white)') == 1:
+                art_dict['thumb'] = 'resource://resource.images.studios.white/{studio}.png'.format(**chan)
+            else:
+                art_dict['thumb'] = 'DefaultTags.png'
+
+            # Try to use the coloured icons for fanart
+            if self._kodi.get_cond_visibility('System.HasAddon(resource.images.studios.coloured)') == 1:
+                art_dict['fanart'] = 'resource://resource.images.studios.coloured/{studio}.png'.format(**chan)
+            elif self._kodi.get_cond_visibility('System.HasAddon(resource.images.studios.white)') == 1:
+                art_dict['fanart'] = 'resource://resource.images.studios.white/{studio}.png'.format(**chan)
 
             if date:
                 title = chan.get('label')
@@ -141,7 +152,7 @@ class TVGuide:
             channel_items.append(TitleItem(
                 title=title,
                 path=path,
-                art_dict=dict(thumb=thumb, fanart=fanart),
+                art_dict=art_dict,
                 info_dict=dict(plot=plot, studio=chan.get('studio')),
             ))
         return channel_items

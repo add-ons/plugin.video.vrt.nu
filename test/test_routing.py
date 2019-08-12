@@ -98,7 +98,7 @@ class TestRouter(unittest.TestCase):
     # TV guide menu: '/tvguide/<date>/<channel>'
     def test_tvguide_date_menu(self):
         plugin.run(['plugin://plugin.video.vrt.nu/tvguide', '0', ''])
-        self.assertEqual(plugin.url_for(addon.tvguide), 'plugin://plugin.video.vrt.nu/tvguide')
+        self.assertEqual(plugin.url_for(addon.tvguide), 'plugin://plugin.video.vrt.nu/tvguide/date')
         plugin.run(['plugin://plugin.video.vrt.nu/tvguide/date/today', '0', ''])
         self.assertEqual(plugin.url_for(addon.tvguide, date='today'), 'plugin://plugin.video.vrt.nu/tvguide/date/today')
         plugin.run(['plugin://plugin.video.vrt.nu/tvguide/date/today/canvas', '0', ''])
