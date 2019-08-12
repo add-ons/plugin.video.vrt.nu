@@ -662,10 +662,18 @@ msgid "There is a problem with this VRT NU {protocol} stream and Kodi {version} 
 msgstr ""
 
 msgctxt "#30963"
-msgid "You need a VRT account to play this stream. Please register at https://www.vrt.be/vrtnu/"
+msgid "This program cannot be played. You need a VRT account to play this program. Please register at https://www.vrt.be/vrtnu/"
+msgstr ""
+
+msgctxt "#30964"
+msgid "This program cannot be played. To view this program outside of Belgium, a Belgian mobile phone number must be linked to your VRT account at https://www.vrt.be/vrtnu/"
 msgstr ""
 
 msgctxt "#30965"
+msgid "This program cannot be played. It is blocked on your geographical location based on your IP address. More info at https://www.vrt.be/vrtnu/help/country/"
+msgstr ""
+
+msgctxt "#30966"
 msgid "Using a SOCKS proxy requires the PySocks library (script.module.pysocks) installed."
 msgstr ""
 
@@ -715,12 +723,4 @@ msgstr ""
 
 msgctxt "#30986"
 msgid "No on demand stream available for {title}."
-msgstr ""
-
-msgctxt "#30990"
-msgid "This program cannot be played. To view this program outside of Belgium, you first have to validate a Belgian mobile phone number on the VRT NU website."
-msgstr ""
-
-msgctxt "#30991"
-msgid "This program cannot be played. It is blocked on your geographical location based on your IP address. More info at https://www.vrt.be/vrtnu/help/country/"
 msgstr ""

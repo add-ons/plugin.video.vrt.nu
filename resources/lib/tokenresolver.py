@@ -77,7 +77,7 @@ class TokenResolver:
                 token = self._get_new_user_xvrttoken(token_variant)
             else:
                 # Login
-                token = self.login(token_variant)
+                token = self.login(token_variant=token_variant)
         return token
 
     def _get_token_path(self, token_name, token_variant):
