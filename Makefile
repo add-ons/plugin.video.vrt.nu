@@ -11,7 +11,7 @@ git_hash = $(shell git rev-parse --short HEAD)
 zip_name = $(name)-$(version)-$(git_branch)-$(git_hash).zip
 include_files = addon.xml LICENSE README.md resources/
 include_paths = $(patsubst %,$(name)/%,$(include_files))
-exclude_files = \*.new \*.orig \*.pyc
+exclude_files = \*.new \*.orig \*.pyc \*.pyo
 zip_dir = $(name)/
 
 blue = \e[1;34m
