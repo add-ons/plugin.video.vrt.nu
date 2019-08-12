@@ -74,10 +74,15 @@ class VRTPlayer:
         self._version_check()
 
     def _version_check(self):
-        first_run, settings_version, addon_version = self._first_run()  # pylint: disable=unused-variable
+        first_run, settings_version, addon_version = self._first_run()
         if first_run:
-            if settings_version == '' and self._kodi.credentials_filled_in():  # New major version, favourites and what-was-watched will break
+            # 2.0.0 version: changed plugin:// url interface: show warning that favourites and what-was-watched will break
+            if settings_version == '' and self._kodi.credentials_filled_in():
                 self._kodi.show_ok_dialog(self._kodi.localize(30978), self._kodi.localize(30979))
+            # 2.2.0 version: changed artwork: delete old cached artwork
+            if addon_version == '2.2.0':
+                self._kodi.delete_cached_thumbnail(self._kodi.get_addon_info('fanart').replace('.png', '.jpg'))
+                self._kodi.delete_cached_thumbnail(self._kodi.get_addon_info('icon'))
 
     def _first_run(self):
         '''Check if this add-on version is run for the first time'''
