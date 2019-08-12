@@ -51,7 +51,8 @@ class Favorites:
                     favorites_json = self._kodi.get_cache('favorites.json', ttl=None)
                 else:
                     self._kodi.update_cache('favorites.json', favorites_json)
-        self._favorites = favorites_json
+        if favorites_json:
+            self._favorites = favorites_json
 
     def set_favorite(self, program, title, value=True):
         ''' Set a program as favorite, and update local copy '''
