@@ -589,15 +589,27 @@ class ApiHelper:
         from data import FEATURED
 
         featured_items = []
-        for feature in FEATURED:
-            featured_name = self._kodi.localize_from_data(feature.get('name'), FEATURED)
+        for feature in self.localize_features(FEATURED):
+            featured_name = feature.get('name')
             featured_items.append(TitleItem(
                 title=featured_name,
                 path=self._kodi.url_for('featured', feature=feature.get('id')),
                 art_dict=dict(thumb='DefaultCountry.png'),
-                info_dict=dict(plot='[B]%s[/B]' % featured_name, studio='VRT'),
+                info_dict=dict(plot='[B]%s[/B]' % feature.get('name'), studio='VRT'),
             ))
         return featured_items
+
+    def localize_features(self, FEATURED):
+        ''' Return a localized and sorted listing '''
+        from copy import deepcopy
+        features = deepcopy(FEATURED)
+
+        for feature in features:
+            for k, v in list(feature.items()):
+                if k == 'name':
+                    feature[k] = self._kodi.localize_from_data(v, FEATURED)
+
+        return sorted(features, key=lambda k: k.get('name'))
 
     def list_categories(self):
         ''' Construct a list of category ListItems '''
@@ -625,19 +637,28 @@ class ApiHelper:
             categories = CATEGORIES
 
         category_items = []
-        for category in categories:
+        for category in self.localize_categories(categories, CATEGORIES):
             if self._showfanart:
                 thumbnail = category.get('thumbnail', 'DefaultGenre.png')
             else:
                 thumbnail = 'DefaultGenre.png'
-            category_name = self._kodi.localize_from_data(category.get('name'), CATEGORIES)
             category_items.append(TitleItem(
-                title=category_name,
+                title=category.get('name'),
                 path=self._kodi.url_for('categories', category=category.get('id')),
                 art_dict=dict(thumb=thumbnail, icon='DefaultGenre.png'),
-                info_dict=dict(plot='[B]%s[/B]' % category_name, studio='VRT'),
+                info_dict=dict(plot='[B]%s[/B]' % category.get('name'), studio='VRT'),
             ))
         return category_items
+
+    def localize_categories(self, categories, CATEGORIES):
+        ''' Return a localized and sorted listing '''
+
+        for category in categories:
+            for k, v in list(category.items()):
+                if k == 'name':
+                    category[k] = self._kodi.localize_from_data(v, CATEGORIES)
+
+        return sorted(categories, key=lambda k: k.get('name'))
 
     def get_categories(self, proxies=None):
         ''' Return a list of categories by scraping the website '''

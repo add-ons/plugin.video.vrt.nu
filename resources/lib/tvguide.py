@@ -145,7 +145,7 @@ class TVGuide:
                 path = self._kodi.url_for('tvguide', date=date, channel=chan.get('name'))
                 plot = '%s\n%s' % (self._kodi.localize(30302, **chan), datelong)
             else:
-                title = self._kodi.localize(30303, **chan)
+                title = '[B]%s[/B]' % self._kodi.localize(30303, **chan)
                 path = self._kodi.url_for('tvguide_channel', channel=chan.get('name'))
                 plot = '%s\n\n%s' % (self._kodi.localize(30302, **chan), self.live_description(chan.get('name')))
 

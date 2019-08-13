@@ -214,8 +214,8 @@ msgid "TV guide for channel [B]{label}[/B]"
 msgstr "Tv-gids for kanaal [B]{label}[/B]"
 
 msgctxt "#30303"
-msgid "[B]{label}[/B] TV guide"
-msgstr "[B]{label}[/B] tv-gids"
+msgid "{label} TV guide"
+msgstr "{label} tv-gids"
 
 msgctxt "#30330"
 msgid "2 days ago"
