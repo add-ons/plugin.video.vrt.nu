@@ -81,6 +81,7 @@ v2.0.0 (2019-06-30)
             <screenshot>resources/media/screenshot01.jpg</screenshot>
             <screenshot>resources/media/screenshot02.jpg</screenshot>
             <screenshot>resources/media/screenshot03.jpg</screenshot>
+            <screenshot>resources/media/screenshot04.jpg</screenshot>
         </assets>
         <reuselanguageinvoker>true</reuselanguageinvoker>
     </extension>
