@@ -343,7 +343,7 @@ class KodiWrapper:
 
     def get_setting(self, setting_id, default=None):
         ''' Get an add-on setting '''
-        value = self._addon.getSetting(setting_id)
+        value = to_unicode(self._addon.getSetting(setting_id))
         if value == '' and default is not None:
             return default
         return value
