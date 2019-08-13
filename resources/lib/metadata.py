@@ -98,6 +98,7 @@ class Metadata:
                 plugin_url = self._kodi.url_for('programs', program=program)
             # NOTE: ActivateWindow doesn't handle urls without trailing slash right
             context_menu.append((self._kodi.localize(30417), 'ActivateWindow(Videos,%s,return)' % plugin_url))
+
         return context_menu, favorite_marker
 
     def get_tvshowtitle(self, api_data):

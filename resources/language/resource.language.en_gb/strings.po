@@ -310,7 +310,7 @@ msgid "TV guide for channel [B]{label}[/B]"
 msgstr ""
 
 msgctxt "#30303"
-msgid "[B]{label}[/B] TV guide"
+msgid "{label} TV guide"
 msgstr ""
 
 msgctxt "#30330"
