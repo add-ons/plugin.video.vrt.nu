@@ -355,18 +355,6 @@ msgctxt "#30836"
 msgid "When enabled, the video description will include a permanent link that points to this episode. This is useful for quickly opening an episode or movie on a mobile device."
 msgstr "Indien actief zal de beschrijving van iedere video een permanent link bevatten die je rechtstreeks naar de VRT NU website brengt. Dit is handig om snel een aflevering of film to openen op een mobiel toestel."
 
-msgctxt "#30837"
-msgid "Cache"
-msgstr "Cache"
-
-msgctxt "#30839"
-msgid "Enable menu caching"
-msgstr "Gebruik menu caching"
-
-msgctxt "#30841"
-msgid "Enable local HTTP caching"
-msgstr "Gebruik local HTTP caching"
-
 msgctxt "#30860"
 msgid "Playback"
 msgstr "Afspelen"
@@ -476,34 +464,42 @@ msgid "Refresh favorites"
 msgstr "Ververs favoriete programma's"
 
 msgctxt "#30907"
+msgid "Use menu caching"
+msgstr "Gebruik menu caching"
+
+msgctxt "#30909"
+msgid "Use local HTTP caching"
+msgstr "Gebruik local HTTP caching"
+
+msgctxt "#30911"
 msgid "Invalidate local HTTP caches"
 msgstr "Maak lokale HTTP caches ongeldig"
 
-msgctxt "#30909"
+msgctxt "#30913"
 msgid "Streaming"
 msgstr "Streaming"
 
-msgctxt "#30911"
+msgctxt "#30915"
 msgid "Please install or enable InputStream Adaptive to use this setting"
 msgstr "Installeer of schakel InputStream Adaptive in voor deze instelling"
 
-msgctxt "#30913"
+msgctxt "#30917"
 msgid "Use InputStream Adaptive"
 msgstr "Gebruik InputStream Adaptive"
 
-msgctxt "#30915"
+msgctxt "#30919"
 msgid "InputStream Adaptive settings..."
 msgstr "InputStream Adaptive instellingen..."
 
-msgctxt "#30917"
+msgctxt "#30921"
 msgid "Install Widevine CDM... [COLOR gray][I](for protected content)[/I][/COLOR]"
 msgstr "Installeer Widevine CDM... [COLOR gray][I](voor beveiligde video's)[/I][/COLOR]"
 
-msgctxt "#30919"
+msgctxt "#30923"
 msgid "Logging"
 msgstr "Logboek"
 
-msgctxt "#30921"
+msgctxt "#30925"
 msgid "Log level"
 msgstr "Log level"
 
