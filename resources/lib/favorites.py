@@ -24,8 +24,7 @@ class Favorites:
 
     def is_activated(self):
         ''' Is favorites activated in the menu and do we have credentials ? '''
-        from tokenresolver import TokenResolver
-        return self._kodi.get_setting('usefavorites') == 'true' and self._kodi.credentials_filled_in() and TokenResolver(self._kodi).logged_in()
+        return self._kodi.get_setting('usefavorites') == 'true' and self._kodi.credentials_filled_in()
 
     def get_favorites(self, ttl=None):
         ''' Get a cached copy or a newer favorites from VRT, or fall back to a cached file '''
