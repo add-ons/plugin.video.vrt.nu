@@ -134,12 +134,6 @@ class TVGuide:
             else:
                 art_dict['thumb'] = 'DefaultTags.png'
 
-            # Try to use the coloured icons for fanart
-            if self._kodi.get_cond_visibility('System.HasAddon(resource.images.studios.coloured)') == 1:
-                art_dict['fanart'] = 'resource://resource.images.studios.coloured/{studio}.png'.format(**chan)
-            elif self._kodi.get_cond_visibility('System.HasAddon(resource.images.studios.white)') == 1:
-                art_dict['fanart'] = 'resource://resource.images.studios.white/{studio}.png'.format(**chan)
-
             if date:
                 title = chan.get('label')
                 path = self._kodi.url_for('tvguide', date=date, channel=chan.get('name'))

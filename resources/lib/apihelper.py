@@ -483,12 +483,6 @@ class ApiHelper:
             else:
                 art_dict['thumb'] = 'DefaultTags.png'
 
-            # Try to use the coloured icons for fanart
-            if self._kodi.get_cond_visibility('System.HasAddon(resource.images.studios.coloured)') == 1:
-                art_dict['fanart'] = 'resource://resource.images.studios.coloured/{studio}.png'.format(**channel)
-            elif self._kodi.get_cond_visibility('System.HasAddon(resource.images.studios.white)') == 1:
-                art_dict['fanart'] = 'resource://resource.images.studios.white/{studio}.png'.format(**channel)
-
             if not live:
                 path = self._kodi.url_for('channels', channel=channel.get('name'))
                 label = channel.get('label')
@@ -552,12 +546,6 @@ class ApiHelper:
                 art_dict['thumb'] = 'resource://resource.images.studios.white/{studio}.png'.format(**channel)
             else:
                 art_dict['thumb'] = 'DefaultTags.png'
-
-            # Try to use the coloured icons for fanart
-            if self._kodi.get_cond_visibility('System.HasAddon(resource.images.studios.coloured)') == 1:
-                art_dict['fanart'] = 'resource://resource.images.studios.coloured/{studio}.png'.format(**channel)
-            elif self._kodi.get_cond_visibility('System.HasAddon(resource.images.studios.white)') == 1:
-                art_dict['fanart'] = 'resource://resource.images.studios.white/{studio}.png'.format(**channel)
 
             if channel.get('youtube'):
                 path = channel.get('youtube')
