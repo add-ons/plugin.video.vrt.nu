@@ -69,7 +69,7 @@ class VRTPlayer:
                       art_dict=dict(thumb='DefaultAddonsSearch.png'),
                       info_dict=dict(plot=self._kodi.localize(30029))),
         ])
-        self._kodi.show_listing(main_items)
+        self._kodi.show_listing(main_items)  # No category
         self._version_check()
 
     def _version_check(self):
@@ -140,7 +140,7 @@ class VRTPlayer:
                           info_dict=dict(plot=self._kodi.localize(30045))),
             )
 
-        self._kodi.show_listing(favorites_items)
+        self._kodi.show_listing(favorites_items, category=30010)  # My programs
 
         # Show dialog when no favorites were found
         if not self._favorites.titles():
@@ -150,24 +150,24 @@ class VRTPlayer:
         ''' The VRT NU add-on 'My documentaries' listing menu '''
         self._favorites.get_favorites(ttl=60 * 60)
         episode_items, sort, ascending, content = self._apihelper.list_episodes(category='docu', season='allseasons', programtype='oneoff')
-        self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content)
+        self._kodi.show_listing(episode_items, category=30044, sort=sort, ascending=ascending, content=content)
 
     def show_tvshow_menu(self, use_favorites=False):
         ''' The VRT NU add-on 'A-Z' listing menu '''
         # My programs menus may need more up-to-date favorites
         self._favorites.get_favorites(ttl=5 * 60 if use_favorites else 60 * 60)
         tvshow_items = self._apihelper.list_tvshows(use_favorites=use_favorites)
-        self._kodi.show_listing(tvshow_items, sort='label', content='tvshows')
+        self._kodi.show_listing(tvshow_items, category=30012, sort='label', content='tvshows')
 
     def show_category_menu(self, category=None):
         ''' The VRT NU add-on 'Categories' listing menu '''
         if category:
             self._favorites.get_favorites(ttl=60 * 60)
             tvshow_items = self._apihelper.list_tvshows(category=category)
-            self._kodi.show_listing(tvshow_items, sort='label', content='tvshows')
+            self._kodi.show_listing(tvshow_items, category=category, sort='label', content='tvshows')
         else:
             category_items = self._apihelper.list_categories()
-            self._kodi.show_listing(category_items, sort='unsorted', content='files')
+            self._kodi.show_listing(category_items, category=30014, sort='unsorted', content='files')  # Categories
 
     def show_channels_menu(self, channel=None):
         ''' The VRT NU add-on 'Channels' listing menu '''
@@ -178,31 +178,31 @@ class VRTPlayer:
             tvguide_item = TVGuide(self._kodi).get_channel_items(channel=channel)
             youtube_item = self._apihelper.list_youtube(channels=[channel])
             tvshow_items = self._apihelper.list_tvshows(channel=channel)
-            self._kodi.show_listing(livetv_item + tvguide_item + youtube_item + tvshow_items, sort='unsorted', content='tvshows')
+            self._kodi.show_listing(livetv_item + tvguide_item + youtube_item + tvshow_items, category=channel, sort='unsorted', content='tvshows')  # Channels
         else:
             channel_items = self._apihelper.list_channels(live=False)
-            self._kodi.show_listing(channel_items, cache=False)
+            self._kodi.show_listing(channel_items, category=30016, cache=False)
 
     def show_featured_menu(self, feature=None):
         ''' The VRT NU add-on 'Featured content' listing menu '''
         if feature:
             self._favorites.get_favorites(ttl=60 * 60)
             tvshow_items = self._apihelper.list_tvshows(feature=feature)
-            self._kodi.show_listing(tvshow_items, sort='label', content='tvshows')
+            self._kodi.show_listing(tvshow_items, category=feature, sort='label', content='tvshows')
         else:
             featured_items = self._apihelper.list_featured()
-            self._kodi.show_listing(featured_items, sort='label', content='files')
+            self._kodi.show_listing(featured_items, category=30024, sort='label', content='files')
 
     def show_livetv_menu(self):
         ''' The VRT NU add-on 'Live TV' listing menu '''
         channel_items = self._apihelper.list_channels()
-        self._kodi.show_listing(channel_items, cache=False)
+        self._kodi.show_listing(channel_items, category=30018, cache=False)
 
     def show_episodes_menu(self, program, season=None):
         ''' The VRT NU add-on episodes listing menu '''
         self._favorites.get_favorites(ttl=60 * 60)
         episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program, season=season)
-        self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content)
+        self._kodi.show_listing(episode_items, category=program, sort=sort, ascending=ascending, content=content)
 
     def show_recent_menu(self, page=0, use_favorites=False):
         ''' The VRT NU add-on 'Most recent' and 'My most recent' listing menu '''
@@ -226,7 +226,7 @@ class VRTPlayer:
                 info_dict=dict(),
             ))
 
-        self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content, cache=False)
+        self._kodi.show_listing(episode_items, category=30020, sort=sort, ascending=ascending, content=content, cache=False)
 
     def show_offline_menu(self, page=0, use_favorites=False):
         ''' The VRT NU add-on 'Soon offline' and 'My soon offline' listing menu '''
@@ -250,7 +250,7 @@ class VRTPlayer:
                 info_dict=dict(),
             ))
 
-        self._kodi.show_listing(episode_items, sort=sort, ascending=ascending, content=content)
+        self._kodi.show_listing(episode_items, category=30022, sort=sort, ascending=ascending, content=content)
 
     def play_latest_episode(self, program):
         ''' A hidden feature in the VRT NU add-on to play the latest episode of a program '''

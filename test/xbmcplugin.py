@@ -57,9 +57,19 @@ def endOfDirectory(handle, succeeded=True, updateListing=True, cacheToDisc=True)
     return
 
 
-def setContent(self, content):
+def setContent(handle, content):
     ''' A stub implementation of the xbmcplugin setContent() function '''
     return
+
+
+def setPluginFanart(handle, image, color1=None, color2=None, color3=None):
+    ''' A stub implementation of the xbmcplugin setCategoryt() function '''
+    return
+
+
+def setPluginCategory(handle, category):
+    ''' A reimplementation of the xbmcplugin setPluginCategory() function '''
+    print(kodi_to_ansi('[B]** %s **[/B]' % category))
 
 
 def setResolvedUrl(handle, succeeded, listitem):

@@ -101,6 +101,14 @@ msgctxt "#30030"
 msgid "Remove"
 msgstr "Verwijder"
 
+msgctxt "#30031"
+msgid "Search"
+msgstr "Zoeken"
+
+msgctxt "#30032"
+msgid "Search results"
+msgstr "Zoekresultaten"
+
 
 ### FAVORITES
 msgctxt "#30040"

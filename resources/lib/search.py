@@ -55,7 +55,7 @@ class Search:
                 is_playable=False,
             ))
 
-        self._kodi.show_listing(menu_items)
+        self._kodi.show_listing(menu_items, category=30031)
 
     def search(self, keywords=None, page=None):
         ''' The VRT NU add-on Search functionality and results '''
@@ -88,7 +88,7 @@ class Search:
             ))
 
         self._favorites.get_favorites(ttl=60 * 60)
-        self._kodi.show_listing(search_items, sort=sort, ascending=ascending, content=content, cache=False)
+        self._kodi.show_listing(search_items, category=30032, sort=sort, ascending=ascending, content=content, cache=False)
 
     def clear(self):
         ''' Clear the search history '''
