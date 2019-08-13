@@ -105,6 +105,7 @@ def favorites_refresh():
 @plugin.route('/programs')
 @plugin.route('/programs/<program>')
 @plugin.route('/programs/<program>/<season>')
+@plugin.route('/programs/<program>/<season>/')
 def programs(program=None, season=None):
     ''' The programs A-Z / seasons / episode listing '''
     from vrtplayer import VRTPlayer

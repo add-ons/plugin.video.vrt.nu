@@ -357,6 +357,10 @@ msgctxt "#30416"
 msgid "We could not find any programs that are followed.\n\nEither right-click on a program or episode to follow a program, or follow a program on the VRT NU website."
 msgstr ""
 
+msgctxt "#30417"
+msgid "Go to program"
+msgstr ""
+
 msgctxt "#30421"
 msgid "Now:"
 msgstr ""

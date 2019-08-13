@@ -88,6 +88,16 @@ class Metadata:
                         'RunPlugin(%s)' % self._kodi.url_for('follow', program=program, title=program_title)
                     ))
         context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file)))
+
+        # Go to program context menu
+        if cache_file and cache_file.startswith(('offline', 'recent')):
+            season = self.get_season(api_data)
+            if season:
+                plugin_url = self._kodi.url_for('programs', program=program, season=season)
+            else:
+                plugin_url = self._kodi.url_for('programs', program=program)
+            # NOTE: ActivateWindow doesn't handle urls without trailing slash right
+            context_menu.append((self._kodi.localize(30417), 'ActivateWindow(Videos,%s,return)' % plugin_url))
         return context_menu, favorite_marker
 
     def get_tvshowtitle(self, api_data):
@@ -238,19 +248,19 @@ class Metadata:
                 try:
                     season = int(api_data.get('seasonName'))
                 except ValueError:
-                    season = int()
+                    season = None
             return season
 
         # VRT NU Suggest API
         if api_data.get('type') == 'program':
-            return int()
+            return None
 
         # VRT NU Schedule API
         if api_data.get('vrt.whatson-id'):
-            return int()
+            return None
 
         # Not Found
-        return int()
+        return None
 
     def get_episode(self, api_data):
         ''' Get episode int from single item json api data '''
