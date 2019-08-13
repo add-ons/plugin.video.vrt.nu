@@ -54,19 +54,19 @@ class TVGuide:
 
         if not date and not channel:
             date_items = self.get_date_items()
-            self._kodi.show_listing(date_items, content='files')
+            self._kodi.show_listing(date_items, category=30026, content='files')  # TV guide
 
         elif not channel:
             channel_items = self.get_channel_items(date=date)
-            self._kodi.show_listing(channel_items)
+            self._kodi.show_listing(channel_items, category=date)
 
         elif not date:
             date_items = self.get_date_items(channel=channel)
-            self._kodi.show_listing(date_items, content='files')
+            self._kodi.show_listing(date_items, category=channel, content='files')
 
         else:
             episode_items = self.get_episode_items(date, channel)
-            self._kodi.show_listing(episode_items, content='episodes', cache=False)
+            self._kodi.show_listing(episode_items, category='%s / %s' % (channel, date), content='episodes', cache=False)
 
     def get_date_items(self, channel=None):
         ''' Offer a menu to select the TV-guide date '''

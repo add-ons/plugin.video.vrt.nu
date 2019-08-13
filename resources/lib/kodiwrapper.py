@@ -146,10 +146,12 @@ class KodiWrapper:
             self.show_notification(heading=self.localize(30971), message=self.localize(30973), icon='error', time=5000)
         self.end_of_directory()
 
-    def show_listing(self, list_items, sort='unsorted', ascending=True, content=None, cache=None):
+    def show_listing(self, list_items, category=None, sort='unsorted', ascending=True, content=None, cache=None):
         ''' Show a virtual directory in Kodi '''
         from xbmcgui import ListItem
         listing = []
+
+        xbmcplugin.setPluginFanart(handle=self._handle, image=self._addon_fanart)
 
         if cache is None:
             cache = self._usemenucaching
@@ -157,6 +159,12 @@ class KodiWrapper:
         if content:
             # content is one of: files, songs, artists, albums, movies, tvshows, episodes, musicvideos
             xbmcplugin.setContent(self._handle, content=content)
+
+        if category:
+            if isinstance(category, int):
+                xbmcplugin.setPluginCategory(handle=self._handle, category=self.localize(category))
+            else:
+                xbmcplugin.setPluginCategory(handle=self._handle, category=category)
 
         # FIXME: Since there is no way to influence descending order, we force it here
         if not ascending:
