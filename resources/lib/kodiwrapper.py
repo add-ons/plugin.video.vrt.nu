@@ -123,6 +123,7 @@ class KodiWrapper:
         self._max_log_level = log_levels.get(self.get_setting('max_log_level', 'Debug'), 3)
         self._usemenucaching = self.get_setting('usemenucaching', 'true') == 'true'
         self._cache_path = self.get_userdata_path() + 'cache/'
+        self._tokens_path = self.get_userdata_path() + 'tokens/'
         self._system_locale_works = None
 
     def url_for(self, name, *args, **kwargs):
@@ -448,6 +449,10 @@ class KodiWrapper:
     def get_userdata_path(self):
         ''' Return the profile's userdata path '''
         return xbmc.translatePath(self._addon.getAddonInfo('profile'))
+
+    def get_tokens_path(self):
+        ''' Return the userdata tokens path '''
+        return self._tokens_path
 
     def get_addon_path(self):
         ''' Return the addon path '''

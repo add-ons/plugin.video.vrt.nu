@@ -84,7 +84,7 @@ class TokenResolver:
     def _get_token_path(self, token_name, token_variant):
         ''' Create token path following predefined file naming rules '''
         prefix = token_variant + '_' if token_variant else ''
-        token_path = self._kodi.get_userdata_path() + prefix + token_name.replace('-', '') + '.tkn'
+        token_path = self._kodi.get_tokens_path() + prefix + token_name.replace('-', '') + '.tkn'
         return token_path
 
     def _get_cached_token(self, token_name, token_variant=None):
@@ -112,6 +112,10 @@ class TokenResolver:
         ''' Save token to cache'''
         token_name = list(token.keys())[0]
         path = self._get_token_path(token_name, token_variant)
+
+        if not self._kodi.check_if_path_exists(self._kodi.get_tokens_path()):
+            self._kodi.mkdir(self._kodi.get_tokens_path())
+
         with self._kodi.open_file(path, 'w') as f:
             json.dump(token, f)
 
@@ -307,8 +311,14 @@ class TokenResolver:
 
     def delete_tokens(self):
         ''' Delete all cached tokens '''
+        # Remove old tokens
+        # FIXME: Deprecate and simplify this part in a future version
         dirs, files = self._kodi.listdir(self._kodi.get_userdata_path())  # pylint: disable=unused-variable
         token_files = [item for item in files if item.endswith('.tkn')]
+        # Empty userdata/tokens/ directory
+        if self._kodi.check_if_path_exists(self._kodi.get_tokens_path()):
+            dirs, files = self._kodi.listdir(self._kodi.get_tokens_path())  # pylint: disable=unused-variable
+            token_files += ['tokens/' + item for item in files]
         if token_files:
             for item in token_files:
                 self._kodi.delete_file(self._kodi.get_userdata_path() + item)
