@@ -459,22 +459,6 @@ msgctxt "#30836"
 msgid "When enabled, the video description will include a permanent link that points to this episode. This is useful for quickly opening an episode or movie on a mobile device."
 msgstr ""
 
-msgctxt "#30837"
-msgid "Cache"
-msgstr ""
-
-msgctxt "#30839"
-msgid "Enable menu caching"
-msgstr ""
-
-msgctxt "#30840"
-msgid "When enabled, menus are being cached so they work more quickly. Only in very specific use-cases this is problematic as new episodes may not appear when they are expected."
-msgstr ""
-
-msgctxt "#30841"
-msgid "Enable local HTTP caching"
-msgstr ""
-
 msgctxt "#30860"
 msgid "Playback"
 msgstr ""
@@ -584,34 +568,46 @@ msgid "Refresh favorites"
 msgstr ""
 
 msgctxt "#30907"
-msgid "Invalidate local HTTP caches"
+msgid "Use menu caching"
+msgstr ""
+
+msgctxt "#30908"
+msgid "When enabled, menus are being cached so they work more quickly. Only in very specific use-cases this is problematic as new episodes may not appear when they are expected."
 msgstr ""
 
 msgctxt "#30909"
-msgid "Streaming"
+msgid "Use local HTTP caching"
 msgstr ""
 
 msgctxt "#30911"
-msgid "Please install or enable InputStream Adaptive to use this setting"
+msgid "Invalidate local HTTP caches"
 msgstr ""
 
 msgctxt "#30913"
-msgid "Use InputStream Adaptive"
+msgid "Streaming"
 msgstr ""
 
 msgctxt "#30915"
-msgid "InputStream Adaptive settings..."
+msgid "Please install or enable InputStream Adaptive to use this setting"
 msgstr ""
 
 msgctxt "#30917"
-msgid "Install Widevine CDM... [COLOR gray][I](for protected content)[/I][/COLOR]"
+msgid "Use InputStream Adaptive"
 msgstr ""
 
 msgctxt "#30919"
-msgid "Logging"
+msgid "InputStream Adaptive settings..."
 msgstr ""
 
 msgctxt "#30921"
+msgid "Install Widevine CDM... [COLOR gray][I](for protected content)[/I][/COLOR]"
+msgstr ""
+
+msgctxt "#30923"
+msgid "Logging"
+msgstr ""
+
+msgctxt "#30925"
 msgid "Log level"
 msgstr ""
 
