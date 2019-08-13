@@ -4,6 +4,7 @@
 
 from __future__ import absolute_import, division, unicode_literals
 import json
+from statichelper import from_unicode
 
 try:  # Python 3
     import http.cookiejar as cookielib
@@ -161,13 +162,13 @@ class TokenResolver:
     def _get_login_json(self):
         ''' Get login json '''
         payload = dict(
-            loginID=self._kodi.get_setting('username'),
-            password=self._kodi.get_setting('password'),
+            loginID=from_unicode(self._kodi.get_setting('username')),
+            password=from_unicode(self._kodi.get_setting('password')),
             sessionExpiration='-1',
             APIKey=self._API_KEY,
             targetEnv='jssdk',
         )
-        data = urlencode(payload).encode('utf8')
+        data = urlencode(payload).encode()
         self._kodi.log_notice('URL post: ' + unquote(self._LOGIN_URL), 'Verbose')
         req = Request(self._LOGIN_URL, data=data)
         login_json = json.load(urlopen(req))
@@ -183,9 +184,9 @@ class TokenResolver:
                 uid=login_json.get('UID'),
                 uidsig=login_json.get('UIDSignature'),
                 ts=login_json.get('signatureTimestamp'),
-                email=self._kodi.get_setting('username'),
+                email=from_unicode(self._kodi.get_setting('username')),
             )
-            data = json.dumps(payload).encode('utf8')
+            data = json.dumps(payload).encode()
             headers = {'Content-Type': 'application/json', 'Cookie': login_cookie}
             self._kodi.log_notice('URL post: ' + unquote(self._TOKEN_GATEWAY_URL), 'Verbose')
             req = Request(self._TOKEN_GATEWAY_URL, data=data, headers=headers)
@@ -219,7 +220,7 @@ class TokenResolver:
             client_id='vrtnu-site',
             submit='submit',
         )
-        data = urlencode(payload).encode('utf8')
+        data = urlencode(payload).encode()
         cookiejar = cookielib.CookieJar()
         opener = build_opener(HTTPCookieProcessor(cookiejar), ProxyHandler(self._proxies))
         self._kodi.log_notice('URL get: ' + unquote(self._USER_TOKEN_GATEWAY_URL), 'Verbose')
