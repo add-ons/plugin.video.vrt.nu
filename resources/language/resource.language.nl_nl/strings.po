@@ -261,6 +261,10 @@ msgctxt "#30416"
 msgid "We could not find any programs that are followed.\n\nEither right-click on a program or episode to follow a program, or follow a program on the VRT NU website."
 msgstr "We konden geen programma's vinden die je volgt.\n\nKlik met de rechtermuisknop op een programma of aflevering om een programma te volgen of volg een programma op de VRT NU-website."
 
+msgctxt "#30417"
+msgid "Go to program"
+msgstr "Ga naar programma"
+
 msgctxt "#30421"
 msgid "Nu:"
 msgstr ""
