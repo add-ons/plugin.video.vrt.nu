@@ -77,20 +77,21 @@ class Metadata:
             if follow_enabled:
                 program_title = quote_plus(statichelper.from_unicode(program_title))  # We need to ensure forward slashes are quoted
                 if self._favorites.is_favorite(program):
+                    # Unfollow context menu
                     context_menu.append((
-                        self._kodi.localize(30412) + follow_suffix,  # Unfollow
+                        self._kodi.localize(30412) + follow_suffix,
                         'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=program_title)
                     ))
                     favorite_marker = '[COLOR yellow]ᵛ[/COLOR]'
                 else:
+                    # Follow context menu
                     context_menu.append((
-                        self._kodi.localize(30411) + follow_suffix,  # Follow
+                        self._kodi.localize(30411) + follow_suffix,
                         'RunPlugin(%s)' % self._kodi.url_for('follow', program=program, title=program_title)
                     ))
-        context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file)))
 
         # Go to program context menu
-        if cache_file and cache_file.startswith(('offline', 'recent')):
+        if cache_file and cache_file.startswith(('my-offline', 'my-recent', 'offline', 'recent')):
             season = self.get_season(api_data)
             if season:
                 plugin_url = self._kodi.url_for('programs', program=program, season=season)
@@ -98,6 +99,9 @@ class Metadata:
                 plugin_url = self._kodi.url_for('programs', program=program)
             # NOTE: ActivateWindow doesn't handle urls without trailing slash right
             context_menu.append((self._kodi.localize(30417), 'ActivateWindow(Videos,%s,return)' % plugin_url))
+
+        # Refresh context menu
+        context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file)))
 
         return context_menu, favorite_marker
 
