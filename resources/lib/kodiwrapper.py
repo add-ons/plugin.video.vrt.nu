@@ -160,11 +160,17 @@ class KodiWrapper:
             # content is one of: files, songs, artists, albums, movies, tvshows, episodes, musicvideos
             xbmcplugin.setContent(self._handle, content=content)
 
+        category_label = ''
         if category:
+            if not content:
+                category_label = 'VRT NU / '
             if isinstance(category, int):
-                xbmcplugin.setPluginCategory(handle=self._handle, category=self.localize(category))
+                category_label += self.localize(category)
             else:
-                xbmcplugin.setPluginCategory(handle=self._handle, category=category)
+                category_label += category
+        elif not content:
+            category_label = 'VRT NU'
+        xbmcplugin.setPluginCategory(handle=self._handle, category=category_label)
 
         # FIXME: Since there is no way to influence descending order, we force it here
         if not ascending:
