@@ -109,7 +109,7 @@ class StreamService:
         from bs4 import BeautifulSoup, SoupStrainer
         self._kodi.log_notice('URL get: ' + unquote(video_url), 'Verbose')
         html_page = urlopen(video_url).read()
-        strainer = SoupStrainer('div', {'class': ['left', 'livestream__player']})
+        strainer = SoupStrainer(['section', 'div'], {'class': ['video-player', 'livestream__player']})
         soup = BeautifulSoup(html_page, 'html.parser', parse_only=strainer)
         try:
             video_data = soup.find(lambda tag: tag.name == 'nui-media').attrs
