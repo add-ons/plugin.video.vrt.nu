@@ -49,6 +49,11 @@ You can report issues at [our GitHub project](https://github.com/pietje666/plugi
 you can send a message to [our Facebook page](https://facebook.com/kodivrtnu/).
 
 ## Releases
+### v2.2.0 (2019-08-16)
+- Small unicode fix in service handler (@mediaminister)
+- Implement Kodi-approved thumb removal (@mediaminister)
+- Fix broken streamservice webscraper (again) (@mediaminister)
+
 ### v2.2.0 (2019-08-14)
 - Add breadcrumbs support (@dagwieers)
 - Support unicode characters in credentials (@mediaminister)
