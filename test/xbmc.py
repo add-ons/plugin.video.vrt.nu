@@ -95,7 +95,7 @@ def executeJSONRPC(jsonrpccommand):
     if command.get('method') == 'Settings.GetSettingValue':
         key = command.get('params').get('setting')
         return '{"id":1,"jsonrpc":"2.0","result":{"value":"%s"}}' % GLOBAL_SETTINGS.get(key)
-    return 'executeJSONRPC'
+    return '{"error":{"code":-1,"message":"Not implemented."},"id":1,"jsonrpc":"2.0"}'
 
 
 def getCondVisibility(s):

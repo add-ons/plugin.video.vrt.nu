@@ -527,26 +527,28 @@ class KodiWrapper:
 
     def delete_cached_thumbnail(self, url):
         ''' Remove a cached thumbnail from Kodi in an attempt to get a realtime live screenshot '''
-        crc = self.crc32(url)
-        ext = url.split('.')[-1]
-        path = 'special://thumbnails/%s/%s.%s' % (crc[0], crc, ext)
-        self.delete_file(path)
-
-    @staticmethod
-    def crc32(string):
-        ''' Return the CRC32 checksum for a given string '''
-        string = string.lower()
-        string_bytes = bytearray(string.encode())
-        crc = 0xffffffff
-        for b in string_bytes:
-            crc = crc ^ (b << 24)
-            for _ in range(8):
-                if crc & 0x80000000:
-                    crc = (crc << 1) ^ 0x04C11DB7
-                else:
-                    crc = crc << 1
-            crc = crc & 0xFFFFFFFF
-        return '%08x' % crc
+        import json
+        # Get texture
+        textures_json = json.loads(xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Textures.GetTextures", "params": \
+        {"filter": {"field": "url", "operator": "is", "value":"%s"}}, "id": 1}' % url))
+        result = textures_json.get('result')
+        if result and result.get('textures'):
+            texture_id = next((texture.get('textureid') for texture in textures_json.get('result').get('textures')), None)
+            self.log_notice('found texture_id %s for url %s in texture cache' % (texture_id, url), 'Verbose')
+            if texture_id:
+                # Remove texture
+                remove_json = json.loads(xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Textures.RemoveTexture", "params": \
+                {"textureid": %d}, "id": 1}' % texture_id))
+                result = remove_json.get('result')
+                if result and result == 'OK':
+                    self.log_notice('succesfully removed %s from texture cache' % url, 'Verbose')
+                    return True
+                error_message = remove_json.get('error').get('message')
+                if error_message:
+                    self.log_error('failed to remove %s from texture cache: %s' % (url, error_message))
+                    return False
+        self.log_error('%s not found in texture cache' % url)
+        return False
 
     def md5(self, data):
         ''' Return an MD5 checksum '''
