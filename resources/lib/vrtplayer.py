@@ -78,11 +78,11 @@ class VRTPlayer:
             # 2.0.0 version: changed plugin:// url interface: show warning that favourites and what-was-watched will break
             if settings_version == '' and self._kodi.credentials_filled_in():
                 self._kodi.show_ok_dialog(self._kodi.localize(30978), self._kodi.localize(30979))
-            if addon_version == '2.2.0':
-                # 2.2.0 version: changed artwork: delete old cached artwork
+            if addon_version == '2.2.1':
+                # 2.2.1 version: changed artwork: delete old cached artwork
                 self._kodi.delete_cached_thumbnail(self._kodi.get_addon_info('fanart').replace('.png', '.jpg'))
                 self._kodi.delete_cached_thumbnail(self._kodi.get_addon_info('icon'))
-                # 2.2.0 version: moved tokens: delete old tokens
+                # 2.2.1 version: moved tokens: delete old tokens
                 from tokenresolver import TokenResolver
                 TokenResolver(self._kodi).delete_tokens()
 
