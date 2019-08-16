@@ -8,6 +8,7 @@ from __future__ import absolute_import, division, unicode_literals
 from xbmc import Monitor
 from kodiwrapper import KodiWrapper
 from tokenresolver import TokenResolver
+from statichelper import to_unicode
 
 
 class VrtMonitor(Monitor):
@@ -23,7 +24,7 @@ class VrtMonitor(Monitor):
     def onNotification(self, sender, method, data):
         ''' Handler for notifications '''
         _kodi = KodiWrapper(None)
-        _kodi.log_notice('Got a notification: %s, %s, %s' % (sender, method, data), 'Verbose')
+        _kodi.log_notice('Got a notification: %s, %s, %s' % (sender, method, to_unicode(data)), 'Verbose')
 
     def onSettingsChanged(self):
         ''' Handler for changes to settings '''
