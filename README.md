@@ -20,7 +20,7 @@ This Kodi add-on can be used to watch all video content from VRT NU.
 
 Some video content may be geo-blocked.
 
-**The VRT NU add-on is provided 'as is' without any warranty of any kind, and is not endorsed by VRT.**
+**The VRT NU add-on is not endorsed by VRT, and is provided 'as is' without any warranty of any kind.**
 
 ## Installing
 In Kodi, simply search for `VRT`, and install the VRT NU add-on.
@@ -49,7 +49,7 @@ You can report issues at [our GitHub project](https://github.com/pietje666/plugi
 you can send a message to [our Facebook page](https://facebook.com/kodivrtnu/).
 
 ## Releases
-### v2.2.0 (2019-08-16)
+### v2.2.1 (2019-08-16)
 - Small unicode fix in service handler (@mediaminister)
 - Implement Kodi-approved thumb removal (@mediaminister)
 - Fix broken streamservice webscraper (again) (@mediaminister)

@@ -28,9 +28,9 @@ This Kodi add-on can be used to watch all video content from VRT NU.
 - Discover recently added or soon offline content
 - Browse the online TV guides or search VRT NU
 
-[B]The VRT NU add-on is provided 'as is' without any warranty of any kind, and is not endorsed by VRT.[/B]
+[B]The VRT NU add-on is not endorsed by VRT, and is provided 'as is' without any warranty of any kind.[/B]
 </description>
-        <disclaimer lang="en_GB">The VRT NU add-on is provided 'as is' without any warranty of any kind, and is not endorsed by VRT.</disclaimer>
+        <disclaimer lang="en_GB">The VRT NU add-on is not endorsed by VRT, and is provided 'as is' without any warranty of any kind.</disclaimer>
         <summary lang="nl_NL">VRT NU videos bekijken.</summary>
         <description lang="nl_NL">
 Met deze Kodi add-on kan je alle video streams van VRT NU bekijken.
@@ -41,9 +41,9 @@ Met deze Kodi add-on kan je alle video streams van VRT NU bekijken.
 - Ontdek recent toegevoegde of binnenkort offline video's
 - Doorblader de online tv-gids of doorzoek VRT NU
 
-[B]Deze VRT NU add-on wordt aangeboden 'as is', zonder enige garantie, en wordt niet ondersteund door de VRT.[/B]
+[B]Deze VRT NU add-on wordt niet ondersteund door de VRT, en wordt aangeboden 'as is', zonder enige garantie.[/B]
 </description>
-        <disclaimer lang="nl_NL">Deze VRT NU add-on wordt aangeboden 'as is', zonder enige garantie, en wordt niet ondersteund door de VRT.</disclaimer>
+        <disclaimer lang="nl_NL">Deze VRT NU add-on wordt niet ondersteund door de VRT, en wordt aangeboden 'as is', zonder enige garantie.</disclaimer>
         <language>en nl</language>
         <platform>all</platform>
         <license>GNU General Public License, v3</license>
