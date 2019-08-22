@@ -378,7 +378,7 @@ msgid "Next:"
 msgstr ""
 
 msgctxt "#30423"
-msgid "No transmission"
+msgid "Retransmissions"
 msgstr ""
 
 msgctxt "#30424"
@@ -608,14 +608,18 @@ msgid "InputStream Adaptive settings..."
 msgstr ""
 
 msgctxt "#30921"
-msgid "Install Widevine CDM... [COLOR gray][I](for protected content)[/I][/COLOR]"
+msgid "InputStream Helper settings..."
 msgstr ""
 
 msgctxt "#30923"
-msgid "Logging"
+msgid "Install Widevine CDM... [COLOR gray][I](for protected content)[/I][/COLOR]"
 msgstr ""
 
 msgctxt "#30925"
+msgid "Logging"
+msgstr ""
+
+msgctxt "#30927"
 msgid "Log level"
 msgstr ""
 
