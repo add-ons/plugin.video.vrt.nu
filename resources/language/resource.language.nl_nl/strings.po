@@ -282,8 +282,8 @@ msgid "Straks:"
 msgstr ""
 
 msgctxt "#30423"
-msgid "No transmission"
-msgstr "Geen uitzending"
+msgid "Retransmissions"
+msgstr "Herhalingslus"
 
 msgctxt "#30424"
 msgid "[B]New search...[/B]"
@@ -500,14 +500,18 @@ msgid "InputStream Adaptive settings..."
 msgstr "InputStream Adaptive instellingen..."
 
 msgctxt "#30921"
+msgid "InputStream Helper settings..."
+msgstr "InputStream Helper instellingen..."
+
+msgctxt "#30923"
 msgid "Install Widevine CDM... [COLOR gray][I](for protected content)[/I][/COLOR]"
 msgstr "Installeer Widevine CDM... [COLOR gray][I](voor beveiligde video's)[/I][/COLOR]"
 
-msgctxt "#30923"
+msgctxt "#30925"
 msgid "Logging"
 msgstr "Logboek"
 
-msgctxt "#30925"
+msgctxt "#30927"
 msgid "Log level"
 msgstr "Log level"
 
