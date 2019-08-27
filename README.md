@@ -18,15 +18,12 @@ This Kodi add-on can be used to watch all video content from VRT NU.
 - Discover recently added or soon offline content
 - Browse the online TV guides or search VRT NU
 
-Some video content may be geo-blocked.
-
-**The VRT NU add-on is not endorsed by VRT, and is provided 'as is' without any warranty of any kind.**
+> Note: The VRT NU add-on is not endorsed by VRT, and is provided 'as is' without any warranty of any kind.
 
 ## Installing
-In Kodi, simply search for `VRT`, and install the VRT NU add-on.
+In Kodi, simply search the add-ons for `VRT` and install the VRT NU video add-on.
 
-Alternatively, you can download a ZIP archive from the [GitHub releases](https://github.com/pietje666/plugin.video.vrt.nu/releases)
-and install it directly in Kodi using the **Install via Zip** option.
+> Note: Detailed information about installing and updating the VRT NU add-on is available on [our Wiki](https://github.com/pietje666/plugin.video.vrt.nu/wiki).
 
 ## Using the plugin
 The [VRT NU](https://vrt.be/vrtnu) platform requires users to sign in before gaining access to video-on-demand content.
@@ -42,11 +39,14 @@ have a VRT NU account and sign in with another method, it is easy to get a passw
 You will receive an email that allows you to set a password. Use this password to enter in the plugin when
 prompted.
 
-For more information about the VRT NU Kodi add-on, look at [our GitHub Wiki page](https://github.com/pietje666/plugin.video.vrt.nu/wiki).
+> For more information about the VRT NU Kodi add-on, look at [our GitHub Wiki page](https://github.com/pietje666/plugin.video.vrt.nu/wiki).
 
 ## Reporting issues
 You can report issues at [our GitHub project](https://github.com/pietje666/plugin.video.vrt.nu) or
-you can send a message to [our Facebook page](https://facebook.com/kodivrtnu/).
+leave a message at [our Facebook page](https://facebook.com/kodivrtnu/).
+
+## Screenshots
+![](./resources/media/screenshot04.jpg)
 
 ## Releases
 ### v2.2.1 (2019-08-16)
