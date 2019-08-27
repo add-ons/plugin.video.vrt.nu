@@ -500,12 +500,8 @@ msgid "InputStream Adaptive settings..."
 msgstr "InputStream Adaptive instellingen..."
 
 msgctxt "#30921"
-msgid "InputStream Helper settings..."
-msgstr "InputStream Helper instellingen..."
-
-msgctxt "#30923"
-msgid "Install Widevine CDM... [COLOR gray][I](for protected content)[/I][/COLOR]"
-msgstr "Installeer Widevine CDM... [COLOR gray][I](voor beveiligde video's)[/I][/COLOR]"
+msgid "InputStream Helper settings... [COLOR gray][I](for protected content)[/I][/COLOR]"
+msgstr "InputStream Helper instellingen...[COLOR gray][I](voor beveiligde video's)[/I][/COLOR]"
 
 msgctxt "#30925"
 msgid "Logging"
@@ -580,22 +576,6 @@ msgstr "Dit programma kan niet afgespeeld worden. Het wordt geblokkeerd op jouw 
 msgctxt "#30966"
 msgid "Using a SOCKS proxy requires the PySocks library (script.module.pysocks) installed."
 msgstr "Het gebruik van SOCKS proxies vereist dat de PySocks library (script.module.pysocks) geïnstalleerd is."
-
-msgctxt "#30971"
-msgid "Install Widevine using 'InputStream Helper' add-on"
-msgstr "Installeer Widevine met de 'InputStream Helper' add-on"
-
-msgctxt "#30972"
-msgid "Installing Widevine libraries using the 'InputStream Helper' add-on is done at your own risk and the VRT NU add-on is not responsible for any results. Nor is it guaranteed that Widevine will be (re)installed correctly."
-msgstr "Het installeren van de Widevine bestanden met de 'InputStream Helper' add-on is op eigen risico en de VRT NU add-on is niet verantwoordelijk voor enig resultaat. Ook wordt het niet gegarandeerd dat Widevine succesvol kan worden geinstalleerd."
-
-msgctxt "#30973"
-msgid "Installation of Widevine failed!"
-msgstr "Widevine installatie mislukt!"
-
-msgctxt "#30974"
-msgid "Installation of Widevine completed!"
-msgstr "Widevine installatie gelukt"
 
 msgctxt "#30975"
 msgid "Failed to get favorites token from VRT NU"

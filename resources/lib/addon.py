@@ -38,12 +38,6 @@ def delete_tokens():
     TokenResolver(kodi).delete_tokens()
 
 
-@plugin.route('/widevine/install')
-def install_widevine():
-    ''' The API interface to install Widevine '''
-    kodi.install_widevine()
-
-
 @plugin.route('/follow/<program>/<title>')
 def follow(program, title):
     ''' The API interface to follow a program used by the context menu '''
