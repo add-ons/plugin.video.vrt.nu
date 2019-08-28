@@ -6,6 +6,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import sys
+import os
 import json
 import time
 import polib
@@ -30,7 +31,7 @@ REGIONS = {
 try:
     with open('test/userdata/global_settings.json') as f:
         GLOBAL_SETTINGS = json.load(f)
-except Exception as e:
+except OSError as e:
     print("Error using 'test/userdata/global_settings.json' : %s" % e, file=sys.stderr)
     GLOBAL_SETTINGS = {
         'locale.language': 'resource.language.en_gb',
@@ -84,7 +85,7 @@ class Player:
         return
 
 
-def executebuiltin(s):
+def executebuiltin(string, wait=False):  # pylint: disable=unused-argument
     ''' A stub implementation of the xbmc executebuiltin() function '''
     return
 
@@ -98,9 +99,11 @@ def executeJSONRPC(jsonrpccommand):
     return '{"error":{"code":-1,"message":"Not implemented."},"id":1,"jsonrpc":"2.0"}'
 
 
-def getCondVisibility(s):
+def getCondVisibility(string):  # pylint: disable=unused-argument
     ''' A reimplementation of the xbmc getCondVisibility() function '''
-    return 1
+    if string == 'system.platform.android':
+        return False
+    return True
 
 
 def getInfoLabel(key):
@@ -121,6 +124,11 @@ def getRegion(key):
     return REGIONS.get(key)
 
 
+def log(msg, level):
+    ''' A reimplementation of the xbmc log() function '''
+    print('[32;1m%s: [32;0m%s[0m' % (level, msg))
+
+
 def setContent(self, content):
     ''' A stub implementation of the xbmc setContent() function '''
     return
@@ -133,9 +141,10 @@ def sleep(seconds):
 
 def translatePath(path):
     ''' A stub implementation of the xbmc translatePath() function '''
+    if path.startswith('special://home'):
+        return path.replace('special://home', os.path.join(os.getcwd(), 'test/'))
+    if path.startswith('special://profile'):
+        return path.replace('special://profile', os.path.join(os.getcwd(), 'test/usedata/'))
+    if path.startswith('special://userdata'):
+        return path.replace('special://userdata', os.path.join(os.getcwd(), 'test/userdata/'))
     return path
-
-
-def log(msg, level):
-    ''' A reimplementation of the xbmc log() function '''
-    print('[32;1m%s: [32;0m%s[0m' % (level, msg))
