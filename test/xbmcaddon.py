@@ -15,7 +15,7 @@ PO = polib.pofile('resources/language/resource.language.en_gb/strings.po')
 try:
     with open('test/userdata/addon_settings.json') as f:
         ADDON_SETTINGS = json.load(f)
-except Exception as e:
+except OSError as e:
     print("Error using 'test/userdata/addon_settings.json': %s" % e, file=sys.stderr)
     ADDON_SETTINGS = {}
 
@@ -23,7 +23,7 @@ except Exception as e:
 try:
     with open('test/userdata/credentials.json') as f:
         ADDON_SETTINGS.update(json.load(f))
-except Exception as e:
+except (IOError, OSError) as e:
     print("Error using 'test/userdata/credentials.json': %s" % e, file=sys.stderr)
 
 
@@ -31,7 +31,7 @@ def __read_addon_xml(path):
     ''' Parse the addon.xml and return an info dictionary '''
     info = dict(
         path='./',  # '/storage/.kodi/addons/plugin.video.vrt.nu',
-        profile='./test/userdata/',  # 'special://profile/addon_data/plugin.video.vrt.nu/',
+        profile='special://userdata',  # 'special://profile/addon_data/plugin.video.vrt.nu/',
         type='xbmc.python.pluginsource',
     )
 
@@ -56,23 +56,24 @@ def __read_addon_xml(path):
             # Add metadata
             info[grandchild.tag] = grandchild.text
 
-    return info
+    return {info['name']: info}
 
 
 ADDON_INFO = __read_addon_xml('addon.xml')
+ADDON_ID = list(ADDON_INFO)[0]
 
 
 class Addon:
     ''' A reimplementation of the xbmcaddon Addon class '''
 
-    @staticmethod
-    def __init__():
+    def __init__(self, id=ADDON_ID):  # pylint: disable=redefined-builtin
         ''' A stub constructor for the xbmcaddon Addon class '''
+        self.id = id
 
-    @staticmethod
-    def getAddonInfo(key):
+    def getAddonInfo(self, key):
         ''' A working implementation for the xbmcaddon Addon class getAddonInfo() method '''
-        return ADDON_INFO.get(key)
+        STUB_INFO = dict(id=self.id, name=self.id, version='1.2.3', type='kodi.inputstream', profile='special://userdata')
+        return ADDON_INFO.get(self.id, STUB_INFO).get(key)
 
     @staticmethod
     def getLocalizedString(msgctxt):
@@ -82,15 +83,19 @@ class Addon:
                 return entry.msgstr or entry.msgid
         return 'vrttest'
 
-    @staticmethod
-    def getSetting(key):
+    def getSetting(self, key):
         ''' A working implementation for the xbmcaddon Addon class getSetting() method '''
-        return ADDON_SETTINGS.get(key, '')
+        return ADDON_SETTINGS.get(self.id, ADDON_SETTINGS).get(key, '')
 
     @staticmethod
     def openSettings():
         ''' A stub implementation for the xbmcaddon Addon class openSettings() method '''
 
-    @staticmethod
-    def setSetting(key, value):
+    def setSetting(self, key, value):
         ''' A stub implementation for the xbmcaddon Addon class setSetting() method '''
+        if self.id in ADDON_SETTINGS:
+            ADDON_SETTINGS[self.id][key] = value
+        else:
+            ADDON_SETTINGS[key] = value
+        with open('test/userdata/addon_settings.json', 'w') as fd:
+            json.dump(ADDON_SETTINGS, fd, sort_keys=True, indent=4)

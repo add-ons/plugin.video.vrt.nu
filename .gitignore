@@ -84,4 +84,3 @@ test/userdata/cache/
 test/userdata/credentials.json
 test/userdata/search_history.json
 test/userdata/tokens/
-test/userdata/*.tkn
