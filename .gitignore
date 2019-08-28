@@ -80,6 +80,7 @@ msbuild.wrn
 *.zip
 
 # Credentials
+test/userdata/addon_settings.json
 test/userdata/cache/
 test/userdata/credentials.json
 test/userdata/search_history.json
