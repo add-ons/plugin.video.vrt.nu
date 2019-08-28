@@ -60,7 +60,7 @@ def unfollow(program, title):
 
 @plugin.route('/favorites')
 def favorites_menu():
-    ''' The favorites My program menu '''
+    ''' The My favorites menu '''
     from vrtplayer import VRTPlayer
     VRTPlayer(kodi).show_favorites_menu()
 
