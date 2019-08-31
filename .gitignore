@@ -79,6 +79,10 @@ msbuild.wrn
 # Packages
 *.zip
 
+# Logs
+kodi-addon-checker-report.log
+kodi-addon-checker.log
+
 # Credentials
 test/userdata/addon_settings.json
 test/userdata/cache/
