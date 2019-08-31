@@ -50,6 +50,10 @@ leave a message at [our Facebook page](https://facebook.com/kodivrtnu/).
 ![](./resources/media/screenshot04.jpg)
 
 ## Releases
+### v2.2.2 (2019-09-01)
+- "Go to program" will now got to "All seasons" listing (@dagwieers)
+- Rename "My programs" to "My favorites" (@dagwieers)
+
 ### v2.2.1 (2019-08-16)
 - Small unicode fix in service handler (@mediaminister)
 - Implement Kodi-approved thumb removal (@mediaminister)

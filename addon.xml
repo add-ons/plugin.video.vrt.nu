@@ -48,6 +48,10 @@ Met deze Kodi add-on kan je alle video streams van VRT NU bekijken.
         <platform>all</platform>
         <license>GNU General Public License, v3</license>
         <news>
+v2.2.2 (2019-09-01)
+- "Go to program" will now got to "All seasons" listing (@dagwieers)
+- Rename "My programs" to "My favorites" (@dagwieers)
+
 v2.2.1 (2019-08-16)
 - Small unicode fix
 - Implement Kodi-approved thumb removal
@@ -75,19 +79,6 @@ v2.1.0 (2019-07-11)
 - Add YouTube channel support
 - Add Radio 1 live stream
 - Improve credential input
-
-v2.0.0 (2019-06-30)
-- Changes to API calls, THIS BREAKS EXISTING FAVOURITES AND WATCHED ITEMS
-- Added "Featured content" menu, with e.g. "Complete season" or "Last chance"
-- Added "My movies" and "My documentaries" menus
-- Added "Refresh" to context menu to refresh without cache
-- New API call to play latest episode of a program, i.e. home automation
-- Added Live TV entry at the top of channel-menu, convenient for favourites
-- Mix one-off programs with multi-episode programs
-- Indicate followed programs using the °-symbol
-- Improvements to the add-on settings and error messages
-- Store previous search queries
-- Small performance/efficiency improvements
         </news>
         <source>https://github.com/pietje666/plugin.video.vrt.nu</source>
         <website>https://github.com/pietje666/plugin.video.vrt.nu/wiki</website>
