@@ -5,6 +5,7 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 from datetime import datetime, timedelta
+import os
 import unittest
 import dateutil.tz
 
@@ -29,6 +30,7 @@ now = datetime.now(dateutil.tz.tzlocal())
 yesterday = now + timedelta(days=-1)
 
 
+@unittest.skipIf(os.environ.get('TRAVIS') == 'true', 'Skipping this test on Travis CI.')
 class StreamServiceTests(unittest.TestCase):
 
     _tokenresolver = TokenResolver(kodi)

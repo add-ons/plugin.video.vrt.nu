@@ -8,6 +8,7 @@ python:
 sudo: false
 
 env:
+  CODECOV_TOKEN: 828d7a36-56bb-4e9b-97aa-d9cc6736b7ad
   PYTHONPATH: resources/lib:test
 
 install:
@@ -19,11 +20,8 @@ script:
 - pylint resources/lib/ test/
 #- kodi-addon-checker . --branch=krypton
 #- kodi-addon-checker . --branch=leia
-- python test/test_apihelper.py
-- python test/test_routing.py
-- python test/test_search.py
-- python test/test_tvguide.py
-- python test/test_vrtplayer.py
-#- python test/test_favorites.py
-#- python test/test_streamservice.py
-- python test/run.py /
+- coverage run test/run.py /
+- coverage run -m unittest discover
+
+after_success:
+- codecov

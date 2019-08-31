@@ -1,4 +1,5 @@
 bs4
+codecov
 kodi-addon-checker
 polib
 python-dateutil
