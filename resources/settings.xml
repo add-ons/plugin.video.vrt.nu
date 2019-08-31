@@ -51,6 +51,7 @@
         <setting label="30917" help="30918" type="bool" id="useinputstreamadaptive" default="true" visible="System.HasAddon(inputstream.adaptive)"/>
         <setting label="30919" help="30920" type="action" id="adaptive_settings" option="close" action="Addon.OpenSettings(inputstream.adaptive)" visible="System.HasAddon(inputstream.adaptive) + [String.StartsWith(System.BuildVersion,18) | String.StartsWith(System.BuildVersion,19)]" enable="eq(-1,true)" subsetting="true"/>
         <setting label="30921" help="30922" type="action" id="ishelper_install" option="close" action="Addon.OpenSettings(script.module.inputstreamhelper)" enable="eq(-2,true)" subsetting="true"/>
+        <setting label="30923" help="30924" type="action" id="widevine_install" option="close" action="RunPlugin(plugin://plugin.video.vrt.nu/widevine/install)" visible="System.HasAddon(inputstream.adaptive) + [String.StartsWith(System.BuildVersion,18) | String.StartsWith(System.BuildVersion,19)]" enable="eq(-3,true)" subsetting="true"/>
         <setting label="30925" type="lsep"/> <!-- Logging -->
         <setting label="30927" help="30928" type="select" id="max_log_level" values="Quiet|Info|Verbose|Debug" default="Info"/>
     </category>
