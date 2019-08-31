@@ -5,6 +5,7 @@
 # pylint: disable=missing-docstring
 
 from __future__ import absolute_import, division, print_function, unicode_literals
+import os
 import unittest
 from addon import kodi
 from apihelper import ApiHelper
@@ -19,6 +20,7 @@ xbmcvfs = __import__('xbmcvfs')
 xbmcaddon.ADDON_SETTINGS['usefavorites'] = 'true'
 
 
+@unittest.skipIf(os.environ.get('TRAVIS') == 'true', 'Skipping this test on Travis CI.')
 class TestFavorites(unittest.TestCase):
 
     _favorites = Favorites(kodi)
