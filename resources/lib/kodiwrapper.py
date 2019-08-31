@@ -130,6 +130,22 @@ class KodiWrapper:
         ''' Wrapper for routing.url_for() to lookup by name '''
         return self.plugin.url_for(self.addon[name], *args, **kwargs)
 
+    def install_widevine(self):
+        ''' Install Widevine using inputstreamhelper '''
+        ok = self.show_yesno_dialog(heading=self.localize(30971), message=self.localize(30972))
+        if not ok:
+            return
+        try:
+            from inputstreamhelper import Helper
+            is_helper = Helper('mpd', drm='com.widevine.alpha')
+            if is_helper.check_inputstream():
+                self.show_notification(heading=self.localize(30971), message=self.localize(30974), icon='info', time=5000)
+            else:
+                self.show_notification(heading=self.localize(30971), message=self.localize(30973), icon='error', time=5000)
+        except Exception:
+            self.show_notification(heading=self.localize(30971), message=self.localize(30973), icon='error', time=5000)
+        self.end_of_directory()
+
     def show_listing(self, list_items, category=None, sort='unsorted', ascending=True, content=None, cache=None):
         ''' Show a virtual directory in Kodi '''
         from xbmcgui import ListItem
