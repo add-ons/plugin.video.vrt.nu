@@ -608,11 +608,7 @@ msgid "InputStream Adaptive settings..."
 msgstr ""
 
 msgctxt "#30921"
-msgid "InputStream Helper settings..."
-msgstr ""
-
-msgctxt "#30923"
-msgid "Install Widevine CDM... [COLOR gray][I](for protected content)[/I][/COLOR]"
+msgid "InputStream Helper settings... [COLOR gray][I](for protected content)[/I][/COLOR]"
 msgstr ""
 
 msgctxt "#30925"
@@ -687,22 +683,6 @@ msgstr ""
 
 msgctxt "#30966"
 msgid "Using a SOCKS proxy requires the PySocks library (script.module.pysocks) installed."
-msgstr ""
-
-msgctxt "#30971"
-msgid "Install Widevine using 'InputStream Helper' add-on"
-msgstr ""
-
-msgctxt "#30972"
-msgid "Installing Widevine libraries using the 'InputStream Helper' add-on is done at your own risk and the VRT NU add-on is not responsible for any results. Nor is it guaranteed that Widevine will be (re)installed correctly."
-msgstr ""
-
-msgctxt "#30973"
-msgid "Installation of Widevine failed!"
-msgstr ""
-
-msgctxt "#30974"
-msgid "Installation of Widevine completed!"
 msgstr ""
 
 msgctxt "#30975"
