@@ -282,8 +282,8 @@ msgid "Straks:"
 msgstr ""
 
 msgctxt "#30423"
-msgid "No transmission"
-msgstr "Geen uitzending"
+msgid "Retransmissions"
+msgstr "Herhalingslus"
 
 msgctxt "#30424"
 msgid "[B]New search...[/B]"
