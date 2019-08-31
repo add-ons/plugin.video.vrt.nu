@@ -378,7 +378,7 @@ msgid "Next:"
 msgstr ""
 
 msgctxt "#30423"
-msgid "No transmission"
+msgid "Retransmissions"
 msgstr ""
 
 msgctxt "#30424"
