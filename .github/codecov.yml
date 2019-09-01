@@ -1,3 +1,7 @@
+coverage:
+  range: 50..100
+  round: up
+  precision: 1
 comment: off
 ignore:
 - test/
