@@ -20,7 +20,7 @@ xbmcvfs = __import__('xbmcvfs')
 xbmcaddon.ADDON_SETTINGS['usefavorites'] = 'true'
 
 
-@unittest.skipIf(os.environ.get('TRAVIS') == 'true', 'Skipping this test on Travis CI.')
+@unittest.skipIf(not os.environ.get('VRTNU_USERNAME') or not os.environ.get('VRTNU_PASSWORD'), 'Skipping this test on Travis CI, lacking environment.')
 class TestFavorites(unittest.TestCase):
 
     _favorites = Favorites(kodi)
