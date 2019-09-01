@@ -58,8 +58,8 @@ class TestRouter(unittest.TestCase):
     def test_categories_tvshow_menu(self):
         plugin.run(['plugin://plugin.video.vrt.nu/categories/docu', '0', ''])
         self.assertEqual(plugin.url_for(addon.categories, category='docu'), 'plugin://plugin.video.vrt.nu/categories/docu')
-        plugin.run(['plugin://plugin.video.vrt.nu/categories/kinderen', '0', ''])
-        self.assertEqual(plugin.url_for(addon.categories, category='kinderen'), 'plugin://plugin.video.vrt.nu/categories/kinderen')
+        plugin.run(['plugin://plugin.video.vrt.nu/categories/voor-kinderen', '0', ''])
+        self.assertEqual(plugin.url_for(addon.categories, category='voor-kinderen'), 'plugin://plugin.video.vrt.nu/categories/voor-kinderen')
 
     # Featured menu: '/featured'
     def test_featured_menu(self):

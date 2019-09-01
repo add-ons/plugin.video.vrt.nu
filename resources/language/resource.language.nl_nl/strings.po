@@ -151,6 +151,103 @@ msgctxt "#30049"
 msgid "My episodes that will soon be offline"
 msgstr "Mijn afleveringen die binnenkort verdwijnen"
 
+### CATEGORIES
+msgctxt "#30070"
+msgid "Audio description"
+msgstr "Audiodescriptie"
+
+msgctxt "#30071"
+msgid "Culture"
+msgstr "Cultuur"
+
+msgctxt "#30072"
+msgid "Documentary"
+msgstr "Docu"
+
+msgctxt "#30073"
+msgid "Entertainment"
+msgstr "Entertainment"
+
+msgctxt "#30074"
+msgid "Films"
+msgstr "Films"
+
+msgctxt "#30075"
+msgid "Human interest"
+msgstr "Human interest"
+
+msgctxt "#30076"
+msgid "Comedy"
+msgstr "Humor"
+
+msgctxt "#30077"
+msgid "Children"
+msgstr "Kinderen"
+
+msgctxt "#30078"
+msgid "Cooking"
+msgstr "Koken"
+
+msgctxt "#30079"
+msgid "Lifestyle"
+msgstr "Lifestyle"
+
+msgctxt "#30080"
+msgid "Music"
+msgstr "Muziek"
+
+msgctxt "#30081"
+msgid "News and current affairs"
+msgstr "Nieuws en actua"
+
+msgctxt "#30082"
+msgid "Series"
+msgstr "Series"
+
+msgctxt "#30083"
+msgid "Sports"
+msgstr "Sport"
+
+msgctxt "#30084"
+msgid "Talk shows"
+msgstr "Talkshows"
+
+msgctxt "#30085"
+msgid "Flemish Sign Language"
+msgstr "Vlaamse Gebarentaal"
+
+msgctxt "#30086"
+msgid "Science and nature"
+msgstr "Wetenschap en natuur"
+
+### FEATURED
+msgctxt "#30087"
+msgid "Online exclusive"
+msgstr "Exclusief online"
+
+msgctxt "#30088"
+msgid "Last episode"
+msgstr "Laatste aflevering"
+
+msgctxt "#30089"
+msgid "Last chance"
+msgstr "Laatste kans"
+
+msgctxt "#30090"
+msgid "New"
+msgstr "Nieuw"
+
+msgctxt "#30091"
+msgid "Full season"
+msgstr "Volledig seizoen"
+
+msgctxt "#30092"
+msgid "Complete series"
+msgstr "Volledige reeks"
+
+msgctxt "#30093"
+msgid "Short film"
+msgstr "Kortfilm"
 
 ### APPLICATION
 msgctxt "#30094"

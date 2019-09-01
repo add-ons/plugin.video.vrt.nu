@@ -354,7 +354,7 @@ class KodiWrapper:
         # Return if Kodi language is Dutch
         if self.get_global_setting('locale.language') == 'resource.language.nl_nl':
             return name
-        return next((self.localize(int(item.get('msgctxt'))) for item in data if item.get('name') == name), name)
+        return next((self.localize(item.get('msgctxt')) for item in data if item.get('name') == name), name)
 
     def get_setting(self, setting_id, default=None):
         ''' Get an add-on setting '''

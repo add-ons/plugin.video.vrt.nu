@@ -14,24 +14,10 @@ try:  # Python 3
 except ImportError:  # Python 2
     from urllib2 import build_opener, install_opener, ProxyHandler, urlopen
 
-from data import CHANNELS
+from data import CHANNELS, RELATIVE_DATES
 from favorites import Favorites
 from helperobjects import TitleItem
 from metadata import Metadata
-
-DATE_STRINGS = {
-    '-2': 30330,  # 2 days ago
-    '-1': 30331,  # Yesterday
-    '0': 30332,  # Today
-    '1': 30333,  # Tomorrow
-    '2': 30334,  # In 2 days
-}
-
-DATES = {
-    '-1': 'yesterday',
-    '0': 'today',
-    '1': 'tomorrow',
-}
 
 
 class TVGuide:
@@ -58,15 +44,25 @@ class TVGuide:
 
         elif not channel:
             channel_items = self.get_channel_items(date=date)
-            self._kodi.show_listing(channel_items, category=date)
+            try:
+                date_name = self._kodi.localize(next(reldate for reldate in RELATIVE_DATES if reldate.get('id') == date).get('msgctxt'))
+            except StopIteration:
+                date_name = date
+            self._kodi.show_listing(channel_items, category=date_name)
 
         elif not date:
             date_items = self.get_date_items(channel=channel)
-            self._kodi.show_listing(date_items, category=channel, content='files')
+            category_channel = next(ch for ch in CHANNELS if ch.get('name') == channel).get('label')
+            self._kodi.show_listing(date_items, category=category_channel, content='files')
 
         else:
             episode_items = self.get_episode_items(date, channel)
-            self._kodi.show_listing(episode_items, category='%s / %s' % (channel, date), content='episodes', cache=False)
+            category_channel = next(ch for ch in CHANNELS if ch.get('name') == channel).get('label')
+            try:
+                date_name = self._kodi.localize(next(reldate for reldate in RELATIVE_DATES if reldate.get('id') == date).get('msgctxt'))
+            except StopIteration:
+                date_name = date
+            self._kodi.show_listing(episode_items, category='%s / %s' % (category_channel, date_name), content='episodes', cache=False)
 
     def get_date_items(self, channel=None):
         ''' Offer a menu to select the TV-guide date '''
@@ -76,22 +72,23 @@ class TVGuide:
         if epg.hour < 6:
             epg += timedelta(days=-1)
         date_items = []
-        for i in range(7, -30, -1):
-            day = epg + timedelta(days=i)
+        for offset in range(7, -30, -1):
+            day = epg + timedelta(days=offset)
             title = self._kodi.localize_datelong(day)
+            date = day.strftime('%Y-%m-%d')
 
             # Highlight today with context of 2 days
-            if str(i) in DATE_STRINGS:
-                if i == 0:
-                    title = '[COLOR yellow][B]%s[/B], %s[/COLOR]' % (self._kodi.localize(DATE_STRINGS[str(i)]), title)
+            try:
+                reldate = next(reldate for reldate in RELATIVE_DATES if reldate.get('offset') == offset)
+                date_name = self._kodi.localize(reldate.get('msgctxt'))
+                if reldate.get('permalink'):
+                    date = reldate.get('id')
+                if offset == 0:
+                    title = '[COLOR yellow][B]{name}[/B], {date}[/COLOR]'.format(name=date_name, date=title)
                 else:
-                    title = '[B]%s[/B], %s' % (self._kodi.localize(DATE_STRINGS[str(i)]), title)
-
-            # Make permalinks for today, yesterday and tomorrow
-            if str(i) in DATES:
-                date = DATES[str(i)]
-            else:
-                date = day.strftime('%Y-%m-%d')
+                    title = '[B]{name}[/B], {date}'.format(name=date_name, date=title)
+            except StopIteration:
+                date_name = date
 
             # Show channel list or channel episodes
             if channel:
@@ -262,17 +259,10 @@ class TVGuide:
             This supports 'today', 'yesterday' and 'tomorrow'
             It also compensates for TV-guides covering from 6AM to 6AM
         '''
-        if date == 'today':
+        try:
+            offset = next(reldate for reldate in RELATIVE_DATES if reldate.get('id') == date).get('offset')
             if now.hour < 6:
-                return now + timedelta(days=-1)
-            return now
-        if date == 'yesterday':
-            if now.hour < 6:
-                return now + timedelta(days=-2)
-            return now + timedelta(days=-1)
-        if date == 'tomorrow':
-            if now.hour < 6:
-                return now
-            return now + timedelta(days=1)
-
-        return dateutil.parser.parse(date)
+                return now + timedelta(days=offset - 1)
+            return now + timedelta(days=offset)
+        except StopIteration:
+            return dateutil.parser.parse(date)

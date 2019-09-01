@@ -73,6 +73,7 @@ msbuild.wrn
 # Test caches
 *.pyc
 *.pyo
+.coverage
 .pytest_cache/
 .tox/
 

@@ -164,7 +164,9 @@ class VRTPlayer:
         if category:
             self._favorites.get_favorites(ttl=60 * 60)
             tvshow_items = self._apihelper.list_tvshows(category=category)
-            self._kodi.show_listing(tvshow_items, category=category, sort='label', content='tvshows')
+            from data import CATEGORIES
+            category_name = self._kodi.localize(next(cat for cat in CATEGORIES if cat['id'] == category)['msgctxt'])
+            self._kodi.show_listing(tvshow_items, category=category_name, sort='label', content='tvshows')
         else:
             category_items = self._apihelper.list_categories()
             self._kodi.show_listing(category_items, category=30014, sort='unsorted', content='files')  # Categories
@@ -174,11 +176,13 @@ class VRTPlayer:
         if channel:
             from tvguide import TVGuide
             self._favorites.get_favorites(ttl=60 * 60)
-            livetv_item = self._apihelper.list_channels(channels=[channel])
-            tvguide_item = TVGuide(self._kodi).get_channel_items(channel=channel)
-            youtube_item = self._apihelper.list_youtube(channels=[channel])
-            tvshow_items = self._apihelper.list_tvshows(channel=channel)
-            self._kodi.show_listing(livetv_item + tvguide_item + youtube_item + tvshow_items, category=channel, sort='unsorted', content='tvshows')  # Channels
+            channel_items = self._apihelper.list_channels(channels=[channel])  # Live TV
+            channel_items.extend(TVGuide(self._kodi).get_channel_items(channel=channel))  # TV guide
+            channel_items.extend(self._apihelper.list_youtube(channels=[channel]))  # YouTube
+            channel_items.extend(self._apihelper.list_tvshows(channel=channel))  # TV shows
+            from data import CHANNELS
+            channel_name = next(ch for ch in CHANNELS if ch['name'] == channel)['label']
+            self._kodi.show_listing(channel_items, category=channel_name, sort='unsorted', content='tvshows')  # Channel
         else:
             channel_items = self._apihelper.list_channels(live=False)
             self._kodi.show_listing(channel_items, category=30016, cache=False)
@@ -188,7 +192,9 @@ class VRTPlayer:
         if feature:
             self._favorites.get_favorites(ttl=60 * 60)
             tvshow_items = self._apihelper.list_tvshows(feature=feature)
-            self._kodi.show_listing(tvshow_items, category=feature, sort='label', content='tvshows')
+            from data import FEATURED
+            feature_name = self._kodi.localize(next(feat for feat in FEATURED if feat['id'] == feature)['msgctxt'])
+            self._kodi.show_listing(tvshow_items, category=feature_name, sort='label', content='tvshows')
         else:
             featured_items = self._apihelper.list_featured()
             self._kodi.show_listing(featured_items, category=30024, sort='label', content='files')
@@ -202,7 +208,8 @@ class VRTPlayer:
         ''' The VRT NU add-on episodes listing menu '''
         self._favorites.get_favorites(ttl=60 * 60)
         episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program, season=season)
-        self._kodi.show_listing(episode_items, category=program, sort=sort, ascending=ascending, content=content)
+        # FIXME: Translate program in Program Title
+        self._kodi.show_listing(episode_items, category=program.title(), sort=sort, ascending=ascending, content=content)
 
     def show_recent_menu(self, page=0, use_favorites=False):
         ''' The VRT NU add-on 'Most recent' and 'My most recent' listing menu '''
