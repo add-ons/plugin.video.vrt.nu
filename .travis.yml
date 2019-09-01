@@ -8,7 +8,6 @@ python:
 sudo: false
 
 env:
-  CODECOV_TOKEN: 828d7a36-56bb-4e9b-97aa-d9cc6736b7ad
   PYTHONPATH: resources/lib:test
 
 install:

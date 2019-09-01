@@ -198,16 +198,28 @@ msgid "[COLOR red]Geo-blocked[/COLOR]\n"
 msgstr "[COLOR red]Geo-geblokkeerd[/COLOR]\n"
 
 msgctxt "#30202"
-msgid "[COLOR blue]Available until {date}[/COLOR]\n"
-msgstr "[COLOR blue]Beschikbaar tot {date}[/COLOR]\n"
+msgid "[COLOR blue][B]{years} more years[/B] available[/COLOR]\n"
+msgstr "[COLOR blue]Nog [B]{years} jaren[/B] beschikbaar[/COLOR]\n"
 
 msgctxt "#30203"
-msgid "[COLOR gray]({days} days left)[/COLOR]\n"
-msgstr "[COLOR gray](nog {days} dagen)[/COLOR]\n"
+msgid "[COLOR blue][B]{months} more months[/B] available[/COLOR]\n"
+msgstr "[COLOR blue]Nog [B]{months} maanden[/B] beschikbaar[/COLOR]\n"
 
 msgctxt "#30204"
-msgid "[COLOR gray]({hours} hours left)[/COLOR]\n"
-msgstr "[COLOR gray](nog {hours} uur)[/COLOR]\n"
+msgid "[COLOR blue][B]{days} more days[/B] available[/COLOR]\n"
+msgstr "[COLOR blue]Nog [B]{days} dagen[/B] beschikbaar[/COLOR]\n"
+
+msgctxt "#30205"
+msgid "[COLOR blue][B]1 more day[/B] available[/COLOR]\n"
+msgstr "[COLOR blue]Nog [B]1 dag[/B] Beschikbaar[/COLOR]\n"
+
+msgctxt "#30206"
+msgid "[COLOR blue][B]{hours} more hours[/B] available[/COLOR]\n"
+msgstr "[COLOR blue]Nog [B]{hours} uren[/B] beschikaar[/COLOR]\n"
+
+msgctxt "#30207"
+msgid "[COLOR blue][B]1 more hour[/B] available[/COLOR]\n"
+msgstr "[COLOR blue]Nog [B]1 uur[/B] beschikaar[/COLOR]\n"
 
 msgctxt "#30300"
 msgid "[B][COLOR yellow]More...[/COLOR][/B]"

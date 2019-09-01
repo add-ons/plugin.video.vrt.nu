@@ -294,15 +294,27 @@ msgid "[COLOR red]Geo-blocked[/COLOR]\n"
 msgstr ""
 
 msgctxt "#30202"
-msgid "[COLOR blue]Available until {date}[/COLOR]\n"
+msgid "[COLOR blue][B]{years} more years[/B] available[/COLOR]\n"
 msgstr ""
 
 msgctxt "#30203"
-msgid "[COLOR gray]({days} days left)[/COLOR]\n"
+msgid "[COLOR blue][B]{months} more months[/B] available[/COLOR]\n"
 msgstr ""
 
 msgctxt "#30204"
-msgid "[COLOR gray]({hours} hours left)[/COLOR]\n"
+msgid "[COLOR blue][B]{days} more days[/B] available[/COLOR]\n"
+msgstr ""
+
+msgctxt "#30205"
+msgid "[COLOR blue][B]1 more day[/B] available[/COLOR]\n"
+msgstr ""
+
+msgctxt "#30206"
+msgid "[COLOR blue][B]{hours} more hours[/B] available[/COLOR]\n"
+msgstr ""
+
+msgctxt "#30207"
+msgid "[COLOR blue][B]1 more hour[/B] available[/COLOR]\n"
 msgstr ""
 
 msgctxt "#30300"

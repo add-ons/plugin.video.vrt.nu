@@ -168,21 +168,31 @@ class Metadata:
 
             # Add additional metadata to plot
             plot_meta = ''
-            if api_data.get('allowedRegion') == 'BE':
-                # Show Geo-blocked
-                plot_meta += self._kodi.localize(30201)
-
             # Only display when a video disappears if it is within the next 3 months
             if api_data.get('assetOffTime'):
                 offtime = dateutil.parser.parse(api_data.get('assetOffTime'))
-            if offtime and (offtime - now).days < 93:
-                # Show date when episode is removed
-                plot_meta += self._kodi.localize(30202, date=self._kodi.localize_dateshort(offtime))
+
                 # Show the remaining days/hours the episode is still available
-                if (offtime - now).days > 0:
-                    plot_meta += self._kodi.localize(30203, days=(offtime - now).days)
-                else:
-                    plot_meta += self._kodi.localize(30204, hours=int((offtime - now).seconds / 3600))
+                if offtime:
+                    remaining = offtime - now
+                    if remaining.days / 365 > 5:
+                        pass  # If it is available for more than 5 years, do not show
+                    elif remaining.days / 365 > 2:
+                        plot_meta += self._kodi.localize(30202, years=int(remaining.days / 365))  # X years remaining
+                    elif remaining.days / 30.5 > 3:
+                        plot_meta += self._kodi.localize(30203, months=int(remaining.days / 30.5))  # X months remaining
+                    elif remaining.days > 1:
+                        plot_meta += self._kodi.localize(30204, days=remaining.days)  # X days to go
+                    elif remaining.days == 1:
+                        plot_meta += self._kodi.localize(30205)  # 1 day to go
+                    elif int(remaining.seconds / 3600) > 1:
+                        plot_meta += self._kodi.localize(30206, hours=int(remaining.seconds / 3600))  # X hours to go
+                    elif int(remaining.seconds / 3600) == 1:
+                        plot_meta += self._kodi.localize(30207)  # 1 hour to go
+
+            if api_data.get('allowedRegion') == 'BE':
+                # Show Geo-blocked
+                plot_meta += self._kodi.localize(30201)
 
             plot = '%s\n%s' % (plot_meta, plot)
 
