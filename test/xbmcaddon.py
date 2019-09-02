@@ -5,6 +5,7 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 import sys
+import os
 import json
 import xml.etree.ElementTree as ET
 import polib
@@ -24,7 +25,12 @@ try:
     with open('test/userdata/credentials.json') as f:
         ADDON_SETTINGS.update(json.load(f))
 except (IOError, OSError) as e:
-    print("Error using 'test/userdata/credentials.json': %s" % e, file=sys.stderr)
+    if 'VRTNU_USERNAME' in os.environ and 'VRTNU_PASSWORD' in os.environ:
+        print('Using credentials from the environment variables VRTNU_USERNAME and VRTNU_PASSWORD')
+        ADDON_SETTINGS['username'] = os.environ.get('VRTNU_USERNAME')
+        ADDON_SETTINGS['password'] = os.environ.get('VRTNU_PASSWORD')
+    else:
+        print("Error using 'test/userdata/credentials.json': %s" % e, file=sys.stderr)
 
 
 def __read_addon_xml(path):

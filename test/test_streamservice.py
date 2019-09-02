@@ -30,7 +30,7 @@ now = datetime.now(dateutil.tz.tzlocal())
 yesterday = now + timedelta(days=-1)
 
 
-@unittest.skipIf(os.environ.get('TRAVIS') == 'true', 'Skipping this test on Travis CI.')
+@unittest.skipIf(not os.environ.get('VRTNU_USERNAME') or not os.environ.get('VRTNU_PASSWORD'), 'Skipping this test on Travis CI, lacking environment.')
 class StreamServiceTests(unittest.TestCase):
 
     _tokenresolver = TokenResolver(kodi)
