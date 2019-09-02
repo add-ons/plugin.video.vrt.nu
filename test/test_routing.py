@@ -129,6 +129,8 @@ class TestRouter(unittest.TestCase):
 
     # Search VRT NU menu: '/search/query/<keywords>/<page>'
     def test_search_menu(self):
+        plugin.run(['plugin://plugin.video.vrt.nu/search', '0', ''])
+        self.assertEqual(plugin.url_for(addon.search), 'plugin://plugin.video.vrt.nu/search')
         plugin.run(['plugin://plugin.video.vrt.nu/search/query', '0', ''])
         self.assertEqual(plugin.url_for(addon.search_query), 'plugin://plugin.video.vrt.nu/search/query')
         plugin.run(['plugin://plugin.video.vrt.nu/search/query/dag', '0', ''])
@@ -204,6 +206,11 @@ class TestRouter(unittest.TestCase):
                                         channel='canvas',
                                         start_date=lastweek.strftime('%Y-%m-%dT20:00:00')),
                          lastweek.strftime('plugin://plugin.video.vrt.nu/play/airdate/canvas/%Y-%m-%dT20:00:00'))
+
+    # Widevine installation = '/widevine/install'
+    def test_install_widevine(self):
+        plugin.run(['plugin://plugin.video.vrt.nu/widevine/install', '0', ''])
+        self.assertEqual(plugin.url_for(addon.install_widevine), 'plugin://plugin.video.vrt.nu/widevine/install')
 
 
 if __name__ == '__main__':
