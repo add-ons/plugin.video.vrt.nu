@@ -5,7 +5,6 @@
 # pylint: disable=missing-docstring
 
 from __future__ import absolute_import, division, print_function, unicode_literals
-import os
 import unittest
 from random import shuffle
 from addon import kodi
@@ -21,7 +20,6 @@ xbmcvfs = __import__('xbmcvfs')
 xbmcaddon.ADDON_SETTINGS['usefavorites'] = 'true'
 
 
-@unittest.skipIf(not os.environ.get('VRTNU_USERNAME') or not os.environ.get('VRTNU_PASSWORD'), 'Skipping this test on Travis CI, lacking environment.')
 class TestFavorites(unittest.TestCase):
 
     _favorites = Favorites(kodi)
@@ -72,12 +70,12 @@ class TestFavorites(unittest.TestCase):
             # self._favorites.unfollow(program=program, title=program_title)
             # self.assertFalse(self._favorites.is_favorite(program))
 
+    @unittest.skipIf(not xbmcaddon.ADDON_SETTINGS.get('username') or not xbmcaddon.ADDON_SETTINGS.get('password'), 'Skipping this test by lack of credentials.')
     def test_follow_unfollow(self):
         programs = [
             {'program_title': 'Winteruur', 'program': 'winteruur'},
             {'program_title': 'De Campus Cup', 'program': 'de-campus-cup'},
             {'program_title': 'Terug naar Siberië', 'program': 'terug-naar-siberie'},
-            {'program_title': '22/3 - 1 jaar later - het onderzoek', 'program': '22-3-1-jaar-later---het-onderzoek'},
             {'program_title': 'Belle & Sebastian', 'program': 'belle---sebastian'},
         ]
         for program_item in programs:
@@ -94,12 +92,16 @@ class TestFavorites(unittest.TestCase):
 
     def test_programs(self):
         programs = self._favorites.programs()
-        self.assertTrue(programs)
+        # NOTE: Getting favorites requires credentials
+        if xbmcaddon.ADDON_SETTINGS.get('username') and xbmcaddon.ADDON_SETTINGS.get('password'):
+            self.assertTrue(programs)
         print(programs)
 
     def test_titles(self):
         titles = self._favorites.titles()
-        self.assertTrue(titles)
+        # NOTE: Getting favorites requires credentials
+        if xbmcaddon.ADDON_SETTINGS.get('username') and xbmcaddon.ADDON_SETTINGS.get('password'):
+            self.assertTrue(titles)
         print(sorted(titles))
 
 
