@@ -38,12 +38,10 @@ def addDirectoryItems(handle, listing, length):
     ''' A reimplementation of the xbmcplugin addDirectoryItems() function '''
     for item in listing:
         label = kodi_to_ansi(item[1].label)
-        path = uri_to_path(item[0])
+        path = uri_to_path(item[0]) if item[0] else ''
         # perma = kodi_to_ansi(item[1].label)  # FIXME: Add permalink
-        if item[2]:
-            print('» %s%s' % (label, path if path else ''))
-        else:
-            print('· %s%s' % (label, path if path else ''))
+        bullet = '»' if item[2] else '·'
+        print('{bullet} {label}{path}'.format(bullet=bullet, label=label, path=path))
     return True
 
 

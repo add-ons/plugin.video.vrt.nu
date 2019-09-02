@@ -1,4 +1,6 @@
 {
     "locale.language": "resource.language.en_gb",
-    "network.bandwidth": "0"
+    "network.bandwidth": "0",
+    "network.usehttpproxy": "false",
+    "network.usehttpproxy": "0"
 }
