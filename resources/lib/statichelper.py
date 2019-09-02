@@ -108,24 +108,6 @@ def add_https_method(url):
     return url
 
 
-def distinct(sequence):
-    ''' Create a unique list that has no duplicates '''
-    seen = set()
-    for s in sequence:
-        if s not in seen:
-            seen.add(s)
-            yield s
-
-
-def boolean(value):
-    ''' Verify if a URL parameter values is a boolean '''
-    if value is True:
-        return True
-    if value in ('True', 'true'):
-        return True
-    return False
-
-
 def realpage(page):
     ''' Convert a URL parameter page value into an integer '''
     try:

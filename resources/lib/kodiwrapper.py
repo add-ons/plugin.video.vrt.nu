@@ -342,10 +342,6 @@ class KodiWrapper:
                 strftime = strftime.replace('%B', MONTH_LONG[date.strftime('%m')])
         return date.strftime(strftime)
 
-    def localize_dateshort(self, date):
-        ''' Return a localized short date string '''
-        return self.localize_date(date, xbmc.getRegion('dateshort'))
-
     def localize_datelong(self, date):
         ''' Return a localized long date string '''
         return self.localize_date(date, xbmc.getRegion('datelong'))
@@ -371,10 +367,6 @@ class KodiWrapper:
     def open_settings(self):
         ''' Open the add-in settings window, shows Credentials '''
         self._addon.openSettings()
-
-    def notify(self, method, data):
-        ''' Send a notification to Kodi '''
-        xbmc.executebuiltin('NotifyAll(%s, %s, %s)' % (self._addon_id, method, data))
 
     def get_global_setting(self, setting):
         ''' Get a Kodi setting '''
@@ -445,10 +437,6 @@ class KodiWrapper:
         ''' Whether the add-on has credentials filled in '''
         return bool(self.get_setting('username') and self.get_setting('password'))
 
-    def credentials_incomplete(self):
-        ''' Whether the add-on credentials are incomplete '''
-        return bool(self.get_setting('username') or self.get_setting('password'))
-
     def kodi_version(self):
         ''' Returns major Kodi version '''
         return int(xbmc.getInfoLabel('System.BuildVersion').split('.')[0])
@@ -469,21 +457,9 @@ class KodiWrapper:
         ''' Return the userdata tokens path '''
         return self._tokens_path
 
-    def get_addon_path(self):
-        ''' Return the addon path '''
-        return xbmc.translatePath(self._addon.getAddonInfo('path'))
-
     def get_addon_info(self, key):
         ''' Return addon information '''
         return self._addon.getAddonInfo(key)
-
-    def get_addon_id(self):
-        ''' Return the addon id '''
-        return self._addon_id
-
-    def get_path(self, path):
-        ''' Convert a special path '''
-        return xbmc.translatePath(path)
 
     def listdir(self, path):
         ''' Return all files in a directory (using xbmcvfs)'''
@@ -636,10 +612,6 @@ class KodiWrapper:
         self.container_refresh()
         self.show_notification(message=self.localize(30981))
 
-    def invalidate_cache(self, path):
-        ''' Invalidate a existing cache file '''
-        self.delete_file(self._cache_path + path)
-
     def invalidate_caches(self, expr=None):
         ''' Invalidate multiple cache files '''
         import fnmatch
@@ -654,13 +626,6 @@ class KodiWrapper:
         ''' Refresh the current container '''
         self.log_notice('Execute: Container.Refresh', 'Debug')
         xbmc.executebuiltin('Container.Refresh')
-
-    def container_update(self, url=None, path='', replace=False):
-        ''' Update the current container '''
-        if url is None:
-            url = self._url
-        self.log_notice('Execute: Container.Update(%s%s%s)' % (url, path, ',replace' if replace else ''), 'Debug')
-        xbmc.executebuiltin('Container.Update(%s%s%s)' % (url, path, ',replace' if replace else ''))
 
     def end_of_directory(self):
         ''' Close a virtual directory, required to avoid a waiting Kodi '''
