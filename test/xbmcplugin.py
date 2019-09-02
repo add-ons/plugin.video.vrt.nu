@@ -61,7 +61,7 @@ def setContent(handle, content):
 
 
 def setPluginFanart(handle, image, color1=None, color2=None, color3=None):
-    ''' A stub implementation of the xbmcplugin setCategoryt() function '''
+    ''' A stub implementation of the xbmcplugin setPluginFanart() function '''
     return
 
 
