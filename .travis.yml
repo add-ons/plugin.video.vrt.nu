@@ -9,6 +9,7 @@ sudo: false
 
 env:
   PYTHONPATH: resources/lib:test
+  PYTHONIOENCODING: utf-8
 
 install:
 - pip install -r requirements.txt
