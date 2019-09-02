@@ -30,63 +30,89 @@ now = datetime.now(dateutil.tz.tzlocal())
 yesterday = now + timedelta(days=-1)
 
 
-@unittest.skipIf(not os.environ.get('VRTNU_USERNAME') or not os.environ.get('VRTNU_PASSWORD'), 'Skipping this test on Travis CI, lacking environment.')
 class StreamServiceTests(unittest.TestCase):
 
     _tokenresolver = TokenResolver(kodi)
     _streamservice = StreamService(kodi, _tokenresolver)
 
+    @unittest.skipIf(not os.environ.get('VRTNU_USERNAME') or not os.environ.get('VRTNU_PASSWORD'), 'Skipping this test on Travis CI, lacking environment.')
     def test_get_ondemand_stream_from_invalid_url(self):
-        video = dict(
-            video_url='https://www.vrt.be/vrtnu/a-z/het-journaal/2017/het-journaal-het-journaal-laat-20170501/',
-            video_id=None,
-            publication_id=None,
-        )
+        video = dict(video_url='https://www.vrt.be/vrtnu/a-z/het-journaal/2017/het-journaal-het-journaal-laat-20170501/', video_id=None, publication_id=None)
         try:
             stream = self._streamservice.get_stream(video)
             self.assertEqual(stream.stream_url, video['video_url'])
         except HTTPError:
             pass
 
+    @unittest.skipIf(not os.environ.get('VRTNU_USERNAME') or not os.environ.get('VRTNU_PASSWORD'), 'Skipping this test on Travis CI, lacking environment.')
     def test_get_ondemand_stream_from_url_gets_stream_does_not_crash(self):
-        video = dict(
-            # video_url='https://www.vrt.be/vrtnu/a-z/pano/2019/pano-s2019a6/',
-            video_url=yesterday.strftime('https://www.vrt.be/vrtnu/a-z/het-journaal/2019/het-journaal-het-journaal-laat-%Y%m%d/'),
-            video_id=None,
-            publication_id=None,
-        )
+        video = dict(video_url=yesterday.strftime('https://www.vrt.be/vrtnu/a-z/het-journaal/2019/het-journaal-het-journaal-laat-%Y%m%d/'), video_id=None, publication_id=None)
         stream = self._streamservice.get_stream(video)
         self.assertTrue(stream is not None)
 
-    def test_get_live_stream_from_url_does_not_crash_returns_stream_and_licensekey(self):
+    def test_get_mpd_live_stream_from_url_does_not_crash_returns_stream_and_licensekey(self):
         xbmcaddon.ADDON_SETTINGS['usedrm'] = 'true'
-        video = dict(
-            video_url=CHANNELS[1]['live_stream'],
-            video_id=None,
-            publication_id=None,
-        )
+        xbmcaddon.ADDON_SETTINGS['useinputstreamadaptive'] = 'true'
+        video = dict(video_url=CHANNELS[1]['live_stream'], video_id=None, publication_id=None)
         stream = self._streamservice.get_stream(video)
+        # NOTE: Testing live streams only works within Europe
         if os.environ.get('TRAVIS') != 'true':
             self.assertTrue(stream is not None)
 #            self.assertTrue(stream.license_key is not None)
 
-    def test_get_live_stream_from_url_does_not_crash(self):
-        video = dict(
-            video_url=CHANNELS[1]['live_stream'],
-            video_id=None,
-            publication_id=None,
-        )
+    def test_get_hls_live_stream_from_url_does_not_crash_returns_stream_and_licensekey(self):
+        xbmcaddon.ADDON_SETTINGS['usedrm'] = 'false'
+        xbmcaddon.ADDON_SETTINGS['useinputstreamadaptive'] = 'false'
+        video = dict(video_url=CHANNELS[1]['live_stream'], video_id=None, publication_id=None)
         stream = self._streamservice.get_stream(video)
+        # NOTE: Testing live streams only works within Europe
         if os.environ.get('TRAVIS') != 'true':
             self.assertTrue(stream is not None)
 
-    def test_get_live_stream_from_id_does_not_crash(self):
-        video = dict(
-            video_url=None,
-            video_id=CHANNELS[1]['live_stream_id'],
-            publication_id=None,
-        )
+    def test_get_mpd_live_stream_from_url_does_not_crash(self):
+        xbmcaddon.ADDON_SETTINGS['usedrm'] = 'false'
+        video = dict(video_url=CHANNELS[1]['live_stream'], video_id=None, publication_id=None)
         stream = self._streamservice.get_stream(video)
+        # NOTE: Testing live streams only works within Europe
+        if os.environ.get('TRAVIS') != 'true':
+            self.assertTrue(stream is not None)
+
+    def test_get_hls_live_stream_from_url_does_not_crash(self):
+        xbmcaddon.ADDON_SETTINGS['usedrm'] = 'false'
+        xbmcaddon.ADDON_SETTINGS['useinputstreamadaptive'] = 'false'
+        video = dict(video_url=CHANNELS[1]['live_stream'], video_id=None, publication_id=None)
+        stream = self._streamservice.get_stream(video)
+        # NOTE: Testing live streams only works within Europe
+        if os.environ.get('TRAVIS') != 'true':
+            self.assertTrue(stream is not None)
+
+    def test_get_mpd_live_stream_from_id_does_not_crash(self):
+        xbmcaddon.ADDON_SETTINGS['usedrm'] = 'false'
+        xbmcaddon.ADDON_SETTINGS['useinputstreamadaptive'] = 'true'
+        video = dict(video_url=None, video_id=CHANNELS[1]['live_stream_id'], publication_id=None)
+        stream = self._streamservice.get_stream(video)
+        # NOTE: Testing live streams only works within Europe
+        if os.environ.get('TRAVIS') != 'true':
+            self.assertTrue(stream is not None)
+
+        video = dict(video_url=None, video_id=CHANNELS[3]['live_stream_id'], publication_id=None)
+        stream = self._streamservice.get_stream(video)
+        # NOTE: Testing live streams only works within Europe
+        if os.environ.get('TRAVIS') != 'true':
+            self.assertTrue(stream is not None)
+
+    def test_get_hls_live_stream_from_id_does_not_crash(self):
+        xbmcaddon.ADDON_SETTINGS['usedrm'] = 'false'
+        xbmcaddon.ADDON_SETTINGS['useinputstreamadaptive'] = 'false'
+        video = dict(video_url=None, video_id=CHANNELS[1]['live_stream_id'], publication_id=None)
+        stream = self._streamservice.get_stream(video)
+        # NOTE: Testing live streams only works within Europe
+        if os.environ.get('TRAVIS') != 'true':
+            self.assertTrue(stream is not None)
+
+        video = dict(video_url=None, video_id=CHANNELS[3]['live_stream_id'], publication_id=None)
+        stream = self._streamservice.get_stream(video)
+        # NOTE: Testing live streams only works within Europe
         if os.environ.get('TRAVIS') != 'true':
             self.assertTrue(stream is not None)
 

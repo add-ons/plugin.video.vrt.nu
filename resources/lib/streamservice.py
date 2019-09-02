@@ -188,7 +188,6 @@ class StreamService:
 
     def get_stream(self, video, roaming=False, api_data=None):
         ''' Main streamservice function '''
-        from datetime import timedelta
         if not api_data:
             api_data = self._get_api_data(video)
 
@@ -230,6 +229,7 @@ class StreamService:
                 manifest_url += '?t=' + video.get('start_date') + '-' + video.get('end_date')
 
             # Fix virtual subclip
+            from datetime import timedelta
             duration = timedelta(milliseconds=stream_json.get('duration', 0))
             manifest_url = self._fix_virtualsubclip(manifest_url, duration)
 

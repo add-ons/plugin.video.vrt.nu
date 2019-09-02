@@ -160,6 +160,7 @@ class KodiWrapper:
             # content is one of: files, songs, artists, albums, movies, tvshows, episodes, musicvideos
             xbmcplugin.setContent(self._handle, content=content)
 
+        # Jump through hoops to get a stable breadcrumbs implementation
         category_label = ''
         if category:
             if not content:
