@@ -83,6 +83,12 @@ class ApiHelperTests(unittest.TestCase):
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
 
+    def test_get_tvshows(self):
+        ''' Test get tvshows '''
+        category = 'humor'
+        tvshow_items = self._apihelper.get_tvshows(category=category)
+        self.assertTrue(tvshow_items)
+
     def test_list_tvshows(self):
         ''' Test items, sort and order '''
         category = 'nieuws-en-actua'
