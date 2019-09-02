@@ -1,7 +1,14 @@
 coverage:
   range: 50..100
-  round: up
+  round: nearest
   precision: 1
-comment: off
+  status:
+    project: false
+#      default:
+#        target: 75%
+#        threshold: 6%
+#        base: auto
+#        branches: null
+comment: false
 ignore:
 - test/

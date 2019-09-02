@@ -35,7 +35,7 @@ class StreamServiceTests(unittest.TestCase):
     _tokenresolver = TokenResolver(kodi)
     _streamservice = StreamService(kodi, _tokenresolver)
 
-    @unittest.skipIf(not os.environ.get('VRTNU_USERNAME') or not os.environ.get('VRTNU_PASSWORD'), 'Skipping this test on Travis CI, lacking environment.')
+    @unittest.skipIf(not xbmcaddon.ADDON_SETTINGS.get('username') or not xbmcaddon.ADDON_SETTINGS.get('password'), 'Skipping this test by lack of credentials.')
     def test_get_ondemand_stream_from_invalid_url(self):
         video = dict(video_url='https://www.vrt.be/vrtnu/a-z/het-journaal/2017/het-journaal-het-journaal-laat-20170501/', video_id=None, publication_id=None)
         try:
@@ -44,7 +44,7 @@ class StreamServiceTests(unittest.TestCase):
         except HTTPError:
             pass
 
-    @unittest.skipIf(not os.environ.get('VRTNU_USERNAME') or not os.environ.get('VRTNU_PASSWORD'), 'Skipping this test on Travis CI, lacking environment.')
+    @unittest.skipIf(not xbmcaddon.ADDON_SETTINGS.get('username') or not xbmcaddon.ADDON_SETTINGS.get('password'), 'Skipping this test by lack of credentials.')
     def test_get_ondemand_stream_from_url_gets_stream_does_not_crash(self):
         video = dict(video_url=yesterday.strftime('https://www.vrt.be/vrtnu/a-z/het-journaal/2019/het-journaal-het-journaal-laat-%Y%m%d/'), video_id=None, publication_id=None)
         stream = self._streamservice.get_stream(video)
