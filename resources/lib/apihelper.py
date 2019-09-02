@@ -5,11 +5,11 @@
 from __future__ import absolute_import, division, unicode_literals
 
 try:  # Python 3
-    from urllib.parse import unquote, urlencode
-    from urllib.request import build_opener, install_opener, ProxyHandler, urlopen
+    from urllib.error import HTTPError
+    from urllib.parse import unquote
+    from urllib.request import build_opener, install_opener, ProxyHandler, Request, urlopen
 except ImportError:  # Python 2
-    from urllib import urlencode
-    from urllib2 import build_opener, install_opener, ProxyHandler, unquote, urlopen
+    from urllib2 import build_opener, install_opener, ProxyHandler, Request, HTTPError, unquote, urlopen
 
 import statichelper
 from data import CHANNELS
@@ -36,7 +36,7 @@ class ApiHelper:
         self._proxies = _kodi.get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
 
-    def list_tvshows(self, category=None, channel=None, feature=None, use_favorites=False):
+    def get_tvshows(self, category=None, channel=None, feature=None, use_favorites=False):
         ''' Get all TV shows for a given category, channel or feature, optionally filtered by favorites '''
         params = dict()
 
@@ -56,15 +56,22 @@ class ApiHelper:
         if not category and not channel and not feature:
             params['facets[transcodingStatus]'] = 'AVAILABLE'  # Required for getting results in Suggests API
             cache_file = 'programs.json'
-
-        # Get programs
-        suggest_json = self._kodi.get_cache(cache_file, ttl=60 * 60)  # Try the cache if it is fresh
-        if not suggest_json:
+        tvshows = self._kodi.get_cache(cache_file, ttl=60 * 60)  # Try the cache if it is fresh
+        if not tvshows:
             import json
-            suggest_url = self._VRTNU_SUGGEST_URL + '?' + urlencode(params)
+            querystring = '&'.join('{}={}'.format(key, value) for key, value in params.items())
+            suggest_url = self._VRTNU_SUGGEST_URL + '?' + querystring
             self._kodi.log_notice('URL get: ' + unquote(suggest_url), 'Verbose')
-            suggest_json = json.load(urlopen(suggest_url))
-            self._kodi.update_cache(cache_file, suggest_json)
+            tvshows = json.load(urlopen(suggest_url))
+            self._kodi.update_cache(cache_file, tvshows)
+
+        return tvshows
+
+    def list_tvshows(self, category=None, channel=None, feature=None, use_favorites=False):
+        ''' List all TV shows for a given category, channel or feature, optionally filtered by favorites '''
+
+        # Get tvshows
+        tvshows = self.get_tvshows(category=category, channel=channel, feature=feature, use_favorites=use_favorites)
 
         # Get oneoffs
         if self._kodi.get_setting('showoneoff', 'true') == 'true':
@@ -74,7 +81,7 @@ class ApiHelper:
             # Return empty list
             oneoffs = []
 
-        return self.__map_tvshows(suggest_json, oneoffs, use_favorites=use_favorites, cache_file=cache_file)
+        return self.__map_tvshows(tvshows, oneoffs, use_favorites=use_favorites, cache_file=cache_file)
 
     def tvshow_to_listitem(self, tvshow, program, cache_file):
         ''' Return a ListItem based on a Suggests API result '''
@@ -418,7 +425,8 @@ class ApiHelper:
             params['facets[whatsonId]'] = whatson_id
 
         # Construct VRT NU Search API Url and get api data
-        search_url = self._VRTNU_SEARCH_URL + '?' + urlencode(params)
+        querystring = '&'.join('{}={}'.format(key, value) for key, value in params.items())
+        search_url = self._VRTNU_SEARCH_URL + '?' + querystring
 
         import json
         if cache_file:
@@ -426,7 +434,20 @@ class ApiHelper:
             search_json = self._kodi.get_cache(cache_file, ttl=60 * 60)
             if not search_json:
                 self._kodi.log_notice('URL get: ' + unquote(search_url), 'Verbose')
-                search_json = json.load(urlopen(search_url))
+                req = Request(search_url)
+                try:
+                    search_json = json.load(urlopen(req))
+                except HTTPError as e:
+                    url_length = len(req.get_selector())
+                    if e.code == 413 and url_length > 8192:
+                        self._kodi.show_ok_dialog(heading='HTTP Error 413', message=self._kodi.localize(30967))
+                        self._kodi.log_error('HTTP Error 413: Exceeded maximum url length: VRT Search API url has a length of %d characters.' % url_length)
+                        return []
+                    if e.code == 400 and 7600 <= url_length <= 8192:
+                        self._kodi.show_ok_dialog(heading='HTTP Error 400', message=self._kodi.localize(30967))
+                        self._kodi.log_error('HTTP Error 400: Probably exceeded maximum url length: VRT Search API url has a length of %d characters.' % url_length)
+                        return []
+                    raise
                 self._kodi.update_cache(cache_file, search_json)
         else:
             self._kodi.log_notice('URL get: ' + unquote(search_url), 'Verbose')

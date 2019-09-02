@@ -686,6 +686,10 @@ msgctxt "#30966"
 msgid "Using a SOCKS proxy requires the PySocks library (script.module.pysocks) installed."
 msgstr "Het gebruik van SOCKS proxies vereist dat de PySocks library (script.module.pysocks) geïnstalleerd is."
 
+msgctxt "#30967"
+msgid "Could not retrieve this program list. VRT Search API url is too long. Unfollowing some favorited programs will reduce url length and may fix this problem."
+msgstr "Deze programmalijst kan niet opgehaald worden. VRT Search API url is te lang. Enkele favoriete programma's vergeten zal de lengte van de URL verminderen en dit probleem mogelijk oplossen."
+
 msgctxt "#30971"
 msgid "Install Widevine using 'InputStream Helper' add-on"
 msgstr "Installeer Widevine met de 'InputStream Helper' add-on"

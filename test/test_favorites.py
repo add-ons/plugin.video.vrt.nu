@@ -7,6 +7,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 import os
 import unittest
+from random import shuffle
 from addon import kodi
 from apihelper import ApiHelper
 from favorites import Favorites
@@ -41,6 +42,35 @@ class TestFavorites(unittest.TestCase):
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
+
+    @unittest.SkipTest
+    def test_unfollow_all(self):
+        programs = self._apihelper.get_tvshows()
+        for program_item in programs:
+            program_title = program_item.get('title')
+            program = program_item.get('programName')
+            if self._favorites.is_favorite(program):
+                # Unfollow
+                self._favorites.unfollow(program=program, title=program_title)
+                self.assertFalse(self._favorites.is_favorite(program))
+
+    @unittest.SkipTest
+    def test_follow_number(self):
+        number = 118
+        programs = self._apihelper.get_tvshows()
+        shuffle(programs)
+        print('VRT NU has %d programs available' % len(programs))
+        for program_item in programs[:number]:
+            program_title = program_item.get('title')
+            program = program_item.get('programName')
+
+            # Follow
+            self._favorites.follow(program=program, title=program_title)
+            self.assertTrue(self._favorites.is_favorite(program))
+
+            # Unfollow
+            # self._favorites.unfollow(program=program, title=program_title)
+            # self.assertFalse(self._favorites.is_favorite(program))
 
     def test_follow_unfollow(self):
         programs = [
