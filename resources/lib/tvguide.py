@@ -18,6 +18,7 @@ from data import CHANNELS, RELATIVE_DATES
 from favorites import Favorites
 from helperobjects import TitleItem
 from metadata import Metadata
+from statichelper import find_entry
 
 
 class TVGuide:
@@ -44,25 +45,21 @@ class TVGuide:
 
         elif not channel:
             channel_items = self.get_channel_items(date=date)
-            try:
-                date_name = self._kodi.localize(next(reldate for reldate in RELATIVE_DATES if reldate.get('id') == date).get('msgctxt'))
-            except StopIteration:
-                date_name = date
+            entry = find_entry(RELATIVE_DATES, 'id', date)
+            date_name = self._kodi.localize(entry.get('msgctxt')) if entry else date
             self._kodi.show_listing(channel_items, category=date_name)
 
         elif not date:
             date_items = self.get_date_items(channel=channel)
-            category_channel = next(ch for ch in CHANNELS if ch.get('name') == channel).get('label')
-            self._kodi.show_listing(date_items, category=category_channel, content='files')
+            channel_name = find_entry(CHANNELS, 'name', channel).get('label')
+            self._kodi.show_listing(date_items, category=channel_name, content='files')
 
         else:
             episode_items = self.get_episode_items(date, channel)
-            category_channel = next(ch for ch in CHANNELS if ch.get('name') == channel).get('label')
-            try:
-                date_name = self._kodi.localize(next(reldate for reldate in RELATIVE_DATES if reldate.get('id') == date).get('msgctxt'))
-            except StopIteration:
-                date_name = date
-            self._kodi.show_listing(episode_items, category='%s / %s' % (category_channel, date_name), content='episodes', cache=False)
+            channel_name = find_entry(CHANNELS, 'name', channel).get('label')
+            entry = find_entry(RELATIVE_DATES, 'id', date)
+            date_name = self._kodi.localize(entry.get('msgctxt')) if entry else date
+            self._kodi.show_listing(episode_items, category='%s / %s' % (channel_name, date_name), content='episodes', cache=False)
 
     def get_date_items(self, channel=None):
         ''' Offer a menu to select the TV-guide date '''
@@ -78,17 +75,15 @@ class TVGuide:
             date = day.strftime('%Y-%m-%d')
 
             # Highlight today with context of 2 days
-            try:
-                reldate = next(reldate for reldate in RELATIVE_DATES if reldate.get('offset') == offset)
-                date_name = self._kodi.localize(reldate.get('msgctxt'))
-                if reldate.get('permalink'):
-                    date = reldate.get('id')
+            entry = find_entry(RELATIVE_DATES, 'offset', offset)
+            if entry:
+                date_name = self._kodi.localize(entry.get('msgctxt'))
+                if entry.get('permalink'):
+                    date = entry.get('id')
                 if offset == 0:
                     title = '[COLOR yellow][B]{name}[/B], {date}[/COLOR]'.format(name=date_name, date=title)
                 else:
                     title = '[B]{name}[/B], {date}'.format(name=date_name, date=title)
-            except StopIteration:
-                date_name = date
 
             # Show channel list or channel episodes
             if channel:
@@ -168,11 +163,10 @@ class TVGuide:
             self._kodi.log_notice('URL get: ' + epg_url, 'Verbose')
             schedule = json.load(urlopen(epg_url))
 
-        name = channel
-        try:
-            channel = next(c for c in CHANNELS if c.get('name') == name)
-            episodes = schedule.get(channel.get('id'), [])
-        except StopIteration:
+        entry = find_entry(CHANNELS, 'name', channel)
+        if entry:
+            episodes = schedule.get(entry.get('id'), [])
+        else:
             episodes = []
         episode_items = []
         for episode in episodes:
@@ -189,7 +183,7 @@ class TVGuide:
                 context_menu, favorite_marker = self._metadata.get_context_menu(episode, program, cache_file)
                 label += favorite_marker
 
-            info_labels = self._metadata.get_info_labels(episode, date=date, channel=channel)
+            info_labels = self._metadata.get_info_labels(episode, date=date, channel=entry)
             info_labels['title'] = label
 
             episode_items.append(TitleItem(
@@ -220,12 +214,12 @@ class TVGuide:
             self._kodi.log_notice('URL get: ' + epg_url, 'Verbose')
             schedule = json.load(urlopen(epg_url))
             self._kodi.update_cache('schedule.today.json', schedule)
-        name = channel
-        try:
-            channel = next(c for c in CHANNELS if c.get('name') == name)
-            episodes = iter(schedule[channel.get('id')])
-        except StopIteration:
+
+        entry = find_entry(CHANNELS, 'name', channel)
+        if not entry:
             return ''
+
+        episodes = iter(schedule[entry.get('id')])
 
         description = ''
         while True:
@@ -259,10 +253,12 @@ class TVGuide:
             This supports 'today', 'yesterday' and 'tomorrow'
             It also compensates for TV-guides covering from 6AM to 6AM
         '''
-        try:
-            offset = next(reldate for reldate in RELATIVE_DATES if reldate.get('id') == date).get('offset')
-            if now.hour < 6:
-                return now + timedelta(days=offset - 1)
-            return now + timedelta(days=offset)
-        except StopIteration:
+        entry = find_entry(RELATIVE_DATES, 'id', date)
+        if not entry:
             return dateutil.parser.parse(date)
+
+        offset = entry.get('offset')
+        if now.hour < 6:
+            return now + timedelta(days=offset - 1)
+
+        return now + timedelta(days=offset)

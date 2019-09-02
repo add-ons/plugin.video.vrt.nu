@@ -6,6 +6,7 @@ from __future__ import absolute_import, division, unicode_literals
 from apihelper import ApiHelper
 from favorites import Favorites
 from helperobjects import TitleItem
+from statichelper import find_entry
 
 
 class VRTPlayer:
@@ -165,8 +166,8 @@ class VRTPlayer:
             self._favorites.get_favorites(ttl=60 * 60)
             tvshow_items = self._apihelper.list_tvshows(category=category)
             from data import CATEGORIES
-            category_name = self._kodi.localize(next(cat for cat in CATEGORIES if cat['id'] == category)['msgctxt'])
-            self._kodi.show_listing(tvshow_items, category=category_name, sort='label', content='tvshows')
+            category_msgctxt = find_entry(CATEGORIES, 'id', category).get('msgctxt')
+            self._kodi.show_listing(tvshow_items, category=category_msgctxt, sort='label', content='tvshows')
         else:
             category_items = self._apihelper.list_categories()
             self._kodi.show_listing(category_items, category=30014, sort='unsorted', content='files')  # Categories
@@ -181,7 +182,7 @@ class VRTPlayer:
             channel_items.extend(self._apihelper.list_youtube(channels=[channel]))  # YouTube
             channel_items.extend(self._apihelper.list_tvshows(channel=channel))  # TV shows
             from data import CHANNELS
-            channel_name = next(ch for ch in CHANNELS if ch['name'] == channel)['label']
+            channel_name = find_entry(CHANNELS, 'name', channel).get('label')
             self._kodi.show_listing(channel_items, category=channel_name, sort='unsorted', content='tvshows')  # Channel
         else:
             channel_items = self._apihelper.list_channels(live=False)
@@ -193,8 +194,8 @@ class VRTPlayer:
             self._favorites.get_favorites(ttl=60 * 60)
             tvshow_items = self._apihelper.list_tvshows(feature=feature)
             from data import FEATURED
-            feature_name = self._kodi.localize(next(feat for feat in FEATURED if feat['id'] == feature)['msgctxt'])
-            self._kodi.show_listing(tvshow_items, category=feature_name, sort='label', content='tvshows')
+            feature_msgctxt = find_entry(FEATURED, 'id', feature).get('msgctxt')
+            self._kodi.show_listing(tvshow_items, category=feature_msgctxt, sort='label', content='tvshows')
         else:
             featured_items = self._apihelper.list_featured()
             self._kodi.show_listing(featured_items, category=30024, sort='label', content='files')
