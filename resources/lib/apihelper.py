@@ -274,9 +274,8 @@ class ApiHelper:
         import dateutil.parser
         import dateutil.tz
         offairdate = None
-        try:
-            channel = next(c for c in CHANNELS if c.get('name') == channel_name)
-        except StopIteration:
+        channel = statichelper.find_entry(CHANNELS, 'name', channel_name)
+        if not channel:
             return None
         try:
             onairdate = dateutil.parser.parse(start_date, default=datetime.now(dateutil.tz.gettz('Europe/Brussels')))

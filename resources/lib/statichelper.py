@@ -135,3 +135,8 @@ def realpage(page):
     if page < 1:
         return 1
     return page
+
+
+def find_entry(dlist, key, value, default=None):
+    ''' Find (the first) dictionary in a list where key matches value '''
+    return next((entry for entry in dlist if entry.get(key) == value), default)
