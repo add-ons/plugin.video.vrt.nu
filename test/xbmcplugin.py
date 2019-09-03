@@ -67,7 +67,7 @@ def setPluginFanart(handle, image, color1=None, color2=None, color3=None):
 
 def setPluginCategory(handle, category):
     ''' A reimplementation of the xbmcplugin setPluginCategory() function '''
-    print(kodi_to_ansi('[B]** %s **[/B]' % category))
+    print(kodi_to_ansi('[B]-=( [COLOR cyan]%s[/COLOR] )=-[/B]' % category))
 
 
 def setResolvedUrl(handle, succeeded, listitem):

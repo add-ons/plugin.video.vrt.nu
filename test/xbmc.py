@@ -52,9 +52,6 @@ if 'PROXY_SERVER' in os.environ:
     if 'PROXY_PASSWORD' in os.environ:
         print('Using proxy server from environment variable PROXY_PASSWORD')
         GLOBAL_SETTINGS['network.httpproxypassword'] = os.environ.get('PROXY_PASSWORD')
-else:
-    print('No proxy server being used')
-    GLOBAL_SETTINGS['network.usehttpproxy'] = 'false'
 
 
 class Keyboard:
@@ -113,7 +110,7 @@ def executeJSONRPC(jsonrpccommand):
     command = json.loads(jsonrpccommand)
     if command.get('method') == 'Settings.GetSettingValue':
         key = command.get('params').get('setting')
-        print("Access global setting '{setting}'".format(setting=key), file=sys.stderr)
+        # print("Access global setting '{setting}'".format(setting=key), file=sys.stderr)
         return '{"id":1,"jsonrpc":"2.0","result":{"value":"%s"}}' % GLOBAL_SETTINGS.get(key)
     print("Error in executeJSONRPC, method '{method}' is not implemented".format(**command), file=sys.stderr)
     return '{"error":{"code":-1,"message":"Not implemented."},"id":1,"jsonrpc":"2.0"}'

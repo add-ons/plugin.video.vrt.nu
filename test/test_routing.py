@@ -211,11 +211,6 @@ class TestRouter(unittest.TestCase):
                                         start_date=lastweek.strftime('%Y-%m-%dT20:00:00')),
                          lastweek.strftime('plugin://plugin.video.vrt.nu/play/airdate/canvas/%Y-%m-%dT20:00:00'))
 
-    # Widevine installation = '/widevine/install'
-    def test_install_widevine(self):
-        plugin.run(['plugin://plugin.video.vrt.nu/widevine/install', '0', ''])
-        self.assertEqual(plugin.url_for(addon.install_widevine), 'plugin://plugin.video.vrt.nu/widevine/install')
-
 
 if __name__ == '__main__':
     unittest.main()
