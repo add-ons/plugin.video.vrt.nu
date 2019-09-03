@@ -389,10 +389,13 @@ class KodiWrapper:
     def get_proxies(self):
         ''' Return a usable proxies dictionary from Kodi proxy settings '''
         usehttpproxy = self.get_global_setting('network.usehttpproxy')
-        if usehttpproxy is False:
+        if usehttpproxy is not True:
             return None
 
-        httpproxytype = self.get_global_setting('network.httpproxytype')
+        try:
+            httpproxytype = int(self.get_global_setting('network.httpproxytype'))
+        except ValueError:
+            httpproxytype = 0
 
         socks_supported = has_socks()
         if httpproxytype != 0 and not socks_supported:
