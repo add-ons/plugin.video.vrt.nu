@@ -3,9 +3,10 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ''' This file implements the Kodi xbmcgui module, either using stubs or alternative functionality '''
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 # pylint: disable=unused-argument,too-many-arguments
+
+from __future__ import absolute_import, division, print_function, unicode_literals
+from xbmcextra import kodi_to_ansi
 
 
 class Dialog:
@@ -17,18 +18,25 @@ class Dialog:
     @staticmethod
     def notification(heading, message, icon=None, time=None, sound=None):
         ''' A working implementation for the xbmcgui Dialog class notification() method '''
-        print('[37;100mNOTIFICATION:[35;0m [%s] [35;0m%s[0m' % (heading, message))
+        print('\033[37;100mNOTIFICATION:\033[35;0m [%s] \033[35;0m%s\033[39;0m' % (heading, message))
 
     @staticmethod
     def ok(heading, line1, line2=None, line3=None):
         ''' A stub implementation for the xbmcgui Dialog class ok() method '''
-        print('[37;100mOK:[35;0m [%s] [35;0m%s[0m' % (heading, line1))
+        print('\033[37;100mOK:\033[35;0m [%s] \033[35;0m%s\033[39;0m' % (heading, line1))
 
     @staticmethod
     def yesno(heading, line1, line2=None, line3=None, nolabel=None, yeslabel=None, autoclose=0):
         ''' A stub implementation for the xbmcgui Dialog class yesno() method '''
-        print('[37;100mYESNO:[35;0m [%s] [35;0m%s[0m' % (heading, line1))
+        print('\033[37;100mYESNO:\033[35;0m [%s] \033[35;0m%s\033[39;0m' % (heading, line1))
         return True
+
+    @staticmethod
+    def textviewer(heading, text=None, usemono=None):
+        ''' A stub implementation for the xbmcgui Dialog class textviewer() method '''
+        heading = kodi_to_ansi(heading)
+        text = kodi_to_ansi(text)
+        print('\033[37;100mTEXTVIEWER:\033[35;0m [%s]\n\033[35;0m%s\033[39;0m' % (heading, text))
 
 
 class DialogProgress:
@@ -45,7 +53,7 @@ class DialogProgress:
     @staticmethod
     def create(heading, line1, line2=None, line3=None):
         ''' A stub implementation for the xbmcgui DialogProgress class create() method '''
-        print('[37;100mPROGRESS:[35;0m [%s] [35;0m%s[0m' % (heading, line1))
+        print('\033[37;100mPROGRESS:\033[35;0m [%s] \033[35;0m%s\033[39;0m' % (heading, line1))
 
     @staticmethod
     def iscanceled():
@@ -55,9 +63,9 @@ class DialogProgress:
     def update(percentage, line1=None, line2=None, line3=None):
         ''' A stub implementation for the xbmcgui DialogProgress class update() method '''
         if line1 or line2 or line3:
-            print('[37;100mPROGRESS:[35;0m [%d%%] [35;0m%s[0m' % (percentage, line1 or line2 or line3))
+            print('\033[37;100mPROGRESS:\033[35;0m [%d%%] \033[35;0m%s\033[39;0m' % (percentage, line1 or line2 or line3))
         else:
-            print('[1G[37;100mPROGRESS:[35;0m [%d%%]' % (percentage), end='')
+            print('\033[1G\033[37;100mPROGRESS:\033[35;0m [%d%%]\033[39;0m' % (percentage), end='')
 
 
 class DialogBusy:

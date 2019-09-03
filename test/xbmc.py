@@ -52,9 +52,6 @@ if 'PROXY_SERVER' in os.environ:
     if 'PROXY_PASSWORD' in os.environ:
         print('Using proxy server from environment variable PROXY_PASSWORD')
         GLOBAL_SETTINGS['network.httpproxypassword'] = os.environ.get('PROXY_PASSWORD')
-else:
-    print('No proxy server being used')
-    GLOBAL_SETTINGS['network.usehttpproxy'] = 'false'
 
 
 class Keyboard:
