@@ -106,11 +106,14 @@ class Favorites:
             self._kodi.show_notification(message=self._kodi.localize(30411) + ' ' + title)
             self._kodi.container_refresh()
 
-    def unfollow(self, program, title):
+    def unfollow(self, program, title, move_down=False):
         ''' Unfollow your favorite program '''
         ok = self.set_favorite(program, title, False)
         if ok:
             self._kodi.show_notification(message=self._kodi.localize(30412) + ' ' + title)
+            # If the current item is selected and we need to move down before removing
+            if move_down:
+                self._kodi.input_down()
             self._kodi.container_refresh()
 
     def uuid(self, program):

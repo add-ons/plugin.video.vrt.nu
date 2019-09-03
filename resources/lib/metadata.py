@@ -51,6 +51,7 @@ class Metadata:
 
     def get_context_menu(self, api_data, program, cache_file):
         ''' Get context menu '''
+        from addon import plugin
         favorite_marker = ''
         context_menu = []
         if self._favorites.is_activated():
@@ -77,10 +78,14 @@ class Metadata:
             if follow_enabled:
                 program_title = quote_plus(statichelper.from_unicode(program_title))  # We need to ensure forward slashes are quoted
                 if self._favorites.is_favorite(program):
+                    extras = dict()
+                    # If we are in a favorites menu, move cursor down before removing a favorite
+                    if plugin.path.startswith('/favorites'):
+                        extras = dict(move_down=True)
                     # Unfollow context menu
                     context_menu.append((
                         self._kodi.localize(30412) + follow_suffix,
-                        'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=program_title)
+                        'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=program_title, **extras)
                     ))
                     favorite_marker = '[COLOR yellow]ᵛ[/COLOR]'
                 else:
@@ -91,7 +96,7 @@ class Metadata:
                     ))
 
         # Go to program context menu
-        if cache_file and cache_file.startswith(('my-offline', 'my-recent', 'offline', 'recent')):
+        if plugin.path.startswith(('/favorites/offline', '/favorites/recent', '/offline', '/recent')):
             plugin_url = self._kodi.url_for('programs', program=program, season='allseasons')
             # NOTE: Because of a bug in ActivateWindow(), return does not work
             # context_menu.append((self._kodi.localize(30417), 'ActivateWindow(Videos,%s,return)' % plugin_url))

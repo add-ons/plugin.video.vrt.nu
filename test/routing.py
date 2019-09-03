@@ -47,10 +47,13 @@ class RoutingError(Exception):
     pass
 
 
-class Plugin(object):
+class Plugin:
     """
     :ivar handle: The plugin handle from kodi
     :type handle: int
+
+    :ivar path: The current path
+    :type path: byte string
 
     :ivar args: The parsed query string.
     :type args: dict of byte strings
@@ -58,8 +61,14 @@ class Plugin(object):
 
     def __init__(self, base_url=None):
         self._rules = {}  # function to list of rules
-        argv = sys.argv if len(sys.argv) > 1 else ['', '', '']
-        self.handle = int(argv[1]) if argv[1].isdigit() else -1
+        if sys.argv:
+            self.path = urlsplit(sys.argv[0]).path or '/'
+        else:
+            self.path = '/'
+        if len(sys.argv) > 1 and sys.argv[1].isdigit():
+            self.handle = int(sys.argv[1])
+        else:
+            self.handle = -1
         self.args = {}
         self.base_url = base_url
         if self.base_url is None:
@@ -74,7 +83,7 @@ class Plugin(object):
         if path.startswith(self.base_url):
             path = path.split(self.base_url, 1)[1]
 
-        for view_fun, rules in iter(self._rules.items()):
+        for view_fun, rules in iter(list(self._rules.items())):
             for rule in rules:
                 if rule.match(path) is not None:
                     return view_fun
@@ -113,17 +122,19 @@ class Plugin(object):
             self._rules[func] = []
         self._rules[func].append(rule)
 
-    def run(self, argv=sys.argv):
+    def run(self, argv=None):
+        if argv is None:
+            argv = sys.argv
+        self.path = urlsplit(argv[0]).path or '/'
         if len(argv) > 2:
             self.args = parse_qs(argv[2].lstrip('?'))
-        path = urlsplit(argv[0]).path or '/'
-        self._dispatch(path)
+        self._dispatch(self.path)
 
     def redirect(self, path):
         self._dispatch(path)
 
     def _dispatch(self, path):
-        for view_func, rules in iter(self._rules.items()):
+        for view_func, rules in iter(list(self._rules.items())):
             for rule in rules:
                 kwargs = rule.match(path)
                 if kwargs is not None:
@@ -133,7 +144,7 @@ class Plugin(object):
         raise RoutingError('No route to path "%s"' % path)
 
 
-class UrlRule(object):
+class UrlRule:
 
     def __init__(self, pattern):
         kw_pattern = r'<(?:[^:]+:)?([A-z]+)>'
@@ -151,6 +162,10 @@ class UrlRule(object):
         Check if path matches this rule. Returns a dictionary of the extracted
         arguments if match, otherwise None.
         """
+        # Strip trailing slashes
+        if len(path) > 1:
+            path = path.rstrip('/')
+
         # match = self._regex.search(urlsplit(path).path)
         match = self._regex.search(path)
         return match.groupdict() if match else None
@@ -168,8 +183,8 @@ class UrlRule(object):
 
         # We need to find the keys from kwargs that occur in our pattern.
         # Unknown keys are pushed to the query string.
-        url_kwargs = dict(((k, v) for k, v in kwargs.items() if k in self._keywords))
-        qs_kwargs = dict(((k, v) for k, v in kwargs.items() if k not in self._keywords))
+        url_kwargs = dict(((k, v) for k, v in list(kwargs.items()) if k in self._keywords))
+        qs_kwargs = dict(((k, v) for k, v in list(kwargs.items()) if k not in self._keywords))
 
         query = '?' + urlencode(qs_kwargs) if qs_kwargs else ''
         try:
