@@ -38,6 +38,16 @@ except OSError as e:
         'network.bandwidth': 0,
     }
 
+if 'PROXY_SERVER' in os.environ:
+    GLOBAL_SETTINGS['network.usehttpproxy'] = 'true'
+    GLOBAL_SETTINGS['network.httpproxytype'] = '0'
+    GLOBAL_SETTINGS['network.httpproxyserver'] = os.environ.get('PROXY_SERVER')
+    if 'PROXY_PORT' in os.environ:
+        GLOBAL_SETTINGS['network.httpproxyport'] = os.environ.get('PROXY_PORT')
+    if 'PROXY_USERNAME' in os.environ and 'PROXY_PASSWORD' in os.environ:
+        GLOBAL_SETTINGS['network.httpproxyusername'] = os.environ.get('PROXY_USERNAME')
+        GLOBAL_SETTINGS['network.httpproxypassword'] = os.environ.get('PROXY_PASSWORD')
+
 
 class Keyboard:
     ''' A stub implementation of the xbmc Keyboard class '''
