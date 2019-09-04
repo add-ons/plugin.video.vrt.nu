@@ -410,7 +410,6 @@ class KodiWrapper:
         else:
             return None
 
-        self.log_notice("Using a proxyserver using proxy type '{scheme}'.".format(scheme=httpproxyscheme))
         return dict(http=proxy_address, https=proxy_address)
 
     def get_cond_visibility(self, condition):
