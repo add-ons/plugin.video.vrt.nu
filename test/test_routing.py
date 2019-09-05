@@ -202,9 +202,20 @@ class TestRouter(unittest.TestCase):
     def test_play_latestepisode_route(self):
         plugin.run(['plugin://plugin.video.vrt.nu/play/latest/het-journaal', '0', ''])
         self.assertEqual(plugin.url_for(addon.play_latest, program='het-journaal'), 'plugin://plugin.video.vrt.nu/play/latest/het-journaal')
+        plugin.run(['plugin://plugin.video.vrt.nu/play/latest/terzake', '0', ''])
+        self.assertEqual(plugin.url_for(addon.play_latest, program='terzake'), 'plugin://plugin.video.vrt.nu/play/latest/terzake')
+        plugin.run(['plugin://plugin.video.vrt.nu/play/latest/winteruur', '0', ''])
+        self.assertEqual(plugin.url_for(addon.play_latest, program='winteruur'), 'plugin://plugin.video.vrt.nu/play/latest/winteruur')
 
     # Play episode by air date method = '/play/airdate/<channel>/<start_date>'
     def test_play_airdateepisode_route(self):
+        # Test Het Journaal
+        plugin.run([lastweek.strftime('plugin://plugin.video.vrt.nu/play/airdate/een/%Y-%m-%dT19:00:00'), '0', ''])
+        self.assertEqual(plugin.url_for(addon.play_by_air_date,
+                                        channel='een',
+                                        start_date=lastweek.strftime('%Y-%m-%dT19:00:00')),
+                         lastweek.strftime('plugin://plugin.video.vrt.nu/play/airdate/een/%Y-%m-%dT19:00:00'))
+        # Test TerZake
         plugin.run([lastweek.strftime('plugin://plugin.video.vrt.nu/play/airdate/canvas/%Y-%m-%dT20:00:00'), '0', ''])
         self.assertEqual(plugin.url_for(addon.play_by_air_date,
                                         channel='canvas',
