@@ -32,24 +32,24 @@ class TestTVGuide(unittest.TestCase):
         date_items = self._tvguide.get_date_items()
         self.assertEqual(len(date_items), 37)
         date_item = random.choice(date_items)
-        print('- %s%s' % (date_item.title, uri_to_path(date_item.path)))
+        print('- %s%s' % (kodi_to_ansi(date_item.title), uri_to_path(date_item.path)))
         date_items = self._tvguide.get_date_items('today')
         self.assertEqual(len(date_items), 37)
         date_item = random.choice(date_items)
-        print('- %s%s' % (date_item.title, uri_to_path(date_item.path)))
+        print('- %s%s' % (kodi_to_ansi(date_item.title), uri_to_path(date_item.path)))
 
     def test_tvguide_channel_menu(self):
         ''' Test channel menu '''
         channel_items = self._tvguide.get_channel_items(channel='een')
         self.assertTrue(channel_items)
         channel_item = random.choice(channel_items)
-        print('- %s%s' % (channel_item.title, uri_to_path(channel_item.path)))
+        print('- %s%s' % (kodi_to_ansi(channel_item.title), uri_to_path(channel_item.path)))
 
         date = (datetime.now(dateutil.tz.tzlocal()) + timedelta(days=-10)).strftime('%Y-%m-%d')
         channel_items = self._tvguide.get_channel_items(date=date)
         self.assertTrue(channel_items)
         channel_item = random.choice(channel_items)
-        print('- %s%s' % (channel_item.title, uri_to_path(channel_item.path)))
+        print('- %s%s' % (kodi_to_ansi(channel_item.title), uri_to_path(channel_item.path)))
 
     def test_tvguide_episode_menu(self):
         ''' Test episode menu '''

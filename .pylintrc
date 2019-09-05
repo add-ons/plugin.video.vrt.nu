@@ -2,13 +2,10 @@
 disable=
     bad-option-value,
     broad-except,
-    cyclic-import,
     duplicate-code,
     fixme,
-    import-error,
     invalid-name,
     line-too-long,
-    no-init,
     no-self-use,
     old-style-class,
     too-few-public-methods,
@@ -19,4 +16,3 @@ disable=
     too-many-public-methods,
     too-many-return-statements,
     too-many-statements,
-    unused-argument,

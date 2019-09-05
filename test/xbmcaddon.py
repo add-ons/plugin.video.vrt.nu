@@ -4,69 +4,14 @@
 ''' This file implements the Kodi xbmcaddon module, either using stubs or alternative functionality '''
 
 from __future__ import absolute_import, division, print_function, unicode_literals
-import sys
-import os
 import json
-import xml.etree.ElementTree as ET
-import polib
+from xbmcextra import addon_settings, global_settings, import_language, read_addon_xml
 
-PO = polib.pofile('resources/language/resource.language.en_gb/strings.po')
-
-# Use the addon_settings file
-try:
-    with open('test/userdata/addon_settings.json') as f:
-        ADDON_SETTINGS = json.load(f)
-except OSError as e:
-    print("Error using 'test/userdata/addon_settings.json': %s" % e, file=sys.stderr)
-    ADDON_SETTINGS = {}
-
-# Read credentials from credentials.json
-try:
-    with open('test/userdata/credentials.json') as f:
-        ADDON_SETTINGS.update(json.load(f))
-except (IOError, OSError) as e:
-    if 'VRTNU_USERNAME' in os.environ and 'VRTNU_PASSWORD' in os.environ:
-        print('Using credentials from the environment variables VRTNU_USERNAME and VRTNU_PASSWORD')
-        ADDON_SETTINGS['username'] = os.environ.get('VRTNU_USERNAME')
-        ADDON_SETTINGS['password'] = os.environ.get('VRTNU_PASSWORD')
-    else:
-        print("Error using 'test/userdata/credentials.json': %s" % e, file=sys.stderr)
-
-
-def __read_addon_xml(path):
-    ''' Parse the addon.xml and return an info dictionary '''
-    info = dict(
-        path='./',  # '/storage/.kodi/addons/plugin.video.vrt.nu',
-        profile='special://userdata',  # 'special://profile/addon_data/plugin.video.vrt.nu/',
-        type='xbmc.python.pluginsource',
-    )
-
-    tree = ET.parse(path)
-    root = tree.getroot()
-
-    info.update(root.attrib)  # Add 'id', 'name' and 'version'
-    info['author'] = info.pop('provider-name')
-
-    for child in root:
-        if child.attrib.get('point') != 'xbmc.addon.metadata':
-            continue
-        for grandchild in child:
-            # Handle assets differently
-            if grandchild.tag == 'assets':
-                for asset in grandchild:
-                    info[asset.tag] = asset.text
-                continue
-            # Not in English ?  Drop it
-            if grandchild.attrib.get('lang', 'en_GB') != 'en_GB':
-                continue
-            # Add metadata
-            info[grandchild.tag] = grandchild.text
-
-    return {info['name']: info}
-
-
-ADDON_INFO = __read_addon_xml('addon.xml')
+GLOBAL_SETTINGS = global_settings()
+ADDON_SETTINGS = addon_settings()
+ADDON_INFO = read_addon_xml('addon.xml')
 ADDON_ID = list(ADDON_INFO)[0]
+PO = import_language(language=GLOBAL_SETTINGS.get('locale.language'))
 
 
 class Addon:
@@ -78,7 +23,7 @@ class Addon:
 
     def getAddonInfo(self, key):
         ''' A working implementation for the xbmcaddon Addon class getAddonInfo() method '''
-        STUB_INFO = dict(id=self.id, name=self.id, version='1.2.3', type='kodi.inputstream', profile='special://userdata')
+        STUB_INFO = dict(id=self.id, name=self.id, version='2.3.4', type='kodi.inputstream', profile='special://userdata')
         return ADDON_INFO.get(self.id, STUB_INFO).get(key)
 
     @staticmethod

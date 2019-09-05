@@ -18,16 +18,22 @@ class Dialog:
     @staticmethod
     def notification(heading, message, icon=None, time=None, sound=None):
         ''' A working implementation for the xbmcgui Dialog class notification() method '''
+        heading = kodi_to_ansi(heading)
+        message = kodi_to_ansi(message)
         print('\033[37;100mNOTIFICATION:\033[35;0m [%s] \033[35;0m%s\033[39;0m' % (heading, message))
 
     @staticmethod
     def ok(heading, line1, line2=None, line3=None):
         ''' A stub implementation for the xbmcgui Dialog class ok() method '''
+        heading = kodi_to_ansi(heading)
+        line1 = kodi_to_ansi(line1)
         print('\033[37;100mOK:\033[35;0m [%s] \033[35;0m%s\033[39;0m' % (heading, line1))
 
     @staticmethod
     def yesno(heading, line1, line2=None, line3=None, nolabel=None, yeslabel=None, autoclose=0):
         ''' A stub implementation for the xbmcgui Dialog class yesno() method '''
+        heading = kodi_to_ansi(heading)
+        line1 = kodi_to_ansi(line1)
         print('\033[37;100mYESNO:\033[35;0m [%s] \033[35;0m%s\033[39;0m' % (heading, line1))
         return True
 
@@ -44,6 +50,7 @@ class DialogProgress:
 
     def __init__(self):
         ''' A stub constructor for the xbmcgui DialogProgress class '''
+        self.percentage = 0
 
     @staticmethod
     def close():
@@ -53,15 +60,22 @@ class DialogProgress:
     @staticmethod
     def create(heading, line1, line2=None, line3=None):
         ''' A stub implementation for the xbmcgui DialogProgress class create() method '''
+        heading = kodi_to_ansi(heading)
+        line1 = kodi_to_ansi(line1)
         print('\033[37;100mPROGRESS:\033[35;0m [%s] \033[35;0m%s\033[39;0m' % (heading, line1))
 
     @staticmethod
     def iscanceled():
         ''' A stub implementation for the xbmcgui DialogProgress class iscanceled() method '''
 
-    @staticmethod
-    def update(percentage, line1=None, line2=None, line3=None):
+    def update(self, percentage, line1=None, line2=None, line3=None):
         ''' A stub implementation for the xbmcgui DialogProgress class update() method '''
+        if (percentage - 5) < self.percentage:
+            return
+        self.percentage = percentage
+        line1 = kodi_to_ansi(line1)
+        line2 = kodi_to_ansi(line2)
+        line3 = kodi_to_ansi(line3)
         if line1 or line2 or line3:
             print('\033[37;100mPROGRESS:\033[35;0m [%d%%] \033[35;0m%s\033[39;0m' % (percentage, line1 or line2 or line3))
         else:
@@ -88,8 +102,8 @@ class ListItem:
 
     def __init__(self, label='', label2='', iconImage='', thumbnailImage='', path='', offscreen=False):
         ''' A stub constructor for the xbmcgui ListItem class '''
-        self.label = label
-        self.label2 = label2
+        self.label = kodi_to_ansi(label)
+        self.label2 = kodi_to_ansi(label2)
         self.path = path
 
     @staticmethod

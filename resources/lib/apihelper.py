@@ -36,7 +36,7 @@ class ApiHelper:
         self._proxies = _kodi.get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
 
-    def get_tvshows(self, category=None, channel=None, feature=None, use_favorites=False):
+    def get_tvshows(self, category=None, channel=None, feature=None):
         ''' Get all TV shows for a given category, channel or feature, optionally filtered by favorites '''
         params = dict()
 
@@ -71,7 +71,7 @@ class ApiHelper:
         ''' List all TV shows for a given category, channel or feature, optionally filtered by favorites '''
 
         # Get tvshows
-        tvshows = self.get_tvshows(category=category, channel=channel, feature=feature, use_favorites=use_favorites)
+        tvshows = self.get_tvshows(category=category, channel=channel, feature=feature)
 
         # Get oneoffs
         if self._kodi.get_setting('showoneoff', 'true') == 'true':
@@ -546,7 +546,7 @@ class ApiHelper:
 
         return channel_items
 
-    def list_youtube(self, channels=None, live=True):
+    def list_youtube(self, channels=None):
         ''' Construct a list of youtube ListItems, either for Live TV or the TV Guide listing '''
 
         youtube_items = []
@@ -629,7 +629,7 @@ class ApiHelper:
         # Try to scrape from the web
         if not categories:
             try:
-                categories = self.get_categories(self._proxies)
+                categories = self.get_categories()
             except Exception:
                 categories = []
             else:
@@ -668,7 +668,7 @@ class ApiHelper:
 
         return sorted(categories, key=lambda k: k.get('name'))
 
-    def get_categories(self, proxies=None):
+    def get_categories(self):
         ''' Return a list of categories by scraping the website '''
         from bs4 import BeautifulSoup, SoupStrainer
         self._kodi.log_notice('URL get: https://www.vrt.be/vrtnu/categorieen/', 'Verbose')

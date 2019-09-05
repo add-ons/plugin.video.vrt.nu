@@ -90,14 +90,15 @@ MONTH_SHORT = {
 
 def has_socks():
     ''' Test if socks is installed, and remember this information '''
-    if not hasattr(has_socks, 'installed'):
-        try:
-            import socks  # noqa: F401; pylint: disable=unused-variable,unused-import
-            has_socks.installed = True
-        except ImportError:
-            has_socks.installed = False
-            return None  # Detect if this is the first run
-    return has_socks.installed
+    if hasattr(has_socks, 'installed'):
+        return has_socks.installed
+    try:
+        import socks  # noqa: F401; pylint: disable=unused-variable,unused-import
+        has_socks.installed = True
+        return True
+    except ImportError:
+        has_socks.installed = False
+        return None  # Detect if this is the first run
 
 
 class SafeDict(dict):
@@ -281,13 +282,6 @@ class KodiWrapper:
         if not heading:
             heading = self._addon.getAddonInfo('name')
         Dialog().notification(heading=heading, message=message, icon=icon, time=time)
-
-    def show_yesno_dialog(self, heading='', message=''):
-        ''' Show Kodi's yes/no dialog '''
-        from xbmcgui import Dialog
-        if not heading:
-            heading = self._addon.getAddonInfo('name')
-        return Dialog().yesno(heading=self.localize(30971), line1=self.localize(30972))
 
     def set_locale(self):
         ''' Load the proper locale for date strings '''
@@ -631,7 +625,7 @@ class KodiWrapper:
             message = '[%s] %s' % (self._addon_id, message)
             xbmc.log(msg=from_unicode(message), level=xbmc.LOGNOTICE)
 
-    def log_error(self, message, log_level='Info'):
+    def log_error(self, message):
         ''' Log error messages to Kodi '''
         message = '[%s] %s' % (self._addon_id, message)
         xbmc.log(msg=from_unicode(message), level=xbmc.LOGERROR)
