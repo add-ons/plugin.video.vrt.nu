@@ -58,4 +58,5 @@ zip: clean
 clean:
 	find resources/ test/ -name '*.pyc' -type f -delete
 	find resources/ test/ -name '__pycache__' -type d -delete
-	rm -rf .pytest_cache/ .tox/ *.log
+	rm -rf .pytest_cache/ .tox/
+	rm -f *.log test/userdata/tokens/*.tkn

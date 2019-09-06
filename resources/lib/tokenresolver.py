@@ -75,7 +75,7 @@ class TokenResolver:
             if refresh_token and token_variant != 'roaming':
                 token = self._get_fresh_token(refresh_token, 'X-VRT-Token', token_variant=token_variant)
             elif token_variant == 'user':
-                token = self._get_new_user_xvrttoken(token_variant)
+                token = self._get_new_user_xvrttoken()
             else:
                 # Login
                 token = self.login(token_variant=token_variant)
@@ -207,7 +207,7 @@ class TokenResolver:
                 self._kodi.show_notification(message=self._kodi.localize(30952))  # Login succeeded.
         return token
 
-    def _get_new_user_xvrttoken(self, token_variant):
+    def _get_new_user_xvrttoken(self):
         ''' Get new 'user' X-VRT-Token from VRT NU website '''
         token = None
 

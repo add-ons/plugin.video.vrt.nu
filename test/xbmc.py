@@ -3,14 +3,15 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ''' This file implements the Kodi xbmc module, either using stubs or alternative functionality '''
 
+# pylint: disable=unused-argument
+
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import sys
 import os
 import json
 import time
-import polib
-
+from xbmcextra import global_settings, import_language
 
 LOGDEBUG = 'Debug'
 LOGERROR = 'Error'
@@ -20,38 +21,13 @@ INFO_LABELS = {
     'System.BuildVersion': '18.2',
 }
 
-PO = polib.pofile('resources/language/resource.language.en_gb/strings.po')
-
 REGIONS = {
     'datelong': '%A, %e %B %Y',
     'dateshort': '%Y-%m-%d',
 }
 
-# Use the global_settings file
-try:
-    with open('test/userdata/global_settings.json') as f:
-        GLOBAL_SETTINGS = json.load(f)
-except OSError as e:
-    print("Error using 'test/userdata/global_settings.json' : %s" % e, file=sys.stderr)
-    GLOBAL_SETTINGS = {
-        'locale.language': 'resource.language.en_gb',
-        'network.bandwidth': 0,
-    }
-
-if 'PROXY_SERVER' in os.environ:
-    GLOBAL_SETTINGS['network.usehttpproxy'] = True
-    GLOBAL_SETTINGS['network.httpproxytype'] = 0
-    print('Using proxy server from environment variable PROXY_SERVER')
-    GLOBAL_SETTINGS['network.httpproxyserver'] = os.environ.get('PROXY_SERVER')
-    if 'PROXY_PORT' in os.environ:
-        print('Using proxy server from environment variable PROXY_PORT')
-        GLOBAL_SETTINGS['network.httpproxyport'] = os.environ.get('PROXY_PORT')
-    if 'PROXY_USERNAME' in os.environ:
-        print('Using proxy server from environment variable PROXY_USERNAME')
-        GLOBAL_SETTINGS['network.httpproxyusername'] = os.environ.get('PROXY_USERNAME')
-    if 'PROXY_PASSWORD' in os.environ:
-        print('Using proxy server from environment variable PROXY_PASSWORD')
-        GLOBAL_SETTINGS['network.httpproxypassword'] = os.environ.get('PROXY_PASSWORD')
+GLOBAL_SETTINGS = global_settings()
+PO = import_language(language=GLOBAL_SETTINGS.get('locale.language'))
 
 
 class Keyboard:
@@ -74,10 +50,12 @@ class Keyboard:
 
 class Monitor:
     ''' A stub implementation of the xbmc Monitor class '''
+    def __init__(self, line='', heading=''):
+        ''' A stub constructor for the xbmc Monitor class '''
 
     def abortRequested(self):
         ''' A stub implementation for the xbmc Keyboard class abortRequested() method '''
-        return
+        return False
 
     def waitForAbort(self):
         ''' A stub implementation for the xbmc Keyboard class waitForAbort() method '''
@@ -86,6 +64,8 @@ class Monitor:
 
 class Player:
     ''' A stub implementation of the xbmc Player class '''
+    def __init__(self):
+        self._count = 0
 
     def play(self, item='', listitem=None, windowed=False, startpos=-1):
         ''' A stub implementation for the xbmc Player class play() method '''
@@ -93,7 +73,9 @@ class Player:
 
     def isPlaying(self):
         ''' A stub implementation for the xbmc Player class isPlaying() method '''
-        return True
+        # Return True four times out of five
+        self._count += 1
+        return bool(self._count % 5 != 0)
 
     def showSubtitles(self, bVisible):
         ''' A stub implementation for the xbmc Player class showSubtitles() method '''
