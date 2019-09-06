@@ -48,8 +48,9 @@ def follow(program, title):
 @plugin.route('/unfollow/<program>/<title>')
 def unfollow(program, title):
     ''' The API interface to unfollow a program used by the context menu '''
+    move_down = bool(plugin.args.get('move_down'))
     from favorites import Favorites
-    Favorites(kodi).unfollow(program=program, title=to_unicode(unquote_plus(title)))
+    Favorites(kodi).unfollow(program=program, title=to_unicode(unquote_plus(title)), move_down=move_down)
 
 
 @plugin.route('/favorites')

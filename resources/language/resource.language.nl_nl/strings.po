@@ -112,8 +112,8 @@ msgstr "Zoekresultaten"
 
 ### FAVORITES
 msgctxt "#30040"
-msgid "My favorite programs"
-msgstr "Mijn favoriete programma's"
+msgid "My programs"
+msgstr "Mijn programma's"
 
 msgctxt "#30041"
 msgid "Alphabetically sorted list of My TV programs"

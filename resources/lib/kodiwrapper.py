@@ -603,6 +603,10 @@ class KodiWrapper:
             self.delete_file(self._cache_path + f)
         self.delete_file(self._cache_path + 'oneoff.json')
 
+    def input_down(self):
+        ''' Move the cursor down '''
+        xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Input.Down", "id": 1}')
+
     def container_refresh(self):
         ''' Refresh the current container '''
         self.log_notice('Execute: Container.Refresh', 'Debug')
