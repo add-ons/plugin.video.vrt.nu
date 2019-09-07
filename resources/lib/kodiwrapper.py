@@ -136,7 +136,7 @@ class KodiWrapper:
         from xbmcgui import ListItem
         listing = []
 
-        xbmcplugin.setPluginFanart(handle=self._handle, image=self._addon_fanart)
+        xbmcplugin.setPluginFanart(handle=self._handle, image=from_unicode(self._addon_fanart))
 
         if cache is None:
             cache = self._usemenucaching
@@ -432,7 +432,7 @@ class KodiWrapper:
 
     def get_userdata_path(self):
         ''' Return the profile's userdata path '''
-        return xbmc.translatePath(self._addon.getAddonInfo('profile'))
+        return to_unicode(xbmc.translatePath(self._addon.getAddonInfo('profile')))
 
     def get_tokens_path(self):
         ''' Return the userdata tokens path '''
