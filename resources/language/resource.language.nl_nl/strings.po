@@ -565,8 +565,8 @@ msgid "VRT NWS"
 msgstr "VRT NWS"
 
 msgctxt "#30900"
-msgid "Troubleshooting"
-msgstr "Foutopsporing"
+msgid "Expert"
+msgstr "Expert"
 
 msgctxt "#30901"
 msgid "Cache"
@@ -586,7 +586,7 @@ msgstr "Gebruik menu caching"
 
 msgctxt "#30909"
 msgid "Use local HTTP caching"
-msgstr "Gebruik local HTTP caching"
+msgstr "Gebruik lokale HTTP caching"
 
 msgctxt "#30911"
 msgid "Invalidate local HTTP caches"

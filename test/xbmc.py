@@ -14,9 +14,13 @@ import time
 from xbmcextra import global_settings, import_language
 from statichelper import to_unicode
 
-LOGDEBUG = 'Debug'
+LOGFATAL = 'Fatal'
 LOGERROR = 'Error'
+LOGWARNING = 'Warning'
 LOGNOTICE = 'Notice'
+LOGINFO = 'Info'
+LOGDEBUG = 'Debug'
+LOGNONE = ''
 
 INFO_LABELS = {
     'System.BuildVersion': '18.2',

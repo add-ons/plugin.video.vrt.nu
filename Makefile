@@ -56,7 +56,7 @@ zip: clean
 	@echo -e "$(white)=$(blue) Successfully wrote package as: $(white)../$(zip_name)$(reset)"
 
 clean:
-	find resources/ test/ -name '*.pyc' -type f -delete
-	find resources/ test/ -name '__pycache__' -type d -delete
+	find . -name '*.pyc' -type f -delete
+	find . -name '__pycache__' -type d -delete
 	rm -rf .pytest_cache/ .tox/
 	rm -f *.log test/userdata/tokens/*.tkn

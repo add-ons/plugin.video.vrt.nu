@@ -62,7 +62,7 @@ class ApiHelper:
             import json
             querystring = '&'.join('{}={}'.format(key, value) for key, value in params.items())
             suggest_url = self._VRTNU_SUGGEST_URL + '?' + querystring
-            self._kodi.log_notice('URL get: ' + unquote(suggest_url), 'Verbose')
+            self._kodi.log('URL get: {url}', 'Verbose', url=unquote(suggest_url))
             tvshows = json.load(urlopen(suggest_url))
             self._kodi.update_cache(cache_file, tvshows)
 
@@ -348,7 +348,7 @@ class ApiHelper:
         api_data = self.get_episodes(program=program, variety='single')
         if len(api_data) == 1:
             episode = api_data[0]
-        self._kodi.log_notice(str(episode))
+        self._kodi.log(str(episode))
         video_item = TitleItem(
             title=self._metadata.get_label(episode),
             art_dict=self._metadata.get_art(episode),
@@ -433,7 +433,7 @@ class ApiHelper:
             # Get api data from cache if it is fresh
             search_json = self._kodi.get_cache(cache_file, ttl=60 * 60)
             if not search_json:
-                self._kodi.log_notice('URL get: ' + unquote(search_url), 'Verbose')
+                self._kodi.log('URL get: {url}', 'Verbose', url=unquote(search_url))
                 req = Request(search_url)
                 try:
                     search_json = json.load(urlopen(req))
@@ -450,7 +450,7 @@ class ApiHelper:
                     raise
                 self._kodi.update_cache(cache_file, search_json)
         else:
-            self._kodi.log_notice('URL get: ' + unquote(search_url), 'Verbose')
+            self._kodi.log('URL get: {url}', 'Verbose', url=unquote(search_url))
             search_json = json.load(urlopen(search_url))
 
         # Check for multiple seasons
@@ -672,7 +672,7 @@ class ApiHelper:
     def get_categories(self):
         ''' Return a list of categories by scraping the website '''
         from bs4 import BeautifulSoup, SoupStrainer
-        self._kodi.log_notice('URL get: https://www.vrt.be/vrtnu/categorieen/', 'Verbose')
+        self._kodi.log('URL get: https://www.vrt.be/vrtnu/categorieen/', 'Verbose')
         response = urlopen('https://www.vrt.be/vrtnu/categorieen/')
         tiles = SoupStrainer('nui-list--content')
         soup = BeautifulSoup(response.read(), 'html.parser', parse_only=tiles)
