@@ -52,6 +52,16 @@ class TestSearch(unittest.TestCase):
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
 
+    def test_search_unicode(self):
+        ''' Test for unicode '''
+        search_items, sort, ascending, content = self._apihelper.list_search('René', page=1)
+
+        # Test we get a non-empty search result
+        self.assertGreater(len(search_items), 2)
+        self.assertEqual(sort, 'dateadded')
+        self.assertFalse(ascending)
+        self.assertEqual(content, 'episodes')
+
 
 if __name__ == '__main__':
     unittest.main()

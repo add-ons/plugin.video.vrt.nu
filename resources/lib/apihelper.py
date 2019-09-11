@@ -6,9 +6,10 @@ from __future__ import absolute_import, division, unicode_literals
 
 try:  # Python 3
     from urllib.error import HTTPError
-    from urllib.parse import unquote
+    from urllib.parse import quote_plus, unquote
     from urllib.request import build_opener, install_opener, ProxyHandler, Request, urlopen
 except ImportError:  # Python 2
+    from urllib import quote_plus
     from urllib2 import build_opener, install_opener, ProxyHandler, Request, HTTPError, unquote, urlopen
 
 import statichelper
@@ -417,7 +418,7 @@ class ApiHelper:
 
         if keywords:
             season = 'allseasons'
-            params['q'] = keywords
+            params['q'] = quote_plus(statichelper.from_unicode(keywords))
             params['highlight'] = 'true'
 
         if whatson_id:

@@ -76,7 +76,7 @@ class Metadata:
                 follow_enabled = bool(api_data.get('url'))
 
             if follow_enabled:
-                program_title = quote_plus(statichelper.from_unicode(program_title))  # We need to ensure forward slashes are quoted
+                program_title = statichelper.to_unicode(quote_plus(statichelper.from_unicode(program_title)))  # We need to ensure forward slashes are quoted
                 if self._favorites.is_favorite(program):
                     extras = dict()
                     # If we are in a favorites menu, move cursor down before removing a favorite
