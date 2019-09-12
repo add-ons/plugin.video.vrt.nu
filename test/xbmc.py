@@ -12,6 +12,7 @@ import os
 import json
 import time
 from xbmcextra import global_settings, import_language
+from statichelper import to_unicode
 
 LOGDEBUG = 'Debug'
 LOGERROR = 'Error'
@@ -124,7 +125,7 @@ def getRegion(key):
 
 def log(msg, level):
     ''' A reimplementation of the xbmc log() function '''
-    print('[32;1m%s: [32;0m%s[0m' % (level, msg))
+    print('[32;1m%s: [32;0m%s[0m' % (level, to_unicode(msg)))
 
 
 def setContent(self, content):

@@ -265,7 +265,7 @@ class KodiWrapper:
         keyboard = xbmc.Keyboard('', self.localize(30097))
         keyboard.doModal()
         if keyboard.isConfirmed():
-            search_string = keyboard.getText()
+            search_string = to_unicode(keyboard.getText())
         return search_string
 
     def show_ok_dialog(self, heading='', message=''):
