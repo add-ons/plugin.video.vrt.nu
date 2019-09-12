@@ -39,7 +39,7 @@
         <setting label="30893" type="bool" id="vrtnws" default="true"/> <!-- VRT NWS -->
         <setting label="30894" type="bool" id="vrtnxt" default="true"/> <!-- VRT NXT -->
     </category>
-    <category label="30900"> <!-- Troubleshooting -->
+    <category label="30900"> <!-- Expert -->
         <setting label="30901" type="lsep"/> <!-- Cache -->
         <setting label="30903" help="30904" type="action" id="delete_tokens" action="RunPlugin(plugin://plugin.video.vrt.nu/tokens/delete)"/>
         <setting label="30905" help="30906" type="action" id="refresh_favorites" action="RunPlugin(plugin://plugin.video.vrt.nu/favorites/refresh)"/>

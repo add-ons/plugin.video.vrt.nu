@@ -41,7 +41,7 @@ class Favorites:
                     'Referer': 'https://www.vrt.be/vrtnu',
                 }
                 req = Request('https://video-user-data.vrt.be/favorites', headers=headers)
-                self._kodi.log_notice('URL post: https://video-user-data.vrt.be/favorites', 'Verbose')
+                self._kodi.log('URL post: https://video-user-data.vrt.be/favorites', 'Verbose')
                 import json
                 try:
                     favorites_json = json.load(urlopen(req))
@@ -78,7 +78,7 @@ class Favorites:
         payload = dict(isFavorite=value, programUrl=program_to_url(program, 'short'), title=title)
         import json
         data = json.dumps(payload).encode('utf-8')
-        self._kodi.log_notice('URL post: https://video-user-data.vrt.be/favorites/%s' % self.uuid(program), 'Verbose')
+        self._kodi.log('URL post: https://video-user-data.vrt.be/favorites/{program}', 'Verbose', program=self.uuid(program))
         req = Request('https://video-user-data.vrt.be/favorites/%s' % self.uuid(program), data=data, headers=headers)
         result = urlopen(req)
         if result.getcode() != 200:

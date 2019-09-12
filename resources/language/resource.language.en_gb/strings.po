@@ -572,7 +572,7 @@ msgid "VRT NWS"
 msgstr ""
 
 msgctxt "#30900"
-msgid "Troubleshooting"
+msgid "Expert"
 msgstr ""
 
 msgctxt "#30901"

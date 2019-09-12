@@ -40,7 +40,7 @@ class StreamService:
 
     def _get_vualto_license_url(self):
         ''' Get Widevine license URL from Vualto API '''
-        self._kodi.log_notice('URL get: ' + unquote(self._VUPLAY_API_URL), 'Verbose')
+        self._kodi.log('URL get: {url}', 'Verbose', url=unquote(self._VUPLAY_API_URL))
         self._vualto_license_url = json.load(urlopen(self._VUPLAY_API_URL)).get('drm_providers', dict()).get('widevine', dict()).get('la_url')
 
     def _create_settings_dir(self):
@@ -107,7 +107,7 @@ class StreamService:
     def _webscrape_api_data(self, video_url):
         ''' Scrape api data from VRT NU html page '''
         from bs4 import BeautifulSoup, SoupStrainer
-        self._kodi.log_notice('URL get: ' + unquote(video_url), 'Verbose')
+        self._kodi.log('URL get: {url}', 'Verbose', url=unquote(video_url))
         html_page = urlopen(video_url).read()
         strainer = SoupStrainer(['section', 'div'], {'class': ['video-player', 'livestream__player']})
         soup = BeautifulSoup(html_page, 'html.parser', parse_only=strainer)
@@ -155,7 +155,7 @@ class StreamService:
         if playertoken:
             api_url = api_data.media_api_url + '/videos/' + api_data.publication_id + \
                 api_data.video_id + '?vrtPlayerToken=' + playertoken + '&client=' + api_data.client
-            self._kodi.log_notice('URL get: ' + unquote(api_url), 'Verbose')
+            self._kodi.log('URL get: {url}', 'Verbose', url=unquote(api_url))
             try:
                 stream_json = json.load(urlopen(api_url))
             except HTTPError as e:
@@ -235,7 +235,7 @@ class StreamService:
 
             # Prepare stream for Kodi player
             if protocol == 'mpeg_dash' and drm_stream:
-                self._kodi.log_notice('Protocol: mpeg_dash drm', 'Verbose')
+                self._kodi.log('Protocol: mpeg_dash drm', 'Verbose')
                 if vudrm_token:
                     if self._vualto_license_url is None:
                         self._get_vualto_license_url()
@@ -250,17 +250,17 @@ class StreamService:
                 stream = StreamURLS(manifest_url, license_key=license_key, use_inputstream_adaptive=True)
             elif protocol == 'mpeg_dash':
                 stream = StreamURLS(manifest_url, use_inputstream_adaptive=True)
-                self._kodi.log_notice('Protocol: ' + protocol, 'Verbose')
+                self._kodi.log('Protocol: {protocol}', 'Verbose', protocol=protocol)
             else:
                 # Fix 720p quality for HLS livestreams
                 manifest_url += '?hd' if '.m3u8?' not in manifest_url else '&hd'
                 stream = self._select_hls_substreams(manifest_url, protocol)
-                self._kodi.log_notice('Protocol: ' + protocol, 'Verbose')
+                self._kodi.log('Protocol: {protocol}', 'Verbose', protocol=protocol)
             return stream
 
         # VRT Geoblock: failed to get stream, now try again with roaming enabled
         if stream_json.get('code') in self._GEOBLOCK_ERROR_CODES:
-            self._kodi.log_notice('VRT Geoblock: ' + stream_json.get('message'), 'Verbose')
+            self._kodi.log('VRT Geoblock: {msg}', 'Verbose', msg=stream_json.get('message'))
             if not roaming:
                 return self.get_stream(video, roaming=True, api_data=api_data)
 
@@ -308,7 +308,7 @@ class StreamService:
         hls_audio_id = None
         hls_subtitle_id = None
         hls_base_url = master_hls_url.split('.m3u8')[0]
-        self._kodi.log_notice('URL get: ' + unquote(master_hls_url), 'Verbose')
+        self._kodi.log('URL get: {url}', 'Verbose', url=unquote(master_hls_url))
         try:
             hls_playlist = urlopen(master_hls_url).read().decode('utf-8')
         except HTTPError as e:
