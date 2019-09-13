@@ -142,7 +142,6 @@ class KodiWrapper:
     def show_listing(self, list_items, category=None, sort='unsorted', ascending=True, content=None, cache=None):
         ''' Show a virtual directory in Kodi '''
         from xbmcgui import ListItem
-        listing = []
 
         xbmcplugin.setPluginFanart(handle=self._handle, image=from_unicode(self._addon_fanart))
 
@@ -188,6 +187,7 @@ class KodiWrapper:
 #            # NOTE: When descending, use unsorted
 #            xbmcplugin.setProperty(handle=self._handle, key='sort.order', value=str(sort_methods['unsorted']))
 
+        listing = []
         for title_item in list_items:
             # Three options:
             #  - item is a virtual directory/folder (not playable, path)

@@ -28,6 +28,7 @@ SORT_METHOD_VIDEO_SORT_TITLE_IGNORE_THE = 27
 SORT_METHOD_STUDIO = 33
 SORT_METHOD_STUDIO_IGNORE_THE = 34
 SORT_METHOD_FULLPATH = 35
+SORT_METHOD_LABEL_IGNORE_FOLDERS = 36
 SORT_METHOD_LASTPLAYED = 37
 SORT_METHOD_PLAYCOUNT = 38
 SORT_METHOD_UNSORTED = 40
@@ -36,14 +37,20 @@ SORT_METHOD_BITRATE = 43
 SORT_METHOD_DATE_TAKEN = 44
 
 
+def addDirectoryItem(handle, path, listitem, isFolder=False):
+    ''' A reimplementation of the xbmcplugin addDirectoryItems() function '''
+    label = kodi_to_ansi(listitem.label)
+    path = uri_to_path(path) if path else ''
+    # perma = kodi_to_ansi(listitem.label)  # FIXME: Add permalink
+    bullet = '»' if isFolder else '·'
+    print('{bullet} {label}{path}'.format(bullet=bullet, label=label, path=path))
+    return True
+
+
 def addDirectoryItems(handle, listing, length):
     ''' A reimplementation of the xbmcplugin addDirectoryItems() function '''
     for item in listing:
-        label = kodi_to_ansi(item[1].label)
-        path = uri_to_path(item[0]) if item[0] else ''
-        # perma = kodi_to_ansi(item[1].label)  # FIXME: Add permalink
-        bullet = '»' if item[2] else '·'
-        print('{bullet} {label}{path}'.format(bullet=bullet, label=label, path=path))
+        addDirectoryItem(handle, item[0], item[1], item[2])
     return True
 
 
