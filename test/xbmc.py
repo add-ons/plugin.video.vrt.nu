@@ -129,7 +129,7 @@ def getRegion(key):
 
 def log(msg, level):
     ''' A reimplementation of the xbmc log() function '''
-    print('[32;1m%s: [32;0m%s[0m' % (level, to_unicode(msg)))
+    print('[32;1m%s: [32;0m%s[0;39m' % (level, to_unicode(msg)))
 
 
 def setContent(self, content):

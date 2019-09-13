@@ -1,7 +1,9 @@
 bs4
 codecov
+git+git://github.com/emilsvennesson/script.module.inputstreamhelper.git@master#egg=inputstreamhelper
 kodi-addon-checker
 polib
 python-dateutil
 pylint
+git+git://github.com/dagwieers/kodi-plugin-routing.git@setup#egg=routing
 tox-travis

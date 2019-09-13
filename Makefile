@@ -16,7 +16,7 @@ zip_dir = $(name)/
 
 blue = \e[1;34m
 white = \e[1;37m
-reset = \e[0m
+reset = \e[0;39m
 
 .PHONY: test
 

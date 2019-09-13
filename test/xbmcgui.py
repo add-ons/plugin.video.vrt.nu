@@ -30,6 +30,10 @@ class Dialog:
         print('\033[37;100mOK:\033[35;0m [%s] \033[35;0m%s\033[39;0m' % (heading, line1))
 
     @staticmethod
+    def info(listitem):
+        ''' A stub implementation for the xbmcgui Dialog class info() method '''
+
+    @staticmethod
     def yesno(heading, line1, line2=None, line3=None, nolabel=None, yeslabel=None, autoclose=0):
         ''' A stub implementation for the xbmcgui Dialog class yesno() method '''
         heading = kodi_to_ansi(heading)
@@ -135,6 +139,10 @@ class ListItem:
     def setMimeType(mimetype):
         ''' A stub implementation for the xbmcgui ListItem class setMimeType() method '''
         return
+
+    def setPath(self, path):
+        ''' A stub implementation for the xbmcgui ListItem class setPath() method '''
+        self.path = path
 
     @staticmethod
     def setProperty(key, value):
