@@ -119,7 +119,9 @@ def getLocalizedString(msgctxt):
     for entry in PO:
         if entry.msgctxt == '#%s' % msgctxt:
             return entry.msgstr or entry.msgid
-    return 'smurf'
+    if int(msgctxt) >= 30000:
+        log('Unable to translate #{msgctxt}'.format(msgctxt=msgctxt), LOGERROR)
+    return '<Untranslated>'
 
 
 def getRegion(key):
@@ -129,7 +131,14 @@ def getRegion(key):
 
 def log(msg, level):
     ''' A reimplementation of the xbmc log() function '''
-    print('[32;1m%s: [32;0m%s[0;39m' % (level, to_unicode(msg)))
+    if level in ('Error', 'Fatal'):
+        print('\033[31;1m%s: \033[32;0m%s\033[0;39m' % (level, to_unicode(msg)))
+        if level == 'Fatal':
+            raise Exception(msg)
+    elif level in ('Warning', 'Notice'):
+        print('\033[33;1m%s: \033[32;0m%s\033[0;39m' % (level, to_unicode(msg)))
+    else:
+        print('\033[32;1m%s: \033[32;0m%s\033[0;39m' % (level, to_unicode(msg)))
 
 
 def setContent(self, content):
@@ -147,7 +156,7 @@ def translatePath(path):
     if path.startswith('special://home'):
         return path.replace('special://home', os.path.join(os.getcwd(), 'test/'))
     if path.startswith('special://profile'):
-        return path.replace('special://profile', os.path.join(os.getcwd(), 'test/usedata/'))
+        return path.replace('special://profile', os.path.join(os.getcwd(), 'test/userdata/'))
     if path.startswith('special://userdata'):
         return path.replace('special://userdata', os.path.join(os.getcwd(), 'test/userdata/'))
     return path

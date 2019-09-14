@@ -31,7 +31,6 @@ def Stat(path):
 
 def delete(path):
     ''' A reimplementation of the xbmcvfs delete() function '''
-
     try:
         os.remove(path)
     except OSError:

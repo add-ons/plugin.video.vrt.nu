@@ -6,9 +6,11 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 import sys
+import os
 
 # Add current working directory to import paths
-sys.path.insert(0, 'resources/lib')
+cwd = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(os.path.realpath(__file__))), os.pardir, 'resources/lib'))
+sys.path.insert(0, cwd)
 import addon  # noqa: E402  pylint: disable=wrong-import-position
 
 xbmc = __import__('xbmc')

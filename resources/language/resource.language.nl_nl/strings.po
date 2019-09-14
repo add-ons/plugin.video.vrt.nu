@@ -622,7 +622,7 @@ msgstr "Logboek"
 
 msgctxt "#30927"
 msgid "Log level"
-msgstr "Log level"
+msgstr "Log niveau"
 
 
 ### MESSAGES

@@ -4,7 +4,6 @@
 ''' Extra functions for testing '''
 
 from __future__ import absolute_import, division, print_function, unicode_literals
-import sys
 import os
 import xml.etree.ElementTree as ET
 import polib
@@ -76,7 +75,7 @@ def global_settings():
         with open('test/userdata/global_settings.json') as f:
             settings = json.load(f)
     except OSError as e:
-        print("Error using 'test/userdata/global_settings.json' : %s" % e, file=sys.stderr)
+        print("Error: Cannot use 'test/userdata/global_settings.json' : %s" % e)
         settings = {
             'locale.language': 'resource.language.en_gb',
             'network.bandwidth': 0,
@@ -106,7 +105,7 @@ def addon_settings():
         with open('test/userdata/addon_settings.json') as f:
             settings = json.load(f)
     except OSError as e:
-        print("Error using 'test/userdata/addon_settings.json': %s" % e, file=sys.stderr)
+        print("Error: Cannot use 'test/userdata/addon_settings.json' : %s" % e)
         settings = {}
 
     # Read credentials from credentials.json
@@ -119,7 +118,7 @@ def addon_settings():
             settings['username'] = os.environ.get('VRTNU_USERNAME')
             settings['password'] = os.environ.get('VRTNU_PASSWORD')
         else:
-            print("Error using 'test/userdata/credentials.json': %s" % e, file=sys.stderr)
+            print("Error: Cannot use 'test/userdata/credentials.json' : %s" % e)
     return settings
 
 

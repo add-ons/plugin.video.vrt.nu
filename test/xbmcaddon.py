@@ -5,12 +5,13 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 import json
+from xbmc import getLocalizedString
 from xbmcextra import addon_settings, global_settings, import_language, read_addon_xml
 
 GLOBAL_SETTINGS = global_settings()
 ADDON_SETTINGS = addon_settings()
 ADDON_INFO = read_addon_xml('addon.xml')
-ADDON_ID = list(ADDON_INFO)[0]
+ADDON_ID = next(iter(ADDON_INFO.values())).get('id')
 PO = import_language(language=GLOBAL_SETTINGS.get('locale.language'))
 
 
@@ -29,10 +30,7 @@ class Addon:
     @staticmethod
     def getLocalizedString(msgctxt):
         ''' A working implementation for the xbmcaddon Addon class getLocalizedString() method '''
-        for entry in PO:
-            if entry.msgctxt == '#%s' % msgctxt:
-                return entry.msgstr or entry.msgid
-        return 'vrttest'
+        return getLocalizedString(msgctxt)
 
     def getSetting(self, key):
         ''' A working implementation for the xbmcaddon Addon class getSetting() method '''
@@ -44,7 +42,7 @@ class Addon:
 
     def setSetting(self, key, value):
         ''' A stub implementation for the xbmcaddon Addon class setSetting() method '''
-        if self.id in ADDON_SETTINGS:
+        if ADDON_SETTINGS.get(self.id):
             ADDON_SETTINGS[self.id][key] = value
         else:
             ADDON_SETTINGS[key] = value
