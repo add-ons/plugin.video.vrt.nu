@@ -17,7 +17,7 @@ xbmcgui = __import__('xbmcgui')
 xbmcplugin = __import__('xbmcplugin')
 xbmcvfs = __import__('xbmcvfs')
 
-xbmcaddon.ADDON_SETTINGS['usefavorites'] = 'true'
+xbmcaddon.ADDON_SETTINGS['plugin.video.vrt.nu']['usefavorites'] = 'true'
 
 
 class TestFavorites(unittest.TestCase):
@@ -70,7 +70,7 @@ class TestFavorites(unittest.TestCase):
             # self._favorites.unfollow(program=program, title=program_title)
             # self.assertFalse(self._favorites.is_favorite(program))
 
-    @unittest.skipIf(not xbmcaddon.ADDON_SETTINGS.get('username') or not xbmcaddon.ADDON_SETTINGS.get('password'), 'Skipping this test by lack of credentials.')
+    @unittest.skipIf(not xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('username') or not xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('password'), 'Skipping this test by lack of credentials.')
     def test_follow_unfollow(self):
         programs = [
             {'program_title': 'Winteruur', 'program': 'winteruur'},
@@ -93,14 +93,14 @@ class TestFavorites(unittest.TestCase):
     def test_programs(self):
         programs = self._favorites.programs()
         # NOTE: Getting favorites requires credentials
-        if xbmcaddon.ADDON_SETTINGS.get('username') and xbmcaddon.ADDON_SETTINGS.get('password'):
+        if xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('username') and xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('password'):
             self.assertTrue(programs)
         print(programs)
 
     def test_titles(self):
         titles = self._favorites.titles()
         # NOTE: Getting favorites requires credentials
-        if xbmcaddon.ADDON_SETTINGS.get('username') and xbmcaddon.ADDON_SETTINGS.get('password'):
+        if xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('username') and xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('password'):
             self.assertTrue(titles)
         print(sorted(titles))
 
