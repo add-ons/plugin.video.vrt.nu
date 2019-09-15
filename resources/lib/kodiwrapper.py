@@ -16,7 +16,7 @@ try:  # Python 3
 except ImportError:  # Python 2
     from urllib2 import unquote
 
-sort_methods = dict(
+SORT_METHODS = dict(
     # date=xbmcplugin.SORT_METHOD_DATE,
     dateadded=xbmcplugin.SORT_METHOD_DATEADDED,
     duration=xbmcplugin.SORT_METHOD_DURATION,
@@ -30,14 +30,14 @@ sort_methods = dict(
     unsorted=xbmcplugin.SORT_METHOD_UNSORTED,
 )
 
-log_levels = dict(
+LOG_LEVELS = dict(
     Quiet=0,
     Info=1,
     Verbose=2,
     Debug=3,
 )
 
-xbmc_log_levels = dict(
+XBMC_LOG_LEVELS = dict(
     Quiet=xbmc.LOGNONE,
     Info=xbmc.LOGNOTICE,
     Verbose=xbmc.LOGINFO,
@@ -129,7 +129,7 @@ class KodiWrapper:
         self._addon_id = to_unicode(self._addon.getAddonInfo('id'))
         self._addon_fanart = to_unicode(self._addon.getAddonInfo('fanart'))
         self._debug_logging = self.get_global_setting('debug.showloginfo')   # Returns a boolean
-        self._max_log_level = log_levels.get(self.get_setting('max_log_level', 'Debug'), 3)
+        self._max_log_level = LOG_LEVELS.get(self.get_setting('max_log_level', 'Debug'), 3)
         self._usemenucaching = self.get_setting('usemenucaching', 'true') == 'true'
         self._cache_path = self.get_userdata_path() + 'cache/'
         self._tokens_path = self.get_userdata_path() + 'tokens/'
@@ -174,18 +174,18 @@ class KodiWrapper:
             sort = 'unsorted'
 
         # Add all sort methods to GUI (start with preferred)
-        xbmcplugin.addSortMethod(handle=self._handle, sortMethod=sort_methods[sort])
-        for key in sorted(sort_methods):
+        xbmcplugin.addSortMethod(handle=self._handle, sortMethod=SORT_METHODS[sort])
+        for key in sorted(SORT_METHODS):
             if key != sort:
-                xbmcplugin.addSortMethod(handle=self._handle, sortMethod=sort_methods[key])
+                xbmcplugin.addSortMethod(handle=self._handle, sortMethod=SORT_METHODS[key])
 
         # FIXME: This does not appear to be working, we have to order it ourselves
 #        xbmcplugin.setProperty(handle=self._handle, key='sort.ascending', value='true' if ascending else 'false')
 #        if ascending:
-#            xbmcplugin.setProperty(handle=self._handle, key='sort.order', value=str(sort_methods[sort]))
+#            xbmcplugin.setProperty(handle=self._handle, key='sort.order', value=str(SORT_METHODS[sort]))
 #        else:
 #            # NOTE: When descending, use unsorted
-#            xbmcplugin.setProperty(handle=self._handle, key='sort.order', value=str(sort_methods['unsorted']))
+#            xbmcplugin.setProperty(handle=self._handle, key='sort.order', value=str(SORT_METHODS['unsorted']))
 
         listing = []
         for title_item in list_items:
@@ -223,8 +223,8 @@ class KodiWrapper:
 
             listing.append((url, list_item, is_folder))
 
-        ok = xbmcplugin.addDirectoryItems(self._handle, listing, len(listing))
-        xbmcplugin.endOfDirectory(self._handle, ok, cacheToDisc=cache)
+        succeeded = xbmcplugin.addDirectoryItems(self._handle, listing, len(listing))
+        xbmcplugin.endOfDirectory(self._handle, succeeded, cacheToDisc=cache)
 
     def play(self, stream, video=None):
         ''' Create a virtual directory listing to play its only item '''
@@ -299,10 +299,10 @@ class KodiWrapper:
             # NOTE: This only works if the platform supports the Kodi configured locale
             locale.setlocale(locale.LC_ALL, locale_lang)
             return True
-        except Exception as e:
+        except Exception as exc:  # pylint: disable=broad-except
             if locale_lang == 'en_gb':
                 return True
-            self.log("Your system does not support locale '{locale}': {error}", 'Debug', locale=locale_lang, error=e)
+            self.log("Your system does not support locale '{locale}': {error}", 'Debug', locale=locale_lang, error=exc)
             return False
 
     def localize(self, string_id, **kwargs):
@@ -354,7 +354,8 @@ class KodiWrapper:
         ''' Open the add-in settings window, shows Credentials '''
         self._addon.openSettings()
 
-    def get_global_setting(self, setting):
+    @staticmethod
+    def get_global_setting(setting):
         ''' Get a Kodi setting '''
         import json
         json_result = xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Settings.GetSettingValue", "params": {"setting": "%s"}, "id": 1}' % setting)
@@ -414,7 +415,8 @@ class KodiWrapper:
 
         return dict(http=proxy_address, https=proxy_address)
 
-    def get_cond_visibility(self, condition):
+    @staticmethod
+    def get_cond_visibility(condition):
         ''' Test a condition in XBMC '''
         return xbmc.getCondVisibility(condition)
 
@@ -426,7 +428,8 @@ class KodiWrapper:
         ''' Whether the add-on has credentials filled in '''
         return bool(self.get_setting('username') and self.get_setting('password'))
 
-    def kodi_version(self):
+    @staticmethod
+    def kodi_version():
         ''' Returns major Kodi version '''
         return int(xbmc.getInfoLabel('System.BuildVersion').split('.')[0])
 
@@ -450,7 +453,8 @@ class KodiWrapper:
         ''' Return addon information '''
         return self._addon.getAddonInfo(key)
 
-    def listdir(self, path):
+    @staticmethod
+    def listdir(path):
         ''' Return all files in a directory (using xbmcvfs)'''
         from xbmcvfs import listdir
         return listdir(path)
@@ -467,20 +471,23 @@ class KodiWrapper:
         self.log("Recursively create directory '{path}'.", 'Debug', path=path)
         return mkdirs(path)
 
-    def check_if_path_exists(self, path):
+    @staticmethod
+    def check_if_path_exists(path):
         ''' Whether the path exists (using xbmcvfs)'''
         from xbmcvfs import exists
         return exists(path)
 
+    @staticmethod
     @contextmanager
-    def open_file(self, path, flags='r'):
+    def open_file(path, flags='r'):
         ''' Open a file (using xbmcvfs) '''
         from xbmcvfs import File
-        f = File(path, flags)
-        yield f
-        f.close()
+        fdesc = File(path, flags)
+        yield fdesc
+        fdesc.close()
 
-    def stat_file(self, path):
+    @staticmethod
+    def stat_file(path):
         ''' Return information about a file (using xbmcvfs) '''
         from xbmcvfs import Stat
         return Stat(path)
@@ -516,12 +523,14 @@ class KodiWrapper:
         self.log_error('%s not found in texture cache' % url)
         return False
 
-    def md5(self, data):
+    @staticmethod
+    def md5(data):
         ''' Return an MD5 checksum '''
         import hashlib
         return hashlib.md5(data)
 
-    def human_delta(self, seconds):
+    @staticmethod
+    def human_delta(seconds):
         ''' Return a human-readable representation of the TTL '''
         from math import floor
         days = int(floor(seconds / (24 * 60 * 60)))
@@ -556,10 +565,10 @@ class KodiWrapper:
                 self.log("Cache '{path}' is forced from cache.", 'Debug', path=path)
             else:
                 self.log("Cache '{path}' is fresh, expires in {time}.", 'Debug', path=path, time=self.human_delta(mtime + ttl - now))
-            with self.open_file(fullpath, 'r') as f:
+            with self.open_file(fullpath, 'r') as fdesc:
                 try:
-                    # return json.load(f, encoding='utf-8')
-                    return json.load(f)
+                    # return json.load(fdesc, encoding='utf-8')
+                    return json.load(fdesc)
                 except (ValueError, TypeError):
                     return None
 
@@ -574,8 +583,8 @@ class KodiWrapper:
         import json
         fullpath = self._cache_path + path
         if self.check_if_path_exists(fullpath):
-            with self.open_file(fullpath) as f:
-                cachefile = f.read().encode('utf-8')
+            with self.open_file(fullpath) as fdesc:
+                cachefile = fdesc.read().encode('utf-8')
             md5 = self.md5(cachefile)
         else:
             md5 = 0
@@ -586,9 +595,9 @@ class KodiWrapper:
         # Avoid writes if possible (i.e. SD cards)
         if md5 != hashlib.md5(json.dumps(data).encode('utf-8')):
             self.log("Write cache '{path}'.", 'Debug', path=path)
-            with self.open_file(fullpath, 'w') as f:
-                # json.dump(data, f, encoding='utf-8')
-                json.dump(data, f)
+            with self.open_file(fullpath, 'w') as fdesc:
+                # json.dump(data, fdesc, encoding='utf-8')
+                json.dump(data, fdesc)
         else:
             # Update timestamp
             import os
@@ -607,11 +616,12 @@ class KodiWrapper:
         _, files = self.listdir(self._cache_path)
         if expr:
             files = fnmatch.filter(files, expr)
-        for f in files:
-            self.delete_file(self._cache_path + f)
+        for filename in files:
+            self.delete_file(self._cache_path + filename)
         self.delete_file(self._cache_path + 'oneoff.json')
 
-    def input_down(self):
+    @staticmethod
+    def input_down():
         ''' Move the cursor down '''
         xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Input.Down", "id": 1}')
 
@@ -626,13 +636,13 @@ class KodiWrapper:
 
     def log_access(self, url, query_string=None, log_level='Verbose'):
         ''' Log addon access '''
-        if log_levels.get(log_level, 0) <= self._max_log_level:
+        if LOG_LEVELS.get(log_level, 0) <= self._max_log_level:
             message = '[%s] Access: %s' % (self._addon_id, url + ('?' + query_string if query_string else ''))
             xbmc.log(msg=from_unicode(message), level=xbmc.LOGNOTICE)
 
     def log(self, message, log_level='Info', **kwargs):
         ''' Log info messages to Kodi '''
-        cur_log_level = log_levels.get(log_level, 0)
+        cur_log_level = LOG_LEVELS.get(log_level, 0)
         if not self._debug_logging and 1 < cur_log_level <= self._max_log_level:
             # If Debug Logging is not enabled, Kodi filters everything up to NOTICE out
             log_level = 'Info'
@@ -640,7 +650,7 @@ class KodiWrapper:
             import string
             message = string.Formatter().vformat(message, (), SafeDict(**kwargs))
         message = '[{addon}] {message}'.format(addon=self._addon_id, message=message)
-        xbmc.log(msg=from_unicode(message), level=xbmc_log_levels.get(log_level))
+        xbmc.log(msg=from_unicode(message), level=XBMC_LOG_LEVELS.get(log_level))
 
     def log_error(self, message, **kwargs):
         ''' Log error messages to Kodi '''

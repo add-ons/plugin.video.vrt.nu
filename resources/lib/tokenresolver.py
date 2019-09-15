@@ -96,8 +96,8 @@ class TokenResolver:
             from datetime import datetime
             import dateutil.parser
             import dateutil.tz
-            with self._kodi.open_file(path) as f:
-                token = json.load(f)
+            with self._kodi.open_file(path) as fdesc:
+                token = json.load(fdesc)
             now = datetime.now(dateutil.tz.tzlocal())
             exp = dateutil.parser.parse(token.get('expirationDate'))
             if exp > now:
@@ -116,8 +116,8 @@ class TokenResolver:
         if not self._kodi.check_if_path_exists(self._kodi.get_tokens_path()):
             self._kodi.mkdir(self._kodi.get_tokens_path())
 
-        with self._kodi.open_file(path, 'w') as f:
-            json.dump(token, f)
+        with self._kodi.open_file(path, 'w') as fdesc:
+            json.dump(token, fdesc)
 
     def _get_new_playertoken(self, token_url, headers, token_variant=None):
         ''' Get new playertoken from VRT Token API '''

@@ -20,7 +20,8 @@ class VrtMonitor(Monitor):
             if self.waitForAbort(10):
                 break
 
-    def onSettingsChanged(self):
+    @staticmethod
+    def onSettingsChanged():  # pylint: disable=invalid-name
         ''' Handler for changes to settings '''
         _kodi = KodiWrapper(None)
         _kodi.log('Settings changed')

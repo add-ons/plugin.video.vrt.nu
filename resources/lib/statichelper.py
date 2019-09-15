@@ -10,9 +10,9 @@ try:  # Python 3
 except ImportError:  # Python 2
     from HTMLParser import HTMLParser
 
-    def unescape(s):
+    def unescape(string):
         ''' Expose HTMLParser's unescape '''
-        return HTMLParser().unescape(s)
+        return HTMLParser().unescape(string)
 
 HTML_MAPPING = [
     (re.compile(r'<(/?)i(|\s[^>]+)>', re.I), '[\\1I]'),
@@ -28,8 +28,8 @@ HTML_MAPPING = [
 
 def convert_html_to_kodilabel(text):
     ''' Convert VRT HTML content into Kodit formatted text '''
-    for (k, v) in HTML_MAPPING:
-        text = k.sub(v, text)
+    for key, val in HTML_MAPPING:
+        text = key.sub(val, text)
     return unescape(text).strip()
 
 

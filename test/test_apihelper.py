@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-# pylint: disable=missing-docstring
+# pylint: disable=invalid-name,missing-docstring
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
@@ -39,14 +39,14 @@ class ApiHelperTests(unittest.TestCase):
 
     def test_get_api_data_specific_season(self):
         title_items, sort, ascending, content = self._apihelper.list_episodes(program='pano')
-        self.assertEqual(len(title_items), 4)
+        self.assertEqual(len(title_items), 5)
         self.assertEqual(sort, 'label')
         self.assertFalse(ascending)
         self.assertEqual(content, 'seasons')
 
     def test_get_api_data_specific_season_without_broadcastdate(self):
         title_items, sort, ascending, content = self._apihelper.list_episodes(program='postbus-x')
-        self.assertEqual(len(title_items), 3)
+        self.assertEqual(len(title_items), 4)
         self.assertEqual(sort, 'label')
         self.assertTrue(ascending)
         self.assertEqual(content, 'seasons')

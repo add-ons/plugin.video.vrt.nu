@@ -22,16 +22,16 @@ class Search:
     def read_history(self):
         ''' Read search history from disk '''
         try:
-            with self._kodi.open_file(self._search_history, 'r') as fd:
-                history = json.load(fd)
-        except Exception:
+            with self._kodi.open_file(self._search_history, 'r') as fdesc:
+                history = json.load(fdesc)
+        except Exception:  # pylint: disable=broad-except
             history = []
         return history
 
     def write_history(self, history):
         ''' Write search history to disk '''
-        with self._kodi.open_file(self._search_history, 'w') as fd:
-            json.dump(history, fd)
+        with self._kodi.open_file(self._search_history, 'w') as fdesc:
+            json.dump(history, fdesc)
 
     def search_menu(self):
         ''' Main search menu '''

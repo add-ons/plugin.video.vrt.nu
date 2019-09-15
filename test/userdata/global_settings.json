@@ -1,5 +1,11 @@
 {
     "locale.language": "resource.language.en_gb",
     "network.bandwidth": "0",
-    "network.usehttpproxy": false
+    "network.usehttpproxy": false,
+    "network.httpproxytype": 0,
+    "network.httpproxyserver": "http://proxy.server/",
+    "network.httpproxyport": "3128",
+    "network.httpproxyusername": "",
+    "network.httpproxypassword": "",
+    "videolibrary.showallitems": true
 }

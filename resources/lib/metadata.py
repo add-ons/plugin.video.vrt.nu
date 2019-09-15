@@ -24,7 +24,8 @@ class Metadata:
         self._showfanart = _kodi.get_setting('showfanart', 'true') == 'true'
         self._showpermalink = _kodi.get_setting('showpermalink', 'false') == 'true'
 
-    def get_studio(self, api_data):
+    @staticmethod
+    def get_studio(api_data):
         ''' Get studio string from single item json api data '''
 
         # VRT NU Search API or VRT NU Suggest API
@@ -107,7 +108,8 @@ class Metadata:
 
         return context_menu, favorite_marker
 
-    def get_tvshowtitle(self, api_data):
+    @staticmethod
+    def get_tvshowtitle(api_data):
         ''' Get tvshowtitle string from single item json api data '''
 
         # VRT NU Search API
@@ -125,7 +127,8 @@ class Metadata:
         # Not Found
         return ''
 
-    def get_duration(self, api_data):
+    @staticmethod
+    def get_duration(api_data):
         ''' Get duration int from single item json api data '''
 
         # VRT NU Search API
@@ -228,7 +231,8 @@ class Metadata:
         # Not Found
         return ''
 
-    def get_plotoutline(self, api_data, season=False):
+    @staticmethod
+    def get_plotoutline(api_data, season=False):
         ''' Get plotoutline string from single item json api data '''
         # VRT NU Search API
         if api_data.get('type') == 'episode':
@@ -254,7 +258,8 @@ class Metadata:
         # Not Found
         return ''
 
-    def get_season(self, api_data):
+    @staticmethod
+    def get_season(api_data):
         ''' Get season int from single item json api data '''
 
         # VRT NU Search API
@@ -279,7 +284,8 @@ class Metadata:
         # Not Found
         return None
 
-    def get_episode(self, api_data):
+    @staticmethod
+    def get_episode(api_data):
         ''' Get episode int from single item json api data '''
 
         # VRT NU Search API
@@ -301,7 +307,8 @@ class Metadata:
         # Not Found
         return int()
 
-    def get_date(self, api_data):
+    @staticmethod
+    def get_date(api_data):
         ''' Get date string from single item json api data '''
 
         # VRT NU Search API
@@ -320,7 +327,8 @@ class Metadata:
         # Not Found
         return ''
 
-    def get_aired(self, api_data):
+    @staticmethod
+    def get_aired(api_data):
         ''' Get aired string from single item json api data '''
 
         # VRT NU Search API
@@ -347,7 +355,8 @@ class Metadata:
         # Not Found
         return ''
 
-    def get_dateadded(self, api_data):
+    @staticmethod
+    def get_dateadded(api_data):
         ''' Get dateadded string from single item json api data '''
 
         # VRT NU Search API
@@ -366,7 +375,8 @@ class Metadata:
         # Not Found
         return ''
 
-    def get_year(self, api_data):
+    @staticmethod
+    def get_year(api_data):
         ''' Get year integer from single item json api data '''
         from datetime import datetime
 
@@ -529,7 +539,7 @@ class Metadata:
                     try:
                         label = 'S%02dE%02d: %s' % (int(api_data.get('seasonName')), int(api_data.get('episodeNumber')), label)
                         sort = 'dateadded'
-                    except Exception:
+                    except Exception:  # pylint: disable=broad-except
                         # Season may not always be a perfect number
                         sort = 'episode'
                 elif display_options.get('showEpisodeNumber') and api_data.get('episodeNumber') and ascending:
@@ -583,7 +593,8 @@ class Metadata:
 
         return label
 
-    def parse(self, date, now):
+    @staticmethod
+    def parse(date, now):
         ''' Parse a given string and return a datetime object
             This supports 'today', 'yesterday' and 'tomorrow'
             It also compensates for TV-guides covering from 6AM to 6AM
