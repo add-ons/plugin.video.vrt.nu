@@ -1,12 +1,9 @@
 [MESSAGES CONTROL]
 disable=
     bad-option-value,
-    broad-except,
     duplicate-code,
     fixme,
-    invalid-name,
     line-too-long,
-    no-self-use,
     old-style-class,
     too-few-public-methods,
     too-many-arguments,

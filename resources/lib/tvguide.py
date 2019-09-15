@@ -196,7 +196,8 @@ class TVGuide:
             ))
         return episode_items
 
-    def episode_description(self, episode):
+    @staticmethod
+    def episode_description(episode):
         ''' Return a formatted description for an episode '''
         return '{start} - {end}\n» {title}'.format(**episode)
 
@@ -248,7 +249,8 @@ class TVGuide:
             description = '[COLOR yellow][B]%s[/B] %s - 06:00\n» %s[/COLOR]' % (self._kodi.localize(30421), episode.get('end'), self._kodi.localize(30423))
         return description
 
-    def parse(self, date, now):
+    @staticmethod
+    def parse(date, now):
         ''' Parse a given string and return a datetime object
             This supports 'today', 'yesterday' and 'tomorrow'
             It also compensates for TV-guides covering from 6AM to 6AM

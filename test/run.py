@@ -9,10 +9,11 @@ import sys
 import os
 
 # Add current working directory to import paths
-cwd = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(os.path.realpath(__file__))), os.pardir, 'resources/lib'))
-sys.path.insert(0, cwd)
+CWD = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(os.path.realpath(__file__))), os.pardir, 'resources/lib'))
+sys.path.insert(0, CWD)
 import addon  # noqa: E402  pylint: disable=wrong-import-position
 
+# pylint: disable=invalid-name
 xbmc = __import__('xbmc')
 xbmcaddon = __import__('xbmcaddon')
 xbmcgui = __import__('xbmcgui')
@@ -28,5 +29,5 @@ if not sys.argv[1].startswith('plugin://'):
     sys.argv[1] = 'plugin://plugin.video.vrt.nu' + sys.argv[1]
 
 print('** Running URI: %s' % sys.argv[1])
-plugin = addon.plugin
-plugin.run([sys.argv[1], 0, ''])
+PLUGIN = addon.plugin
+PLUGIN.run([sys.argv[1], 0, ''])

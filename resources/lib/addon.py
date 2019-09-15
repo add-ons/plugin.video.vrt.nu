@@ -13,6 +13,7 @@ except ImportError:  # Python 2
 from kodiwrapper import KodiWrapper
 from statichelper import from_unicode, to_unicode
 
+# pylint: disable=invalid-name
 plugin = Plugin()
 kodi = KodiWrapper(globals())
 

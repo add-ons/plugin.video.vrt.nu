@@ -437,13 +437,13 @@ class ApiHelper:
                 req = Request(search_url)
                 try:
                     search_json = json.load(urlopen(req))
-                except HTTPError as e:
+                except HTTPError as exc:
                     url_length = len(req.get_selector())
-                    if e.code == 413 and url_length > 8192:
+                    if exc.code == 413 and url_length > 8192:
                         self._kodi.show_ok_dialog(heading='HTTP Error 413', message=self._kodi.localize(30967))
                         self._kodi.log_error('HTTP Error 413: Exceeded maximum url length: VRT Search API url has a length of %d characters.' % url_length)
                         return []
-                    if e.code == 400 and 7600 <= url_length <= 8192:
+                    if exc.code == 400 and 7600 <= url_length <= 8192:
                         self._kodi.show_ok_dialog(heading='HTTP Error 400', message=self._kodi.localize(30967))
                         self._kodi.log_error('HTTP Error 400: Probably exceeded maximum url length: VRT Search API url has a length of %d characters.' % url_length)
                         return []
@@ -608,17 +608,17 @@ class ApiHelper:
             ))
         return featured_items
 
-    def localize_features(self, FEATURED):
+    def localize_features(self, featured):
         ''' Return a localized and sorted listing '''
         from copy import deepcopy
-        features = deepcopy(FEATURED)
+        features = deepcopy(featured)
 
         for feature in features:
-            for k, v in list(feature.items()):
-                if k == 'name':
-                    feature[k] = self._kodi.localize_from_data(v, FEATURED)
+            for key, val in list(feature.items()):
+                if key == 'name':
+                    feature[key] = self._kodi.localize_from_data(val, featured)
 
-        return sorted(features, key=lambda k: k.get('name'))
+        return sorted(features, key=lambda x: x.get('name'))
 
     def list_categories(self):
         ''' Construct a list of category ListItems '''
@@ -631,7 +631,7 @@ class ApiHelper:
         if not categories:
             try:
                 categories = self.get_categories()
-            except Exception:
+            except Exception:  # pylint: disable=broad-except
                 categories = []
             else:
                 self._kodi.update_cache('categories.json', categories)
@@ -659,15 +659,15 @@ class ApiHelper:
             ))
         return category_items
 
-    def localize_categories(self, categories, CATEGORIES):
+    def localize_categories(self, categories, categories2):
         ''' Return a localized and sorted listing '''
 
         for category in categories:
-            for k, v in list(category.items()):
-                if k == 'name':
-                    category[k] = self._kodi.localize_from_data(v, CATEGORIES)
+            for key, val in list(category.items()):
+                if key == 'name':
+                    category[key] = self._kodi.localize_from_data(val, categories2)
 
-        return sorted(categories, key=lambda k: k.get('name'))
+        return sorted(categories, key=lambda x: x.get('name'))
 
     def get_categories(self):
         ''' Return a list of categories by scraping the website '''

@@ -49,7 +49,8 @@ class StreamService:
         if not self._kodi.check_if_path_exists(settingsdir):
             self._kodi.mkdir(settingsdir)
 
-    def _get_license_key(self, key_url, key_type='R', key_headers=None, key_value=None):
+    @staticmethod
+    def _get_license_key(key_url, key_type='R', key_headers=None, key_value=None):
         ''' Generates a proper Widevine license key value
 
             # A{SSM} -> not implemented
@@ -113,9 +114,9 @@ class StreamService:
         soup = BeautifulSoup(html_page, 'html.parser', parse_only=strainer)
         try:
             video_data = soup.find(lambda tag: tag.name == 'nui-media').attrs
-        except Exception as e:
+        except Exception as exc:  # pylint: disable=broad-except
             # Web scraping failed, log error
-            self._kodi.log_error('Web scraping api data failed: %s' % e)
+            self._kodi.log_error('Web scraping api data failed: %s' % exc)
             return None
 
         # Web scraping failed, log error
@@ -158,8 +159,8 @@ class StreamService:
             self._kodi.log('URL get: {url}', 'Verbose', url=unquote(api_url))
             try:
                 stream_json = json.load(urlopen(api_url))
-            except HTTPError as e:
-                stream_json = json.load(e)
+            except HTTPError as exc:
+                stream_json = json.load(exc)
 
         return stream_json
 
@@ -311,8 +312,8 @@ class StreamService:
         self._kodi.log('URL get: {url}', 'Verbose', url=unquote(master_hls_url))
         try:
             hls_playlist = urlopen(master_hls_url).read().decode('utf-8')
-        except HTTPError as e:
-            if e.code == 415:
+        except HTTPError as exc:
+            if exc.code == 415:
                 self._handle_bad_stream_error(protocol)
                 return None
             raise

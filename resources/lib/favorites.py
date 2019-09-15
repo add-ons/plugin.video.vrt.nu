@@ -45,7 +45,7 @@ class Favorites:
                 import json
                 try:
                     favorites_json = json.load(urlopen(req))
-                except Exception:
+                except Exception:  # pylint: disable=broad-except
                     # Force favorites from cache
                     favorites_json = self._kodi.get_cache('favorites.json', ttl=None)
                 else:
@@ -101,22 +101,23 @@ class Favorites:
 
     def follow(self, program, title):
         ''' Follow your favorite program '''
-        ok = self.set_favorite(program, title, True)
-        if ok:
+        succeeded = self.set_favorite(program, title, True)
+        if succeeded:
             self._kodi.show_notification(message=self._kodi.localize(30411) + ' ' + title)
             self._kodi.container_refresh()
 
     def unfollow(self, program, title, move_down=False):
         ''' Unfollow your favorite program '''
-        ok = self.set_favorite(program, title, False)
-        if ok:
+        succeeded = self.set_favorite(program, title, False)
+        if succeeded:
             self._kodi.show_notification(message=self._kodi.localize(30412) + ' ' + title)
             # If the current item is selected and we need to move down before removing
             if move_down:
                 self._kodi.input_down()
             self._kodi.container_refresh()
 
-    def uuid(self, program):
+    @staticmethod
+    def uuid(program):
         ''' Convert a program url component (e.g. de-campus-cup) to a favorite uuid (e.g. vrtnuazdecampuscup), used for lookups in favorites dict '''
         return 'vrtnuaz' + program.replace('-', '')
 
