@@ -383,12 +383,12 @@ msgid "Go to program"
 msgstr "Ga naar programma"
 
 msgctxt "#30421"
-msgid "Nu:"
-msgstr ""
+msgid "Now:"
+msgstr "Nu:"
 
 msgctxt "#30422"
-msgid "Straks:"
-msgstr ""
+msgid "Next:"
+msgstr "Straks:"
 
 msgctxt "#30423"
 msgid "Retransmissions"
@@ -424,9 +424,17 @@ msgctxt "#30803"
 msgid "Email address"
 msgstr "E-mailadres"
 
+msgctxt "#30804"
+msgid "Provide your VRT NU email address. In case this is a Google or Facebook account, please ensure that this login is enabled for normal username/password authentication. See the wiki for more information."
+msgstr "Geef je VRT NU e-mailadres in. In het geval je een Google of Facebook account gebruikt, controleer dat deze login geactiveerd werd voor normale gebruikersnaam/wachtwoord authenticatie. Zie de wiki pagina voor meer informatie."
+
 msgctxt "#30805"
 msgid "Password"
 msgstr "Wachtwoord"
+
+msgctxt "#30806"
+msgid "Provide your VRT NU account password."
+msgstr "Geef je VRT NU account paswoord in."
 
 msgctxt "#30820"
 msgid "Interface"
@@ -583,6 +591,10 @@ msgstr "Ververs favoriete programma's"
 msgctxt "#30907"
 msgid "Use menu caching"
 msgstr "Gebruik menu caching"
+
+msgctxt "#30908"
+msgid "When enabled, menus are being cached so they work more quickly. Only in very specific use-cases this is problematic as new episodes may not appear when they are expected. You can also use [B]Refresh[/B] from the context-menu."
+msgstr "Indien geactiveerd worden Kodi menus gecached zodat ze sneller werken. Enkel in heel uitzonderlijke gevallen is het interessanter noodzakelijk om altijd nieuwe episodes te zijn als ze uitkomen. Je kan ook [B]Ververs[/B] gebruiken vanuit het context-menu."
 
 msgctxt "#30909"
 msgid "Use local HTTP caching"

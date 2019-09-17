@@ -81,7 +81,7 @@ class DialogProgress:
         line2 = kodi_to_ansi(line2)
         line3 = kodi_to_ansi(line3)
         if line1 or line2 or line3:
-            print('\033[37;44;1mPROGRESS:\033[35;49:1m [%d%%] \033[37;1m%s\033[39;0m' % (percentage, line1 or line2 or line3))
+            print('\033[37;44;1mPROGRESS:\033[35;49;1m [%d%%] \033[37;1m%s\033[39;0m' % (percentage, line1 or line2 or line3))
         else:
             print('\033[1G\033[37;44;1mPROGRESS:\033[35;49;1m [%d%%]\033[39;0m' % (percentage), end='')
 
