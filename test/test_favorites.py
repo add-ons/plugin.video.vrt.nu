@@ -70,7 +70,8 @@ class TestFavorites(unittest.TestCase):
             # self._favorites.unfollow(program=program, title=program_title)
             # self.assertFalse(self._favorites.is_favorite(program))
 
-    @unittest.skipIf(not xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('username') or not xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('password'), 'Skipping this test by lack of credentials.')
+    @unittest.skipUnless(xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('password'), 'Skipping as VRT password is missing.')
     def test_follow_unfollow(self):
         programs = [
             {'program_title': 'Winteruur', 'program': 'winteruur'},

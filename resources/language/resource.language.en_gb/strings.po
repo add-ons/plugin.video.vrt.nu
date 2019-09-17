@@ -160,7 +160,7 @@ msgid "Culture"
 msgstr ""
 
 msgctxt "#30072"
-msgid "Docu"
+msgid "Documentary"
 msgstr ""
 
 msgctxt "#30073"
@@ -592,7 +592,7 @@ msgid "Use menu caching"
 msgstr ""
 
 msgctxt "#30908"
-msgid "When enabled, menus are being cached so they work more quickly. Only in very specific use-cases this is problematic as new episodes may not appear when they are expected."
+msgid "When enabled, menus are being cached so they work more quickly. Only in very specific use-cases this is problematic as new episodes may not appear when they are expected. You can also use [B]Refresh[/B] from the context-menu."
 msgstr ""
 
 msgctxt "#30909"

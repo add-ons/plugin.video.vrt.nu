@@ -26,8 +26,10 @@ class Addon:
 
     def getAddonInfo(self, key):
         ''' A working implementation for the xbmcaddon Addon class getAddonInfo() method '''
-        STUB_INFO = dict(id=self.id, name=self.id, version='2.3.4', type='kodi.inputstream', profile='special://userdata')
-        return ADDON_INFO.get(self.id, STUB_INFO).get(key)
+        stub_info = dict(id=self.id, name=self.id, version='2.3.4', type='kodi.inputstream', profile='special://userdata', path='special://userdata')
+        # Add stub_info values to ADD_INFO when missing (e.g. path and profile)
+        addon_info = dict(ADDON_INFO, **stub_info)
+        return addon_info.get(self.id, stub_info).get(key)
 
     @staticmethod
     def getLocalizedString(msgctxt):

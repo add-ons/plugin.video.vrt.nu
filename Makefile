@@ -26,7 +26,7 @@ package: zip
 
 test: sanity unit run
 
-sanity: tox pylint
+sanity: tox pylint language
 
 tox:
 	@echo -e "$(white)=$(blue) Starting sanity tox test$(reset)"
@@ -35,6 +35,10 @@ tox:
 pylint:
 	@echo -e "$(white)=$(blue) Starting sanity pylint test$(reset)"
 	pylint resources/lib/ test/
+
+language:
+	@echo -e "$(white)=$(blue) Checking translations$(reset)"
+	msgcmp resources/language/resource.language.{nl_nl,en_gb}/strings.po
 
 addon: clean
 	@echo -e "$(white)=$(blue) Starting sanity addon tests$(reset)"

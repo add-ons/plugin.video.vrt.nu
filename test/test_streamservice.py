@@ -35,7 +35,8 @@ class StreamServiceTests(unittest.TestCase):
     _tokenresolver = TokenResolver(kodi)
     _streamservice = StreamService(kodi, _tokenresolver)
 
-    @unittest.skipIf(not xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('username') or not xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('password'), 'Skipping this test by lack of credentials.')
+    @unittest.skipUnless(xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('password'), 'Skipping as VRT password is missing.')
     def test_get_ondemand_stream_from_invalid_url(self):
         video = dict(video_url='https://www.vrt.be/vrtnu/a-z/het-journaal/2017/het-journaal-het-journaal-laat-20170501/', video_id=None, publication_id=None)
         try:
@@ -44,9 +45,12 @@ class StreamServiceTests(unittest.TestCase):
         except HTTPError:
             pass
 
-    @unittest.skipIf(not xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('username') or not xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('password'), 'Skipping this test by lack of credentials.')
+    @unittest.skipUnless(xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('password'), 'Skipping as VRT password is missing.')
     def test_get_ondemand_stream_from_url_gets_stream_does_not_crash(self):
-        video = dict(video_url=yesterday.strftime('https://www.vrt.be/vrtnu/a-z/het-journaal/2019/het-journaal-het-journaal-laat-%Y%m%d/'), video_id=None, publication_id=None)
+        video = dict(video_url=yesterday.strftime('https://www.vrt.be/vrtnu/a-z/het-journaal/2019/het-journaal-het-journaal-laat-%Y%m%d/'),
+                     video_id=None,
+                     publication_id=None)
         stream = self._streamservice.get_stream(video)
         self.assertTrue(stream is not None)
 
