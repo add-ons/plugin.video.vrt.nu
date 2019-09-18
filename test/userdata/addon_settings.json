@@ -2,6 +2,8 @@
     "inputstream.adaptive": {
         "DECRYPTERPATH": "special://home/cdm"
     }, 
+    "last_update": "1568504274.0", 
+    "password": "pt4PYWDU", 
     "plugin.video.vrt.nu": {
         "_comment": "do-not-add-username-and-password-here", 
         "canvas": "true", 
@@ -25,8 +27,10 @@
         "useinputstreamadaptive": "true", 
         "usemenucaching": "true", 
         "username": "", 
-        "version": "", 
+        "version": "2.3.4", 
         "vrtnws": "true", 
         "vrtnxt": "true"
-    }
+    }, 
+    "username": "dag@wieers.com", 
+    "version": "2.3.4"
 }

@@ -6,9 +6,10 @@
 from __future__ import absolute_import, division, unicode_literals
 
 try:  # Python 3
+    from urllib.parse import unquote
     from urllib.request import build_opener, install_opener, ProxyHandler, Request, urlopen
 except ImportError:  # Python 2
-    from urllib2 import build_opener, install_opener, ProxyHandler, Request, urlopen
+    from urllib2 import build_opener, install_opener, ProxyHandler, Request, unquote, urlopen
 
 
 class Favorites:
@@ -123,12 +124,12 @@ class Favorites:
 
     def titles(self):
         ''' Return all favorite titles '''
-        return [p.get('value').get('title') for p in list(self._favorites.values()) if p.get('value').get('isFavorite')]
+        return [value.get('value').get('title') for value in list(self._favorites.values()) if value.get('value').get('isFavorite')]
 
     def programs(self):
         ''' Return all favorite programs '''
         from statichelper import url_to_program
-        return [url_to_program(p.get('value').get('programUrl')) for p in list(self._favorites.values()) if p.get('value').get('isFavorite')]
+        return [url_to_program(value.get('value').get('programUrl')) for value in list(self._favorites.values()) if value.get('value').get('isFavorite')]
 
     def invalidate_caches(self):
         ''' Invalidate caches that rely on favorites '''
@@ -141,3 +142,27 @@ class Favorites:
         ''' External API call to refresh favorites, used in Troubleshooting section '''
         self.get_favorites(ttl=0)
         self._kodi.show_notification(message=self._kodi.localize(30982))
+
+    def manage_favorites(self):
+        ''' Allow the user to unselect favorites to be removed from the listing '''
+        from statichelper import url_to_program
+        self.get_favorites(ttl=0)
+        if not self._favorites:
+            self._kodi.show_ok_dialog(heading=self._kodi.localize(30418), message=self._kodi.localize(30419))  # No favorites found
+            return
+
+        def by_title(item):
+            ''' Sort by title '''
+            return item.get('value').get('title')
+
+        items = [dict(program=url_to_program(value.get('value').get('programUrl')),
+                      title=unquote(value.get('value').get('title')),
+                      enabled=value.get('value').get('isFavorite')) for value in list(sorted(self._favorites.values(), key=by_title))]
+        titles = [item['title'] for item in items]
+        preselect = [idx for idx in range(0, len(items) - 1) if items[idx]['enabled']]
+        selected = self._kodi.show_multiselect(self._kodi.localize(30420), options=titles, preselect=preselect)  # Please select/unselect to follow/unfollow
+        if selected is not None:
+            for idx in set(preselect).difference(set(selected)):
+                self.unfollow(program=items[idx]['program'], title=items[idx]['title'])
+            for idx in set(selected).difference(set(preselect)):
+                self.follow(program=items[idx]['program'], title=items[idx]['title'])

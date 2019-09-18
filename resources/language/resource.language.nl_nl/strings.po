@@ -382,6 +382,18 @@ msgctxt "#30417"
 msgid "Go to program"
 msgstr "Ga naar programma"
 
+msgctxt "#30418"
+msgid "No favorites found"
+msgstr "Geen favoriten gevonden"
+
+msgctxt "#30419"
+msgid "Currently you have not followed any programs."
+msgstr "Er werden geen gevolgde programma's gevonden."
+
+msgctxt "#30420"
+msgid "Please unselect/select favorites to unfollow/follow."
+msgstr "Duidt aan welke programma's je als favorieten wil volgen."
+
 msgctxt "#30421"
 msgid "Now:"
 msgstr "Nu:"
@@ -453,30 +465,34 @@ msgid "When enabled, the user can follow their favorite programs and list these 
 msgstr "Indien actief kan de gebruiker zijn favoriete programma's volgen en apart aanroepen. Dit zorgt er wel voor dat de VRT NU add-on een lijst van favoriete programma's download en aanpast op de VRT NU website."
 
 msgctxt "#30825"
+msgid "Manage My favorites..."
+msgstr "Beheer Mijn favorieten..."
+
+msgctxt "#30827"
 msgid "Add My movies"
 msgstr "Toon Mijn films"
 
-msgctxt "#30827"
+msgctxt "#30829"
 msgid "Add My documentaries"
 msgstr "Toon Mijn documentaires"
 
-msgctxt "#30829"
+msgctxt "#30831"
 msgid "Show one-off videos in between program folders"
 msgstr "Toon one-off video's tussen tv-programmafolders"
 
-msgctxt "#30831"
+msgctxt "#30833"
 msgid "Show fanart"
 msgstr "Toon fanart"
 
-msgctxt "#30833"
+msgctxt "#30835"
 msgid "Show YouTube channel content"
 msgstr "Toon YouTube kanaal video's"
 
-msgctxt "#30835"
+msgctxt "#30837"
 msgid "Show episode permalink in plot"
 msgstr "Toon aflevering permalink in beschrijving"
 
-msgctxt "#30836"
+msgctxt "#30838"
 msgid "When enabled, the video description will include a permanent link that points to this episode. This is useful for quickly opening an episode or movie on a mobile device."
 msgstr "Indien actief zal de beschrijving van iedere video een permanent link bevatten die je rechtstreeks naar de VRT NU website brengt. Dit is handig om snel een aflevering of film to openen op een mobiel toestel."
 
@@ -703,7 +719,7 @@ msgid "Using a SOCKS proxy requires the PySocks library (script.module.pysocks) 
 msgstr "Het gebruik van SOCKS proxies vereist dat de PySocks library (script.module.pysocks) geïnstalleerd is."
 
 msgctxt "#30967"
-msgid "Could not retrieve this program list. VRT Search API url is too long. Unfollowing some favorited programs will reduce url length and may fix this problem."
+msgid "Could not retrieve this program list. VRT Search API url is too long. Unfollowing some favorite programs will reduce url length and may fix this problem."
 msgstr "Deze programmalijst kan niet opgehaald worden. VRT Search API url is te lang. Enkele favoriete programma's vergeten zal de lengte van de URL verminderen en dit probleem mogelijk oplossen."
 
 msgctxt "#30975"

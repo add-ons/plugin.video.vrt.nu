@@ -98,6 +98,13 @@ def favorites_refresh():
     Favorites(kodi).refresh_favorites()
 
 
+@plugin.route('/favorites/manage')
+def favorites_manage():
+    ''' The API interface to manage your favorites '''
+    from favorites import Favorites
+    Favorites(kodi).manage_favorites()
+
+
 @plugin.route('/programs')
 @plugin.route('/programs/<program>')
 @plugin.route('/programs/<program>/<season>')
