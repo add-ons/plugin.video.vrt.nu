@@ -64,3 +64,8 @@ def mkdir(path):
 def mkdirs(path):
     ''' A reimplementation of the xbmcvfs mkdirs() function '''
     return os.makedirs(path)
+
+
+def rmdir(path):
+    ''' A reimplementation of the xbmcvfs rmdir() function '''
+    return os.rmdir(path)

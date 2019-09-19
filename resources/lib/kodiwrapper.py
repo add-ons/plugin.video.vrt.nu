@@ -281,8 +281,7 @@ class KodiWrapper:
         from xbmcgui import Dialog
         if not heading:
             heading = self._addon.getAddonInfo('name')
-        dialog = Dialog()
-        dialog.ok(heading=heading, line1=message)
+        return Dialog().ok(heading=heading, line1=message)
 
     def show_notification(self, heading='', message='', icon='info', time=4000):
         ''' Show a Kodi notification '''
@@ -290,6 +289,13 @@ class KodiWrapper:
         if not heading:
             heading = self._addon.getAddonInfo('name')
         Dialog().notification(heading=heading, message=message, icon=icon, time=time)
+
+    def show_multiselect(self, heading='', options=None, autoclose=0, preselect=None, use_details=False):
+        ''' Show a Kodi multi-select dialog '''
+        from xbmcgui import Dialog
+        if not heading:
+            heading = self._addon.getAddonInfo('name')
+        return Dialog().multiselect(heading=heading, options=options, autoclose=autoclose, preselect=preselect, useDetails=use_details)
 
     def set_locale(self):
         ''' Load the proper locale for date strings '''

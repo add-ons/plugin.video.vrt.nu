@@ -441,11 +441,13 @@ class ApiHelper:
                     url_length = len(req.get_selector())
                     if exc.code == 413 and url_length > 8192:
                         self._kodi.show_ok_dialog(heading='HTTP Error 413', message=self._kodi.localize(30967))
-                        self._kodi.log_error('HTTP Error 413: Exceeded maximum url length: VRT Search API url has a length of %d characters.' % url_length)
+                        self._kodi.log_error('HTTP Error 413: Exceeded maximum url length: '
+                                             'VRT Search API url has a length of %d characters.' % url_length)
                         return []
                     if exc.code == 400 and 7600 <= url_length <= 8192:
                         self._kodi.show_ok_dialog(heading='HTTP Error 400', message=self._kodi.localize(30967))
-                        self._kodi.log_error('HTTP Error 400: Probably exceeded maximum url length: VRT Search API url has a length of %d characters.' % url_length)
+                        self._kodi.log_error('HTTP Error 400: Probably exceeded maximum url length: '
+                                             'VRT Search API url has a length of %d characters.' % url_length)
                         return []
                     raise
                 self._kodi.update_cache(cache_file, search_json)

@@ -167,6 +167,11 @@ class TestRouter(unittest.TestCase):
         plugin.run(['plugin://plugin.video.vrt.nu/favorites/refresh', '0', ''])
         self.assertEqual(plugin.url_for(addon.favorites_refresh), 'plugin://plugin.video.vrt.nu/favorites/refresh')
 
+    # Manage favorites method: '/favorites/manage'
+    def test_manage_favorites_route(self):
+        plugin.run(['plugin://plugin.video.vrt.nu/favorites/manage', '0', ''])
+        self.assertEqual(plugin.url_for(addon.favorites_manage), 'plugin://plugin.video.vrt.nu/favorites/manage')
+
     # Play on demand by id = '/play/id/<publication_id>/<video_id>'
     # Achterflap episode 8 available until 31/12/2025
     def test_play_on_demand_by_id_route(self):

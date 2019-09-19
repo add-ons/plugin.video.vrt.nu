@@ -381,6 +381,18 @@ msgctxt "#30417"
 msgid "Go to program"
 msgstr ""
 
+msgctxt "#30418"
+msgid "No favorites found"
+msgstr ""
+
+msgctxt "#30419"
+msgid "Currently you have not followed any programs."
+msgstr ""
+
+msgctxt "#30420"
+msgid "Please unselect/select favorites to unfollow/follow."
+msgstr ""
+
 msgctxt "#30421"
 msgid "Now:"
 msgstr ""
@@ -452,30 +464,34 @@ msgid "When enabled, the user can follow their favorite programs and list these 
 msgstr ""
 
 msgctxt "#30825"
-msgid "Add My movies"
+msgid "Manage My favorites..."
 msgstr ""
 
 msgctxt "#30827"
-msgid "Add My documentaries"
+msgid "Add My movies"
 msgstr ""
 
 msgctxt "#30829"
-msgid "Show one-off videos in between program folders"
+msgid "Add My documentaries"
 msgstr ""
 
 msgctxt "#30831"
-msgid "Show fanart"
+msgid "Show one-off videos in between program folders"
 msgstr ""
 
 msgctxt "#30833"
-msgid "Show YouTube channel content"
+msgid "Show fanart"
 msgstr ""
 
 msgctxt "#30835"
+msgid "Show YouTube channel content"
+msgstr ""
+
+msgctxt "#30837"
 msgid "Show episode permalink in plot"
 msgstr ""
 
-msgctxt "#30836"
+msgctxt "#30838"
 msgid "When enabled, the video description will include a permanent link that points to this episode. This is useful for quickly opening an episode or movie on a mobile device."
 msgstr ""
 
@@ -702,7 +718,7 @@ msgid "Using a SOCKS proxy requires the PySocks library (script.module.pysocks) 
 msgstr ""
 
 msgctxt "#30967"
-msgid "Could not retrieve this program list. VRT Search API url is too long. Unfollowing some favorited programs will reduce url length and may fix this problem."
+msgid "Could not retrieve this program list. VRT Search API url is too long. Unfollowing some favorite programs will reduce url length and may fix this problem."
 msgstr ""
 
 msgctxt "#30975"
