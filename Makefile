@@ -45,9 +45,12 @@ addon: clean
 	kodi-addon-checker . --branch=krypton
 	kodi-addon-checker . --branch=leia
 
-unit:
+unit: clean
 	@echo -e "$(white)=$(blue) Starting unit tests$(reset)"
+	-pkill -ef proxy.py
+	proxy.py &
 	python -m unittest discover
+	pkill -ef proxy.py
 
 run:
 	@echo -e "$(white)=$(blue) Run CLI$(reset)"
@@ -61,6 +64,7 @@ zip: clean
 
 clean:
 	find . -name '*.pyc' -type f -delete
+	find . -name '*.pyo' -type f -delete
 	find . -name '__pycache__' -type d -delete
 	rm -rf .pytest_cache/ .tox/
 	rm -f *.log test/userdata/tokens/*.tkn
