@@ -49,7 +49,7 @@ class Keyboard:
 
     def getText(self):
         ''' A stub implementation for the xbmc Keyboard class getText() method '''
-        return 'unittest'
+        return 'test'
 
 
 class Monitor:
