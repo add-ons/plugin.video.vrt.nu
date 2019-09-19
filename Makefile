@@ -38,7 +38,7 @@ pylint:
 
 language:
 	@echo -e "$(white)=$(blue) Checking translations$(reset)"
-	msgcmp resources/language/resource.language.{nl_nl,en_gb}/strings.po
+	msgcmp resources/language/resource.language.nl_nl/strings.po resources/language/resource.language.en_gb/strings.po
 
 addon: clean
 	@echo -e "$(white)=$(blue) Starting sanity addon tests$(reset)"
