@@ -60,7 +60,7 @@ class ApiHelper:
         tvshows = self._kodi.get_cache(cache_file, ttl=60 * 60)  # Try the cache if it is fresh
         if not tvshows:
             import json
-            querystring = '&'.join('{}={}'.format(key, value) for key, value in params.items())
+            querystring = '&'.join('{}={}'.format(key, value) for key, value in list(params.items()))
             suggest_url = self._VRTNU_SUGGEST_URL + '?' + querystring
             self._kodi.log('URL get: {url}', 'Verbose', url=unquote(suggest_url))
             tvshows = json.load(urlopen(suggest_url))
@@ -425,7 +425,7 @@ class ApiHelper:
             params['facets[whatsonId]'] = whatson_id
 
         # Construct VRT NU Search API Url and get api data
-        querystring = '&'.join('{}={}'.format(key, value) for key, value in params.items())
+        querystring = '&'.join('{}={}'.format(key, value) for key, value in list(params.items()))
         search_url = self._VRTNU_SEARCH_URL + '?' + querystring
 
         import json
