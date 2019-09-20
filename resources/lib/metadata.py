@@ -411,6 +411,7 @@ class Metadata:
             if season:
                 if self._showfanart:
                     art_dict['fanart'] = statichelper.add_https_method(api_data.get('programImageUrl', 'DefaultSets.png'))
+                    art_dict['banner'] = art_dict.get('fanart')
                     if season != 'allseasons':
                         art_dict['thumb'] = statichelper.add_https_method(api_data.get('videoThumbnailUrl', art_dict.get('fanart')))
                     else:
@@ -421,6 +422,7 @@ class Metadata:
                 if self._showfanart:
                     art_dict['thumb'] = statichelper.add_https_method(api_data.get('videoThumbnailUrl', 'DefaultAddonVideo.png'))
                     art_dict['fanart'] = statichelper.add_https_method(api_data.get('programImageUrl', art_dict.get('thumb')))
+                    art_dict['banner'] = art_dict.get('fanart')
                 else:
                     art_dict['thumb'] = 'DefaultAddonVideo.png'
 
@@ -431,6 +433,7 @@ class Metadata:
             if self._showfanart:
                 art_dict['thumb'] = statichelper.add_https_method(api_data.get('thumbnail', 'DefaultAddonVideo.png'))
                 art_dict['fanart'] = art_dict.get('thumb')
+                art_dict['banner'] = art_dict.get('fanart')
             else:
                 art_dict['thumb'] = 'DefaultAddonVideo.png'
 
@@ -441,6 +444,7 @@ class Metadata:
             if self._showfanart:
                 art_dict['thumb'] = api_data.get('image', 'DefaultAddonVideo.png')
                 art_dict['fanart'] = art_dict.get('thumb')
+                art_dict['banner'] = art_dict.get('fanart')
             else:
                 art_dict['thumb'] = 'DefaultAddonVideo.png'
 
