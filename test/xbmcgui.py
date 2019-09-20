@@ -57,6 +57,12 @@ class Dialog:
         text = kodi_to_ansi(text)
         print('\033[37;44;1mTEXTVIEWER:\033[35;49;1m [%s]\n\033[37;1m%s\033[39;0m' % (heading, text))
 
+    @staticmethod
+    def browseSingle(type, heading, shares, mask=None, useThumbs=None, treatAsFolder=None, default=None):  # pylint: disable=redefined-builtin
+        ''' A stub implementation for the xbmcgui Dialog class browseSingle() method '''
+        print('\033[37;44;1mBROWSESINGLE:\033[35;49;1m [%s] \033[37;1m%s\033[39;0m' % (type, heading))
+        return 'special://masterprofile/addon_data/script.module.inputstreamhelper/'
+
 
 class DialogProgress:
     ''' A reimplementation of the xbmcgui DialogProgress '''
