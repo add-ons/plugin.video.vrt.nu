@@ -4,9 +4,16 @@
 ''' This file implements the Kodi xbmcplugin module, either using stubs or alternative functionality '''
 
 # pylint: disable=invalid-name,unused-argument
-
 from __future__ import absolute_import, division, print_function, unicode_literals
+
+from xbmc import log
 from xbmcextra import kodi_to_ansi, uri_to_path
+
+try:  # Python 3
+    from urllib.error import HTTPError
+    from urllib.request import Request, urlopen
+except ImportError:  # Python 2
+    from urllib2 import HTTPError, Request, urlopen
 
 SORT_METHOD_NONE = 0
 SORT_METHOD_LABEL = 1
@@ -56,22 +63,19 @@ def addDirectoryItems(handle, listing, length):
 
 def addSortMethod(handle, sortMethod):
     ''' A stub implementation of the xbmcplugin addSortMethod() function '''
-    return
 
 
 def endOfDirectory(handle, succeeded=True, updateListing=True, cacheToDisc=True):
     ''' A stub implementation of the xbmcplugin endOfDirectory() function '''
-    return
+    print(kodi_to_ansi('[B]-=( [COLOR cyan]--------[/COLOR] )=-[/B]'))
 
 
 def setContent(handle, content):
     ''' A stub implementation of the xbmcplugin setContent() function '''
-    return
 
 
 def setPluginFanart(handle, image, color1=None, color2=None, color3=None):
     ''' A stub implementation of the xbmcplugin setPluginFanart() function '''
-    return
 
 
 def setPluginCategory(handle, category):
@@ -81,4 +85,10 @@ def setPluginCategory(handle, category):
 
 def setResolvedUrl(handle, succeeded, listitem):
     ''' A stub implementation of the xbmcplugin setResolvedUrl() function '''
-    return
+    request = Request(listitem.path)
+    request.get_method = lambda: 'HEAD'
+    try:
+        response = urlopen(request)
+        log('Stream playing successfully: %s' % response.code, 'Info')
+    except HTTPError as exc:
+        log('Playing stream returned: %s' % exc, 'Fatal')

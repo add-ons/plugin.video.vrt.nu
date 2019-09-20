@@ -308,7 +308,7 @@ msgstr "[COLOR blue]Nog [B]{days} dagen[/B] beschikbaar[/COLOR]\n"
 
 msgctxt "#30205"
 msgid "[COLOR blue][B]1 more day[/B] available[/COLOR]\n"
-msgstr "[COLOR blue]Nog [B]1 dag[/B] Beschikbaar[/COLOR]\n"
+msgstr "[COLOR blue]Nog [B]1 dag[/B] beschikbaar[/COLOR]\n"
 
 msgctxt "#30206"
 msgid "[COLOR blue][B]{hours} more hours[/B] available[/COLOR]\n"

@@ -13,6 +13,7 @@
         <setting label="30825" help="30826" type="action" id="manage_favorites" action="RunPlugin(plugin://plugin.video.vrt.nu/favorites/manage)" enable="eq(-1,true)" subsetting="true"/>
         <setting label="30827" help="30828" type="bool" id="addmymovies" default="true" enable="eq(-2,true)" subsetting="true"/>
         <setting label="30829" help="30830" type="bool" id="addmydocu" default="true" enable="eq(-3,true)" subsetting="true"/>
+        <setting type="sep"/>
         <setting label="30831" help="30832" type="bool" id="showoneoff" default="true"/>
         <setting label="30833" help="30834" type="bool" id="showfanart" default="true"/>
         <setting label="30835" help="30836" type="bool" id="showyoutube" default="true" enable="System.HasAddon(plugin.video.youtube)"/>
