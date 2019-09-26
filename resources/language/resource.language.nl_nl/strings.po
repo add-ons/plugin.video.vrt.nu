@@ -354,6 +354,18 @@ msgctxt "#30334"
 msgid "In 2 days"
 msgstr "Overmorgen"
 
+msgctxt "#30401"
+msgid "Add {title} to watch later"
+msgstr "{title} later bekijken"
+
+msgctxt "#30402"
+msgid "Remove {title} from watch later"
+msgstr "{title} niet later bekijken"
+
+msgctxt "#30409"
+msgid "episode"
+msgstr "aflevering"
+
 msgctxt "#30410"
 msgid "program"
 msgstr "programma"

@@ -11,6 +11,11 @@ import statichelper
 
 class HelperTests(unittest.TestCase):
 
+    def test_url_to_episode(self):
+        url = '//www.vrt.be/vrtnu/a-z/buck/1/buck-s1a32/'
+        episode = '/vrtnu/a-z/buck/1/buck-s1a32/'
+        self.assertEqual(episode, statichelper.url_to_episode(url))
+
     def test_url_to_program(self):
         url = '//www.vrt.be/vrtnu/a-z/buck/1/buck-s1a32/'
         program = 'buck'

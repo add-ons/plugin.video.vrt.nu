@@ -9,6 +9,7 @@ from addon import kodi
 from apihelper import ApiHelper
 from data import CHANNELS
 from favorites import Favorites
+from resumepoints import ResumePoints
 from xbmcextra import kodi_to_ansi
 
 xbmc = __import__('xbmc')
@@ -21,7 +22,8 @@ xbmcvfs = __import__('xbmcvfs')
 class ApiHelperTests(unittest.TestCase):
 
     _favorites = Favorites(kodi)
-    _apihelper = ApiHelper(kodi, _favorites)
+    _resumepoints = ResumePoints(kodi)
+    _apihelper = ApiHelper(kodi, _favorites, _resumepoints)
 
     def test_get_api_data_single_season(self):
         title_items, sort, ascending, content = self._apihelper.list_episodes(program='het-journaal')

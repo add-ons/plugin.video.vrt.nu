@@ -69,6 +69,16 @@ def url_to_program(url):
     return program
 
 
+def url_to_episode(url):
+    ''' Convert a targetUrl (e.g. //www.vrt.be/vrtnu/a-z/buck/1/buck-s1a32/)
+        to a short episode url (/vrtnu/a-z/buck/1/buck-s1a32/)
+    '''
+    if url.startswith('//www.vrt.be/vrtnu/a-z/'):
+        # long episode url
+        return url.replace('//www.vrt.be/vrtnu/a-z/', '/vrtnu/a-z/')
+    return None
+
+
 def to_unicode(text, encoding='utf-8'):
     ''' Force text to unicode '''
     return text.decode(encoding) if isinstance(text, bytes) else text

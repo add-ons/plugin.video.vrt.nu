@@ -6,6 +6,7 @@
 from __future__ import absolute_import, division, unicode_literals
 import json
 from favorites import Favorites
+from resumepoints import ResumePoints
 from helperobjects import TitleItem
 
 
@@ -16,6 +17,7 @@ class Search:
         ''' Initialize searchtes, relies on XBMC vfs '''
         self._kodi = _kodi
         self._favorites = Favorites(_kodi)
+        self._resumepoints = ResumePoints(_kodi)
 
         self._search_history = _kodi.get_userdata_path() + 'search_history.json'
 
@@ -81,7 +83,7 @@ class Search:
         self.add(keywords)
 
         from apihelper import ApiHelper
-        search_items, sort, ascending, content = ApiHelper(self._kodi, self._favorites).list_search(keywords, page=page)
+        search_items, sort, ascending, content = ApiHelper(self._kodi, self._favorites, self._resumepoints).list_search(keywords, page=page)
         if not search_items:
             self._kodi.show_ok_dialog(heading=self._kodi.localize(30098), message=self._kodi.localize(30099, keywords=keywords))
             self._kodi.end_of_directory()

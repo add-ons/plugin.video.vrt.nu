@@ -54,6 +54,20 @@ def unfollow(program, title):
     Favorites(kodi).unfollow(program=program, title=to_unicode(unquote_plus(from_unicode(title))), move_down=move_down)
 
 
+@plugin.route('/watchlater/<uuid>/<title>/<path:url>')
+def watchlater(uuid, title, url):
+    ''' The API interface to watch an episode used by the context menu '''
+    from resumepoints import ResumePoints
+    ResumePoints(kodi).watchlater(uuid=uuid, title=to_unicode(unquote_plus(from_unicode(title))), url=url)
+
+
+@plugin.route('/unwatchlater/<uuid>/<title>/<path:url>')
+def unwatchlater(uuid, title, url):
+    ''' The API interface to unwatch an episode used by the context menu '''
+    from resumepoints import ResumePoints
+    ResumePoints(kodi).unwatchlater(uuid=uuid, title=to_unicode(unquote_plus(from_unicode(title))), url=url)
+
+
 @plugin.route('/favorites')
 def favorites_menu():
     ''' The My favorites menu '''
@@ -89,6 +103,13 @@ def favorites_offline(page=1):
     ''' The favorites offline listing '''
     from vrtplayer import VRTPlayer
     VRTPlayer(kodi).show_offline_menu(page=page, use_favorites=True)
+
+
+@plugin.route('/favorites/watchlater')
+def favorites_watchlater():
+    ''' The resumepoints watchlater listing '''
+    from vrtplayer import VRTPlayer
+    VRTPlayer(kodi).show_watchlater_menu()
 
 
 @plugin.route('/favorites/refresh')

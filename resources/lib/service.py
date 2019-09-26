@@ -26,8 +26,10 @@ class VrtMonitor(Monitor):
         _kodi = KodiWrapper(None)
         _kodi.log('Settings changed')
 
+        _kodi.invalidate_caches('favorites.json')
         _kodi.invalidate_caches('offline-*.json')
         _kodi.invalidate_caches('recent-*.json')
+        _kodi.invalidate_caches('resume_points.json')
 
         TokenResolver(_kodi).refresh_login()
         _kodi.container_refresh()

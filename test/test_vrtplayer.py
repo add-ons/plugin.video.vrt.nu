@@ -10,6 +10,7 @@ from addon import kodi
 from apihelper import ApiHelper
 from data import CATEGORIES
 from favorites import Favorites
+from resumepoints import ResumePoints
 from vrtplayer import VRTPlayer
 
 xbmc = __import__('xbmc')
@@ -22,7 +23,8 @@ xbmcvfs = __import__('xbmcvfs')
 class TestVRTPlayer(unittest.TestCase):
 
     _favorites = Favorites(kodi)
-    _apihelper = ApiHelper(kodi, _favorites)
+    _resumepoints = ResumePoints(kodi)
+    _apihelper = ApiHelper(kodi, _favorites, _resumepoints)
     _vrtplayer = VRTPlayer(kodi)
 
     def test_show_videos_single_episode_shows_videos(self):

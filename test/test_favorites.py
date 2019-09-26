@@ -10,6 +10,7 @@ from random import shuffle
 from addon import kodi
 from apihelper import ApiHelper
 from favorites import Favorites
+from resumepoints import ResumePoints
 
 xbmc = __import__('xbmc')
 xbmcaddon = __import__('xbmcaddon')
@@ -23,7 +24,8 @@ xbmcaddon.ADDON_SETTINGS['plugin.video.vrt.nu']['usefavorites'] = 'true'
 class TestFavorites(unittest.TestCase):
 
     _favorites = Favorites(kodi)
-    _apihelper = ApiHelper(kodi, _favorites)
+    _resumepoints = ResumePoints(kodi)
+    _apihelper = ApiHelper(kodi, _favorites, _resumepoints)
 
     def test_get_recent_episodes(self):
         ''' Test items, sort and order '''

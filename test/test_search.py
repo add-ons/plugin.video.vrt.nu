@@ -9,6 +9,7 @@ import unittest
 from addon import kodi
 from apihelper import ApiHelper
 from favorites import Favorites
+from resumepoints import ResumePoints
 
 xbmc = __import__('xbmc')
 xbmcaddon = __import__('xbmcaddon')
@@ -20,7 +21,8 @@ xbmcvfs = __import__('xbmcvfs')
 class TestSearch(unittest.TestCase):
 
     _favorites = Favorites(kodi)
-    _apihelper = ApiHelper(kodi, _favorites)
+    _resumepoints = ResumePoints(kodi)
+    _apihelper = ApiHelper(kodi, _favorites, _resumepoints)
 
     def test_search_journaal(self):
         ''' Test for journaal '''
