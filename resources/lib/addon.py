@@ -54,14 +54,14 @@ def unfollow(program, title):
     Favorites(kodi).unfollow(program=program, title=to_unicode(unquote_plus(from_unicode(title))), move_down=move_down)
 
 
-@plugin.route('/watchlater/<uuid>/<title>/<path:url>')
+@plugin.route('/watchlater/<path:url>/<uuid>/<title>')
 def watchlater(uuid, title, url):
     ''' The API interface to watch an episode used by the context menu '''
     from resumepoints import ResumePoints
     ResumePoints(kodi).watchlater(uuid=uuid, title=to_unicode(unquote_plus(from_unicode(title))), url=url)
 
 
-@plugin.route('/unwatchlater/<uuid>/<title>/<path:url>')
+@plugin.route('/unwatchlater/<path:url>/<uuid>/<title>')
 def unwatchlater(uuid, title, url):
     ''' The API interface to unwatch an episode used by the context menu '''
     from resumepoints import ResumePoints
