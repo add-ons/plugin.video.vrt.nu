@@ -79,15 +79,16 @@ class Favorites:
         payload = dict(isFavorite=value, programUrl=program_to_url(program, 'short'), title=title)
         import json
         data = json.dumps(payload).encode('utf-8')
-        self._kodi.log('URL post: https://video-user-data.vrt.be/favorites/{program}', 'Verbose', program=self.uuid(program))
-        req = Request('https://video-user-data.vrt.be/favorites/%s' % self.uuid(program), data=data, headers=headers)
+        program_uuid = self.program_to_uuid(program)
+        self._kodi.log('URL post: https://video-user-data.vrt.be/favorites/{uuid}', 'Verbose', uuid=program_uuid)
+        req = Request('https://video-user-data.vrt.be/favorites/%s' % program_uuid, data=data, headers=headers)
         result = urlopen(req)
         if result.getcode() != 200:
             self._kodi.log_error("Failed to (un)follow program '{program}' at VRT NU".format(program=program))
             self._kodi.show_notification(message=self._kodi.localize(30976, program=program))
             return False
         # NOTE: Updates to favorites take a longer time to take effect, so we keep our own cache and use it
-        self._favorites[self.uuid(program)] = dict(value=payload)
+        self._favorites[program_uuid] = dict(value=payload)
         self._kodi.update_cache('favorites.json', self._favorites)
         self.invalidate_caches()
         return True
@@ -95,30 +96,30 @@ class Favorites:
     def is_favorite(self, program):
         ''' Is a program a favorite ? '''
         value = False
-        favorite = self._favorites.get(self.uuid(program))
+        favorite = self._favorites.get(self.program_to_uuid(program))
         if favorite is not None:
-            value = favorite.get('value', dict(isFavorite=False)).get('isFavorite', False)
-        return value
+            value = favorite.get('value', {}).get('isFavorite')
+        return value is True
 
     def follow(self, program, title):
         ''' Follow your favorite program '''
         succeeded = self.set_favorite(program, title, True)
         if succeeded:
-            self._kodi.show_notification(message=self._kodi.localize(30411) + ' ' + title)
+            self._kodi.show_notification(message=self._kodi.localize(30411, title=title))
             self._kodi.container_refresh()
 
     def unfollow(self, program, title, move_down=False):
         ''' Unfollow your favorite program '''
         succeeded = self.set_favorite(program, title, False)
         if succeeded:
-            self._kodi.show_notification(message=self._kodi.localize(30412) + ' ' + title)
+            self._kodi.show_notification(message=self._kodi.localize(30412, title=title))
             # If the current item is selected and we need to move down before removing
             if move_down:
                 self._kodi.input_down()
             self._kodi.container_refresh()
 
     @staticmethod
-    def uuid(program):
+    def program_to_uuid(program):
         ''' Convert a program url component (e.g. de-campus-cup) to a favorite uuid (e.g. vrtnuazdecampuscup), used for lookups in favorites dict '''
         return 'vrtnuaz' + program.replace('-', '')
 

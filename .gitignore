@@ -84,7 +84,8 @@ msbuild.wrn
 kodi-addon-checker-report.log
 kodi-addon-checker.log
 
-# Credentials
+# Userdata
+test/cdm/
 test/userdata/addon_settings.json
 test/userdata/cache/
 test/userdata/credentials.json

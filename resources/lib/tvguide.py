@@ -237,7 +237,7 @@ class TVGuide:
                 except StopIteration:
                     break
                 break
-            elif now < start_date:  # Nothing playing now, but this may be next
+            if now < start_date:  # Nothing playing now, but this may be next
                 description = '[B]%s[/B] %s\n' % (self._kodi.localize(30422), self.episode_description(episode))
                 try:
                     description += '[B]%s[/B] %s' % (self._kodi.localize(30422), self.episode_description(next(episodes)))

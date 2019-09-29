@@ -197,9 +197,16 @@ class KodiWrapper:
             is_playable = bool(title_item.is_playable and title_item.path)
 
             list_item = ListItem(label=title_item.title)
+
+            if title_item.prop_dict:
+                # FIXME: The setProperties method is new in Kodi18, so we cannot use it just yet.
+                # list_item.setProperties(values=title_item.prop_dict)
+                for key, value in title_item.prop_dict.items():
+                    list_item.setProperty(key=key, value=str(value))
+            list_item.setProperty(key='IsInternetStream', value='true' if is_playable else 'false')
             list_item.setProperty(key='IsPlayable', value='true' if is_playable else 'false')
 
-            # FIXME: The setIsFolder is new in Kodi18, so we cannot use it just yet.
+            # FIXME: The setIsFolder method is new in Kodi18, so we cannot use it just yet.
             # list_item.setIsFolder(is_folder)
 
             if title_item.art_dict:
@@ -230,7 +237,7 @@ class KodiWrapper:
         ''' Create a virtual directory listing to play its only item '''
         from xbmcgui import ListItem
         play_item = ListItem(path=stream.stream_url)
-        if video and video.info_dict:
+        if video and hasattr(video, 'info_dict'):
             play_item.setProperty('subtitle', video.title)
             play_item.setArt(video.art_dict)
             play_item.setInfo(
@@ -624,6 +631,7 @@ class KodiWrapper:
             files = fnmatch.filter(files, expr)
         for filename in files:
             self.delete_file(self._cache_path + filename)
+        self.delete_file(self._cache_path + 'favorites.json')
         self.delete_file(self._cache_path + 'oneoff.json')
 
     @staticmethod

@@ -61,7 +61,7 @@ class Metadata:
             if api_data.get('type') == 'episode':
                 program_title = api_data.get('program')
                 program_type = api_data.get('programType')
-                follow_suffix = (' ' + self._kodi.localize(30410) if program_type != 'oneoff' else '')
+                follow_suffix = self._kodi.localize(30410) if program_type != 'oneoff' else ''
                 follow_enabled = True
 
             # VRT NU Suggest API
@@ -73,7 +73,7 @@ class Metadata:
             # VRT NU Schedule API
             elif api_data.get('vrt.whatson-id'):
                 program_title = api_data.get('title')
-                follow_suffix = (' ' + self._kodi.localize(30410))
+                follow_suffix = self._kodi.localize(30410)
                 follow_enabled = bool(api_data.get('url'))
 
             if follow_enabled:
@@ -85,21 +85,21 @@ class Metadata:
                         extras = dict(move_down=True)
                     # Unfollow context menu
                     context_menu.append((
-                        self._kodi.localize(30412) + follow_suffix,
+                        self._kodi.localize(30412, title=follow_suffix),
                         'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=program_title, **extras)
                     ))
                     favorite_marker = '[COLOR yellow]ᵛ[/COLOR]'
                 else:
                     # Follow context menu
                     context_menu.append((
-                        self._kodi.localize(30411) + follow_suffix,
+                        self._kodi.localize(30411, title=follow_suffix),
                         'RunPlugin(%s)' % self._kodi.url_for('follow', program=program, title=program_title)
                     ))
 
         # Go to program context menu
         if plugin.path.startswith(('/favorites/offline', '/favorites/recent', '/offline', '/recent')):
             plugin_url = self._kodi.url_for('programs', program=program, season='allseasons')
-            # NOTE: Because of a bug in ActivateWindow(), return does not work
+            # FIXME: Because of a bug in ActivateWindow(), return does not work
             # context_menu.append((self._kodi.localize(30417), 'ActivateWindow(Videos,%s,return)' % plugin_url))
             context_menu.append((self._kodi.localize(30417), 'ActivateWindow(Videos,%s)' % plugin_url))
 
@@ -107,6 +107,27 @@ class Metadata:
         context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file)))
 
         return context_menu, favorite_marker
+
+    def get_properties(self, api_data):
+        ''' Get properties from single item json api data '''
+        properties = dict()
+
+        # VRT NU Search API
+        if api_data.get('type') == 'episode':
+            episode = self.get_episode(api_data)
+            season = self.get_season(api_data)
+            if episode and season:
+                properties['episodeno'] = 's%se%s' % (season, episode)
+
+            duration = self.get_duration(api_data)
+            if duration:
+                properties['totaltime'] = duration
+
+            year = self.get_year(api_data)
+            if year:
+                properties['year'] = year
+
+        return properties
 
     @staticmethod
     def get_tvshowtitle(api_data):

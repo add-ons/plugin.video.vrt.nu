@@ -359,12 +359,12 @@ msgid "program"
 msgstr "programma"
 
 msgctxt "#30411"
-msgid "Follow"
-msgstr "Volg"
+msgid "Follow {title}"
+msgstr "Volg {title}"
 
 msgctxt "#30412"
-msgid "Unfollow"
-msgstr "Vergeet"
+msgid "Unfollow {title}"
+msgstr "Vergeet {title}"
 
 msgctxt "#30413"
 msgid "Refresh"

@@ -358,11 +358,11 @@ msgid "program"
 msgstr ""
 
 msgctxt "#30411"
-msgid "Follow"
+msgid "Follow {title}"
 msgstr ""
 
 msgctxt "#30412"
-msgid "Unfollow"
+msgid "Unfollow {title}"
 msgstr ""
 
 msgctxt "#30413"

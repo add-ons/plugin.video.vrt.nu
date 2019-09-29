@@ -263,7 +263,7 @@ class ApiHelper:
             video_item = TitleItem(
                 title=self._metadata.get_label(episode),
                 art_dict=self._metadata.get_art(episode),
-                info_dict=self._metadata.get_info_labels(episode)
+                info_dict=self._metadata.get_info_labels(episode),
             )
             video = dict(listitem=video_item, video_id=episode.get('videoId'), publication_id=episode.get('publicationId'))
         return video
@@ -333,7 +333,7 @@ class ApiHelper:
                     listitem=video_item,
                     video_id=channel.get('live_stream_id'),
                     start_date=start_date,
-                    end_date=end_date
+                    end_date=end_date,
                 )
                 return video
 
@@ -352,7 +352,7 @@ class ApiHelper:
         video_item = TitleItem(
             title=self._metadata.get_label(episode),
             art_dict=self._metadata.get_art(episode),
-            info_dict=self._metadata.get_info_labels(episode)
+            info_dict=self._metadata.get_info_labels(episode),
         )
         video = dict(listitem=video_item, video_id=episode.get('videoId'), publication_id=episode.get('publicationId'))
         return video
