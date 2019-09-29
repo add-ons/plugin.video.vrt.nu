@@ -29,7 +29,7 @@ class VRTPlayer:
                 title=self._kodi.localize(30010),  # My favorites
                 path=self._kodi.url_for('favorites_menu'),
                 art_dict=dict(thumb='DefaultFavourites.png'),
-                info_dict=dict(plot=self._kodi.localize(30011))
+                info_dict=dict(plot=self._kodi.localize(30011)),
             ))
 
         main_items.extend([

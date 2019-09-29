@@ -3,6 +3,7 @@ disable=
     bad-option-value,
     duplicate-code,
     fixme,
+    import-outside-toplevel,
     line-too-long,
     old-style-class,
     too-few-public-methods,
