@@ -131,4 +131,4 @@ def import_language(language):
 
 
 ADDON_INFO = read_addon_xml('addon.xml')
-ADDON_ID = next(iter(ADDON_INFO.values())).get('id')
+ADDON_ID = next(iter(list(ADDON_INFO.values()))).get('id')
