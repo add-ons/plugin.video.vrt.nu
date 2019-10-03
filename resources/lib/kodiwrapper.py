@@ -657,6 +657,8 @@ class KodiWrapper:
     def log(self, message, log_level='Info', **kwargs):
         ''' Log info messages to Kodi '''
         cur_log_level = LOG_LEVELS.get(log_level, 0)
+        if cur_log_level > self._max_log_level:
+            return
         if not self._debug_logging and 1 < cur_log_level <= self._max_log_level:
             # If Debug Logging is not enabled, Kodi filters everything up to NOTICE out
             log_level = 'Info'
