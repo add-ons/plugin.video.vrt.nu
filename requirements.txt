@@ -3,6 +3,7 @@ codecov
 git+git://github.com/emilsvennesson/script.module.inputstreamhelper.git@master#egg=inputstreamhelper
 kodi-addon-checker
 polib
+proxy.py
 python-dateutil
 pylint
 git+git://github.com/dagwieers/kodi-plugin-routing.git@setup#egg=routing
