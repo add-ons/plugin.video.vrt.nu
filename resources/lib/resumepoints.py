@@ -80,8 +80,8 @@ class ResumePoints:
 
         if uuid in self._resumepoints:
             payload = self._resumepoints[uuid]['value']
-        else:
-            payload = dict(position=position, total=total, url=url)
+
+        payload = dict(position=position, total=total, url=url)
 
         if watch_later is not None:
             payload['watchLater'] = watch_later

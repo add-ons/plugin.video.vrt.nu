@@ -7,7 +7,8 @@ from apihelper import ApiHelper
 from favorites import Favorites
 from helperobjects import TitleItem
 from resumepoints import ResumePoints
-from statichelper import find_entry
+from statichelper import find_entry, url_to_episode
+from playerinfo import PlayerInfo
 
 
 class VRTPlayer:
@@ -320,3 +321,22 @@ class VRTPlayer:
         stream = _streamservice.get_stream(video)
         if stream is not None:
             self._kodi.play(stream, video.get('listitem'))
+        if self._resumepoints.is_activated():
+            # Get timestamps from player
+            PlayerInfo(position=lambda position: self.push_position(position, video))
+
+    def push_position(self, position, video):
+        ''' Push player position to VRT NU resumepoints API '''
+        # Get uuid, title and url from api based on video.get('publication_id') or video.get('video_url')
+        if video.get('publication_id'):
+            episode = self._apihelper.get_episodes(video_id=video.get('video_id'), variety='single')[0]
+        elif video.get('video_url'):
+            # NOTE: add a trailing slash again because routing just removed it and VRT NU Search API needs it
+            video_url = video.get('video_url').replace('https:', '') + '/'
+            episode = self._apihelper.get_episodes(video_url=video_url, variety='single')[0]
+        uuid = self._resumepoints.assetpath_to_uuid(episode.get('assetPath'))
+        title = episode.get('program')
+        url = url_to_episode(episode.get('url', ''))
+
+        # Push resumepoint to VRT NU
+        self._resumepoints.set_resumepoint(uuid=uuid, title=title, url=url, watch_later=None, position=position[0], total=position[1])

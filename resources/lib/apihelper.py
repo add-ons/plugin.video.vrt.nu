@@ -363,8 +363,8 @@ class ApiHelper:
         video = dict(listitem=video_item, video_id=episode.get('videoId'), publication_id=episode.get('publicationId'))
         return video
 
-    def get_episodes(self, program=None, season=None, category=None, feature=None, programtype=None, keywords=None, whatson_id=None,
-                     page=None, use_favorites=False, variety=None, cache_file=None):
+    def get_episodes(self, program=None, season=None, category=None, feature=None, programtype=None, keywords=None, whatson_id=None, video_id=None,
+                     video_url=None, page=None, use_favorites=False, variety=None, cache_file=None):
         ''' Get episodes or season data from VRT NU Search API '''
 
         # Contruct params
@@ -429,6 +429,12 @@ class ApiHelper:
 
         if whatson_id:
             params['facets[whatsonId]'] = whatson_id
+
+        if video_id:
+            params['facets[videoId]'] = video_id
+
+        if video_url:
+            params['facets[url]'] = video_url
 
         # Construct VRT NU Search API Url and get api data
         querystring = '&'.join('{}={}'.format(key, value) for key, value in list(params.items()))

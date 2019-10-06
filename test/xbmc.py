@@ -59,11 +59,11 @@ class Monitor:
 
     def abortRequested(self):
         ''' A stub implementation for the xbmc Keyboard class abortRequested() method '''
-        return False
+        return True
 
-    def waitForAbort(self):
+    def waitForAbort(self, timeout=None):
         ''' A stub implementation for the xbmc Keyboard class waitForAbort() method '''
-        return
+        return False
 
 
 class Player:
@@ -84,6 +84,14 @@ class Player:
     def showSubtitles(self, bVisible):
         ''' A stub implementation for the xbmc Player class showSubtitles() method '''
         return
+
+    def getTotalTime(self):
+        ''' A stub implementation for the xbmc Player class getTotalTime() method '''
+        return 0
+
+    def getTime(self):
+        ''' A stub implementation for the xbmc Player class getTime() method '''
+        return 0
 
 
 def executebuiltin(string, wait=False):  # pylint: disable=unused-argument
