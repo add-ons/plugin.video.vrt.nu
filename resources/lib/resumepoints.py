@@ -29,7 +29,7 @@ class ResumePoints:
     def get_resumepoints(self, ttl=None):
         ''' Get a cached copy or a newer resumepoints from VRT, or fall back to a cached file '''
         if not self.is_activated():
-            return
+            return None
         resumepoints_json = self._kodi.get_cache('resume_points.json', ttl)
         if not resumepoints_json:
             from tokenresolver import TokenResolver
@@ -52,6 +52,7 @@ class ResumePoints:
                     self._kodi.update_cache('resume_points.json', resumepoints_json)
         if resumepoints_json:
             self._resumepoints = resumepoints_json
+        return self._resumepoints
 
     def set_resumepoint(self, uuid, title, url, watch_later=None, position=0, total=100):
         ''' Set a program as watchlater, and update local copy '''
