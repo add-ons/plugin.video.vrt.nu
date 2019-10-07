@@ -602,7 +602,7 @@ class Metadata:
             sort = 'unsorted'
             ascending = True
 
-            if titletype in ('offline', 'recent'):
+            if titletype in ('offline', 'recent', 'watchlater'):
                 ascending = False
                 label = '[B]%s[/B] - %s' % (api_data.get('program'), label)
                 sort = 'dateadded'

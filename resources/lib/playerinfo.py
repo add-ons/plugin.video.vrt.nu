@@ -37,6 +37,7 @@ class PlayerInfo(Player):
 
     def onPlayBackEnded(self):
         ''' called when Kodi stops playing a file '''
+        self._info((self._total, self._total))
 
     def onPlayBackError(self):
         ''' called when playback stops due to an error '''

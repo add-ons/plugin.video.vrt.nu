@@ -281,11 +281,14 @@ class VRTPlayer:
 
         self._kodi.show_listing(episode_items, category=30022, sort=sort, ascending=ascending, content=content)
 
-    def show_watchlater_menu(self):
+    def show_watchlater_menu(self, page=0):
         ''' The VRT NU add-on 'My watch later' listing menu '''
-        # My favorites menus may need more up-to-date favorites
+        from statichelper import realpage
+
+        # My watch later menu may need more up-to-date favorites
         self._resumepoints.get_resumepoints(ttl=5 * 60)
-        episode_items, sort, ascending, content = self._apihelper.list_episodes(variety='watchlater')
+        page = realpage(page)
+        episode_items, sort, ascending, content = self._apihelper.list_episodes(page=page, variety='watchlater')
         self._kodi.show_listing(episode_items, category=30022, sort=sort, ascending=ascending, content=content)
 
     def play_latest_episode(self, program):

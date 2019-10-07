@@ -97,7 +97,7 @@ class ResumePoints:
             self._kodi.show_notification(message=self._kodi.localize(30976))
             return False
         # NOTE: Updates to resumepoints take a longer time to take effect, so we keep our own cache and use it
-        self._resumepoints[uuid]['value'] = payload
+        self._resumepoints[uuid] = dict(value=payload)
         self._kodi.update_cache('resume_points.json', self._resumepoints)
         self.invalidate_caches()
         return True
@@ -151,10 +151,8 @@ class ResumePoints:
 
     def invalidate_caches(self):
         ''' Invalidate caches that rely on resumepoints '''
-        # NOTE: Do not invalidate resume_points cache as we manage it ourselves
-        # self._kodi.invalidate_caches('resume_points.json')
-#        self._kodi.invalidate_caches('my-offline-*.json')
-#        self._kodi.invalidate_caches('my-recent-*.json')
+        self._kodi.invalidate_caches('resume_points.json')
+        self._kodi.invalidate_caches('watchlater-*.json')
 
     def refresh_resumepoints(self):
         ''' External API call to refresh resumepoints, used in Troubleshooting section '''

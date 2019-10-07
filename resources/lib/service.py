@@ -30,6 +30,7 @@ class VrtMonitor(Monitor):
         _kodi.invalidate_caches('offline-*.json')
         _kodi.invalidate_caches('recent-*.json')
         _kodi.invalidate_caches('resume_points.json')
+        _kodi.invalidate_caches('watchlater-*.json')
 
         TokenResolver(_kodi).refresh_login()
         _kodi.container_refresh()
