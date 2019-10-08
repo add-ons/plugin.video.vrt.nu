@@ -150,6 +150,15 @@ msgctxt "#30049"
 msgid "My episodes that will soon be offline"
 msgstr ""
 
+msgctxt "#30050"
+msgid "My watch later"
+msgstr ""
+
+msgctxt "#30051"
+msgid "The videos you like to watch later"
+msgstr ""
+
+
 ### CATEGORIES
 msgctxt "#30070"
 msgid "Audio description"

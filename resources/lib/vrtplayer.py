@@ -132,10 +132,10 @@ class VRTPlayer:
         # Only add 'My watch later' when it has been activated
         if self._resumepoints.is_activated():
             favorites_items.append(TitleItem(
-                title='My watch later',  # My watch later
+                title=self._kodi.localize(30050),  # My watch later
                 path=self._kodi.url_for('favorites_watchlater'),
-                art_dict=dict(thumb='DefaultFavourites.png'),
-                info_dict=dict(plot='The episodes you want to watch later'),
+                art_dict=dict(thumb='DefaultInProgressShows.png'),
+                info_dict=dict(plot=self._kodi.localize(30051)),
             ))
 
         if self._kodi.get_setting('addmymovies', 'true') == 'true':

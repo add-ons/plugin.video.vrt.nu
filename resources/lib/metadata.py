@@ -56,7 +56,6 @@ class Metadata:
         from addon import plugin
         favorite_marker = ''
         watchlater_marker = ''
-        watch_suffix = ''
         context_menu = []
         resumepoints_enabled = False
 
@@ -113,7 +112,6 @@ class Metadata:
             # VRT NU Search API
             if api_data.get('type') == 'episode':
                 program_title = api_data.get('program')
-                watch_suffix = self._kodi.localize(30409) if program_type != 'oneoff' else ''
                 assetpath = api_data.get('assetPath')
                 if assetpath:
                     resumepoints_enabled = True
@@ -129,14 +127,14 @@ class Metadata:
                         extras = dict(move_down=True)
                     # Unwatch context menu
                     context_menu.append((
-                        self._kodi.localize(30402, title=watch_suffix),
+                        statichelper.capitalize(self._kodi.localize(30402, title='')),
                         'RunPlugin(%s)' % self._kodi.url_for('unwatchlater', uuid=assetuuid, title=program_title, url=url, **extras)
                     ))
-                    watchlater_marker = '[COLOR red]°[/COLOR]'
+                    watchlater_marker = '[COLOR yellow]ᶫ[/COLOR]'
                 else:
                     # Watch context menu
                     context_menu.append((
-                        self._kodi.localize(30401, title=watch_suffix),
+                        statichelper.capitalize(self._kodi.localize(30401, title='')),
                         'RunPlugin(%s)' % self._kodi.url_for('watchlater', uuid=assetuuid, title=program_title, url=url)
                     ))
 

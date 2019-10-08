@@ -151,6 +151,15 @@ msgctxt "#30049"
 msgid "My episodes that will soon be offline"
 msgstr "Mijn afleveringen die binnenkort verdwijnen"
 
+msgctxt "#30050"
+msgid "My watch later"
+msgstr "Mijn later bekijken"
+
+msgctxt "#30051"
+msgid "The videos you like to watch later"
+msgstr "Mijn afleveringen die ik later wil bekijken"
+
+
 ### CATEGORIES
 msgctxt "#30070"
 msgid "Audio description"
