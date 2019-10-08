@@ -55,17 +55,20 @@ class ResumePoints:
         return self._resumepoints
 
     def set_resumepoint(self, uuid, title, url, watch_later=None, position=0, total=100):
-        ''' Set a program as watchlater, and update local copy '''
+        ''' Set program resumepoint or watchLater status and update local copy '''
 
+        # Load current resumepoints
         self.get_resumepoints(ttl=60 * 60)
+
         if watch_later is not None and not position and watch_later is self.is_watchlater(uuid):
-            # Already followed/unfollowed, nothing to do
+            # watchLater status is not changed, nothing to do
             return True
 
         if watch_later is None and position == self.get_position(uuid):
-            # Already followed/unfollowed, nothing to do
+            # resumepoint is not changed, nothing to do
             return True
 
+        # Collect header info for POST Request
         from tokenresolver import TokenResolver
         xvrttoken = TokenResolver(self._kodi).get_xvrttoken(token_variant='user')
         if xvrttoken is None:
@@ -80,15 +83,25 @@ class ResumePoints:
         }
 
         if uuid in self._resumepoints:
+            # Update existing resumepoint values
             payload = self._resumepoints[uuid]['value']
-
-        payload = dict(position=position, total=total, url=url)
+            payload['url'] = url
+            payload['position'] = position
+            payload['total'] = total
+        else:
+            # Create new resumepoint values
+            payload = dict(position=position, total=total, url=url)
 
         if watch_later is not None:
+            # Add watchLater status to payload
             payload['watchLater'] = watch_later
 
+            # Updating watchLater status, invalidate watchlater menu cache
+            self._kodi.invalidate_caches('watchlater-*.json')
+
         import json
-        data = json.dumps(payload).encode('utf-8')
+        from statichelper import from_unicode
+        data = from_unicode(json.dumps(payload))
         self._kodi.log('URL post: https://video-user-data.vrt.be/resume_points/{uuid}', 'Verbose', uuid=uuid)
         req = Request('https://video-user-data.vrt.be/resume_points/%s' % uuid, data=data, headers=headers)
         result = urlopen(req)
@@ -96,10 +109,11 @@ class ResumePoints:
             self._kodi.log_error("Failed to (un)watch episode' at VRT NU")
             self._kodi.show_notification(message=self._kodi.localize(30976))
             return False
+
         # NOTE: Updates to resumepoints take a longer time to take effect, so we keep our own cache and use it
         self._resumepoints[uuid] = dict(value=payload)
         self._kodi.update_cache('resume_points.json', self._resumepoints)
-        self.invalidate_caches()
+        self._kodi.container_refresh()
         return True
 
     def is_watchlater(self, uuid):
@@ -148,11 +162,6 @@ class ResumePoints:
     def resumepoints_uuids(self):
         ''' Return all resumepoints uuids and their resume point '''
         return {key: value.get('value').get('position') for key, value in list(self._resumepoints.items()) if value.get('value').get('position', 0) != 0}
-
-    def invalidate_caches(self):
-        ''' Invalidate caches that rely on resumepoints '''
-        self._kodi.invalidate_caches('resume_points.json')
-        self._kodi.invalidate_caches('watchlater-*.json')
 
     def refresh_resumepoints(self):
         ''' External API call to refresh resumepoints, used in Troubleshooting section '''
