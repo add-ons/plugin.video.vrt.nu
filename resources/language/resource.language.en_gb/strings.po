@@ -119,7 +119,7 @@ msgid "Alphabetically sorted list of My TV programs"
 msgstr ""
 
 msgctxt "#30042"
-msgid "My movies"
+msgid "Movies"
 msgstr ""
 
 msgctxt "#30043"
@@ -127,7 +127,7 @@ msgid "All movies available on VRT NU"
 msgstr ""
 
 msgctxt "#30044"
-msgid "My documentaries"
+msgid "Documentaries"
 msgstr ""
 
 msgctxt "#30045"
@@ -135,7 +135,7 @@ msgid "All [I]one-off[/I] documentaries on VRT NU"
 msgstr ""
 
 msgctxt "#30046"
-msgid "My most recent"
+msgid "Most recent"
 msgstr ""
 
 msgctxt "#30047"
@@ -143,7 +143,7 @@ msgid "Recently published episodes of My TV programs"
 msgstr ""
 
 msgctxt "#30048"
-msgid "My soon offline"
+msgid "Soon offline"
 msgstr ""
 
 msgctxt "#30049"
@@ -151,7 +151,7 @@ msgid "My episodes that will soon be offline"
 msgstr ""
 
 msgctxt "#30050"
-msgid "My watch later"
+msgid "Watch later"
 msgstr ""
 
 msgctxt "#30051"
@@ -395,7 +395,7 @@ msgid "Unfollow {title}"
 msgstr ""
 
 msgctxt "#30413"
-msgid "Refresh"
+msgid "Refresh menu"
 msgstr ""
 
 msgctxt "#30415"
@@ -450,6 +450,10 @@ msgctxt "#30427"
 msgid "Clear the search history"
 msgstr ""
 
+msgctxt "#30428"
+msgid "My"
+msgstr ""
+
 
 ### SETTINGS
 msgctxt "#30800"
@@ -497,11 +501,11 @@ msgid "Manage My favorites..."
 msgstr ""
 
 msgctxt "#30827"
-msgid "Add My movies"
+msgid "Add Movies subsection"
 msgstr ""
 
 msgctxt "#30829"
-msgid "Add My documentaries"
+msgid "Add Documentaries subsection"
 msgstr ""
 
 msgctxt "#30831"

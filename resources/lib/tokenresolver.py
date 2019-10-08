@@ -101,7 +101,7 @@ class TokenResolver:
             now = datetime.now(dateutil.tz.tzlocal())
             exp = dateutil.parser.parse(token.get('expirationDate'))
             if exp > now:
-                self._kodi.log("Got cached token '{path}'", 'Verbose', path=path)
+                self._kodi.log("Got cached token '{path}'", 'Debug', path=path)
                 cached_token = token.get(token_name)
             else:
                 self._kodi.log("Cached token '{path}' deleted", 'Verbose', path=path)

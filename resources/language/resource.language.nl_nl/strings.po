@@ -120,40 +120,40 @@ msgid "Alphabetically sorted list of My TV programs"
 msgstr "Alle tv-programma's die je volgt in alfabetische volgorde"
 
 msgctxt "#30042"
-msgid "My movies"
-msgstr "Mijn films"
+msgid "Movies"
+msgstr "Films"
 
 msgctxt "#30043"
 msgid "All movies available on VRT NU"
 msgstr "Alle films beschikbaar op VRT NU"
 
 msgctxt "#30044"
-msgid "My documentaries"
-msgstr "Mijn documentaires"
+msgid "Documentaries"
+msgstr "Documentaires"
 
 msgctxt "#30045"
 msgid "All [I]one-off[/I] documentaries on VRT NU"
 msgstr "Alle [I]one-off[/I] documentaires op VRT NU"
 
 msgctxt "#30046"
-msgid "My most recent"
-msgstr "Mijn meest recent"
+msgid "Most recent"
+msgstr "Meest recent"
 
 msgctxt "#30047"
 msgid "Recently published episodes of My TV programs"
 msgstr "Recent gepubliceerde afleveringen van tv-programma's die je volgt"
 
 msgctxt "#30048"
-msgid "My soon offline"
-msgstr "Mijn binnenkort offline"
+msgid "Soon offline"
+msgstr "Binnenkort offline"
 
 msgctxt "#30049"
 msgid "My episodes that will soon be offline"
 msgstr "Mijn afleveringen die binnenkort verdwijnen"
 
 msgctxt "#30050"
-msgid "My watch later"
-msgstr "Mijn later bekijken"
+msgid "Watch later"
+msgstr "Later bekijken"
 
 msgctxt "#30051"
 msgid "The videos you like to watch later"
@@ -161,7 +161,7 @@ msgstr "Mijn afleveringen die ik later wil bekijken"
 
 msgctxt "#30052"
 msgid "Continue watching"
-msgstr "Programma's verder kijken"
+msgstr "Verder kijken"
 
 msgctxt "#30053"
 msgid "Continue watching the videos you started earlier"
@@ -396,8 +396,8 @@ msgid "Unfollow {title}"
 msgstr "Vergeet {title}"
 
 msgctxt "#30413"
-msgid "Refresh"
-msgstr "Vernieuw"
+msgid "Refresh menu"
+msgstr "Vernieuw menu"
 
 msgctxt "#30415"
 msgid "No followed programs found"
@@ -451,6 +451,10 @@ msgctxt "#30427"
 msgid "Clear the search history"
 msgstr "Verwijder alle oude zoekopdrachten"
 
+msgctxt "#30428"
+msgid "My"
+msgstr "Mijn"
+
 
 ### SETTINGS
 msgctxt "#30800"
@@ -498,12 +502,12 @@ msgid "Manage My favorites..."
 msgstr "Beheer Mijn favorieten..."
 
 msgctxt "#30827"
-msgid "Add My movies"
-msgstr "Toon Mijn films"
+msgid "Add Movies subsection"
+msgstr "Toon Films rubriek"
 
 msgctxt "#30829"
-msgid "Add My documentaries"
-msgstr "Toon Mijn documentaires"
+msgid "Add Documentaries subsection"
+msgstr "Toon Documentaires rubriek"
 
 msgctxt "#30831"
 msgid "Show one-off videos in between program folders"
