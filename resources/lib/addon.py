@@ -109,7 +109,7 @@ def favorites_offline(page=1):
 def favorites_watchlater():
     ''' The resumepoints watchlater listing '''
     from vrtplayer import VRTPlayer
-    VRTPlayer(kodi).show_watchlater_menu()
+    VRTPlayer(kodi).show_watchlater_menu(page=1, use_favorites=True)
 
 
 @plugin.route('/favorites/refresh')
