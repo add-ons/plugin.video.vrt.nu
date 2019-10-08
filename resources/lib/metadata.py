@@ -499,7 +499,8 @@ class Metadata:
                 duration=self.get_duration(api_data),
                 mediatype=api_data.get('type', 'episode'),
                 studio=self.get_studio(api_data),
-                year=self.get_year(api_data)
+                year=self.get_year(api_data),
+                tag=self.get_tag(api_data),
             )
             return info_labels
 
@@ -508,7 +509,8 @@ class Metadata:
             info_labels = dict(
                 tvshowtitle=self.get_tvshowtitle(api_data),
                 plot=self.get_plot(api_data),
-                studio=self.get_studio(api_data)
+                studio=self.get_studio(api_data),
+                tag=self.get_tag(api_data),
             )
             return info_labels
 
@@ -521,7 +523,7 @@ class Metadata:
                 plot=self.get_plot(api_data, date=date, channel=channel),
                 duration=self.get_duration(api_data),
                 mediatype=api_data.get('type', 'episode'),
-                studio=channel.get('studio')
+                studio=channel.get('studio'),
             )
             return info_labels
 
@@ -621,6 +623,21 @@ class Metadata:
             return label, sort, ascending
 
         return label
+
+    def get_tag(self, api_data):
+        ''' Return categories for a given episode '''
+
+        # VRT NU Search API
+        if api_data.get('type') == 'episode':
+            from data import CATEGORIES
+            return sorted([self._kodi.localize(statichelper.find_entry(CATEGORIES, 'id', category).get('msgctxt'))
+                           for category in api_data.get('categories')])
+
+        # VRT NU Suggest API
+        if api_data.get('type') == 'program':
+            return ['Series']
+
+        return []
 
     @staticmethod
     def parse(date, now):
