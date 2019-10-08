@@ -4,7 +4,6 @@ disable=
     duplicate-code,
     fixme,
     import-outside-toplevel,
-    invalid-name,
     line-too-long,
     old-style-class,
     too-few-public-methods,

@@ -29,6 +29,8 @@ class TestResumePoints(unittest.TestCase):
     # Update resume_points.json
     _resumepoints.get_resumepoints(ttl=0)
 
+    @unittest.skipUnless(xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('password'), 'Skipping as VRT password is missing.')
     def test_update_watchlist(self):
         self._resumepoints.get_resumepoints(ttl=0)
         assetuuid, first_entry = next(iter(self._resumepoints._resumepoints.items()))  # pylint: disable=protected-access

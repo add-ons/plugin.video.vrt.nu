@@ -155,7 +155,8 @@ class Metadata:
         if api_data.get('type') == 'episode':
             assetpath = api_data.get('assetPath')
             if assetpath:
-                program_title = statichelper.to_unicode(quote_plus(statichelper.from_unicode(api_data.get('program'))))  # We need to ensure forward slashes are quoted
+                # We need to ensure forward slashes are quoted
+                program_title = statichelper.to_unicode(quote_plus(statichelper.from_unicode(api_data.get('program'))))
 
                 assetuuid = self._resumepoints.assetpath_to_uuid(assetpath)
                 url = statichelper.url_to_episode(api_data.get('url', ''))

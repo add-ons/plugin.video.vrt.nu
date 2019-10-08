@@ -402,7 +402,9 @@ class ApiHelper:
 
             if variety == 'watchlater':
                 self._resumepoints.get_resumepoints(ttl=5 * 60)
-                watchlater_urls = ['//www.vrt.be' + self._resumepoints.get_resumepoints(ttl=5 * 60).get(item).get('value').get('url') for item in self._resumepoints.get_resumepoints(ttl=5 * 60) if self._resumepoints.get_resumepoints(ttl=5 * 60).get(item).get('value').get('watchLater')]
+                watchlater_urls = ['//www.vrt.be' + self._resumepoints.get_resumepoints(ttl=5 * 60).get(item).get('value').get('url')
+                                   for item in self._resumepoints.get_resumepoints(ttl=5 * 60)
+                                   if self._resumepoints.get_resumepoints(ttl=5 * 60).get(item).get('value').get('watchLater')]
                 params['facets[url]'] = '[%s]' % (','.join(watchlater_urls))
 
             if use_favorites:

@@ -22,31 +22,31 @@ class PlayerInfo(Player):
             if self._monitor.waitForAbort(10):
                 break
 
-    def onAVStarted(self):
+    def onAVStarted(self):  # pylint: disable=invalid-name
         ''' called when Kodi has a video or audiostream '''
         self._total = self.getTotalTime()
         self._tracker = Thread(target=self.stream_position)
         self._tracker.start()
 
-    def onPlayBackStopped(self):
+    def onPlayBackStopped(self):  # pylint: disable=invalid-name
         ''' called when user stops Kodi playing a file '''
         self._info((self._last_pos, self._total))
 
-    def onAVChange(self):
+    def onAVChange(self):  # pylint: disable=invalid-name
         ''' called when Kodi has a video, audio or subtitle stream. Also happens when the stream changes. '''
 
-    def onPlayBackEnded(self):
+    def onPlayBackEnded(self):  # pylint: disable=invalid-name
         ''' called when Kodi stops playing a file '''
         self._info((self._total, self._total))
 
-    def onPlayBackError(self):
+    def onPlayBackError(self):  # pylint: disable=invalid-name
         ''' called when playback stops due to an error '''
 
-    def onPlayBackPaused(self):
+    def onPlayBackPaused(self):  # pylint: disable=invalid-name
         ''' called when user pauses a playing file '''
         self._info((self._last_pos, self._total))
 
-    def onPlayBackResumed(self):
+    def onPlayBackResumed(self):  # pylint: disable=invalid-name
         '''called when user resumes a paused file '''
 
     def stream_position(self):
