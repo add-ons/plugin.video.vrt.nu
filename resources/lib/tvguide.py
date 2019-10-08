@@ -18,6 +18,7 @@ from data import CHANNELS, RELATIVE_DATES
 from favorites import Favorites
 from helperobjects import TitleItem
 from metadata import Metadata
+from resumepoints import ResumePoints
 from statichelper import find_entry
 
 
@@ -30,7 +31,8 @@ class TVGuide:
         ''' Initializes TV-guide object '''
         self._kodi = _kodi
         self._favorites = Favorites(_kodi)
-        self._metadata = Metadata(self._kodi, self._favorites)
+        self._resumepoints = ResumePoints(_kodi)
+        self._metadata = Metadata(self._kodi, self._favorites, self._resumepoints)
 
         self._proxies = _kodi.get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
@@ -180,8 +182,8 @@ class TVGuide:
                 video_url = add_https_method(episode.get('url'))
                 path = self._kodi.url_for('play_url', video_url=video_url)
                 program = url_to_program(episode.get('url'))
-                context_menu, favorite_marker = self._metadata.get_context_menu(episode, program, cache_file)
-                label += favorite_marker
+                context_menu, favorite_marker, watchlater_marker = self._metadata.get_context_menu(episode, program, cache_file)
+                label += favorite_marker + watchlater_marker
 
             info_labels = self._metadata.get_info_labels(episode, date=date, channel=entry)
             info_labels['title'] = label

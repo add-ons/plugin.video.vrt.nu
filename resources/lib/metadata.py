@@ -18,9 +18,10 @@ from data import CHANNELS
 class Metadata:
     ''' This class creates appropriate Kodi ListItem metadata from single item json api data '''
 
-    def __init__(self, _kodi, _favorites):
+    def __init__(self, _kodi, _favorites, _resumepoints):
         self._kodi = _kodi
         self._favorites = _favorites
+        self._resumepoints = _resumepoints
         self._showfanart = _kodi.get_setting('showfanart', 'true') == 'true'
         self._showpermalink = _kodi.get_setting('showpermalink', 'false') == 'true'
 
@@ -54,7 +55,10 @@ class Metadata:
         ''' Get context menu '''
         from addon import plugin
         favorite_marker = ''
+        watchlater_marker = ''
         context_menu = []
+        resumepoints_enabled = False
+
         if self._favorites.is_activated():
 
             # VRT NU Search API
@@ -104,12 +108,42 @@ class Metadata:
                 'ActivateWindow(Videos,%s)' % plugin_url
             ))
 
+        if self._resumepoints.is_activated():
+            # VRT NU Search API
+            if api_data.get('type') == 'episode':
+                program_title = api_data.get('program')
+                assetpath = api_data.get('assetPath')
+                if assetpath:
+                    resumepoints_enabled = True
+
+            if resumepoints_enabled:
+                program_title = statichelper.to_unicode(quote_plus(statichelper.from_unicode(program_title)))  # We need to ensure forward slashes are quoted
+                url = statichelper.url_to_episode(api_data.get('url', ''))
+                assetuuid = self._resumepoints.assetpath_to_uuid(assetpath)
+                if self._resumepoints.is_watchlater(assetuuid):
+                    extras = dict()
+                    # If we are in a favorites menu, move cursor down before removing a favorite
+                    if plugin.path.startswith('/favorites/watchlater'):
+                        extras = dict(move_down=True)
+                    # Unwatch context menu
+                    context_menu.append((
+                        statichelper.capitalize(self._kodi.localize(30402, title='')),
+                        'RunPlugin(%s)' % self._kodi.url_for('unwatchlater', uuid=assetuuid, title=program_title, url=url, **extras)
+                    ))
+                    watchlater_marker = '[COLOR yellow]ᶫ[/COLOR]'
+                else:
+                    # Watch context menu
+                    context_menu.append((
+                        statichelper.capitalize(self._kodi.localize(30401, title='')),
+                        'RunPlugin(%s)' % self._kodi.url_for('watchlater', uuid=assetuuid, title=program_title, url=url)
+                    ))
+
         context_menu.append((
             self._kodi.localize(30413),  # Refresh
             'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file)
         ))
 
-        return context_menu, favorite_marker
+        return context_menu, favorite_marker, watchlater_marker
 
     def get_properties(self, api_data):
         ''' Get properties from single item json api data '''
@@ -117,6 +151,19 @@ class Metadata:
 
         # VRT NU Search API
         if api_data.get('type') == 'episode':
+            assetpath = api_data.get('assetPath')
+            if assetpath:
+                # We need to ensure forward slashes are quoted
+                program_title = statichelper.to_unicode(quote_plus(statichelper.from_unicode(api_data.get('program'))))
+
+                assetuuid = self._resumepoints.assetpath_to_uuid(assetpath)
+                url = statichelper.url_to_episode(api_data.get('url', ''))
+                properties.update(assetuuid=assetuuid, url=url, title=program_title)
+
+                position = self._resumepoints.get_position(assetuuid)
+                if position:
+                    properties['resumetime'] = position
+
             episode = self.get_episode(api_data)
             season = self.get_season(api_data)
             if episode and season:
@@ -554,7 +601,7 @@ class Metadata:
             sort = 'unsorted'
             ascending = True
 
-            if titletype in ('offline', 'recent'):
+            if titletype in ('offline', 'recent', 'watchlater', 'continue'):
                 ascending = False
                 label = '[B]%s[/B] - %s' % (api_data.get('program'), label)
                 sort = 'dateadded'

@@ -633,6 +633,7 @@ class KodiWrapper:
             self.delete_file(self._cache_path + filename)
         self.delete_file(self._cache_path + 'favorites.json')
         self.delete_file(self._cache_path + 'oneoff.json')
+        self.delete_file(self._cache_path + 'resume_points.json')
 
     @staticmethod
     def input_down():

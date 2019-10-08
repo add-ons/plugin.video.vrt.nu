@@ -97,7 +97,7 @@ class Favorites:
         ''' Is a program a favorite ? '''
         value = False
         favorite = self._favorites.get(self.program_to_uuid(program))
-        if favorite is not None:
+        if favorite:
             value = favorite.get('value', {}).get('isFavorite')
         return value is True
 

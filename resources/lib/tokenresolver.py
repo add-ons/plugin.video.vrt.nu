@@ -346,6 +346,9 @@ class TokenResolver:
         self._kodi.invalidate_caches('my-offline-*.json')
         self._kodi.invalidate_caches('my-recent-*.json')
 
+        # Delete resume_points
+        self._kodi.invalidate_caches('resume_points.json')
+
     def logged_in(self):
         ''' Whether there is an active login '''
         return bool(self._get_cached_token('X-VRT-Token'))

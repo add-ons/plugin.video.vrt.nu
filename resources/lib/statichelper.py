@@ -69,6 +69,16 @@ def url_to_program(url):
     return program
 
 
+def url_to_episode(url):
+    ''' Convert a targetUrl (e.g. //www.vrt.be/vrtnu/a-z/buck/1/buck-s1a32/)
+        to a short episode url (/vrtnu/a-z/buck/1/buck-s1a32/)
+    '''
+    if url.startswith('//www.vrt.be/vrtnu/a-z/'):
+        # long episode url
+        return url.replace('//www.vrt.be/vrtnu/a-z/', '/vrtnu/a-z/')
+    return None
+
+
 def to_unicode(text, encoding='utf-8'):
     ''' Force text to unicode '''
     return text.decode(encoding) if isinstance(text, bytes) else text
@@ -105,7 +115,7 @@ def add_https_method(url):
     if url.startswith('//'):
         return 'https:' + url
     if url.startswith('/'):
-        return 'https://vrt.be' + url
+        return 'https://www.vrt.be' + url
     return url
 
 
@@ -123,3 +133,9 @@ def realpage(page):
 def find_entry(dlist, key, value, default=None):
     ''' Find (the first) dictionary in a list where key matches value '''
     return next((entry for entry in dlist if entry.get(key) == value), default)
+
+
+def capitalize(string):
+    ''' Ensure the first character is uppercase '''
+    string = string.strip()
+    return string[0].upper() + string[1:]

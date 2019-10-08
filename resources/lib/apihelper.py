@@ -26,13 +26,14 @@ class ApiHelper:
     _VRTNU_SUGGEST_URL = 'https://vrtnu-api.vrt.be/suggest'
     _VRTNU_SCREENSHOT_URL = 'https://vrtnu-api.vrt.be/screenshots'
 
-    def __init__(self, _kodi, _favorites):
+    def __init__(self, _kodi, _favorites, _resumepoints):
         ''' Constructor for the ApiHelper class '''
         self._kodi = _kodi
         self._favorites = _favorites
+        self._resumepoints = _resumepoints
         self._showfanart = _kodi.get_setting('showfanart', 'true') == 'true'
         self._showpermalink = _kodi.get_setting('showpermalink', 'false') == 'true'
-        self._metadata = Metadata(_kodi, _favorites)
+        self._metadata = Metadata(_kodi, _favorites, _resumepoints)
 
         self._proxies = _kodi.get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
@@ -90,7 +91,7 @@ class ApiHelper:
         label = self._metadata.get_label(tvshow)
 
         if program:
-            context_menu, favorite_marker = self._metadata.get_context_menu(tvshow, program, cache_file)
+            context_menu, favorite_marker, _ = self._metadata.get_context_menu(tvshow, program, cache_file)
             label += favorite_marker
 
         return TitleItem(
@@ -199,6 +200,7 @@ class ApiHelper:
                 path=self._kodi.url_for('programs', program=program, season=season_key),
                 art_dict=self._metadata.get_art(episode, season=True),
                 info_dict=info_labels,
+                prop_dict=self._metadata.get_properties(episode),
             ))
         return season_items, sort, ascending, content
 
@@ -234,8 +236,8 @@ class ApiHelper:
         label, sort, ascending = self._metadata.get_label(episode, titletype, return_sort=True)
 
         if program:
-            context_menu, favorite_marker = self._metadata.get_context_menu(episode, program, cache_file)
-            label += favorite_marker
+            context_menu, favorite_marker, watchlater_marker = self._metadata.get_context_menu(episode, program, cache_file)
+            label += favorite_marker + watchlater_marker
 
         info_labels = self._metadata.get_info_labels(episode)
         info_labels['title'] = label
@@ -245,6 +247,7 @@ class ApiHelper:
             path=self._kodi.url_for('play_id', video_id=episode.get('videoId'), publication_id=episode.get('publicationId')),
             art_dict=self._metadata.get_art(episode),
             info_dict=info_labels,
+            prop_dict=self._metadata.get_properties(episode),
             context_menu=context_menu,
             is_playable=True,
         ), sort, ascending
@@ -264,6 +267,7 @@ class ApiHelper:
                 title=self._metadata.get_label(episode),
                 art_dict=self._metadata.get_art(episode),
                 info_dict=self._metadata.get_info_labels(episode),
+                prop_dict=self._metadata.get_properties(episode),
             )
             video = dict(listitem=video_item, video_id=episode.get('videoId'), publication_id=episode.get('publicationId'))
         return video
@@ -327,7 +331,8 @@ class ApiHelper:
                 video_item = TitleItem(
                     title=self._metadata.get_label(episode_guess_on),
                     art_dict=self._metadata.get_art(episode_guess_on),
-                    info_dict=self._metadata.get_info_labels(episode_guess_on, channel=channel, date=start_date)
+                    info_dict=self._metadata.get_info_labels(episode_guess_on, channel=channel, date=start_date),
+                    prop_dict=self._metadata.get_properties(episode_guess_on),
                 )
                 video = dict(
                     listitem=video_item,
@@ -353,12 +358,13 @@ class ApiHelper:
             title=self._metadata.get_label(episode),
             art_dict=self._metadata.get_art(episode),
             info_dict=self._metadata.get_info_labels(episode),
+            prop_dict=self._metadata.get_properties(episode),
         )
         video = dict(listitem=video_item, video_id=episode.get('videoId'), publication_id=episode.get('publicationId'))
         return video
 
-    def get_episodes(self, program=None, season=None, category=None, feature=None, programtype=None, keywords=None, whatson_id=None,
-                     page=None, use_favorites=False, variety=None, cache_file=None):
+    def get_episodes(self, program=None, season=None, category=None, feature=None, programtype=None, keywords=None, whatson_id=None, video_id=None,
+                     video_url=None, page=None, use_favorites=False, variety=None, cache_file=None):
         ''' Get episodes or season data from VRT NU Search API '''
 
         # Contruct params
@@ -394,6 +400,18 @@ class ApiHelper:
             if variety == 'oneoff':
                 params['facets[programType]'] = 'oneoff'
 
+            if variety in ('watchlater', 'continue'):
+                resumepoints = self._resumepoints.get_resumepoints(ttl=5 * 60)
+                if variety == 'watchlater':
+                    episode_urls = ['//www.vrt.be' + resumepoints.get(item).get('value').get('url') for item in resumepoints
+                                    if resumepoints.get(item).get('value').get('watchLater')]
+                elif variety == 'continue':
+                    seconds_margin = 30
+                    episode_urls = ['//www.vrt.be' + resumepoints.get(item).get('value').get('url') for item in resumepoints
+                                    if seconds_margin < resumepoints.get(item).get('value').get('position')
+                                    < (resumepoints.get(item).get('value').get('total') - seconds_margin)]
+                params['facets[url]'] = '[%s]' % (','.join(episode_urls))
+
             if use_favorites:
                 program_urls = [statichelper.program_to_url(p, 'long') for p in self._favorites.programs()]
                 params['facets[programUrl]'] = '[%s]' % (','.join(program_urls))
@@ -423,6 +441,12 @@ class ApiHelper:
 
         if whatson_id:
             params['facets[whatsonId]'] = whatson_id
+
+        if video_id:
+            params['facets[videoId]'] = video_id
+
+        if video_url:
+            params['facets[url]'] = video_url
 
         # Construct VRT NU Search API Url and get api data
         querystring = '&'.join('{}={}'.format(key, value) for key, value in list(params.items()))

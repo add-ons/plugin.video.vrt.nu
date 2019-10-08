@@ -151,6 +151,23 @@ msgctxt "#30049"
 msgid "My episodes that will soon be offline"
 msgstr "Mijn afleveringen die binnenkort verdwijnen"
 
+msgctxt "#30050"
+msgid "My watch later"
+msgstr "Mijn later bekijken"
+
+msgctxt "#30051"
+msgid "The videos you like to watch later"
+msgstr "Mijn afleveringen die ik later wil bekijken"
+
+msgctxt "#30052"
+msgid "Continue watching"
+msgstr "Programma's verder kijken"
+
+msgctxt "#30053"
+msgid "Continue watching the videos you started earlier"
+msgstr "Bekijk de programma's verder die je eerder bent gestart"
+
+
 ### CATEGORIES
 msgctxt "#30070"
 msgid "Audio description"
@@ -353,6 +370,18 @@ msgstr "Morgen"
 msgctxt "#30334"
 msgid "In 2 days"
 msgstr "Overmorgen"
+
+msgctxt "#30401"
+msgid "Add {title} to watch later"
+msgstr "{title} later bekijken"
+
+msgctxt "#30402"
+msgid "Remove {title} from watch later"
+msgstr "{title} niet later bekijken"
+
+msgctxt "#30409"
+msgid "episode"
+msgstr "aflevering"
 
 msgctxt "#30410"
 msgid "program"
@@ -651,6 +680,14 @@ msgstr "Logboek"
 msgctxt "#30927"
 msgid "Log level"
 msgstr "Log niveau"
+
+msgctxt "#30929"
+msgid "Enable watching activity"
+msgstr "Toon kijkactiviteit"
+
+msgctxt "#30930"
+msgid "This enables 'watch later' and 'continue watching' menus and syncs playback position between different devices using the same VRT NU account."
+msgstr "Dit activeert 'kijk later' en 'verderkijken' menu's and synchroniseert de afspeelpositie tussen verschillende toestellen die hetzelfde VRT NU account gebruiken."
 
 
 ### MESSAGES

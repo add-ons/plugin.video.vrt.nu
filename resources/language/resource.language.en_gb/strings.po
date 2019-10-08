@@ -150,6 +150,23 @@ msgctxt "#30049"
 msgid "My episodes that will soon be offline"
 msgstr ""
 
+msgctxt "#30050"
+msgid "My watch later"
+msgstr ""
+
+msgctxt "#30051"
+msgid "The videos you like to watch later"
+msgstr ""
+
+msgctxt "#30052"
+msgid "Continue watching"
+msgstr ""
+
+msgctxt "#30053"
+msgid "Continue watching the videos you started earlier"
+msgstr ""
+
+
 ### CATEGORIES
 msgctxt "#30070"
 msgid "Audio description"
@@ -351,6 +368,18 @@ msgstr ""
 
 msgctxt "#30334"
 msgid "In 2 days"
+msgstr ""
+
+msgctxt "#30401"
+msgid "Add {title} to watch later"
+msgstr ""
+
+msgctxt "#30402"
+msgid "Remove {title} from watch later"
+msgstr ""
+
+msgctxt "#30409"
+msgid "episode"
 msgstr ""
 
 msgctxt "#30410"
@@ -649,6 +678,14 @@ msgstr ""
 
 msgctxt "#30927"
 msgid "Log level"
+msgstr ""
+
+msgctxt "#30929"
+msgid "Enable watching activity"
+msgstr ""
+
+msgctxt "#30930"
+msgid "This enables 'watch later' and 'continue watching' menus and syncs playback position between different devices using the same VRT NU account."
 msgstr ""
 
 
