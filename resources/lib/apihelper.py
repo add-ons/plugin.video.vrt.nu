@@ -400,12 +400,21 @@ class ApiHelper:
             if variety == 'oneoff':
                 params['facets[programType]'] = 'oneoff'
 
-            if variety == 'watchlater':
-                self._resumepoints.get_resumepoints(ttl=5 * 60)
-                watchlater_urls = ['//www.vrt.be' + self._resumepoints.get_resumepoints(ttl=5 * 60).get(item).get('value').get('url')
-                                   for item in self._resumepoints.get_resumepoints(ttl=5 * 60)
-                                   if self._resumepoints.get_resumepoints(ttl=5 * 60).get(item).get('value').get('watchLater')]
-                params['facets[url]'] = '[%s]' % (','.join(watchlater_urls))
+            if variety in ('watchlater', 'continue'):
+                resumepoints = self._resumepoints.get_resumepoints(ttl=5 * 60)
+                if variety == 'watchlater':
+                    episode_urls = ['//www.vrt.be' + resumepoints.get(item).get('value').get('url') for item in resumepoints
+                                    if resumepoints.get(item).get('value').get('watchLater')]
+                elif variety == 'continue':
+                    from datetime import datetime, timedelta
+                    import dateutil.tz
+                    now = datetime.now(dateutil.tz.UTC)
+                    lastweek = now - timedelta(days=30)
+                    episode_urls = ['//www.vrt.be' + resumepoints.get(item).get('value').get('url') for item in resumepoints
+                                    if (0.05 * resumepoints.get(item).get('value').get('total'))
+                                    < resumepoints.get(item).get('value').get('position') < (0.95 * resumepoints.get(item).get('value').get('total'))
+                                    and datetime.fromtimestamp(resumepoints.get(item).get('created') / 1000, dateutil.tz.UTC) > lastweek]
+                params['facets[url]'] = '[%s]' % (','.join(episode_urls))
 
             if use_favorites:
                 program_urls = [statichelper.program_to_url(p, 'long') for p in self._favorites.programs()]

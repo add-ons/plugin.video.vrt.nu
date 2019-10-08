@@ -129,13 +129,19 @@ class VRTPlayer:
                       info_dict=dict(plot=self._kodi.localize(30049))),
         ]
 
-        # Only add 'My watch later' when it has been activated
+        # Only add 'My watch later' and 'Continue watching' when it has been activated
         if self._resumepoints.is_activated():
             favorites_items.append(TitleItem(
                 title=self._kodi.localize(30050),  # My watch later
                 path=self._kodi.url_for('favorites_watchlater'),
-                art_dict=dict(thumb='DefaultInProgressShows.png'),
+                art_dict=dict(thumb='DefaultVideoPlaylists.png'),
                 info_dict=dict(plot=self._kodi.localize(30051)),
+            ))
+            favorites_items.append(TitleItem(
+                title=self._kodi.localize(30052),  # Continue Watching
+                path=self._kodi.url_for('favorites_continue'),
+                art_dict=dict(thumb='DefaultInProgressShows.png'),
+                info_dict=dict(plot=self._kodi.localize(30053)),
             ))
 
         if self._kodi.get_setting('addmymovies', 'true') == 'true':
@@ -290,6 +296,17 @@ class VRTPlayer:
         self._resumepoints.get_resumepoints(ttl=5 * 60)
         page = realpage(page)
         episode_items, sort, ascending, content = self._apihelper.list_episodes(page=page, variety='watchlater')
+        self._kodi.show_listing(episode_items, category=30022, sort=sort, ascending=ascending, content=content, cache=False)
+
+    def show_continue_menu(self, page=0, use_favorites=False):
+        ''' The VRT NU add-on 'Continue waching' listing menu '''
+        from statichelper import realpage
+
+        # Continue watching menu may need more up-to-date favorites
+        self._favorites.get_favorites(ttl=5 * 60 if use_favorites else 60 * 60)
+        self._resumepoints.get_resumepoints(ttl=5 * 60)
+        page = realpage(page)
+        episode_items, sort, ascending, content = self._apihelper.list_episodes(page=page, variety='continue')
         self._kodi.show_listing(episode_items, category=30022, sort=sort, ascending=ascending, content=content, cache=False)
 
     def play_latest_episode(self, program):

@@ -159,6 +159,14 @@ msgctxt "#30051"
 msgid "The videos you like to watch later"
 msgstr "Mijn afleveringen die ik later wil bekijken"
 
+msgctxt "#30052"
+msgid "Continue watching"
+msgstr "Programma's verder kijken"
+
+msgctxt "#30053"
+msgid "Continue watching the videos you started earlier"
+msgstr "Bekijk de programma's verder die je eerder bent gestart"
+
 
 ### CATEGORIES
 msgctxt "#30070"

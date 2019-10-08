@@ -112,6 +112,13 @@ def favorites_watchlater():
     VRTPlayer(kodi).show_watchlater_menu(page=1, use_favorites=True)
 
 
+@plugin.route('/favorites/continue')
+def favorites_continue():
+    ''' The resumepoints continue listing '''
+    from vrtplayer import VRTPlayer
+    VRTPlayer(kodi).show_continue_menu(page=1, use_favorites=True)
+
+
 @plugin.route('/favorites/refresh')
 def favorites_refresh():
     ''' The API interface to refresh the favorites cache '''

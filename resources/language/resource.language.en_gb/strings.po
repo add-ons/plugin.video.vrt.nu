@@ -158,6 +158,14 @@ msgctxt "#30051"
 msgid "The videos you like to watch later"
 msgstr ""
 
+msgctxt "#30052"
+msgid "Continue watching"
+msgstr ""
+
+msgctxt "#30053"
+msgid "Continue watching the videos you started earlier"
+msgstr ""
+
 
 ### CATEGORIES
 msgctxt "#30070"
