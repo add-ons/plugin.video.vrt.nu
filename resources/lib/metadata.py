@@ -61,7 +61,7 @@ class Metadata:
             if api_data.get('type') == 'episode':
                 program_title = api_data.get('program')
                 program_type = api_data.get('programType')
-                follow_suffix = self._kodi.localize(30410) if program_type != 'oneoff' else ''
+                follow_suffix = self._kodi.localize(30410) if program_type != 'oneoff' else ''  # program
                 follow_enabled = True
 
             # VRT NU Suggest API
@@ -73,7 +73,7 @@ class Metadata:
             # VRT NU Schedule API
             elif api_data.get('vrt.whatson-id'):
                 program_title = api_data.get('title')
-                follow_suffix = self._kodi.localize(30410)
+                follow_suffix = self._kodi.localize(30410)  # program
                 follow_enabled = bool(api_data.get('url'))
 
             if follow_enabled:
@@ -83,16 +83,14 @@ class Metadata:
                     # If we are in a favorites menu, move cursor down before removing a favorite
                     if plugin.path.startswith('/favorites'):
                         extras = dict(move_down=True)
-                    # Unfollow context menu
                     context_menu.append((
-                        self._kodi.localize(30412, title=follow_suffix),
+                        self._kodi.localize(30412, title=follow_suffix),  # Unfollow
                         'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=program_title, **extras)
                     ))
                     favorite_marker = '[COLOR yellow]ᵛ[/COLOR]'
                 else:
-                    # Follow context menu
                     context_menu.append((
-                        self._kodi.localize(30411, title=follow_suffix),
+                        self._kodi.localize(30411, title=follow_suffix),  # Follow
                         'RunPlugin(%s)' % self._kodi.url_for('follow', program=program, title=program_title)
                     ))
 
@@ -101,10 +99,15 @@ class Metadata:
             plugin_url = self._kodi.url_for('programs', program=program, season='allseasons')
             # FIXME: Because of a bug in ActivateWindow(), return does not work
             # context_menu.append((self._kodi.localize(30417), 'ActivateWindow(Videos,%s,return)' % plugin_url))
-            context_menu.append((self._kodi.localize(30417), 'ActivateWindow(Videos,%s)' % plugin_url))
+            context_menu.append((
+                self._kodi.localize(30417),  # Go to program
+                'ActivateWindow(Videos,%s)' % plugin_url
+            ))
 
-        # Refresh context menu
-        context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file)))
+        context_menu.append((
+            self._kodi.localize(30413),  # Refresh
+            'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file)
+        ))
 
         return context_menu, favorite_marker
 
@@ -187,13 +190,9 @@ class Metadata:
                 # Add additional metadata to plot
                 plot_meta = ''
                 if api_data.get('allowedRegion') == 'BE':
-                    # Show Geo-blocked
-                    plot_meta += self._kodi.localize(30201) + '\n'
+                    plot_meta += self._kodi.localize(30201) + '\n\n'  # Geo-blocked
                 plot = '%s[B]%s[/B]\n%s' % (plot_meta, api_data.get('program'), plot)
                 return plot
-
-            plot = statichelper.convert_html_to_kodilabel(api_data.get('description'))
-            now = datetime.now(dateutil.tz.tzlocal())
 
             # Add additional metadata to plot
             plot_meta = ''
@@ -203,6 +202,7 @@ class Metadata:
 
                 # Show the remaining days/hours the episode is still available
                 if offtime:
+                    now = datetime.now(dateutil.tz.tzlocal())
                     remaining = offtime - now
                     if remaining.days / 365 > 5:
                         pass  # If it is available for more than 5 years, do not show
@@ -220,10 +220,14 @@ class Metadata:
                         plot_meta += self._kodi.localize(30207)  # 1 hour to go
 
             if api_data.get('allowedRegion') == 'BE':
-                # Show Geo-blocked
-                plot_meta += self._kodi.localize(30201)
+                if plot_meta:
+                    plot_meta += '  '
+                plot_meta += self._kodi.localize(30201)  # Geo-blocked
 
-            plot = '%s\n%s' % (plot_meta, plot)
+            plot = statichelper.convert_html_to_kodilabel(api_data.get('description'))
+
+            if plot_meta:
+                plot = '%s\n\n%s' % (plot_meta, plot)
 
             permalink = statichelper.shorten_link(api_data.get('permalink')) or api_data.get('externalPermalink')
             if self._showpermalink and permalink:
