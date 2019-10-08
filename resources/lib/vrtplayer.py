@@ -279,7 +279,7 @@ class VRTPlayer:
                 info_dict=dict(),
             ))
 
-        self._kodi.show_listing(episode_items, category=30022, sort=sort, ascending=ascending, content=content)
+        self._kodi.show_listing(episode_items, category=30022, sort=sort, ascending=ascending, content=content, cache=False)
 
     def show_watchlater_menu(self, page=0, use_favorites=False):
         ''' The VRT NU add-on 'My watch later' listing menu '''
@@ -290,7 +290,7 @@ class VRTPlayer:
         self._resumepoints.get_resumepoints(ttl=5 * 60)
         page = realpage(page)
         episode_items, sort, ascending, content = self._apihelper.list_episodes(page=page, variety='watchlater')
-        self._kodi.show_listing(episode_items, category=30022, sort=sort, ascending=ascending, content=content)
+        self._kodi.show_listing(episode_items, category=30022, sort=sort, ascending=ascending, content=content, cache=False)
 
     def play_latest_episode(self, program):
         ''' A hidden feature in the VRT NU add-on to play the latest episode of a program '''
