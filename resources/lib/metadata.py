@@ -233,7 +233,7 @@ class Metadata:
         # VRT NU Suggest API
         if api_data.get('type') == 'program':
             plot = statichelper.unescape(api_data.get('description', '???'))
-            permalink = statichelper.shorten_link(api_data.get('targetUrl'))
+            permalink = statichelper.shorten_link(api_data.get('programUrl'))
             if self._showpermalink and permalink:
                 plot = '%s\n\n[COLOR yellow]%s[/COLOR]' % (plot, permalink)
             return plot

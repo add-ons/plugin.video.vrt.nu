@@ -213,7 +213,7 @@ class ApiHelper:
         oneoff_programs = [statichelper.url_to_program(episode.get('programUrl')) for episode in oneoffs]
 
         for tvshow in tvshows:
-            program = statichelper.url_to_program(tvshow.get('targetUrl'))
+            program = statichelper.url_to_program(tvshow.get('programUrl'))
 
             if use_favorites and program not in favorite_programs:
                 continue
