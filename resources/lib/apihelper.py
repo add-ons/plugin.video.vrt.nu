@@ -406,14 +406,10 @@ class ApiHelper:
                     episode_urls = ['//www.vrt.be' + resumepoints.get(item).get('value').get('url') for item in resumepoints
                                     if resumepoints.get(item).get('value').get('watchLater')]
                 elif variety == 'continue':
-                    from datetime import datetime, timedelta
-                    import dateutil.tz
-                    now = datetime.now(dateutil.tz.UTC)
-                    lastweek = now - timedelta(days=30)
+                    seconds_margin = 30
                     episode_urls = ['//www.vrt.be' + resumepoints.get(item).get('value').get('url') for item in resumepoints
-                                    if (0.05 * resumepoints.get(item).get('value').get('total'))
-                                    < resumepoints.get(item).get('value').get('position') < (0.95 * resumepoints.get(item).get('value').get('total'))
-                                    and datetime.fromtimestamp(resumepoints.get(item).get('created') / 1000, dateutil.tz.UTC) > lastweek]
+                                    if seconds_margin < resumepoints.get(item).get('value').get('position')
+                                    < (resumepoints.get(item).get('value').get('total') - seconds_margin)]
                 params['facets[url]'] = '[%s]' % (','.join(episode_urls))
 
             if use_favorites:

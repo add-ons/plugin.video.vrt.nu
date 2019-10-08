@@ -681,6 +681,14 @@ msgctxt "#30927"
 msgid "Log level"
 msgstr "Log niveau"
 
+msgctxt "#30929"
+msgid "Enable watching activity"
+msgstr "Toon kijkactiviteit"
+
+msgctxt "#30930"
+msgid "This enables 'watch later' and 'continue watching' menus and syncs playback position between different devices using the same VRT NU account."
+msgstr "Dit activeert 'kijk later' en 'verderkijken' menu's and synchroniseert de afspeelpositie tussen verschillende toestellen die hetzelfde VRT NU account gebruiken."
+
 
 ### MESSAGES
 msgctxt "#30951"
