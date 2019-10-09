@@ -100,8 +100,7 @@ class ResumePoints:
             self._kodi.invalidate_caches('watchlater-*.json')
 
         import json
-        from statichelper import from_unicode
-        data = from_unicode(json.dumps(payload))
+        data = json.dumps(payload).encode()
         self._kodi.log('URL post: https://video-user-data.vrt.be/resume_points/{uuid}', 'Verbose', uuid=uuid)
         req = Request('https://video-user-data.vrt.be/resume_points/%s' % uuid, data=data, headers=headers)
         result = urlopen(req)
