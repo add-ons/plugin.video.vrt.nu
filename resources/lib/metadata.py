@@ -98,16 +98,6 @@ class Metadata:
                         'RunPlugin(%s)' % self._kodi.url_for('follow', program=program, title=program_title)
                     ))
 
-        # Go to program context menu
-        if plugin.path.startswith(('/favorites/offline', '/favorites/recent', '/offline', '/recent')):
-            plugin_url = self._kodi.url_for('programs', program=program, season='allseasons')
-            # FIXME: Because of a bug in ActivateWindow(), return does not work
-            # context_menu.append((self._kodi.localize(30417), 'ActivateWindow(Videos,%s,return)' % plugin_url))
-            context_menu.append((
-                self._kodi.localize(30417),  # Go to program
-                'ActivateWindow(Videos,%s)' % plugin_url
-            ))
-
         if self._resumepoints.is_activated():
             # VRT NU Search API
             if api_data.get('type') == 'episode':
@@ -138,8 +128,18 @@ class Metadata:
                         'RunPlugin(%s)' % self._kodi.url_for('watchlater', uuid=assetuuid, title=program_title, url=url)
                     ))
 
+        # Go to program context menu
+        if plugin.path.startswith(('/favorites/continue', '/favorites/offline', '/favorites/recent', '/favorites/watchlater', '/offline', '/recent')):
+            plugin_url = self._kodi.url_for('programs', program=program, season='allseasons')
+            # FIXME: Because of a bug in ActivateWindow(), return does not work
+            # context_menu.append((self._kodi.localize(30417), 'ActivateWindow(Videos,%s,return)' % plugin_url))
+            context_menu.append((
+                self._kodi.localize(30417),  # Go to program
+                'ActivateWindow(Videos,%s)' % plugin_url
+            ))
+
         context_menu.append((
-            self._kodi.localize(30413),  # Refresh
+            self._kodi.localize(30413),  # Refresh menu
             'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file)
         ))
 
@@ -151,6 +151,10 @@ class Metadata:
 
         # VRT NU Search API
         if api_data.get('type') == 'episode':
+            duration = self.get_duration(api_data)
+            if duration:
+                properties['totaltime'] = duration
+
             assetpath = api_data.get('assetPath')
             if assetpath:
                 # We need to ensure forward slashes are quoted
@@ -161,17 +165,13 @@ class Metadata:
                 properties.update(assetuuid=assetuuid, url=url, title=program_title)
 
                 position = self._resumepoints.get_position(assetuuid)
-                if position:
+                if position and duration and 60 < position < duration - 60:  # Since it is based on minutes
                     properties['resumetime'] = position
 
             episode = self.get_episode(api_data)
             season = self.get_season(api_data)
             if episode and season:
                 properties['episodeno'] = 's%se%s' % (season, episode)
-
-            duration = self.get_duration(api_data)
-            if duration:
-                properties['totaltime'] = duration
 
             year = self.get_year(api_data)
             if year:

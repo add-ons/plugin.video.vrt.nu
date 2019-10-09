@@ -157,6 +157,9 @@ class KodiWrapper:
         if category:
             if not content:
                 category_label = 'VRT NU / '
+            from addon import plugin
+            if plugin.path.startswith('/favorites/'):
+                category_label += self.localize(30428) + ' / '  # My
             if isinstance(category, int):
                 category_label += self.localize(category)
             else:

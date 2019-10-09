@@ -147,13 +147,15 @@ def getRegion(key):
 def log(msg, level):
     ''' A reimplementation of the xbmc log() function '''
     if level in ('Error', 'Fatal'):
-        print('\033[31;1m%s: \033[32;0m%s\033[0;39m' % (level, to_unicode(msg)))
+        print('\033[31;1m%s: \033[32;0m%s\033[39;0m' % (level, to_unicode(msg)))
         if level == 'Fatal':
             raise Exception(msg)
     elif level in ('Warning', 'Notice'):
-        print('\033[33;1m%s: \033[32;0m%s\033[0;39m' % (level, to_unicode(msg)))
+        print('\033[33;1m%s: \033[32;0m%s\033[39;0m' % (level, to_unicode(msg)))
+    elif level == 'Debug':
+        print('\033[32;1m%s: \033[30;1m%s\033[39;0m' % (level, to_unicode(msg)))
     else:
-        print('\033[32;1m%s: \033[32;0m%s\033[0;39m' % (level, to_unicode(msg)))
+        print('\033[32;1m%s: \033[32;0m%s\033[39;0m' % (level, to_unicode(msg)))
 
 
 def setContent(self, content):
