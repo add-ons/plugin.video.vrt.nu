@@ -25,12 +25,7 @@ class VrtMonitor(Monitor):
         ''' Handler for changes to settings '''
         _kodi = KodiWrapper(None)
         _kodi.log('Settings changed')
-
-        _kodi.invalidate_caches('favorites.json')
-        _kodi.invalidate_caches('offline-*.json')
-        _kodi.invalidate_caches('recent-*.json')
-        _kodi.invalidate_caches('resume_points.json')
-        _kodi.invalidate_caches('watchlater-*.json')
-
         TokenResolver(_kodi).refresh_login()
+
+        _kodi.invalidate_caches('continue-*.json', 'favorites.json', 'my-offline-*.json', 'my-recent-*.json', 'resume_points.json', 'watchlater-*.json')
         _kodi.container_refresh()

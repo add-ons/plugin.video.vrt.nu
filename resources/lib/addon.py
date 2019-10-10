@@ -27,7 +27,7 @@ def main_menu():
 
 @plugin.route('/cache/delete')
 @plugin.route('/cache/delete/<cache_file>')
-def delete_cache(cache_file=None):
+def delete_cache(cache_file='*.json'):
     ''' The API interface to delete caches '''
     kodi.refresh_caches(cache_file=cache_file)
 
@@ -105,32 +105,41 @@ def favorites_offline(page=1):
     VRTPlayer(kodi).show_offline_menu(page=page, use_favorites=True)
 
 
-@plugin.route('/favorites/watchlater')
-def favorites_watchlater():
-    ''' The resumepoints watchlater listing '''
-    from vrtplayer import VRTPlayer
-    VRTPlayer(kodi).show_watchlater_menu(page=1, use_favorites=True)
-
-
-@plugin.route('/favorites/continue')
-def favorites_continue():
-    ''' The resumepoints continue listing '''
-    from vrtplayer import VRTPlayer
-    VRTPlayer(kodi).show_continue_menu(page=1, use_favorites=True)
-
-
 @plugin.route('/favorites/refresh')
 def favorites_refresh():
     ''' The API interface to refresh the favorites cache '''
     from favorites import Favorites
-    Favorites(kodi).refresh_favorites()
+    Favorites(kodi).refresh(ttl=0)
+    kodi.show_notification(message=kodi.localize(30982))
 
 
 @plugin.route('/favorites/manage')
 def favorites_manage():
     ''' The API interface to manage your favorites '''
     from favorites import Favorites
-    Favorites(kodi).manage_favorites()
+    Favorites(kodi).manage()
+
+
+@plugin.route('/resumepoints/continue')
+def resumepoints_continue():
+    ''' The resumepoints continue listing '''
+    from vrtplayer import VRTPlayer
+    VRTPlayer(kodi).show_continue_menu(page=1)
+
+
+@plugin.route('/resumepoints/refresh')
+def resumepoints_refresh():
+    ''' The API interface to refresh the resumepoints cache '''
+    from resumepoints import ResumePoints
+    ResumePoints(kodi).refresh(ttl=0)
+    kodi.show_notification(message=kodi.localize(30983))
+
+
+@plugin.route('/resumepoints/watchlater')
+def resumepoints_watchlater():
+    ''' The resumepoints watchlater listing '''
+    from vrtplayer import VRTPlayer
+    VRTPlayer(kodi).show_watchlater_menu(page=1)
 
 
 @plugin.route('/programs')

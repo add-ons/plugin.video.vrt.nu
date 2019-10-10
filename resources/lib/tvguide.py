@@ -151,7 +151,7 @@ class TVGuide:
         epg = self.parse(date, now)
         epg_url = epg.strftime(self.VRT_TVGUIDE)
 
-        self._favorites.get_favorites(ttl=60 * 60)
+        self._favorites.refresh(ttl=60 * 60)
 
         cache_file = 'schedule.%s.json' % date
         if date in ('today', 'yesterday', 'tomorrow'):

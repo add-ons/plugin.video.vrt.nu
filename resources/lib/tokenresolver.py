@@ -341,13 +341,8 @@ class TokenResolver:
         # Delete token cache
         self.delete_tokens()
 
-        # Delete favorites
-        self._kodi.invalidate_caches('favorites.json')
-        self._kodi.invalidate_caches('my-offline-*.json')
-        self._kodi.invalidate_caches('my-recent-*.json')
-
-        # Delete resume_points
-        self._kodi.invalidate_caches('resume_points.json')
+        # Delete user-related caches
+        self._kodi.invalidate_caches('continue-*.json', 'favorites.json', 'my-offline-*.json', 'my-recent-*.json', 'resume_points.json', 'watchlater-*.json')
 
     def logged_in(self):
         ''' Whether there is an active login '''

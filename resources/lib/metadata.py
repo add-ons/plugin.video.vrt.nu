@@ -57,7 +57,6 @@ class Metadata:
         favorite_marker = ''
         watchlater_marker = ''
         context_menu = []
-        resumepoints_enabled = False
 
         if self._favorites.is_activated():
 
@@ -103,33 +102,31 @@ class Metadata:
             if api_data.get('type') == 'episode':
                 program_title = api_data.get('program')
                 assetpath = api_data.get('assetPath')
-                if assetpath:
-                    resumepoints_enabled = True
 
-            if resumepoints_enabled:
-                program_title = statichelper.to_unicode(quote_plus(statichelper.from_unicode(program_title)))  # We need to ensure forward slashes are quoted
-                url = statichelper.url_to_episode(api_data.get('url', ''))
-                assetuuid = self._resumepoints.assetpath_to_uuid(assetpath)
-                if self._resumepoints.is_watchlater(assetuuid):
-                    extras = dict()
-                    # If we are in a favorites menu, move cursor down before removing a favorite
-                    if plugin.path.startswith('/favorites/watchlater'):
-                        extras = dict(move_down=True)
-                    # Unwatch context menu
-                    context_menu.append((
-                        statichelper.capitalize(self._kodi.localize(30402, title='')),
-                        'RunPlugin(%s)' % self._kodi.url_for('unwatchlater', uuid=assetuuid, title=program_title, url=url, **extras)
-                    ))
-                    watchlater_marker = '[COLOR yellow]ᶫ[/COLOR]'
-                else:
-                    # Watch context menu
-                    context_menu.append((
-                        statichelper.capitalize(self._kodi.localize(30401, title='')),
-                        'RunPlugin(%s)' % self._kodi.url_for('watchlater', uuid=assetuuid, title=program_title, url=url)
-                    ))
+                if assetpath is not None:
+                    program_title = statichelper.to_unicode(quote_plus(statichelper.from_unicode(program_title)))  # We need to ensure forward slashes are quoted
+                    url = statichelper.url_to_episode(api_data.get('url', ''))
+                    assetuuid = self._resumepoints.assetpath_to_uuid(assetpath)
+                    if self._resumepoints.is_watchlater(assetuuid):
+                        extras = dict()
+                        # If we are in a watchlater menu, move cursor down before removing a favorite
+                        if plugin.path.startswith('/resumepoints/watchlater'):
+                            extras = dict(move_down=True)
+                        # Unwatch context menu
+                        context_menu.append((
+                            statichelper.capitalize(self._kodi.localize(30402)),
+                            'RunPlugin(%s)' % self._kodi.url_for('unwatchlater', uuid=assetuuid, title=program_title, url=url, **extras)
+                        ))
+                        watchlater_marker = '[COLOR yellow]ᶫ[/COLOR]'
+                    else:
+                        # Watch context menu
+                        context_menu.append((
+                            statichelper.capitalize(self._kodi.localize(30401)),
+                            'RunPlugin(%s)' % self._kodi.url_for('watchlater', uuid=assetuuid, title=program_title, url=url)
+                        ))
 
         # Go to program context menu
-        if plugin.path.startswith(('/favorites/continue', '/favorites/offline', '/favorites/recent', '/favorites/watchlater', '/offline', '/recent')):
+        if plugin.path.startswith(('/favorites/offline', '/favorites/recent', '/offline', 'recent', '/resumepoints/continue', '/resumepoints/watchlater')):
             plugin_url = self._kodi.url_for('programs', program=program, season='allseasons')
             # FIXME: Because of a bug in ActivateWindow(), return does not work
             # context_menu.append((self._kodi.localize(30417), 'ActivateWindow(Videos,%s,return)' % plugin_url))
@@ -151,22 +148,24 @@ class Metadata:
 
         # VRT NU Search API
         if api_data.get('type') == 'episode':
-            duration = self.get_duration(api_data)
-            if duration:
-                properties['totaltime'] = duration
-
             assetpath = api_data.get('assetPath')
             if assetpath:
                 # We need to ensure forward slashes are quoted
                 program_title = statichelper.to_unicode(quote_plus(statichelper.from_unicode(api_data.get('program'))))
 
                 assetuuid = self._resumepoints.assetpath_to_uuid(assetpath)
-                url = statichelper.url_to_episode(api_data.get('url', ''))
+                url = statichelper.reformat_url(api_data.get('url', ''), 'medium')
                 properties.update(assetuuid=assetuuid, url=url, title=program_title)
 
+                seconds_margin = 30
                 position = self._resumepoints.get_position(assetuuid)
-                if position and duration and 60 < position < duration - 60:  # Since it is based on minutes
+                total = self._resumepoints.get_total(assetuuid)
+                if position and total and seconds_margin < position < total - seconds_margin:
                     properties['resumetime'] = position
+
+            duration = self.get_duration(api_data)
+            if duration:
+                properties['totaltime'] = duration
 
             episode = self.get_episode(api_data)
             season = self.get_season(api_data)
@@ -284,9 +283,9 @@ class Metadata:
         # VRT NU Suggest API
         if api_data.get('type') == 'program':
             plot = statichelper.unescape(api_data.get('description', '???'))
-            permalink = statichelper.shorten_link(api_data.get('programUrl'))
-            if self._showpermalink and permalink:
-                plot = '%s\n\n[COLOR yellow]%s[/COLOR]' % (plot, permalink)
+            # permalink = statichelper.shorten_link(api_data.get('programUrl'))
+            # if self._showpermalink and permalink:
+            #     plot = '%s\n\n[COLOR yellow]%s[/COLOR]' % (plot, permalink)
             return plot
 
         # VRT NU Schedule API

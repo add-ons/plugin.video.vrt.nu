@@ -98,7 +98,7 @@ class Search:
                 info_dict=dict(),
             ))
 
-        self._favorites.get_favorites(ttl=60 * 60)
+        self._favorites.refresh(ttl=60 * 60)
         self._kodi.show_listing(search_items, category=30032, sort=sort, ascending=ascending, content=content, cache=False)
 
     def clear(self):

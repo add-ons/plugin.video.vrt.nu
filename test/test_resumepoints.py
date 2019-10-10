@@ -26,19 +26,36 @@ class TestResumePoints(unittest.TestCase):
     _resumepoints = ResumePoints(kodi)
     _apihelper = ApiHelper(kodi, _favorites, _resumepoints)
 
-    # Update resume_points.json
-    _resumepoints.get_resumepoints(ttl=0)
+    @unittest.skipUnless(xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('password'), 'Skipping as VRT password is missing.')
+    def test_get_watchlater_episodes(self):
+        ''' Test items, sort and order '''
+        episode_items, sort, ascending, content = self._apihelper.list_episodes(page=1, variety='watchlater')
+        self.assertTrue(episode_items)
+        self.assertEqual(sort, 'dateadded')
+        self.assertFalse(ascending)
+        self.assertEqual(content, 'episodes')
+
+    @unittest.skipUnless(xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('password'), 'Skipping as VRT password is missing.')
+    def test_get_continue_episodes(self):
+        ''' Test items, sort and order '''
+        episode_items, sort, ascending, content = self._apihelper.list_episodes(page=1, variety='continue')
+        self.assertTrue(episode_items)
+        self.assertEqual(sort, 'dateadded')
+        self.assertFalse(ascending)
+        self.assertEqual(content, 'episodes')
 
     @unittest.skipUnless(xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('password'), 'Skipping as VRT password is missing.')
     def test_update_watchlist(self):
-        self._resumepoints.get_resumepoints(ttl=0)
+        self._resumepoints.refresh(ttl=0)
         assetuuid, first_entry = next(iter(self._resumepoints._resumepoints.items()))  # pylint: disable=protected-access
         print('%s = %s' % (assetuuid, first_entry))
         url = first_entry.get('value').get('url')
         self._resumepoints.watchlater(uuid=assetuuid, title='Foo bar', url=url)
         self._resumepoints.unwatchlater(uuid=assetuuid, title='Foo bar', url=url)
-        self._resumepoints.get_resumepoints(ttl=0)
+        self._resumepoints.refresh(ttl=0)
         assetuuid, first_entry = next(iter(self._resumepoints._resumepoints.items()))  # pylint: disable=protected-access
         print('%s = %s' % (assetuuid, first_entry))
 
