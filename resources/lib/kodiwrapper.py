@@ -158,7 +158,7 @@ class KodiWrapper:
             if not content:
                 category_label = 'VRT NU / '
             from addon import plugin
-            if plugin.path.startswith('/favorites/'):
+            if plugin.path.startswith(('/favorites/', '/resumepoints/')):
                 category_label += self.localize(30428) + ' / '  # My
             if isinstance(category, int):
                 category_label += self.localize(category)
@@ -622,21 +622,23 @@ class KodiWrapper:
 
     def refresh_caches(self, cache_file=None):
         ''' Invalidate the needed caches and refresh container '''
-        self.invalidate_caches(expr=cache_file)
+        files = ['favorites.json', 'oneoff.json', 'resume_points.json']
+        if cache_file and cache_file not in files:
+            files.append(cache_file)
+        self.invalidate_caches(*files)
         self.container_refresh()
         self.show_notification(message=self.localize(30981))
 
-    def invalidate_caches(self, expr=None):
+    def invalidate_caches(self, *caches):
         ''' Invalidate multiple cache files '''
         import fnmatch
         _, files = self.listdir(self._cache_path)
-        if expr:
-            files = fnmatch.filter(files, expr)
-        for filename in files:
+        # Invalidate caches related to menu list refreshes
+        removes = set()
+        for expr in caches:
+            removes.update(fnmatch.filter(files, expr))
+        for filename in removes:
             self.delete_file(self._cache_path + filename)
-        self.delete_file(self._cache_path + 'favorites.json')
-        self.delete_file(self._cache_path + 'oneoff.json')
-        self.delete_file(self._cache_path + 'resume_points.json')
 
     @staticmethod
     def input_down():

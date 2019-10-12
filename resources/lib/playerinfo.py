@@ -17,20 +17,22 @@ class PlayerInfo(Player):
         self._tracker = None
         self._last_pos = 0
         self._total = None
+        self._stop = False
         Player.__init__(self)
-        while not self._monitor.abortRequested():
-            if self._monitor.waitForAbort(10):
+        while not self._monitor.abortRequested() and not self._stop:
+            if self._monitor.waitForAbort(5):
                 break
 
     def onAVStarted(self):  # pylint: disable=invalid-name
         ''' called when Kodi has a video or audiostream '''
         self._total = self.getTotalTime()
-        self._tracker = Thread(target=self.stream_position)
+        self._tracker = Thread(target=self.stream_position, name='VRTNUThread')
         self._tracker.start()
 
     def onPlayBackStopped(self):  # pylint: disable=invalid-name
         ''' called when user stops Kodi playing a file '''
         self._info((self._last_pos, self._total))
+        self._stop = True
 
     def onAVChange(self):  # pylint: disable=invalid-name
         ''' called when Kodi has a video, audio or subtitle stream. Also happens when the stream changes. '''
@@ -38,9 +40,11 @@ class PlayerInfo(Player):
     def onPlayBackEnded(self):  # pylint: disable=invalid-name
         ''' called when Kodi stops playing a file '''
         self._info((self._total, self._total))
+        self._stop = True
 
     def onPlayBackError(self):  # pylint: disable=invalid-name
         ''' called when playback stops due to an error '''
+        self._info((self._total, self._total))
 
     def onPlayBackPaused(self):  # pylint: disable=invalid-name
         ''' called when user pauses a playing file '''
@@ -53,4 +57,4 @@ class PlayerInfo(Player):
         ''' get latest stream position while playing '''
         while self.isPlaying():
             self._last_pos = self.getTime()
-            sleep(100)
+            sleep(500)

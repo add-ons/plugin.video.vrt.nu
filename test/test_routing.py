@@ -35,6 +35,8 @@ class TestRouter(unittest.TestCase):
         plugin.run(['plugin://plugin.video.vrt.nu/favorites/recent/2', '0', ''])
         self.assertEqual(plugin.url_for(addon.favorites_recent, page=2), 'plugin://plugin.video.vrt.nu/favorites/recent/2')
         plugin.run(['plugin://plugin.video.vrt.nu/favorites/offline', '0', ''])
+        plugin.run(['plugin://plugin.video.vrt.nu/resumepoints/watchlater', '0', ''])
+        plugin.run(['plugin://plugin.video.vrt.nu/resumepoints/continue', '0', ''])
         plugin.run(['plugin://plugin.video.vrt.nu/favorites/docu', '0', ''])
 
     # A-Z menu: '/programs'
@@ -46,8 +48,8 @@ class TestRouter(unittest.TestCase):
     def test_episodes_menu(self):
         plugin.run(['plugin://plugin.video.vrt.nu/programs/thuis', '0', ''])
         self.assertEqual(plugin.url_for(addon.programs, program='thuis'), 'plugin://plugin.video.vrt.nu/programs/thuis')
-        plugin.run(['plugin://plugin.video.vrt.nu/programs/de-campus-cup', '0', ''])
-        self.assertEqual(plugin.url_for(addon.programs, program='de-campus-cup'), 'plugin://plugin.video.vrt.nu/programs/de-campus-cup')
+        plugin.run(['plugin://plugin.video.vrt.nu/programs/pano/allseasons', '0', ''])
+        self.assertEqual(plugin.url_for(addon.programs, program='pano', season='allseasons'), 'plugin://plugin.video.vrt.nu/programs/pano/allseasons')
 
     # Categories menu: '/categories'
     def test_categories_menu(self):
@@ -166,6 +168,11 @@ class TestRouter(unittest.TestCase):
     def test_refresh_favorites_route(self):
         plugin.run(['plugin://plugin.video.vrt.nu/favorites/refresh', '0', ''])
         self.assertEqual(plugin.url_for(addon.favorites_refresh), 'plugin://plugin.video.vrt.nu/favorites/refresh')
+
+    # Refresh resumepoints method: '/resumepoints/refresh'
+    def test_refresh_resumepoints_route(self):
+        plugin.run(['plugin://plugin.video.vrt.nu/resumepoints/refresh', '0', ''])
+        self.assertEqual(plugin.url_for(addon.resumepoints_refresh), 'plugin://plugin.video.vrt.nu/resumepoints/refresh')
 
     # Manage favorites method: '/favorites/manage'
     def test_manage_favorites_route(self):

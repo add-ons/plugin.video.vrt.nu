@@ -372,10 +372,18 @@ msgid "In 2 days"
 msgstr "Overmorgen"
 
 msgctxt "#30401"
+msgid "Watch later"
+msgstr "Later bekijken"
+
+msgctxt "#30402"
+msgid "Remove from watch later"
+msgstr "Niet later bekijken"
+
+msgctxt "#30403"
 msgid "Add {title} to watch later"
 msgstr "{title} later bekijken"
 
-msgctxt "#30402"
+msgctxt "#30404"
 msgid "Remove {title} from watch later"
 msgstr "{title} niet later bekijken"
 
@@ -502,30 +510,38 @@ msgid "Manage My favorites..."
 msgstr "Beheer Mijn favorieten..."
 
 msgctxt "#30827"
+msgid "Enable watching activity"
+msgstr "Toon kijkactiviteit"
+
+msgctxt "#30828"
+msgid "This enables 'watch later' and 'continue watching' menus and syncs playback position between different devices using the same VRT NU account."
+msgstr "Dit activeert 'kijk later' en 'verderkijken' menu's and synchroniseert de afspeelpositie tussen verschillende toestellen die hetzelfde VRT NU account gebruiken."
+
+msgctxt "#30829"
 msgid "Add Movies subsection"
 msgstr "Toon Films rubriek"
 
-msgctxt "#30829"
+msgctxt "#30831"
 msgid "Add Documentaries subsection"
 msgstr "Toon Documentaires rubriek"
 
-msgctxt "#30831"
+msgctxt "#30833"
 msgid "Show one-off videos in between program folders"
 msgstr "Toon one-off video's tussen tv-programmafolders"
 
-msgctxt "#30833"
+msgctxt "#30835"
 msgid "Show fanart"
 msgstr "Toon fanart"
 
-msgctxt "#30835"
+msgctxt "#30837"
 msgid "Show YouTube channel content"
 msgstr "Toon YouTube kanaal video's"
 
-msgctxt "#30837"
+msgctxt "#30839"
 msgid "Show episode permalink in plot"
 msgstr "Toon aflevering permalink in beschrijving"
 
-msgctxt "#30838"
+msgctxt "#30840"
 msgid "When enabled, the video description will include a permanent link that points to this episode. This is useful for quickly opening an episode or movie on a mobile device."
 msgstr "Indien actief zal de beschrijving van iedere video een permanent link bevatten die je rechtstreeks naar de VRT NU website brengt. Dit is handig om snel een aflevering of film to openen op een mobiel toestel."
 
@@ -638,60 +654,56 @@ msgid "Refresh favorites"
 msgstr "Ververs favoriete programma's"
 
 msgctxt "#30907"
+msgid "Refresh watching activity"
+msgstr "Ververs kijkactiviteit"
+
+msgctxt "#30909"
 msgid "Use menu caching"
 msgstr "Gebruik menu caching"
 
-msgctxt "#30908"
+msgctxt "#30910"
 msgid "When enabled, menus are being cached so they work more quickly. Only in very specific use-cases this is problematic as new episodes may not appear when they are expected. You can also use [B]Refresh[/B] from the context-menu."
 msgstr "Indien geactiveerd worden Kodi menus gecached zodat ze sneller werken. Enkel in heel uitzonderlijke gevallen is het interessanter noodzakelijk om altijd nieuwe episodes te zijn als ze uitkomen. Je kan ook [B]Ververs[/B] gebruiken vanuit het context-menu."
 
-msgctxt "#30909"
+msgctxt "#30911"
 msgid "Use local HTTP caching"
 msgstr "Gebruik lokale HTTP caching"
 
-msgctxt "#30911"
+msgctxt "#30913"
 msgid "Invalidate local HTTP caches"
 msgstr "Maak lokale HTTP caches ongeldig"
 
-msgctxt "#30913"
+msgctxt "#30915"
 msgid "Streaming"
 msgstr "Streaming"
 
-msgctxt "#30915"
+msgctxt "#30917"
 msgid "Please install or enable InputStream Adaptive to use this setting"
 msgstr "Installeer of schakel InputStream Adaptive in voor deze instelling"
 
-msgctxt "#30917"
+msgctxt "#30919"
 msgid "Use InputStream Adaptive"
 msgstr "Gebruik InputStream Adaptive"
 
-msgctxt "#30919"
+msgctxt "#30921"
 msgid "InputStream Adaptive settings..."
 msgstr "InputStream Adaptive instellingen..."
 
-msgctxt "#30921"
+msgctxt "#30923"
 msgid "InputStream Helper information"
 msgstr "InputStream Helper informatie"
 
-msgctxt "#30923"
+msgctxt "#30925"
 msgid "InputStream Helper settings... [COLOR gray][I](for protected content)[/I][/COLOR]"
 msgstr "InputStream Helper instellingen...[COLOR gray][I](voor beveiligde video's)[/I][/COLOR]"
 
-msgctxt "#30925"
+msgctxt "#30927"
 msgid "Logging"
 msgstr "Logboek"
 
-msgctxt "#30927"
+msgctxt "#30929"
 msgid "Log level"
 msgstr "Log niveau"
-
-msgctxt "#30929"
-msgid "Enable watching activity"
-msgstr "Toon kijkactiviteit"
-
-msgctxt "#30930"
-msgid "This enables 'watch later' and 'continue watching' menus and syncs playback position between different devices using the same VRT NU account."
-msgstr "Dit activeert 'kijk later' en 'verderkijken' menu's and synchroniseert de afspeelpositie tussen verschillende toestellen die hetzelfde VRT NU account gebruiken."
 
 
 ### MESSAGES
@@ -771,6 +783,10 @@ msgctxt "#30976"
 msgid "Failed to (un)follow program '{program}' at VRT NU"
 msgstr "Het programma '{program}' op VRT NU volgen of vergeten is mislukt"
 
+msgctxt "#30977"
+msgid "Failed to update watch activity at VRT NU"
+msgstr "Updaten van kijkactiviteit bij VRT NU is mislukt"
+
 msgctxt "#30978"
 msgid "Welcome to VRT NU add-on v2.0.0"
 msgstr "Welkom bij VRT NU add-on v2.0.0"
@@ -786,6 +802,10 @@ msgstr "Caches werden ongeldig gemaakt."
 msgctxt "#30982"
 msgid "Successfully refreshed favorites."
 msgstr "Favoriete programmma's werden verversd."
+
+msgctxt "#30983"
+msgid "Successfully refreshed watching activity."
+msgstr "Kijkactiviteit werd verversd."
 
 msgctxt "#30985"
 msgid "Successfully cleared VRT tokens."

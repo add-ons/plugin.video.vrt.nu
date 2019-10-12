@@ -24,6 +24,7 @@
         "usehttpcaching": "true", 
         "useinputstreamadaptive": "true", 
         "usemenucaching": "true", 
+        "useresumepoints": "true", 
         "username": "", 
         "version": "", 
         "vrtnws": "true", 

@@ -33,6 +33,35 @@ def convert_html_to_kodilabel(text):
     return unescape(text).strip()
 
 
+def reformat_url(url, url_type):
+    ''' Convert a url '''
+    # Clean URLs with a hash in it
+    pos = url.find('#')
+    if pos >= 0:
+        url = url[:pos]
+    # long url
+    if url_type == 'long':
+        if url.startswith('/vrtnu/a-z'):
+            return 'https://www.vrt.be' + url
+        if url.startswith('//www.vrt.be'):
+            return 'https:' + url
+        return url
+    # medium url
+    if url_type == 'medium':
+        if url.startswith('https:'):
+            return url.replace('https:', '')
+        if url.startswith('/vrtnu/a-z'):
+            return '//www.vrt.be' + url
+        return url
+    # short url
+    if url_type == 'short':
+        if url.startswith('https://www.vrt.be'):
+            return url.replace('https://www.vrt.be', '')
+        if url.startswith('//www.vrt.be'):
+            return url.replace('//www.vrt.be', '')
+    return url
+
+
 def program_to_url(program, url_type):
     ''' Convert a program url component (e.g. de-campus-cup) to a short programUrl (e.g. /vrtnu/a-z/de-campus-cup/)
         or to a long programUrl (e.g. //www.vrt.be/vrtnu/a-z/de-campus-cup/)
@@ -43,8 +72,10 @@ def program_to_url(program, url_type):
         if url_type == 'short':
             url = '/vrtnu/a-z/' + program + '/'
         # long programUrl
-        elif url_type == 'long':
+        elif url_type == 'medium':
             url = '//www.vrt.be/vrtnu/a-z/' + program + '/'
+        elif url_type == 'long':
+            url = 'https://www.vrt.be/vrtnu/a-z/' + program + '/'
     return url
 
 
@@ -73,6 +104,9 @@ def url_to_episode(url):
     ''' Convert a targetUrl (e.g. //www.vrt.be/vrtnu/a-z/buck/1/buck-s1a32/)
         to a short episode url (/vrtnu/a-z/buck/1/buck-s1a32/)
     '''
+    if url.startswith('https://www.vrt.be/vrtnu/a-z/'):
+        # very long episode url
+        return url.replace('https://www.vrt.be/vrtnu/a-z/', '/vrtnu/a-z/')
     if url.startswith('//www.vrt.be/vrtnu/a-z/'):
         # long episode url
         return url.replace('//www.vrt.be/vrtnu/a-z/', '/vrtnu/a-z/')

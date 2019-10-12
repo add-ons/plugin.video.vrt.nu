@@ -400,27 +400,25 @@ class ApiHelper:
             if variety == 'oneoff':
                 params['facets[programType]'] = 'oneoff'
 
-            if variety in ('watchlater', 'continue'):
-                resumepoints = self._resumepoints.get_resumepoints(ttl=5 * 60)
-                if variety == 'watchlater':
-                    episode_urls = ['//www.vrt.be' + resumepoints.get(item).get('value').get('url') for item in resumepoints
-                                    if resumepoints.get(item).get('value').get('watchLater')]
-                elif variety == 'continue':
-                    seconds_margin = 30
-                    episode_urls = ['//www.vrt.be' + resumepoints.get(item).get('value').get('url') for item in resumepoints
-                                    if seconds_margin < resumepoints.get(item).get('value').get('position')
-                                    < (resumepoints.get(item).get('value').get('total') - seconds_margin)]
+            if variety == 'watchlater':
+                self._resumepoints.refresh(ttl=5 * 60)
+                episode_urls = self._resumepoints.watchlater_urls()
+                params['facets[url]'] = '[%s]' % (','.join(episode_urls))
+
+            if variety == 'continue':
+                self._resumepoints.refresh(ttl=5 * 60)
+                episode_urls = self._resumepoints.resumepoints_urls()
                 params['facets[url]'] = '[%s]' % (','.join(episode_urls))
 
             if use_favorites:
-                program_urls = [statichelper.program_to_url(p, 'long') for p in self._favorites.programs()]
+                program_urls = [statichelper.program_to_url(p, 'medium') for p in self._favorites.programs()]
                 params['facets[programUrl]'] = '[%s]' % (','.join(program_urls))
             elif variety in ('offline', 'recent'):
                 channel_filter = [channel.get('name') for channel in CHANNELS if self._kodi.get_setting(channel.get('name'), 'true') == 'true']
                 params['facets[programBrands]'] = '[%s]' % (','.join(channel_filter))
 
         if program:
-            params['facets[programUrl]'] = statichelper.program_to_url(program, 'long')
+            params['facets[programUrl]'] = statichelper.program_to_url(program, 'medium')
 
         if season and season != 'allseasons':
             params['facets[seasonTitle]'] = season
