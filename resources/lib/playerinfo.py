@@ -12,7 +12,7 @@ class PlayerInfo(Player):
 
     def __init__(self, **kwargs):
         ''' PlayerInfo initialisation '''
-        self._info = kwargs['position']
+        self._info = kwargs['info']
         self._monitor = Monitor()
         self._tracker = None
         self._last_pos = 0
@@ -28,10 +28,19 @@ class PlayerInfo(Player):
         self._total = self.getTotalTime()
         self._tracker = Thread(target=self.stream_position, name='VRTNUThread')
         self._tracker.start()
+        tag = self.getVideoInfoTag()
+        self._info(dict(
+            season=tag.getSeason(),
+            episode=tag.getEpisode(),
+            program=tag.getTVShowTitle(),
+            playcount=tag.getPlayCount(),
+            rating=tag.getRating(),
+            runtime=self._total,
+        ))
 
     def onPlayBackStopped(self):  # pylint: disable=invalid-name
         ''' called when user stops Kodi playing a file '''
-        self._info((self._last_pos, self._total))
+        self._info(dict(position=self._last_pos, total=self._total))
         self._stop = True
 
     def onAVChange(self):  # pylint: disable=invalid-name
@@ -39,7 +48,7 @@ class PlayerInfo(Player):
 
     def onPlayBackEnded(self):  # pylint: disable=invalid-name
         ''' called when Kodi stops playing a file '''
-        self._info((self._total, self._total))
+        self._info(dict(position=self._last_pos, total=self._total))
         self._stop = True
 
     def onPlayBackError(self):  # pylint: disable=invalid-name
@@ -48,7 +57,7 @@ class PlayerInfo(Player):
 
     def onPlayBackPaused(self):  # pylint: disable=invalid-name
         ''' called when user pauses a playing file '''
-        self._info((self._last_pos, self._total))
+        self._info(dict(position=self._last_pos, total=self._total))
 
     def onPlayBackResumed(self):  # pylint: disable=invalid-name
         '''called when user resumes a paused file '''
