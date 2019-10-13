@@ -7,7 +7,7 @@ from apihelper import ApiHelper
 from favorites import Favorites
 from helperobjects import TitleItem
 from resumepoints import ResumePoints
-from statichelper import find_entry, url_to_episode
+from statichelper import find_entry, url_to_episode, video_to_api_url
 
 
 class VRTPlayer:
@@ -342,22 +342,27 @@ class VRTPlayer:
             self._kodi.play(stream, video.get('listitem'))
         if self._resumepoints.is_activated():
             from playerinfo import PlayerInfo
-            # Get timestamps from player
-            PlayerInfo(position=lambda position: self.push_position(position, video))
+            # Get info from player
+            PlayerInfo(info=lambda info: self.handle_info(info, video))
 
-    def push_position(self, position, video):
+    def handle_info(self, info, video):
+        ''' Handle information from PlayerInfo class '''
+        self._kodi.log('Got VRT NU Player info: ' + str(info))
+        # Push resume position
+        if info.get('position'):
+            self.push_position(info, video)
+
+    def push_position(self, info, video):
         ''' Push player position to VRT NU resumepoints API '''
         # Get uuid, title and url from api based on video.get('publication_id') or video.get('video_url')
         if video.get('publication_id'):
             episode = self._apihelper.get_episodes(video_id=video.get('video_id'), variety='single')[0]
         elif video.get('video_url'):
-            # NOTE: add a trailing slash again because routing just removed it and VRT NU Search API needs it
-            video_url = video.get('video_url').replace('https:', '') + '/'
-            episode = self._apihelper.get_episodes(video_url=video_url, variety='single')[0]
+            episode = self._apihelper.get_episodes(video_url=video_to_api_url(video.get('video_url')), variety='single')[0]
         uuid = self._resumepoints.assetpath_to_uuid(episode.get('assetPath'))
         title = episode.get('program')
         url = url_to_episode(episode.get('url', ''))
 
         # Push resumepoint to VRT NU
-        self._resumepoints.update(uuid=uuid, title=title, url=url, position=position[0], total=position[1])
+        self._resumepoints.update(uuid=uuid, title=title, url=url, watch_later=None, position=info.get('position'), total=info.get('total'))
         self._kodi.container_refresh()

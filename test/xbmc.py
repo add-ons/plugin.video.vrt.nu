@@ -54,6 +54,7 @@ class Keyboard:
 
 class Monitor:
     ''' A stub implementation of the xbmc Monitor class '''
+
     def __init__(self, line='', heading=''):
         ''' A stub constructor for the xbmc Monitor class '''
 
@@ -91,6 +92,37 @@ class Player:
 
     def getTime(self):
         ''' A stub implementation for the xbmc Player class getTime() method '''
+        return 0
+
+    def getVideoInfoTag(self):
+        ''' A stub implementation for the xbmc Player class getVideoInfoTag() method '''
+        return VideoInfoTag()
+
+
+class VideoInfoTag:
+    ''' A stub implementation of the xbmc VideoInfoTag class '''
+
+    def __init__(self):
+        ''' A stub constructor for the xbmc VideoInfoTag class '''
+
+    def getSeason(self):
+        ''' A stub implementation for the xbmc VideoInfoTag class getSeason() method '''
+        return 0
+
+    def getEpisode(self):
+        ''' A stub implementation for the xbmc VideoInfoTag class getEpisode() method '''
+        return 0
+
+    def getTVShowTitle(self):
+        ''' A stub implementation for the xbmc VideoInfoTag class getTVShowTitle() method '''
+        return ''
+
+    def getPlayCount(self):
+        ''' A stub implementation for the xbmc VideoInfoTag class getPlayCount() method '''
+        return 0
+
+    def getRating(self):
+        ''' A stub implementation for the xbmc VideoInfoTag class getRating() method '''
         return 0
 
 

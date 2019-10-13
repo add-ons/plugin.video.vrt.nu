@@ -113,6 +113,18 @@ def url_to_episode(url):
     return None
 
 
+def video_to_api_url(url):
+    ''' Convert a full VRT NU url (e.g. https://www.vrt.be/vrtnu/a-z/de-ideale-wereld/2019-nj/de-ideale-wereld-d20191010/
+        to a VRT Search API url (e.g. //www.vrt.be/vrtnu/a-z/de-ideale-wereld/2019-nj/de-ideale-wereld-d20191010/
+    '''
+    if url.startswith('https:'):
+        url = url.replace('https:', '')
+        # NOTE: add a trailing slash again because routing plugin removes it and VRT NU Search API needs it
+        if not url.endswith('/'):
+            url += '/'
+    return url
+
+
 def to_unicode(text, encoding='utf-8'):
     ''' Force text to unicode '''
     return text.decode(encoding) if isinstance(text, bytes) else text
