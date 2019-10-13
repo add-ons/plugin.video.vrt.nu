@@ -257,6 +257,93 @@ class ApiHelper:
         episodes = self.get_episodes(keywords=keywords, page=page)
         return self.__map_episodes(episodes, titletype='recent')
 
+    def get_up_next(self, info):
+        ''' Get up next data from VRT Search API '''
+        # Collect upnext data from api
+        season = None
+        if info.get('season') > 0:
+            season = info.get('season')
+        current_epnumber = info.get('episode')
+        next_epnumber = info.get('episode') + 1
+        episodes = list((current_epnumber, next_epnumber))
+        program = info.get('program')
+        # Get episodes
+        result = self.get_episodes(keywords=program, season=season, episodes=episodes)
+        up_next = dict()
+        for episode in result:
+            if episode.get('program') == program and episode.get('episodeNumber') in episodes:  # and episode.get('programType') in ('reeksaflopend', 'reeksoplopend'):
+                if episode.get('episodeNumber') == current_epnumber:
+                    up_next['current'] = episode
+                elif episode.get('episodeNumber') == next_epnumber:
+                    up_next['next'] = episode
+
+        if up_next.get('next'):
+            notification_time = 60
+            current_ep = up_next.get('current')
+            # fill in data
+            art = self._metadata.get_art(current_ep)
+            current_episode = dict(
+                episodeid=current_ep.get('whatsonId'),
+                tvshowid=current_ep.get('programWhatsonId'),
+                title=self._metadata.get_label(current_ep),
+                art={
+                    'tvshow.poster': art.get('thumb'),
+                    'thumb': art.get('thumb'),
+                    'tvshow.fanart': art.get('fanart'),
+                    'tvshow.landscape': art.get('banner'),
+                    'tvshow.clearart': None,
+                    'tvshow.clearlogo': None
+                },
+                plot=self._metadata.get_plot(current_ep),
+                showtitle=self._metadata.get_tvshowtitle(current_ep),
+                playcount=info.get('playcount'),
+                season=self._metadata.get_season(current_ep),
+                episode=self._metadata.get_episode(current_ep),
+                rating=info.get('rating'),
+                firstaired=self._metadata.get_aired(current_ep),
+                runtime=info.get('runtime'),
+            )
+            next_ep = up_next.get('next')
+            art = self._metadata.get_art(next_ep)
+            next_episode = dict(
+                episodeid=next_ep.get('whatsonId'),
+                tvshowid=next_ep.get('programWhatsonId'),
+                title=self._metadata.get_label(next_ep),
+                art={
+                    'tvshow.poster': art.get('thumb'),
+                    'thumb': art.get('thumb'),
+                    'tvshow.fanart': art.get('fanart'),
+                    'tvshow.landscape': art.get('banner'),
+                    'tvshow.clearart': None,
+                    'tvshow.clearlogo': None,
+                },
+                plot=self._metadata.get_plot(next_ep),
+                showtitle=self._metadata.get_tvshowtitle(next_ep),
+                playcount=None,
+                season=self._metadata.get_season(next_ep),
+                episode=self._metadata.get_episode(next_ep),
+                rating=None,
+                firstaired=self._metadata.get_aired(next_ep),
+                runtime=self._metadata.get_duration(next_ep),
+            )
+            play_info = dict(
+                whatson_id=next_ep.get('whatsonId'),
+            )
+            next_info = dict(
+                current_episode=current_episode,
+                next_episode=next_episode,
+                play_info=play_info,
+                notification_time=notification_time,
+            )
+            return next_info
+        if up_next.get('current'):
+            if up_next.get('current').get('episodeNumber') == up_next.get('current').get('seasonNbOfEpisodes'):
+                self._kodi.log_error(message='[Up Next] Last episode of season, next season not implemented for "%s S%sE%s"'
+                                     % (info.get('program'), info.get('season'), info.get('episode')))
+            return None
+        self._kodi.log_error(message='[Up Next] No api data found for "%s S%sE%s"' % (info.get('program'), info.get('season'), info.get('episode')))
+        return None
+
     def get_single_episode(self, whatson_id):
         ''' Get single episode by whatsonId '''
         video = None
@@ -363,8 +450,8 @@ class ApiHelper:
         video = dict(listitem=video_item, video_id=episode.get('videoId'), publication_id=episode.get('publicationId'))
         return video
 
-    def get_episodes(self, program=None, season=None, category=None, feature=None, programtype=None, keywords=None, whatson_id=None, video_id=None,
-                     video_url=None, page=None, use_favorites=False, variety=None, cache_file=None):
+    def get_episodes(self, program=None, season=None, episodes=None, category=None, feature=None, programtype=None, keywords=None,
+                     whatson_id=None, video_id=None, video_url=None, page=None, use_favorites=False, variety=None, cache_file=None):
         ''' Get episodes or season data from VRT NU Search API '''
 
         # Contruct params
@@ -423,6 +510,9 @@ class ApiHelper:
         if season and season != 'allseasons':
             params['facets[seasonTitle]'] = season
 
+        if episodes:
+            params['facets[episodeNumber]'] = '[%s]' % (','.join(str(episode) for episode in episodes))
+
         if category:
             params['facets[categories]'] = category
 
@@ -433,7 +523,8 @@ class ApiHelper:
             params['facets[programType]'] = programtype
 
         if keywords:
-            season = 'allseasons'
+            if not season:
+                season = 'allseasons'
             params['q'] = quote_plus(statichelper.from_unicode(keywords))
             params['highlight'] = 'true'
 

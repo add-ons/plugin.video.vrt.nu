@@ -277,6 +277,10 @@ class KodiWrapper:
             xbmc.sleep(100)
         xbmc.Player().showSubtitles(subtitles_visible)
 
+    def addon_id(self):
+        ''' Return VRT NU Add-on ID '''
+        return self._addon_id
+
     def get_search_string(self):
         ''' Ask the user for a search string '''
         search_string = None
@@ -375,6 +379,20 @@ class KodiWrapper:
         result = self.jsonrpc(method='Settings.GetSettingValue', params=dict(setting=setting))
         return result.get('result', {}).get('value')
 
+    def notify(self, sender, message, data):
+        ''' Send a notification to Kodi using JSON RPC '''
+        import json
+        notify_json = json.loads(xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "JSONRPC.NotifyAll", "params": \
+        {"sender": "%s", "message": "%s", "data": %s}, "id": 1}' % (sender, message, data)))
+        result = notify_json.get('result')
+        if result and result == 'OK':
+            self.log('Succesfully sent notification', 'Verbose')
+            return True
+        error_message = notify_json.get('error').get('message')
+        if error_message:
+            self.log_error('Failed to send notification: {error_message}', error_message=error_message)
+        return False
+
     def get_max_bandwidth(self):
         ''' Get the max bandwidth based on Kodi and VRT NU add-on settings '''
         vrtnu_max_bandwidth = int(self.get_setting('max_bandwidth', '0'))
@@ -437,6 +455,11 @@ class KodiWrapper:
     def has_inputstream_adaptive(self):
         ''' Whether InputStream Adaptive is installed and enabled in add-on settings '''
         return self.get_setting('useinputstreamadaptive', 'true') == 'true' and xbmc.getCondVisibility('System.HasAddon(inputstream.adaptive)') == 1
+
+    @staticmethod
+    def has_addon(addon_id):
+        ''' Checks if add-on is installed '''
+        return xbmc.getCondVisibility('System.HasAddon(%s)' % addon_id) == 1
 
     def credentials_filled_in(self):
         ''' Whether the add-on has credentials filled in '''
