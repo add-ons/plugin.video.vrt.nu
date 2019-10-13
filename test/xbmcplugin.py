@@ -67,7 +67,7 @@ def addSortMethod(handle, sortMethod):
 
 def endOfDirectory(handle, succeeded=True, updateListing=True, cacheToDisc=True):
     ''' A stub implementation of the xbmcplugin endOfDirectory() function '''
-    print(kodi_to_ansi('[B]-=( [COLOR cyan]--------[/COLOR] )=-[/B]'))
+    # print(kodi_to_ansi('[B]-=( [COLOR cyan]--------[/COLOR] )=-[/B]'))
 
 
 def setContent(handle, content):
