@@ -279,6 +279,13 @@ def play_latest(program):
     VRTPlayer(kodi).play_latest_episode(program=program)
 
 
+@plugin.route('/play/whatson/<whatson_id>')
+def play_whatson(whatson_id):
+    ''' The API interface to play a video by whatson_id '''
+    from vrtplayer import VRTPlayer
+    VRTPlayer(kodi).play_whatson(whatson_id=whatson_id)
+
+
 @plugin.route('/play/airdate/<channel>/<start_date>')
 @plugin.route('/play/airdate/<channel>/<start_date>/<end_date>')
 def play_by_air_date(channel, start_date, end_date=None):

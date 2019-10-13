@@ -5,9 +5,10 @@
 # pylint: disable=non-parent-init-called,no-member,too-many-function-args
 
 from __future__ import absolute_import, division, unicode_literals
-from xbmc import Monitor
+from xbmc import executebuiltin, Monitor
 from kodiwrapper import KodiWrapper
 from tokenresolver import TokenResolver
+from statichelper import to_unicode
 
 
 class VrtMonitor(Monitor):
@@ -19,6 +20,22 @@ class VrtMonitor(Monitor):
         while not self.abortRequested():
             if self.waitForAbort(10):
                 break
+
+    @staticmethod
+    def onNotification(sender, method, data):  # pylint: disable=invalid-name
+        ''' Handler for notifications '''
+        _kodi = KodiWrapper(None)
+        _kodi.log('Got a notification: %s, %s, %s' % (sender, method, to_unicode(data)), 'Verbose')
+
+        if any(item in sender for item in ['upnextprovider', 'service.upnext']):
+            from binascii import unhexlify
+            import json
+            hexdata = json.loads(data)
+            if hexdata:
+                data = json.loads(unhexlify(hexdata[0]))
+                _kodi.log('[Up Next]: %s, %s, %s' % (sender, method, data), 'Verbose')
+                if 'plugin.video.vrt.nu_play_action' in method:
+                    executebuiltin('PlayMedia(plugin://plugin.video.vrt.nu/play/whatson/%s)' % data.get('whatson_id'))
 
     @staticmethod
     def onSettingsChanged():  # pylint: disable=invalid-name

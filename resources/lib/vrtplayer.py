@@ -331,6 +331,16 @@ class VRTPlayer:
             return
         self.play(video)
 
+    def play_whatson(self, whatson_id):
+        ''' Play a video by whatson_id '''
+        video = self._apihelper.get_single_episode(whatson_id)
+        if not video:
+            self._kodi.log_error('Play by whatson_id %s failed' % whatson_id)
+            self._kodi.show_ok_dialog(message=self._kodi.localize(30954))
+            self._kodi.end_of_directory()
+            return
+        self.play(video)
+
     def play(self, video):
         ''' A wrapper for playing video items '''
         from tokenresolver import TokenResolver
@@ -351,6 +361,16 @@ class VRTPlayer:
         # Push resume position
         if info.get('position'):
             self.push_position(info, video)
+
+        # Up Next feature
+        if self._kodi.has_addon('service.upnext') and info.get('program'):
+            from binascii import hexlify
+            import json
+            next_info = self._apihelper.get_up_next(info)
+            if next_info:
+                upnext_data = '["{0}"]'.format(hexlify(json.dumps(next_info)))
+                sender = '%s.SIGNAL' % self._kodi.addon_id()
+                self._kodi.notify(sender, 'upnext_data', upnext_data)
 
     def push_position(self, info, video):
         ''' Push player position to VRT NU resumepoints API '''
