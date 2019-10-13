@@ -98,6 +98,8 @@ class Metadata:
                     ))
 
         if self._resumepoints.is_activated():
+            assetpath = None
+
             # VRT NU Search API
             if api_data.get('type') == 'episode':
                 program_title = api_data.get('program')
