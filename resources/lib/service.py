@@ -8,7 +8,6 @@ from __future__ import absolute_import, division, unicode_literals
 from xbmc import executebuiltin, Monitor
 from kodiwrapper import KodiWrapper
 from tokenresolver import TokenResolver
-from statichelper import to_unicode
 
 
 class VrtMonitor(Monitor):
@@ -25,15 +24,16 @@ class VrtMonitor(Monitor):
     def onNotification(sender, method, data):  # pylint: disable=invalid-name
         ''' Handler for notifications '''
         _kodi = KodiWrapper(None)
-        _kodi.log('Got a notification: %s, %s, %s' % (sender, method, to_unicode(data)), 'Verbose')
 
-        if any(item in sender for item in ['upnextprovider', 'service.upnext']):
-            from binascii import unhexlify
+        if 'upnextprovider' in sender:
             import json
             hexdata = json.loads(data)
+
             if hexdata:
+                from binascii import unhexlify
                 data = json.loads(unhexlify(hexdata[0]))
                 _kodi.log('[Up Next]: %s, %s, %s' % (sender, method, data), 'Verbose')
+
                 if 'plugin.video.vrt.nu_play_action' in method:
                     executebuiltin('PlayMedia(plugin://plugin.video.vrt.nu/play/whatson/%s)' % data.get('whatson_id'))
 
