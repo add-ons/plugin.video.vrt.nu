@@ -448,7 +448,7 @@ class ApiHelper:
 
         # Construct VRT NU Search API Url and get api data
         querystring = '&'.join('{}={}'.format(key, value) for key, value in list(params.items()))
-        search_url = self._VRTNU_SEARCH_URL + '?' + querystring
+        search_url = self._VRTNU_SEARCH_URL + '?' + querystring.replace(' ', '%20')  # Only encode spaces to minimize url length
 
         import json
         if cache_file:
