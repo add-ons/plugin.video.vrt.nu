@@ -259,23 +259,23 @@ class ApiHelper:
 
     def get_up_next(self, info):
         ''' Get up next data from VRT Search API '''
-        # Collect upnext data from api
+        program = info.get('program')
         season = None
         if info.get('season') > 0:
             season = info.get('season')
         current_epnumber = info.get('episode')
-        next_epnumber = info.get('episode') + 1
-        episodes = list((current_epnumber, next_epnumber))
-        program = info.get('program')
+
         # Get episodes
-        result = self.get_episodes(keywords=program, season=season, episodes=episodes)
+        sorted_results = sorted(self.get_episodes(keywords=program), key=lambda k: (k.get('program'), k.get('seasonTitle'), k.get('episodeNumber')))
         up_next = dict()
-        for episode in result:
-            if episode.get('program') == program and episode.get('episodeNumber') in episodes:  # and episode.get('programType') in ('reeksaflopend', 'reeksoplopend'):
-                if episode.get('episodeNumber') == current_epnumber:
-                    up_next['current'] = episode
-                elif episode.get('episodeNumber') == next_epnumber:
-                    up_next['next'] = episode
+        for item in sorted_results:
+            if item.get('program') == program and str(season) in item.get('seasonTitle') and int(item.get('episodeNumber')) == current_epnumber:
+                try:
+                    up_next['current'] = item
+                    next_item = sorted_results[sorted_results.index(item) + 1]
+                    up_next['next'] = next_item if next_item.get('program') == program else None
+                except IndexError:
+                    pass
 
         if up_next.get('next'):
             notification_time = 60

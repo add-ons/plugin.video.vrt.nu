@@ -357,20 +357,15 @@ class VRTPlayer:
 
     def handle_info(self, info, video):
         ''' Handle information from PlayerInfo class '''
-        self._kodi.log('Got VRT NU Player info: ' + str(info))
+        self._kodi.log('Got VRT NU Player info: ' + str(info), 'Verbose')
+
         # Push resume position
         if info.get('position'):
             self.push_position(info, video)
 
-        # Up Next feature
-        if self._kodi.has_addon('service.upnext') and info.get('program'):
-            from binascii import hexlify
-            import json
-            next_info = self._apihelper.get_up_next(info)
-            if next_info:
-                upnext_data = '["{0}"]'.format(hexlify(json.dumps(next_info)))
-                sender = '%s.SIGNAL' % self._kodi.addon_id()
-                self._kodi.notify(sender, 'upnext_data', upnext_data)
+        # Push up next episode info
+        if info.get('episode'):
+            self.push_up_next(info)
 
     def push_position(self, info, video):
         ''' Push player position to VRT NU resumepoints API '''
@@ -386,3 +381,14 @@ class VRTPlayer:
         # Push resumepoint to VRT NU
         self._resumepoints.update(uuid=uuid, title=title, url=url, watch_later=None, position=info.get('position'), total=info.get('total'))
         self._kodi.container_refresh()
+
+    def push_up_next(self, info):
+        ''' Push episode info to Up Next service add-on'''
+        if self._kodi.has_addon('service.upnext') and info.get('program'):
+            from binascii import hexlify
+            import json
+            next_info = self._apihelper.get_up_next(info)
+            if next_info:
+                upnext_data = '["{0}"]'.format(hexlify(json.dumps(next_info)))
+                sender = '%s.SIGNAL' % self._kodi.addon_id()
+                self._kodi.notify(sender, 'upnext_data', upnext_data)

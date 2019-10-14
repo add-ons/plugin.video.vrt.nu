@@ -348,7 +348,7 @@ class Metadata:
                 try:
                     season = int(api_data.get('seasonName'))
                 except ValueError:
-                    season = None
+                    season = api_data.get('seasonTitle')
             return season
 
         # VRT NU Suggest API
