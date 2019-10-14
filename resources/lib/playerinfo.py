@@ -5,6 +5,7 @@
 from __future__ import absolute_import, division, unicode_literals
 from threading import Thread
 from xbmc import Monitor, Player, sleep
+from statichelper import to_unicode
 
 
 class PlayerInfo(Player):
@@ -32,7 +33,7 @@ class PlayerInfo(Player):
         self._info(dict(
             season=tag.getSeason(),
             episode=tag.getEpisode(),
-            program=tag.getTVShowTitle(),
+            program=to_unicode(tag.getTVShowTitle()),
             playcount=tag.getPlayCount(),
             rating=tag.getRating(),
             runtime=self._total,
