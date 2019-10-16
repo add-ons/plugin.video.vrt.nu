@@ -334,6 +334,10 @@ msgctxt "#30207"
 msgid "[COLOR blue][B]1 more hour[/B] available[/COLOR]"
 msgstr ""
 
+msgctxt "#30208"
+msgid "[COLOR blue][B]{minutes} more minutes[/B] available[/COLOR]"
+msgstr ""
+
 msgctxt "#30300"
 msgid "[B][COLOR yellow]More...[/COLOR][/B]"
 msgstr ""

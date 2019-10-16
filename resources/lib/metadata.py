@@ -268,10 +268,12 @@ class Metadata:
                         plot_meta += self._kodi.localize(30204, days=remaining.days)  # X days to go
                     elif remaining.days == 1:
                         plot_meta += self._kodi.localize(30205)  # 1 day to go
-                    elif int(remaining.seconds / 3600) > 1:
-                        plot_meta += self._kodi.localize(30206, hours=int(remaining.seconds / 3600))  # X hours to go
-                    elif int(remaining.seconds / 3600) == 1:
+                    elif remaining.seconds // 3600 > 1:
+                        plot_meta += self._kodi.localize(30206, hours=remaining.seconds // 3600)  # X hours to go
+                    elif remaining.seconds // 3600 == 1:
                         plot_meta += self._kodi.localize(30207)  # 1 hour to go
+                    else:
+                        plot_meta += self._kodi.localize(30208, minutes=remaining.seconds // 60)  # X minutes to go
 
             if api_data.get('allowedRegion') == 'BE':
                 if plot_meta:
@@ -608,7 +610,7 @@ class Metadata:
             sort = 'unsorted'
             ascending = True
 
-            if titletype in ('offline', 'recent', 'watchlater', 'continue'):
+            if titletype in ('continue', 'offline', 'recent', 'watchlater'):
                 ascending = False
                 label = '[B]%s[/B] - %s' % (api_data.get('program'), label)
                 sort = 'dateadded'
