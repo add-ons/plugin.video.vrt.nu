@@ -198,6 +198,38 @@ class TVGuide:
             ))
         return episode_items
 
+    def playing_now(self, channel):
+        ''' Return the EPG information for what is playing now '''
+        now = datetime.now(dateutil.tz.tzlocal())
+        epg = now
+        # Daily EPG information shows information from 6AM until 6AM
+        if epg.hour < 6:
+            epg += timedelta(days=-1)
+        # Try the cache if it is fresh
+        schedule = self._kodi.get_cache('schedule.today.json', ttl=60 * 60)
+        if not schedule:
+            epg_url = epg.strftime(self.VRT_TVGUIDE)
+            self._kodi.log('URL get: {url}', 'Verbose', url=epg_url)
+            schedule = json.load(urlopen(epg_url))
+            self._kodi.update_cache('schedule.today.json', schedule)
+
+        entry = find_entry(CHANNELS, 'name', channel)
+        if not entry:
+            return ''
+
+        episodes = iter(schedule.get(entry.get('id'), []))
+
+        while True:
+            try:
+                episode = next(episodes)
+            except StopIteration:
+                break
+            start_date = dateutil.parser.parse(episode.get('startTime'))
+            end_date = dateutil.parser.parse(episode.get('endTime'))
+            if start_date <= now <= end_date:  # Now playing
+                return episode.get('title')
+        return ''
+
     @staticmethod
     def episode_description(episode):
         ''' Return a formatted description for an episode '''
@@ -222,7 +254,7 @@ class TVGuide:
         if not entry:
             return ''
 
-        episodes = iter(schedule[entry.get('id')])
+        episodes = iter(schedule.get(entry.get('id'), []))
 
         description = ''
         while True:

@@ -544,6 +544,10 @@ class ApiHelper:
                 # A single Live channel means it is the entry for channel's TV Show listing, so make it stand out
                 if channels and len(channels) == 1:
                     label = '[B]%s[/B]' % label
+                else:
+                    playing_now = _tvguide.playing_now(channel.get('name'))
+                    if playing_now:
+                        label += ' [COLOR gray]| %s[/COLOR]' % playing_now
                 is_playable = True
                 if channel.get('name') in ['een', 'canvas', 'ketnet']:
                     if self._showfanart:

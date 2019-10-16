@@ -64,12 +64,12 @@ CHANNELS = [
         has_tvguide=True,
     ),
     dict(
-        id='1H',
+        id='',
         name='ketnet-jr',
         label='Ketnet Junior',
         studio='Ketnet Junior',
         live_stream_id='ketnet_jr',
-        # Ketnet Juior: https://www.youtube.com/channel/UCTxm_H52WlKWBEB_h7PjzFA
+        # Ketnet Junior: https://www.youtube.com/channel/UCTxm_H52WlKWBEB_h7PjzFA
         youtube='plugin://plugin.video.youtube/channel/UCTxm_H52WlKWBEB_h7PjzFA/',
     ),
     dict(
