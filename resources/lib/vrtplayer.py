@@ -359,6 +359,8 @@ class VRTPlayer:
             episode = self._apihelper.get_episodes(video_id=video.get('video_id'), variety='single')[0]
         elif video.get('video_url'):
             episode = self._apihelper.get_episodes(video_url=video_to_api_url(video.get('video_url')), variety='single')[0]
+        else:
+            return
         uuid = self._resumepoints.assetpath_to_uuid(episode.get('assetPath'))
         title = episode.get('program')
         url = url_to_episode(episode.get('url', ''))
