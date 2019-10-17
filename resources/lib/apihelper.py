@@ -541,13 +541,12 @@ class ApiHelper:
                 elif channel.get('live_stream'):
                     path = self._kodi.url_for('play_url', video_url=channel.get('live_stream'))
                 label = self._kodi.localize(30101, **channel)
+                playing_now = _tvguide.playing_now(channel.get('name'))
+                if playing_now:
+                    label += ' [COLOR gray]| %s[/COLOR]' % playing_now
                 # A single Live channel means it is the entry for channel's TV Show listing, so make it stand out
                 if channels and len(channels) == 1:
                     label = '[B]%s[/B]' % label
-                else:
-                    playing_now = _tvguide.playing_now(channel.get('name'))
-                    if playing_now:
-                        label += ' [COLOR gray]| %s[/COLOR]' % playing_now
                 is_playable = True
                 if channel.get('name') in ['een', 'canvas', 'ketnet']:
                     if self._showfanart:
