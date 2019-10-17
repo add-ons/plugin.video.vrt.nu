@@ -41,7 +41,7 @@ class PlayerInfo(Player):
 
     def onPlayBackStopped(self):  # pylint: disable=invalid-name
         ''' called when user stops Kodi playing a file '''
-        self._info(dict(position=self._last_pos, total=self._total))
+        self._info(dict(position=self._last_pos, total=self._total, event='playbackstopped'))
         self._stop = True
 
     def onAVChange(self):  # pylint: disable=invalid-name
@@ -49,16 +49,16 @@ class PlayerInfo(Player):
 
     def onPlayBackEnded(self):  # pylint: disable=invalid-name
         ''' called when Kodi stops playing a file '''
-        self._info(dict(position=self._last_pos, total=self._total))
+        self._info(dict(position=self._last_pos, total=self._total, event='playbackended'))
         self._stop = True
 
     def onPlayBackError(self):  # pylint: disable=invalid-name
         ''' called when playback stops due to an error '''
-        self._info((self._total, self._total))
+        self._info(dict(position=self._last_pos, total=self._total, event='playbackerror'))
 
     def onPlayBackPaused(self):  # pylint: disable=invalid-name
         ''' called when user pauses a playing file '''
-        self._info(dict(position=self._last_pos, total=self._total))
+        self._info(dict(position=self._last_pos, total=self._total, event='playbackpaused'))
 
     def onPlayBackResumed(self):  # pylint: disable=invalid-name
         '''called when user resumes a paused file '''
