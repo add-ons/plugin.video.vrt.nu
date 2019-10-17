@@ -26,6 +26,9 @@
         <setting label="30865" type="lsep"/> <!-- InputStream Adaptive -->
         <setting label="30867" help="30868" type="bool" id="usedrm" visible="String.StartsWith(System.BuildVersion,18) | String.StartsWith(System.BuildVersion,19)" default="false"/>
         <setting label="30869" help="30870" type="select" id="max_bandwidth" default="0" values="0|256|512|1024|1536|2048|2560|3072|4096|6144|8192|10240|15360|20480|25600|30720"/>
+        <setting label="30871" type="lsep" visible="System.HasAddon(service.upnext)"/> <!-- Up Next -->
+        <setting label="30872" help="30873" type="bool" id="useupnext" default="true" visible="System.HasAddon(service.upnext)" />
+        <setting label="30874" help="30875" type="action" id="upnext_settings" action="Addon.OpenSettings(service.upnext)" enable="eq(-1,true)" option="close" visible="System.HasAddon(service.upnext)" subsetting="true"/>
     </category>
     <category label="30880"> <!--Channels -->
         <setting label="30881" type="lsep"/>

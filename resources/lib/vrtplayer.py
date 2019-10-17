@@ -384,11 +384,11 @@ class VRTPlayer:
 
     def push_up_next(self, info):
         ''' Push episode info to Up Next service add-on'''
-        if self._kodi.has_addon('service.upnext') and info.get('program'):
-            from binascii import hexlify
-            import json
+        if self._kodi.has_addon('service.upnext') and self._kodi.get_setting('useupnext', 'true') == 'true' and info.get('program'):
             next_info = self._apihelper.get_up_next(info)
             if next_info:
-                upnext_data = '["{0}"]'.format(hexlify(json.dumps(next_info)))
+                from binascii import hexlify
+                import json
+                upnext_data = '["%s"]' % hexlify(json.dumps(next_info))
                 sender = '%s.SIGNAL' % self._kodi.addon_id()
                 self._kodi.notify(sender, 'upnext_data', upnext_data)

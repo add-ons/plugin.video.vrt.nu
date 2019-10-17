@@ -584,6 +584,26 @@ msgctxt "#30870"
 msgid "In case you have limited bandwidth available, you may want to specify a maximum bandwidth so that a lower bitrate stream can be selected for playback."
 msgstr "Als de bandbreedte van je verbinding gelimiteerd is, wilt u misschien een maximale bandbreedte instellen zodat een stream met lagere bitrate-stream wordt geselecteerd."
 
+msgctxt "#30871"
+msgid "Up Next"
+msgstr "Up Next"
+
+msgctxt "#30872"
+msgid "Enable Up Next"
+msgstr "Activeer Up Next"
+
+msgctxt "#30873"
+msgid "This enables a Netflix style pop up notification for watching the next episode using the Up Next service add-on."
+msgstr "Dit activeert een pop-upmelding in Netflix-stijl voor het bekijken van de volgende aflevering met de service-add-up Up Next."
+
+msgctxt "#30874"
+msgid "Up Next settings..."
+msgstr "Up Next instellingen..."
+
+msgctxt "#30875"
+msgid "Open Up Next service add-on settings."
+msgstr "Open de Up Next service add-on instellingen."
+
 msgctxt "#30880"
 msgid "Channels"
 msgstr "Kanalen"
