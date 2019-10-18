@@ -257,30 +257,31 @@ class ApiHelper:
         episodes = self.get_episodes(keywords=keywords, page=page)
         return self.__map_episodes(episodes, titletype='recent')
 
-    def get_up_next(self, info):
+    def get_upnext(self, info):
         ''' Get up next data from VRT Search API '''
         program = info.get('program')
         season = None
         if info.get('season') > 0:
             season = info.get('season')
-        current_epnumber = info.get('episode')
+        current_ep_no = info.get('episode')
 
-        # Get episodes
-        sorted_results = sorted(self.get_episodes(keywords=program), key=lambda k: (k.get('program'), k.get('seasonTitle'), k.get('episodeNumber')))
-        up_next = dict()
-        for item in sorted_results:
-            if item.get('program') == program and str(season) in item.get('seasonTitle') and int(item.get('episodeNumber')) == current_epnumber:
+        # Get current and next episode data from VRT Search API
+        episodes = sorted(self.get_episodes(keywords=program), key=lambda k: (k.get('program'), k.get('seasonTitle'), k.get('episodeNumber')))
+        upnext = dict()
+        for episode in episodes:
+            if episode.get('program') == program and str(season) in episode.get('seasonTitle') and int(episode.get('episodeNumber')) == current_ep_no:
                 try:
-                    up_next['current'] = item
-                    next_item = sorted_results[sorted_results.index(item) + 1]
-                    up_next['next'] = next_item if next_item.get('program') == program else None
+                    upnext['current'] = episode
+                    next_episode = episodes[episodes.index(episode) + 1]
+                    upnext['next'] = next_episode if next_episode.get('program') == program else None
                 except IndexError:
                     pass
 
-        if up_next.get('next'):
+        if upnext.get('next'):
             notification_time = 60
-            current_ep = up_next.get('current')
-            # fill in data
+            current_ep = upnext.get('current')
+            next_ep = upnext.get('next')
+
             art = self._metadata.get_art(current_ep)
             current_episode = dict(
                 episodeid=current_ep.get('whatsonId'),
@@ -292,7 +293,7 @@ class ApiHelper:
                     'tvshow.fanart': art.get('fanart'),
                     'tvshow.landscape': art.get('banner'),
                     'tvshow.clearart': None,
-                    'tvshow.clearlogo': None
+                    'tvshow.clearlogo': None,
                 },
                 plot=self._metadata.get_plot(current_ep),
                 showtitle=self._metadata.get_tvshowtitle(current_ep),
@@ -303,7 +304,7 @@ class ApiHelper:
                 firstaired=self._metadata.get_aired(current_ep),
                 runtime=info.get('runtime'),
             )
-            next_ep = up_next.get('next')
+
             art = self._metadata.get_art(next_ep)
             next_episode = dict(
                 episodeid=next_ep.get('whatsonId'),
@@ -326,9 +327,11 @@ class ApiHelper:
                 firstaired=self._metadata.get_aired(next_ep),
                 runtime=self._metadata.get_duration(next_ep),
             )
+
             play_info = dict(
                 whatson_id=next_ep.get('whatsonId'),
             )
+
             next_info = dict(
                 current_episode=current_episode,
                 next_episode=next_episode,
@@ -336,12 +339,13 @@ class ApiHelper:
                 notification_time=notification_time,
             )
             return next_info
-        if up_next.get('current'):
-            if up_next.get('current').get('episodeNumber') == up_next.get('current').get('seasonNbOfEpisodes'):
+
+        if upnext.get('current'):
+            if upnext.get('current').get('episodeNumber') == upnext.get('current').get('seasonNbOfEpisodes'):
                 self._kodi.log_error(message='[Up Next] Last episode of season, next season not implemented for "%s S%sE%s"'
-                                     % (info.get('program'), info.get('season'), info.get('episode')))
+                                     % (program, season, current_ep_no))
             return None
-        self._kodi.log_error(message='[Up Next] No api data found for "%s S%sE%s"' % (info.get('program'), info.get('season'), info.get('episode')))
+        self._kodi.log_error(message='[Up Next] No api data found for "%s S%sE%s"' % (program, season, current_ep_no))
         return None
 
     def get_single_episode(self, whatson_id):
