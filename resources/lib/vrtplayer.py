@@ -7,7 +7,7 @@ from apihelper import ApiHelper
 from favorites import Favorites
 from helperobjects import TitleItem
 from resumepoints import ResumePoints
-from statichelper import find_entry, url_to_episode, video_to_api_url
+from statichelper import find_entry, url_to_episode, video_to_api_url, to_unicode
 
 
 class VRTPlayer:
@@ -390,6 +390,6 @@ class VRTPlayer:
             if next_info:
                 from binascii import hexlify
                 import json
-                upnext_data = '["%s"]' % hexlify(json.dumps(next_info))
+                upnext_data = '["%s"]' % to_unicode(hexlify(json.dumps(next_info).encode()))
                 sender = '%s.SIGNAL' % self._kodi.addon_id()
                 self._kodi.notify(sender, 'upnext_data', upnext_data)
