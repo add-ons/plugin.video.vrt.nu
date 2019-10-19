@@ -353,7 +353,8 @@ class VRTPlayer:
         if self._resumepoints.is_activated():
             from playerinfo import PlayerInfo
             # Get info from player
-            PlayerInfo(info=lambda info: self.handle_info(info, video))
+            playerinfo = PlayerInfo(info=lambda info: self.handle_info(info, video))
+            playerinfo.run()
 
     def handle_info(self, info, video):
         ''' Handle information from PlayerInfo class '''
@@ -365,7 +366,7 @@ class VRTPlayer:
 
         # Push up next episode info
         if info.get('episode'):
-            self.push_up_next(info)
+            self.push_upnext(info)
 
     def push_position(self, info, video):
         ''' Push player position to VRT NU resumepoints API '''
@@ -382,10 +383,10 @@ class VRTPlayer:
         self._resumepoints.update(uuid=uuid, title=title, url=url, watch_later=None, position=info.get('position'), total=info.get('total'))
         self._kodi.container_refresh()
 
-    def push_up_next(self, info):
+    def push_upnext(self, info):
         ''' Push episode info to Up Next service add-on'''
         if self._kodi.has_addon('service.upnext') and self._kodi.get_setting('useupnext', 'true') == 'true' and info.get('program'):
-            next_info = self._apihelper.get_up_next(info)
+            next_info = self._apihelper.get_upnext(info)
             if next_info:
                 from binascii import hexlify
                 import json
