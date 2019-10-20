@@ -286,7 +286,7 @@ class ApiHelper:
             current_episode = dict(
                 episodeid=current_ep.get('whatsonId'),
                 tvshowid=current_ep.get('programWhatsonId'),
-                title=self._metadata.get_label(current_ep),
+                title=self._metadata.get_plotoutline(current_ep),
                 art={
                     'tvshow.poster': art.get('thumb'),
                     'thumb': art.get('thumb'),
@@ -309,7 +309,7 @@ class ApiHelper:
             next_episode = dict(
                 episodeid=next_ep.get('whatsonId'),
                 tvshowid=next_ep.get('programWhatsonId'),
-                title=self._metadata.get_label(next_ep),
+                title=self._metadata.get_plotoutline(next_ep),
                 art={
                     'tvshow.poster': art.get('thumb'),
                     'thumb': art.get('thumb'),
