@@ -390,6 +390,6 @@ class VRTPlayer:
             if next_info:
                 from binascii import hexlify
                 import json
-                upnext_data = '["%s"]' % to_unicode(hexlify(json.dumps(next_info).encode()))
+                data = [to_unicode(hexlify(json.dumps(next_info).encode()))]
                 sender = '%s.SIGNAL' % self._kodi.addon_id()
-                self._kodi.notify(sender, 'upnext_data', upnext_data)
+                self._kodi.notify(sender=sender, message='upnext_data', data=data)
