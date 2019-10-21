@@ -135,12 +135,9 @@ class Metadata:
 
         # Go to program context menu
         if plugin.path.startswith(('/favorites/offline', '/favorites/recent', '/offline', '/recent', '/resumepoints/continue', '/resumepoints/watchlater', '/tvguide')):
-            plugin_url = self._kodi.url_for('programs', program=program, season='allseasons')
-            # FIXME: Because of a bug in ActivateWindow(), return does not work
-            # context_menu.append((self._kodi.localize(30417), 'ActivateWindow(Videos,%s,return)' % plugin_url))
             context_menu.append((
                 self._kodi.localize(30417),  # Go to program
-                'ActivateWindow(Videos,%s)' % plugin_url
+                'XBMC.Container.Update(%s)' % self._kodi.url_for('programs', program=program, season='allseasons')
             ))
 
         context_menu.append((

@@ -370,12 +370,10 @@ class KodiWrapper:
         ''' Open the add-in settings window, shows Credentials '''
         self._addon.openSettings()
 
-    @staticmethod
-    def get_global_setting(setting):
+    def get_global_setting(self, setting):
         ''' Get a Kodi setting '''
-        import json
-        json_result = xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Settings.GetSettingValue", "params": {"setting": "%s"}, "id": 1}' % setting)
-        return json.loads(json_result).get('result', dict()).get('value')
+        result = self.jsonrpc(method='Settings.GetSettingValue', params=dict(setting=setting))
+        return result.get('result', {}).get('value')
 
     def get_max_bandwidth(self):
         ''' Get the max bandwidth based on Kodi and VRT NU add-on settings '''
@@ -516,28 +514,32 @@ class KodiWrapper:
 
     def delete_cached_thumbnail(self, url):
         ''' Remove a cached thumbnail from Kodi in an attempt to get a realtime live screenshot '''
-        import json
         # Get texture
-        textures_json = json.loads(xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Textures.GetTextures", "params": \
-        {"filter": {"field": "url", "operator": "is", "value":"%s"}}, "id": 1}' % url))
-        result = textures_json.get('result')
-        if result and result.get('textures'):
-            texture_id = next((texture.get('textureid') for texture in textures_json.get('result').get('textures')), None)
-            self.log('found texture_id {id} for url {url} in texture cache', 'Verbose', id=texture_id, url=url)
-            if texture_id:
-                # Remove texture
-                remove_json = json.loads(xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Textures.RemoveTexture", "params": \
-                {"textureid": %d}, "id": 1}' % texture_id))
-                result = remove_json.get('result')
-                if result and result == 'OK':
-                    self.log('succesfully removed {url} from texture cache', 'Verbose', url=url)
-                    return True
-                error_message = remove_json.get('error').get('message')
-                if error_message:
-                    self.log_error('failed to remove %s from texture cache: %s' % (url, error_message))
-                    return False
-        self.log_error('%s not found in texture cache' % url)
-        return False
+        result = self.jsonrpc(method='Textures.GetTextures', params=dict(
+            filter=dict(
+                field='url',
+                operator='is',
+                value=url,
+            ),
+        ))
+        if result.get('result', {}).get('textures') is None:
+            self.log_error('%s not found in texture cache' % url)
+            return False
+
+        texture_id = next((texture.get('textureid') for texture in result.get('result').get('textures')), None)
+        if not texture_id:
+            self.log_error('%s not found in texture cache' % url)
+            return False
+        self.log('found texture_id {id} for url {url} in texture cache', 'Verbose', id=texture_id, url=url)
+
+        # Remove texture
+        result = self.jsonrpc(method='Textures.RemoveTexture', params=dict(textureid=texture_id))
+        if result.get('result') != 'OK':
+            self.log_error('failed to remove %s from texture cache: %s' % (url, result.get('error', {}).get('message')))
+            return False
+
+        self.log('succesfully removed {url} from texture cache', 'Verbose', url=url)
+        return True
 
     @staticmethod
     def md5(data):
@@ -640,10 +642,9 @@ class KodiWrapper:
         for filename in removes:
             self.delete_file(self._cache_path + filename)
 
-    @staticmethod
-    def input_down():
+    def input_down(self):
         ''' Move the cursor down '''
-        xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Input.Down", "id": 1}')
+        self.jsonrpc(method='Input.Down')
 
     def container_refresh(self):
         ''' Refresh the current container '''
@@ -681,3 +682,13 @@ class KodiWrapper:
             message = string.Formatter().vformat(message, (), SafeDict(**kwargs))
         message = '[{addon}] {message}'.format(addon=self._addon_id, message=message)
         xbmc.log(msg=from_unicode(message), level=xbmc.LOGERROR)
+
+    @staticmethod
+    def jsonrpc(**kwargs):
+        ''' Perform JSONRPC calls '''
+        import json
+        if 'id' not in kwargs:
+            kwargs.update(id=1)
+        if 'jsonrpc' not in kwargs:
+            kwargs.update(jsonrpc='2.0')
+        return json.loads(xbmc.executeJSONRPC(json.dumps(kwargs)))
