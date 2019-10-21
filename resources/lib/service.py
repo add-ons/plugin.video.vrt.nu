@@ -5,7 +5,7 @@
 # pylint: disable=non-parent-init-called,no-member,too-many-function-args
 
 from __future__ import absolute_import, division, unicode_literals
-from xbmc import executebuiltin, Monitor
+from xbmc import Monitor
 from kodiwrapper import KodiWrapper
 from tokenresolver import TokenResolver
 from statichelper import to_unicode
@@ -26,18 +26,23 @@ class VrtMonitor(Monitor):
         ''' Handler for notifications '''
         _kodi = KodiWrapper(None)
 
-        if 'upnextprovider' in sender:
-            import json
-            hexdata = json.loads(data)
+        if not sender.startswith('upnextprovider'):
+            return
+        if not method.endswith('plugin.video.vrt.nu_play_action'):
+            return
 
-            if hexdata:
-                from binascii import unhexlify
-                data = json.loads(unhexlify(hexdata[0]))
-                _kodi.log('[Up Next]: %s, %s, %s' % (sender, method, to_unicode(data)), 'Verbose')
+        import json
+        hexdata = json.loads(data)
 
-                if 'plugin.video.vrt.nu_play_action' in method:
-                    executebuiltin('PlayerControl(Stop)')
-                    executebuiltin('PlayMedia(plugin://plugin.video.vrt.nu/play/whatson/%s)' % data.get('whatson_id'))
+        if not hexdata:
+            return
+
+        _kodi.jsonrpc(method='Player.Stop', params=dict(playerid=_kodi.get_playerid()))
+
+        from binascii import unhexlify
+        data = json.loads(unhexlify(hexdata[0]))
+        _kodi.log('[Up Next notification] %s, %s, %s' % (sender, method, to_unicode(data)), 'Verbose')
+        _kodi.jsonrpc(method='Player.Open', params=dict(item=dict(file='plugin://plugin.video.vrt.nu/play/whatson/%s' % data.get('whatson_id'))))
 
     @staticmethod
     def onSettingsChanged():  # pylint: disable=invalid-name

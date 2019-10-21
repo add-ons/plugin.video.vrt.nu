@@ -381,17 +381,23 @@ class KodiWrapper:
 
     def notify(self, sender, message, data):
         ''' Send a notification to Kodi using JSON RPC '''
-        import json
-        notify_json = json.loads(xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "JSONRPC.NotifyAll", "params": \
-        {"sender": "%s", "message": "%s", "data": %s}, "id": 1}' % (sender, message, data)))
-        result = notify_json.get('result')
-        if result and result == 'OK':
-            self.log('Succesfully sent notification', 'Verbose')
-            return True
-        error_message = notify_json.get('error').get('message')
-        if error_message:
-            self.log_error('Failed to send notification: {error_message}', error_message=error_message)
-        return False
+        result = self.jsonrpc(method='JSONRPC.NotifyAll', params=dict(
+            sender=sender,
+            message=message,
+            data=data,
+        ))
+        if result.get('result') != 'OK':
+            self.log_error('Failed to send notification: {error_message}', error_message=result.get('error').get('message'))
+            return False
+        self.log('Succesfully sent notification', 'Verbose')
+        return True
+
+    def get_playerid(self):
+        ''' Get current playerid '''
+        result = dict()
+        while not result.get('result'):
+            result = self.jsonrpc(method='Player.GetActivePlayers')
+        return result.get('result', [{}])[0].get('playerid')
 
     def get_max_bandwidth(self):
         ''' Get the max bandwidth based on Kodi and VRT NU add-on settings '''
