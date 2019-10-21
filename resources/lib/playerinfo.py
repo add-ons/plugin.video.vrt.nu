@@ -26,7 +26,8 @@ class PlayerInfo(Player):
         while not self._monitor.abortRequested() and not self._stop:
             if self._monitor.waitForAbort(0.5):
                 break
-        self._tracker.join()
+        if self._tracker:
+            self._tracker.join()
 
     def onAVStarted(self):  # pylint: disable=invalid-name
         ''' called when Kodi has a video or audiostream '''
