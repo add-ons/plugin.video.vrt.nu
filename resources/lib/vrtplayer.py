@@ -348,8 +348,9 @@ class VRTPlayer:
         _tokenresolver = TokenResolver(self._kodi)
         _streamservice = StreamService(self._kodi, _tokenresolver)
         stream = _streamservice.get_stream(video)
-        if stream is not None:
-            self._kodi.play(stream, video.get('listitem'))
+        if stream is None:
+            return
+        self._kodi.play(stream, video.get('listitem'))
         if self._resumepoints.is_activated():
             from playerinfo import PlayerInfo
             # Get info from player
