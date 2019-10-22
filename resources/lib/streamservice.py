@@ -250,13 +250,13 @@ class StreamService:
 
                 stream = StreamURLS(manifest_url, license_key=license_key, use_inputstream_adaptive=True)
             elif protocol == 'mpeg_dash':
+                self._kodi.log('Protocol: mpeg_dash', 'Verbose')
                 stream = StreamURLS(manifest_url, use_inputstream_adaptive=True)
-                self._kodi.log('Protocol: {protocol}', 'Verbose', protocol=protocol)
             else:
+                self._kodi.log('Protocol: {protocol}', 'Verbose', protocol=protocol)
                 # Fix 720p quality for HLS livestreams
                 manifest_url += '?hd' if '.m3u8?' not in manifest_url else '&hd'
                 stream = self._select_hls_substreams(manifest_url, protocol)
-                self._kodi.log('Protocol: {protocol}', 'Verbose', protocol=protocol)
             return stream
 
         # VRT Geoblock: failed to get stream, now try again with roaming enabled
@@ -283,7 +283,7 @@ class StreamService:
         self._kodi.show_ok_dialog(message=message)
         self._kodi.end_of_directory()
 
-    def _handle_bad_stream_error(self, protocol):
+    def _handle_bad_stream_error(self, protocol, code=None, reason=None):
         ''' Show a localized error message in Kodi GUI for a failing VRT NU stream based on protocol: hls, hls_aes, mpeg_dash)
             message: VRT NU stream <stream_type> problem, try again with (InputStream Adaptive) (and) (DRM) enabled/disabled:
                 30959=and DRM, 30960=disabled, 30961=enabled
@@ -299,7 +299,9 @@ class StreamService:
             message = self._kodi.localize(30958, protocol=protocol.upper(), component='InputStream Adaptive', state=self._kodi.localize(30961))
         else:
             message = self._kodi.localize(30958, protocol=protocol.upper(), component='InputStream Adaptive', state=self._kodi.localize(30960))
-        self._kodi.show_ok_dialog(message=message)
+        heading = 'HTTP Error %s: %s' % (code, reason) if code and reason else None
+        self._kodi.log_error('Unable to play stream. %s' % heading)
+        self._kodi.show_ok_dialog(heading=heading, message=message)
         self._kodi.end_of_directory()
 
     def _select_hls_substreams(self, master_hls_url, protocol):
@@ -314,7 +316,7 @@ class StreamService:
             hls_playlist = urlopen(master_hls_url).read().decode('utf-8')
         except HTTPError as exc:
             if exc.code == 415:
-                self._handle_bad_stream_error(protocol)
+                self._handle_bad_stream_error(protocol, exc.code, exc.reason)
                 return None
             raise
         max_bandwidth = self._kodi.get_max_bandwidth()
