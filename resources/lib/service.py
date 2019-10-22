@@ -24,8 +24,6 @@ class VrtMonitor(Monitor):
     @staticmethod
     def onNotification(sender, method, data):  # pylint: disable=invalid-name
         ''' Handler for notifications '''
-        _kodi = KodiWrapper(None)
-
         if not sender.startswith('upnextprovider'):
             return
         if not method.endswith('plugin.video.vrt.nu_play_action'):
@@ -37,6 +35,7 @@ class VrtMonitor(Monitor):
         if not hexdata:
             return
 
+        _kodi = KodiWrapper(None)
         _kodi.jsonrpc(method='Player.Stop', params=dict(playerid=_kodi.get_playerid()))
 
         from binascii import unhexlify
