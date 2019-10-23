@@ -7,11 +7,7 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 from xbmc import getLocalizedString
-from xbmcextra import ADDON_INFO, ADDON_ID, addon_settings, global_settings, import_language
-
-GLOBAL_SETTINGS = global_settings()
-ADDON_SETTINGS = addon_settings()
-PO = import_language(language=GLOBAL_SETTINGS.get('locale.language'))
+from xbmcextra import ADDON_INFO, ADDON_ID, addon_settings
 
 
 class Addon:
@@ -20,6 +16,7 @@ class Addon:
     def __init__(self, id=ADDON_ID):  # pylint: disable=redefined-builtin
         ''' A stub constructor for the xbmcaddon Addon class '''
         self.id = id
+        self.settings = addon_settings(id)
 
     def getAddonInfo(self, key):
         ''' A working implementation for the xbmcaddon Addon class getAddonInfo() method '''
@@ -35,7 +32,7 @@ class Addon:
 
     def getSetting(self, key):
         ''' A working implementation for the xbmcaddon Addon class getSetting() method '''
-        return ADDON_SETTINGS.get(self.id, {}).get(key, '')
+        return self.settings.get(key, '')
 
     @staticmethod
     def openSettings():
@@ -43,9 +40,7 @@ class Addon:
 
     def setSetting(self, key, value):
         ''' A stub implementation for the xbmcaddon Addon class setSetting() method '''
-        if not ADDON_SETTINGS.get(self.id):
-            ADDON_SETTINGS[self.id] = dict()
-        ADDON_SETTINGS[self.id][key] = value
+        self.settings[key] = value
         # NOTE: Disable actual writing as it is no longer needed for testing
         # with open('test/userdata/addon_settings.json', 'w') as fd:
         #     json.dump(filtered_settings, fd, sort_keys=True, indent=4)
