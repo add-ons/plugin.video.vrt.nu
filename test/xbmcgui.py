@@ -3,10 +3,22 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 ''' This file implements the Kodi xbmcgui module, either using stubs or alternative functionality '''
 
-# pylint: disable=invalid-name,too-many-arguments,unused-argument
+# pylint: disable=invalid-name,super-on-old-class,too-many-arguments,unused-argument,useless-super-delegation
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 from xbmcextra import kodi_to_ansi
+
+
+class Control:
+    ''' A reimplementation of the xbmcgui Control class '''
+
+    def __init__(self):
+        ''' A stub constructor for the xbmcgui Control class '''
+
+    @staticmethod
+    def selectItem(index):
+        ''' A stub implementation for the xbmcgui Control class selectItem() method '''
+        return
 
 
 class Dialog:
@@ -168,3 +180,61 @@ class ListItem:
     def setSubtitles(subtitleFiles):
         ''' A stub implementation for the xbmcgui ListItem class setSubtitles() method '''
         return
+
+
+class Window:
+    ''' A reimplementation of the xbmcgui Window '''
+
+    def __init__(self, windowId):
+        ''' A stub constructor for the xbmcgui Window class '''
+        return None
+
+    def clearProperty(self):
+        ''' A stub implementation for the xbmcgui Window class clearProperty() method '''
+
+    def close(self):
+        ''' A stub implementation for the xbmcgui Window class close() method '''
+
+    @staticmethod
+    def getControl():
+        ''' A stub implementation for the xbmcgui Window class getControl() method '''
+        return Control()
+
+    @staticmethod
+    def getFocusId():
+        ''' A stub implementation for the xbmcgui Window class getFocusId() method '''
+        return 0
+
+    @staticmethod
+    def getProperty():
+        ''' A stub implementation for the xbmcgui Window class getProperty() method '''
+        return ''
+
+    @staticmethod
+    def setProperty(key, value):
+        ''' A stub implementation for the xbmcgui Window class setProperty() method '''
+        return
+
+    def show(self):
+        ''' A stub implementation for the xbmcgui Window class show() method '''
+
+
+class WindowXML(Window):
+    ''' A reimplementation of the xbmcgui WindowXML '''
+
+    def __init__(self):
+        ''' A stub constructor for the xbmcgui WindowXML class '''
+        super(WindowXML, self).__init__()
+
+
+class WindowXMLDialog(WindowXML):
+    ''' A reimplementation of the xbmcgui WindowXMLDialog '''
+
+    def __init__(self):
+        ''' A stub constructor for the xbmcgui WindowXMLDialog class '''
+        super(WindowXMLDialog, self).__init__()
+
+
+def getCurrentWindowId():
+    ''' A stub implementation of the xbmcgui getCurrentWindowId() method '''
+    return 0

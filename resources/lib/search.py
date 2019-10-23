@@ -66,7 +66,7 @@ class Search:
                 is_playable=False,
             ))
 
-        self._kodi.show_listing(menu_items, category=30031)
+        self._kodi.show_listing(menu_items, category=30031, cache=False)
 
     def search(self, keywords=None, page=None):
         ''' The VRT NU add-on Search functionality and results '''
