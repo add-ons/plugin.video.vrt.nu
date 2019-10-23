@@ -150,7 +150,7 @@ class Favorites:
 
         items = [dict(program=url_to_program(value.get('value').get('programUrl')),
                       title=unquote(value.get('value').get('title')),
-                      enabled=value.get('value').get('isFavorite')) for value in list(sorted(self._favorites.values(), key=by_title))]
+                      enabled=value.get('value').get('isFavorite')) for value in list(sorted(list(self._favorites.values()), key=by_title))]
         titles = [item['title'] for item in items]
         preselect = [idx for idx in range(0, len(items) - 1) if items[idx]['enabled']]
         selected = self._kodi.show_multiselect(self._kodi.localize(30420), options=titles, preselect=preselect)  # Please select/unselect to follow/unfollow
