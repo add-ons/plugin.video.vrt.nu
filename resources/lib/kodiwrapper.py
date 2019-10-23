@@ -204,7 +204,7 @@ class KodiWrapper:
             if title_item.prop_dict:
                 # FIXME: The setProperties method is new in Kodi18, so we cannot use it just yet.
                 # list_item.setProperties(values=title_item.prop_dict)
-                for key, value in title_item.prop_dict.items():
+                for key, value in list(title_item.prop_dict.items()):
                     list_item.setProperty(key=key, value=str(value))
             list_item.setProperty(key='IsInternetStream', value='true' if is_playable else 'false')
             list_item.setProperty(key='IsPlayable', value='true' if is_playable else 'false')
