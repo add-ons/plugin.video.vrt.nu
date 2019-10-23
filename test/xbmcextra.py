@@ -100,7 +100,7 @@ def global_settings():
     return settings
 
 
-def addon_settings():
+def addon_settings(addon_id=None):
     ''' Use the addon_settings file '''
     import json
     try:
@@ -122,6 +122,10 @@ def addon_settings():
         settings[ADDON_ID].update(credentials)
     else:
         print("Error: Cannot use 'test/userdata/credentials.json'")
+
+    if addon_id:
+        return settings[addon_id]
+
     return settings
 
 

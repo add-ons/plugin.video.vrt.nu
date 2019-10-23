@@ -17,7 +17,8 @@ xbmcgui = __import__('xbmcgui')
 xbmcplugin = __import__('xbmcplugin')
 xbmcvfs = __import__('xbmcvfs')
 
-xbmcaddon.ADDON_SETTINGS['plugin.video.vrt.nu']['useresumepoints'] = 'true'
+addon = xbmcaddon.Addon()
+addon.settings['useresumepoints'] = 'true'
 
 
 class TestResumePoints(unittest.TestCase):
@@ -26,8 +27,8 @@ class TestResumePoints(unittest.TestCase):
     _resumepoints = ResumePoints(kodi)
     _apihelper = ApiHelper(kodi, _favorites, _resumepoints)
 
-    @unittest.skipUnless(xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_get_watchlater_episodes(self):
         ''' Test items, sort and order '''
         episode_items, sort, ascending, content = self._apihelper.list_episodes(page=1, variety='watchlater')
@@ -36,8 +37,8 @@ class TestResumePoints(unittest.TestCase):
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
 
-    @unittest.skipUnless(xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_get_continue_episodes(self):
         ''' Test items, sort and order '''
         episode_items, sort, ascending, content = self._apihelper.list_episodes(page=1, variety='continue')
@@ -46,8 +47,8 @@ class TestResumePoints(unittest.TestCase):
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
 
-    @unittest.skipUnless(xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(xbmcaddon.ADDON_SETTINGS.get('plugin.video.vrt.nu').get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_update_watchlist(self):
         self._resumepoints.refresh(ttl=0)
         assetuuid, first_entry = next(iter(self._resumepoints._resumepoints.items()))  # pylint: disable=protected-access
