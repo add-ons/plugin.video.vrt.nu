@@ -72,7 +72,7 @@ class VRTPlayer:
                       art_dict=dict(thumb='DefaultAddonsSearch.png'),
                       info_dict=dict(plot=self._kodi.localize(30029))),
         ])
-        self._kodi.show_listing(main_items)  # No category
+        self._kodi.show_listing(main_items, cache=False)  # No category
         self._version_check()
 
     def _version_check(self):
@@ -158,7 +158,7 @@ class VRTPlayer:
                           info_dict=dict(plot=self._kodi.localize(30045))),
             )
 
-        self._kodi.show_listing(favorites_items, category=30010)  # My favorites
+        self._kodi.show_listing(favorites_items, category=30010, cache=False)  # My favorites
 
         # Show dialog when no favorites were found
         if not self._favorites.titles():
@@ -169,7 +169,7 @@ class VRTPlayer:
         self._favorites.refresh(ttl=60 * 60)
         self._resumepoints.refresh(ttl=60 * 60)
         episode_items, sort, ascending, content = self._apihelper.list_episodes(category='docu', season='allseasons', programtype='oneoff')
-        self._kodi.show_listing(episode_items, category=30044, sort=sort, ascending=ascending, content=content)
+        self._kodi.show_listing(episode_items, category=30044, sort=sort, ascending=ascending, content=content, cache=False)
 
     def show_tvshow_menu(self, use_favorites=False):
         ''' The VRT NU add-on 'A-Z' listing menu '''
@@ -204,7 +204,7 @@ class VRTPlayer:
             channel_items.extend(self._apihelper.list_tvshows(channel=channel))  # TV shows
             from data import CHANNELS
             channel_name = find_entry(CHANNELS, 'name', channel).get('label')
-            self._kodi.show_listing(channel_items, category=channel_name, sort='unsorted', content='tvshows')  # Channel
+            self._kodi.show_listing(channel_items, category=channel_name, sort='unsorted', content='tvshows', cache=False)  # Channel
         else:
             channel_items = self._apihelper.list_channels(live=False)
             self._kodi.show_listing(channel_items, category=30016, cache=False)
@@ -217,7 +217,7 @@ class VRTPlayer:
             tvshow_items = self._apihelper.list_tvshows(feature=feature)
             from data import FEATURED
             feature_msgctxt = find_entry(FEATURED, 'id', feature).get('msgctxt')
-            self._kodi.show_listing(tvshow_items, category=feature_msgctxt, sort='label', content='tvshows')
+            self._kodi.show_listing(tvshow_items, category=feature_msgctxt, sort='label', content='tvshows', cache=False)
         else:
             featured_items = self._apihelper.list_featured()
             self._kodi.show_listing(featured_items, category=30024, sort='label', content='files')
@@ -233,7 +233,7 @@ class VRTPlayer:
         self._resumepoints.refresh(ttl=60 * 60)
         episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program, season=season)
         # FIXME: Translate program in Program Title
-        self._kodi.show_listing(episode_items, category=program.title(), sort=sort, ascending=ascending, content=content)
+        self._kodi.show_listing(episode_items, category=program.title(), sort=sort, ascending=ascending, content=content, cache=False)
 
     def show_recent_menu(self, page=0, use_favorites=False):
         ''' The VRT NU add-on 'Most recent' and 'My most recent' listing menu '''

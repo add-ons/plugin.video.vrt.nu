@@ -54,7 +54,7 @@ class TVGuide:
         elif not date:
             date_items = self.get_date_items(channel=channel)
             channel_name = find_entry(CHANNELS, 'name', channel).get('label')
-            self._kodi.show_listing(date_items, category=channel_name, content='files')
+            self._kodi.show_listing(date_items, category=channel_name, content='files', selected=7)
 
         else:
             episode_items = self.get_episode_items(date, channel)
