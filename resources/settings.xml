@@ -60,6 +60,6 @@
         <setting label="30923" help="30924" type="action" id="ishelper_info" action="RunScript(script.module.inputstreamhelper, info)" enable="eq(-2,true)"/>
         <setting label="30925" help="30926" type="action" id="ishelper_settings" option="close" action="Addon.OpenSettings(script.module.inputstreamhelper)" enable="eq(-3,true)" subsetting="true"/>
         <setting label="30927" type="lsep"/> <!-- Logging -->
-        <setting label="30929" help="30930" type="select" id="max_log_level" values="Quiet|Info|Verbose|Debug" default="Quiet"/>
+        <setting label="30929" help="30930" type="select" id="max_log_level" lvalues="30430|30431|30432|30433" default="0"/>
     </category>
 </settings>

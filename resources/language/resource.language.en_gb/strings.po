@@ -466,6 +466,22 @@ msgctxt "#30428"
 msgid "My"
 msgstr ""
 
+msgctxt "#30430"
+msgid "Quiet"
+msgstr ""
+
+msgctxt "#30431"
+msgid "Info"
+msgstr ""
+
+msgctxt "#30432"
+msgid "Verbose"
+msgstr ""
+
+msgctxt "#30433"
+msgid "Debug"
+msgstr ""
+
 
 ### SETTINGS
 msgctxt "#30800"

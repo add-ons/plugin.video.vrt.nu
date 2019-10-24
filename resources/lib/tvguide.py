@@ -158,11 +158,11 @@ class TVGuide:
             # Try the cache if it is fresh
             schedule = self._kodi.get_cache(cache_file, ttl=60 * 60)
             if not schedule:
-                self._kodi.log('URL get: {url}', 'Verbose', url=epg_url)
+                self._kodi.log(2, 'URL get: {url}', url=epg_url)
                 schedule = json.load(urlopen(epg_url))
                 self._kodi.update_cache(cache_file, schedule)
         else:
-            self._kodi.log('URL get: {url}', 'Verbose', url=epg_url)
+            self._kodi.log(2, 'URL get: {url}', url=epg_url)
             schedule = json.load(urlopen(epg_url))
 
         entry = find_entry(CHANNELS, 'name', channel)
@@ -209,7 +209,7 @@ class TVGuide:
         schedule = self._kodi.get_cache('schedule.today.json', ttl=60 * 60)
         if not schedule:
             epg_url = epg.strftime(self.VRT_TVGUIDE)
-            self._kodi.log('URL get: {url}', 'Verbose', url=epg_url)
+            self._kodi.log(2, 'URL get: {url}', url=epg_url)
             schedule = json.load(urlopen(epg_url))
             self._kodi.update_cache('schedule.today.json', schedule)
 
@@ -246,7 +246,7 @@ class TVGuide:
         schedule = self._kodi.get_cache('schedule.today.json', ttl=60 * 60)
         if not schedule:
             epg_url = epg.strftime(self.VRT_TVGUIDE)
-            self._kodi.log('URL get: {url}', 'Verbose', url=epg_url)
+            self._kodi.log(2, 'URL get: {url}', url=epg_url)
             schedule = json.load(urlopen(epg_url))
             self._kodi.update_cache('schedule.today.json', schedule)
 
