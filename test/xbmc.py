@@ -13,13 +13,15 @@ import time
 from xbmcextra import global_settings, import_language
 from statichelper import to_unicode
 
-LOGFATAL = 'Fatal'
-LOGERROR = 'Error'
-LOGWARNING = 'Warning'
-LOGNOTICE = 'Notice'
-LOGINFO = 'Info'
-LOGDEBUG = 'Debug'
-LOGNONE = ''
+LOGLEVELS = ['Debug', 'Info', 'Notice', 'Warning', 'Error', 'Severe', 'Fatal', 'None']
+LOGDEBUG = 0
+LOGINFO = 1
+LOGNOTICE = 2
+LOGWARNING = 3
+LOGERROR = 4
+LOGSEVERE = 5
+LOGFATAL = 6
+LOGNONE = 7
 
 INFO_LABELS = {
     'System.BuildVersion': '18.2',
@@ -145,7 +147,7 @@ def executeJSONRPC(jsonrpccommand):
         return json.dumps(dict(id=1, jsonrpc='2.0', result=dict(textures=[dict(cachedurl="", imagehash="", lasthashcheck="", textureid=4837, url="")])))
     if command.get('method') == 'Textures.RemoveTexture':
         return json.dumps(dict(id=1, jsonrpc='2.0', result="OK"))
-    log("executeJSONRPC does not implement method '{method}'".format(**command), 'Error')
+    log("executeJSONRPC does not implement method '{method}'".format(**command), LOGERROR)
     return json.dumps(dict(error=dict(code=-1, message='Not implemented'), id=1, jsonrpc='2.0'))
 
 
@@ -178,16 +180,18 @@ def getRegion(key):
 
 def log(msg, level):
     ''' A reimplementation of the xbmc log() function '''
-    if level in ('Error', 'Fatal'):
-        print('\033[31;1m%s: \033[32;0m%s\033[39;0m' % (level, to_unicode(msg)))
-        if level == 'Fatal':
+    color1 = '\033[32;1m'
+    color2 = '\033[32;0m'
+    name = LOGLEVELS[level]
+    if level in (5, 6, 7):
+        color1 = '\033[31;1m'
+        if level in (6, 7):
             raise Exception(msg)
-    elif level in ('Warning', 'Notice'):
-        print('\033[33;1m%s: \033[32;0m%s\033[39;0m' % (level, to_unicode(msg)))
-    elif level == 'Debug':
-        print('\033[32;1m%s: \033[30;1m%s\033[39;0m' % (level, to_unicode(msg)))
-    else:
-        print('\033[32;1m%s: \033[32;0m%s\033[39;0m' % (level, to_unicode(msg)))
+    elif level in (2, 3):
+        color1 = '\033[33;1m'
+    elif level == 0:
+        color2 = '\033[30;1m'
+    print('{color1}{name}: {color2}{msg}\033[39;0m'.format(name=name, color1=color1, color2=color2, msg=to_unicode(msg)))
 
 
 def setContent(self, content):

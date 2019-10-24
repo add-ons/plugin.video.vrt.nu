@@ -311,7 +311,7 @@ class VRTPlayer:
         ''' A hidden feature in the VRT NU add-on to play the latest episode of a program '''
         video = self._apihelper.get_latest_episode(program)
         if not video:
-            self._kodi.log_error('Play latest episode failed, program %s' % program)
+            self._kodi.log_error('Play latest episode failed, program {program}', program=program)
             self._kodi.show_ok_dialog(message=self._kodi.localize(30954))
             self._kodi.end_of_directory()
             return
@@ -325,7 +325,7 @@ class VRTPlayer:
             self._kodi.end_of_directory()
             return
         if not video:
-            self._kodi.log_error('Play episode by air date failed, channel %s, start_date %s' % (channel, start_date))
+            self._kodi.log_error('Play episode by air date failed, channel {channel}, start_date {start}', channel=channel, start=start_date)
             self._kodi.show_ok_dialog(message=self._kodi.localize(30954))
             self._kodi.end_of_directory()
             return
@@ -335,7 +335,7 @@ class VRTPlayer:
         ''' Play a video by whatson_id '''
         video = self._apihelper.get_single_episode(whatson_id)
         if not video:
-            self._kodi.log_error('Play by whatson_id %s failed' % whatson_id)
+            self._kodi.log_error('Play by whatson_id {id} failed', id=whatson_id)
             self._kodi.show_ok_dialog(message=self._kodi.localize(30954))
             self._kodi.end_of_directory()
             return
@@ -359,7 +359,7 @@ class VRTPlayer:
 
     def handle_info(self, info, video):
         ''' Handle information from PlayerInfo class '''
-        self._kodi.log('Got VRT NU Player info: ' + str(info), 'Verbose')
+        self._kodi.log(2, 'Got VRT NU Player info: {info}', info=str(info))
 
         # Push resume position
         if info.get('position'):

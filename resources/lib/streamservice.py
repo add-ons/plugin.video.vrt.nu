@@ -40,7 +40,7 @@ class StreamService:
 
     def _get_vualto_license_url(self):
         ''' Get Widevine license URL from Vualto API '''
-        self._kodi.log('URL get: {url}', 'Verbose', url=unquote(self._VUPLAY_API_URL))
+        self._kodi.log(2, 'URL get: {url}', url=unquote(self._VUPLAY_API_URL))
         self._vualto_license_url = json.load(urlopen(self._VUPLAY_API_URL)).get('drm_providers', dict()).get('widevine', dict()).get('la_url')
 
     def _create_settings_dir(self):
@@ -108,7 +108,7 @@ class StreamService:
     def _webscrape_api_data(self, video_url):
         ''' Scrape api data from VRT NU html page '''
         from bs4 import BeautifulSoup, SoupStrainer
-        self._kodi.log('URL get: {url}', 'Verbose', url=unquote(video_url))
+        self._kodi.log(2, 'URL get: {url}', url=unquote(video_url))
         html_page = urlopen(video_url).read()
         strainer = SoupStrainer(['section', 'div'], {'class': ['video-player', 'livestream__player']})
         soup = BeautifulSoup(html_page, 'html.parser', parse_only=strainer)
@@ -116,7 +116,7 @@ class StreamService:
             video_data = soup.find(lambda tag: tag.name == 'nui-media').attrs
         except Exception as exc:  # pylint: disable=broad-except
             # Web scraping failed, log error
-            self._kodi.log_error('Web scraping api data failed: %s' % exc)
+            self._kodi.log_error('Web scraping api data failed: {error}', error=exc)
             return None
 
         # Web scraping failed, log error
@@ -156,7 +156,7 @@ class StreamService:
         if playertoken:
             api_url = api_data.media_api_url + '/videos/' + api_data.publication_id + \
                 api_data.video_id + '?vrtPlayerToken=' + playertoken + '&client=' + api_data.client
-            self._kodi.log('URL get: {url}', 'Verbose', url=unquote(api_url))
+            self._kodi.log(2, 'URL get: {url}', url=unquote(api_url))
             try:
                 stream_json = json.load(urlopen(api_url))
             except HTTPError as exc:
@@ -236,7 +236,7 @@ class StreamService:
 
             # Prepare stream for Kodi player
             if protocol == 'mpeg_dash' and drm_stream:
-                self._kodi.log('Protocol: mpeg_dash drm', 'Verbose')
+                self._kodi.log(2, 'Protocol: mpeg_dash drm')
                 if vudrm_token:
                     if self._vualto_license_url is None:
                         self._get_vualto_license_url()
@@ -250,10 +250,10 @@ class StreamService:
 
                 stream = StreamURLS(manifest_url, license_key=license_key, use_inputstream_adaptive=True)
             elif protocol == 'mpeg_dash':
-                self._kodi.log('Protocol: mpeg_dash', 'Verbose')
+                self._kodi.log(2, 'Protocol: mpeg_dash')
                 stream = StreamURLS(manifest_url, use_inputstream_adaptive=True)
             else:
-                self._kodi.log('Protocol: {protocol}', 'Verbose', protocol=protocol)
+                self._kodi.log(2, 'Protocol: {protocol}', protocol=protocol)
                 # Fix 720p quality for HLS livestreams
                 manifest_url += '?hd' if '.m3u8?' not in manifest_url else '&hd'
                 stream = self._select_hls_substreams(manifest_url, protocol)
@@ -261,7 +261,7 @@ class StreamService:
 
         # VRT Geoblock: failed to get stream, now try again with roaming enabled
         if stream_json.get('code') in self._GEOBLOCK_ERROR_CODES:
-            self._kodi.log('VRT Geoblock: {msg}', 'Verbose', msg=stream_json.get('message'))
+            self._kodi.log(2, 'VRT Geoblock: {msg}', msg=stream_json.get('message'))
             if not roaming:
                 return self.get_stream(video, roaming=True, api_data=api_data)
 
@@ -300,7 +300,7 @@ class StreamService:
         else:
             message = self._kodi.localize(30958, protocol=protocol.upper(), component='InputStream Adaptive', state=self._kodi.localize(30960))
         heading = 'HTTP Error %s: %s' % (code, reason) if code and reason else None
-        self._kodi.log_error('Unable to play stream. %s' % heading)
+        self._kodi.log_error('Unable to play stream. {error}', error=heading)
         self._kodi.show_ok_dialog(heading=heading, message=message)
         self._kodi.end_of_directory()
 
@@ -311,7 +311,7 @@ class StreamService:
         hls_audio_id = None
         hls_subtitle_id = None
         hls_base_url = master_hls_url.split('.m3u8')[0]
-        self._kodi.log('URL get: {url}', 'Verbose', url=unquote(master_hls_url))
+        self._kodi.log(2, 'URL get: {url}', url=unquote(master_hls_url))
         try:
             hls_playlist = urlopen(master_hls_url).read().decode('utf-8')
         except HTTPError as exc:

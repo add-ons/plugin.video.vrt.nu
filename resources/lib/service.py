@@ -40,14 +40,14 @@ class VrtMonitor(Monitor):
 
         from binascii import unhexlify
         data = json.loads(unhexlify(hexdata[0]))
-        _kodi.log('[Up Next notification] %s, %s, %s' % (sender, method, to_unicode(data)), 'Verbose')
+        _kodi.log(2, '[Up Next notification] sender={sender}, method={method}, data={data}', sender=sender, method=method, data=to_unicode(data))
         _kodi.jsonrpc(method='Player.Open', params=dict(item=dict(file='plugin://plugin.video.vrt.nu/play/whatson/%s' % data.get('whatson_id'))))
 
     @staticmethod
     def onSettingsChanged():  # pylint: disable=invalid-name
         ''' Handler for changes to settings '''
         _kodi = KodiWrapper(None)
-        _kodi.log('Settings changed')
+        _kodi.log(1, 'Settings changed')
         TokenResolver(_kodi).refresh_login()
 
         _kodi.invalidate_caches('continue-*.json', 'favorites.json', 'my-offline-*.json', 'my-recent-*.json', 'resume_points.json', 'watchlater-*.json')

@@ -466,6 +466,22 @@ msgctxt "#30428"
 msgid "My"
 msgstr "Mijn"
 
+msgctxt "#30430"
+msgid "Quiet"
+msgstr "Stil"
+
+msgctxt "#30431"
+msgid "Info"
+msgstr "Info"
+
+msgctxt "#30432"
+msgid "Verbose"
+msgstr "Meer"
+
+msgctxt "#30433"
+msgid "Debug"
+msgstr "Foutopsporing"
+
 
 ### SETTINGS
 msgctxt "#30800"

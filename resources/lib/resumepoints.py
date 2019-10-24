@@ -42,7 +42,7 @@ class ResumePoints:
                     'Referer': 'https://www.vrt.be/vrtnu',
                 }
                 req = Request('https://video-user-data.vrt.be/resume_points', headers=headers)
-                self._kodi.log('URL post: https://video-user-data.vrt.be/resume_points', 'Verbose')
+                self._kodi.log(2, 'URL post: https://video-user-data.vrt.be/resume_points')
                 import json
                 try:
                     resumepoints_json = json.load(urlopen(req))
@@ -112,13 +112,13 @@ class ResumePoints:
 
         import json
         data = json.dumps(payload).encode()
-        self._kodi.log('URL post: https://video-user-data.vrt.be/resume_points/{uuid}', 'Verbose', uuid=uuid)
-        self._kodi.log('URL post data:: {data}', 'Verbose', data=data)
+        self._kodi.log(2, 'URL post: https://video-user-data.vrt.be/resume_points/{uuid}', uuid=uuid)
+        self._kodi.log(2, 'URL post data:: {data}', data=data)
         try:
             req = Request('https://video-user-data.vrt.be/resume_points/%s' % uuid, data=data, headers=headers)
             urlopen(req)
         except HTTPError as exc:
-            self._kodi.log_error('Failed to (un)watch episode at VRT NU (%s)' % exc)
+            self._kodi.log_error('Failed to (un)watch episode at VRT NU ({error})', error=exc)
             self._kodi.show_notification(message=self._kodi.localize(30977))
             return False
 

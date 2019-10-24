@@ -134,7 +134,8 @@ class Metadata:
                     ))
 
         # Go to program context menu
-        if plugin.path.startswith(('/favorites/offline', '/favorites/recent', '/offline', '/recent', '/resumepoints/continue', '/resumepoints/watchlater', '/tvguide')):
+        if plugin.path.startswith(('/favorites/offline', '/favorites/recent', '/offline', '/recent',
+                                   '/resumepoints/continue', '/resumepoints/watchlater', '/tvguide')):
             context_menu.append((
                 self._kodi.localize(30417),  # Go to program
                 'XBMC.Container.Update(%s)' % self._kodi.url_for('programs', program=program, season='allseasons')

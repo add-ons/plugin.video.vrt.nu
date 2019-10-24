@@ -30,20 +30,6 @@ SORT_METHODS = dict(
     unsorted=xbmcplugin.SORT_METHOD_UNSORTED,
 )
 
-LOG_LEVELS = dict(
-    Quiet=0,
-    Info=1,
-    Verbose=2,
-    Debug=3,
-)
-
-XBMC_LOG_LEVELS = dict(
-    Quiet=xbmc.LOGNONE,
-    Info=xbmc.LOGNOTICE,
-    Verbose=xbmc.LOGINFO,
-    Debug=xbmc.LOGDEBUG,
-)
-
 WEEKDAY_LONG = {
     '0': xbmc.getLocalizedString(17),
     '1': xbmc.getLocalizedString(11),
@@ -129,7 +115,8 @@ class KodiWrapper:
         self._addon_id = to_unicode(self._addon.getAddonInfo('id'))
         self._addon_fanart = to_unicode(self._addon.getAddonInfo('fanart'))
         self._debug_logging = self.get_global_setting('debug.showloginfo')   # Returns a boolean
-        self._max_log_level = LOG_LEVELS.get(self.get_setting('max_log_level', 'Debug'), 3)
+        self._max_log_level = self.get_setting('max_log_level', 0)  # May return string
+        self._max_log_level = int(self._max_log_level) if self._max_log_level.isdecimal() else 0
         self._usemenucaching = self.get_setting('usemenucaching', 'true') == 'true'
         self._cache_path = self.get_userdata_path() + 'cache/'
         self._tokens_path = self.get_userdata_path() + 'tokens/'
@@ -264,10 +251,10 @@ class KodiWrapper:
         subtitles_visible = self.get_setting('showsubtitles', 'true') == 'true'
         # Separate subtitle url for hls-streams
         if subtitles_visible and stream.subtitle_url is not None:
-            self.log('Subtitle URL: {url}', 'Verbose', url=unquote(stream.subtitle_url))
+            self.log(2, 'Subtitle URL: {url}', url=unquote(stream.subtitle_url))
             play_item.setSubtitles([stream.subtitle_url])
 
-        self.log('Play: {url}', 'Info', url=unquote(stream.stream_url))
+        self.log(1, 'Play: {url}', url=unquote(stream.stream_url))
 
         # To support video playback directly from RunPlugin() we need to use xbmc.Player().play instead of
         # setResolvedUrl that only works with PlayMedia() or with internal playable menu items
@@ -322,7 +309,7 @@ class KodiWrapper:
         except Exception as exc:  # pylint: disable=broad-except
             if locale_lang == 'en_gb':
                 return True
-            self.log("Your system does not support locale '{locale}': {error}", 'Debug', locale=locale_lang, error=exc)
+            self.log(3, "Your system does not support locale '{locale}': {error}", locale=locale_lang, error=exc)
             return False
 
     def localize(self, string_id, **kwargs):
@@ -387,9 +374,9 @@ class KodiWrapper:
             data=data,
         ))
         if result.get('result') != 'OK':
-            self.log_error('Failed to send notification: {error_message}', error_message=result.get('error').get('message'))
+            self.log_error('Failed to send notification: {error}', error=result.get('error').get('message'))
             return False
-        self.log('Succesfully sent notification', 'Verbose')
+        self.log(2, 'Succesfully sent notification')
         return True
 
     def get_playerid(self):
@@ -505,13 +492,13 @@ class KodiWrapper:
     def mkdir(self, path):
         ''' Create a directory (using xbmcvfs) '''
         from xbmcvfs import mkdir
-        self.log("Create directory '{path}'.", 'Debug', path=path)
+        self.log(3, "Create directory '{path}'.", path=path)
         return mkdir(path)
 
     def mkdirs(self, path):
         ''' Create directory including parents (using xbmcvfs) '''
         from xbmcvfs import mkdirs
-        self.log("Recursively create directory '{path}'.", 'Debug', path=path)
+        self.log(3, "Recursively create directory '{path}'.", path=path)
         return mkdirs(path)
 
     @staticmethod
@@ -538,7 +525,7 @@ class KodiWrapper:
     def delete_file(self, path):
         ''' Remove a file (using xbmcvfs) '''
         from xbmcvfs import delete
-        self.log("Delete file '{path}'.", 'Debug', path=path)
+        self.log(3, "Delete file '{path}'.", path=path)
         return delete(path)
 
     def delete_cached_thumbnail(self, url):
@@ -552,22 +539,22 @@ class KodiWrapper:
             ),
         ))
         if result.get('result', {}).get('textures') is None:
-            self.log_error('%s not found in texture cache' % url)
+            self.log_error('URL {url} not found in texture cache', url=url)
             return False
 
         texture_id = next((texture.get('textureid') for texture in result.get('result').get('textures')), None)
         if not texture_id:
-            self.log_error('%s not found in texture cache' % url)
+            self.log_error('URL {url} not found in texture cache', url=url)
             return False
-        self.log('found texture_id {id} for url {url} in texture cache', 'Verbose', id=texture_id, url=url)
+        self.log(2, 'found texture_id {id} for url {url} in texture cache', id=texture_id, url=url)
 
         # Remove texture
         result = self.jsonrpc(method='Textures.RemoveTexture', params=dict(textureid=texture_id))
         if result.get('result') != 'OK':
-            self.log_error('failed to remove %s from texture cache: %s' % (url, result.get('error', {}).get('message')))
+            self.log_error('failed to remove {url} from texture cache: {error}', url=url, error=result.get('error', {}).get('message'))
             return False
 
-        self.log('succesfully removed {url} from texture cache', 'Verbose', url=url)
+        self.log(2, 'succesfully removed {url} from texture cache', url=url)
         return True
 
     @staticmethod
@@ -609,9 +596,9 @@ class KodiWrapper:
         if ttl is None or now - mtime < ttl:
             import json
             if ttl is None:
-                self.log("Cache '{path}' is forced from cache.", 'Debug', path=path)
+                self.log(3, "Cache '{path}' is forced from cache.", path=path)
             else:
-                self.log("Cache '{path}' is fresh, expires in {time}.", 'Debug', path=path, time=self.human_delta(mtime + ttl - now))
+                self.log(3, "Cache '{path}' is fresh, expires in {time}.", path=path, time=self.human_delta(mtime + ttl - now))
             with self.open_file(fullpath, 'r') as fdesc:
                 try:
                     # return json.load(fdesc, encoding='utf-8')
@@ -641,14 +628,14 @@ class KodiWrapper:
 
         # Avoid writes if possible (i.e. SD cards)
         if md5 != hashlib.md5(json.dumps(data).encode('utf-8')):
-            self.log("Write cache '{path}'.", 'Debug', path=path)
+            self.log(3, "Write cache '{path}'.", path=path)
             with self.open_file(fullpath, 'w') as fdesc:
                 # json.dump(data, fdesc, encoding='utf-8')
                 json.dump(data, fdesc)
         else:
             # Update timestamp
             import os
-            self.log("Cache '{path}' has not changed, updating mtime only.", 'Debug', path=path)
+            self.log(3, "Cache '{path}' has not changed, updating mtime only.", path=path)
             os.utime(path)
 
     def refresh_caches(self, cache_file=None):
@@ -677,32 +664,27 @@ class KodiWrapper:
 
     def container_refresh(self):
         ''' Refresh the current container '''
-        self.log('Execute: Container.Refresh', 'Debug')
+        self.log(3, 'Execute: Container.Refresh')
         xbmc.executebuiltin('Container.Refresh')
 
     def end_of_directory(self):
         ''' Close a virtual directory, required to avoid a waiting Kodi '''
         xbmcplugin.endOfDirectory(handle=self._handle, succeeded=False, updateListing=False, cacheToDisc=False)
 
-    def log_access(self, url, query_string=None, log_level='Verbose'):
-        ''' Log addon access '''
-        if LOG_LEVELS.get(log_level, 0) <= self._max_log_level:
-            message = '[%s] Access: %s' % (self._addon_id, url + ('?' + query_string if query_string else ''))
-            xbmc.log(msg=from_unicode(message), level=xbmc.LOGNOTICE)
-
-    def log(self, message, log_level='Info', **kwargs):
+    def log(self, level=1, message='', **kwargs):
         ''' Log info messages to Kodi '''
-        cur_log_level = LOG_LEVELS.get(log_level, 0)
-        if cur_log_level > self._max_log_level:
+        if not self._debug_logging and not (level <= self._max_log_level or self._max_log_level == 0):
             return
-        if not self._debug_logging and 1 < cur_log_level <= self._max_log_level:
-            # If Debug Logging is not enabled, Kodi filters everything up to NOTICE out
-            log_level = 'Info'
         if kwargs:
             import string
             message = string.Formatter().vformat(message, (), SafeDict(**kwargs))
         message = '[{addon}] {message}'.format(addon=self._addon_id, message=message)
-        xbmc.log(msg=from_unicode(message), level=XBMC_LOG_LEVELS.get(log_level))
+        xbmc.log(from_unicode(message), level % 3 if self._debug_logging else 2)
+
+    def log_access(self, url, query_string=None):
+        ''' Log addon access '''
+        message = 'Access: %s' % (url + ('?' + query_string if query_string else ''))
+        self.log(1, message)
 
     def log_error(self, message, **kwargs):
         ''' Log error messages to Kodi '''
@@ -710,7 +692,7 @@ class KodiWrapper:
             import string
             message = string.Formatter().vformat(message, (), SafeDict(**kwargs))
         message = '[{addon}] {message}'.format(addon=self._addon_id, message=message)
-        xbmc.log(msg=from_unicode(message), level=xbmc.LOGERROR)
+        xbmc.log(from_unicode(message), 4)
 
     @staticmethod
     def jsonrpc(**kwargs):

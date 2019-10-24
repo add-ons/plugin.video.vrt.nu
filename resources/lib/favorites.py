@@ -42,7 +42,7 @@ class Favorites:
                     'Referer': 'https://www.vrt.be/vrtnu',
                 }
                 req = Request('https://video-user-data.vrt.be/favorites', headers=headers)
-                self._kodi.log('URL post: https://video-user-data.vrt.be/favorites', 'Verbose')
+                self._kodi.log(2, 'URL post: https://video-user-data.vrt.be/favorites')
                 import json
                 try:
                     favorites_json = json.load(urlopen(req))
@@ -80,11 +80,11 @@ class Favorites:
         import json
         data = json.dumps(payload).encode('utf-8')
         program_uuid = self.program_to_uuid(program)
-        self._kodi.log('URL post: https://video-user-data.vrt.be/favorites/{uuid}', 'Verbose', uuid=program_uuid)
+        self._kodi.log(2, 'URL post: https://video-user-data.vrt.be/favorites/{uuid}', uuid=program_uuid)
         req = Request('https://video-user-data.vrt.be/favorites/%s' % program_uuid, data=data, headers=headers)
         result = urlopen(req)
         if result.getcode() != 200:
-            self._kodi.log_error("Failed to (un)follow program '{program}' at VRT NU".format(program=program))
+            self._kodi.log_error("Failed to (un)follow program '{program}' at VRT NU", program=program)
             self._kodi.show_notification(message=self._kodi.localize(30976, program=program))
             return False
         # NOTE: Updates to favorites take a longer time to take effect, so we keep our own cache and use it
