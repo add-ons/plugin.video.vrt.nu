@@ -59,7 +59,7 @@ class TestSearch(unittest.TestCase):
         search_items, sort, ascending, content = self._apihelper.list_search('René', page=1)
 
         # Test we get a non-empty search result
-        self.assertGreater(len(search_items), 2)
+        self.assertGreater(len(search_items), 0)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
