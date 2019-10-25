@@ -377,12 +377,13 @@ class VRTPlayer:
             episode = self._apihelper.get_episodes(video_id=video.get('video_id'), variety='single')[0]
         elif video.get('video_url'):
             episode = self._apihelper.get_episodes(video_url=video_to_api_url(video.get('video_url')), variety='single')[0]
+        # Push resumepoint to VRT NU
         uuid = self._resumepoints.assetpath_to_uuid(episode.get('assetPath'))
         title = episode.get('program')
         url = url_to_episode(episode.get('url', ''))
 
         # Push resumepoint to VRT NU
-        self._resumepoints.update(uuid=uuid, title=title, url=url, watch_later=None, position=info.get('position'), total=info.get('total'))
+        self._resumepoints.update(uuid=uuid, title=title, url=url, position=info.get('position'), total=info.get('total'))
         # Only refresh container if the play action was initiated from it
         if container_url == self._kodi.current_container_url():
             self._kodi.container_refresh(container_url)

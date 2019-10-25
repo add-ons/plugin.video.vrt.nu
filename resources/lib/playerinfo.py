@@ -68,8 +68,6 @@ class PlayerInfo(Player):
 
     def stream_position(self):
         ''' get latest stream position while playing '''
-        import sys
         while self.isPlaying():
             self._last_pos = self.getTime()
             sleep(500)
-        sys.exit()

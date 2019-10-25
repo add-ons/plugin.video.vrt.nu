@@ -226,7 +226,8 @@ class KodiWrapper:
             listing.append((url, list_item, is_folder))
 
         # Jump to specific item
-#        if selected is not None:
+        if selected is not None:
+            pass
 #            from xbmcgui import getCurrentWindowId, Window
 #            wnd = Window(getCurrentWindowId())
 #            wnd.getControl(wnd.getFocusId()).selectItem(selected)
