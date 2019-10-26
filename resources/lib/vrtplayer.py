@@ -382,7 +382,7 @@ class VRTPlayer:
         url = url_to_episode(episode.get('url', ''))
 
         # Push resumepoint to VRT NU
-        self._resumepoints.update(uuid=uuid, title=title, url=url, position=info.get('position'), total=info.get('total'))
+        self._resumepoints.update(uuid=uuid, title=title, url=url, position=info.get('position'), total=info.get('total'), asynchronous=True)
         # Only refresh container if the play action was initiated from it
         if container_url == self._kodi.current_container_url():
             self._kodi.container_refresh(container_url)
