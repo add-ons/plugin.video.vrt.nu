@@ -484,196 +484,228 @@ msgstr ""
 
 
 ### SETTINGS
-msgctxt "#30800"
+msgctxt "#30700"
 msgid "Credentials"
 msgstr ""
 
-msgctxt "#30801"
+msgctxt "#30701"
 msgid "VRT NU login"
 msgstr ""
 
-msgctxt "#30803"
+msgctxt "#30703"
 msgid "Email address"
 msgstr ""
 
-msgctxt "#30804"
+msgctxt "#30704"
 msgid "Provide your VRT NU email address. In case this is a Google or Facebook account, please ensure that this login is enabled for normal username/password authentication. See the wiki for more information."
 msgstr ""
 
-msgctxt "#30805"
+msgctxt "#30705"
 msgid "Password"
 msgstr ""
 
-msgctxt "#30806"
+msgctxt "#30706"
 msgid "Provide your VRT NU account password."
 msgstr ""
 
-msgctxt "#30820"
+msgctxt "#30740"
 msgid "Interface"
 msgstr ""
 
-msgctxt "#30821"
+msgctxt "#30741"
 msgid "Features"
 msgstr ""
 
-msgctxt "#30823"
+msgctxt "#30743"
 msgid "Enable My favorites"
 msgstr ""
 
-msgctxt "#30824"
+msgctxt "#30744"
 msgid "When enabled, the user can follow their favorite programs and list these separately. In this case the VRT NU add-on will download and update a list of your followed programs on the VRT NU website."
 msgstr ""
 
-msgctxt "#30825"
+msgctxt "#30745"
 msgid "Manage My favorites..."
 msgstr ""
 
-msgctxt "#30827"
+msgctxt "#30747"
 msgid "Enable watching activity"
 msgstr ""
 
-msgctxt "#30828"
+msgctxt "#30748"
 msgid "This enables 'watch later' and 'continue watching' menus and syncs playback position between different devices using the same VRT NU account."
 msgstr ""
 
-msgctxt "#30829"
+msgctxt "#30749"
 msgid "Add Movies subsection"
 msgstr ""
 
-msgctxt "#30831"
+msgctxt "#30751"
 msgid "Add Documentaries subsection"
 msgstr ""
 
-msgctxt "#30833"
+msgctxt "#30753"
 msgid "Show one-off videos in between program folders"
 msgstr ""
 
-msgctxt "#30835"
+msgctxt "#30755"
 msgid "Show fanart"
 msgstr ""
 
-msgctxt "#30837"
-msgid "Show YouTube channel content"
-msgstr ""
-
-msgctxt "#30839"
+msgctxt "#30759"
 msgid "Show episode permalink in plot"
 msgstr ""
 
-msgctxt "#30840"
+msgctxt "#30760"
 msgid "When enabled, the video description will include a permanent link that points to this episode. This is useful for quickly opening an episode or movie on a mobile device."
 msgstr ""
 
-msgctxt "#30860"
+msgctxt "#30780"
 msgid "Playback"
 msgstr ""
 
-msgctxt "#30861"
+msgctxt "#30781"
 msgid "Subtitles"
 msgstr ""
 
-msgctxt "#30863"
+msgctxt "#30783"
 msgid "Show subtitles when available"
 msgstr ""
 
-msgctxt "#30864"
+msgctxt "#30784"
 msgid "This enables subtitles by default for all content that includes subtitles."
 msgstr ""
 
-msgctxt "#30865"
+msgctxt "#30785"
 msgid "Streaming"
 msgstr ""
 
-msgctxt "#30867"
+msgctxt "#30787"
 msgid "Use Widevine DRM [COLOR gray][I](for protected content)[/I][/COLOR]"
 msgstr ""
 
-msgctxt "#30868"
+msgctxt "#30788"
 msgid "Most live streams are available in 720p HD-quality, but may require DRM to be enabled."
 msgstr ""
 
-msgctxt "#30869"
+msgctxt "#30789"
 msgid "Maximum bandwidth (kbps)"
 msgstr ""
 
-msgctxt "#30870"
+msgctxt "#30790"
 msgid "In case you have limited bandwidth available, you may want to specify a maximum bandwidth so that a lower bitrate stream can be selected for playback."
 msgstr ""
 
-msgctxt "#30871"
-msgid "Up Next"
-msgstr ""
-
-msgctxt "#30872"
-msgid "Enable Up Next"
-msgstr ""
-
-msgctxt "#30873"
-msgid "This enables a Netflix style pop up notification for watching the next episode using the Up Next service add-on."
-msgstr ""
-
-msgctxt "#30874"
-msgid "Up Next settings..."
-msgstr ""
-
-msgctxt "#30875"
-msgid "Open Up Next service add-on settings."
-msgstr ""
-
-msgctxt "#30880"
+msgctxt "#30820"
 msgid "Channels"
 msgstr ""
 
-msgctxt "#30881"
+msgctxt "#30821"
 msgid "Select channels to use for 'Most recent' and 'Soon offline' listings"
 msgstr ""
 
-msgctxt "#30883"
+msgctxt "#30823"
 msgid "Eén"
 msgstr ""
 
-msgctxt "#30884"
+msgctxt "#30824"
 msgid "Canvas"
 msgstr ""
 
-msgctxt "#30885"
+msgctxt "#30825"
 msgid "Ketnet"
 msgstr ""
 
-msgctxt "#30886"
+msgctxt "#30826"
 msgid "Ketnet Junior"
 msgstr ""
 
-msgctxt "#30887"
+msgctxt "#30827"
 msgid "Sporza"
 msgstr ""
 
-msgctxt "#30888"
+msgctxt "#30828"
 msgid "Radio 1"
 msgstr ""
 
-msgctxt "#30889"
+msgctxt "#30829"
 msgid "Radio 2"
 msgstr ""
 
-msgctxt "#30890"
+msgctxt "#30830"
 msgid "Klara"
 msgstr ""
 
-msgctxt "#30891"
+msgctxt "#30831"
 msgid "Studio Brussel"
 msgstr ""
 
-msgctxt "#30892"
+msgctxt "#30832"
 msgid "MNM"
 msgstr ""
 
-msgctxt "#30893"
+msgctxt "#30833"
 msgid "VRT NXT"
 msgstr ""
 
-msgctxt "#30894"
+msgctxt "#30834"
 msgid "VRT NWS"
+msgstr ""
+
+msgctxt "#30860"
+msgid "Integration"
+msgstr ""
+
+msgctxt "#30861"
+msgid "Install YouTube add-on"
+msgstr ""
+
+msgctxt "#30862"
+msgid "Show YouTube channel content in the Channels menu."
+msgstr ""
+
+msgctxt "#30863"
+msgid "Enable YouTube integration"
+msgstr ""
+
+msgctxt "#30865"
+msgid "YouTube settings..."
+msgstr ""
+
+msgctxt "#30867"
+msgid "Install Up Next add-on"
+msgstr ""
+
+msgctxt "#30868"
+msgid "This enables a Netflix style pop up notification for watching the next episode using the Up Next service add-on."
+msgstr ""
+
+msgctxt "#30869"
+msgid "Enable Up Next integration"
+msgstr ""
+
+msgctxt "#30871"
+msgid "Up Next settings..."
+msgstr ""
+
+msgctxt "#30872"
+msgid "Open Up Next service add-on settings."
+msgstr ""
+
+msgctxt "#30873"
+msgid "Install Twitter add-on"
+msgstr ""
+
+msgctxt "#30875"
+msgid "Enable Twitter integration"
+msgstr ""
+
+msgctxt "#30877"
+msgid "Twitter settings..."
+msgstr ""
+
+msgctxt "#30879"
+msgid "Install PySocks library"
 msgstr ""
 
 msgctxt "#30900"

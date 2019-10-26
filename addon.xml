@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.vrt.nu" name="VRT NU" version="2.2.3" provider-name="Martijn Moreel, dagwieers">
 <requires>
-  <import addon="plugin.video.youtube" version="6.5.1" optional="true"/>
   <import addon="resource.images.studios.white" version="0.0.22"/>
   <import addon="script.module.beautifulsoup4" version="4.6.2"/>
   <import addon="script.module.dateutil" version="2.8.0"/>
   <import addon="script.module.inputstreamhelper" version="0.4.2"/>
-  <import addon="script.module.pysocks" version="1.6.8" optional="true"/>
   <import addon="script.module.routing" version="0.2.3"/>
   <import addon="xbmc.python" version="2.25.0" />
 </requires>
