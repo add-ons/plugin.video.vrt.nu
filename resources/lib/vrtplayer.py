@@ -35,7 +35,7 @@ class VRTPlayer:
             ))
 
         main_items.extend([
-            TitleItem(title=self._kodi.localize(30012),  # A-Z listing
+            TitleItem(title=self._kodi.localize(30012),  # All programs
                       path=self._kodi.url_for('programs'),
                       art_dict=dict(thumb='DefaultMovieTitle.png'),
                       info_dict=dict(plot=self._kodi.localize(30013))),
@@ -110,10 +110,10 @@ class VRTPlayer:
         return False, settings_version, addon_version
 
     def show_favorites_menu(self):
-        ''' The VRT NU addon 'My Programs' menu '''
+        ''' The VRT NU addon 'My programs' menu '''
         self._favorites.refresh(ttl=60 * 60)
         favorites_items = [
-            TitleItem(title=self._kodi.localize(30040),  # My A-Z listing
+            TitleItem(title=self._kodi.localize(30040),  # My programs
                       path=self._kodi.url_for('favorites_programs'),
                       art_dict=dict(thumb='DefaultMovieTitle.png'),
                       info_dict=dict(plot=self._kodi.localize(30041))),
@@ -172,12 +172,12 @@ class VRTPlayer:
         self._kodi.show_listing(episode_items, category=30044, sort=sort, ascending=ascending, content=content, cache=False)
 
     def show_tvshow_menu(self, use_favorites=False):
-        ''' The VRT NU add-on 'A-Z' listing menu '''
+        ''' The VRT NU add-on 'All programs' listing menu '''
         # My favorites menus may need more up-to-date favorites
         self._favorites.refresh(ttl=5 * 60 if use_favorites else 60 * 60)
         self._resumepoints.refresh(ttl=5 * 60 if use_favorites else 60 * 60)
         tvshow_items = self._apihelper.list_tvshows(use_favorites=use_favorites)
-        self._kodi.show_listing(tvshow_items, category=30012, sort='label', content='tvshows')
+        self._kodi.show_listing(tvshow_items, category=30440, sort='label', content='tvshows')  # A-Z
 
     def show_category_menu(self, category=None):
         ''' The VRT NU add-on 'Categories' listing menu '''

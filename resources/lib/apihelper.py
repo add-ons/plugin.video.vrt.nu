@@ -54,7 +54,7 @@ class ApiHelper:
             params['facets[programTags.title]'] = feature
             cache_file = 'featured.%s.json' % feature
 
-        # If no facet-selection is done, we return the A-Z listing
+        # If no facet-selection is done, we return the 'All programs' listing
         if not category and not channel and not feature:
             params['facets[transcodingStatus]'] = 'AVAILABLE'  # Required for getting results in Suggests API
             cache_file = 'programs.json'

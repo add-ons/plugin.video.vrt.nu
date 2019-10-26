@@ -25,7 +25,7 @@ msgid "Browse only the programs you follow"
 msgstr ""
 
 msgctxt "#30012"
-msgid "A-Z"
+msgid "All programs"
 msgstr ""
 
 msgctxt "#30013"
@@ -480,6 +480,10 @@ msgstr ""
 
 msgctxt "#30433"
 msgid "Debug"
+msgstr ""
+
+msgctxt "#30440"
+msgid "A-Z"
 msgstr ""
 
 
