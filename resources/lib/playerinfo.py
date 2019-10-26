@@ -4,7 +4,7 @@
 
 from __future__ import absolute_import, division, unicode_literals
 from threading import Thread
-from xbmc import Monitor, Player, sleep
+from xbmc import Monitor, Player, sleep, getInfoLabel
 from statichelper import to_unicode
 
 
@@ -34,11 +34,10 @@ class PlayerInfo(Player):
         self._tracker.start()
         tag = self.getVideoInfoTag()
         self._info(dict(
-            season=tag.getSeason(),
-            episode=tag.getEpisode(),
             program=to_unicode(tag.getTVShowTitle()),
             playcount=tag.getPlayCount(),
             rating=tag.getRating(),
+            path=getInfoLabel('Player.Filenameandpath'),
             runtime=self._total,
         ))
 
