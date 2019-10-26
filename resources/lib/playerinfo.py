@@ -4,7 +4,7 @@
 
 from __future__ import absolute_import, division, unicode_literals
 from threading import Thread
-from xbmc import Monitor, Player, sleep, getInfoLabel
+from xbmc import getInfoLabel, Monitor, Player, sleep
 from statichelper import to_unicode
 
 
@@ -15,7 +15,6 @@ class PlayerInfo(Player):
         ''' PlayerInfo initialisation '''
         self._info = kwargs['info']
         self._monitor = Monitor()
-        self._tracker = None
         self._last_pos = 0
         self._total = None
         self._stop = False
@@ -30,8 +29,6 @@ class PlayerInfo(Player):
     def onAVStarted(self):  # pylint: disable=invalid-name
         ''' called when Kodi has a video or audiostream '''
         self._total = self.getTotalTime()
-        self._tracker = Thread(target=self.stream_position, name='StreamPositionThread')
-        self._tracker.start()
         tag = self.getVideoInfoTag()
         self._info(dict(
             program=to_unicode(tag.getTVShowTitle()),
@@ -40,6 +37,7 @@ class PlayerInfo(Player):
             path=getInfoLabel('Player.Filenameandpath'),
             runtime=self._total,
         ))
+        Thread(target=self.stream_position, name='StreamPosition').start()
 
     def onPlayBackStopped(self):  # pylint: disable=invalid-name
         ''' called when user stops Kodi playing a file '''
@@ -68,6 +66,6 @@ class PlayerInfo(Player):
 
     def stream_position(self):
         ''' get latest stream position while playing '''
-        while self.isPlaying():
+        while self.isPlaying() and not self._stop:
             self._last_pos = self.getTime()
             sleep(500)

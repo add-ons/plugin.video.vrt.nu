@@ -355,8 +355,7 @@ class VRTPlayer:
             container_url = self._kodi.current_container_url()
             from playerinfo import PlayerInfo
             # Get info from player
-            playerinfo = PlayerInfo(info=lambda info: self.handle_info(info, video, container_url))
-            playerinfo.run()
+            PlayerInfo(info=lambda info: self.handle_info(info, video, container_url)).run()
 
     def handle_info(self, info, video, container_url):
         ''' Handle information from PlayerInfo class '''
