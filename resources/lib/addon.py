@@ -77,7 +77,7 @@ def favorites_menu():
 
 @plugin.route('/favorites/programs')
 def favorites_programs():
-    ''' The favorites A-Z listing '''
+    ''' The favorites 'My programs' listing '''
     from vrtplayer import VRTPlayer
     VRTPlayer(kodi).show_tvshow_menu(use_favorites=True)
 
@@ -146,7 +146,7 @@ def resumepoints_watchlater():
 @plugin.route('/programs/<program>')
 @plugin.route('/programs/<program>/<season>')
 def programs(program=None, season=None):
-    ''' The programs A-Z / seasons / episode listing '''
+    ''' The Programs / Seasons / Episodes listing '''
     from vrtplayer import VRTPlayer
     if program:
         VRTPlayer(kodi).show_episodes_menu(program=program, season=season)

@@ -25,8 +25,8 @@ msgid "Browse only the programs you follow"
 msgstr "Bekijk alleen de tv-programma's die je volgt"
 
 msgctxt "#30012"
-msgid "A-Z"
-msgstr "A-Z"
+msgid "All programs"
+msgstr "Alle programma's"
 
 msgctxt "#30013"
 msgid "Alphabetically sorted list of programs"
@@ -481,6 +481,10 @@ msgstr "Meer"
 msgctxt "#30433"
 msgid "Debug"
 msgstr "Foutopsporing"
+
+msgctxt "#30440"
+msgid "A-Z"
+msgstr "A-Z"
 
 
 ### SETTINGS
