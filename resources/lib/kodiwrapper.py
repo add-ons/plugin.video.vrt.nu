@@ -115,8 +115,11 @@ class KodiWrapper:
         self._addon_id = to_unicode(self._addon.getAddonInfo('id'))
         self._addon_fanart = to_unicode(self._addon.getAddonInfo('fanart'))
         self._debug_logging = self.get_global_setting('debug.showloginfo')   # Returns a boolean
-        self._max_log_level = self.get_setting('max_log_level', 0)  # May return string
-        self._max_log_level = int(self._max_log_level) if self._max_log_level.isdecimal() else 0
+        try:
+            self._max_log_level = int(self.get_setting('max_log_level', 0))  # May return string
+        except TypeError:
+            self._max_log_level = 0
+            self.set_setting('max_log_level', 0)
         self._usemenucaching = self.get_setting('usemenucaching', 'true') == 'true'
         self._cache_path = self.get_userdata_path() + 'cache/'
         self._tokens_path = self.get_userdata_path() + 'tokens/'
