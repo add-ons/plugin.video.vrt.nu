@@ -366,7 +366,7 @@ class VRTPlayer:
             self.push_position(info, video)
 
         # Push up next episode info
-        if info.get('episode'):
+        if info.get('program'):
             self.push_upnext(info)
 
     def push_position(self, info, video):
@@ -386,7 +386,7 @@ class VRTPlayer:
 
     def push_upnext(self, info):
         ''' Push episode info to Up Next service add-on'''
-        if self._kodi.has_addon('service.upnext') and self._kodi.get_setting('useupnext', 'true') == 'true' and info.get('program'):
+        if self._kodi.has_addon('service.upnext') and self._kodi.get_setting('useupnext', 'true') == 'true':
             next_info = self._apihelper.get_upnext(info)
             if next_info:
                 from binascii import hexlify

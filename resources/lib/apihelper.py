@@ -260,16 +260,26 @@ class ApiHelper:
     def get_upnext(self, info):
         ''' Get up next data from VRT Search API '''
         program = info.get('program')
+        path = info.get('path')
         season = None
-        if info.get('season') > 0:
-            season = info.get('season')
-        current_ep_no = info.get('episode')
+        current_ep_no = None
 
-        # Get current and next episode data from VRT Search API
+        # Get current episode unique identifier
+        if 'play/id/' in path:
+            ep_id = path.split('play/id/')[1].split('/')[0]
+        elif 'play/whatson/' in path:
+            ep_id = path.split('play/whatson/')[1]
+        elif '/play/url/' in path:
+            ep_id = statichelper.video_to_api_url(path.split('play/url/')[1])
+
+        # Get all episodes from current program and sort by program, seasonTitle and episodeNumber
         episodes = sorted(self.get_episodes(keywords=program), key=lambda k: (k.get('program'), k.get('seasonTitle'), k.get('episodeNumber')))
         upnext = dict()
         for episode in episodes:
-            if episode.get('program') == program and str(season) in episode.get('seasonTitle') and int(episode.get('episodeNumber')) == current_ep_no:
+            if ep_id == episode.get('whatsonId') or ep_id == episode.get('videoId') or ep_id == episode.get('url'):
+                season = episode.get('seasonTitle')
+                current_ep_no = episode.get('episodeNumber')
+                program = episode.get('program')
                 try:
                     upnext['current'] = episode
                     next_episode = episodes[episodes.index(episode) + 1]
