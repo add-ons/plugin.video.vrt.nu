@@ -5,6 +5,7 @@
 # pylint: disable=duplicate-code,invalid-name,missing-docstring,protected-access
 
 from __future__ import absolute_import, division, print_function, unicode_literals
+import sys
 import unittest
 import addon
 
@@ -16,6 +17,7 @@ xbmcvfs = __import__('xbmcvfs')
 plugin = addon.plugin
 
 
+@unittest.skipIf(sys.version_info[0] < 3, 'Skipping proxy tests on Python 2')
 class TestProxy(unittest.TestCase):
     def setUp(self):
         xbmc.GLOBAL_SETTINGS['network.usehttpproxy'] = True
