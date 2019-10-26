@@ -48,6 +48,8 @@ def listdir(path):
     ''' A reimplementation of the xbmcvfs listdir() function '''
     files = []
     dirs = []
+    if not exists(path):
+        return dirs, files
     for filename in os.listdir(path):
         if os.path.isfile(filename):
             files.append(filename)
