@@ -40,6 +40,7 @@ class PlayerInfo(Player):
             path=getInfoLabel('Player.Filenameandpath'),
             runtime=self._total,
         ))
+        Thread(target=self.stream_position, name='StreamPosition').start()
 
     def onPlayBackStopped(self):  # pylint: disable=invalid-name
         ''' called when user stops Kodi playing a file '''

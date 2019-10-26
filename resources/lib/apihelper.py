@@ -663,7 +663,10 @@ class ApiHelper:
                 # NOTE: Playcount is required to not have live streams as "Watched"
                 info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video', playcount=0, duration=0)
                 stream_dict = dict(duration=0)
-                context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file='channel.%s.json' % channel)))
+                context_menu.append((
+                    self._kodi.localize(30413),
+                    'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file='channel.%s.json' % channel)
+                ))
             else:
                 # Not a playable channel
                 continue
@@ -710,7 +713,10 @@ class ApiHelper:
                 plot = self._kodi.localize(30104, **channel)
                 # NOTE: Playcount is required to not have live streams as "Watched"
                 info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video', playcount=0)
-                context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file='channel.%s.json' % channel)))
+                context_menu.append((
+                    self._kodi.localize(30413),
+                    'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file='channel.%s.json' % channel)
+                ))
             else:
                 # Not a playable channel
                 continue
