@@ -665,10 +665,16 @@ class KodiWrapper:
         ''' Move the cursor down '''
         self.jsonrpc(method='Input.Down')
 
-    def container_refresh(self):
-        ''' Refresh the current container '''
-        self.log(3, 'Execute: Container.Refresh')
-        xbmc.executebuiltin('Container.Refresh')
+    @staticmethod
+    def current_container_url():
+        ''' Get current container plugin:// url '''
+        url = xbmc.getInfoLabel('Container.FolderPath')
+        return url
+
+    def container_refresh(self, url=''):
+        ''' Refresh the current container or (re)load a container by url '''
+        self.log(3, 'Execute: Container.Refresh({url})', url=url)
+        xbmc.executebuiltin('Container.Refresh({url})'.format(url=url))
 
     def end_of_directory(self):
         ''' Close a virtual directory, required to avoid a waiting Kodi '''
