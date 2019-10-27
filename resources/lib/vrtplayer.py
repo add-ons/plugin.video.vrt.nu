@@ -352,24 +352,25 @@ class VRTPlayer:
             return
         self._kodi.play(stream, video.get('listitem'))
         if self._resumepoints.is_activated():
+            container_url = self._kodi.current_container_url()
             from playerinfo import PlayerInfo
             # Get info from player
-            playerinfo = PlayerInfo(info=lambda info: self.handle_info(info, video))
+            playerinfo = PlayerInfo(info=lambda info: self.handle_info(info, video, container_url))
             playerinfo.run()
 
-    def handle_info(self, info, video):
+    def handle_info(self, info, video, container_url):
         ''' Handle information from PlayerInfo class '''
         self._kodi.log(2, 'Got VRT NU Player info: {info}', info=str(info))
 
         # Push resume position
         if info.get('position'):
-            self.push_position(info, video)
+            self.push_position(info, video, container_url)
 
         # Push up next episode info
         if info.get('program'):
             self.push_upnext(info)
 
-    def push_position(self, info, video):
+    def push_position(self, info, video, container_url):
         ''' Push player position to VRT NU resumepoints API '''
         # Get uuid, title and url from api based on video.get('publication_id') or video.get('video_url')
         if video.get('publication_id'):
@@ -382,7 +383,9 @@ class VRTPlayer:
 
         # Push resumepoint to VRT NU
         self._resumepoints.update(uuid=uuid, title=title, url=url, watch_later=None, position=info.get('position'), total=info.get('total'))
-        self._kodi.container_refresh()
+        # Only refresh container if the play action was initiated from it
+        if container_url == self._kodi.current_container_url():
+            self._kodi.container_refresh(container_url)
 
     def push_upnext(self, info):
         ''' Push episode info to Up Next service add-on'''
