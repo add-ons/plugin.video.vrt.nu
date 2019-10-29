@@ -124,7 +124,8 @@ class TokenResolver:
         self._kodi.log(2, 'URL post: {url}', url=unquote(token_url))
         req = Request(token_url, data=b'', headers=headers)
         playertoken = json.load(urlopen(req))
-        self._set_cached_token(playertoken, token_variant)
+        if playertoken is not None:
+            self._set_cached_token(playertoken, token_variant)
         return playertoken.get('vrtPlayerToken')
 
     def login(self, refresh=False, token_variant=None):
@@ -252,8 +253,10 @@ class TokenResolver:
         req = Request(refresh_url, headers=headers)
         opener.open(req)
         token = TokenResolver._create_token_dictionary(cookiejar, token_name)
-        self._set_cached_token(token, token_variant)
-        return list(token.values())[0]
+        if token is not None:
+            self._set_cached_token(token, token_variant)
+            token = list(token.values())[0]
+        return token
 
     def _get_roaming_xvrttoken(self, xvrttoken):
         ''' Get new 'roaming' X-VRT-Token from VRT NU website '''
