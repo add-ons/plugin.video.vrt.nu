@@ -114,8 +114,8 @@ def url_to_episode(url):
 
 
 def video_to_api_url(url):
-    ''' Convert a full VRT NU url (e.g. https://www.vrt.be/vrtnu/a-z/de-ideale-wereld/2019-nj/de-ideale-wereld-d20191010/
-        to a VRT Search API url (e.g. //www.vrt.be/vrtnu/a-z/de-ideale-wereld/2019-nj/de-ideale-wereld-d20191010/
+    ''' Convert a full VRT NU url (e.g. https://www.vrt.be/vrtnu/a-z/de-ideale-wereld/2019-nj/de-ideale-wereld-d20191010/)
+        to a VRT Search API url (e.g. //www.vrt.be/vrtnu/a-z/de-ideale-wereld/2019-nj/de-ideale-wereld-d20191010/)
     '''
     if url.startswith('https:'):
         url = url.replace('https:', '')
@@ -123,6 +123,20 @@ def video_to_api_url(url):
         if not url.endswith('/'):
             url += '/'
     return url
+
+
+def play_url_to_id(url):
+    ''' Convert a plugin:// url (e.g. plugin://plugin.video.vrt.nu/play/id/vid-5b12c0f6-b8fe-426f-a600-557f501f3be9/pbs-pub-7e2764cf-a8c0-4e78-9cbc-46d39381c237)
+        to an id dictionary (e.g. {'video_id': 'vid-5b12c0f6-b8fe-426f-a600-557f501f3be9'}
+    '''
+    play_id = dict()
+    if 'play/id/' in url:
+        play_id['video_id'] = url.split('play/id/')[1].split('/')[0]
+    elif 'play/whatson/' in url:
+        play_id['whatson_id'] = url.split('play/whatson/')[1]
+    elif '/play/url/' in url:
+        play_id['video_url'] = video_to_api_url(url.split('play/url/')[1])
+    return play_id
 
 
 def to_unicode(text, encoding='utf-8'):

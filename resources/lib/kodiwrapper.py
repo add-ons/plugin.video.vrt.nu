@@ -675,6 +675,8 @@ class KodiWrapper:
     def current_container_url():
         ''' Get current container plugin:// url '''
         url = xbmc.getInfoLabel('Container.FolderPath')
+        if url == '':
+            url = None
         return url
 
     def container_refresh(self, url=''):

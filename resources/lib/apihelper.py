@@ -265,18 +265,13 @@ class ApiHelper:
         current_ep_no = None
 
         # Get current episode unique identifier
-        if 'play/id/' in path:
-            ep_id = path.split('play/id/')[1].split('/')[0]
-        elif 'play/whatson/' in path:
-            ep_id = path.split('play/whatson/')[1]
-        elif '/play/url/' in path:
-            ep_id = statichelper.video_to_api_url(path.split('play/url/')[1])
+        ep_id = statichelper.play_url_to_id(path)
 
         # Get all episodes from current program and sort by program, seasonTitle and episodeNumber
         episodes = sorted(self.get_episodes(keywords=program), key=lambda k: (k.get('program'), k.get('seasonTitle'), k.get('episodeNumber')))
         upnext = dict()
         for episode in episodes:
-            if ep_id == episode.get('whatsonId') or ep_id == episode.get('videoId') or ep_id == episode.get('url'):
+            if ep_id.get('whatson_id') == episode.get('whatsonId') or ep_id.get('video_id') == episode.get('videoId') or ep_id.get('video_url') == episode.get('url'):
                 season = episode.get('seasonTitle')
                 current_ep_no = episode.get('episodeNumber')
                 program = episode.get('program')

@@ -7,7 +7,7 @@ from apihelper import ApiHelper
 from favorites import Favorites
 from helperobjects import TitleItem
 from resumepoints import ResumePoints
-from statichelper import find_entry, url_to_episode, video_to_api_url, to_unicode
+from statichelper import find_entry
 
 
 class VRTPlayer:
@@ -351,49 +351,6 @@ class VRTPlayer:
         if stream is None:
             return
         self._kodi.play(stream, video.get('listitem'))
-        if self._resumepoints.is_activated():
-            container_url = self._kodi.current_container_url()
-            from playerinfo import PlayerInfo
-            # Get info from player
-            playerinfo = PlayerInfo(info=lambda info: self.handle_info(info, video, container_url))
-            playerinfo.run()
-
-    def handle_info(self, info, video, container_url):
-        ''' Handle information from PlayerInfo class '''
-        self._kodi.log(2, 'Got VRT NU Player info: {info}', info=str(info))
-
-        # Push resume position
-        if info.get('position'):
-            self.push_position(info, video, container_url)
-
-        # Push up next episode info
-        if info.get('program'):
-            self.push_upnext(info)
-
-    def push_position(self, info, video, container_url):
-        ''' Push player position to VRT NU resumepoints API '''
-        # Get uuid, title and url from api based on video.get('publication_id') or video.get('video_url')
-        if video.get('publication_id'):
-            episode = self._apihelper.get_episodes(video_id=video.get('video_id'), variety='single')[0]
-        elif video.get('video_url'):
-            episode = self._apihelper.get_episodes(video_url=video_to_api_url(video.get('video_url')), variety='single')[0]
-        uuid = self._resumepoints.assetpath_to_uuid(episode.get('assetPath'))
-        title = episode.get('program')
-        url = url_to_episode(episode.get('url', ''))
-
-        # Push resumepoint to VRT NU
-        self._resumepoints.update(uuid=uuid, title=title, url=url, watch_later=None, position=info.get('position'), total=info.get('total'))
-        # Only refresh container if the play action was initiated from it
-        if container_url == self._kodi.current_container_url():
-            self._kodi.container_refresh(container_url)
-
-    def push_upnext(self, info):
-        ''' Push episode info to Up Next service add-on'''
-        if self._kodi.has_addon('service.upnext') and self._kodi.get_setting('useupnext', 'true') == 'true':
-            next_info = self._apihelper.get_upnext(info)
-            if next_info:
-                from binascii import hexlify
-                import json
-                data = [to_unicode(hexlify(json.dumps(next_info).encode()))]
-                sender = '%s.SIGNAL' % self._kodi.addon_id()
-                self._kodi.notify(sender=sender, message='upnext_data', data=data)
+        source_container = self._kodi.current_container_url()
+        if source_container:
+            self._kodi.notify(sender=self._kodi.addon_id(), message='source_container', data=dict(container=self._kodi.current_container_url()))
