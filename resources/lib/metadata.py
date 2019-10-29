@@ -152,35 +152,37 @@ class Metadata:
         ''' Get properties from single item json api data '''
         properties = dict()
 
-        # VRT NU Search API
-        if api_data.get('type') == 'episode':
-            assetpath = api_data.get('assetPath')
-            if assetpath:
-                # We need to ensure forward slashes are quoted
-                program_title = statichelper.to_unicode(quote_plus(statichelper.from_unicode(api_data.get('program'))))
+        # Only fill in properties when using VRT NU resumepoints because setting resumetime/totaltime breaks standard Kodi watch status
+        if self._resumepoints.is_activated():
+            # VRT NU Search API
+            if api_data.get('type') == 'episode':
+                assetpath = api_data.get('assetPath')
+                if assetpath:
+                    # We need to ensure forward slashes are quoted
+                    program_title = statichelper.to_unicode(quote_plus(statichelper.from_unicode(api_data.get('program'))))
 
-                assetuuid = self._resumepoints.assetpath_to_uuid(assetpath)
-                url = statichelper.reformat_url(api_data.get('url', ''), 'medium')
-                properties.update(assetuuid=assetuuid, url=url, title=program_title)
+                    assetuuid = self._resumepoints.assetpath_to_uuid(assetpath)
+                    url = statichelper.reformat_url(api_data.get('url', ''), 'medium')
+                    properties.update(assetuuid=assetuuid, url=url, title=program_title)
 
-                seconds_margin = 30
-                position = self._resumepoints.get_position(assetuuid)
-                total = self._resumepoints.get_total(assetuuid)
-                if position and total and seconds_margin < position < total - seconds_margin:
-                    properties['resumetime'] = position
+                    seconds_margin = 30
+                    position = self._resumepoints.get_position(assetuuid)
+                    total = self._resumepoints.get_total(assetuuid)
+                    if position and total and seconds_margin < position < total - seconds_margin:
+                        properties['resumetime'] = position
 
-            duration = self.get_duration(api_data)
-            if duration:
-                properties['totaltime'] = duration
+                duration = self.get_duration(api_data)
+                if duration:
+                    properties['totaltime'] = duration
 
-            episode = self.get_episode(api_data)
-            season = self.get_season(api_data)
-            if episode and season:
-                properties['episodeno'] = 's%se%s' % (season, episode)
+                episode = self.get_episode(api_data)
+                season = self.get_season(api_data)
+                if episode and season:
+                    properties['episodeno'] = 's%se%s' % (season, episode)
 
-            year = self.get_year(api_data)
-            if year:
-                properties['year'] = year
+                year = self.get_year(api_data)
+                if year:
+                    properties['year'] = year
 
         return properties
 
