@@ -682,7 +682,7 @@ class KodiWrapper:
 
     def log(self, level=1, message='', **kwargs):
         ''' Log info messages to Kodi '''
-        if not self._debug_logging and not (level <= self._max_log_level or self._max_log_level == 0):
+        if not self._debug_logging and not (level <= self._max_log_level and self._max_log_level != 0):
             return
         if kwargs:
             import string
