@@ -138,7 +138,7 @@ class Metadata:
                                    '/resumepoints/continue', '/resumepoints/watchlater', '/tvguide')):
             context_menu.append((
                 self._kodi.localize(30417),  # Go to program
-                'XBMC.Container.Update(%s)' % self._kodi.url_for('programs', program=program, season='allseasons')
+                'Container.Update(%s)' % self._kodi.url_for('programs', program=program, season='allseasons')
             ))
 
         context_menu.append((

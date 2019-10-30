@@ -178,7 +178,7 @@ def getRegion(key):
     return REGIONS.get(key)
 
 
-def log(msg, level):
+def log(msg, level=0):
     ''' A reimplementation of the xbmc log() function '''
     color1 = '\033[32;1m'
     color2 = '\033[32;0m'

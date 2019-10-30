@@ -129,7 +129,7 @@ class KodiWrapper:
         ''' Wrapper for routing.url_for() to lookup by name '''
         return self.plugin.url_for(self.addon[name], *args, **kwargs)
 
-    def show_listing(self, list_items, category=None, sort='unsorted', ascending=True, content=None, cache=None):
+    def show_listing(self, list_items, category=None, sort='unsorted', ascending=True, content=None, cache=None, selected=None):
         ''' Show a virtual directory in Kodi '''
         from xbmcgui import ListItem
 
@@ -137,6 +137,8 @@ class KodiWrapper:
 
         if cache is None:
             cache = self._usemenucaching
+        elif self._usemenucaching is False:
+            cache = False
 
         if content:
             # content is one of: files, songs, artists, albums, movies, tvshows, episodes, musicvideos
@@ -223,8 +225,15 @@ class KodiWrapper:
 
             listing.append((url, list_item, is_folder))
 
+        # Jump to specific item
+        if selected is not None:
+            pass
+#            from xbmcgui import getCurrentWindowId, Window
+#            wnd = Window(getCurrentWindowId())
+#            wnd.getControl(wnd.getFocusId()).selectItem(selected)
+
         succeeded = xbmcplugin.addDirectoryItems(self._handle, listing, len(listing))
-        xbmcplugin.endOfDirectory(self._handle, succeeded, cacheToDisc=cache)
+        xbmcplugin.endOfDirectory(self._handle, succeeded, updateListing=False, cacheToDisc=cache)
 
     def play(self, stream, video=None):
         ''' Create a virtual directory listing to play its only item '''
@@ -258,9 +267,6 @@ class KodiWrapper:
             play_item.setSubtitles([stream.subtitle_url])
 
         self.log(1, 'Play: {url}', url=unquote(stream.stream_url))
-
-        # To support video playback directly from RunPlugin() we need to use xbmc.Player().play instead of
-        # setResolvedUrl that only works with PlayMedia() or with internal playable menu items
         xbmcplugin.setResolvedUrl(self._handle, bool(stream.stream_url), listitem=play_item)
 
         while not xbmc.Player().isPlaying() and not xbmc.Monitor().abortRequested():
@@ -669,6 +675,8 @@ class KodiWrapper:
     def current_container_url():
         ''' Get current container plugin:// url '''
         url = xbmc.getInfoLabel('Container.FolderPath')
+        if url == '':
+            url = None
         return url
 
     def container_refresh(self, url=''):

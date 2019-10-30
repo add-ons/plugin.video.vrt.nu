@@ -54,7 +54,7 @@ class ApiHelper:
             params['facets[programTags.title]'] = feature
             cache_file = 'featured.%s.json' % feature
 
-        # If no facet-selection is done, we return the A-Z listing
+        # If no facet-selection is done, we return the 'All programs' listing
         if not category and not channel and not feature:
             params['facets[transcodingStatus]'] = 'AVAILABLE'  # Required for getting results in Suggests API
             cache_file = 'programs.json'
@@ -265,18 +265,13 @@ class ApiHelper:
         current_ep_no = None
 
         # Get current episode unique identifier
-        if 'play/id/' in path:
-            ep_id = path.split('play/id/')[1].split('/')[0]
-        elif 'play/whatson/' in path:
-            ep_id = path.split('play/whatson/')[1]
-        elif '/play/url/' in path:
-            ep_id = statichelper.video_to_api_url(path.split('play/url/')[1])
+        ep_id = statichelper.play_url_to_id(path)
 
         # Get all episodes from current program and sort by program, seasonTitle and episodeNumber
         episodes = sorted(self.get_episodes(keywords=program), key=lambda k: (k.get('program'), k.get('seasonTitle'), k.get('episodeNumber')))
         upnext = dict()
         for episode in episodes:
-            if ep_id == episode.get('whatsonId') or ep_id == episode.get('videoId') or ep_id == episode.get('url'):
+            if ep_id.get('whatson_id') == episode.get('whatsonId') or ep_id.get('video_id') == episode.get('videoId') or ep_id.get('video_url') == episode.get('url'):
                 season = episode.get('seasonTitle')
                 current_ep_no = episode.get('episodeNumber')
                 program = episode.get('program')
@@ -649,7 +644,7 @@ class ApiHelper:
                 label = self._kodi.localize(30101, **channel)
                 playing_now = _tvguide.playing_now(channel.get('name'))
                 if playing_now:
-                    label += ' [COLOR gray]| %s[/COLOR]' % playing_now
+                    label += ' [COLOR yellow]| %s[/COLOR]' % playing_now
                 # A single Live channel means it is the entry for channel's TV Show listing, so make it stand out
                 if channels and len(channels) == 1:
                     label = '[B]%s[/B]' % label
@@ -663,7 +658,10 @@ class ApiHelper:
                 # NOTE: Playcount is required to not have live streams as "Watched"
                 info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video', playcount=0, duration=0)
                 stream_dict = dict(duration=0)
-                context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file='channel.%s.json' % channel)))
+                context_menu.append((
+                    self._kodi.localize(30413),
+                    'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file='channel.%s.json' % channel)
+                ))
             else:
                 # Not a playable channel
                 continue
@@ -710,7 +708,10 @@ class ApiHelper:
                 plot = self._kodi.localize(30104, **channel)
                 # NOTE: Playcount is required to not have live streams as "Watched"
                 info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video', playcount=0)
-                context_menu.append((self._kodi.localize(30413), 'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file='channel.%s.json' % channel)))
+                context_menu.append((
+                    self._kodi.localize(30413),
+                    'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file='channel.%s.json' % channel)
+                ))
             else:
                 # Not a playable channel
                 continue

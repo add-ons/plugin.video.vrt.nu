@@ -7,7 +7,7 @@ from apihelper import ApiHelper
 from favorites import Favorites
 from helperobjects import TitleItem
 from resumepoints import ResumePoints
-from statichelper import find_entry, url_to_episode, video_to_api_url, to_unicode
+from statichelper import find_entry
 
 
 class VRTPlayer:
@@ -35,7 +35,7 @@ class VRTPlayer:
             ))
 
         main_items.extend([
-            TitleItem(title=self._kodi.localize(30012),  # A-Z listing
+            TitleItem(title=self._kodi.localize(30012),  # All programs
                       path=self._kodi.url_for('programs'),
                       art_dict=dict(thumb='DefaultMovieTitle.png'),
                       info_dict=dict(plot=self._kodi.localize(30013))),
@@ -72,7 +72,7 @@ class VRTPlayer:
                       art_dict=dict(thumb='DefaultAddonsSearch.png'),
                       info_dict=dict(plot=self._kodi.localize(30029))),
         ])
-        self._kodi.show_listing(main_items)  # No category
+        self._kodi.show_listing(main_items, cache=False)  # No category
         self._version_check()
 
     def _version_check(self):
@@ -110,10 +110,10 @@ class VRTPlayer:
         return False, settings_version, addon_version
 
     def show_favorites_menu(self):
-        ''' The VRT NU addon 'My Programs' menu '''
+        ''' The VRT NU addon 'My programs' menu '''
         self._favorites.refresh(ttl=60 * 60)
         favorites_items = [
-            TitleItem(title=self._kodi.localize(30040),  # My A-Z listing
+            TitleItem(title=self._kodi.localize(30040),  # My programs
                       path=self._kodi.url_for('favorites_programs'),
                       art_dict=dict(thumb='DefaultMovieTitle.png'),
                       info_dict=dict(plot=self._kodi.localize(30041))),
@@ -158,7 +158,7 @@ class VRTPlayer:
                           info_dict=dict(plot=self._kodi.localize(30045))),
             )
 
-        self._kodi.show_listing(favorites_items, category=30010)  # My favorites
+        self._kodi.show_listing(favorites_items, category=30010, cache=False)  # My favorites
 
         # Show dialog when no favorites were found
         if not self._favorites.titles():
@@ -169,15 +169,15 @@ class VRTPlayer:
         self._favorites.refresh(ttl=60 * 60)
         self._resumepoints.refresh(ttl=60 * 60)
         episode_items, sort, ascending, content = self._apihelper.list_episodes(category='docu', season='allseasons', programtype='oneoff')
-        self._kodi.show_listing(episode_items, category=30044, sort=sort, ascending=ascending, content=content)
+        self._kodi.show_listing(episode_items, category=30044, sort=sort, ascending=ascending, content=content, cache=False)
 
     def show_tvshow_menu(self, use_favorites=False):
-        ''' The VRT NU add-on 'A-Z' listing menu '''
+        ''' The VRT NU add-on 'All programs' listing menu '''
         # My favorites menus may need more up-to-date favorites
         self._favorites.refresh(ttl=5 * 60 if use_favorites else 60 * 60)
         self._resumepoints.refresh(ttl=5 * 60 if use_favorites else 60 * 60)
         tvshow_items = self._apihelper.list_tvshows(use_favorites=use_favorites)
-        self._kodi.show_listing(tvshow_items, category=30012, sort='label', content='tvshows')
+        self._kodi.show_listing(tvshow_items, category=30440, sort='label', content='tvshows')  # A-Z
 
     def show_category_menu(self, category=None):
         ''' The VRT NU add-on 'Categories' listing menu '''
@@ -204,7 +204,7 @@ class VRTPlayer:
             channel_items.extend(self._apihelper.list_tvshows(channel=channel))  # TV shows
             from data import CHANNELS
             channel_name = find_entry(CHANNELS, 'name', channel).get('label')
-            self._kodi.show_listing(channel_items, category=channel_name, sort='unsorted', content='tvshows')  # Channel
+            self._kodi.show_listing(channel_items, category=channel_name, sort='unsorted', content='tvshows', cache=False)  # Channel
         else:
             channel_items = self._apihelper.list_channels(live=False)
             self._kodi.show_listing(channel_items, category=30016, cache=False)
@@ -217,7 +217,7 @@ class VRTPlayer:
             tvshow_items = self._apihelper.list_tvshows(feature=feature)
             from data import FEATURED
             feature_msgctxt = find_entry(FEATURED, 'id', feature).get('msgctxt')
-            self._kodi.show_listing(tvshow_items, category=feature_msgctxt, sort='label', content='tvshows')
+            self._kodi.show_listing(tvshow_items, category=feature_msgctxt, sort='label', content='tvshows', cache=False)
         else:
             featured_items = self._apihelper.list_featured()
             self._kodi.show_listing(featured_items, category=30024, sort='label', content='files')
@@ -233,7 +233,7 @@ class VRTPlayer:
         self._resumepoints.refresh(ttl=60 * 60)
         episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program, season=season)
         # FIXME: Translate program in Program Title
-        self._kodi.show_listing(episode_items, category=program.title(), sort=sort, ascending=ascending, content=content)
+        self._kodi.show_listing(episode_items, category=program.title(), sort=sort, ascending=ascending, content=content, cache=False)
 
     def show_recent_menu(self, page=0, use_favorites=False):
         ''' The VRT NU add-on 'Most recent' and 'My most recent' listing menu '''
@@ -351,49 +351,6 @@ class VRTPlayer:
         if stream is None:
             return
         self._kodi.play(stream, video.get('listitem'))
-        if self._resumepoints.is_activated():
-            container_url = self._kodi.current_container_url()
-            from playerinfo import PlayerInfo
-            # Get info from player
-            playerinfo = PlayerInfo(info=lambda info: self.handle_info(info, video, container_url))
-            playerinfo.run()
-
-    def handle_info(self, info, video, container_url):
-        ''' Handle information from PlayerInfo class '''
-        self._kodi.log(2, 'Got VRT NU Player info: {info}', info=str(info))
-
-        # Push resume position
-        if info.get('position'):
-            self.push_position(info, video, container_url)
-
-        # Push up next episode info
-        if info.get('program'):
-            self.push_upnext(info)
-
-    def push_position(self, info, video, container_url):
-        ''' Push player position to VRT NU resumepoints API '''
-        # Get uuid, title and url from api based on video.get('publication_id') or video.get('video_url')
-        if video.get('publication_id'):
-            episode = self._apihelper.get_episodes(video_id=video.get('video_id'), variety='single')[0]
-        elif video.get('video_url'):
-            episode = self._apihelper.get_episodes(video_url=video_to_api_url(video.get('video_url')), variety='single')[0]
-        uuid = self._resumepoints.assetpath_to_uuid(episode.get('assetPath'))
-        title = episode.get('program')
-        url = url_to_episode(episode.get('url', ''))
-
-        # Push resumepoint to VRT NU
-        self._resumepoints.update(uuid=uuid, title=title, url=url, watch_later=None, position=info.get('position'), total=info.get('total'))
-        # Only refresh container if the play action was initiated from it
-        if container_url == self._kodi.current_container_url():
-            self._kodi.container_refresh(container_url)
-
-    def push_upnext(self, info):
-        ''' Push episode info to Up Next service add-on'''
-        if self._kodi.has_addon('service.upnext') and self._kodi.get_setting('useupnext', 'true') == 'true':
-            next_info = self._apihelper.get_upnext(info)
-            if next_info:
-                from binascii import hexlify
-                import json
-                data = [to_unicode(hexlify(json.dumps(next_info).encode()))]
-                sender = '%s.SIGNAL' % self._kodi.addon_id()
-                self._kodi.notify(sender=sender, message='upnext_data', data=data)
+        source_container = self._kodi.current_container_url()
+        if source_container:
+            self._kodi.notify(sender=self._kodi.addon_id(), message='source_container', data=dict(container=self._kodi.current_container_url()))
