@@ -4,6 +4,10 @@
 
 from __future__ import absolute_import, division, unicode_literals
 
+# The margin at start/end to consider a video as watched
+# This value is used by resumepoints and upnext
+SECONDS_MARGIN = 30
+
 # Fallback list of categories so we don't depend on web scraping only
 CATEGORIES = [
     dict(name='Audiodescriptie', id='met-audiodescriptie', msgctxt=30070),

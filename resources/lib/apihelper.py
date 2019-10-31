@@ -13,7 +13,7 @@ except ImportError:  # Python 2
     from urllib2 import build_opener, install_opener, ProxyHandler, Request, HTTPError, unquote, urlopen
 
 import statichelper
-from data import CHANNELS
+from data import CHANNELS, SECONDS_MARGIN
 from helperobjects import TitleItem
 from metadata import Metadata
 
@@ -283,7 +283,6 @@ class ApiHelper:
                     pass
 
         if upnext.get('next'):
-            notification_time = 60
             current_ep = upnext.get('current')
             next_ep = upnext.get('next')
 
@@ -341,7 +340,7 @@ class ApiHelper:
                 current_episode=current_episode,
                 next_episode=next_episode,
                 play_info=play_info,
-                notification_time=notification_time,
+                notification_time=SECONDS_MARGIN,
             )
             return next_info
 

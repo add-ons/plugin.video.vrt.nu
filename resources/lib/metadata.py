@@ -12,7 +12,7 @@ except ImportError:  # Python 2
     from urllib import quote_plus
 
 import statichelper
-from data import CHANNELS
+from data import CHANNELS, SECONDS_MARGIN
 
 
 class Metadata:
@@ -165,10 +165,9 @@ class Metadata:
                     url = statichelper.reformat_url(api_data.get('url', ''), 'medium')
                     properties.update(assetuuid=assetuuid, url=url, title=program_title)
 
-                    seconds_margin = 30
                     position = self._resumepoints.get_position(assetuuid)
                     total = self._resumepoints.get_total(assetuuid)
-                    if position and total and seconds_margin < position < total - seconds_margin:
+                    if position and total and SECONDS_MARGIN < position < total - SECONDS_MARGIN:
                         properties['resumetime'] = position
 
                 duration = self.get_duration(api_data)
