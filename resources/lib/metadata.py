@@ -58,6 +58,44 @@ class Metadata:
         watchlater_marker = ''
         context_menu = []
 
+        # WATCH LATER
+        if self._resumepoints.is_activated():
+            assetpath = None
+
+            # VRT NU Search API
+            if api_data.get('type') == 'episode':
+                program_title = api_data.get('program')
+                assetpath = api_data.get('assetPath')
+
+            # VRT NU Schedule API (some are missing vrt.whatson-id)
+            elif api_data.get('vrt.whatson-id') or api_data.get('startTime'):
+                program_title = api_data.get('title')
+                assetpath = api_data.get('assetPath')
+
+            if assetpath is not None:
+                # We need to ensure forward slashes are quoted
+                program_title = statichelper.to_unicode(quote_plus(statichelper.from_unicode(program_title)))
+                url = statichelper.url_to_episode(api_data.get('url', ''))
+                assetuuid = self._resumepoints.assetpath_to_uuid(assetpath)
+                if self._resumepoints.is_watchlater(assetuuid):
+                    extras = dict()
+                    # If we are in a watchlater menu, move cursor down before removing a favorite
+                    if plugin.path.startswith('/resumepoints/watchlater'):
+                        extras = dict(move_down=True)
+                    # Unwatch context menu
+                    context_menu.append((
+                        statichelper.capitalize(self._kodi.localize(30402)),
+                        'RunPlugin(%s)' % self._kodi.url_for('unwatchlater', uuid=assetuuid, title=program_title, url=url, **extras)
+                    ))
+                    watchlater_marker = '[COLOR yellow]ᶫ[/COLOR]'
+                else:
+                    # Watch context menu
+                    context_menu.append((
+                        statichelper.capitalize(self._kodi.localize(30401)),
+                        'RunPlugin(%s)' % self._kodi.url_for('watchlater', uuid=assetuuid, title=program_title, url=url)
+                    ))
+
+        # FOLLOW PROGRAM
         if self._favorites.is_activated():
 
             # VRT NU Search API
@@ -97,43 +135,7 @@ class Metadata:
                         'RunPlugin(%s)' % self._kodi.url_for('follow', program=program, title=program_title)
                     ))
 
-        if self._resumepoints.is_activated():
-            assetpath = None
-
-            # VRT NU Search API
-            if api_data.get('type') == 'episode':
-                program_title = api_data.get('program')
-                assetpath = api_data.get('assetPath')
-
-            # VRT NU Schedule API (some are missing vrt.whatson-id)
-            elif api_data.get('vrt.whatson-id') or api_data.get('startTime'):
-                program_title = api_data.get('title')
-                assetpath = api_data.get('assetPath')
-
-            if assetpath is not None:
-                # We need to ensure forward slashes are quoted
-                program_title = statichelper.to_unicode(quote_plus(statichelper.from_unicode(program_title)))
-                url = statichelper.url_to_episode(api_data.get('url', ''))
-                assetuuid = self._resumepoints.assetpath_to_uuid(assetpath)
-                if self._resumepoints.is_watchlater(assetuuid):
-                    extras = dict()
-                    # If we are in a watchlater menu, move cursor down before removing a favorite
-                    if plugin.path.startswith('/resumepoints/watchlater'):
-                        extras = dict(move_down=True)
-                    # Unwatch context menu
-                    context_menu.append((
-                        statichelper.capitalize(self._kodi.localize(30402)),
-                        'RunPlugin(%s)' % self._kodi.url_for('unwatchlater', uuid=assetuuid, title=program_title, url=url, **extras)
-                    ))
-                    watchlater_marker = '[COLOR yellow]ᶫ[/COLOR]'
-                else:
-                    # Watch context menu
-                    context_menu.append((
-                        statichelper.capitalize(self._kodi.localize(30401)),
-                        'RunPlugin(%s)' % self._kodi.url_for('watchlater', uuid=assetuuid, title=program_title, url=url)
-                    ))
-
-        # Go to program context menu
+        # GO TO PROGRAM
         if plugin.path.startswith(('/favorites/offline', '/favorites/recent', '/offline', '/recent',
                                    '/resumepoints/continue', '/resumepoints/watchlater', '/tvguide')):
             context_menu.append((
@@ -141,6 +143,7 @@ class Metadata:
                 'Container.Update(%s)' % self._kodi.url_for('programs', program=program, season='allseasons')
             ))
 
+        # REFRESH MENU
         context_menu.append((
             self._kodi.localize(30413),  # Refresh menu
             'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file)
