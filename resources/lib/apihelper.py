@@ -271,7 +271,9 @@ class ApiHelper:
         episodes = sorted(self.get_episodes(keywords=program), key=lambda k: (k.get('program'), k.get('seasonTitle'), k.get('episodeNumber')))
         upnext = dict()
         for episode in episodes:
-            if ep_id.get('whatson_id') == episode.get('whatsonId') or ep_id.get('video_id') == episode.get('videoId') or ep_id.get('video_url') == episode.get('url'):
+            if ep_id.get('whatson_id') == episode.get('whatsonId') or \
+               ep_id.get('video_id') == episode.get('videoId') or \
+               ep_id.get('video_url') == episode.get('url'):
                 season = episode.get('seasonTitle')
                 current_ep_no = episode.get('episodeNumber')
                 program = episode.get('program')
