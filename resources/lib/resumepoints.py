@@ -11,6 +11,8 @@ try:  # Python 3
 except ImportError:  # Python 2
     from urllib2 import build_opener, install_opener, ProxyHandler, Request, HTTPError, urlopen
 
+from data import SECONDS_MARGIN
+
 
 class ResumePoints:
     ''' Track, cache and manage VRT resume points and watch list '''
@@ -177,8 +179,7 @@ class ResumePoints:
 
     def resumepoints_urls(self):
         ''' Return all urls that have not been finished watching '''
-        seconds_margin = 30  # Margin in seconds
-        return [self.get_url(uuid) for uuid in self._resumepoints if seconds_margin < self.get_position(uuid) < (self.get_total(uuid) - seconds_margin)]
+        return [self.get_url(uuid) for uuid in self._resumepoints if SECONDS_MARGIN < self.get_position(uuid) < (self.get_total(uuid) - SECONDS_MARGIN)]
 
     def invalidate_caches(self):
         ''' Invalidate caches that rely on favorites '''
