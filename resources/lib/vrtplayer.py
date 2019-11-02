@@ -78,9 +78,16 @@ class VRTPlayer:
     def _version_check(self):
         first_run, settings_version, addon_version = self._first_run()
         if first_run:
+            # 2.2.3 version: max_log_level to be an integer
+            try:
+                int(self._kodi.get_setting('max_log_level', 0))  # May return string
+            except TypeError:
+                self._kodi.set_setting('max_log_level', 0)
+
             # 2.0.0 version: changed plugin:// url interface: show warning that Kodi favourites and what-was-watched will break
             if settings_version == '' and self._kodi.credentials_filled_in():
                 self._kodi.show_ok_dialog(self._kodi.localize(30978), self._kodi.localize(30979))
+
             if addon_version == '2.2.1':
                 # 2.2.1 version: changed artwork: delete old cached artwork
                 self._kodi.delete_cached_thumbnail(self._kodi.get_addon_info('fanart').replace('.png', '.jpg'))

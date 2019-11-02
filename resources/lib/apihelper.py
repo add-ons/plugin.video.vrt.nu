@@ -31,8 +31,6 @@ class ApiHelper:
         self._kodi = _kodi
         self._favorites = _favorites
         self._resumepoints = _resumepoints
-        self._showfanart = _kodi.get_setting('showfanart', 'true') == 'true'
-        self._showpermalink = _kodi.get_setting('showpermalink', 'false') == 'true'
         self._metadata = Metadata(_kodi, _favorites, _resumepoints)
 
         self._proxies = _kodi.get_proxies()
@@ -651,7 +649,7 @@ class ApiHelper:
                     label = '[B]%s[/B]' % label
                 is_playable = True
                 if channel.get('name') in ['een', 'canvas', 'ketnet']:
-                    if self._showfanart:
+                    if self._kodi.get_setting('showfanart', 'true') == 'true':
                         art_dict['fanart'] = self.get_live_screenshot(channel.get('name', art_dict.get('fanart')))
                     plot = '%s\n\n%s' % (self._kodi.localize(30102, **channel), _tvguide.live_description(channel.get('name')))
                 else:
@@ -782,7 +780,7 @@ class ApiHelper:
 
         category_items = []
         for category in self.localize_categories(categories, CATEGORIES):
-            if self._showfanart:
+            if self._kodi.get_setting('showfanart', 'true') == 'true':
                 thumbnail = category.get('thumbnail', 'DefaultGenre.png')
             else:
                 thumbnail = 'DefaultGenre.png'
@@ -824,7 +822,7 @@ class ApiHelper:
 
     def get_category_thumbnail(self, element):
         ''' Return a category thumbnail, if available '''
-        if self._showfanart:
+        if self._kodi.get_setting('showfanart', 'true') == 'true':
             raw_thumbnail = element.find(class_='media').get('data-responsive-image', 'DefaultGenre.png')
             return statichelper.add_https_method(raw_thumbnail)
         return 'DefaultGenre.png'
