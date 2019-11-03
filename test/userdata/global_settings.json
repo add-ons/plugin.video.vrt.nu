@@ -1,7 +1,7 @@
 {
     "debug.showloginfo": true,
     "locale.language": "resource.language.nl_nl",
-    "network.bandwidth": "0",
+    "network.bandwidth": "20000000",
     "network.usehttpproxy": false,
     "network.httpproxytype": 0,
     "network.httpproxyserver": "http://proxy.server/",

@@ -8,10 +8,10 @@
   <import addon="script.module.routing" version="0.2.3"/>
   <import addon="xbmc.python" version="2.25.0" />
 </requires>
-<extension point="xbmc.python.pluginsource" library="resources/lib/addon_plugin.py">
+<extension point="xbmc.python.pluginsource" library="resources/lib/addon_entry.py">
   <provides>video</provides>
 </extension>
-<extension point="xbmc.service" library="resources/lib/addon_service.py"/>
+<extension point="xbmc.service" library="resources/lib/service_entry.py"/>
 <extension point="xbmc.addon.metadata">
   <summary lang="en_GB">Watch videos from VRT NU</summary>
   <description lang="en_GB">

@@ -81,7 +81,7 @@ class VRTPlayer:
             # 2.2.3 version: max_log_level to be an integer
             try:
                 int(self._kodi.get_setting('max_log_level', 0))  # May return string
-            except TypeError:
+            except ValueError:
                 self._kodi.set_setting('max_log_level', 0)
 
             # 2.0.0 version: changed plugin:// url interface: show warning that Kodi favourites and what-was-watched will break

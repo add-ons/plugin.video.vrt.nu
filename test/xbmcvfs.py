@@ -51,9 +51,10 @@ def listdir(path):
     if not exists(path):
         return dirs, files
     for filename in os.listdir(path):
-        if os.path.isfile(filename):
+        fullname = os.path.join(path, filename)
+        if os.path.isfile(fullname):
             files.append(filename)
-        if os.path.isdir(filename):
+        if os.path.isdir(fullname):
             dirs.append(filename)
     return dirs, files
 

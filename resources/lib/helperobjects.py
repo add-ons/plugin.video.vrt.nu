@@ -42,6 +42,3 @@ class TitleItem:
         self.prop_dict = prop_dict
         self.context_menu = context_menu
         self.is_playable = is_playable
-
-    def __str__(self):
-        return 'TitleItem[%s]' % self.title

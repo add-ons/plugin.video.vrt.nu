@@ -46,7 +46,7 @@ class Favorites:
                 import json
                 try:
                     favorites_json = json.load(urlopen(req))
-                except Exception:  # pylint: disable=broad-except
+                except (TypeError, ValueError):  # No JSON object could be decoded
                     # Force favorites from cache
                     favorites_json = self._kodi.get_cache('favorites.json', ttl=None)
                 else:

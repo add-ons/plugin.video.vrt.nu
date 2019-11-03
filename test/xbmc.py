@@ -10,7 +10,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import os
 import json
 import time
-from xbmcextra import global_settings, import_language
+from xbmcextra import ADDON_ID, global_settings, import_language
 from statichelper import to_unicode
 
 LOGLEVELS = ['Debug', 'Info', 'Notice', 'Warning', 'Error', 'Severe', 'Fatal', 'None']
@@ -24,6 +24,7 @@ LOGFATAL = 6
 LOGNONE = 7
 
 INFO_LABELS = {
+    'Container.FolderPath': 'plugin://' + ADDON_ID + '/',
     'System.BuildVersion': '18.2',
 }
 
@@ -155,6 +156,8 @@ def getCondVisibility(string):  # pylint: disable=unused-argument
     ''' A reimplementation of the xbmc getCondVisibility() function '''
     if string == 'system.platform.android':
         return False
+    if string.startswith('System.HasAddon'):
+        return True
     return True
 
 
