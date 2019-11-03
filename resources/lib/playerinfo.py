@@ -53,9 +53,9 @@ class PlayerInfo(Player):
         ''' called when Kodi has a video, audio or subtitle stream. Also happens when the stream changes. '''
 
     def onPlayBackEnded(self):  # pylint: disable=invalid-name
-        ''' called when Kodi stops playing a file '''
+        ''' called when Kodi has ended playing a file '''
         self._kodi.log(2, '[PlayerInfo] %d onPlayBackEnded' % self._id)
-        self._info(dict(path=self._path, position=self._last_pos, total=self._total, event='playbackended'))
+        self._info(dict(path=self._path, position=self._total, total=self._total, event='playbackended'))
         self._stop.set()
 
     def onPlayBackError(self):  # pylint: disable=invalid-name
