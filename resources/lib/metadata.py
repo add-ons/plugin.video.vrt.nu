@@ -22,8 +22,6 @@ class Metadata:
         self._kodi = _kodi
         self._favorites = _favorites
         self._resumepoints = _resumepoints
-        self._showfanart = _kodi.get_setting('showfanart', 'true') == 'true'
-        self._showpermalink = _kodi.get_setting('showpermalink', 'false') == 'true'
 
     @staticmethod
     def get_studio(api_data):
@@ -289,7 +287,7 @@ class Metadata:
                 plot = '%s\n\n%s' % (plot_meta, plot)
 
             permalink = statichelper.shorten_link(api_data.get('permalink')) or api_data.get('externalPermalink')
-            if self._showpermalink and permalink:
+            if permalink and self._kodi.get_setting('showpermalink', 'false') == 'true':
                 plot = '%s\n\n[COLOR yellow]%s[/COLOR]' % (plot, permalink)
             return plot
 
@@ -297,7 +295,7 @@ class Metadata:
         if api_data.get('type') == 'program':
             plot = statichelper.unescape(api_data.get('description', '???'))
             # permalink = statichelper.shorten_link(api_data.get('programUrl'))
-            # if self._showpermalink and permalink:
+            # if permalink and self._kodi.get_setting('showpermalink', 'false') == 'true':
             #     plot = '%s\n\n[COLOR yellow]%s[/COLOR]' % (plot, permalink)
             return plot
 
@@ -493,7 +491,7 @@ class Metadata:
         # VRT NU Search API
         if api_data.get('type') == 'episode':
             if season:
-                if self._showfanart:
+                if self._kodi.get_setting('showfanart', 'true') == 'true':
                     art_dict['fanart'] = statichelper.add_https_method(api_data.get('programImageUrl', 'DefaultSets.png'))
                     art_dict['banner'] = art_dict.get('fanart')
                     if season != 'allseasons':
@@ -503,7 +501,7 @@ class Metadata:
                 else:
                     art_dict['thumb'] = 'DefaultSets.png'
             else:
-                if self._showfanart:
+                if self._kodi.get_setting('showfanart', 'true') == 'true':
                     art_dict['thumb'] = statichelper.add_https_method(api_data.get('videoThumbnailUrl', 'DefaultAddonVideo.png'))
                     art_dict['fanart'] = statichelper.add_https_method(api_data.get('programImageUrl', art_dict.get('thumb')))
                     art_dict['banner'] = art_dict.get('fanart')
@@ -514,7 +512,7 @@ class Metadata:
 
         # VRT NU Suggest API
         if api_data.get('type') == 'program':
-            if self._showfanart:
+            if self._kodi.get_setting('showfanart', 'true') == 'true':
                 art_dict['thumb'] = statichelper.add_https_method(api_data.get('thumbnail', 'DefaultAddonVideo.png'))
                 art_dict['fanart'] = art_dict.get('thumb')
                 art_dict['banner'] = art_dict.get('fanart')
@@ -525,7 +523,7 @@ class Metadata:
 
         # VRT NU Schedule API (some are missing vrt.whatson-id)
         if api_data.get('vrt.whatson-id') or api_data.get('startTime'):
-            if self._showfanart:
+            if self._kodi.get_setting('showfanart', 'true') == 'true':
                 art_dict['thumb'] = api_data.get('image', 'DefaultAddonVideo.png')
                 art_dict['fanart'] = art_dict.get('thumb')
                 art_dict['banner'] = art_dict.get('fanart')

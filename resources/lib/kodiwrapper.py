@@ -114,13 +114,6 @@ class KodiWrapper:
         self._addon = Addon()
         self._addon_id = to_unicode(self._addon.getAddonInfo('id'))
         self._addon_fanart = to_unicode(self._addon.getAddonInfo('fanart'))
-        self._debug_logging = self.get_global_setting('debug.showloginfo')   # Returns a boolean
-        try:
-            self._max_log_level = int(self.get_setting('max_log_level', 0))  # May return string
-        except TypeError:
-            self._max_log_level = 0
-            self.set_setting('max_log_level', 0)
-        self._usemenucaching = self.get_setting('usemenucaching', 'true') == 'true'
         self._cache_path = self.get_userdata_path() + 'cache/'
         self._tokens_path = self.get_userdata_path() + 'tokens/'
         self._system_locale_works = None
@@ -135,9 +128,10 @@ class KodiWrapper:
 
         xbmcplugin.setPluginFanart(handle=self._handle, image=from_unicode(self._addon_fanart))
 
+        usemenucaching = self.get_setting('usemenucaching', 'true') == 'true'
         if cache is None:
-            cache = self._usemenucaching
-        elif self._usemenucaching is False:
+            cache = usemenucaching
+        elif usemenucaching is False:
             cache = False
 
         if content:
@@ -679,10 +673,14 @@ class KodiWrapper:
             url = None
         return url
 
-    def container_refresh(self, url=''):
+    def container_refresh(self, url=None):
         ''' Refresh the current container or (re)load a container by url '''
-        self.log(3, 'Execute: Container.Refresh({url})', url=url)
-        xbmc.executebuiltin('Container.Refresh({url})'.format(url=url))
+        if url:
+            self.log(3, 'Execute: Container.Refresh({url})', url=url)
+            xbmc.executebuiltin('Container.Refresh({url})'.format(url=url))
+        else:
+            self.log(3, 'Execute: Container.Refresh')
+            xbmc.executebuiltin('Container.Refresh')
 
     def end_of_directory(self):
         ''' Close a virtual directory, required to avoid a waiting Kodi '''
@@ -690,13 +688,15 @@ class KodiWrapper:
 
     def log(self, level=1, message='', **kwargs):
         ''' Log info messages to Kodi '''
-        if not self._debug_logging and not (level <= self._max_log_level and self._max_log_level != 0):
+        debug_logging = self.get_global_setting('debug.showloginfo')  # Returns a boolean
+        max_log_level = int(self.get_setting('max_log_level', 0))
+        if not debug_logging and not (level <= max_log_level and max_log_level != 0):
             return
         if kwargs:
             import string
             message = string.Formatter().vformat(message, (), SafeDict(**kwargs))
         message = '[{addon}] {message}'.format(addon=self._addon_id, message=message)
-        xbmc.log(from_unicode(message), level % 3 if self._debug_logging else 2)
+        xbmc.log(from_unicode(message), level % 3 if debug_logging else 2)
 
     def log_access(self, url, query_string=None):
         ''' Log addon access '''

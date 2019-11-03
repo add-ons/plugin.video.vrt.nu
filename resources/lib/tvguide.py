@@ -36,7 +36,6 @@ class TVGuide:
 
         self._proxies = _kodi.get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
-        self._showfanart = _kodi.get_setting('showfanart', 'true') == 'true'
 
     def show_tvguide(self, date=None, channel=None):
         ''' Offer a menu depending on the information provided '''
