@@ -217,6 +217,9 @@ def show_listing(list_items, category=None, sort='unsorted', ascending=True, con
             # type is one of: video, audio, subtitle
             list_item.addStreamInfo('video', title_item.stream_dict)
 
+        if title_item.id_dict:
+            list_item.setUniqueIDs(title_item.id_dict)
+
         if title_item.context_menu:
             list_item.addContextMenuItems(title_item.context_menu)
 
@@ -255,6 +258,11 @@ def play(stream, video=None):
             type='video',
             infoLabels=video.info_dict
         )
+        set_property('playerinfo.asset_id', video.id_dict['vrt_assetid'])
+        set_property('playerinfo.title', video.title)
+        set_property('playerinfo.url', video.id_dict['vrt_url'])
+        set_property('playerinfo.video_id', video.id_dict['vrt_videoid'])
+        set_property('playerinfo.whatson_id', video.id_dict['vrt_whatsonid'])
     play_item.setProperty('inputstream.adaptive.max_bandwidth', str(get_max_bandwidth() * 1000))
     play_item.setProperty('network.bandwidth', str(get_max_bandwidth() * 1000))
     if stream.stream_url is not None and stream.use_inputstream_adaptive:

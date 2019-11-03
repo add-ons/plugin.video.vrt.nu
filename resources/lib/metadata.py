@@ -508,6 +508,33 @@ class Metadata:
         return ''
 
     @staticmethod
+    def get_unique_ids(api_data):
+        ''' Get unique ids dict from a singke item json api data '''
+        # VRT NU Search API
+        if api_data.get('type') == 'episode':
+            from resumepoints import ResumePoints
+            return dict(
+                vrt_assetid=ResumePoints.assetpath_to_id(api_data.get('assetPath')),
+                vrt_assetpath=api_data.get('assetPath'),
+                vrt_publicationid=api_data.get('publicationId'),
+                vrt_url=api_data.get('url'),
+                vrt_videoid=api_data.get('videoId'),
+                vrt_whatsonid=api_data.get('whatsonId'),
+            )
+
+        # VRT NU Suggest API
+        if api_data.get('type') == 'program':
+            return dict()
+
+        # VRT NU Schedule API (some are missing vrt.whatson-id)
+        if api_data.get('vrt.whatson-id') or api_data.get('startTime'):
+            return dict(
+                vrt_whatsonid=api_data.get('vrt.whatson-id'),
+            )
+
+        return dict()
+
+    @staticmethod
     def get_art(api_data, season=False):
         ''' Get art dict from single item json api data '''
         art_dict = dict()

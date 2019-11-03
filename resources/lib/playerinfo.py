@@ -30,6 +30,7 @@ class PlayerInfo(Player):
         self.title = None
         self.url = None
         self.whatson_id = None
+
         from random import randint
         self.thread_id = randint(1, 10001)
         log(3, '[PlayerInfo %d] Initialized' % self.thread_id)
@@ -37,6 +38,7 @@ class PlayerInfo(Player):
 
     def onPlayBackStarted(self):  # pylint: disable=invalid-name
         ''' Called when user starts playing a file '''
+
         self.path = getInfoLabel('Player.Filenameandpath')
         if self.path.startswith('plugin://plugin.video.vrt.nu/'):
             self.listen = True
@@ -45,6 +47,12 @@ class PlayerInfo(Player):
             return
 
         log(3, '[PlayerInfo %d] Event onPlayBackStarted' % self.thread_id)
+
+#        self.asset_id = get_property('playerinfo.asset_id')
+#        self.title = get_property('playerinfo.title')
+#        self.url = get_property('playerinfo.url')
+#        self.video_id = get_property('playerinfo.video_id')
+#        self.whatson_id = get_property('playerinfo.whatson_id')
 
         # Get asset_id, title and url from api
         ep_id = play_url_to_id(self.path)
@@ -159,6 +167,10 @@ class PlayerInfo(Player):
                 rating=info_tag.getRating(),
                 path=self.path,
                 runtime=self.total,
+                asset_id=self.asset_id,
+                title=self.title,
+                url=self.url,
+                # video_id=self.video_id,
             ))
             if next_info:
                 from binascii import hexlify
@@ -195,7 +207,7 @@ class PlayerInfo(Player):
             position=position,
             total=total,
             whatson_id=self.whatson_id,
-            asynchronous=True
+            asynchronous=True,
         )
 
         # Do not reload container when we are not done playing

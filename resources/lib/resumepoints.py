@@ -67,7 +67,7 @@ class ResumePoints:
         if position is not None and total is not None and position >= total - 30:
             watch_later = False
 
-        self.refresh(ttl=0)
+        # self.refresh(ttl=0)
 
         if watch_later is not None and position is None and total is None and watch_later is self.is_watchlater(asset_id):
             # watchLater status is not changed, nothing to do
@@ -135,6 +135,7 @@ class ResumePoints:
             'content-type': 'application/json',
             'Referer': 'https://www.vrt.be' + url,
         }
+
         from json import dumps
         data = dumps(payload).encode()
         log(2, 'URL post: https://video-user-data.vrt.be/resume_points/{asset_id}', asset_id=asset_id)

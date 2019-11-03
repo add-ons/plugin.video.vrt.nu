@@ -200,6 +200,7 @@ class ApiHelper:
                 art_dict=self._metadata.get_art(episode, season=True),
                 info_dict=info_labels,
                 prop_dict=self._metadata.get_properties(episode),
+                id_dict=self._metadata.get_unique_ids(episode),
             ))
         return season_items, sort, ascending, content
 
@@ -247,6 +248,7 @@ class ApiHelper:
             art_dict=self._metadata.get_art(episode),
             info_dict=info_labels,
             prop_dict=self._metadata.get_properties(episode),
+            id_dict=self._metadata.get_unique_ids(episode),
             context_menu=context_menu,
             is_playable=True,
         ), sort, ascending
@@ -371,6 +373,7 @@ class ApiHelper:
                 art_dict=self._metadata.get_art(episode),
                 info_dict=self._metadata.get_info_labels(episode),
                 prop_dict=self._metadata.get_properties(episode),
+                id_dict=self._metadata.get_unique_ids(episode),
             )
             video = dict(listitem=video_item, video_id=episode.get('videoId'), publication_id=episode.get('publicationId'))
         return video
@@ -439,6 +442,7 @@ class ApiHelper:
                     art_dict=self._metadata.get_art(episode_guess_on),
                     info_dict=self._metadata.get_info_labels(episode_guess_on, channel=channel, date=start_date),
                     prop_dict=self._metadata.get_properties(episode_guess_on),
+                    id_dict=self._metadata.get_unique_ids(episode_guess_on),
                 )
                 video = dict(
                     listitem=video_item,
@@ -465,6 +469,7 @@ class ApiHelper:
             art_dict=self._metadata.get_art(episode),
             info_dict=self._metadata.get_info_labels(episode),
             prop_dict=self._metadata.get_properties(episode),
+            id_dict=self._metadata.get_unique_ids(episode),
         )
         video = dict(listitem=video_item, video_id=episode.get('videoId'), publication_id=episode.get('publicationId'))
         return video
