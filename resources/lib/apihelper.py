@@ -682,7 +682,7 @@ class ApiHelper:
 
         youtube_items = []
 
-        if self._kodi.get_cond_visibility('System.HasAddon(plugin.video.youtube)') == 0 or self._kodi.get_setting('showyoutube') == 'false':
+        if self._kodi.get_cond_visibility('System.HasAddon(plugin.video.youtube)') == 0 or self._kodi.get_setting('showyoutube', 'true') == 'false':
             return youtube_items
 
         for channel in CHANNELS:

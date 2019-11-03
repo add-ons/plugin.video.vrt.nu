@@ -48,7 +48,7 @@ class ResumePoints:
                 import json
                 try:
                     resumepoints_json = json.load(urlopen(req))
-                except Exception:  # pylint: disable=broad-except
+                except (TypeError, ValueError):  # No JSON object could be decoded
                     # Force resumepoints from cache
                     resumepoints_json = self._kodi.get_cache('resume_points.json', ttl=None)
                 else:

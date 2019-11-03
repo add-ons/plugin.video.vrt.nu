@@ -54,6 +54,7 @@ unit: clean
 
 run:
 	@echo -e "$(white)=$(blue) Run CLI$(reset)"
+	python resources/lib/service_entry.py
 	python test/run.py /
 
 zip: clean

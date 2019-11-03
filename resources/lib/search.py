@@ -26,7 +26,7 @@ class Search:
         try:
             with self._kodi.open_file(self._search_history, 'r') as fdesc:
                 history = json.load(fdesc)
-        except Exception:  # pylint: disable=broad-except
+        except (TypeError, ValueError):  # No JSON object could be decoded
             history = []
         return history
 

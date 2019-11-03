@@ -9,14 +9,16 @@
         "ketnet": "false",
         "ketnet-jr": "false",
         "klara": "true",
-        "max_bandwidth": "0",
+        "max_bandwidth": "10000000",
         "max_log_level": "3",
         "mnm": "true",
         "password": "",
         "radio1": "true",
         "radio2": "true",
+        "showoneoff": "true",
         "showpermalink": "true",
         "showsubtitles": "true",
+        "showyoutube": "true",
         "sporza": "true",
         "stubru": "true",
         "usedrm": "true",
@@ -26,12 +28,17 @@
         "usemenucaching": "true",
         "useresumepoints": "true",
         "username": "",
+        "useupnext": "true",
         "version": "",
         "vrtnws": "true",
         "vrtnxt": "true"
     },
+    "plugin.video.youtube": {
+    },
     "script.module.inputstreamhelper": {
         "last_update": "",
         "version": ""
+    },
+    "service.upnext": {
     }
 }

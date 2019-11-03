@@ -627,7 +627,7 @@ class Metadata:
                     try:
                         label = 'S%02dE%02d: %s' % (int(api_data.get('seasonName')), int(api_data.get('episodeNumber')), label)
                         sort = 'dateadded'
-                    except Exception:  # pylint: disable=broad-except
+                    except ValueError:
                         # Season may not always be a perfect number
                         sort = 'episode'
                 elif display_options.get('showEpisodeNumber') and api_data.get('episodeNumber') and ascending:

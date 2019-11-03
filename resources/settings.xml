@@ -10,7 +10,7 @@
     <category label="30740"> <!-- Interface -->
         <setting label="30741" type="lsep"/> <!-- Features -->
         <setting label="30743" help="30744" type="bool" id="usefavorites" default="true"/>
-        <setting label="30745" help="30746" type="action" id="manage_favorites" action="RunPlugin(plugin://plugin.video.vrt.nu/favorites/manage)" enable="eq(-1,true)" subsetting="true"/>
+        <setting label="30745" help="30746" type="action" action="RunPlugin(plugin://plugin.video.vrt.nu/favorites/manage)" enable="eq(-1,true)" subsetting="true"/>  <!-- Manage favorites -->
         <setting label="30747" help="30748" type="bool" id="useresumepoints" default="true" enable="eq(-2,true)" subsetting="true"/>
         <setting label="30749" help="30750" type="bool" id="addmymovies" default="true" enable="eq(-3,true)" subsetting="true"/>
         <setting label="30751" help="30752" type="bool" id="addmydocu" default="true" enable="eq(-4,true)" subsetting="true"/>
@@ -43,34 +43,34 @@
     </category>
     <category label="30860"> <!--Integration -->
         <!-- YouTube -->
-        <setting label="30861" help="30862" type="action" id="youtube_install" action="InstallAddon(plugin.video.youtube)" visible="!System.HasAddon(plugin.video.youtube)"/>
+        <setting label="30861" help="30862" type="action" action="InstallAddon(plugin.video.youtube)" visible="!System.HasAddon(plugin.video.youtube)"/> <!-- Install YouTube add-on -->
         <setting label="30863" help="30862" type="bool" id="showyoutube" default="true" visible="System.HasAddon(plugin.video.youtube)"/>
-        <setting label="30865" help="30866" type="action" id="youtube_settings" option="close" action="Addon.OpenSettings(plugin.video.youtube)" enable="eq(-1,true)" visible="System.HasAddon(plugin.video.youtube)" subsetting="true"/>
+        <setting label="30865" help="30866" type="action" option="close" action="Addon.OpenSettings(plugin.video.youtube)" enable="eq(-1,true)" visible="System.HasAddon(plugin.video.youtube)" subsetting="true"/> <!-- YouTube settings -->
         <!-- UpNext -->
-        <setting label="30867" help="30868" type="action" id="upnext_install" action="InstallAddon(service.upnext)" visible="!System.HasAddon(service.upnext)"/>
+        <setting label="30867" help="30868" type="action" action="InstallAddon(service.upnext)" visible="!System.HasAddon(service.upnext)"/> <!-- Install Up Next add-on -->
         <setting label="30869" help="30868" type="bool" id="useupnext" default="true" visible="System.HasAddon(service.upnext)" />
-        <setting label="30871" help="30872" type="action" id="upnext_settings" action="Addon.OpenSettings(service.upnext)" enable="eq(-1,true)" option="close" visible="System.HasAddon(service.upnext)" subsetting="true"/>
+        <setting label="30871" help="30872" type="action" action="Addon.OpenSettings(service.upnext)" enable="eq(-1,true)" option="close" visible="System.HasAddon(service.upnext)" subsetting="true"/> <!-- Up Next settings -->
         <!-- Twitter -->
-        <!-- setting label="30873" help="30874" type="action" id="twitter_install" action="InstallAddon(service.twitter)" visible="!System.HasAddon(service.twitter)"/ -->
+        <!-- setting label="30873" help="30874" type="action" action="InstallAddon(service.twitter)" visible="!System.HasAddon(service.twitter)"/ -->
         <setting label="30875" help="30874" type="bool" id="usetwitter" default="true" visible="System.HasAddon(service.twitter)"/>
-        <setting label="30877" help="30878" type="action" id="twitter_settings" option="close" action="Addon.OpenSettings(service.twitter)" enable="eq(-1,true)" visible="System.HasAddon(service.twitter)" subsetting="true"/>
+        <setting label="30877" help="30878" type="action" option="close" action="Addon.OpenSettings(service.twitter)" enable="eq(-1,true)" visible="System.HasAddon(service.twitter)" subsetting="true"/>
         <!-- PySocks -->
-        <setting label="30879" help="30880" type="action" id="pysocks_install" action="InstallAddon(script.module.pysocks)" visible="!System.HasAddon(script.module.pysocks)"/>
+        <setting label="30879" help="30880" type="action" action="InstallAddon(script.module.pysocks)" visible="!System.HasAddon(script.module.pysocks)"/>
     </category>
     <category label="30900"> <!-- Expert -->
         <setting label="30901" type="lsep"/> <!-- Cache -->
-        <setting label="30903" help="30904" type="action" id="delete_tokens" action="RunPlugin(plugin://plugin.video.vrt.nu/tokens/delete)"/>
-        <setting label="30905" help="30906" type="action" id="refresh_favorites" action="RunPlugin(plugin://plugin.video.vrt.nu/favorites/refresh)"/>
-        <setting label="30907" help="30908" type="action" id="refresh_resumepoints" action="RunPlugin(plugin://plugin.video.vrt.nu/resumepoints/refresh)"/>
+        <setting label="30903" help="30904" type="action" action="RunPlugin(plugin://plugin.video.vrt.nu/tokens/delete)"/> <!-- Delete tokens -->
+        <setting label="30905" help="30906" type="action" action="RunPlugin(plugin://plugin.video.vrt.nu/favorites/refresh)"/> <!-- Refresh favorites -->
+        <setting label="30907" help="30908" type="action" action="RunPlugin(plugin://plugin.video.vrt.nu/resumepoints/refresh)"/> <!-- Refresh resumepoints -->
         <setting label="30909" help="30910" type="bool" id="usemenucaching" default="true"/>
         <setting label="30911" help="30912" type="bool" id="usehttpcaching" default="true"/>
-        <setting label="30913" help="30914" type="action" id="invalidate_caches" action="RunPlugin(plugin://plugin.video.vrt.nu/cache/delete)" enable="eq(-1,true)" subsetting="true"/>
+        <setting label="30913" help="30914" type="action" action="RunPlugin(plugin://plugin.video.vrt.nu/cache/delete)" enable="eq(-1,true)" subsetting="true"/>
         <setting label="30915" type="lsep"/> <!-- InputStream Adaptive -->
         <setting label="30917" type="action" visible="!System.HasAddon(inputstream.adaptive)" enable="false"/>
         <setting label="30919" help="30920" type="bool" id="useinputstreamadaptive" default="true" visible="System.HasAddon(inputstream.adaptive)"/>
-        <setting label="30921" help="30922" type="action" id="adaptive_settings" option="close" action="Addon.OpenSettings(inputstream.adaptive)" visible="System.HasAddon(inputstream.adaptive) + [String.StartsWith(System.BuildVersion,18) | String.StartsWith(System.BuildVersion,19)]" enable="eq(-1,true)" subsetting="true"/>
-        <setting label="30923" help="30924" type="action" id="ishelper_info" action="RunScript(script.module.inputstreamhelper, info)" enable="eq(-2,true)"/>
-        <setting label="30925" help="30926" type="action" id="ishelper_settings" option="close" action="Addon.OpenSettings(script.module.inputstreamhelper)" enable="eq(-3,true)" subsetting="true"/>
+        <setting label="30921" help="30922" type="action" option="close" action="Addon.OpenSettings(inputstream.adaptive)" visible="System.HasAddon(inputstream.adaptive) + [String.StartsWith(System.BuildVersion,18) | String.StartsWith(System.BuildVersion,19)]" enable="eq(-1,true)" subsetting="true"/> <!-- InputStream Adaptive settings -->
+        <setting label="30923" help="30924" type="action" action="RunScript(script.module.inputstreamhelper, info)" enable="eq(-2,true)"/> <!-- InputStream Helper information -->
+        <setting label="30925" help="30926" type="action" option="close" action="Addon.OpenSettings(script.module.inputstreamhelper)" enable="eq(-3,true)" subsetting="true"/> <!-- InputStream Helper settings -->
         <setting label="30927" type="lsep"/> <!-- Logging -->
         <setting label="30929" help="30930" type="enum" id="max_log_level" lvalues="30430|30431|30432|30433" default="0"/>
     </category>
