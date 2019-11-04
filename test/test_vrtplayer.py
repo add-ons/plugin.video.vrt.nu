@@ -105,7 +105,7 @@ class TestVRTPlayer(unittest.TestCase):
     def test_featured(self):
         ''' Test to ensure our hardcoded categories conforms to scraped categories '''
         featured_items = self._apihelper.list_featured()
-        self.assertEqual(len(featured_items), 7)
+        self.assertEqual(len(featured_items), 9)
 
 
 if __name__ == '__main__':

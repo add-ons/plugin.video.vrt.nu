@@ -274,7 +274,7 @@ class KodiWrapper:
     def get_search_string(self):
         ''' Ask the user for a search string '''
         search_string = None
-        keyboard = xbmc.Keyboard('', self.localize(30097))
+        keyboard = xbmc.Keyboard('', self.localize(30134))
         keyboard.doModal()
         if keyboard.isConfirmed():
             search_string = to_unicode(keyboard.getText())
