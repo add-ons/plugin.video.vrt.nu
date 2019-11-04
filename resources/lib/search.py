@@ -85,7 +85,7 @@ class Search:
         from apihelper import ApiHelper
         search_items, sort, ascending, content = ApiHelper(self._kodi, self._favorites, self._resumepoints).list_search(keywords, page=page)
         if not search_items:
-            self._kodi.show_ok_dialog(heading=self._kodi.localize(30098), message=self._kodi.localize(30099, keywords=keywords))
+            self._kodi.show_ok_dialog(heading=self._kodi.localize(30135), message=self._kodi.localize(30136, keywords=keywords))
             self._kodi.end_of_directory()
             return
 

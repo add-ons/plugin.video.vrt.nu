@@ -175,7 +175,7 @@ class ApiHelper:
         # Add an "* All seasons" list item
         if self._kodi.get_global_setting('videolibrary.showallitems') is True:
             season_items.append(TitleItem(
-                title=self._kodi.localize(30096),
+                title=self._kodi.localize(30133),
                 path=self._kodi.url_for('programs', program=program, season='allseasons'),
                 art_dict=self._metadata.get_art(episode, season='allseasons'),
                 info_dict=info_labels,
@@ -192,7 +192,7 @@ class ApiHelper:
             except IndexError:
                 episode = episodes[0]
 
-            label = '%s %s' % (self._kodi.localize(30094), season_key)
+            label = '%s %s' % (self._kodi.localize(30131), season_key)
             season_items.append(TitleItem(
                 title=label,
                 path=self._kodi.url_for('programs', program=program, season=season_key),
@@ -640,7 +640,7 @@ class ApiHelper:
                     path = self._kodi.url_for('play_id', video_id=channel.get('live_stream_id'))
                 elif channel.get('live_stream'):
                     path = self._kodi.url_for('play_url', video_url=channel.get('live_stream'))
-                label = self._kodi.localize(30101, **channel)
+                label = self._kodi.localize(30141, **channel)  # Channel live
                 playing_now = _tvguide.playing_now(channel.get('name'))
                 if playing_now:
                     label += ' [COLOR yellow]| %s[/COLOR]' % playing_now
@@ -651,9 +651,9 @@ class ApiHelper:
                 if channel.get('name') in ['een', 'canvas', 'ketnet']:
                     if self._kodi.get_setting('showfanart', 'true') == 'true':
                         art_dict['fanart'] = self.get_live_screenshot(channel.get('name', art_dict.get('fanart')))
-                    plot = '%s\n\n%s' % (self._kodi.localize(30102, **channel), _tvguide.live_description(channel.get('name')))
+                    plot = '%s\n\n%s' % (self._kodi.localize(30142, **channel), _tvguide.live_description(channel.get('name')))
                 else:
-                    plot = self._kodi.localize(30102, **channel)
+                    plot = self._kodi.localize(30142, **channel)  # Watch live
                 # NOTE: Playcount is required to not have live streams as "Watched"
                 info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video', playcount=0, duration=0)
                 stream_dict = dict(duration=0)
@@ -700,11 +700,11 @@ class ApiHelper:
 
             if channel.get('youtube'):
                 path = channel.get('youtube')
-                label = self._kodi.localize(30103, **channel)
+                label = self._kodi.localize(30143, **channel)  # Channel on YouTube
                 # A single Live channel means it is the entry for channel's TV Show listing, so make it stand out
                 if channels and len(channels) == 1:
                     label = '[B]%s[/B]' % label
-                plot = self._kodi.localize(30104, **channel)
+                plot = self._kodi.localize(30144, **channel)  # Watch on YouTube
                 # NOTE: Playcount is required to not have live streams as "Watched"
                 info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video', playcount=0)
                 context_menu.append((

@@ -632,7 +632,7 @@ class Metadata:
                         sort = 'episode'
                 elif display_options.get('showEpisodeNumber') and api_data.get('episodeNumber') and ascending:
                     # NOTE: Do not prefix with "Episode X" when sorting by episode
-                    # label = '%s %s: %s' % (self._kodi.localize(30095), api_data.get('episodeNumber'), label)
+                    # label = '%s %s: %s' % (self._kodi.localize(30132), api_data.get('episodeNumber'), label)
                     sort = 'episode'
                 elif display_options.get('showBroadcastDate') and api_data.get('formattedBroadcastShortDate'):
                     label = '%s - %s' % (api_data.get('formattedBroadcastShortDate'), label)

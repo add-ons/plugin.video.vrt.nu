@@ -237,72 +237,80 @@ msgid "Science and nature"
 msgstr "Wetenschap en natuur"
 
 ### FEATURED
-msgctxt "#30087"
+msgctxt "#30100"
 msgid "Online exclusive"
 msgstr "Exclusief online"
 
-msgctxt "#30088"
+msgctxt "#30101"
 msgid "Last episode"
 msgstr "Laatste aflevering"
 
-msgctxt "#30089"
+msgctxt "#30102"
 msgid "Last chance"
 msgstr "Laatste kans"
 
-msgctxt "#30090"
+msgctxt "#30103"
 msgid "New"
 msgstr "Nieuw"
 
-msgctxt "#30091"
+msgctxt "#30104"
 msgid "Full season"
 msgstr "Volledig seizoen"
 
-msgctxt "#30092"
+msgctxt "#30105"
 msgid "Complete series"
 msgstr "Volledige reeks"
 
-msgctxt "#30093"
+msgctxt "#30106"
+msgid "Brand new"
+msgstr "Gloednieuw"
+
+msgctxt "#30107"
+msgid "New episodes"
+msgstr "Nieuwe afleveringen"
+
+msgctxt "#30120"
 msgid "Short film"
 msgstr "Kortfilm"
 
 ### APPLICATION
-msgctxt "#30094"
+msgctxt "#30131"
 msgid "Season"
 msgstr "Seizoen"
 
-msgctxt "#30095"
+msgctxt "#30132"
 msgid "Episode"
 msgstr "Aflevering"
 
-msgctxt "#30096"
+msgctxt "#30133"
 msgid "* All seasons"
 msgstr "* Alle seizoenen"
 
-msgctxt "#30097"
+msgctxt "#30134"
 msgid "Enter search string"
 msgstr "Geef zoektermen op"
 
-msgctxt "#30098"
+msgctxt "#30135"
 msgid "Nothing found"
 msgstr "Niets gevonden"
 
-msgctxt "#30099"
+msgctxt "#30136"
 msgid "Nothing was found when searching for: {keywords}"
 msgstr "Er werd niets gevonden bij het zoeken naar: {keywords}"
 
-msgctxt "#30101"
+msgctxt "#30141"
 msgid "{label} live"
 msgstr "{label} live"
 
-msgctxt "#30102"
+msgctxt "#30142"
 msgid "Watch [B]{label}[/B] live via Internet"
 msgstr "Bekijk [B]{label}[/B] live via Internet"
 
-msgctxt "#30103"
+msgctxt "#30143"
 msgid "{label} on YouTube"
 msgstr "{label} op YouTube"
 
-msgctxt "#30104"
+msgctxt "#30144"
 msgid "Watch [B]{label}[/B] on YouTube"
 msgstr "Bekijk [B]{label}[/B] op YouTube"
 
