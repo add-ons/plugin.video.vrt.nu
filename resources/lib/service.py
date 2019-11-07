@@ -102,7 +102,7 @@ class VrtMonitor(Monitor):
         self._kodi.log(2, '[PlayerPosition] resumepoint update {info} {container}', info=episode.get('title'), container=current_container)
         if current_container is None or self._container == current_container:
             self._kodi.log(2, '[PlayerPosition] update container {info}', info=self._container)
-            self._kodi.container_refresh(self._container)
+            self._kodi.container_update(self._container)
 
     def push_upnext(self, info):
         ''' Push episode info to Up Next service add-on'''
