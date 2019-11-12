@@ -150,40 +150,64 @@ class Metadata:
 
         return context_menu, favorite_marker, watchlater_marker
 
+    @staticmethod
+    def get_assetpath(api_data):
+        ''' Get assetpath from single item json api data '''
+        assetpath = None
+
+        # VRT NU Search API
+        if api_data.get('type') == 'episode':
+            assetpath = api_data.get('assetPath')
+
+        return assetpath
+
+    def get_playcount(self, api_data):
+        ''' Get playcount from single item json api data '''
+        playcount = None
+        # Only fill in playcount when using VRT NU resumepoints because setting playcount breaks standard Kodi watched status
+        if self._resumepoints.is_activated():
+            assetpath = self.get_assetpath(api_data)
+            if assetpath:
+                assetuuid = self._resumepoints.assetpath_to_uuid(assetpath)
+                position = self._resumepoints.get_position(assetuuid)
+                total = self._resumepoints.get_total(assetuuid)
+                if position and total and position > total - SECONDS_MARGIN:
+                    playcount = 1
+        return playcount
+
     def get_properties(self, api_data):
         ''' Get properties from single item json api data '''
         properties = dict()
 
-        # Only fill in properties when using VRT NU resumepoints because setting resumetime/totaltime breaks standard Kodi watch status
+        # Only fill in properties when using VRT NU resumepoints because setting resumetime/totaltime breaks standard Kodi watched status
         if self._resumepoints.is_activated():
-            # VRT NU Search API
-            if api_data.get('type') == 'episode':
-                assetpath = api_data.get('assetPath')
-                if assetpath:
-                    # We need to ensure forward slashes are quoted
-                    program_title = statichelper.to_unicode(quote_plus(statichelper.from_unicode(api_data.get('program'))))
+            assetpath = self.get_assetpath(api_data)
+            if assetpath:
+                # We need to ensure forward slashes are quoted
+                program_title = statichelper.to_unicode(quote_plus(statichelper.from_unicode(api_data.get('program'))))
 
-                    assetuuid = self._resumepoints.assetpath_to_uuid(assetpath)
-                    url = statichelper.reformat_url(api_data.get('url', ''), 'medium')
-                    properties.update(assetuuid=assetuuid, url=url, title=program_title)
+                assetuuid = self._resumepoints.assetpath_to_uuid(assetpath)
+                url = statichelper.reformat_url(api_data.get('url', ''), 'medium')
+                properties.update(assetuuid=assetuuid, url=url, title=program_title)
 
-                    position = self._resumepoints.get_position(assetuuid)
-                    total = self._resumepoints.get_total(assetuuid)
-                    if position and total and SECONDS_MARGIN < position < total - SECONDS_MARGIN:
-                        properties['resumetime'] = position
+                position = self._resumepoints.get_position(assetuuid)
+                total = self._resumepoints.get_total(assetuuid)
+                if position and total and SECONDS_MARGIN < position < total - SECONDS_MARGIN:
+                    properties['resumetime'] = position
+                    self._kodi.log(2, '[Metadata] manual resumetime set to %d' % position)
 
-                duration = self.get_duration(api_data)
-                if duration:
-                    properties['totaltime'] = duration
+            duration = self.get_duration(api_data)
+            if duration:
+                properties['totaltime'] = duration
 
-                episode = self.get_episode(api_data)
-                season = self.get_season(api_data)
-                if episode and season:
-                    properties['episodeno'] = 's%se%s' % (season, episode)
+            episode = self.get_episode(api_data)
+            season = self.get_season(api_data)
+            if episode and season:
+                properties['episodeno'] = 's%se%s' % (season, episode)
 
-                year = self.get_year(api_data)
-                if year:
-                    properties['year'] = year
+            year = self.get_year(api_data)
+            if year:
+                properties['year'] = year
 
         return properties
 
@@ -550,6 +574,7 @@ class Metadata:
                 dateadded=self.get_dateadded(api_data),
                 episode=self.get_episode(api_data),
                 season=self.get_season(api_data),
+                playcount=self.get_playcount(api_data),
                 plot=self.get_plot(api_data, season=season),
                 plotoutline=self.get_plotoutline(api_data, season=season),
                 tagline=self.get_plotoutline(api_data, season=season),
