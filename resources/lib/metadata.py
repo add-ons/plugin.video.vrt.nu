@@ -163,7 +163,7 @@ class Metadata:
 
     def get_playcount(self, api_data):
         ''' Get playcount from single item json api data '''
-        playcount = None
+        playcount = -1
         # Only fill in playcount when using VRT NU resumepoints because setting playcount breaks standard Kodi watched status
         if self._resumepoints.is_activated():
             assetpath = self.get_assetpath(api_data)

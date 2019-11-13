@@ -23,10 +23,10 @@ class VrtMonitor(Monitor):
         self._kodi = KodiWrapper(None)
         self._resumepoints = ResumePoints(self._kodi)
         self._container = None
-        if self._resumepoints.is_activated():
-            self._playerinfo = PlayerInfo(info=self.handle_info)
-            self._favorites = Favorites(self._kodi)
-            self._apihelper = ApiHelper(self._kodi, self._favorites, self._resumepoints)
+        self._playerinfo = None
+        self._favorites = None
+        self._apihelper = None
+        self.init_watching_activity()
         Monitor.__init__(self)
 
     def run(self):
@@ -34,6 +34,17 @@ class VrtMonitor(Monitor):
         while not self.abortRequested():
             if self.waitForAbort(10):
                 break
+
+    def init_watching_activity(self):
+        ''' Only load components for watching activity when needed '''
+
+        if self._resumepoints.is_activated():
+            if not self._playerinfo:
+                self._playerinfo = PlayerInfo(info=self.handle_info)
+            if not self._favorites:
+                self._favorites = Favorites(self._kodi)
+            if not self._apihelper:
+                self._apihelper = ApiHelper(self._kodi, self._favorites, self._resumepoints)
 
     def onNotification(self, sender, method, data):  # pylint: disable=invalid-name
         ''' Handler for notifications '''
@@ -66,6 +77,11 @@ class VrtMonitor(Monitor):
         TokenResolver(self._kodi).refresh_login()
 
         self._kodi.invalidate_caches('continue-*.json', 'favorites.json', 'my-offline-*.json', 'my-recent-*.json', 'resume_points.json', 'watchlater-*.json')
+
+        # Init watching activity again when settings change
+        self.init_watching_activity()
+
+        # Refresh container when settings change
         self._kodi.container_refresh()
 
     def handle_info(self, info):
@@ -97,7 +113,7 @@ class VrtMonitor(Monitor):
         url = url_to_episode(episode.get('url', ''))
         # Push resumepoint to VRT NU
         self._resumepoints.update(uuid=uuid, title=title, url=url, watch_later=None, position=info.get('position'), total=info.get('total'))
-        # Only refresh container if the play action was initiated from it
+        # Only update container if the play action was initiated from it
         current_container = self._kodi.current_container_url()
         self._kodi.log(2, '[PlayerPosition] resumepoint update {info} {container}', info=episode.get('title'), container=current_container)
         if current_container is None or self._container == current_container:

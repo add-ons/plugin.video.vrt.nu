@@ -688,8 +688,9 @@ class KodiWrapper:
             self.log(3, 'Execute: Container.Update({url})', url=url)
             xbmc.executebuiltin('Container.Update({url})'.format(url=url))
         else:
-            self.log(3, 'Execute: Container.Update')
-            xbmc.executebuiltin('Container.Update')
+            # Url is a mandatory argument for Container.Update, use Container.Refresh instead
+            self.log(3, 'Execute: Container.Refresh')
+            xbmc.executebuiltin('Container.Refresh')
 
     def end_of_directory(self):
         ''' Close a virtual directory, required to avoid a waiting Kodi '''
