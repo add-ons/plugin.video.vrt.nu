@@ -15,13 +15,14 @@ from statichelper import from_unicode, to_unicode
 
 # pylint: disable=invalid-name
 plugin = Plugin()
-kodi = KodiWrapper(globals())
+glob = globals()
 
 
 @plugin.route('/')
 def main_menu():
     ''' The VRT NU plugin main menu '''
     from vrtplayer import VRTPlayer
+    kodi = KodiWrapper(glob)
     VRTPlayer(kodi).show_main_menu()
 
 
@@ -29,6 +30,7 @@ def main_menu():
 @plugin.route('/cache/delete/<cache_file>')
 def delete_cache(cache_file='*.json'):
     ''' The API interface to delete caches '''
+    kodi = KodiWrapper(glob)
     kodi.refresh_caches(cache_file=cache_file)
 
 
@@ -36,6 +38,7 @@ def delete_cache(cache_file='*.json'):
 def delete_tokens():
     ''' The API interface to delete all VRT tokens '''
     from tokenresolver import TokenResolver
+    kodi = KodiWrapper(glob)
     TokenResolver(kodi).delete_tokens()
 
 
@@ -43,6 +46,7 @@ def delete_tokens():
 def follow(program, title):
     ''' The API interface to follow a program used by the context menu '''
     from favorites import Favorites
+    kodi = KodiWrapper(glob)
     Favorites(kodi).follow(program=program, title=to_unicode(unquote_plus(from_unicode(title))))
 
 
@@ -51,6 +55,7 @@ def unfollow(program, title):
     ''' The API interface to unfollow a program used by the context menu '''
     move_down = bool(plugin.args.get('move_down'))
     from favorites import Favorites
+    kodi = KodiWrapper(glob)
     Favorites(kodi).unfollow(program=program, title=to_unicode(unquote_plus(from_unicode(title))), move_down=move_down)
 
 
@@ -58,6 +63,7 @@ def unfollow(program, title):
 def watchlater(uuid, title, url):
     ''' The API interface to watch an episode used by the context menu '''
     from resumepoints import ResumePoints
+    kodi = KodiWrapper(glob)
     ResumePoints(kodi).watchlater(uuid=uuid, title=to_unicode(unquote_plus(from_unicode(title))), url=url)
 
 
@@ -65,6 +71,7 @@ def watchlater(uuid, title, url):
 def unwatchlater(uuid, title, url):
     ''' The API interface to unwatch an episode used by the context menu '''
     from resumepoints import ResumePoints
+    kodi = KodiWrapper(glob)
     ResumePoints(kodi).unwatchlater(uuid=uuid, title=to_unicode(unquote_plus(from_unicode(title))), url=url)
 
 
@@ -72,6 +79,7 @@ def unwatchlater(uuid, title, url):
 def favorites_menu():
     ''' The My favorites menu '''
     from vrtplayer import VRTPlayer
+    kodi = KodiWrapper(glob)
     VRTPlayer(kodi).show_favorites_menu()
 
 
@@ -79,6 +87,7 @@ def favorites_menu():
 def favorites_programs():
     ''' The favorites 'My programs' listing '''
     from vrtplayer import VRTPlayer
+    kodi = KodiWrapper(glob)
     VRTPlayer(kodi).show_tvshow_menu(use_favorites=True)
 
 
@@ -86,6 +95,7 @@ def favorites_programs():
 def favorites_docu():
     ''' The favorites docu listing '''
     from vrtplayer import VRTPlayer
+    kodi = KodiWrapper(glob)
     VRTPlayer(kodi).show_favorites_docu_menu()
 
 
@@ -94,6 +104,7 @@ def favorites_docu():
 def favorites_recent(page=1):
     ''' The favorites recent listing '''
     from vrtplayer import VRTPlayer
+    kodi = KodiWrapper(glob)
     VRTPlayer(kodi).show_recent_menu(page=page, use_favorites=True)
 
 
@@ -102,6 +113,7 @@ def favorites_recent(page=1):
 def favorites_offline(page=1):
     ''' The favorites offline listing '''
     from vrtplayer import VRTPlayer
+    kodi = KodiWrapper(glob)
     VRTPlayer(kodi).show_offline_menu(page=page, use_favorites=True)
 
 
@@ -109,6 +121,7 @@ def favorites_offline(page=1):
 def favorites_refresh():
     ''' The API interface to refresh the favorites cache '''
     from favorites import Favorites
+    kodi = KodiWrapper(glob)
     Favorites(kodi).refresh(ttl=0)
     kodi.show_notification(message=kodi.localize(30982))
 
@@ -117,6 +130,7 @@ def favorites_refresh():
 def favorites_manage():
     ''' The API interface to manage your favorites '''
     from favorites import Favorites
+    kodi = KodiWrapper(glob)
     Favorites(kodi).manage()
 
 
@@ -124,6 +138,7 @@ def favorites_manage():
 def resumepoints_continue():
     ''' The resumepoints continue listing '''
     from vrtplayer import VRTPlayer
+    kodi = KodiWrapper(glob)
     VRTPlayer(kodi).show_continue_menu(page=1)
 
 
@@ -131,6 +146,7 @@ def resumepoints_continue():
 def resumepoints_refresh():
     ''' The API interface to refresh the resumepoints cache '''
     from resumepoints import ResumePoints
+    kodi = KodiWrapper(glob)
     ResumePoints(kodi).refresh(ttl=0)
     kodi.show_notification(message=kodi.localize(30983))
 
@@ -139,6 +155,7 @@ def resumepoints_refresh():
 def resumepoints_watchlater():
     ''' The resumepoints watchlater listing '''
     from vrtplayer import VRTPlayer
+    kodi = KodiWrapper(glob)
     VRTPlayer(kodi).show_watchlater_menu(page=1)
 
 
@@ -148,6 +165,7 @@ def resumepoints_watchlater():
 def programs(program=None, season=None):
     ''' The Programs / Seasons / Episodes listing '''
     from vrtplayer import VRTPlayer
+    kodi = KodiWrapper(glob)
     if program:
         VRTPlayer(kodi).show_episodes_menu(program=program, season=season)
     else:
@@ -159,6 +177,7 @@ def programs(program=None, season=None):
 def categories(category=None):
     ''' The categories menu and listing '''
     from vrtplayer import VRTPlayer
+    kodi = KodiWrapper(glob)
     VRTPlayer(kodi).show_category_menu(category=category)
 
 
@@ -167,6 +186,7 @@ def categories(category=None):
 def channels(channel=None):
     ''' The channels menu and listing '''
     from vrtplayer import VRTPlayer
+    kodi = KodiWrapper(glob)
     VRTPlayer(kodi).show_channels_menu(channel=channel)
 
 
@@ -174,6 +194,7 @@ def channels(channel=None):
 def livetv():
     ''' The livetv menu '''
     from vrtplayer import VRTPlayer
+    kodi = KodiWrapper(glob)
     VRTPlayer(kodi).show_livetv_menu()
 
 
@@ -182,6 +203,7 @@ def livetv():
 def recent(page=1):
     ''' The most recent items listing '''
     from vrtplayer import VRTPlayer
+    kodi = KodiWrapper(glob)
     VRTPlayer(kodi).show_recent_menu(page=page)
 
 
@@ -190,6 +212,7 @@ def recent(page=1):
 def offline(page=1):
     ''' The soon offline listing '''
     from vrtplayer import VRTPlayer
+    kodi = KodiWrapper(glob)
     VRTPlayer(kodi).show_offline_menu(page=page)
 
 
@@ -198,6 +221,7 @@ def offline(page=1):
 def featured(feature=None):
     ''' The featured menu and listing '''
     from vrtplayer import VRTPlayer
+    kodi = KodiWrapper(glob)
     VRTPlayer(kodi).show_featured_menu(feature=feature)
 
 
@@ -208,6 +232,7 @@ def featured(feature=None):
 def tvguide(date=None, channel=None):
     ''' The TV guide menu and listings by date '''
     from tvguide import TVGuide
+    kodi = KodiWrapper(glob)
     TVGuide(kodi).show_tvguide(date=date, channel=channel)
 
 
@@ -217,6 +242,7 @@ def tvguide(date=None, channel=None):
 def tvguide_channel(channel=None, date=None):
     ''' The TV guide menu and listings by channel '''
     from tvguide import TVGuide
+    kodi = KodiWrapper(glob)
     TVGuide(kodi).show_tvguide(channel=channel, date=date)
 
 
@@ -224,6 +250,7 @@ def tvguide_channel(channel=None, date=None):
 def search():
     ''' The Search menu and history '''
     from search import Search
+    kodi = KodiWrapper(glob)
     Search(kodi).search_menu()
 
 
@@ -231,6 +258,7 @@ def search():
 def clear_search():
     ''' Clear the search history '''
     from search import Search
+    kodi = KodiWrapper(glob)
     Search(kodi).clear()
 
 
@@ -238,6 +266,7 @@ def clear_search():
 def add_search(keywords):
     ''' Add to search history '''
     from search import Search
+    kodi = KodiWrapper(glob)
     Search(kodi).add(keywords)
 
 
@@ -245,6 +274,7 @@ def add_search(keywords):
 def remove_search(keywords):
     ''' Remove from search history '''
     from search import Search
+    kodi = KodiWrapper(glob)
     Search(kodi).remove(keywords)
 
 
@@ -254,6 +284,7 @@ def remove_search(keywords):
 def search_query(keywords=None, page=1):
     ''' The Search interface and query listing '''
     from search import Search
+    kodi = KodiWrapper(glob)
     Search(kodi).search(keywords=keywords, page=page)
 
 
@@ -262,6 +293,7 @@ def search_query(keywords=None, page=1):
 def play_id(video_id, publication_id=None):
     ''' The API interface to play a video by video_id and/or publication_id '''
     from vrtplayer import VRTPlayer
+    kodi = KodiWrapper(glob)
     VRTPlayer(kodi).play(dict(video_id=video_id, publication_id=publication_id))
 
 
@@ -269,6 +301,7 @@ def play_id(video_id, publication_id=None):
 def play_url(video_url):
     ''' The API interface to play a video by using a URL '''
     from vrtplayer import VRTPlayer
+    kodi = KodiWrapper(glob)
     VRTPlayer(kodi).play(dict(video_url=video_url))
 
 
@@ -276,6 +309,7 @@ def play_url(video_url):
 def play_latest(program):
     ''' The API interface to play the latest episode of a program '''
     from vrtplayer import VRTPlayer
+    kodi = KodiWrapper(glob)
     VRTPlayer(kodi).play_latest_episode(program=program)
 
 
@@ -283,6 +317,7 @@ def play_latest(program):
 def play_whatson(whatson_id):
     ''' The API interface to play a video by whatson_id '''
     from vrtplayer import VRTPlayer
+    kodi = KodiWrapper(glob)
     VRTPlayer(kodi).play_whatson(whatson_id=whatson_id)
 
 
@@ -291,10 +326,13 @@ def play_whatson(whatson_id):
 def play_by_air_date(channel, start_date, end_date=None):
     ''' The API interface to play an episode of a program given the channel and the air date in iso format (2019-07-06T19:35:00) '''
     from vrtplayer import VRTPlayer
+    kodi = KodiWrapper(glob)
     VRTPlayer(kodi).play_episode_by_air_date(channel, start_date, end_date)
 
 
-def run(argv):
+def run():
     ''' Addon entry point from wrapper '''
-    kodi.log_access(argv[0])
-    plugin.run(argv)
+    import sys
+    kodi = KodiWrapper(glob)
+    kodi.log_access(sys.argv[0])
+    plugin.run(sys.argv)

@@ -5,7 +5,8 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
-from addon import kodi
+from addon import glob
+from kodiwrapper import KodiWrapper
 from tokenresolver import TokenResolver
 
 xbmc = __import__('xbmc')
@@ -17,6 +18,7 @@ xbmcvfs = __import__('xbmcvfs')
 
 class TokenResolverTests(unittest.TestCase):
 
+    kodi = KodiWrapper(glob)
     _tokenresolver = TokenResolver(kodi)
 
     def test_refresh_login(self):

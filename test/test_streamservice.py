@@ -14,8 +14,9 @@ try:
 except ImportError:
     from urllib2 import HTTPError
 
-from addon import kodi
+from addon import glob
 from data import CHANNELS
+from kodiwrapper import KodiWrapper
 from streamservice import StreamService
 from tokenresolver import TokenResolver
 
@@ -34,6 +35,7 @@ yesterday = now + timedelta(days=-1)
 
 class StreamServiceTests(unittest.TestCase):
 
+    kodi = KodiWrapper(glob)
     _tokenresolver = TokenResolver(kodi)
     _streamservice = StreamService(kodi, _tokenresolver)
 

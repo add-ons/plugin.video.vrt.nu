@@ -6,10 +6,11 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 import random
 import unittest
-from addon import kodi
+from addon import glob
 from apihelper import ApiHelper
 from data import CATEGORIES
 from favorites import Favorites
+from kodiwrapper import KodiWrapper
 from resumepoints import ResumePoints
 from vrtplayer import VRTPlayer
 
@@ -22,6 +23,7 @@ xbmcvfs = __import__('xbmcvfs')
 
 class TestVRTPlayer(unittest.TestCase):
 
+    kodi = KodiWrapper(glob)
     _favorites = Favorites(kodi)
     _resumepoints = ResumePoints(kodi)
     _apihelper = ApiHelper(kodi, _favorites, _resumepoints)

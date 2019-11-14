@@ -5,10 +5,11 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
-from addon import kodi
+from addon import glob
 from apihelper import ApiHelper
 from data import CHANNELS
 from favorites import Favorites
+from kodiwrapper import KodiWrapper
 from resumepoints import ResumePoints
 from xbmcextra import kodi_to_ansi
 
@@ -21,6 +22,7 @@ xbmcvfs = __import__('xbmcvfs')
 
 class ApiHelperTests(unittest.TestCase):
 
+    kodi = KodiWrapper(glob)
     _favorites = Favorites(kodi)
     _resumepoints = ResumePoints(kodi)
     _apihelper = ApiHelper(kodi, _favorites, _resumepoints)
