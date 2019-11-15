@@ -3,8 +3,11 @@
 ''' This module contains all functionality for VRT NU API authentication. '''
 
 from __future__ import absolute_import, division, unicode_literals
-import json
 from statichelper import from_unicode
+from kodiutils import (delete, exists, get_proxies, get_setting, get_tokens_path,
+                       get_userdata_path, has_credentials, invalidate_caches, listdir, localize, log,
+                       log_error, mkdir, notification, ok_dialog, open_file, open_settings,
+                       set_setting)
 
 try:  # Python 3
     import http.cookiejar as cookielib
@@ -35,10 +38,9 @@ class TokenResolver:
     _USER_TOKEN_GATEWAY_URL = 'https://token.vrt.be/vrtnuinitlogin?provider=site&destination=https://www.vrt.be/vrtnu/'
     _ROAMING_TOKEN_GATEWAY_URL = 'https://token.vrt.be/vrtnuinitloginEU?destination=https://www.vrt.be/vrtnu/'
 
-    def __init__(self, _kodi):
+    def __init__(self):
         ''' Initialize Token Resolver class '''
-        self._kodi = _kodi
-        self._proxies = _kodi.get_proxies()
+        self._proxies = get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
 
     def get_playertoken(self, token_url, token_variant=None, roaming=False):
@@ -49,7 +51,7 @@ class TokenResolver:
             xvrttoken_variant = 'roaming'
             # Delete cached playertoken
             path = self._get_token_path('vrtPlayerToken', token_variant)
-            self._kodi.delete_file(path)
+            delete(path)
         else:
             token = self._get_cached_token('vrtPlayerToken', token_variant)
 
@@ -81,49 +83,53 @@ class TokenResolver:
                 token = self.login(token_variant=token_variant)
         return token
 
-    def _get_token_path(self, token_name, token_variant):
+    @staticmethod
+    def _get_token_path(token_name, token_variant):
         ''' Create token path following predefined file naming rules '''
         prefix = token_variant + '_' if token_variant else ''
-        token_path = self._kodi.get_tokens_path() + prefix + token_name.replace('-', '') + '.tkn'
+        token_path = get_tokens_path() + prefix + token_name.replace('-', '') + '.tkn'
         return token_path
 
     def _get_cached_token(self, token_name, token_variant=None):
         ''' Return a cached token '''
+        from json import load
         cached_token = None
         path = self._get_token_path(token_name, token_variant)
 
-        if self._kodi.check_if_path_exists(path):
+        if exists(path):
             from datetime import datetime
             import dateutil.parser
             import dateutil.tz
-            with self._kodi.open_file(path) as fdesc:
-                token = json.load(fdesc)
+            with open_file(path) as fdesc:
+                token = load(fdesc)
             now = datetime.now(dateutil.tz.tzlocal())
             exp = dateutil.parser.parse(token.get('expirationDate'))
             if exp > now:
-                self._kodi.log(3, "Got cached token '{path}'", path=path)
+                log(3, "Got cached token '{path}'", path=path)
                 cached_token = token.get(token_name)
             else:
-                self._kodi.log(2, "Cached token '{path}' deleted", path=path)
-                self._kodi.delete_file(path)
+                log(2, "Cached token '{path}' deleted", path=path)
+                delete(path)
         return cached_token
 
     def _set_cached_token(self, token, token_variant=None):
         ''' Save token to cache'''
+        from json import dump
         token_name = list(token.keys())[0]
         path = self._get_token_path(token_name, token_variant)
 
-        if not self._kodi.check_if_path_exists(self._kodi.get_tokens_path()):
-            self._kodi.mkdir(self._kodi.get_tokens_path())
+        if not exists(get_tokens_path()):
+            mkdir(get_tokens_path())
 
-        with self._kodi.open_file(path, 'w') as fdesc:
-            json.dump(token, fdesc)
+        with open_file(path, 'w') as fdesc:
+            dump(token, fdesc)
 
     def _get_new_playertoken(self, token_url, headers, token_variant=None):
         ''' Get new playertoken from VRT Token API '''
-        self._kodi.log(2, 'URL post: {url}', url=unquote(token_url))
+        from json import load
+        log(2, 'URL post: {url}', url=unquote(token_url))
         req = Request(token_url, data=b'', headers=headers)
-        playertoken = json.load(urlopen(req))
+        playertoken = load(urlopen(req))
         if playertoken is not None:
             self._set_cached_token(playertoken, token_variant)
         return playertoken.get('vrtPlayerToken')
@@ -131,10 +137,10 @@ class TokenResolver:
     def login(self, refresh=False, token_variant=None):
         ''' Kodi GUI login flow '''
         # If no credentials, ask user for credentials
-        if not self._kodi.credentials_filled_in():
+        if not has_credentials():
             if refresh:
-                return self._kodi.open_settings()
-            self._kodi.open_settings()
+                return open_settings()
+            open_settings()
             if not self._credentials_changed():
                 return None
 
@@ -145,17 +151,17 @@ class TokenResolver:
         while login_json.get('errorCode') != 0:
             # Show localized login error messages in Kodi GUI
             message = login_json.get('errorDetails')
-            self._kodi.log_error('Login failed: {msg}', msg=message)
+            log_error('Login failed: {msg}', msg=message)
             if message == 'invalid loginID or password':
-                message = self._kodi.localize(30953)  # Invalid login!
+                message = localize(30953)  # Invalid login!
             elif message == 'loginID must be provided':
-                message = self._kodi.localize(30955)  # Please fill in username
+                message = localize(30955)  # Please fill in username
             elif message == 'Missing required parameter: password':
-                message = self._kodi.localize(30956)  # Please fill in password
-            self._kodi.show_ok_dialog(heading=self._kodi.localize(30951), message=message)  # Login failed!
+                message = localize(30956)  # Please fill in password
+            ok_dialog(heading=localize(30951), message=message)  # Login failed!
             if refresh:
-                return self._kodi.open_settings()
-            self._kodi.open_settings()
+                return open_settings()
+            open_settings()
             if not self._credentials_changed():
                 return None
             login_json = self._get_login_json()
@@ -166,17 +172,18 @@ class TokenResolver:
 
     def _get_login_json(self):
         ''' Get login json '''
+        from json import load
         payload = dict(
-            loginID=from_unicode(self._kodi.get_setting('username')),
-            password=from_unicode(self._kodi.get_setting('password')),
+            loginID=from_unicode(get_setting('username')),
+            password=from_unicode(get_setting('password')),
             sessionExpiration='-1',
             APIKey=self._API_KEY,
             targetEnv='jssdk',
         )
         data = urlencode(payload).encode()
-        self._kodi.log(2, 'URL post: {url}', url=unquote(self._LOGIN_URL))
+        log(2, 'URL post: {url}', url=unquote(self._LOGIN_URL))
         req = Request(self._LOGIN_URL, data=data)
-        login_json = json.load(urlopen(req))
+        login_json = load(urlopen(req))
         return login_json
 
     def _get_new_xvrttoken(self, login_json, token_variant=None):
@@ -184,16 +191,17 @@ class TokenResolver:
         token = None
         login_token = login_json.get('sessionInfo', dict()).get('login_token')
         if login_token:
+            from json import dumps
             login_cookie = 'glt_%s=%s' % (self._API_KEY, login_token)
             payload = dict(
                 uid=login_json.get('UID'),
                 uidsig=login_json.get('UIDSignature'),
                 ts=login_json.get('signatureTimestamp'),
-                email=from_unicode(self._kodi.get_setting('username')),
+                email=from_unicode(get_setting('username')),
             )
-            data = json.dumps(payload).encode()
+            data = dumps(payload).encode()
             headers = {'Content-Type': 'application/json', 'Cookie': login_cookie}
-            self._kodi.log(2, 'URL post: {url}', url=unquote(self._TOKEN_GATEWAY_URL))
+            log(2, 'URL post: {url}', url=unquote(self._TOKEN_GATEWAY_URL))
             req = Request(self._TOKEN_GATEWAY_URL, data=data, headers=headers)
             try:  # Python 3
                 setcookie_header = urlopen(req).info().get('Set-Cookie')
@@ -205,7 +213,7 @@ class TokenResolver:
             if xvrttoken is not None:
                 token = xvrttoken.get('X-VRT-Token')
                 self._set_cached_token(xvrttoken, token_variant)
-                self._kodi.show_notification(message=self._kodi.localize(30952))  # Login succeeded.
+                notification(message=localize(30952))  # Login succeeded.
         return token
 
     def _get_new_user_xvrttoken(self):
@@ -228,9 +236,9 @@ class TokenResolver:
         data = urlencode(payload).encode()
         cookiejar = cookielib.CookieJar()
         opener = build_opener(HTTPCookieProcessor(cookiejar), ProxyHandler(self._proxies))
-        self._kodi.log(2, 'URL get: {url}', url=unquote(self._USER_TOKEN_GATEWAY_URL))
+        log(2, 'URL get: {url}', url=unquote(self._USER_TOKEN_GATEWAY_URL))
         opener.open(self._USER_TOKEN_GATEWAY_URL)
-        self._kodi.log(2, 'URL post: {url}', url=unquote(self._VRT_LOGIN_URL))
+        log(2, 'URL post: {url}', url=unquote(self._VRT_LOGIN_URL))
         opener.open(self._VRT_LOGIN_URL, data=data)
         xvrttoken = TokenResolver._create_token_dictionary(cookiejar)
         refreshtoken = TokenResolver._create_token_dictionary(cookiejar, cookie_name='vrtlogin-rt')
@@ -249,7 +257,7 @@ class TokenResolver:
         headers = {'Cookie': cookie_value}
         cookiejar = cookielib.CookieJar()
         opener = build_opener(HTTPCookieProcessor(cookiejar), ProxyHandler(self._proxies))
-        self._kodi.log(2, 'URL get: {url}', url=refresh_url)
+        log(2, 'URL get: {url}', url=refresh_url)
         req = Request(refresh_url, headers=headers)
         opener.open(req)
         token = TokenResolver._create_token_dictionary(cookiejar, token_name)
@@ -264,7 +272,7 @@ class TokenResolver:
         cookie_value = 'X-VRT-Token=' + xvrttoken.get('X-VRT-Token')
         headers = {'Cookie': cookie_value}
         opener = build_opener(NoRedirection, ProxyHandler(self._proxies))
-        self._kodi.log(2, 'URL get: {url}', url=unquote(self._ROAMING_TOKEN_GATEWAY_URL))
+        log(2, 'URL get: {url}', url=unquote(self._ROAMING_TOKEN_GATEWAY_URL))
         req = Request(self._ROAMING_TOKEN_GATEWAY_URL, headers=headers)
         req_info = opener.open(req).info()
         try:  # Python 3
@@ -273,14 +281,14 @@ class TokenResolver:
         except AttributeError:  # Python 2
             cookie_value += '; state=' + req_info.getheader('Set-Cookie').split('state=')[1].split('; ')[0]
             url = req_info.getheader('Location')
-        self._kodi.log(2, 'URL get: {url}', url=unquote(url))
+        log(2, 'URL get: {url}', url=unquote(url))
         try:  # Python 3
             url = opener.open(url).info().get('Location')
         except AttributeError:  # Python 2
             url = opener.open(url).info().getheader('Location')
         headers = {'Cookie': cookie_value}
         if url is not None:
-            self._kodi.log(2, 'URL get: {url}', url=unquote(url))
+            log(2, 'URL get: {url}', url=unquote(url))
             req = Request(url, headers=headers)
             try:  # Python 3
                 setcookie_header = opener.open(req).info().get('Set-Cookie')
@@ -312,30 +320,31 @@ class TokenResolver:
             }
         return token_dictionary
 
-    def delete_tokens(self):
+    @staticmethod
+    def delete_tokens():
         ''' Delete all cached tokens '''
         # Remove old tokens
         # FIXME: Deprecate and simplify this part in a future version
-        dirs, files = self._kodi.listdir(self._kodi.get_userdata_path())  # pylint: disable=unused-variable
+        dirs, files = listdir(get_userdata_path())  # pylint: disable=unused-variable
         token_files = [item for item in files if item.endswith('.tkn')]
         # Empty userdata/tokens/ directory
-        if self._kodi.check_if_path_exists(self._kodi.get_tokens_path()):
-            dirs, files = self._kodi.listdir(self._kodi.get_tokens_path())  # pylint: disable=unused-variable
+        if exists(get_tokens_path()):
+            dirs, files = listdir(get_tokens_path())  # pylint: disable=unused-variable
             token_files += ['tokens/' + item for item in files]
         if token_files:
             for item in token_files:
-                self._kodi.delete_file(self._kodi.get_userdata_path() + item)
-            self._kodi.show_notification(message=self._kodi.localize(30985))
+                delete(get_userdata_path() + item)
+            notification(message=localize(30985))
 
     def refresh_login(self):
         ''' Refresh login if necessary '''
 
-        if self._credentials_changed() and self._kodi.credentials_filled_in():
-            self._kodi.log(2, 'Credentials have changed, cleaning up userdata')
+        if self._credentials_changed() and has_credentials():
+            log(2, 'Credentials have changed, cleaning up userdata')
             self.cleanup_userdata()
 
             # Refresh login
-            self._kodi.log(2, 'Refresh login')
+            log(2, 'Refresh login')
             self.login(refresh=True)
 
     def cleanup_userdata(self):
@@ -345,21 +354,23 @@ class TokenResolver:
         self.delete_tokens()
 
         # Delete user-related caches
-        self._kodi.invalidate_caches('continue-*.json', 'favorites.json', 'my-offline-*.json', 'my-recent-*.json', 'resume_points.json', 'watchlater-*.json')
+        invalidate_caches('continue-*.json', 'favorites.json', 'my-offline-*.json', 'my-recent-*.json', 'resume_points.json', 'watchlater-*.json')
 
     def logged_in(self):
         ''' Whether there is an active login '''
         return bool(self._get_cached_token('X-VRT-Token'))
 
-    def _credentials_changed(self):
+    @staticmethod
+    def _credentials_changed():
         ''' Check if credentials have changed '''
-        old_hash = self._kodi.get_setting('credentials_hash')
-        username = self._kodi.get_setting('username')
-        password = self._kodi.get_setting('password')
+        old_hash = get_setting('credentials_hash')
+        username = get_setting('username')
+        password = get_setting('password')
         new_hash = ''
         if username or password:
-            new_hash = self._kodi.md5((username + password).encode('utf-8')).hexdigest()
+            from hashlib import md5
+            new_hash = md5((username + password).encode('utf-8')).hexdigest()
         if new_hash != old_hash:
-            self._kodi.set_setting('credentials_hash', new_hash)
+            set_setting('credentials_hash', new_hash)
             return True
         return False

@@ -13,13 +13,13 @@ except ImportError:  # Python 2
 
 import statichelper
 from data import CHANNELS, SECONDS_MARGIN
+from kodiutils import get_setting, localize, localize_datelong, log, url_for
 
 
 class Metadata:
     ''' This class creates appropriate Kodi ListItem metadata from single item json api data '''
 
-    def __init__(self, _kodi, _favorites, _resumepoints):
-        self._kodi = _kodi
+    def __init__(self, _favorites, _resumepoints):
         self._favorites = _favorites
         self._resumepoints = _resumepoints
 
@@ -82,15 +82,15 @@ class Metadata:
                         extras = dict(move_down=True)
                     # Unwatch context menu
                     context_menu.append((
-                        statichelper.capitalize(self._kodi.localize(30402)),
-                        'RunPlugin(%s)' % self._kodi.url_for('unwatchlater', uuid=assetuuid, title=program_title, url=url, **extras)
+                        statichelper.capitalize(localize(30402)),
+                        'RunPlugin(%s)' % url_for('unwatchlater', uuid=assetuuid, title=program_title, url=url, **extras)
                     ))
                     watchlater_marker = '[COLOR yellow]ᶫ[/COLOR]'
                 else:
                     # Watch context menu
                     context_menu.append((
-                        statichelper.capitalize(self._kodi.localize(30401)),
-                        'RunPlugin(%s)' % self._kodi.url_for('watchlater', uuid=assetuuid, title=program_title, url=url)
+                        statichelper.capitalize(localize(30401)),
+                        'RunPlugin(%s)' % url_for('watchlater', uuid=assetuuid, title=program_title, url=url)
                     ))
 
         # FOLLOW PROGRAM
@@ -100,7 +100,7 @@ class Metadata:
             if api_data.get('type') == 'episode':
                 program_title = api_data.get('program')
                 program_type = api_data.get('programType')
-                follow_suffix = self._kodi.localize(30410) if program_type != 'oneoff' else ''  # program
+                follow_suffix = localize(30410) if program_type != 'oneoff' else ''  # program
                 follow_enabled = True
 
             # VRT NU Suggest API
@@ -112,7 +112,7 @@ class Metadata:
             # VRT NU Schedule API (some are missing vrt.whatson-id)
             elif api_data.get('vrt.whatson-id') or api_data.get('startTime'):
                 program_title = api_data.get('title')
-                follow_suffix = self._kodi.localize(30410)  # program
+                follow_suffix = localize(30410)  # program
                 follow_enabled = bool(api_data.get('url'))
 
             if follow_enabled:
@@ -123,14 +123,14 @@ class Metadata:
                     if plugin.path.startswith('/favorites'):
                         extras = dict(move_down=True)
                     context_menu.append((
-                        self._kodi.localize(30412, title=follow_suffix),  # Unfollow
-                        'RunPlugin(%s)' % self._kodi.url_for('unfollow', program=program, title=program_title, **extras)
+                        localize(30412, title=follow_suffix),  # Unfollow
+                        'RunPlugin(%s)' % url_for('unfollow', program=program, title=program_title, **extras)
                     ))
                     favorite_marker = '[COLOR yellow]ᵛ[/COLOR]'
                 else:
                     context_menu.append((
-                        self._kodi.localize(30411, title=follow_suffix),  # Follow
-                        'RunPlugin(%s)' % self._kodi.url_for('follow', program=program, title=program_title)
+                        localize(30411, title=follow_suffix),  # Follow
+                        'RunPlugin(%s)' % url_for('follow', program=program, title=program_title)
                     ))
 
         # GO TO PROGRAM
@@ -138,14 +138,14 @@ class Metadata:
             if plugin.path.startswith(('/favorites/offline', '/favorites/recent', '/offline', '/recent',
                                        '/resumepoints/continue', '/resumepoints/watchlater', '/tvguide')):
                 context_menu.append((
-                    self._kodi.localize(30417),  # Go to program
-                    'Container.Update(%s)' % self._kodi.url_for('programs', program=program, season='allseasons')
+                    localize(30417),  # Go to program
+                    'Container.Update(%s)' % url_for('programs', program=program, season='allseasons')
                 ))
 
         # REFRESH MENU
         context_menu.append((
-            self._kodi.localize(30413),  # Refresh menu
-            'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file=cache_file)
+            localize(30413),  # Refresh menu
+            'RunPlugin(%s)' % url_for('delete_cache', cache_file=cache_file)
         ))
 
         return context_menu, favorite_marker, watchlater_marker
@@ -194,7 +194,7 @@ class Metadata:
                 total = self._resumepoints.get_total(assetuuid)
                 if position and total and SECONDS_MARGIN < position < total - SECONDS_MARGIN:
                     properties['resumetime'] = position
-                    self._kodi.log(2, '[Metadata] manual resumetime set to %d' % position)
+                    log(2, '[Metadata] manual resumetime set to %d' % position)
 
             duration = self.get_duration(api_data)
             if duration:
@@ -269,7 +269,7 @@ class Metadata:
                 # Add additional metadata to plot
                 plot_meta = ''
                 if api_data.get('allowedRegion') == 'BE':
-                    plot_meta += self._kodi.localize(30201) + '\n\n'  # Geo-blocked
+                    plot_meta += localize(30201) + '\n\n'  # Geo-blocked
                 plot = '%s[B]%s[/B]\n%s' % (plot_meta, api_data.get('program'), plot)
                 return plot
 
@@ -286,24 +286,24 @@ class Metadata:
                     if remaining.days / 365 > 5:
                         pass  # If it is available for more than 5 years, do not show
                     elif remaining.days / 365 > 2:
-                        plot_meta += self._kodi.localize(30202, years=int(remaining.days / 365))  # X years remaining
+                        plot_meta += localize(30202, years=int(remaining.days / 365))  # X years remaining
                     elif remaining.days / 30.5 > 3:
-                        plot_meta += self._kodi.localize(30203, months=int(remaining.days / 30.5))  # X months remaining
+                        plot_meta += localize(30203, months=int(remaining.days / 30.5))  # X months remaining
                     elif remaining.days > 1:
-                        plot_meta += self._kodi.localize(30204, days=remaining.days)  # X days to go
+                        plot_meta += localize(30204, days=remaining.days)  # X days to go
                     elif remaining.days == 1:
-                        plot_meta += self._kodi.localize(30205)  # 1 day to go
+                        plot_meta += localize(30205)  # 1 day to go
                     elif remaining.seconds // 3600 > 1:
-                        plot_meta += self._kodi.localize(30206, hours=remaining.seconds // 3600)  # X hours to go
+                        plot_meta += localize(30206, hours=remaining.seconds // 3600)  # X hours to go
                     elif remaining.seconds // 3600 == 1:
-                        plot_meta += self._kodi.localize(30207)  # 1 hour to go
+                        plot_meta += localize(30207)  # 1 hour to go
                     else:
-                        plot_meta += self._kodi.localize(30208, minutes=remaining.seconds // 60)  # X minutes to go
+                        plot_meta += localize(30208, minutes=remaining.seconds // 60)  # X minutes to go
 
             if api_data.get('allowedRegion') == 'BE':
                 if plot_meta:
                     plot_meta += '  '
-                plot_meta += self._kodi.localize(30201)  # Geo-blocked
+                plot_meta += localize(30201)  # Geo-blocked
 
             plot = statichelper.convert_html_to_kodilabel(api_data.get('description'))
 
@@ -311,7 +311,7 @@ class Metadata:
                 plot = '%s\n\n%s' % (plot_meta, plot)
 
             permalink = statichelper.shorten_link(api_data.get('permalink')) or api_data.get('externalPermalink')
-            if permalink and self._kodi.get_setting('showpermalink', 'false') == 'true':
+            if permalink and get_setting('showpermalink', 'false') == 'true':
                 plot = '%s\n\n[COLOR yellow]%s[/COLOR]' % (plot, permalink)
             return plot
 
@@ -319,7 +319,7 @@ class Metadata:
         if api_data.get('type') == 'program':
             plot = statichelper.unescape(api_data.get('description', '???'))
             # permalink = statichelper.shorten_link(api_data.get('programUrl'))
-            # if permalink and self._kodi.get_setting('showpermalink', 'false') == 'true':
+            # if permalink and get_setting('showpermalink', 'false') == 'true':
             #     plot = '%s\n\n[COLOR yellow]%s[/COLOR]' % (plot, permalink)
             return plot
 
@@ -328,7 +328,7 @@ class Metadata:
             title = api_data.get('title')
             now = datetime.now(dateutil.tz.tzlocal())
             epg = self.parse(date, now)
-            datelong = self._kodi.localize_datelong(epg)
+            datelong = localize_datelong(epg)
             start = api_data.get('start')
             end = api_data.get('end')
             plot = '[B]%s[/B]\n%s\n%s - %s' % (title, datelong, start, end)
@@ -508,14 +508,15 @@ class Metadata:
         # Not Found
         return ''
 
-    def get_art(self, api_data, season=False):
+    @staticmethod
+    def get_art(api_data, season=False):
         ''' Get art dict from single item json api data '''
         art_dict = dict()
 
         # VRT NU Search API
         if api_data.get('type') == 'episode':
             if season:
-                if self._kodi.get_setting('showfanart', 'true') == 'true':
+                if get_setting('showfanart', 'true') == 'true':
                     art_dict['fanart'] = statichelper.add_https_method(api_data.get('programImageUrl', 'DefaultSets.png'))
                     art_dict['banner'] = art_dict.get('fanart')
                     if season != 'allseasons':
@@ -525,7 +526,7 @@ class Metadata:
                 else:
                     art_dict['thumb'] = 'DefaultSets.png'
             else:
-                if self._kodi.get_setting('showfanart', 'true') == 'true':
+                if get_setting('showfanart', 'true') == 'true':
                     art_dict['thumb'] = statichelper.add_https_method(api_data.get('videoThumbnailUrl', 'DefaultAddonVideo.png'))
                     art_dict['fanart'] = statichelper.add_https_method(api_data.get('programImageUrl', art_dict.get('thumb')))
                     art_dict['banner'] = art_dict.get('fanart')
@@ -536,7 +537,7 @@ class Metadata:
 
         # VRT NU Suggest API
         if api_data.get('type') == 'program':
-            if self._kodi.get_setting('showfanart', 'true') == 'true':
+            if get_setting('showfanart', 'true') == 'true':
                 art_dict['thumb'] = statichelper.add_https_method(api_data.get('thumbnail', 'DefaultAddonVideo.png'))
                 art_dict['fanart'] = art_dict.get('thumb')
                 art_dict['banner'] = art_dict.get('fanart')
@@ -547,7 +548,7 @@ class Metadata:
 
         # VRT NU Schedule API (some are missing vrt.whatson-id)
         if api_data.get('vrt.whatson-id') or api_data.get('startTime'):
-            if self._kodi.get_setting('showfanart', 'true') == 'true':
+            if get_setting('showfanart', 'true') == 'true':
                 art_dict['thumb'] = api_data.get('image', 'DefaultAddonVideo.png')
                 art_dict['fanart'] = art_dict.get('thumb')
                 art_dict['banner'] = art_dict.get('fanart')
@@ -612,7 +613,8 @@ class Metadata:
         # Not Found
         return dict()
 
-    def get_label(self, api_data, titletype=None, return_sort=False):
+    @staticmethod
+    def get_label(api_data, titletype=None, return_sort=False):
         ''' Get an appropriate label string matching the type of listing and VRT NU provided displayOptions from single item json api data '''
 
         # VRT NU Search API
@@ -657,7 +659,7 @@ class Metadata:
                         sort = 'episode'
                 elif display_options.get('showEpisodeNumber') and api_data.get('episodeNumber') and ascending:
                     # NOTE: Do not prefix with "Episode X" when sorting by episode
-                    # label = '%s %s: %s' % (self._kodi.localize(30132), api_data.get('episodeNumber'), label)
+                    # label = '%s %s: %s' % (localize(30132), api_data.get('episodeNumber'), label)
                     sort = 'episode'
                 elif display_options.get('showBroadcastDate') and api_data.get('formattedBroadcastShortDate'):
                     label = '%s - %s' % (api_data.get('formattedBroadcastShortDate'), label)
@@ -689,11 +691,11 @@ class Metadata:
             end_date = dateutil.parser.parse(api_data.get('endTime'))
             if api_data.get('url'):
                 if start_date <= now <= end_date:  # Now playing
-                    label = '[COLOR yellow]%s[/COLOR] %s' % (label, self._kodi.localize(30301))
+                    label = '[COLOR yellow]%s[/COLOR] %s' % (label, localize(30301))
             else:
                 # This is a non-actionable item
                 if start_date < now <= end_date:  # Now playing
-                    label = '[COLOR gray]%s[/COLOR] %s' % (label, self._kodi.localize(30301))
+                    label = '[COLOR gray]%s[/COLOR] %s' % (label, localize(30301))
                 else:
                     label = '[COLOR gray]%s[/COLOR]' % label
 
@@ -706,13 +708,14 @@ class Metadata:
 
         return label
 
-    def get_tag(self, api_data):
+    @staticmethod
+    def get_tag(api_data):
         ''' Return categories for a given episode '''
 
         # VRT NU Search API
         if api_data.get('type') == 'episode':
             from data import CATEGORIES
-            return sorted([self._kodi.localize(statichelper.find_entry(CATEGORIES, 'id', category).get('msgctxt'))
+            return sorted([localize(statichelper.find_entry(CATEGORIES, 'id', category).get('msgctxt'))
                            for category in api_data.get('categories')])
 
         # VRT NU Suggest API

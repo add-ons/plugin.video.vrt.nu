@@ -12,31 +12,32 @@ except ImportError:  # Python 2
     from urllib2 import build_opener, install_opener, ProxyHandler, Request, HTTPError, urlopen
 
 from data import SECONDS_MARGIN
+from kodiutils import (container_refresh, get_cache, get_proxies, get_setting, has_credentials,
+                       input_down, invalidate_caches, localize, log, log_error, notification,
+                       update_cache)
 
 
 class ResumePoints:
     ''' Track, cache and manage VRT resume points and watch list '''
 
-    def __init__(self, _kodi):
+    def __init__(self):
         ''' Initialize resumepoints, relies on XBMC vfs and a special VRT token '''
-        self._kodi = _kodi
-        self._proxies = _kodi.get_proxies()
-        install_opener(build_opener(ProxyHandler(self._proxies)))
-        # This is our internal representation
-        self._resumepoints = dict()
+        self._resumepoints = dict()  # Our internal representation
+        install_opener(build_opener(ProxyHandler(get_proxies())))
 
-    def is_activated(self):
+    @staticmethod
+    def is_activated():
         ''' Is resumepoints activated in the menu and do we have credentials ? '''
-        return self._kodi.get_setting('useresumepoints') == 'true' and self._kodi.credentials_filled_in()
+        return get_setting('useresumepoints') == 'true' and has_credentials()
 
     def refresh(self, ttl=None):
         ''' Get a cached copy or a newer resumepoints from VRT, or fall back to a cached file '''
         if not self.is_activated():
             return
-        resumepoints_json = self._kodi.get_cache('resume_points.json', ttl)
+        resumepoints_json = get_cache('resume_points.json', ttl)
         if not resumepoints_json:
             from tokenresolver import TokenResolver
-            xvrttoken = TokenResolver(self._kodi).get_xvrttoken(token_variant='user')
+            xvrttoken = TokenResolver().get_xvrttoken(token_variant='user')
             if xvrttoken:
                 headers = {
                     'authorization': 'Bearer ' + xvrttoken,
@@ -44,22 +45,20 @@ class ResumePoints:
                     'Referer': 'https://www.vrt.be/vrtnu',
                 }
                 req = Request('https://video-user-data.vrt.be/resume_points', headers=headers)
-                self._kodi.log(2, 'URL post: https://video-user-data.vrt.be/resume_points')
-                import json
+                log(2, 'URL post: https://video-user-data.vrt.be/resume_points')
+                from json import load
                 try:
-                    resumepoints_json = json.load(urlopen(req))
+                    resumepoints_json = load(urlopen(req))
                 except (TypeError, ValueError):  # No JSON object could be decoded
                     # Force resumepoints from cache
-                    resumepoints_json = self._kodi.get_cache('resume_points.json', ttl=None)
+                    resumepoints_json = get_cache('resume_points.json', ttl=None)
                 else:
-                    self._kodi.update_cache('resume_points.json', resumepoints_json)
+                    update_cache('resume_points.json', resumepoints_json)
         if resumepoints_json:
             self._resumepoints = resumepoints_json
 
     def update(self, uuid, title, url, watch_later=None, position=None, total=None):
         ''' Set program resumepoint or watchLater status and update local copy '''
-        removes = []
-        self.refresh(ttl=0)
 
         # The video has no assetPath, so we cannot update resumepoints
         if uuid is None:
@@ -68,6 +67,7 @@ class ResumePoints:
         if position is not None and position >= total - 30:
             watch_later = False
 
+        self.refresh(ttl=0)
         if watch_later is not None and position is None and total is None and watch_later is self.is_watchlater(uuid):
             # watchLater status is not changed, nothing to do
             return True
@@ -78,10 +78,10 @@ class ResumePoints:
 
         # Collect header info for POST Request
         from tokenresolver import TokenResolver
-        xvrttoken = TokenResolver(self._kodi).get_xvrttoken(token_variant='user')
+        xvrttoken = TokenResolver().get_xvrttoken(token_variant='user')
         if xvrttoken is None:
-            self._kodi.log_error('Failed to get usertoken from VRT NU')
-            self._kodi.show_notification(message=self._kodi.localize(30975) + title)
+            log_error('Failed to get usertoken from VRT NU')
+            notification(message=localize(30975) + title)
             return False
 
         headers = {
@@ -104,6 +104,7 @@ class ResumePoints:
         if total is not None:
             payload['total'] = total
 
+        removes = []
         if position is not None or total is not None:
             removes.append('continue-*.json')
 
@@ -112,22 +113,22 @@ class ResumePoints:
             payload['watchLater'] = watch_later
             removes.append('watchlater-*.json')
 
-        import json
-        data = json.dumps(payload).encode()
-        self._kodi.log(2, 'URL post: https://video-user-data.vrt.be/resume_points/{uuid}', uuid=uuid)
-        self._kodi.log(2, 'URL post data:: {data}', data=data)
+        from json import dumps
+        data = dumps(payload).encode()
+        log(2, 'URL post: https://video-user-data.vrt.be/resume_points/{uuid}', uuid=uuid)
+        log(2, 'URL post data:: {data}', data=data)
         try:
             req = Request('https://video-user-data.vrt.be/resume_points/%s' % uuid, data=data, headers=headers)
             urlopen(req)
         except HTTPError as exc:
-            self._kodi.log_error('Failed to (un)watch episode at VRT NU ({error})', error=exc)
-            self._kodi.show_notification(message=self._kodi.localize(30977))
+            log_error('Failed to (un)watch episode at VRT NU ({error})', error=exc)
+            notification(message=localize(30977))
             return False
 
         # NOTE: Updates to resumepoints take a longer time to take effect, so we keep our own cache and use it
         self._resumepoints[uuid] = dict(value=payload)
-        self._kodi.update_cache('resume_points.json', self._resumepoints)
-        self._kodi.invalidate_caches(*removes)
+        update_cache('resume_points.json', self._resumepoints)
+        invalidate_caches(*removes)
         return True
 
     def is_watchlater(self, uuid):
@@ -138,18 +139,18 @@ class ResumePoints:
         ''' Watch an episode later '''
         succeeded = self.update(uuid=uuid, title=title, url=url, watch_later=True)
         if succeeded:
-            self._kodi.show_notification(message=self._kodi.localize(30403, title=title))
-            self._kodi.container_refresh()
+            notification(message=localize(30403, title=title))
+            container_refresh()
 
     def unwatchlater(self, uuid, title, url, move_down=False):
         ''' Unwatch an episode later '''
         succeeded = self.update(uuid=uuid, title=title, url=url, watch_later=False)
         if succeeded:
-            self._kodi.show_notification(message=self._kodi.localize(30404, title=title))
+            notification(message=localize(30404, title=title))
             # If the current item is selected and we need to move down before removing
             if move_down:
-                self._kodi.input_down()
-            self._kodi.container_refresh()
+                input_down()
+            container_refresh()
 
     def get_position(self, uuid):
         ''' Return the stored position of a video '''
@@ -180,8 +181,3 @@ class ResumePoints:
     def resumepoints_urls(self):
         ''' Return all urls that have not been finished watching '''
         return [self.get_url(uuid) for uuid in self._resumepoints if SECONDS_MARGIN < self.get_position(uuid) < (self.get_total(uuid) - SECONDS_MARGIN)]
-
-    def invalidate_caches(self):
-        ''' Invalidate caches that rely on favorites '''
-        # Delete resumepoints-related caches
-        self._kodi.invalidate_caches('continue-*.json', 'resume_points.json', 'watchlater-*.json')

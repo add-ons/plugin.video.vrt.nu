@@ -14,7 +14,6 @@ try:
 except ImportError:
     from urllib2 import HTTPError
 
-from addon import kodi
 from data import CHANNELS
 from streamservice import StreamService
 from tokenresolver import TokenResolver
@@ -34,8 +33,8 @@ yesterday = now + timedelta(days=-1)
 
 class StreamServiceTests(unittest.TestCase):
 
-    _tokenresolver = TokenResolver(kodi)
-    _streamservice = StreamService(kodi, _tokenresolver)
+    _tokenresolver = TokenResolver()
+    _streamservice = StreamService(_tokenresolver)
 
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')

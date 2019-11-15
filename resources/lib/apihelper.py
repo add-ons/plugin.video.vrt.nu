@@ -15,6 +15,9 @@ except ImportError:  # Python 2
 import statichelper
 from data import CHANNELS, SECONDS_MARGIN
 from helperobjects import TitleItem
+from kodiutils import (delete_cached_thumbnail, get_cache, get_global_setting, get_proxies, get_setting,
+                       has_addon, localize, localize_from_data, log, log_error, ok_dialog, update_cache,
+                       url_for)
 from metadata import Metadata
 
 
@@ -26,15 +29,12 @@ class ApiHelper:
     _VRTNU_SUGGEST_URL = 'https://vrtnu-api.vrt.be/suggest'
     _VRTNU_SCREENSHOT_URL = 'https://vrtnu-api.vrt.be/screenshots'
 
-    def __init__(self, _kodi, _favorites, _resumepoints):
+    def __init__(self, _favorites, _resumepoints):
         ''' Constructor for the ApiHelper class '''
-        self._kodi = _kodi
         self._favorites = _favorites
         self._resumepoints = _resumepoints
-        self._metadata = Metadata(_kodi, _favorites, _resumepoints)
-
-        self._proxies = _kodi.get_proxies()
-        install_opener(build_opener(ProxyHandler(self._proxies)))
+        self._metadata = Metadata(_favorites, _resumepoints)
+        install_opener(build_opener(ProxyHandler(get_proxies())))
 
     def get_tvshows(self, category=None, channel=None, feature=None):
         ''' Get all TV shows for a given category, channel or feature, optionally filtered by favorites '''
@@ -56,14 +56,14 @@ class ApiHelper:
         if not category and not channel and not feature:
             params['facets[transcodingStatus]'] = 'AVAILABLE'  # Required for getting results in Suggests API
             cache_file = 'programs.json'
-        tvshows = self._kodi.get_cache(cache_file, ttl=60 * 60)  # Try the cache if it is fresh
+        tvshows = get_cache(cache_file, ttl=60 * 60)  # Try the cache if it is fresh
         if not tvshows:
-            import json
+            from json import load
             querystring = '&'.join('{}={}'.format(key, value) for key, value in list(params.items()))
             suggest_url = self._VRTNU_SUGGEST_URL + '?' + querystring
-            self._kodi.log(2, 'URL get: {url}', url=unquote(suggest_url))
-            tvshows = json.load(urlopen(suggest_url))
-            self._kodi.update_cache(cache_file, tvshows)
+            log(2, 'URL get: {url}', url=unquote(suggest_url))
+            tvshows = load(urlopen(suggest_url))
+            update_cache(cache_file, tvshows)
 
         return tvshows
 
@@ -74,7 +74,7 @@ class ApiHelper:
         tvshows = self.get_tvshows(category=category, channel=channel, feature=feature)
 
         # Get oneoffs
-        if self._kodi.get_setting('showoneoff', 'true') == 'true':
+        if get_setting('showoneoff', 'true') == 'true':
             cache_file = 'oneoff.json'
             oneoffs = self.get_episodes(variety='oneoff', cache_file=cache_file)
         else:
@@ -94,7 +94,7 @@ class ApiHelper:
 
         return TitleItem(
             title=label,
-            path=self._kodi.url_for('programs', program=program),
+            path=url_for('programs', program=program),
             art_dict=self._metadata.get_art(tvshow),
             info_dict=self._metadata.get_info_labels(tvshow),
             context_menu=context_menu,
@@ -173,10 +173,10 @@ class ApiHelper:
             ascending = False
 
         # Add an "* All seasons" list item
-        if self._kodi.get_global_setting('videolibrary.showallitems') is True:
+        if get_global_setting('videolibrary.showallitems') is True:
             season_items.append(TitleItem(
-                title=self._kodi.localize(30133),
-                path=self._kodi.url_for('programs', program=program, season='allseasons'),
+                title=localize(30133),
+                path=url_for('programs', program=program, season='allseasons'),
                 art_dict=self._metadata.get_art(episode, season='allseasons'),
                 info_dict=info_labels,
             ))
@@ -192,10 +192,10 @@ class ApiHelper:
             except IndexError:
                 episode = episodes[0]
 
-            label = '%s %s' % (self._kodi.localize(30131), season_key)
+            label = '%s %s' % (localize(30131), season_key)
             season_items.append(TitleItem(
                 title=label,
-                path=self._kodi.url_for('programs', program=program, season=season_key),
+                path=url_for('programs', program=program, season=season_key),
                 art_dict=self._metadata.get_art(episode, season=True),
                 info_dict=info_labels,
                 prop_dict=self._metadata.get_properties(episode),
@@ -242,7 +242,7 @@ class ApiHelper:
 
         return TitleItem(
             title=label,
-            path=self._kodi.url_for('play_id', video_id=episode.get('videoId'), publication_id=episode.get('publicationId')),
+            path=url_for('play_id', video_id=episode.get('videoId'), publication_id=episode.get('publicationId')),
             art_dict=self._metadata.get_art(episode),
             info_dict=info_labels,
             prop_dict=self._metadata.get_properties(episode),
@@ -346,11 +346,11 @@ class ApiHelper:
 
         if upnext.get('current'):
             if upnext.get('current').get('episodeNumber') == upnext.get('current').get('seasonNbOfEpisodes'):
-                self._kodi.log_error(message='[Up Next] Last episode of season, next season not implemented for "{program} S{season}E{episode}"',
-                                     program=program, season=season, episode=current_ep_no)
+                log_error(message='[Up Next] Last episode of season, next season not implemented for "{program} S{season}E{episode}"',
+                          program=program, season=season, episode=current_ep_no)
             return None
-        self._kodi.log_error(message='[Up Next] No api data found for "{program}s S{season}E{episode}"',
-                             program=program, season=season, episode=current_ep_no)
+        log_error(message='[Up Next] No api data found for "{program}s S{season}E{episode}"',
+                  program=program, season=season, episode=current_ep_no)
         return None
 
     def get_single_episode(self, whatson_id):
@@ -370,14 +370,14 @@ class ApiHelper:
 
     def get_episode_by_air_date(self, channel_name, start_date, end_date=None):
         ''' Get an episode of a program given the channel and the air date in iso format (2019-07-06T19:35:00) '''
-        import json
+        channel = statichelper.find_entry(CHANNELS, 'name', channel_name)
+        if not channel:
+            return None
+
         from datetime import datetime, timedelta
         import dateutil.parser
         import dateutil.tz
         offairdate = None
-        channel = statichelper.find_entry(CHANNELS, 'name', channel_name)
-        if not channel:
-            return None
         try:
             onairdate = dateutil.parser.parse(start_date, default=datetime.now(dateutil.tz.gettz('Europe/Brussels')))
         except ValueError:
@@ -397,7 +397,8 @@ class ApiHelper:
             schedule_date = onairdate
         schedule_datestr = schedule_date.isoformat().split('T')[0]
         url = 'https://www.vrt.be/bin/epg/schedule.%s.json' % schedule_datestr
-        schedule_json = json.load(urlopen(url))
+        from json import load
+        schedule_json = load(urlopen(url))
         episodes = schedule_json.get(channel.get('id'), [])
         if offairdate:
             mindate = min(abs(offairdate - dateutil.parser.parse(episode.get('endTime'))) for episode in episodes)
@@ -449,7 +450,7 @@ class ApiHelper:
         api_data = self.get_episodes(program=program, variety='single')
         if len(api_data) == 1:
             episode = api_data[0]
-        self._kodi.log(2, str(episode))
+        log(2, str(episode))
         video_item = TitleItem(
             title=self._metadata.get_label(episode),
             art_dict=self._metadata.get_art(episode),
@@ -510,7 +511,7 @@ class ApiHelper:
                 program_urls = [statichelper.program_to_url(p, 'medium') for p in self._favorites.programs()]
                 params['facets[programUrl]'] = '[%s]' % (','.join(program_urls))
             elif variety in ('offline', 'recent'):
-                channel_filter = [channel.get('name') for channel in CHANNELS if self._kodi.get_setting(channel.get('name'), 'true') == 'true']
+                channel_filter = [channel.get('name') for channel in CHANNELS if get_setting(channel.get('name'), 'true') == 'true']
                 params['facets[programBrands]'] = '[%s]' % (','.join(channel_filter))
 
         if program:
@@ -550,32 +551,32 @@ class ApiHelper:
         querystring = '&'.join('{}={}'.format(key, value) for key, value in list(params.items()))
         search_url = self._VRTNU_SEARCH_URL + '?' + querystring.replace(' ', '%20')  # Only encode spaces to minimize url length
 
-        import json
+        from json import load
         if cache_file:
             # Get api data from cache if it is fresh
-            search_json = self._kodi.get_cache(cache_file, ttl=60 * 60)
+            search_json = get_cache(cache_file, ttl=60 * 60)
             if not search_json:
-                self._kodi.log(2, 'URL get: {url}', url=unquote(search_url))
+                log(2, 'URL get: {url}', url=unquote(search_url))
                 req = Request(search_url)
                 try:
-                    search_json = json.load(urlopen(req))
+                    search_json = load(urlopen(req))
                 except HTTPError as exc:
                     url_length = len(req.get_selector())
                     if exc.code == 413 and url_length > 8192:
-                        self._kodi.show_ok_dialog(heading='HTTP Error 413', message=self._kodi.localize(30967))
-                        self._kodi.log_error('HTTP Error 413: Exceeded maximum url length: '
-                                             'VRT Search API url has a length of {length} characters.', length=url_length)
+                        ok_dialog(heading='HTTP Error 413', message=localize(30967))
+                        log_error('HTTP Error 413: Exceeded maximum url length: '
+                                  'VRT Search API url has a length of {length} characters.', length=url_length)
                         return []
                     if exc.code == 400 and 7600 <= url_length <= 8192:
-                        self._kodi.show_ok_dialog(heading='HTTP Error 400', message=self._kodi.localize(30967))
-                        self._kodi.log_error('HTTP Error 400: Probably exceeded maximum url length: '
-                                             'VRT Search API url has a length of {length} characters.', length=url_length)
+                        ok_dialog(heading='HTTP Error 400', message=localize(30967))
+                        log_error('HTTP Error 400: Probably exceeded maximum url length: '
+                                  'VRT Search API url has a length of {length} characters.', length=url_length)
                         return []
                     raise
-                self._kodi.update_cache(cache_file, search_json)
+                update_cache(cache_file, search_json)
         else:
-            self._kodi.log(2, 'URL get: {url}', url=unquote(search_url))
-            search_json = json.load(urlopen(search_url))
+            log(2, 'URL get: {url}', url=unquote(search_url))
+            search_json = load(urlopen(search_url))
 
         # Check for multiple seasons
         seasons = None
@@ -597,7 +598,7 @@ class ApiHelper:
         if all_items and total_results > api_page_size:
             for api_page in range(1, api_pages):
                 api_page_url = search_url + '&from=' + str(api_page * api_page_size + 1)
-                api_page_json = json.load(urlopen(api_page_url))
+                api_page_json = load(urlopen(api_page_url))
                 episodes += api_page_json.get('results', [{}])
 
         # Return episodes
@@ -606,13 +607,13 @@ class ApiHelper:
     def get_live_screenshot(self, channel):
         ''' Get a live screenshot for a given channel, only supports Eén, Canvas and Ketnet '''
         url = '%s/%s.jpg' % (self._VRTNU_SCREENSHOT_URL, channel)
-        self._kodi.delete_cached_thumbnail(url)
+        delete_cached_thumbnail(url)
         return url
 
     def list_channels(self, channels=None, live=True):
         ''' Construct a list of channel ListItems, either for Live TV or the TV Guide listing '''
         from tvguide import TVGuide
-        _tvguide = TVGuide(self._kodi)
+        _tvguide = TVGuide()
 
         channel_items = []
         for channel in CHANNELS:
@@ -623,13 +624,13 @@ class ApiHelper:
             art_dict = dict()
 
             # Try to use the white icons for thumbnails (used for icons as well)
-            if self._kodi.get_cond_visibility('System.HasAddon(resource.images.studios.white)') == 1:
+            if has_addon('resource.images.studios.white'):
                 art_dict['thumb'] = 'resource://resource.images.studios.white/{studio}.png'.format(**channel)
             else:
                 art_dict['thumb'] = 'DefaultTags.png'
 
             if not live:
-                path = self._kodi.url_for('channels', channel=channel.get('name'))
+                path = url_for('channels', channel=channel.get('name'))
                 label = channel.get('label')
                 plot = '[B]%s[/B]' % channel.get('label')
                 is_playable = False
@@ -637,10 +638,10 @@ class ApiHelper:
                 stream_dict = []
             elif channel.get('live_stream') or channel.get('live_stream_id'):
                 if channel.get('live_stream_id'):
-                    path = self._kodi.url_for('play_id', video_id=channel.get('live_stream_id'))
+                    path = url_for('play_id', video_id=channel.get('live_stream_id'))
                 elif channel.get('live_stream'):
-                    path = self._kodi.url_for('play_url', video_url=channel.get('live_stream'))
-                label = self._kodi.localize(30141, **channel)  # Channel live
+                    path = url_for('play_url', video_url=channel.get('live_stream'))
+                label = localize(30141, **channel)  # Channel live
                 playing_now = _tvguide.playing_now(channel.get('name'))
                 if playing_now:
                     label += ' [COLOR yellow]| %s[/COLOR]' % playing_now
@@ -649,17 +650,17 @@ class ApiHelper:
                     label = '[B]%s[/B]' % label
                 is_playable = True
                 if channel.get('name') in ['een', 'canvas', 'ketnet']:
-                    if self._kodi.get_setting('showfanart', 'true') == 'true':
+                    if get_setting('showfanart', 'true') == 'true':
                         art_dict['fanart'] = self.get_live_screenshot(channel.get('name', art_dict.get('fanart')))
-                    plot = '%s\n\n%s' % (self._kodi.localize(30142, **channel), _tvguide.live_description(channel.get('name')))
+                    plot = '%s\n\n%s' % (localize(30142, **channel), _tvguide.live_description(channel.get('name')))
                 else:
-                    plot = self._kodi.localize(30142, **channel)  # Watch live
+                    plot = localize(30142, **channel)  # Watch live
                 # NOTE: Playcount is required to not have live streams as "Watched"
                 info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video', playcount=0, duration=0)
                 stream_dict = dict(duration=0)
                 context_menu.append((
-                    self._kodi.localize(30413),
-                    'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file='channel.%s.json' % channel)
+                    localize(30413),
+                    'RunPlugin(%s)' % url_for('delete_cache', cache_file='channel.%s.json' % channel)
                 ))
             else:
                 # Not a playable channel
@@ -677,12 +678,13 @@ class ApiHelper:
 
         return channel_items
 
-    def list_youtube(self, channels=None):
+    @staticmethod
+    def list_youtube(channels=None):
         ''' Construct a list of youtube ListItems, either for Live TV or the TV Guide listing '''
 
         youtube_items = []
 
-        if self._kodi.get_cond_visibility('System.HasAddon(plugin.video.youtube)') == 0 or self._kodi.get_setting('showyoutube', 'true') == 'false':
+        if not has_addon('plugin.video.youtube') or get_setting('showyoutube', 'true') == 'false':
             return youtube_items
 
         for channel in CHANNELS:
@@ -693,23 +695,23 @@ class ApiHelper:
             art_dict = dict()
 
             # Try to use the white icons for thumbnails (used for icons as well)
-            if self._kodi.get_cond_visibility('System.HasAddon(resource.images.studios.white)') == 1:
+            if has_addon('resource.images.studios.white'):
                 art_dict['thumb'] = 'resource://resource.images.studios.white/{studio}.png'.format(**channel)
             else:
                 art_dict['thumb'] = 'DefaultTags.png'
 
             if channel.get('youtube'):
                 path = channel.get('youtube')
-                label = self._kodi.localize(30143, **channel)  # Channel on YouTube
+                label = localize(30143, **channel)  # Channel on YouTube
                 # A single Live channel means it is the entry for channel's TV Show listing, so make it stand out
                 if channels and len(channels) == 1:
                     label = '[B]%s[/B]' % label
-                plot = self._kodi.localize(30144, **channel)  # Watch on YouTube
+                plot = localize(30144, **channel)  # Watch on YouTube
                 # NOTE: Playcount is required to not have live streams as "Watched"
                 info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video', playcount=0)
                 context_menu.append((
-                    self._kodi.localize(30413),
-                    'RunPlugin(%s)' % self._kodi.url_for('delete_cache', cache_file='channel.%s.json' % channel)
+                    localize(30413),
+                    'RunPlugin(%s)' % url_for('delete_cache', cache_file='channel.%s.json' % channel)
                 ))
             else:
                 # Not a playable channel
@@ -735,13 +737,14 @@ class ApiHelper:
             featured_name = feature.get('name')
             featured_items.append(TitleItem(
                 title=featured_name,
-                path=self._kodi.url_for('featured', feature=feature.get('id')),
+                path=url_for('featured', feature=feature.get('id')),
                 art_dict=dict(thumb='DefaultCountry.png'),
                 info_dict=dict(plot='[B]%s[/B]' % feature.get('name'), studio='VRT'),
             ))
         return featured_items
 
-    def localize_features(self, featured):
+    @staticmethod
+    def localize_features(featured):
         ''' Return a localized and sorted listing '''
         from copy import deepcopy
         features = deepcopy(featured)
@@ -749,7 +752,7 @@ class ApiHelper:
         for feature in features:
             for key, val in list(feature.items()):
                 if key == 'name':
-                    feature[key] = self._kodi.localize_from_data(val, featured)
+                    feature[key] = localize_from_data(val, featured)
 
         return sorted(features, key=lambda x: x.get('name'))
 
@@ -758,7 +761,7 @@ class ApiHelper:
         categories = []
 
         # Try the cache if it is fresh
-        categories = self._kodi.get_cache('categories.json', ttl=7 * 24 * 60 * 60)
+        categories = get_cache('categories.json', ttl=7 * 24 * 60 * 60)
 
         # Try to scrape from the web
         if not categories:
@@ -767,11 +770,11 @@ class ApiHelper:
             except Exception:  # pylint: disable=broad-except
                 categories = []
             else:
-                self._kodi.update_cache('categories.json', categories)
+                update_cache('categories.json', categories)
 
         # Use the cache anyway (better than hard-coded)
         if not categories:
-            categories = self._kodi.get_cache('categories.json', ttl=None)
+            categories = get_cache('categories.json', ttl=None)
 
         # Fall back to internal hard-coded categories if all else fails
         from data import CATEGORIES
@@ -780,32 +783,33 @@ class ApiHelper:
 
         category_items = []
         for category in self.localize_categories(categories, CATEGORIES):
-            if self._kodi.get_setting('showfanart', 'true') == 'true':
+            if get_setting('showfanart', 'true') == 'true':
                 thumbnail = category.get('thumbnail', 'DefaultGenre.png')
             else:
                 thumbnail = 'DefaultGenre.png'
             category_items.append(TitleItem(
                 title=category.get('name'),
-                path=self._kodi.url_for('categories', category=category.get('id')),
+                path=url_for('categories', category=category.get('id')),
                 art_dict=dict(thumb=thumbnail, icon='DefaultGenre.png'),
                 info_dict=dict(plot='[B]%s[/B]' % category.get('name'), studio='VRT'),
             ))
         return category_items
 
-    def localize_categories(self, categories, categories2):
+    @staticmethod
+    def localize_categories(categories, categories2):
         ''' Return a localized and sorted listing '''
 
         for category in categories:
             for key, val in list(category.items()):
                 if key == 'name':
-                    category[key] = self._kodi.localize_from_data(val, categories2)
+                    category[key] = localize_from_data(val, categories2)
 
         return sorted(categories, key=lambda x: x.get('name'))
 
     def get_categories(self):
         ''' Return a list of categories by scraping the website '''
         from bs4 import BeautifulSoup, SoupStrainer
-        self._kodi.log(2, 'URL get: https://www.vrt.be/vrtnu/categorieen/')
+        log(2, 'URL get: https://www.vrt.be/vrtnu/categorieen/')
         response = urlopen('https://www.vrt.be/vrtnu/categorieen/')
         tiles = SoupStrainer('nui-list--content')
         soup = BeautifulSoup(response.read(), 'html.parser', parse_only=tiles)
@@ -820,9 +824,10 @@ class ApiHelper:
 
         return categories
 
-    def get_category_thumbnail(self, element):
+    @staticmethod
+    def get_category_thumbnail(element):
         ''' Return a category thumbnail, if available '''
-        if self._kodi.get_setting('showfanart', 'true') == 'true':
+        if get_setting('showfanart', 'true') == 'true':
             raw_thumbnail = element.find(class_='media').get('data-responsive-image', 'DefaultGenre.png')
             return statichelper.add_https_method(raw_thumbnail)
         return 'DefaultGenre.png'
