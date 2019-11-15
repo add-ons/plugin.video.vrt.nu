@@ -5,7 +5,6 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
-from addon import kodi
 from apihelper import ApiHelper
 from data import CHANNELS
 from favorites import Favorites
@@ -21,9 +20,9 @@ xbmcvfs = __import__('xbmcvfs')
 
 class ApiHelperTests(unittest.TestCase):
 
-    _favorites = Favorites(kodi)
-    _resumepoints = ResumePoints(kodi)
-    _apihelper = ApiHelper(kodi, _favorites, _resumepoints)
+    _favorites = Favorites()
+    _resumepoints = ResumePoints()
+    _apihelper = ApiHelper(_favorites, _resumepoints)
 
     def test_get_api_data_single_season(self):
         title_items, sort, ascending, content = self._apihelper.list_episodes(program='het-journaal')

@@ -11,30 +11,32 @@ try:  # Python 3
 except ImportError:  # Python 2
     from urllib2 import build_opener, install_opener, ProxyHandler, Request, unquote, urlopen
 
+from kodiutils import (container_refresh, get_cache, get_proxies, get_setting, has_credentials,
+                       input_down, invalidate_caches, localize, log, log_error, multiselect,
+                       notification, ok_dialog, update_cache)
+
 
 class Favorites:
     ''' Track, cache and manage VRT favorites '''
 
-    def __init__(self, _kodi):
+    def __init__(self):
         ''' Initialize favorites, relies on XBMC vfs and a special VRT token '''
-        self._kodi = _kodi
-        self._proxies = _kodi.get_proxies()
-        install_opener(build_opener(ProxyHandler(self._proxies)))
-        # This is our internal representation
-        self._favorites = dict()
+        self._favorites = dict()  # Our internal representation
+        install_opener(build_opener(ProxyHandler(get_proxies())))
 
-    def is_activated(self):
+    @staticmethod
+    def is_activated():
         ''' Is favorites activated in the menu and do we have credentials ? '''
-        return self._kodi.get_setting('usefavorites') == 'true' and self._kodi.credentials_filled_in()
+        return get_setting('usefavorites') == 'true' and has_credentials()
 
     def refresh(self, ttl=None):
         ''' Get a cached copy or a newer favorites from VRT, or fall back to a cached file '''
         if not self.is_activated():
             return
-        favorites_json = self._kodi.get_cache('favorites.json', ttl)
+        favorites_json = get_cache('favorites.json', ttl)
         if not favorites_json:
             from tokenresolver import TokenResolver
-            xvrttoken = TokenResolver(self._kodi).get_xvrttoken(token_variant='user')
+            xvrttoken = TokenResolver().get_xvrttoken(token_variant='user')
             if xvrttoken:
                 headers = {
                     'authorization': 'Bearer ' + xvrttoken,
@@ -42,15 +44,15 @@ class Favorites:
                     'Referer': 'https://www.vrt.be/vrtnu',
                 }
                 req = Request('https://video-user-data.vrt.be/favorites', headers=headers)
-                self._kodi.log(2, 'URL post: https://video-user-data.vrt.be/favorites')
-                import json
+                log(2, 'URL post: https://video-user-data.vrt.be/favorites')
+                from json import load
                 try:
-                    favorites_json = json.load(urlopen(req))
+                    favorites_json = load(urlopen(req))
                 except (TypeError, ValueError):  # No JSON object could be decoded
                     # Force favorites from cache
-                    favorites_json = self._kodi.get_cache('favorites.json', ttl=None)
+                    favorites_json = get_cache('favorites.json', ttl=None)
                 else:
-                    self._kodi.update_cache('favorites.json', favorites_json)
+                    update_cache('favorites.json', favorites_json)
         if favorites_json:
             self._favorites = favorites_json
 
@@ -63,10 +65,10 @@ class Favorites:
             return True
 
         from tokenresolver import TokenResolver
-        xvrttoken = TokenResolver(self._kodi).get_xvrttoken(token_variant='user')
+        xvrttoken = TokenResolver().get_xvrttoken(token_variant='user')
         if xvrttoken is None:
-            self._kodi.log_error('Failed to get favorites token from VRT NU')
-            self._kodi.show_notification(message=self._kodi.localize(30975))
+            log_error('Failed to get favorites token from VRT NU')
+            notification(message=localize(30975))
             return False
 
         headers = {
@@ -77,20 +79,20 @@ class Favorites:
 
         from statichelper import program_to_url
         payload = dict(isFavorite=value, programUrl=program_to_url(program, 'short'), title=title)
-        import json
-        data = json.dumps(payload).encode('utf-8')
+        from json import dumps
+        data = dumps(payload).encode('utf-8')
         program_uuid = self.program_to_uuid(program)
-        self._kodi.log(2, 'URL post: https://video-user-data.vrt.be/favorites/{uuid}', uuid=program_uuid)
+        log(2, 'URL post: https://video-user-data.vrt.be/favorites/{uuid}', uuid=program_uuid)
         req = Request('https://video-user-data.vrt.be/favorites/%s' % program_uuid, data=data, headers=headers)
         result = urlopen(req)
         if result.getcode() != 200:
-            self._kodi.log_error("Failed to (un)follow program '{program}' at VRT NU", program=program)
-            self._kodi.show_notification(message=self._kodi.localize(30976, program=program))
+            log_error("Failed to (un)follow program '{program}' at VRT NU", program=program)
+            notification(message=localize(30976, program=program))
             return False
         # NOTE: Updates to favorites take a longer time to take effect, so we keep our own cache and use it
         self._favorites[program_uuid] = dict(value=payload)
-        self._kodi.update_cache('favorites.json', self._favorites)
-        # self.invalidate_caches()
+        update_cache('favorites.json', self._favorites)
+        invalidate_caches('my-offline-*.json', 'my-recent-*.json')
         return True
 
     def is_favorite(self, program):
@@ -105,18 +107,18 @@ class Favorites:
         ''' Follow your favorite program '''
         succeeded = self.update(program, title, True)
         if succeeded:
-            self._kodi.show_notification(message=self._kodi.localize(30411, title=title))
-            self._kodi.container_refresh()
+            notification(message=localize(30411, title=title))
+            container_refresh()
 
     def unfollow(self, program, title, move_down=False):
         ''' Unfollow your favorite program '''
         succeeded = self.update(program, title, False)
         if succeeded:
-            self._kodi.show_notification(message=self._kodi.localize(30412, title=title))
+            notification(message=localize(30412, title=title))
             # If the current item is selected and we need to move down before removing
             if move_down:
-                self._kodi.input_down()
-            self._kodi.container_refresh()
+                input_down()
+            container_refresh()
 
     @staticmethod
     def program_to_uuid(program):
@@ -132,16 +134,12 @@ class Favorites:
         from statichelper import url_to_program
         return [url_to_program(value.get('value').get('programUrl')) for value in list(self._favorites.values()) if value.get('value').get('isFavorite')]
 
-    def invalidate_caches(self):
-        ''' Invalidate caches that rely on favorites '''
-        self._kodi.invalidate_caches('favorites.json', 'my-offline-*.json', 'my-recent-*.json')
-
     def manage(self):
         ''' Allow the user to unselect favorites to be removed from the listing '''
         from statichelper import url_to_program
         self.refresh(ttl=0)
         if not self._favorites:
-            self._kodi.show_ok_dialog(heading=self._kodi.localize(30418), message=self._kodi.localize(30419))  # No favorites found
+            ok_dialog(heading=localize(30418), message=localize(30419))  # No favorites found
             return
 
         def by_title(item):
@@ -153,7 +151,7 @@ class Favorites:
                       enabled=value.get('value').get('isFavorite')) for value in list(sorted(list(self._favorites.values()), key=by_title))]
         titles = [item['title'] for item in items]
         preselect = [idx for idx in range(0, len(items) - 1) if items[idx]['enabled']]
-        selected = self._kodi.show_multiselect(self._kodi.localize(30420), options=titles, preselect=preselect)  # Please select/unselect to follow/unfollow
+        selected = multiselect(localize(30420), options=titles, preselect=preselect)  # Please select/unselect to follow/unfollow
         if selected is not None:
             for idx in set(preselect).difference(set(selected)):
                 self.unfollow(program=items[idx]['program'], title=items[idx]['title'])

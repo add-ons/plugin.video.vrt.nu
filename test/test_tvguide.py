@@ -11,7 +11,6 @@ import unittest
 import dateutil.tz
 from xbmcextra import kodi_to_ansi, uri_to_path
 
-from addon import kodi
 from tvguide import TVGuide
 
 xbmc = __import__('xbmc')
@@ -25,7 +24,7 @@ channels = ['een', 'canvas', 'ketnet']
 
 class TestTVGuide(unittest.TestCase):
 
-    _tvguide = TVGuide(kodi)
+    _tvguide = TVGuide()
 
     def test_tvguide_date_menu(self):
         ''' Test TV guide main menu '''

@@ -8,7 +8,8 @@ from __future__ import absolute_import, division, unicode_literals
 from xbmc import Monitor
 from apihelper import ApiHelper
 from favorites import Favorites
-from kodiwrapper import KodiWrapper
+from kodiutils import (addon_id, container_refresh, container_update, current_container_url,
+                       get_setting, has_addon, invalidate_caches, jsonrpc, log, notify)
 from playerinfo import PlayerInfo
 from resumepoints import ResumePoints
 from statichelper import play_url_to_id, to_unicode, url_to_episode
@@ -20,8 +21,7 @@ class VrtMonitor(Monitor):
 
     def __init__(self):
         ''' VRT Monitor initialisiation '''
-        self._kodi = KodiWrapper(None)
-        self._resumepoints = ResumePoints(self._kodi)
+        self._resumepoints = ResumePoints()
         self._container = None
         self._playerinfo = None
         self._favorites = None
@@ -42,16 +42,16 @@ class VrtMonitor(Monitor):
             if not self._playerinfo:
                 self._playerinfo = PlayerInfo(info=self.handle_info)
             if not self._favorites:
-                self._favorites = Favorites(self._kodi)
+                self._favorites = Favorites()
             if not self._apihelper:
-                self._apihelper = ApiHelper(self._kodi, self._favorites, self._resumepoints)
+                self._apihelper = ApiHelper(self._favorites, self._resumepoints)
 
     def onNotification(self, sender, method, data):  # pylint: disable=invalid-name
         ''' Handler for notifications '''
-        self._kodi.log(2, '[Notification] sender={sender}, method={method}, data={data}', sender=sender, method=method, data=to_unicode(data))
+        log(2, '[Notification] sender={sender}, method={method}, data={data}', sender=sender, method=method, data=to_unicode(data))
         if method.endswith('source_container'):
-            import json
-            self._container = json.loads(data).get('container')
+            from json import loads
+            self._container = loads(data).get('container')
             return
 
         if not sender.startswith('upnextprovider'):
@@ -59,34 +59,34 @@ class VrtMonitor(Monitor):
         if not method.endswith('plugin.video.vrt.nu_play_action'):
             return
 
-        import json
-        hexdata = json.loads(data)
+        from json import loads
+        hexdata = loads(data)
 
         if not hexdata:
             return
 
         from binascii import unhexlify
-        data = json.loads(unhexlify(hexdata[0]))
-        self._kodi.log(2, '[Up Next notification] sender={sender}, method={method}, data={data}', sender=sender, method=method, data=to_unicode(data))
-        self._kodi.jsonrpc(method='Player.Open', params=dict(item=dict(file='plugin://plugin.video.vrt.nu/play/whatson/%s' % data.get('whatson_id'))))
+        data = loads(unhexlify(hexdata[0]))
+        log(2, '[Up Next notification] sender={sender}, method={method}, data={data}', sender=sender, method=method, data=to_unicode(data))
+        jsonrpc(method='Player.Open', params=dict(item=dict(file='plugin://plugin.video.vrt.nu/play/whatson/%s' % data.get('whatson_id'))))
 
     def onSettingsChanged(self):  # pylint: disable=invalid-name
         ''' Handler for changes to settings '''
 
-        self._kodi.log(1, 'Settings changed')
-        TokenResolver(self._kodi).refresh_login()
+        log(1, 'Settings changed')
+        TokenResolver().refresh_login()
 
-        self._kodi.invalidate_caches('continue-*.json', 'favorites.json', 'my-offline-*.json', 'my-recent-*.json', 'resume_points.json', 'watchlater-*.json')
+        invalidate_caches('continue-*.json', 'favorites.json', 'my-offline-*.json', 'my-recent-*.json', 'resume_points.json', 'watchlater-*.json')
 
         # Init watching activity again when settings change
         self.init_watching_activity()
 
         # Refresh container when settings change
-        self._kodi.container_refresh()
+        container_refresh()
 
     def handle_info(self, info):
         ''' Handle information from PlayerInfo class '''
-        self._kodi.log(2, 'Got VRT NU Player info: {info}', info=str(info))
+        log(2, 'Got VRT NU Player info: {info}', info=str(info))
 
         # Push resume position
         if info.get('position'):
@@ -114,19 +114,19 @@ class VrtMonitor(Monitor):
         # Push resumepoint to VRT NU
         self._resumepoints.update(uuid=uuid, title=title, url=url, watch_later=None, position=info.get('position'), total=info.get('total'))
         # Only update container if the play action was initiated from it
-        current_container = self._kodi.current_container_url()
-        self._kodi.log(2, '[PlayerPosition] resumepoint update {info} {container}', info=episode.get('title'), container=current_container)
+        current_container = current_container_url()
+        log(2, '[PlayerPosition] resumepoint update {info} {container}', info=episode.get('title'), container=current_container)
         if current_container is None or self._container == current_container:
-            self._kodi.log(2, '[PlayerPosition] update container {info}', info=self._container)
-            self._kodi.container_update(self._container)
+            log(2, '[PlayerPosition] update container {info}', info=self._container)
+            container_update(self._container)
 
     def push_upnext(self, info):
         ''' Push episode info to Up Next service add-on'''
-        if self._kodi.has_addon('service.upnext') and self._kodi.get_setting('useupnext', 'true') == 'true':
+        if has_addon('service.upnext') and get_setting('useupnext', 'true') == 'true':
             next_info = self._apihelper.get_upnext(info)
             if next_info:
                 from binascii import hexlify
-                import json
-                data = [to_unicode(hexlify(json.dumps(next_info).encode()))]
-                sender = '%s.SIGNAL' % self._kodi.addon_id()
-                self._kodi.notify(sender=sender, message='upnext_data', data=data)
+                from json import dumps
+                data = [to_unicode(hexlify(dumps(next_info).encode()))]
+                sender = '%s.SIGNAL' % addon_id()
+                notify(sender=sender, message='upnext_data', data=data)

@@ -6,7 +6,6 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
-from addon import kodi
 from apihelper import ApiHelper
 from favorites import Favorites
 from resumepoints import ResumePoints
@@ -23,9 +22,9 @@ addon.settings['useresumepoints'] = 'true'
 
 class TestResumePoints(unittest.TestCase):
 
-    _favorites = Favorites(kodi)
-    _resumepoints = ResumePoints(kodi)
-    _apihelper = ApiHelper(kodi, _favorites, _resumepoints)
+    _favorites = Favorites()
+    _resumepoints = ResumePoints()
+    _apihelper = ApiHelper(_favorites, _resumepoints)
 
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
