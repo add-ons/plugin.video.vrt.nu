@@ -63,17 +63,20 @@ def reformat_url(url, url_type):
 
 
 def program_to_url(program, url_type):
-    ''' Convert a program url component (e.g. de-campus-cup) to a short programUrl (e.g. /vrtnu/a-z/de-campus-cup/)
-        or to a long programUrl (e.g. //www.vrt.be/vrtnu/a-z/de-campus-cup/)
+    ''' Convert a program url component (e.g. de-campus-cup) to:
+        - a short programUrl (e.g. /vrtnu/a-z/de-campus-cup/)
+        - a medium programUrl (e.g. //www.vrt.be/vrtnu/a-z/de-campus-cup/)
+        - a long programUrl (e.g. https://www.vrt.be/vrtnu/a-z/de-campus-cup/)
     '''
     url = None
     if program:
         # short programUrl
         if url_type == 'short':
             url = '/vrtnu/a-z/' + program + '/'
-        # long programUrl
+        # medium programUrl
         elif url_type == 'medium':
             url = '//www.vrt.be/vrtnu/a-z/' + program + '/'
+        # long programUrl
         elif url_type == 'long':
             url = 'https://www.vrt.be/vrtnu/a-z/' + program + '/'
     return url
@@ -105,14 +108,14 @@ def url_to_program(url):
 
 
 def url_to_episode(url):
-    ''' Convert a targetUrl (e.g. //www.vrt.be/vrtnu/a-z/buck/1/buck-s1a32/)
-        to a short episode url (/vrtnu/a-z/buck/1/buck-s1a32/)
+    ''' Convert a targetUrl (e.g. //www.vrt.be/vrtnu/a-z/buck/1/buck-s1a32/) to
+        a short episode url (/vrtnu/a-z/buck/1/buck-s1a32/)
     '''
     if url.startswith('https://www.vrt.be/vrtnu/a-z/'):
-        # very long episode url
+        # long episode url
         return url.replace('https://www.vrt.be/vrtnu/a-z/', '/vrtnu/a-z/')
     if url.startswith('//www.vrt.be/vrtnu/a-z/'):
-        # long episode url
+        # medium episode url
         return url.replace('//www.vrt.be/vrtnu/a-z/', '/vrtnu/a-z/')
     return None
 

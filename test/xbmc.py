@@ -221,7 +221,7 @@ def log(msg, level=0):
     color1 = '\033[32;1m'
     color2 = '\033[32;0m'
     name = LOGLEVELS[level]
-    if level in (5, 6, 7):
+    if level in (4, 5, 6, 7):
         color1 = '\033[31;1m'
         if level in (6, 7):
             raise Exception(msg)

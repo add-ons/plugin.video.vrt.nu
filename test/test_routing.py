@@ -48,6 +48,8 @@ class TestRouting(unittest.TestCase):
     def test_episodes_menu(self):
         addon.run(['plugin://plugin.video.vrt.nu/programs/thuis', '0', ''])
         self.assertEqual(plugin.url_for(addon.programs, program='thuis'), 'plugin://plugin.video.vrt.nu/programs/thuis')
+        addon.run(['plugin://plugin.video.vrt.nu/programs/pano/2019', '0', ''])
+        self.assertEqual(plugin.url_for(addon.programs, program='pano', season='2019'), 'plugin://plugin.video.vrt.nu/programs/pano/2019')
         addon.run(['plugin://plugin.video.vrt.nu/programs/pano/allseasons', '0', ''])
         self.assertEqual(plugin.url_for(addon.programs, program='pano', season='allseasons'), 'plugin://plugin.video.vrt.nu/programs/pano/allseasons')
 

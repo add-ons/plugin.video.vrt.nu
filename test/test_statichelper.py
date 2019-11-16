@@ -52,15 +52,27 @@ class TestStaticHelper(unittest.TestCase):
         api_url = '//www.vrt.be/vrtnu/a-z/de-ideale-wereld/2019-nj/de-ideale-wereld-d20191010/'
         self.assertEqual(api_url, statichelper.video_to_api_url(video))
 
+        video = 'https://www.vrt.be/vrtnu/a-z/de-ideale-wereld/2019-nj/de-ideale-wereld-d20191010'
+        api_url = '//www.vrt.be/vrtnu/a-z/de-ideale-wereld/2019-nj/de-ideale-wereld-d20191010/'
+        self.assertEqual(api_url, statichelper.video_to_api_url(video))
+
     def test_play_url_to_id(self):
         url = 'plugin://plugin.video.vrt.nu/play/id/vid-5b12c0f6-b8fe-426f-a600-557f501f3be9/pbs-pub-7e2764cf-a8c0-4e78-9cbc-46d39381c237'
-        video_id = dict(video_id='vid-5b12c0f6-b8fe-426f-a600-557f501f3be9')
-        self.assertEqual(video_id, statichelper.play_url_to_id(url))
+        play_id = dict(video_id='vid-5b12c0f6-b8fe-426f-a600-557f501f3be9')
+        self.assertEqual(play_id, statichelper.play_url_to_id(url))
+
+        url = 'plugin://plugin.video.vrt.nu/play/whatson/705308178527'
+        play_id = dict(whatson_id='705308178527')
+        self.assertEqual(play_id, statichelper.play_url_to_id(url))
+
+        url = 'plugin://plugin.video.vrt.nu/play/url/https://www.vrt.be/vrtnu/kanalen/canvas/'
+        play_id = dict(video_url='//www.vrt.be/vrtnu/kanalen/canvas/')
+        self.assertEqual(play_id, statichelper.play_url_to_id(url))
 
     def test_reformat_url(self):
-        long_url = 'https://www.vrt.be/vrtnu/a-z/terzake/2019/terzake-d20191017/'
-        medium_url = '//www.vrt.be/vrtnu/a-z/terzake/2019/terzake-d20191017/'
         short_url = '/vrtnu/a-z/terzake/2019/terzake-d20191017/'
+        medium_url = '//www.vrt.be/vrtnu/a-z/terzake/2019/terzake-d20191017/'
+        long_url = 'https://www.vrt.be/vrtnu/a-z/terzake/2019/terzake-d20191017/'
 
         self.assertEqual(long_url, statichelper.reformat_url(short_url, 'long'))
         self.assertEqual(long_url, statichelper.reformat_url(medium_url, 'long'))
@@ -73,6 +85,26 @@ class TestStaticHelper(unittest.TestCase):
         self.assertEqual(short_url, statichelper.reformat_url(short_url, 'short'))
         self.assertEqual(short_url, statichelper.reformat_url(medium_url, 'short'))
         self.assertEqual(short_url, statichelper.reformat_url(long_url, 'short'))
+
+        self.assertEqual(long_url, statichelper.reformat_url(long_url + '#foo', 'long'))
+        self.assertEqual(medium_url, statichelper.reformat_url(long_url + '#foo', 'medium'))
+        self.assertEqual(short_url, statichelper.reformat_url(long_url + '#foo', 'short'))
+
+    def test_shorten_link(self):
+        self.assertEqual(None, statichelper.shorten_link(None))
+
+        long_url = 'https://www.vrt.be/vrtnu/p.LR90GkqOD'
+        self.assertEqual('vrtnu.be/p.LR90GkqOD', statichelper.shorten_link(long_url))
+
+        medium_url = '//www.vrt.be/vrtnu/p.LR90GkqOD'
+        self.assertEqual('vrtnu.be/p.LR90GkqOD', statichelper.shorten_link(medium_url))
+
+    def test_realpage(self):
+        self.assertEqual(1, statichelper.realpage('foo'))
+        self.assertEqual(1, statichelper.realpage('-1'))
+        self.assertEqual(1, statichelper.realpage('0'))
+        self.assertEqual(2, statichelper.realpage(2))
+        self.assertEqual(3, statichelper.realpage('3'))
 
 
 if __name__ == '__main__':

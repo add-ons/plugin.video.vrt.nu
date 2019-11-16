@@ -113,6 +113,7 @@ class TestVRTPlayer(unittest.TestCase):
     def test_play_unknown_airdate(self):
         ''' Test playing unknown airdate '''
         self._vrtplayer.play_episode_by_air_date(channel='een', start_date='2100-01-01T23:59:58', end_date='2100-01-01T23:59:59')
+        self._vrtplayer.play_episode_by_air_date(channel='foo', start_date='2100-01-01T23:59:58', end_date='2100-01-01T23:59:59')
 
     def test_play_unknown_whatson_id(self):
         ''' Test playing unknown whatson id '''
