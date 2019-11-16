@@ -29,5 +29,4 @@ if not sys.argv[1].startswith('plugin://'):
     sys.argv[1] = 'plugin://plugin.video.vrt.nu' + sys.argv[1]
 
 print('** Running URI: %s' % sys.argv[1])
-PLUGIN = addon.plugin
-PLUGIN.run([sys.argv[1], 0, ''])
+addon.run([sys.argv[1], 0, ''])

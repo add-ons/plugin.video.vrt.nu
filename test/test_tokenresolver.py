@@ -13,16 +13,31 @@ xbmcgui = __import__('xbmcgui')
 xbmcplugin = __import__('xbmcplugin')
 xbmcvfs = __import__('xbmcvfs')
 
+addon = xbmcaddon.Addon()
 
-class TokenResolverTests(unittest.TestCase):
 
+class TestTokenResolver(unittest.TestCase):
     _tokenresolver = TokenResolver()
+    password = None
+
+    def setUp(self):
+        # Save password
+        self.password = addon.settings['password']
+
+    def tearDown(self):
+        # Restore password
+        addon.settings['password'] = self.password
 
     def test_refresh_login(self):
         self._tokenresolver.refresh_login()
 
     def test_cleanup_userdata(self):
         self._tokenresolver.cleanup_userdata()
+
+    def test_no_credentials(self):
+        # Remove password
+        addon.settings['password'] = ''
+        self._tokenresolver.refresh_login()
 
 
 if __name__ == '__main__':

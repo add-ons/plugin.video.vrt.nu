@@ -112,11 +112,11 @@ def addon_settings(addon_id=None):
 
     # Read credentials from environment or credentials.json
     if 'ADDON_USERNAME' in os.environ and 'ADDON_PASSWORD' in os.environ:
-        print('Using credentials from the environment variables ADDON_USERNAME and ADDON_PASSWORD')
+        # print('Using credentials from the environment variables ADDON_USERNAME and ADDON_PASSWORD')
         settings[ADDON_ID]['username'] = os.environ.get('ADDON_USERNAME')
         settings[ADDON_ID]['password'] = os.environ.get('ADDON_PASSWORD')
     elif os.path.exists('test/userdata/credentials.json'):
-        print('Using credentials from test/userdata/credentials.json')
+        # print('Using credentials from test/userdata/credentials.json')
         with open('test/userdata/credentials.json') as f:
             credentials = json.load(f)
         settings[ADDON_ID].update(credentials)
@@ -131,7 +131,10 @@ def addon_settings(addon_id=None):
 
 def import_language(language):
     ''' Process the language.po file '''
-    return polib.pofile('resources/language/{language}/strings.po'.format(language=language))
+    try:
+        return polib.pofile('resources/language/{language}/strings.po'.format(language=language))
+    except IOError:
+        return polib.pofile('resources/language/resource.language.en_gb/strings.po')
 
 
 ADDON_INFO = read_addon_xml('addon.xml')

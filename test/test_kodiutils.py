@@ -17,6 +17,8 @@ xbmcvfs = __import__('xbmcvfs')
 class KodiTests(unittest.TestCase):
 
     def test_localize(self):
+        xbmc.settings['locale.language'] = 'resource.language.nl_nl'
+
         msg = localize(30958)
         #self.assertEqual(msg, "There is a problem with this VRT NU {protocol} stream. Try again with {component} {state} or try to play this program from the VRT NU website. Please report this problem at https://www.vrt.be/vrtnu/help/")  # noqa
         self.assertEqual(msg, "Er is een probleem met deze VRT NU {protocol}-stream. Probeer het opnieuw met {component} {state} of probeer dit programma af te spelen vanaf de VRT NU-website. Meld dit probleem op https://www.vrt.be/vrtnu/help/")  # noqa

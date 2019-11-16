@@ -83,20 +83,24 @@ def url_to_program(url):
     ''' Convert
           - a targetUrl (e.g. //www.vrt.be/vrtnu/a-z/de-campus-cup.relevant/),
           - a short programUrl (e.g. /vrtnu/a-z/de-campus-cup/) or
-          - a long programUrl (e.g. //www.vrt.be/vrtnu/a-z/de-campus-cup/)
+          - a medium programUrl (e.g. //www.vrt.be/vrtnu/a-z/de-campus-cup/)
+          - a long programUrl (e.g. https://www.vrt.be/vrtnu/a-z/de-campus-cup/)
         to a program url component (e.g. de-campus-cup).
         Any season or episode information is removed as well.
     '''
     program = None
-    if url.startswith('//www.vrt.be/vrtnu/a-z/'):
+    if url.startswith('https://www.vrt.be/vrtnu/a-z/'):
         # long programUrl or targetUrl
         program = url.split('/')[5]
-        if program.endswith('.relevant'):
-            # targetUrl
-            program = program.replace('.relevant', '')
+    elif url.startswith('//www.vrt.be/vrtnu/a-z/'):
+        # medium programUrl or targetUrl
+        program = url.split('/')[5]
     elif url.startswith('/vrtnu/a-z/'):
         # short programUrl
         program = url.split('/')[3]
+    if program.endswith('.relevant'):
+        # targetUrl
+        program = program.replace('.relevant', '')
     return program
 
 
