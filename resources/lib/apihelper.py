@@ -400,6 +400,8 @@ class ApiHelper:
         from json import load
         schedule_json = load(urlopen(url))
         episodes = schedule_json.get(channel.get('id'), [])
+        if not episodes:
+            return None
         if offairdate:
             mindate = min(abs(offairdate - dateutil.parser.parse(episode.get('endTime'))) for episode in episodes)
             episode_guess_off = next((episode for episode in episodes if abs(offairdate - dateutil.parser.parse(episode.get('endTime'))) == mindate), None)
@@ -446,10 +448,10 @@ class ApiHelper:
 
     def get_latest_episode(self, program):
         ''' Get the latest episode of a program '''
-        video = None
         api_data = self.get_episodes(program=program, variety='single')
-        if len(api_data) == 1:
-            episode = api_data[0]
+        if len(api_data) != 1:
+            return None
+        episode = api_data[0]
         log(2, str(episode))
         video_item = TitleItem(
             title=self._metadata.get_label(episode),

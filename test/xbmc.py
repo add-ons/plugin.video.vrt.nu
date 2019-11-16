@@ -33,8 +33,7 @@ REGIONS = {
     'dateshort': '%Y-%m-%d',
 }
 
-GLOBAL_SETTINGS = global_settings()
-PO = import_language(language=GLOBAL_SETTINGS.get('locale.language'))
+settings = global_settings()
 
 
 class Keyboard:
@@ -60,30 +59,52 @@ class Monitor:
 
     def __init__(self, line='', heading=''):
         ''' A stub constructor for the xbmc Monitor class '''
+        self.iteration = 0
 
     def abortRequested(self):
         ''' A stub implementation for the xbmc Keyboard class abortRequested() method '''
-        return True
+        self.iteration += 1
+        print('Iteration: %s' % self.iteration)
+        return self.iteration % 5 == 0
 
     def waitForAbort(self, timeout=None):
-        ''' A stub implementation for the xbmc Keyboard class waitForAbort() method '''
+        ''' A stub implementation for the xbmc Monitor class waitForAbort() method '''
+        try:
+            time.sleep(timeout)
+        except KeyboardInterrupt:
+            return True
+        except Exception:  # pylint: disable=broad-except
+            return True
         return False
 
 
 class Player:
     ''' A stub implementation of the xbmc Player class '''
     def __init__(self):
+        ''' A stub constructor for the xbmc Player class '''
         self._count = 0
 
     def play(self, item='', listitem=None, windowed=False, startpos=-1):
         ''' A stub implementation for the xbmc Player class play() method '''
         return
 
+    def stop(self):
+        ''' A stub implementation for the xbmc Player class stop() method '''
+        return
+
+    def getPlayingFile(self):
+        ''' A stub implementation for the xbmc Player class getPlayingFile() method '''
+        return '/foo/bar'
+
     def isPlaying(self):
         ''' A stub implementation for the xbmc Player class isPlaying() method '''
         # Return True four times out of five
         self._count += 1
         return bool(self._count % 5 != 0)
+
+    def seekTime(self, seekTime):
+        ''' A stub implementation for the xbmc Player class seekTime() method '''
+        return
 
     def showSubtitles(self, bVisible):
         ''' A stub implementation for the xbmc Player class showSubtitles() method '''
@@ -100,6 +121,20 @@ class Player:
     def getVideoInfoTag(self):
         ''' A stub implementation for the xbmc Player class getVideoInfoTag() method '''
         return VideoInfoTag()
+
+
+class PlayList:
+    ''' A stub implementation of the xbmc PlayList class '''
+
+    def __init__(self):
+        ''' A stub constructor for the xbmc PlayList class '''
+
+    def getposition(self):
+        ''' A stub implementation for the xbmc PlayList class getposition() method '''
+        return 0
+
+    def size(self):
+        ''' A stub implementation for the xbmc PlayList class size() method '''
 
 
 class VideoInfoTag:
@@ -139,7 +174,7 @@ def executeJSONRPC(jsonrpccommand):
     command = json.loads(jsonrpccommand)
     if command.get('method') == 'Settings.GetSettingValue':
         key = command.get('params').get('setting')
-        return json.dumps(dict(id=1, jsonrpc='2.0', result=dict(value=GLOBAL_SETTINGS.get(key))))
+        return json.dumps(dict(id=1, jsonrpc='2.0', result=dict(value=settings.get(key))))
     if command.get('method') == 'Addons.GetAddonDetails':
         if command.get('params', {}).get('addonid') == 'script.module.inputstreamhelper':
             return json.dumps(dict(id=1, jsonrpc='2.0', result=dict(addon=dict(enabled='true', version='0.3.5'))))
@@ -168,7 +203,7 @@ def getInfoLabel(key):
 
 def getLocalizedString(msgctxt):
     ''' A reimplementation of the xbmc getLocalizedString() function '''
-    for entry in PO:
+    for entry in import_language(language=settings.get('locale.language')):
         if entry.msgctxt == '#%s' % msgctxt:
             return entry.msgstr or entry.msgid
     if int(msgctxt) >= 30000:
@@ -202,9 +237,9 @@ def setContent(self, content):
     return
 
 
-def sleep(seconds):
+def sleep(timemillis):
     ''' A reimplementation of the xbmc sleep() function '''
-    time.sleep(seconds)
+    time.sleep(timemillis / 1000)
 
 
 def translatePath(path):

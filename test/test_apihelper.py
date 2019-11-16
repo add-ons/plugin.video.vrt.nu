@@ -18,7 +18,7 @@ xbmcplugin = __import__('xbmcplugin')
 xbmcvfs = __import__('xbmcvfs')
 
 
-class ApiHelperTests(unittest.TestCase):
+class TestApiHelper(unittest.TestCase):
 
     _favorites = Favorites()
     _resumepoints = ResumePoints()
@@ -122,6 +122,17 @@ class ApiHelperTests(unittest.TestCase):
         self.assertEqual(content, 'episodes')
         plot = title_items[0].info_dict['plot']
         print(kodi_to_ansi(plot))
+
+    def test_upnext(self):
+        current_episode = dict(
+            program='winteruur',
+            path='plugin://plugin.video.vrt.nu/play/whatson/705308178527',
+            playcount='0',
+            rating='0',
+            runtime='600',
+        )
+        next_episode = self._apihelper.get_upnext(info=current_episode)
+        print(next_episode)
 
 
 if __name__ == '__main__':

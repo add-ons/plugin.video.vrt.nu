@@ -106,6 +106,18 @@ class TestVRTPlayer(unittest.TestCase):
         featured_items = self._apihelper.list_featured()
         self.assertEqual(len(featured_items), 9)
 
+    def test_play_unknown_program(self):
+        ''' Test playing latest episode of an unknown program '''
+        self._vrtplayer.play_latest_episode(program='foobar')
+
+    def test_play_unknown_airdate(self):
+        ''' Test playing unknown airdate '''
+        self._vrtplayer.play_episode_by_air_date(channel='een', start_date='2100-01-01T23:59:58', end_date='2100-01-01T23:59:59')
+
+    def test_play_unknown_whatson_id(self):
+        ''' Test playing unknown whatson id '''
+        self._vrtplayer.play_whatson(whatson_id='1234567890')
+
 
 if __name__ == '__main__':
     unittest.main()

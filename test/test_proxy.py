@@ -20,13 +20,13 @@ plugin = addon.plugin
 @unittest.skipIf(sys.version_info[0] < 3, 'Skipping proxy tests on Python 2')
 class TestProxy(unittest.TestCase):
     def setUp(self):
-        xbmc.GLOBAL_SETTINGS['network.usehttpproxy'] = True
-        xbmc.GLOBAL_SETTINGS['network.httpproxytype'] = 0
-        xbmc.GLOBAL_SETTINGS['network.httpproxyserver'] = '127.0.0.1'
-        xbmc.GLOBAL_SETTINGS['network.httpproxyport'] = '8899'
+        xbmc.settings['network.usehttpproxy'] = True
+        xbmc.settings['network.httpproxytype'] = 0
+        xbmc.settings['network.httpproxyserver'] = '127.0.0.1'
+        xbmc.settings['network.httpproxyport'] = '8899'
 
     def tearDown(self):
-        xbmc.GLOBAL_SETTINGS['network.usehttpproxy'] = False
+        xbmc.settings['network.usehttpproxy'] = False
 
     # Delete tokens method: '/tokens/delete'
     def test_clear_cookies_route(self):

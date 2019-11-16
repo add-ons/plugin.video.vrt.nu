@@ -21,7 +21,7 @@ class PlayerInfo(Player):
         self._total = None
         self._stop = Event()
         from random import randint
-        self._id = randint(1, 101)
+        self._id = randint(1, 10001)
         log(2, '[PlayerInfo] %d initialized' % self._id)
         Player.__init__(self)
 

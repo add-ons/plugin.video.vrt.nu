@@ -8,6 +8,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import unittest
 from apihelper import ApiHelper
 from favorites import Favorites
+from search import Search
 from resumepoints import ResumePoints
 
 xbmc = __import__('xbmc')
@@ -62,6 +63,11 @@ class TestSearch(unittest.TestCase):
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
+
+    @staticmethod
+    def test_search_empty():
+        ''' Test for empty search '''
+        Search().search(keywords='')
 
 
 if __name__ == '__main__':
