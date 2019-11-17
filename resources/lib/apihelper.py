@@ -562,6 +562,8 @@ class ApiHelper:
                 req = Request(search_url)
                 try:
                     search_json = load(urlopen(req))
+                except (TypeError, ValueError):  # No JSON object could be decoded
+                    return []
                 except HTTPError as exc:
                     url_length = len(req.get_selector())
                     if exc.code == 413 and url_length > 8192:

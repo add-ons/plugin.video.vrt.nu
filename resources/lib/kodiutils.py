@@ -657,7 +657,7 @@ def get_cache(path, ttl=None):
             try:
                 # return load(fdesc, encoding='utf-8')
                 return load(fdesc)
-            except (TypeError, ValueError):
+            except (TypeError, ValueError):  # No JSON object could be decoded
                 return None
 
     return None

@@ -31,7 +31,7 @@ now = datetime.now(dateutil.tz.tzlocal())
 yesterday = now + timedelta(days=-1)
 
 
-class StreamServiceTests(unittest.TestCase):
+class TestStreamService(unittest.TestCase):
 
     _tokenresolver = TokenResolver()
     _streamservice = StreamService(_tokenresolver)

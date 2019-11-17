@@ -37,7 +37,8 @@ class TestTokenResolver(unittest.TestCase):
     def test_no_credentials(self):
         # Remove password
         addon.settings['password'] = ''
-        self._tokenresolver.refresh_login()
+        self._tokenresolver.login(refresh=True)
+        self._tokenresolver.login(refresh=False)
 
 
 if __name__ == '__main__':

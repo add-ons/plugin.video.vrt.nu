@@ -59,6 +59,13 @@ class TestResumePoints(unittest.TestCase):
         assetuuid, first_entry = next(iter(self._resumepoints._resumepoints.items()))  # pylint: disable=protected-access
         print('%s = %s' % (assetuuid, first_entry))
 
+    def test_assetpath_to_uuid(self):
+        self.assertEqual(None, self._resumepoints.assetpath_to_uuid(None))
+
+        assetpath = '/content/dam/vrt/2019/08/14/woodstock-depot_WP00157456'
+        uuid = 'contentdamvrt20190814woodstockdepotwp00157456'
+        self.assertEqual(uuid, self._resumepoints.assetpath_to_uuid(assetpath))
+
 
 if __name__ == '__main__':
     unittest.main()
