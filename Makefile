@@ -1,4 +1,4 @@
-ENVS := flake8,py27,py36
+ENVS := flake8,py27,py36,py37
 export PYTHONPATH := $(CURDIR)/resources/lib:$(CURDIR)/test
 addon_xml := addon.xml
 
