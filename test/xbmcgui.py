@@ -81,6 +81,12 @@ class Dialog:
         return None
 
     @staticmethod
+    def contextmenu(items):
+        ''' A stub implementation for the xbmcgui Dialog class contextmenu() method '''
+        print('\033[37;44;1mCONTEXTMENU:\033[35;49;1m \033[37;1m%s\033[39;0m' % (', '.join(items)))
+        return -1
+
+    @staticmethod
     def yesno(heading, line1, line2=None, line3=None, nolabel=None, yeslabel=None, autoclose=0):
         ''' A stub implementation for the xbmcgui Dialog class yesno() method '''
         heading = kodi_to_ansi(heading)
@@ -142,6 +148,41 @@ class DialogProgress:
         sys.stdout.flush()
 
 
+class DialogProgressBG:
+    ''' A reimplementation of the xbmcgui DialogProgressBG '''
+
+    def __init__(self):
+        ''' A stub constructor for the xbmcgui DialogProgressBG class '''
+        self.percentage = 0
+
+    @staticmethod
+    def close():
+        ''' A stub implementation for the xbmcgui DialogProgressBG class close() method '''
+        print()
+
+    @staticmethod
+    def create(heading, message):
+        ''' A stub implementation for the xbmcgui DialogProgressBG class create() method '''
+        heading = kodi_to_ansi(heading)
+        message = kodi_to_ansi(message)
+        print('\033[37;44;1mPROGRESS:\033[35;49;1m [%s] \033[37;1m%s\033[39;0m' % (heading, message))
+
+    @staticmethod
+    def isfinished():
+        ''' A stub implementation for the xbmcgui DialogProgressBG class isfinished() method '''
+
+    def update(self, percentage, heading=None, message=None):
+        ''' A stub implementation for the xbmcgui DialogProgressBG class update() method '''
+        if (percentage - 5) < self.percentage:
+            return
+        self.percentage = percentage
+        message = kodi_to_ansi(message)
+        if message:
+            print('\033[37;44;1mPROGRESS:\033[35;49;1m [%d%%] \033[37;1m%s\033[39;0m' % (percentage, message))
+        else:
+            print('\033[1G\033[37;44;1mPROGRESS:\033[35;49;1m [%d%%]\033[39;0m' % (percentage), end='')
+
+
 class DialogBusy:
     ''' A reimplementation of the xbmcgui DialogBusy '''
 
@@ -192,6 +233,11 @@ class ListItem:
         return
 
     @staticmethod
+    def setIsFolder(isFolder):
+        ''' A stub implementation for the xbmcgui ListItem class setIsFolder() method '''
+        return
+
+    @staticmethod
     def setMimeType(mimetype):
         ''' A stub implementation for the xbmcgui ListItem class setMimeType() method '''
         return
@@ -203,6 +249,11 @@ class ListItem:
     @staticmethod
     def setProperty(key, value):
         ''' A stub implementation for the xbmcgui ListItem class setProperty() method '''
+        return
+
+    @staticmethod
+    def setProperties(dictionary):
+        ''' A stub implementation for the xbmcgui ListItem class setProperties() method '''
         return
 
     @staticmethod

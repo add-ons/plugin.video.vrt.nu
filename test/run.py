@@ -28,5 +28,11 @@ if len(sys.argv) <= 1:
 if not sys.argv[1].startswith('plugin://'):
     sys.argv[1] = 'plugin://plugin.video.vrt.nu' + sys.argv[1]
 
-print('** Running URI: %s' % sys.argv[1])
-addon.run([sys.argv[1], 0, ''])
+# Split path and args
+try:
+    path, args = sys.argv[1].split('?', 1)
+except ValueError:
+    path, args = sys.argv[1], ''
+
+print('** Running URI %s with args %s' % (path, args))
+addon.run([sys.argv[1], 0, args])
