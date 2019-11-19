@@ -20,6 +20,8 @@ class TestStaticHelper(unittest.TestCase):
         episode = '/vrtnu/a-z/buck/1/buck-s1a32/'
         self.assertEqual(episode, statichelper.url_to_episode(medium_url))
 
+        self.assertEqual(None, statichelper.url_to_episode('foobar'))
+
     def test_url_to_program(self):
         long_url = 'https://www.vrt.be/vrtnu/a-z/buck/1/buck-s1a32/'
         program = 'buck'
@@ -105,6 +107,12 @@ class TestStaticHelper(unittest.TestCase):
         self.assertEqual(1, statichelper.realpage('0'))
         self.assertEqual(2, statichelper.realpage(2))
         self.assertEqual(3, statichelper.realpage('3'))
+
+    def test_capitalize(self):
+        self.assertEqual('Foo bar', statichelper.capitalize('foo bar'))
+        self.assertEqual('Foo bar', statichelper.capitalize('Foo bar'))
+        self.assertEqual('FoO bAr', statichelper.capitalize('foO bAr'))
+        self.assertEqual('FOO BAR', statichelper.capitalize('FOO BAR'))
 
 
 if __name__ == '__main__':

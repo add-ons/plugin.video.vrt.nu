@@ -35,27 +35,28 @@
         <setting label="30827" type="bool" id="sporza" default="true"/> <!-- Sporza -->
         <setting label="30828" type="bool" id="radio1" default="true"/> <!-- Radio 1 -->
         <setting label="30829" type="bool" id="radio2" default="true"/> <!-- Radio 2 -->
-        <setting label="30820" type="bool" id="klara" default="true"/> <!-- Klara -->
-        <setting label="30821" type="bool" id="stubru" default="true"/> <!-- Studio Brussel -->
-        <setting label="30822" type="bool" id="mnm" default="true"/> <!-- MNM -->
-        <setting label="30823" type="bool" id="vrtnws" default="true"/> <!-- VRT NWS -->
-        <setting label="30824" type="bool" id="vrtnxt" default="true"/> <!-- VRT NXT -->
+        <setting label="30830" type="bool" id="klara" default="true"/> <!-- Klara -->
+        <setting label="30831" type="bool" id="stubru" default="true"/> <!-- Studio Brussel -->
+        <setting label="30832" type="bool" id="mnm" default="true"/> <!-- MNM -->
+        <setting label="30833" type="bool" id="vrtnws" default="true"/> <!-- VRT NWS -->
+        <setting label="30834" type="bool" id="vrtnxt" default="true"/> <!-- VRT NXT -->
     </category>
     <category label="30860"> <!--Integration -->
+        <setting label="30861" type="lsep"/> <!-- Integration with other add-ons -->
         <!-- YouTube -->
-        <setting label="30861" help="30862" type="action" action="InstallAddon(plugin.video.youtube)" visible="!System.HasAddon(plugin.video.youtube)"/> <!-- Install YouTube add-on -->
-        <setting label="30863" help="30862" type="bool" id="showyoutube" default="true" visible="System.HasAddon(plugin.video.youtube)"/>
-        <setting label="30865" help="30866" type="action" option="close" action="Addon.OpenSettings(plugin.video.youtube)" enable="eq(-1,true)" visible="System.HasAddon(plugin.video.youtube)" subsetting="true"/> <!-- YouTube settings -->
+        <setting label="30863" help="30864" type="action" action="InstallAddon(plugin.video.youtube)" visible="!System.HasAddon(plugin.video.youtube)"/> <!-- Install YouTube add-on -->
+        <setting label="30865" help="30866" type="bool" id="showyoutube" default="true" visible="System.HasAddon(plugin.video.youtube)"/>
+        <setting label="30867" help="30868" type="action" option="close" action="Addon.OpenSettings(plugin.video.youtube)" enable="eq(-1,true)" visible="System.HasAddon(plugin.video.youtube)" subsetting="true"/> <!-- YouTube settings -->
         <!-- UpNext -->
-        <setting label="30867" help="30868" type="action" action="InstallAddon(service.upnext)" visible="!System.HasAddon(service.upnext)"/> <!-- Install Up Next add-on -->
-        <setting label="30869" help="30868" type="bool" id="useupnext" default="true" visible="System.HasAddon(service.upnext)" />
-        <setting label="30871" help="30872" type="action" action="Addon.OpenSettings(service.upnext)" enable="eq(-1,true)" option="close" visible="System.HasAddon(service.upnext)" subsetting="true"/> <!-- Up Next settings -->
+        <setting label="30869" help="30870" type="action" action="InstallAddon(service.upnext)" visible="!System.HasAddon(service.upnext)"/> <!-- Install Up Next add-on -->
+        <setting label="30871" help="30872" type="bool" id="useupnext" default="true" visible="System.HasAddon(service.upnext)" />
+        <setting label="30873" help="30874" type="action" action="Addon.OpenSettings(service.upnext)" enable="eq(-1,true)" option="close" visible="System.HasAddon(service.upnext)" subsetting="true"/> <!-- Up Next settings -->
         <!-- Twitter -->
-        <!-- setting label="30873" help="30874" type="action" action="InstallAddon(service.twitter)" visible="!System.HasAddon(service.twitter)"/ -->
-        <setting label="30875" help="30874" type="bool" id="usetwitter" default="true" visible="System.HasAddon(service.twitter)"/>
-        <setting label="30877" help="30878" type="action" option="close" action="Addon.OpenSettings(service.twitter)" enable="eq(-1,true)" visible="System.HasAddon(service.twitter)" subsetting="true"/>
+        <!-- setting label="30875" help="30876" type="action" action="InstallAddon(service.twitter)" visible="!System.HasAddon(service.twitter)"/ -->
+        <setting label="30877" help="30878" type="bool" id="usetwitter" default="true" visible="System.HasAddon(service.twitter)"/>
+        <setting label="30879" help="30880" type="action" option="close" action="Addon.OpenSettings(service.twitter)" enable="eq(-1,true)" visible="System.HasAddon(service.twitter)" subsetting="true"/>
         <!-- PySocks -->
-        <setting label="30879" help="30880" type="action" action="InstallAddon(script.module.pysocks)" visible="!System.HasAddon(script.module.pysocks)"/>
+        <setting label="30881" help="30882" type="action" action="InstallAddon(script.module.pysocks)" visible="!System.HasAddon(script.module.pysocks)"/>
     </category>
     <category label="30900"> <!-- Expert -->
         <setting label="30901" type="lsep"/> <!-- Cache -->

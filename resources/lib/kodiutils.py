@@ -75,24 +75,35 @@ MONTH_SHORT = {
 }
 
 
-def has_socks():
-    ''' Test if socks is installed, and remember this information '''
-    if hasattr(has_socks, 'cached'):
-        return has_socks.cached
-    try:
-        import socks  # noqa: F401; pylint: disable=unused-variable,unused-import
-    except ImportError:
-        has_socks.cached = False
-        return None  # Detect if this is the first run
-    has_socks.cached = True
-    return True
-
-
 class SafeDict(dict):
     ''' A safe dictionary implementation that does not break down on missing keys '''
     def __missing__(self, key):
         ''' Replace missing keys with the original placeholder '''
         return '{' + key + '}'
+
+
+def addon_id():
+    ''' Cache and return VRT NU Add-on ID '''
+    if not hasattr(addon_id, 'cached'):
+        from xbmcaddon import Addon
+        addon_id.cached = to_unicode(Addon().getAddonInfo('id'))
+    return getattr(addon_id, 'cached')
+
+
+def addon_fanart():
+    ''' Cache and return VRT NU Add-on fanart '''
+    if not hasattr(addon_fanart, 'cached'):
+        from xbmcaddon import Addon
+        addon_fanart.cached = to_unicode(Addon().getAddonInfo('fanart'))
+    return getattr(addon_fanart, 'cached')
+
+
+def addon_name():
+    ''' Cache and return VRT NU Add-on name '''
+    if not hasattr(addon_name, 'cached'):
+        from xbmcaddon import Addon
+        addon_name.cached = to_unicode(Addon().getAddonInfo('name'))
+    return getattr(addon_name, 'cached')
 
 
 def url_for(name, *args, **kwargs):
@@ -254,30 +265,6 @@ def play(stream, video=None):
     xbmc.Player().showSubtitles(subtitles_visible)
 
 
-def addon_id():
-    ''' Cache and return VRT NU Add-on ID '''
-    if not hasattr(addon_id, 'cached'):
-        from xbmcaddon import Addon
-        addon_id.cached = to_unicode(Addon().getAddonInfo('id'))
-    return addon_id.cached
-
-
-def addon_fanart():
-    ''' Cache and return VRT NU Add-on fanart '''
-    if not hasattr(addon_fanart, 'cached'):
-        from xbmcaddon import Addon
-        addon_fanart.cached = to_unicode(Addon().getAddonInfo('fanart'))
-    return addon_fanart.cached
-
-
-def addon_name():
-    ''' Cache and return VRT NU Add-on name '''
-    if not hasattr(addon_name, 'cached'):
-        from xbmcaddon import Addon
-        addon_name.cached = to_unicode(Addon().getAddonInfo('name'))
-    return addon_name.cached
-
-
 def get_search_string():
     ''' Ask the user for a search string '''
     search_string = None
@@ -431,6 +418,19 @@ def get_max_bandwidth():
     if global_max_bandwidth != 0:
         return global_max_bandwidth
     return 0
+
+
+def has_socks():
+    ''' Test if socks is installed, and use a static variable to remember '''
+    if hasattr(has_socks, 'cached'):
+        return getattr(has_socks, 'cached')
+    try:
+        import socks  # noqa: F401; pylint: disable=unused-variable,unused-import
+    except ImportError:
+        has_socks.cached = False
+        return None  # Detect if this is the first run
+    has_socks.cached = True
+    return True
 
 
 def get_proxies():

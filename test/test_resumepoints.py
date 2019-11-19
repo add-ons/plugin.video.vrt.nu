@@ -50,13 +50,13 @@ class TestResumePoints(unittest.TestCase):
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_update_watchlist(self):
         self._resumepoints.refresh(ttl=0)
-        assetuuid, first_entry = next(iter(self._resumepoints._resumepoints.items()))  # pylint: disable=protected-access
+        assetuuid, first_entry = next(iter(list(self._resumepoints._resumepoints.items())))  # pylint: disable=protected-access
         print('%s = %s' % (assetuuid, first_entry))
         url = first_entry.get('value').get('url')
         self._resumepoints.watchlater(uuid=assetuuid, title='Foo bar', url=url)
         self._resumepoints.unwatchlater(uuid=assetuuid, title='Foo bar', url=url)
         self._resumepoints.refresh(ttl=0)
-        assetuuid, first_entry = next(iter(self._resumepoints._resumepoints.items()))  # pylint: disable=protected-access
+        assetuuid, first_entry = next(iter(list(self._resumepoints._resumepoints.items())))  # pylint: disable=protected-access
         print('%s = %s' % (assetuuid, first_entry))
 
     def test_assetpath_to_uuid(self):
@@ -65,6 +65,9 @@ class TestResumePoints(unittest.TestCase):
         assetpath = '/content/dam/vrt/2019/08/14/woodstock-depot_WP00157456'
         uuid = 'contentdamvrt20190814woodstockdepotwp00157456'
         self.assertEqual(uuid, self._resumepoints.assetpath_to_uuid(assetpath))
+
+    def test_update(self):
+        self.assertTrue(self._resumepoints.update(uuid=None, title=None, url=None))
 
 
 if __name__ == '__main__':
