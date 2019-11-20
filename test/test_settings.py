@@ -52,6 +52,7 @@ class TestSettings(unittest.TestCase):
         plugin.run(['plugin://plugin.video.vrt.nu/favorites', '0', ''])
         plugin.run(['plugin://plugin.video.vrt.nu/favorites/recent', '0', ''])
         plugin.run(['plugin://plugin.video.vrt.nu/favorites/offline', '0', ''])
+        plugin.run(['plugin://plugin.video.vrt.nu/favorites/manage', '0', ''])
 
     @staticmethod
     def test_resumepoints_disabled():

@@ -347,7 +347,7 @@ msgid "[COLOR blue][B]{minutes} more minutes[/B] available[/COLOR]"
 msgstr ""
 
 msgctxt "#30300"
-msgid "[B][COLOR yellow]More...[/COLOR][/B]"
+msgid "[B][COLOR yellow]More…[/COLOR][/B]"
 msgstr ""
 
 msgctxt "#30301"
@@ -455,7 +455,7 @@ msgid "Retransmissions"
 msgstr ""
 
 msgctxt "#30424"
-msgid "[B]New search...[/B]"
+msgid "[B]New search…[/B]"
 msgstr ""
 
 msgctxt "#30425"
@@ -537,7 +537,7 @@ msgid "When enabled, the user can follow their favorite programs and list these 
 msgstr ""
 
 msgctxt "#30745"
-msgid "Manage My favorites..."
+msgid "Manage My favorites…"
 msgstr ""
 
 msgctxt "#30747"
@@ -669,54 +669,58 @@ msgid "Integration"
 msgstr ""
 
 msgctxt "#30861"
-msgid "Install YouTube add-on"
-msgstr ""
-
-msgctxt "#30862"
-msgid "Show YouTube channel content in the Channels menu."
+msgid "Integration with other Kodi add-ons"
 msgstr ""
 
 msgctxt "#30863"
-msgid "Enable YouTube integration"
+msgid "Install YouTube add-on"
+msgstr ""
+
+msgctxt "#30864"
+msgid "Show YouTube channel content in the Channels menu."
 msgstr ""
 
 msgctxt "#30865"
-msgid "YouTube settings..."
+msgid "Enable YouTube integration"
 msgstr ""
 
 msgctxt "#30867"
-msgid "Install Up Next add-on"
-msgstr ""
-
-msgctxt "#30868"
-msgid "This enables a Netflix style pop up notification for watching the next episode using the Up Next service add-on."
+msgid "YouTube settings…"
 msgstr ""
 
 msgctxt "#30869"
-msgid "Enable Up Next integration"
+msgid "Install Up Next add-on"
+msgstr ""
+
+msgctxt "#30870"
+msgid "This enables a Netflix style pop up notification for watching the next episode using the Up Next service add-on."
 msgstr ""
 
 msgctxt "#30871"
-msgid "Up Next settings..."
-msgstr ""
-
-msgctxt "#30872"
-msgid "Open Up Next service add-on settings."
+msgid "Enable Up Next integration"
 msgstr ""
 
 msgctxt "#30873"
-msgid "Install Twitter add-on"
+msgid "Up Next settings…"
+msgstr ""
+
+msgctxt "#30874"
+msgid "Open Up Next service add-on settings."
 msgstr ""
 
 msgctxt "#30875"
-msgid "Enable Twitter integration"
+msgid "Install Twitter add-on"
 msgstr ""
 
 msgctxt "#30877"
-msgid "Twitter settings..."
+msgid "Enable Twitter integration"
 msgstr ""
 
 msgctxt "#30879"
+msgid "Twitter settings…"
+msgstr ""
+
+msgctxt "#30881"
 msgid "Install PySocks library"
 msgstr ""
 
@@ -769,7 +773,7 @@ msgid "Use InputStream Adaptive"
 msgstr ""
 
 msgctxt "#30921"
-msgid "InputStream Adaptive settings..."
+msgid "InputStream Adaptive settings…"
 msgstr ""
 
 msgctxt "#30923"
@@ -777,7 +781,7 @@ msgid "InputStream Helper information"
 msgstr ""
 
 msgctxt "#30925"
-msgid "InputStream Helper settings... [COLOR gray][I](for protected content)[/I][/COLOR]"
+msgid "InputStream Helper settings… [COLOR gray][I](for protected content)[/I][/COLOR]"
 msgstr ""
 
 msgctxt "#30927"

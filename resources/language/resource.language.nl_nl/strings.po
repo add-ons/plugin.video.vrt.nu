@@ -347,8 +347,8 @@ msgid "[COLOR blue][B]{minutes} more minutes[/B] available[/COLOR]"
 msgstr "[COLOR blue]Nog [B]{minutes} minuten[/B] beschikbaar[/COLOR]"
 
 msgctxt "#30300"
-msgid "[B][COLOR yellow]More...[/COLOR][/B]"
-msgstr "[B][COLOR yellow]Meer...[/COLOR][/B]"
+msgid "[B][COLOR yellow]More…[/COLOR][/B]"
+msgstr "[B][COLOR yellow]Meer…[/COLOR][/B]"
 
 msgctxt "#30301"
 msgid "[B][I]Now on live TV[/I][/B]"
@@ -455,8 +455,8 @@ msgid "Retransmissions"
 msgstr "Herhalingslus"
 
 msgctxt "#30424"
-msgid "[B]New search...[/B]"
-msgstr "[B]Nieuwe zoekopdracht...[/B]"
+msgid "[B]New search…[/B]"
+msgstr "[B]Nieuwe zoekopdracht…[/B]"
 
 msgctxt "#30425"
 msgid "Perform a new search on VRT NU content"
@@ -537,8 +537,8 @@ msgid "When enabled, the user can follow their favorite programs and list these 
 msgstr "Indien actief kan de gebruiker zijn favoriete programma's volgen en apart aanroepen. Dit zorgt er wel voor dat de VRT NU add-on een lijst van favoriete programma's download en aanpast op de VRT NU website."
 
 msgctxt "#30745"
-msgid "Manage My favorites..."
-msgstr "Beheer Mijn favorieten..."
+msgid "Manage My favorites…"
+msgstr "Beheer Mijn favorieten…"
 
 msgctxt "#30747"
 msgid "Enable watching activity"
@@ -669,55 +669,58 @@ msgid "Integration"
 msgstr "Integratie"
 
 msgctxt "#30861"
+msgid "Integration with other Kodi add-ons"
+msgstr "Integratie met andere Kodi add-ons"
+
+msgctxt "#30863"
 msgid "Install YouTube add-on"
 msgstr "Installeer de YouTube add-on"
 
-msgctxt "#30862"
+msgctxt "#30864"
 msgid "Show YouTube channel content in the Channels menu."
 msgstr "Toon YouTube kanaal video's in het Kanalen menu."
 
-msgctxt "#30863"
+msgctxt "#30865"
 msgid "Enable YouTube integration"
 msgstr "Activeer YouTube integratie"
 
-msgctxt "#30865"
-msgid "YouTube settings..."
-msgstr "YouTube instellingen..."
-
 msgctxt "#30867"
+msgid "YouTube settings…"
+msgstr "YouTube instellingen…"
+
+msgctxt "#30869"
 msgid "Install Up Next add-on"
 msgstr "Installeer de Up Next add-on"
 
-msgctxt "#30868"
+msgctxt "#30870"
 msgid "This enables a Netflix style pop up notification for watching the next episode using the Up Next service add-on."
 msgstr "Dit activeert een pop-upmelding in Netflix-stijl voor het bekijken van de volgende aflevering met de service-add-up Up Next."
 
-
-msgctxt "#30869"
+msgctxt "#30871"
 msgid "Enable Up Next integration"
 msgstr "Activeer Up Next integratie"
 
-msgctxt "#30871"
-msgid "Up Next settings..."
-msgstr "Up Next instellingen..."
+msgctxt "#30873"
+msgid "Up Next settings…"
+msgstr "Up Next instellingen…"
 
-msgctxt "#30872"
+msgctxt "#30874"
 msgid "Open Up Next service add-on settings."
 msgstr "Open de Up Next service add-on instellingen."
 
-msgctxt "#30873"
+msgctxt "#30875"
 msgid "Install Twitter add-on"
 msgstr "Installeer de Twitter add-on"
 
-msgctxt "#30875"
+msgctxt "#30877"
 msgid "Enable Twitter integration"
 msgstr "Activeer Twitter integratie"
 
-msgctxt "#30877"
-msgid "Twitter settings..."
-msgstr "Twitter instellingen..."
-
 msgctxt "#30879"
+msgid "Twitter settings…"
+msgstr "Twitter instellingen…"
+
+msgctxt "#30881"
 msgid "Install PySocks library"
 msgstr "Installeer de PySocks library"
 
@@ -770,16 +773,16 @@ msgid "Use InputStream Adaptive"
 msgstr "Gebruik InputStream Adaptive"
 
 msgctxt "#30921"
-msgid "InputStream Adaptive settings..."
-msgstr "InputStream Adaptive instellingen..."
+msgid "InputStream Adaptive settings…"
+msgstr "InputStream Adaptive instellingen…"
 
 msgctxt "#30923"
 msgid "InputStream Helper information"
 msgstr "InputStream Helper informatie"
 
 msgctxt "#30925"
-msgid "InputStream Helper settings... [COLOR gray][I](for protected content)[/I][/COLOR]"
-msgstr "InputStream Helper instellingen...[COLOR gray][I](voor beveiligde video's)[/I][/COLOR]"
+msgid "InputStream Helper settings… [COLOR gray][I](for protected content)[/I][/COLOR]"
+msgstr "InputStream Helper instellingen…[COLOR gray][I](voor beveiligde video's)[/I][/COLOR]"
 
 msgctxt "#30927"
 msgid "Logging"
