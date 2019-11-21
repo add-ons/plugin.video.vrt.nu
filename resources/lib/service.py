@@ -68,7 +68,7 @@ class VrtMonitor(Monitor):
         from binascii import unhexlify
         data = loads(unhexlify(hexdata[0]))
         log(2, '[Up Next notification] sender={sender}, method={method}, data={data}', sender=sender, method=method, data=to_unicode(data))
-        jsonrpc(method='Player.Open', params=dict(item=dict(file='plugin://plugin.video.vrt.nu/play/whatson/%s' % data.get('whatson_id'))))
+        jsonrpc(method='Player.Open', params=dict(item=dict(file='plugin://plugin.video.vrt.nu/play/upnext/%s' % data.get('video_id'))))
 
     def onSettingsChanged(self):  # pylint: disable=invalid-name
         ''' Handler for changes to settings '''
