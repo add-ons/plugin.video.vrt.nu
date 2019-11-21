@@ -333,7 +333,7 @@ class ApiHelper:
             )
 
             play_info = dict(
-                whatson_id=next_ep.get('whatsonId'),
+                video_id=next_ep.get('videoId'),
             )
 
             next_info = dict(
@@ -353,10 +353,14 @@ class ApiHelper:
                   program=program, season=season, episode=current_ep_no)
         return None
 
-    def get_single_episode(self, whatson_id):
-        ''' Get single episode by whatsonId '''
+    def get_single_episode(self, video_id=None, whatson_id=None):
+        ''' Get single episode by whatsonId or videoId '''
         video = None
-        api_data = self.get_episodes(whatson_id=whatson_id, variety='single')
+        api_data = list()
+        if video_id:
+            api_data = self.get_episodes(video_id=video_id, variety='single')
+        elif whatson_id:
+            api_data = self.get_episodes(whatson_id=whatson_id, variety='single')
         if len(api_data) == 1:
             episode = api_data[0]
             video_item = TitleItem(
@@ -411,7 +415,7 @@ class ApiHelper:
         offairdate_guess = dateutil.parser.parse(episode_guess_on.get('endTime'))
         if (episode_guess_off and episode_guess_on.get('vrt.whatson-id') == episode_guess_off.get('vrt.whatson-id')
                 or (not episode_guess_off and episode_guess_on)):
-            video = self.get_single_episode(episode_guess_on.get('vrt.whatson-id'))
+            video = self.get_single_episode(whatson_id=episode_guess_on.get('vrt.whatson-id'))
             if video:
                 return video
 

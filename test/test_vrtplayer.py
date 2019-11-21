@@ -115,9 +115,9 @@ class TestVRTPlayer(unittest.TestCase):
         self._vrtplayer.play_episode_by_air_date(channel='een', start_date='2100-01-01T23:59:58', end_date='2100-01-01T23:59:59')
         self._vrtplayer.play_episode_by_air_date(channel='foo', start_date='2100-01-01T23:59:58', end_date='2100-01-01T23:59:59')
 
-    def test_play_unknown_whatson_id(self):
-        ''' Test playing unknown whatson id '''
-        self._vrtplayer.play_whatson(whatson_id='1234567890')
+    def test_play_unknown_video_id(self):
+        ''' Test playing unknown Up Next video_id '''
+        self._vrtplayer.play_upnext(video_id='1234567890')
 
 
 if __name__ == '__main__':

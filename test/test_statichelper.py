@@ -63,8 +63,8 @@ class TestStaticHelper(unittest.TestCase):
         play_id = dict(video_id='vid-5b12c0f6-b8fe-426f-a600-557f501f3be9')
         self.assertEqual(play_id, statichelper.play_url_to_id(url))
 
-        url = 'plugin://plugin.video.vrt.nu/play/whatson/705308178527'
-        play_id = dict(whatson_id='705308178527')
+        url = 'plugin://plugin.video.vrt.nu/play/upnext/vid-271d7238-b7f2-4a3c-b3c7-17a5110be71a'
+        play_id = dict(video_id='vid-271d7238-b7f2-4a3c-b3c7-17a5110be71a')
         self.assertEqual(play_id, statichelper.play_url_to_id(url))
 
         url = 'plugin://plugin.video.vrt.nu/play/url/https://www.vrt.be/vrtnu/kanalen/canvas/'

@@ -341,11 +341,11 @@ class VRTPlayer:
             return
         self.play(video)
 
-    def play_whatson(self, whatson_id):
-        ''' Play a video by whatson_id '''
-        video = self._apihelper.get_single_episode(whatson_id)
+    def play_upnext(self, video_id):
+        ''' Play the next episode of a program by video_id '''
+        video = self._apihelper.get_single_episode(video_id=video_id)
         if not video:
-            log_error('Play by whatson_id {id} failed', id=whatson_id)
+            log_error('Play Up Next with video_id {video_id} failed', video_id=video_id)
             ok_dialog(message=localize(30954))
             end_of_directory()
             return
