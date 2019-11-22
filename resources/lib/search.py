@@ -6,7 +6,7 @@
 from __future__ import absolute_import, division, unicode_literals
 from favorites import Favorites
 from resumepoints import ResumePoints
-from kodiutils import (container_refresh, end_of_directory, get_search_string, get_userdata_path,
+from kodiutils import (addon_profile, container_refresh, end_of_directory, get_search_string,
                        localize, ok_dialog, open_file, show_listing, url_for)
 
 
@@ -17,7 +17,7 @@ class Search:
         ''' Initialize searchtes, relies on XBMC vfs '''
         self._favorites = Favorites()
         self._resumepoints = ResumePoints()
-        self._search_history = get_userdata_path() + 'search_history.json'
+        self._search_history = addon_profile() + 'search_history.json'
 
     def read_history(self):
         ''' Read search history from disk '''
@@ -55,7 +55,10 @@ class Search:
                 path=url_for('search_query', keywords=keywords),
                 art_dict=dict(thumb='DefaultAddonsSearch.png'),
                 is_playable=False,
-                context_menu=[(localize(30030), 'RunPlugin(%s)' % url_for('remove_search', keywords=keywords))]
+                context_menu=[(
+                    localize(30030),  # Remove
+                    'RunPlugin(%s)' % url_for('remove_search', keywords=keywords)
+                )],
             ))
 
         if history:
@@ -90,11 +93,11 @@ class Search:
             end_of_directory()
             return
 
-        # Add 'More...' entry at the end
+        # Add 'More…' entry at the end
         from helperobjects import TitleItem
         if len(search_items) == 50:
             search_items.append(TitleItem(
-                title=localize(30300),
+                title=localize(30300),  # More…
                 path=url_for('search_query', keywords=keywords, page=page + 1),
                 art_dict=dict(thumb='DefaultAddonSearch.png'),
                 info_dict=dict(),

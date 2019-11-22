@@ -4,10 +4,9 @@
 
 from __future__ import absolute_import, division, unicode_literals
 from statichelper import from_unicode
-from kodiutils import (delete, exists, get_proxies, get_setting, get_tokens_path,
-                       get_userdata_path, has_credentials, invalidate_caches, listdir, localize, log,
-                       log_error, mkdir, notification, ok_dialog, open_file, open_settings,
-                       set_setting)
+from kodiutils import (addon_profile, delete, exists, get_proxies, get_setting, get_tokens_path,
+                       has_credentials, invalidate_caches, listdir, localize, log, log_error,
+                       mkdir, notification, ok_dialog, open_file, open_settings, set_setting)
 
 try:  # Python 3
     import http.cookiejar as cookielib
@@ -325,7 +324,7 @@ class TokenResolver:
         ''' Delete all cached tokens '''
         # Remove old tokens
         # FIXME: Deprecate and simplify this part in a future version
-        dirs, files = listdir(get_userdata_path())  # pylint: disable=unused-variable
+        dirs, files = listdir(addon_profile())  # pylint: disable=unused-variable
         token_files = [item for item in files if item.endswith('.tkn')]
         # Empty userdata/tokens/ directory
         if exists(get_tokens_path()):
@@ -333,7 +332,7 @@ class TokenResolver:
             token_files += ['tokens/' + item for item in files]
         if token_files:
             for item in token_files:
-                delete(get_userdata_path() + item)
+                delete(addon_profile() + item)
             notification(message=localize(30985))
 
     def refresh_login(self):

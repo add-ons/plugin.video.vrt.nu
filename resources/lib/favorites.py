@@ -44,7 +44,7 @@ class Favorites:
                     'Referer': 'https://www.vrt.be/vrtnu',
                 }
                 req = Request('https://video-user-data.vrt.be/favorites', headers=headers)
-                log(2, 'URL post: https://video-user-data.vrt.be/favorites')
+                log(2, 'URL get: https://video-user-data.vrt.be/favorites')
                 from json import load
                 try:
                     favorites_json = load(urlopen(req))
