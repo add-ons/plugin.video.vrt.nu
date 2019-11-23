@@ -41,7 +41,7 @@
   <disclaimer lang="nl_NL">Deze VRT NU add-on wordt niet ondersteund door de VRT, en wordt aangeboden 'as is', zonder enige garantie.</disclaimer>
   <language>en nl</language>
   <platform>all</platform>
-  <license>GNU General Public License, v3</license>
+  <license>GPL-3.0-only</license>
   <forum>https://www.facebook.com/kodivrtnu/</forum>
   <website>https://github.com/pietje666/plugin.video.vrt.nu/wiki</website>
   <source>https://github.com/pietje666/plugin.video.vrt.nu</source>
