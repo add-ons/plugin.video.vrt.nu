@@ -282,76 +282,76 @@ class ApiHelper:
                 except IndexError:
                     pass
 
-        if upnext.get('next'):
-            current_ep = upnext.get('current')
-            next_ep = upnext.get('next')
+        current_ep = upnext.get('current')
+        next_ep = upnext.get('next')
 
-            art = self._metadata.get_art(current_ep)
-            current_episode = dict(
-                episodeid=current_ep.get('whatsonId'),
-                tvshowid=current_ep.get('programWhatsonId'),
-                title=self._metadata.get_plotoutline(current_ep),
-                art={
-                    'tvshow.poster': art.get('thumb'),
-                    'thumb': art.get('thumb'),
-                    'tvshow.fanart': art.get('fanart'),
-                    'tvshow.landscape': art.get('thumb'),
-                    'tvshow.clearart': None,
-                    'tvshow.clearlogo': None,
-                },
-                plot=self._metadata.get_plot(current_ep),
-                showtitle=self._metadata.get_tvshowtitle(current_ep),
-                playcount=info.get('playcount'),
-                season=self._metadata.get_season(current_ep),
-                episode=self._metadata.get_episode(current_ep),
-                rating=info.get('rating'),
-                firstaired=self._metadata.get_aired(current_ep),
-                runtime=info.get('runtime'),
-            )
-
-            art = self._metadata.get_art(next_ep)
-            next_episode = dict(
-                episodeid=next_ep.get('whatsonId'),
-                tvshowid=next_ep.get('programWhatsonId'),
-                title=self._metadata.get_plotoutline(next_ep),
-                art={
-                    'tvshow.poster': art.get('thumb'),
-                    'thumb': art.get('thumb'),
-                    'tvshow.fanart': art.get('fanart'),
-                    'tvshow.landscape': art.get('thumb'),
-                    'tvshow.clearart': None,
-                    'tvshow.clearlogo': None,
-                },
-                plot=self._metadata.get_plot(next_ep),
-                showtitle=self._metadata.get_tvshowtitle(next_ep),
-                playcount=None,
-                season=self._metadata.get_season(next_ep),
-                episode=self._metadata.get_episode(next_ep),
-                rating=None,
-                firstaired=self._metadata.get_aired(next_ep),
-                runtime=self._metadata.get_duration(next_ep),
-            )
-
-            play_info = dict(
-                video_id=next_ep.get('videoId'),
-            )
-
-            next_info = dict(
-                current_episode=current_episode,
-                next_episode=next_episode,
-                play_info=play_info,
-                notification_time=SECONDS_MARGIN,
-            )
-            return next_info
-
-        if upnext.get('current'):
-            if upnext.get('current').get('episodeNumber') == upnext.get('current').get('seasonNbOfEpisodes'):
+        if next_ep is None:
+            if current_ep is not None and current_ep.get('episodeNumber') == current_ep.get('seasonNbOfEpisodes'):
                 log_error(message='[Up Next] Last episode of season, next season not implemented for "{program} S{season}E{episode}"',
                           program=program, season=season, episode=current_ep_no)
+                return None
+
+            log_error(message='[Up Next] No api data found for "{program}s S{season}E{episode}"',
+                      program=program, season=season, episode=current_ep_no)
             return None
-        log_error(message='[Up Next] No api data found for "{program}s S{season}E{episode}"',
-                  program=program, season=season, episode=current_ep_no)
-        return None
+
+        art = self._metadata.get_art(current_ep)
+        current_episode = dict(
+            episodeid=current_ep.get('whatsonId'),
+            tvshowid=current_ep.get('programWhatsonId'),
+            title=self._metadata.get_plotoutline(current_ep),
+            art={
+                'tvshow.poster': art.get('thumb'),
+                'thumb': art.get('thumb'),
+                'tvshow.fanart': art.get('fanart'),
+                'tvshow.landscape': art.get('thumb'),
+                'tvshow.clearart': None,
+                'tvshow.clearlogo': None,
+            },
+            plot=self._metadata.get_plot(current_ep),
+            showtitle=self._metadata.get_tvshowtitle(current_ep),
+            playcount=info.get('playcount'),
+            season=self._metadata.get_season(current_ep),
+            episode=self._metadata.get_episode(current_ep),
+            rating=info.get('rating'),
+            firstaired=self._metadata.get_aired(current_ep),
+            runtime=info.get('runtime'),
+        )
+
+        art = self._metadata.get_art(next_ep)
+        next_episode = dict(
+            episodeid=next_ep.get('whatsonId'),
+            tvshowid=next_ep.get('programWhatsonId'),
+            title=self._metadata.get_plotoutline(next_ep),
+            art={
+                'tvshow.poster': art.get('thumb'),
+                'thumb': art.get('thumb'),
+                'tvshow.fanart': art.get('fanart'),
+                'tvshow.landscape': art.get('thumb'),
+                'tvshow.clearart': None,
+                'tvshow.clearlogo': None,
+            },
+            plot=self._metadata.get_plot(next_ep),
+            showtitle=self._metadata.get_tvshowtitle(next_ep),
+            playcount=None,
+            season=self._metadata.get_season(next_ep),
+            episode=self._metadata.get_episode(next_ep),
+            rating=None,
+            firstaired=self._metadata.get_aired(next_ep),
+            runtime=self._metadata.get_duration(next_ep),
+        )
+
+        play_info = dict(
+            video_id=next_ep.get('videoId'),
+        )
+
+        next_info = dict(
+            current_episode=current_episode,
+            next_episode=next_episode,
+            play_info=play_info,
+            notification_time=SECONDS_MARGIN,
+        )
+        return next_info
 
     def get_single_episode(self, video_id=None, whatson_id=None):
         ''' Get single episode by whatsonId or videoId '''

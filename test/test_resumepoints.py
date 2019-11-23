@@ -50,24 +50,24 @@ class TestResumePoints(unittest.TestCase):
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_update_watchlist(self):
         self._resumepoints.refresh(ttl=0)
-        assetuuid, first_entry = next(iter(list(self._resumepoints._resumepoints.items())))  # pylint: disable=protected-access
-        print('%s = %s' % (assetuuid, first_entry))
+        asset_id, first_entry = next(iter(list(self._resumepoints._resumepoints.items())))  # pylint: disable=protected-access
+        print('%s = %s' % (asset_id, first_entry))
         url = first_entry.get('value').get('url')
-        self._resumepoints.watchlater(uuid=assetuuid, title='Foo bar', url=url)
-        self._resumepoints.unwatchlater(uuid=assetuuid, title='Foo bar', url=url)
+        self._resumepoints.watchlater(asset_id=asset_id, title='Foo bar', url=url)
+        self._resumepoints.unwatchlater(asset_id=asset_id, title='Foo bar', url=url)
         self._resumepoints.refresh(ttl=0)
-        assetuuid, first_entry = next(iter(list(self._resumepoints._resumepoints.items())))  # pylint: disable=protected-access
-        print('%s = %s' % (assetuuid, first_entry))
+        asset_id, first_entry = next(iter(list(self._resumepoints._resumepoints.items())))  # pylint: disable=protected-access
+        print('%s = %s' % (asset_id, first_entry))
 
-    def test_assetpath_to_uuid(self):
-        self.assertEqual(None, self._resumepoints.assetpath_to_uuid(None))
+    def test_assetpath_to_id(self):
+        self.assertEqual(None, self._resumepoints.assetpath_to_id(None))
 
-        assetpath = '/content/dam/vrt/2019/08/14/woodstock-depot_WP00157456'
-        uuid = 'contentdamvrt20190814woodstockdepotwp00157456'
-        self.assertEqual(uuid, self._resumepoints.assetpath_to_uuid(assetpath))
+        asset_path = '/content/dam/vrt/2019/08/14/woodstock-depot_WP00157456'
+        asset_id = 'contentdamvrt20190814woodstockdepotwp00157456'
+        self.assertEqual(asset_id, self._resumepoints.assetpath_to_id(asset_path))
 
     def test_update(self):
-        self.assertTrue(self._resumepoints.update(uuid=None, title=None, url=None))
+        self.assertTrue(self._resumepoints.update(asset_id=None, title=None, url=None))
 
 
 if __name__ == '__main__':

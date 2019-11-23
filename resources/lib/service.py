@@ -54,26 +54,23 @@ class VrtMonitor(Monitor):
             self._container = loads(data).get('container')
             return
 
-        if not sender.startswith('upnextprovider'):
-            return
-        if not method.endswith('plugin.video.vrt.nu_play_action'):
-            return
+        # Handle play_action events from upnextprovider
+        if sender.startswith('upnextprovider') and method.endswith('plugin.video.vrt.nu_play_action'):
+            from json import loads
+            hexdata = loads(data)
 
-        from json import loads
-        hexdata = loads(data)
+            if not hexdata:
+                return
 
-        if not hexdata:
-            return
+            from binascii import unhexlify
+            json_data = unhexlify(data[0])
 
-        from binascii import unhexlify
-        json_data = unhexlify(data[0])
-
-        # NOTE: With Python 3.5 and older json.loads() does not support bytes or bytearray
-        if isinstance(json_data, bytes):
-            json_data = json_data.decode('utf-8')
-        data = loads(json_data)
-        log(2, '[Up Next notification] sender={sender}, method={method}, data={data}', sender=sender, method=method, data=to_unicode(data))
-        jsonrpc(method='Player.Open', params=dict(item=dict(file='plugin://plugin.video.vrt.nu/play/upnext/%s' % data.get('video_id'))))
+            # NOTE: With Python 3.5 and older json.loads() does not support bytes or bytearray
+            if isinstance(json_data, bytes):
+                json_data = json_data.decode('utf-8')
+            data = loads(json_data)
+            log(2, '[Up Next notification] sender={sender}, method={method}, data={data}', sender=sender, method=method, data=to_unicode(data))
+            jsonrpc(method='Player.Open', params=dict(item=dict(file='plugin://plugin.video.vrt.nu/play/upnext/%s' % data.get('video_id'))))
 
     def onSettingsChanged(self):  # pylint: disable=invalid-name
         ''' Handler for changes to settings '''
@@ -103,7 +100,7 @@ class VrtMonitor(Monitor):
 
     def push_position(self, info):
         ''' Push player position to VRT NU resumepoints API '''
-        # Get uuid, title and url from api based on video.get('publication_id') or video.get('video_url')
+        # Get asset_id, title and url from api based on video.get('publication_id') or video.get('video_url')
         ep_id = play_url_to_id(info.get('path'))
 
         if ep_id.get('video_id'):
@@ -113,11 +110,11 @@ class VrtMonitor(Monitor):
         elif ep_id.get('video_url'):
             episode = self._apihelper.get_episodes(video_url=ep_id.get('video_url'), variety='single')[0]
 
-        uuid = self._resumepoints.assetpath_to_uuid(episode.get('assetPath'))
+        asset_id = self._resumepoints.assetpath_to_id(episode.get('assetPath'))
         title = episode.get('program')
         url = url_to_episode(episode.get('url', ''))
         # Push resumepoint to VRT NU
-        self._resumepoints.update(uuid=uuid, title=title, url=url, watch_later=None, position=info.get('position'), total=info.get('total'))
+        self._resumepoints.update(asset_id=asset_id, title=title, url=url, watch_later=None, position=info.get('position'), total=info.get('total'))
         # Only update container if the play action was initiated from it
         current_container = current_container_url()
         log(2, '[PlayerPosition] resumepoint update {info} {container}', info=episode.get('title'), container=current_container)

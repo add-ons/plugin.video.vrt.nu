@@ -181,15 +181,15 @@ class TestRouting(unittest.TestCase):
         addon.run(['plugin://plugin.video.vrt.nu/favorites/manage', '0', ''])
         self.assertEqual(plugin.url_for(addon.favorites_manage), 'plugin://plugin.video.vrt.nu/favorites/manage')
 
-    # Watch later method: 'plugin://plugin.video.vrt.nu/watchlater/<url>/<uuid>/<title>'
+    # Watch later method: 'plugin://plugin.video.vrt.nu/watchlater/<url>/<asset_id>/<title>'
     def test_watchlater_route(self):
         addon.run(['plugin://plugin.video.vrt.nu/watchlater//vrtnu/a-z/winteruur/5/winteruur-s5a1//contentdamvrt20191015winteruurr005a0001depotwp00162177/Winteruur', '0', ''])
-        self.assertEqual(plugin.url_for(addon.watchlater, url='/vrtnu/a-z/winteruur/5/winteruur-s5a1', uuid='/contentdamvrt20191015winteruurr005a0001depotwp00162177', title='Winteruur'), 'plugin://plugin.video.vrt.nu/watchlater//vrtnu/a-z/winteruur/5/winteruur-s5a1//contentdamvrt20191015winteruurr005a0001depotwp00162177/Winteruur')
+        self.assertEqual(plugin.url_for(addon.watchlater, url='/vrtnu/a-z/winteruur/5/winteruur-s5a1', asset_id='/contentdamvrt20191015winteruurr005a0001depotwp00162177', title='Winteruur'), 'plugin://plugin.video.vrt.nu/watchlater//vrtnu/a-z/winteruur/5/winteruur-s5a1//contentdamvrt20191015winteruurr005a0001depotwp00162177/Winteruur')
 
-    # Unwatch later method: 'plugin://plugin.video.vrt.nu/unwatchlater/<url>/<uuid>/<title>'
+    # Unwatch later method: 'plugin://plugin.video.vrt.nu/unwatchlater/<url>/<asset_id>/<title>'
     def test_unwatchlater_route(self):
         addon.run(['plugin://plugin.video.vrt.nu/unwatchlater//vrtnu/a-z/winteruur/5/winteruur-s5a1//contentdamvrt20191015winteruurr005a0001depotwp00162177/Winteruur', '0', ''])
-        self.assertEqual(plugin.url_for(addon.unwatchlater, url='/vrtnu/a-z/winteruur/5/winteruur-s5a1', uuid='/contentdamvrt20191015winteruurr005a0001depotwp00162177', title='Winteruur'), 'plugin://plugin.video.vrt.nu/unwatchlater//vrtnu/a-z/winteruur/5/winteruur-s5a1//contentdamvrt20191015winteruurr005a0001depotwp00162177/Winteruur')
+        self.assertEqual(plugin.url_for(addon.unwatchlater, url='/vrtnu/a-z/winteruur/5/winteruur-s5a1', asset_id='/contentdamvrt20191015winteruurr005a0001depotwp00162177', title='Winteruur'), 'plugin://plugin.video.vrt.nu/unwatchlater//vrtnu/a-z/winteruur/5/winteruur-s5a1//contentdamvrt20191015winteruurr005a0001depotwp00162177/Winteruur')
 
     # Play on demand by id = '/play/id/<publication_id>/<video_id>'
     # Achterflap episode 8 available until 31/12/2025

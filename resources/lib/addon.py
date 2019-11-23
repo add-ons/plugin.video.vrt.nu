@@ -53,18 +53,18 @@ def unfollow(program, title):
     Favorites().unfollow(program=program, title=to_unicode(unquote_plus(from_unicode(title))), move_down=move_down)
 
 
-@plugin.route('/watchlater/<path:url>/<uuid>/<title>')
-def watchlater(uuid, title, url):
+@plugin.route('/watchlater/<path:url>/<asset_id>/<title>')
+def watchlater(asset_id, title, url):
     ''' The API interface to watch an episode used by the context menu '''
     from resumepoints import ResumePoints
-    ResumePoints().watchlater(uuid=uuid, title=to_unicode(unquote_plus(from_unicode(title))), url=url)
+    ResumePoints().watchlater(asset_id=asset_id, title=to_unicode(unquote_plus(from_unicode(title))), url=url)
 
 
-@plugin.route('/unwatchlater/<path:url>/<uuid>/<title>')
-def unwatchlater(uuid, title, url):
+@plugin.route('/unwatchlater/<path:url>/<asset_id>/<title>')
+def unwatchlater(asset_id, title, url):
     ''' The API interface to unwatch an episode used by the context menu '''
     from resumepoints import ResumePoints
-    ResumePoints().unwatchlater(uuid=uuid, title=to_unicode(unquote_plus(from_unicode(title))), url=url)
+    ResumePoints().unwatchlater(asset_id=asset_id, title=to_unicode(unquote_plus(from_unicode(title))), url=url)
 
 
 @plugin.route('/favorites')
