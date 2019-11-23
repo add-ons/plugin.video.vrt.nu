@@ -48,7 +48,7 @@ class VrtMonitor(Monitor):
 
     def onNotification(self, sender, method, data):  # pylint: disable=invalid-name
         ''' Handler for notifications '''
-        log(2, '[Notification] sender={sender}, method={method}, data={data}', sender=sender, method=method, data=to_unicode(data))
+        # log(2, '[Notification] sender={sender}, method={method}, data={data}', sender=sender, method=method, data=to_unicode(data))
         if method.endswith('source_container'):
             from json import loads
             self._container = loads(data).get('container')
