@@ -66,7 +66,12 @@ class VrtMonitor(Monitor):
             return
 
         from binascii import unhexlify
-        data = loads(unhexlify(hexdata[0]))
+        json_data = unhexlify(data[0])
+
+        # NOTE: With Python 3.5 and older json.loads() does not support bytes or bytearray
+        if isinstance(json_data, bytes):
+            json_data = json_data.decode('utf-8')
+        data = loads(json_data)
         log(2, '[Up Next notification] sender={sender}, method={method}, data={data}', sender=sender, method=method, data=to_unicode(data))
         jsonrpc(method='Player.Open', params=dict(item=dict(file='plugin://plugin.video.vrt.nu/play/upnext/%s' % data.get('video_id'))))
 
