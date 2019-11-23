@@ -175,7 +175,7 @@ class ApiHelper:
         # Add an "* All seasons" list item
         if get_global_setting('videolibrary.showallitems') is True:
             season_items.append(TitleItem(
-                title=localize(30133),
+                title=localize(30133),  # All seasons
                 path=url_for('programs', program=program, season='allseasons'),
                 art_dict=self._metadata.get_art(episode, season='allseasons'),
                 info_dict=info_labels,
@@ -192,7 +192,7 @@ class ApiHelper:
             except IndexError:
                 episode = episodes[0]
 
-            label = '%s %s' % (localize(30131), season_key)
+            label = '%s %s' % (localize(30131), season_key)  # Season X
             season_items.append(TitleItem(
                 title=label,
                 path=url_for('programs', program=program, season=season_key),
@@ -667,7 +667,7 @@ class ApiHelper:
                 info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video', playcount=0, duration=0)
                 stream_dict = dict(duration=0)
                 context_menu.append((
-                    localize(30413),
+                    localize(30413),  # Refresh menu
                     'RunPlugin(%s)' % url_for('delete_cache', cache_file='channel.%s.json' % channel)
                 ))
             else:
@@ -718,7 +718,7 @@ class ApiHelper:
                 # NOTE: Playcount is required to not have live streams as "Watched"
                 info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video', playcount=0)
                 context_menu.append((
-                    localize(30413),
+                    localize(30413),  # Refresh menu
                     'RunPlugin(%s)' % url_for('delete_cache', cache_file='channel.%s.json' % channel)
                 ))
             else:

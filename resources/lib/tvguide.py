@@ -97,7 +97,10 @@ class TVGuide:
                 path=path,
                 art_dict=dict(thumb='DefaultYear.png'),
                 info_dict=dict(plot=localize_datelong(day)),
-                context_menu=[(localize(30413), 'RunPlugin(%s)' % url_for('delete_cache', cache_file=cache_file))],
+                context_menu=[(
+                    localize(30413),  # Refresh menu
+                    'RunPlugin(%s)' % url_for('delete_cache', cache_file=cache_file)
+                )],
             ))
         return date_items
 

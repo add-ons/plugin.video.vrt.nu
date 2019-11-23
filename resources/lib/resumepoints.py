@@ -45,7 +45,7 @@ class ResumePoints:
                     'Referer': 'https://www.vrt.be/vrtnu',
                 }
                 req = Request('https://video-user-data.vrt.be/resume_points', headers=headers)
-                log(2, 'URL post: https://video-user-data.vrt.be/resume_points')
+                log(2, 'URL get: https://video-user-data.vrt.be/resume_points')
                 from json import load
                 try:
                     resumepoints_json = load(urlopen(req))

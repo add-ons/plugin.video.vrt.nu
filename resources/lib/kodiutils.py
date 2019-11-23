@@ -82,6 +82,14 @@ class SafeDict(dict):
         return '{' + key + '}'
 
 
+def addon_icon():
+    ''' Cache and return VRT NU Add-on icon '''
+    if not hasattr(addon_icon, 'cached'):
+        from xbmcaddon import Addon
+        addon_icon.cached = to_unicode(Addon().getAddonInfo('icon'))
+    return getattr(addon_icon, 'cached')
+
+
 def addon_id():
     ''' Cache and return VRT NU Add-on ID '''
     if not hasattr(addon_id, 'cached'):
@@ -104,6 +112,22 @@ def addon_name():
         from xbmcaddon import Addon
         addon_name.cached = to_unicode(Addon().getAddonInfo('name'))
     return getattr(addon_name, 'cached')
+
+
+def addon_path():
+    ''' Cache and return VRT NU Add-on path '''
+    if not hasattr(addon_path, 'cached'):
+        from xbmcaddon import Addon
+        addon_path.cached = to_unicode(Addon().getAddonInfo('path'))
+    return getattr(addon_path, 'cached')
+
+
+def addon_profile():
+    ''' Cache and return VRT NU Add-on profile '''
+    if not hasattr(addon_profile, 'cached'):
+        from xbmcaddon import Addon
+        addon_profile.cached = to_unicode(xbmc.translatePath(Addon().getAddonInfo('profile')))
+    return getattr(addon_profile, 'cached')
 
 
 def url_for(name, *args, **kwargs):
@@ -288,6 +312,8 @@ def notification(heading='', message='', icon='info', time=4000):
     from xbmcgui import Dialog
     if not heading:
         heading = addon_name()
+    if not icon:
+        icon = addon_icon()
     Dialog().notification(heading=heading, message=message, icon=icon, time=time)
 
 
@@ -302,7 +328,7 @@ def multiselect(heading='', options=None, autoclose=0, preselect=None, use_detai
 def set_locale():
     ''' Load the proper locale for date strings, only once '''
     if hasattr(set_locale, 'cached'):
-        return set_locale.cached
+        return getattr(set_locale, 'cached')
     from locale import LC_ALL, setlocale
     locale_lang = get_global_setting('locale.language').split('.')[-1]
     try:
@@ -511,26 +537,18 @@ def supports_drm():
     return kodi_version() > 17
 
 
-def get_userdata_path():
-    ''' Cache and return the profile's userdata path '''
-    if not hasattr(get_userdata_path, 'cached'):
-        from xbmcaddon import Addon
-        get_userdata_path.cached = to_unicode(xbmc.translatePath(Addon().getAddonInfo('profile')))
-    return get_userdata_path.cached
-
-
 def get_tokens_path():
     ''' Cache and return the userdata tokens path '''
     if not hasattr(get_tokens_path, 'cached'):
-        get_tokens_path.cached = get_userdata_path() + 'tokens/'
-    return get_tokens_path.cached
+        get_tokens_path.cached = addon_profile() + 'tokens/'
+    return getattr(get_tokens_path, 'cached')
 
 
 def get_cache_path():
     ''' Cache and return the userdata cache path '''
     if not hasattr(get_cache_path, 'cached'):
-        get_cache_path.cached = get_userdata_path() + 'cache/'
-    return get_cache_path.cached
+        get_cache_path.cached = addon_profile() + 'cache/'
+    return getattr(get_cache_path, 'cached')
 
 
 def get_addon_info(key):

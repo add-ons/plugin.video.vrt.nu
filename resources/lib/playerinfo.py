@@ -26,7 +26,7 @@ class PlayerInfo(Player):
         Player.__init__(self)
 
     def onAVStarted(self):  # pylint: disable=invalid-name
-        ''' called when Kodi has a video or audiostream '''
+        ''' Called when Kodi has a video or audiostream '''
         log(2, '[PlayerInfo] %d onAVStarted' % self._id)
         self._stop.clear()
         self._last_pos = 0
@@ -43,28 +43,28 @@ class PlayerInfo(Player):
         Thread(target=self.stream_position, name='StreamPosition').start()
 
     def onPlayBackStopped(self):  # pylint: disable=invalid-name
-        ''' called when user stops Kodi playing a file '''
+        ''' Called when user stops Kodi playing a file '''
         log(2, '[PlayerInfo] %d onPlayBackStopped' % self._id)
         self._info(dict(path=self._path, position=self._last_pos, total=self._total, event='playbackstopped'))
         self._stop.set()
 
     def onAVChange(self):  # pylint: disable=invalid-name
-        ''' called when Kodi has a video, audio or subtitle stream. Also happens when the stream changes. '''
+        ''' Called when Kodi has a video, audio or subtitle stream. Also happens when the stream changes. '''
 
     def onPlayBackEnded(self):  # pylint: disable=invalid-name
-        ''' called when Kodi has ended playing a file '''
+        ''' Called when Kodi has ended playing a file '''
         log(2, '[PlayerInfo] %d onPlayBackEnded' % self._id)
         self._info(dict(path=self._path, position=self._total, total=self._total, event='playbackended'))
         self._stop.set()
 
     def onPlayBackError(self):  # pylint: disable=invalid-name
-        ''' called when playback stops due to an error '''
+        ''' Called when playback stops due to an error '''
         log(2, '[PlayerInfo] %d onPlayBackError' % self._id)
         self._info(dict(path=self._path, position=self._last_pos, total=self._total, event='playbackerror'))
         self._stop.set()
 
     def onPlayBackPaused(self):  # pylint: disable=invalid-name
-        ''' called when user pauses a playing file '''
+        ''' Called when user pauses a playing file '''
         log(2, '[PlayerInfo] %d onPlayBackPaused' % self._id)
         self._paused = True
         self._info(dict(path=self._path, position=self._last_pos, total=self._total, event='playbackpaused'))

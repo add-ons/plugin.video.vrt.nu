@@ -13,8 +13,8 @@ except ImportError:  # Python 2
     from urllib2 import build_opener, install_opener, urlopen, ProxyHandler, quote, unquote, HTTPError
 
 from helperobjects import ApiData, StreamURLS
-from kodiutils import (can_play_drm, exists, end_of_directory, get_max_bandwidth, get_proxies,
-                       get_setting, get_userdata_path, has_inputstream_adaptive, kodi_version,
+from kodiutils import (addon_profile, can_play_drm, exists, end_of_directory, get_max_bandwidth,
+                       get_proxies, get_setting, has_inputstream_adaptive, kodi_version,
                        localize, log, log_error, mkdir, ok_dialog, open_settings, supports_drm)
 
 
@@ -46,7 +46,7 @@ class StreamService:
     @staticmethod
     def _create_settings_dir():
         ''' Create settings directory '''
-        settingsdir = get_userdata_path()
+        settingsdir = addon_profile()
         if not exists(settingsdir):
             mkdir(settingsdir)
 

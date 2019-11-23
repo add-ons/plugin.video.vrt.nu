@@ -86,7 +86,6 @@ kodi-addon-checker.log
 
 # Userdata
 test/cdm/
-test/userdata/addon_settings.json
 test/userdata/cache/
 test/userdata/credentials.json
 test/userdata/search_history.json
