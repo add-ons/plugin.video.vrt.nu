@@ -291,7 +291,7 @@ class ApiHelper:
                           program=program, season=season, episode=current_ep_no)
                 return None
 
-            log_error(message='[Up Next] No api data found for "{program}s S{season}E{episode}"',
+            log_error(message='[Up Next] No api data found for "{program} S{season}E{episode}"',
                       program=program, season=season, episode=current_ep_no)
             return None
 

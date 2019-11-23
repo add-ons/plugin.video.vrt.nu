@@ -384,19 +384,19 @@ def localize_from_data(name, data):
     return next((localize(item.get('msgctxt')) for item in data if item.get('name') == name), name)
 
 
-def get_setting(setting_id, default=None):
+def get_setting(key, default=None):
     ''' Get an add-on setting '''
     from xbmcaddon import Addon
-    value = to_unicode(Addon().getSetting(setting_id))
+    value = to_unicode(Addon().getSetting(key))
     if value == '' and default is not None:
         return default
     return value
 
 
-def set_setting(setting_id, setting_value):
+def set_setting(key, value):
     ''' Set an add-on setting '''
     from xbmcaddon import Addon
-    return Addon().setSetting(setting_id, setting_value)
+    return Addon().setSetting(key, value)
 
 
 def open_settings():
@@ -405,9 +405,9 @@ def open_settings():
     Addon().openSettings()
 
 
-def get_global_setting(setting):
+def get_global_setting(key):
     ''' Get a Kodi setting '''
-    result = jsonrpc(method='Settings.GetSettingValue', params=dict(setting=setting))
+    result = jsonrpc(method='Settings.GetSettingValue', params=dict(setting=key))
     return result.get('result', {}).get('value')
 
 
@@ -743,7 +743,7 @@ def current_container_url():
     ''' Get current container plugin:// url '''
     url = xbmc.getInfoLabel('Container.FolderPath')
     if url == '':
-        url = None
+        return None
     return url
 
 

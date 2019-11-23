@@ -22,12 +22,12 @@ class PlayerInfo(Player):
         self._stop = Event()
         from random import randint
         self._id = randint(1, 10001)
-        log(2, '[PlayerInfo] %d initialized' % self._id)
+        log(3, '[PlayerInfo] %d initialized' % self._id)
         Player.__init__(self)
 
     def onAVStarted(self):  # pylint: disable=invalid-name
         ''' Called when Kodi has a video or audiostream '''
-        log(2, '[PlayerInfo] %d onAVStarted' % self._id)
+        log(3, '[PlayerInfo] %d onAVStarted' % self._id)
         self._stop.clear()
         self._last_pos = 0
         self._total = self.getTotalTime()
@@ -44,7 +44,7 @@ class PlayerInfo(Player):
 
     def onPlayBackStopped(self):  # pylint: disable=invalid-name
         ''' Called when user stops Kodi playing a file '''
-        log(2, '[PlayerInfo] %d onPlayBackStopped' % self._id)
+        log(3, '[PlayerInfo] %d onPlayBackStopped' % self._id)
         self._info(dict(path=self._path, position=self._last_pos, total=self._total, event='playbackstopped'))
         self._stop.set()
 
@@ -53,26 +53,26 @@ class PlayerInfo(Player):
 
     def onPlayBackEnded(self):  # pylint: disable=invalid-name
         ''' Called when Kodi has ended playing a file '''
-        log(2, '[PlayerInfo] %d onPlayBackEnded' % self._id)
+        log(3, '[PlayerInfo] %d onPlayBackEnded' % self._id)
         self._info(dict(path=self._path, position=self._total, total=self._total, event='playbackended'))
         self._stop.set()
 
     def onPlayBackError(self):  # pylint: disable=invalid-name
         ''' Called when playback stops due to an error '''
-        log(2, '[PlayerInfo] %d onPlayBackError' % self._id)
+        log(3, '[PlayerInfo] %d onPlayBackError' % self._id)
         self._info(dict(path=self._path, position=self._last_pos, total=self._total, event='playbackerror'))
         self._stop.set()
 
     def onPlayBackPaused(self):  # pylint: disable=invalid-name
         ''' Called when user pauses a playing file '''
-        log(2, '[PlayerInfo] %d onPlayBackPaused' % self._id)
+        log(3, '[PlayerInfo] %d onPlayBackPaused' % self._id)
         self._paused = True
         self._info(dict(path=self._path, position=self._last_pos, total=self._total, event='playbackpaused'))
 
     def onPlayBackResumed(self):  # pylint: disable=invalid-name
         '''called when user resumes a paused file or a next playlist item is started '''
         suffix = 'after pausing' if self._paused else 'after playlist change'
-        log(2, '[PlayerInfo] %d onPlayBackResumed %s' % (self._id, suffix))
+        log(3, '[PlayerInfo] %d onPlayBackResumed %s' % (self._id, suffix))
         if not self._paused:
             self._info(dict(path=self._path, position=self._last_pos, total=self._total, event='playbackresumed'))
         self._paused = False
@@ -83,4 +83,4 @@ class PlayerInfo(Player):
             self._last_pos = self.getTime()
             if self._stop.wait(timeout=0.5):
                 break
-        log(2, '[PlayerInfo] %d stream position loop exited' % self._id)
+        log(3, '[PlayerInfo] %d stream position loop exited' % self._id)

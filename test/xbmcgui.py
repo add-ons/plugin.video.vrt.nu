@@ -261,6 +261,11 @@ class ListItem:
         ''' A stub implementation for the xbmcgui ListItem class setSubtitles() method '''
         return
 
+    @staticmethod
+    def setUniqueIDs(values, defaultrating=None):
+        ''' A stub implementation for the xbmcgui ListItem class setUniqueIDs() method '''
+        return
+
 
 class Window:
     ''' A reimplementation of the xbmcgui Window '''
@@ -286,7 +291,7 @@ class Window:
         return 0
 
     @staticmethod
-    def getProperty():
+    def getProperty(key):
         ''' A stub implementation for the xbmcgui Window class getProperty() method '''
         return ''
 

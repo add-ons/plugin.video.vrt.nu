@@ -57,17 +57,18 @@ class ResumePoints:
         if resumepoints_json:
             self._resumepoints = resumepoints_json
 
-    def update(self, asset_id, title, url, watch_later=None, position=None, total=None):
+    def update(self, asset_id, title, url, watch_later=None, position=None, total=None, whatson_id=None):
         ''' Set program resumepoint or watchLater status and update local copy '''
 
         # The video has no assetPath, so we cannot update resumepoints
         if asset_id is None:
             return True
 
-        if position is not None and position >= total - 30:
+        if position is not None and total is not None and position >= total - 30:
             watch_later = False
 
         self.refresh(ttl=0)
+
         if watch_later is not None and position is None and total is None and watch_later is self.is_watchlater(asset_id):
             # watchLater status is not changed, nothing to do
             return True
@@ -90,6 +91,9 @@ class ResumePoints:
             'Referer': 'https://www.vrt.be' + url,
         }
 
+        from statichelper import reformat_url
+        url = reformat_url(url, 'short')
+
         if asset_id in self._resumepoints:
             # Update existing resumepoint values
             payload = self._resumepoints[asset_id]['value']
@@ -104,6 +108,9 @@ class ResumePoints:
         if total is not None:
             payload['total'] = total
 
+        if whatson_id is not None:
+            payload['whatsonId'] = whatson_id
+
         removes = []
         if position is not None or total is not None:
             removes.append('continue-*.json')
@@ -116,7 +123,7 @@ class ResumePoints:
         from json import dumps
         data = dumps(payload).encode()
         log(2, 'URL post: https://video-user-data.vrt.be/resume_points/{asset_id}', asset_id=asset_id)
-        log(2, 'URL post data:: {data}', data=data)
+        log(2, 'URL post data: {data}', data=data)
         try:
             req = Request('https://video-user-data.vrt.be/resume_points/%s' % asset_id, data=data, headers=headers)
             urlopen(req)
@@ -180,4 +187,5 @@ class ResumePoints:
 
     def resumepoints_urls(self):
         ''' Return all urls that have not been finished watching '''
-        return [self.get_url(asset_id) for asset_id in self._resumepoints if SECONDS_MARGIN < self.get_position(asset_id) < (self.get_total(asset_id) - SECONDS_MARGIN)]
+        return [self.get_url(asset_id) for asset_id in self._resumepoints
+                if SECONDS_MARGIN < self.get_position(asset_id) < (self.get_total(asset_id) - SECONDS_MARGIN)]
