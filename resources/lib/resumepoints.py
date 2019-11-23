@@ -57,22 +57,22 @@ class ResumePoints:
         if resumepoints_json:
             self._resumepoints = resumepoints_json
 
-    def update(self, uuid, title, url, watch_later=None, position=None, total=None):
+    def update(self, asset_id, title, url, watch_later=None, position=None, total=None):
         ''' Set program resumepoint or watchLater status and update local copy '''
 
         # The video has no assetPath, so we cannot update resumepoints
-        if uuid is None:
+        if asset_id is None:
             return True
 
         if position is not None and position >= total - 30:
             watch_later = False
 
         self.refresh(ttl=0)
-        if watch_later is not None and position is None and total is None and watch_later is self.is_watchlater(uuid):
+        if watch_later is not None and position is None and total is None and watch_later is self.is_watchlater(asset_id):
             # watchLater status is not changed, nothing to do
             return True
 
-        if watch_later is None and position == self.get_position(uuid) and total == self.get_total(uuid):
+        if watch_later is None and position == self.get_position(asset_id) and total == self.get_total(asset_id):
             # resumepoint is not changed, nothing to do
             return True
 
@@ -90,9 +90,9 @@ class ResumePoints:
             'Referer': 'https://www.vrt.be' + url,
         }
 
-        if uuid in self._resumepoints:
+        if asset_id in self._resumepoints:
             # Update existing resumepoint values
-            payload = self._resumepoints[uuid]['value']
+            payload = self._resumepoints[asset_id]['value']
             payload['url'] = url
         else:
             # Create new resumepoint values
@@ -115,10 +115,10 @@ class ResumePoints:
 
         from json import dumps
         data = dumps(payload).encode()
-        log(2, 'URL post: https://video-user-data.vrt.be/resume_points/{uuid}', uuid=uuid)
+        log(2, 'URL post: https://video-user-data.vrt.be/resume_points/{asset_id}', asset_id=asset_id)
         log(2, 'URL post data:: {data}', data=data)
         try:
-            req = Request('https://video-user-data.vrt.be/resume_points/%s' % uuid, data=data, headers=headers)
+            req = Request('https://video-user-data.vrt.be/resume_points/%s' % asset_id, data=data, headers=headers)
             urlopen(req)
         except HTTPError as exc:
             log_error('Failed to (un)watch episode at VRT NU ({error})', error=exc)
@@ -126,25 +126,25 @@ class ResumePoints:
             return False
 
         # NOTE: Updates to resumepoints take a longer time to take effect, so we keep our own cache and use it
-        self._resumepoints[uuid] = dict(value=payload)
+        self._resumepoints[asset_id] = dict(value=payload)
         update_cache('resume_points.json', self._resumepoints)
         invalidate_caches(*removes)
         return True
 
-    def is_watchlater(self, uuid):
+    def is_watchlater(self, asset_id):
         ''' Is a program set to watch later ? '''
-        return self._resumepoints.get(uuid, {}).get('value', {}).get('watchLater') is True
+        return self._resumepoints.get(asset_id, {}).get('value', {}).get('watchLater') is True
 
-    def watchlater(self, uuid, title, url):
+    def watchlater(self, asset_id, title, url):
         ''' Watch an episode later '''
-        succeeded = self.update(uuid=uuid, title=title, url=url, watch_later=True)
+        succeeded = self.update(asset_id=asset_id, title=title, url=url, watch_later=True)
         if succeeded:
             notification(message=localize(30403, title=title))
             container_refresh()
 
-    def unwatchlater(self, uuid, title, url, move_down=False):
+    def unwatchlater(self, asset_id, title, url, move_down=False):
         ''' Unwatch an episode later '''
-        succeeded = self.update(uuid=uuid, title=title, url=url, watch_later=False)
+        succeeded = self.update(asset_id=asset_id, title=title, url=url, watch_later=False)
         if succeeded:
             notification(message=localize(30404, title=title))
             # If the current item is selected and we need to move down before removing
@@ -152,23 +152,23 @@ class ResumePoints:
                 input_down()
             container_refresh()
 
-    def get_position(self, uuid):
+    def get_position(self, asset_id):
         ''' Return the stored position of a video '''
-        return self._resumepoints.get(uuid, {}).get('value', {}).get('position', 0)
+        return self._resumepoints.get(asset_id, {}).get('value', {}).get('position', 0)
 
-    def get_total(self, uuid):
+    def get_total(self, asset_id):
         ''' Return the stored total length of a video '''
-        return self._resumepoints.get(uuid, {}).get('value', {}).get('total', 100)
+        return self._resumepoints.get(asset_id, {}).get('value', {}).get('total', 100)
 
-    def get_url(self, uuid, url_type='medium'):
+    def get_url(self, asset_id, url_type='medium'):
         ''' Return the stored url a video '''
         from statichelper import reformat_url
-        return reformat_url(self._resumepoints.get(uuid, {}).get('value', {}).get('url'), url_type)
+        return reformat_url(self._resumepoints.get(asset_id, {}).get('value', {}).get('url'), url_type)
 
     @staticmethod
-    def assetpath_to_uuid(assetpath):
+    def assetpath_to_id(assetpath):
         ''' Convert an assetpath (e.g. /content/dam/vrt/2019/08/14/woodstock-depot_WP00157456)
-            to a resumepoint uuid (e.g. contentdamvrt20190814woodstockdepotwp00157456) '''
+            to a resumepoint asset_id (e.g. contentdamvrt20190814woodstockdepotwp00157456) '''
         # The video has no assetPath, so we return None instead
         if assetpath is None:
             return None
@@ -176,8 +176,8 @@ class ResumePoints:
 
     def watchlater_urls(self):
         ''' Return all watchlater urls '''
-        return [self.get_url(uuid) for uuid in self._resumepoints if self.is_watchlater(uuid)]
+        return [self.get_url(asset_id) for asset_id in self._resumepoints if self.is_watchlater(asset_id)]
 
     def resumepoints_urls(self):
         ''' Return all urls that have not been finished watching '''
-        return [self.get_url(uuid) for uuid in self._resumepoints if SECONDS_MARGIN < self.get_position(uuid) < (self.get_total(uuid) - SECONDS_MARGIN)]
+        return [self.get_url(asset_id) for asset_id in self._resumepoints if SECONDS_MARGIN < self.get_position(asset_id) < (self.get_total(asset_id) - SECONDS_MARGIN)]

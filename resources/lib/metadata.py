@@ -74,8 +74,8 @@ class Metadata:
                 # We need to ensure forward slashes are quoted
                 program_title = statichelper.to_unicode(quote_plus(statichelper.from_unicode(program_title)))
                 url = statichelper.url_to_episode(api_data.get('url', ''))
-                assetuuid = self._resumepoints.assetpath_to_uuid(assetpath)
-                if self._resumepoints.is_watchlater(assetuuid):
+                asset_id = self._resumepoints.assetpath_to_id(assetpath)
+                if self._resumepoints.is_watchlater(asset_id):
                     extras = dict()
                     # If we are in a watchlater menu, move cursor down before removing a favorite
                     if plugin.path.startswith('/resumepoints/watchlater'):
@@ -83,14 +83,14 @@ class Metadata:
                     # Unwatch context menu
                     context_menu.append((
                         statichelper.capitalize(localize(30402)),
-                        'RunPlugin(%s)' % url_for('unwatchlater', uuid=assetuuid, title=program_title, url=url, **extras)
+                        'RunPlugin(%s)' % url_for('unwatchlater', asset_id=asset_id, title=program_title, url=url, **extras)
                     ))
                     watchlater_marker = '[COLOR yellow]ᶫ[/COLOR]'
                 else:
                     # Watch context menu
                     context_menu.append((
                         statichelper.capitalize(localize(30401)),
-                        'RunPlugin(%s)' % url_for('watchlater', uuid=assetuuid, title=program_title, url=url)
+                        'RunPlugin(%s)' % url_for('watchlater', asset_id=asset_id, title=program_title, url=url)
                     ))
 
         # FOLLOW PROGRAM
@@ -168,9 +168,9 @@ class Metadata:
         if self._resumepoints.is_activated():
             assetpath = self.get_assetpath(api_data)
             if assetpath:
-                assetuuid = self._resumepoints.assetpath_to_uuid(assetpath)
-                position = self._resumepoints.get_position(assetuuid)
-                total = self._resumepoints.get_total(assetuuid)
+                asset_id = self._resumepoints.assetpath_to_id(assetpath)
+                position = self._resumepoints.get_position(asset_id)
+                total = self._resumepoints.get_total(asset_id)
                 if position and total and position > total - SECONDS_MARGIN:
                     playcount = 1
         return playcount
@@ -186,12 +186,12 @@ class Metadata:
                 # We need to ensure forward slashes are quoted
                 program_title = statichelper.to_unicode(quote_plus(statichelper.from_unicode(api_data.get('program'))))
 
-                assetuuid = self._resumepoints.assetpath_to_uuid(assetpath)
+                asset_id = self._resumepoints.assetpath_to_id(assetpath)
                 url = statichelper.reformat_url(api_data.get('url', ''), 'medium')
-                properties.update(assetuuid=assetuuid, url=url, title=program_title)
+                properties.update(asset_id=asset_id, url=url, title=program_title)
 
-                position = self._resumepoints.get_position(assetuuid)
-                total = self._resumepoints.get_total(assetuuid)
+                position = self._resumepoints.get_position(asset_id)
+                total = self._resumepoints.get_total(asset_id)
                 if position and total and SECONDS_MARGIN < position < total - SECONDS_MARGIN:
                     properties['resumetime'] = position
                     log(2, '[Metadata] manual resumetime set to %d' % position)

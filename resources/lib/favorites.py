@@ -81,16 +81,16 @@ class Favorites:
         payload = dict(isFavorite=value, programUrl=program_to_url(program, 'short'), title=title)
         from json import dumps
         data = dumps(payload).encode('utf-8')
-        program_uuid = self.program_to_uuid(program)
-        log(2, 'URL post: https://video-user-data.vrt.be/favorites/{uuid}', uuid=program_uuid)
-        req = Request('https://video-user-data.vrt.be/favorites/%s' % program_uuid, data=data, headers=headers)
+        program_id = self.program_to_id(program)
+        log(2, 'URL post: https://video-user-data.vrt.be/favorites/{program_id}', program_id=program_id)
+        req = Request('https://video-user-data.vrt.be/favorites/%s' % program_id, data=data, headers=headers)
         result = urlopen(req)
         if result.getcode() != 200:
             log_error("Failed to (un)follow program '{program}' at VRT NU", program=program)
             notification(message=localize(30976, program=program))
             return False
         # NOTE: Updates to favorites take a longer time to take effect, so we keep our own cache and use it
-        self._favorites[program_uuid] = dict(value=payload)
+        self._favorites[program_id] = dict(value=payload)
         update_cache('favorites.json', self._favorites)
         invalidate_caches('my-offline-*.json', 'my-recent-*.json')
         return True
@@ -98,7 +98,7 @@ class Favorites:
     def is_favorite(self, program):
         ''' Is a program a favorite ? '''
         value = False
-        favorite = self._favorites.get(self.program_to_uuid(program))
+        favorite = self._favorites.get(self.program_to_id(program))
         if favorite:
             value = favorite.get('value', {}).get('isFavorite')
         return value is True
@@ -121,8 +121,8 @@ class Favorites:
             container_refresh()
 
     @staticmethod
-    def program_to_uuid(program):
-        ''' Convert a program url component (e.g. de-campus-cup) to a favorite uuid (e.g. vrtnuazdecampuscup), used for lookups in favorites dict '''
+    def program_to_id(program):
+        ''' Convert a program url component (e.g. de-campus-cup) to a favorite program_id (e.g. vrtnuazdecampuscup), used for lookups in favorites dict '''
         return 'vrtnuaz' + program.replace('-', '')
 
     def titles(self):
