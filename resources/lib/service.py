@@ -62,8 +62,7 @@ class VrtMonitor(Monitor):
             if not hexdata:
                 return
 
-            from binascii import unhexlify
-            json_data = unhexlify(data[0])
+            json_data = hexdata[0].decode('hex')
 
             # NOTE: With Python 3.5 and older json.loads() does not support bytes or bytearray
             if isinstance(json_data, bytes):
@@ -127,8 +126,7 @@ class VrtMonitor(Monitor):
         if has_addon('service.upnext') and get_setting('useupnext', 'true') == 'true':
             next_info = self._apihelper.get_upnext(info)
             if next_info:
-                from binascii import hexlify
                 from json import dumps
-                data = [to_unicode(hexlify(dumps(next_info).encode()))]
+                data = [to_unicode(dumps(next_info).encode().encode('hex'))]
                 sender = '%s.SIGNAL' % addon_id()
                 notify(sender=sender, message='upnext_data', data=data)
