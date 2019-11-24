@@ -12,12 +12,13 @@ except ImportError:  # Python 2
     from urllib import quote_plus
     from urllib2 import build_opener, install_opener, ProxyHandler, Request, HTTPError, unquote, urlopen
 
-import statichelper
 from data import CHANNELS, SECONDS_MARGIN
 from helperobjects import TitleItem
 from kodiutils import (delete_cached_thumbnail, get_cache, get_global_setting, get_proxies, get_setting,
                        has_addon, localize, localize_from_data, log, log_error, ok_dialog, update_cache,
                        url_for)
+from statichelper import (add_https_method, convert_html_to_kodilabel, find_entry, from_unicode, play_url_to_id,
+                          program_to_url, realpage, to_unicode, strip_newlines, url_to_program)
 from metadata import Metadata
 
 
@@ -58,11 +59,11 @@ class ApiHelper:
             cache_file = 'programs.json'
         tvshows = get_cache(cache_file, ttl=60 * 60)  # Try the cache if it is fresh
         if not tvshows:
-            from json import load
+            from json import loads
             querystring = '&'.join('{}={}'.format(key, value) for key, value in list(params.items()))
             suggest_url = self._VRTNU_SUGGEST_URL + '?' + querystring
             log(2, 'URL get: {url}', url=unquote(suggest_url))
-            tvshows = load(urlopen(suggest_url))
+            tvshows = loads(to_unicode(urlopen(suggest_url).read()))
             update_cache(cache_file, tvshows)
 
         return tvshows
@@ -142,7 +143,7 @@ class ApiHelper:
             if season and season != 'allseasons' and episode.get('seasonTitle') != season:
                 continue
 
-            program = statichelper.url_to_program(episode.get('programUrl'))
+            program = url_to_program(episode.get('programUrl'))
             if use_favorites and program not in favorite_programs:
                 continue
 
@@ -150,7 +151,7 @@ class ApiHelper:
             highlight = episode.get('highlight')
             if highlight:
                 for key in highlight:
-                    episode[key] = statichelper.convert_html_to_kodilabel(highlight.get(key)[0])
+                    episode[key] = convert_html_to_kodilabel(highlight.get(key)[0])
 
             list_item, sort, ascending = self.episode_to_listitem(episode, program, cache_file, titletype)
             episode_items.append(list_item)
@@ -210,10 +211,10 @@ class ApiHelper:
             favorite_programs = self._favorites.programs()
 
         # Create list of oneoff programs from oneoff episodes
-        oneoff_programs = [statichelper.url_to_program(episode.get('programUrl')) for episode in oneoffs]
+        oneoff_programs = [url_to_program(episode.get('programUrl')) for episode in oneoffs]
 
         for tvshow in tvshows:
-            program = statichelper.url_to_program(tvshow.get('programUrl'))
+            program = url_to_program(tvshow.get('programUrl'))
 
             if use_favorites and program not in favorite_programs:
                 continue
@@ -263,7 +264,7 @@ class ApiHelper:
         current_ep_no = None
 
         # Get current episode unique identifier
-        ep_id = statichelper.play_url_to_id(path)
+        ep_id = play_url_to_id(path)
 
         # Get all episodes from current program and sort by program, seasonTitle and episodeNumber
         episodes = sorted(self.get_episodes(keywords=program), key=lambda k: (k.get('program'), k.get('seasonTitle'), k.get('episodeNumber')))
@@ -374,7 +375,7 @@ class ApiHelper:
 
     def get_episode_by_air_date(self, channel_name, start_date, end_date=None):
         ''' Get an episode of a program given the channel and the air date in iso format (2019-07-06T19:35:00) '''
-        channel = statichelper.find_entry(CHANNELS, 'name', channel_name)
+        channel = find_entry(CHANNELS, 'name', channel_name)
         if not channel:
             return None
 
@@ -401,8 +402,8 @@ class ApiHelper:
             schedule_date = onairdate
         schedule_datestr = schedule_date.isoformat().split('T')[0]
         url = 'https://www.vrt.be/bin/epg/schedule.%s.json' % schedule_datestr
-        from json import load
-        schedule_json = load(urlopen(url))
+        from json import loads
+        schedule_json = loads(to_unicode(urlopen(url).read()))
         episodes = schedule_json.get(channel.get('id'), [])
         if not episodes:
             return None
@@ -472,7 +473,7 @@ class ApiHelper:
 
         # Contruct params
         if page:
-            page = statichelper.realpage(page)
+            page = realpage(page)
             all_items = False
             params = {
                 'from': ((page - 1) * 50) + 1,
@@ -514,14 +515,14 @@ class ApiHelper:
                 params['facets[url]'] = '[%s]' % (','.join(episode_urls))
 
             if use_favorites:
-                program_urls = [statichelper.program_to_url(p, 'medium') for p in self._favorites.programs()]
+                program_urls = [program_to_url(p, 'medium') for p in self._favorites.programs()]
                 params['facets[programUrl]'] = '[%s]' % (','.join(program_urls))
             elif variety in ('offline', 'recent'):
                 channel_filter = [channel.get('name') for channel in CHANNELS if get_setting(channel.get('name'), 'true') == 'true']
                 params['facets[programBrands]'] = '[%s]' % (','.join(channel_filter))
 
         if program:
-            params['facets[programUrl]'] = statichelper.program_to_url(program, 'medium')
+            params['facets[programUrl]'] = program_to_url(program, 'medium')
 
         if season and season != 'allseasons':
             params['facets[seasonTitle]'] = season
@@ -541,7 +542,7 @@ class ApiHelper:
         if keywords:
             if not season:
                 season = 'allseasons'
-            params['q'] = quote_plus(statichelper.from_unicode(keywords))
+            params['q'] = quote_plus(from_unicode(keywords))
             params['highlight'] = 'true'
 
         if whatson_id:
@@ -557,7 +558,7 @@ class ApiHelper:
         querystring = '&'.join('{}={}'.format(key, value) for key, value in list(params.items()))
         search_url = self._VRTNU_SEARCH_URL + '?' + querystring.replace(' ', '%20')  # Only encode spaces to minimize url length
 
-        from json import load
+        from json import loads
         if cache_file:
             # Get api data from cache if it is fresh
             search_json = get_cache(cache_file, ttl=60 * 60)
@@ -565,7 +566,7 @@ class ApiHelper:
                 log(2, 'URL get: {url}', url=unquote(search_url))
                 req = Request(search_url)
                 try:
-                    search_json = load(urlopen(req))
+                    search_json = loads(to_unicode(urlopen(req).read()))
                 except (TypeError, ValueError):  # No JSON object could be decoded
                     return []
                 except HTTPError as exc:
@@ -584,7 +585,7 @@ class ApiHelper:
                 update_cache(cache_file, search_json)
         else:
             log(2, 'URL get: {url}', url=unquote(search_url))
-            search_json = load(urlopen(search_url))
+            search_json = loads(to_unicode(urlopen(search_url).read()))
 
         # Check for multiple seasons
         seasons = None
@@ -606,7 +607,7 @@ class ApiHelper:
         if all_items and total_results > api_page_size:
             for api_page in range(1, api_pages):
                 api_page_url = search_url + '&from=' + str(api_page * api_page_size + 1)
-                api_page_json = load(urlopen(api_page_url))
+                api_page_json = loads(to_unicode(urlopen(api_page_url).read()))
                 episodes += api_page_json.get('results', [{}])
 
         # Return episodes
@@ -837,7 +838,7 @@ class ApiHelper:
         ''' Return a category thumbnail, if available '''
         if get_setting('showfanart', 'true') == 'true':
             raw_thumbnail = element.find(class_='media').get('data-responsive-image', 'DefaultGenre.png')
-            return statichelper.add_https_method(raw_thumbnail)
+            return add_https_method(raw_thumbnail)
         return 'DefaultGenre.png'
 
     @staticmethod
@@ -845,6 +846,6 @@ class ApiHelper:
         ''' Return a category title, if available '''
         found_element = element.find('a')
         if found_element:
-            return statichelper.strip_newlines(found_element.contents[0])
+            return strip_newlines(found_element.contents[0])
         # FIXME: We should probably fall back to something sensible here, or raise an exception instead
         return ''

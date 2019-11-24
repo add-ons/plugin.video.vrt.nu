@@ -3,7 +3,7 @@
 ''' This module contains all functionality for VRT NU API authentication. '''
 
 from __future__ import absolute_import, division, unicode_literals
-from statichelper import from_unicode
+from statichelper import from_unicode, to_unicode
 from kodiutils import (addon_profile, delete, exists, get_proxies, get_setting, get_tokens_path,
                        has_credentials, invalidate_caches, listdir, localize, log, log_error,
                        mkdir, notification, ok_dialog, open_file, open_settings, set_setting)
@@ -125,10 +125,10 @@ class TokenResolver:
 
     def _get_new_playertoken(self, token_url, headers, token_variant=None):
         ''' Get new playertoken from VRT Token API '''
-        from json import load
+        from json import loads
         log(2, 'URL post: {url}', url=unquote(token_url))
         req = Request(token_url, data=b'', headers=headers)
-        playertoken = load(urlopen(req))
+        playertoken = loads(to_unicode(urlopen(req).read()))
         if playertoken is not None:
             self._set_cached_token(playertoken, token_variant)
         return playertoken.get('vrtPlayerToken')
@@ -171,7 +171,7 @@ class TokenResolver:
 
     def _get_login_json(self):
         ''' Get login json '''
-        from json import load
+        from json import loads
         payload = dict(
             loginID=from_unicode(get_setting('username')),
             password=from_unicode(get_setting('password')),
@@ -182,7 +182,7 @@ class TokenResolver:
         data = urlencode(payload).encode()
         log(2, 'URL post: {url}', url=unquote(self._LOGIN_URL))
         req = Request(self._LOGIN_URL, data=data)
-        login_json = load(urlopen(req))
+        login_json = loads(to_unicode(urlopen(req).read()))
         return login_json
 
     def _get_new_xvrttoken(self, login_json, token_variant=None):
