@@ -18,7 +18,7 @@ from favorites import Favorites
 from helperobjects import TitleItem
 from metadata import Metadata
 from resumepoints import ResumePoints
-from statichelper import find_entry
+from statichelper import find_entry, to_unicode
 from kodiutils import (get_cache, get_proxies, has_addon, localize, localize_datelong, log,
                        show_listing, update_cache, url_for)
 
@@ -159,14 +159,14 @@ class TVGuide:
             # Try the cache if it is fresh
             schedule = get_cache(cache_file, ttl=60 * 60)
             if not schedule:
-                from json import load
+                from json import loads
                 log(2, 'URL get: {url}', url=epg_url)
-                schedule = load(urlopen(epg_url))
+                schedule = loads(to_unicode(urlopen(epg_url).read()))
                 update_cache(cache_file, schedule)
         else:
-            from json import load
+            from json import loads
             log(2, 'URL get: {url}', url=epg_url)
-            schedule = load(urlopen(epg_url))
+            schedule = loads(to_unicode(urlopen(epg_url).read()))
 
         entry = find_entry(CHANNELS, 'name', channel)
         if entry:
@@ -211,10 +211,10 @@ class TVGuide:
         # Try the cache if it is fresh
         schedule = get_cache('schedule.today.json', ttl=60 * 60)
         if not schedule:
-            from json import load
+            from json import loads
             epg_url = epg.strftime(self.VRT_TVGUIDE)
             log(2, 'URL get: {url}', url=epg_url)
-            schedule = load(urlopen(epg_url))
+            schedule = loads(to_unicode(urlopen(epg_url).read()))
             update_cache('schedule.today.json', schedule)
 
         entry = find_entry(CHANNELS, 'name', channel)
@@ -249,10 +249,10 @@ class TVGuide:
         # Try the cache if it is fresh
         schedule = get_cache('schedule.today.json', ttl=60 * 60)
         if not schedule:
-            from json import load
+            from json import loads
             epg_url = epg.strftime(self.VRT_TVGUIDE)
             log(2, 'URL get: {url}', url=epg_url)
-            schedule = load(urlopen(epg_url))
+            schedule = loads(to_unicode(urlopen(epg_url).read()))
             update_cache('schedule.today.json', schedule)
 
         entry = find_entry(CHANNELS, 'name', channel)

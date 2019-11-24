@@ -62,12 +62,9 @@ class VrtMonitor(Monitor):
             if not hexdata:
                 return
 
-            json_data = hexdata[0].decode('hex')
-
-            # NOTE: With Python 3.5 and older json.loads() does not support bytes or bytearray
-            if isinstance(json_data, bytes):
-                json_data = json_data.decode('utf-8')
-            data = loads(json_data)
+            # NOTE: With Python 3.5 and older json.loads() does not support bytes or bytearray, so we convert to unicode
+            from binascii import unhexlify
+            data = loads(to_unicode(unhexlify(hexdata[0])))
             log(2, '[Up Next notification] sender={sender}, method={method}, data={data}', sender=sender, method=method, data=to_unicode(data))
             jsonrpc(method='Player.Open', params=dict(item=dict(file='plugin://plugin.video.vrt.nu/play/upnext/%s' % data.get('video_id'))))
 
@@ -126,7 +123,8 @@ class VrtMonitor(Monitor):
         if has_addon('service.upnext') and get_setting('useupnext', 'true') == 'true':
             next_info = self._apihelper.get_upnext(info)
             if next_info:
+                from binascii import hexlify
                 from json import dumps
-                data = [to_unicode(dumps(next_info).encode().encode('hex'))]
+                data = [to_unicode(hexlify(dumps(next_info).encode()))]
                 sender = '%s.SIGNAL' % addon_id()
                 notify(sender=sender, message='upnext_data', data=data)
