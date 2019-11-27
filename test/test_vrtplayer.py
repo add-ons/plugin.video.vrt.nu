@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+''' Unit tests for VRTPlayer functionality '''
 
-# pylint: disable=invalid-name,missing-docstring
+# pylint: disable=invalid-name
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 import random
@@ -20,6 +21,7 @@ xbmcvfs = __import__('xbmcvfs')
 
 
 class TestVRTPlayer(unittest.TestCase):
+    ''' TestCase class '''
 
     _favorites = Favorites()
     _resumepoints = ResumePoints()
@@ -27,6 +29,7 @@ class TestVRTPlayer(unittest.TestCase):
     _vrtplayer = VRTPlayer()
 
     def test_show_videos_single_episode_shows_videos(self):
+        ''' Test listing single episode for a given program '''
         program = 'marathonradio'
         episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program)
         self.assertTrue(episode_items, msg=program)
@@ -37,6 +40,7 @@ class TestVRTPlayer(unittest.TestCase):
         self._vrtplayer.show_episodes_menu(program)
 
     def test_show_videos_single_season_shows_videos(self):
+        ''' Test listing single season for a given program '''
         program = 'het-weer'
         episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program)
         self.assertTrue(episode_items, msg=program)
@@ -47,6 +51,7 @@ class TestVRTPlayer(unittest.TestCase):
         self._vrtplayer.show_episodes_menu(program)
 
     def test_show_videos_multiple_seasons_shows_videos(self):
+        ''' Test listing multiple season for a given program '''
         program = 'pano'
         episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program)
         self.assertTrue(episode_items)
@@ -57,6 +62,7 @@ class TestVRTPlayer(unittest.TestCase):
         self._vrtplayer.show_episodes_menu(program)
 
     def test_show_videos_specific_seasons_shows_videos(self):
+        ''' Test listing specific seasons for a given program '''
         program = 'thuis'
         episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program)
         self.assertTrue(episode_items, msg=program)

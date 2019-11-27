@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 # Copyright: (c) 2019, Dag Wieers (@dagwieers) <dag@wieers.com>
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+''' Unit tests for TVGuide functionality '''
 
-# pylint: disable=invalid-name,missing-docstring
+# pylint: disable=invalid-name
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 from datetime import datetime, timedelta
@@ -23,6 +24,7 @@ channels = ['een', 'canvas', 'ketnet']
 
 
 class TestTVGuide(unittest.TestCase):
+    ''' TestCase class '''
 
     _tvguide = TVGuide()
 
@@ -65,6 +67,7 @@ class TestTVGuide(unittest.TestCase):
         self.assertEqual(episode_items, [])
 
     def test_livetv_description(self):
+        ''' Test Live TV description '''
         description = self._tvguide.live_description('een')
         print(kodi_to_ansi(description))
         description = self._tvguide.live_description('canvas')
@@ -82,6 +85,7 @@ class TestTVGuide(unittest.TestCase):
         self.assertTrue(episode_items)
 
     def test_parse(self):
+        ''' Test parsing date '''
         now = datetime.now(dateutil.tz.tzlocal())
         date = self._tvguide.parse('2019-05-11', now)
         print(date)

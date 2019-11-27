@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 # Copyright: (c) 2019, Dag Wieers (@dagwieers) <dag@wieers.com>
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+''' Unit tests for ResumePoints functionality '''
 
-# pylint: disable=invalid-name,missing-docstring
+# pylint: disable=invalid-name
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
@@ -21,6 +22,7 @@ addon.settings['useresumepoints'] = 'true'
 
 
 class TestResumePoints(unittest.TestCase):
+    ''' TestCase class '''
 
     _favorites = Favorites()
     _resumepoints = ResumePoints()
@@ -48,7 +50,8 @@ class TestResumePoints(unittest.TestCase):
 
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
-    def test_update_watchlist(self):
+    def test_update_watchlater(self):
+        ''' Test updating the watch later list '''
         self._resumepoints.refresh(ttl=0)
         asset_id, first_entry = next(iter(list(self._resumepoints._resumepoints.items())))  # pylint: disable=protected-access
         print('%s = %s' % (asset_id, first_entry))
@@ -60,13 +63,15 @@ class TestResumePoints(unittest.TestCase):
         print('%s = %s' % (asset_id, first_entry))
 
     def test_assetpath_to_id(self):
+        ''' Test converting assetpath to assetid '''
         self.assertEqual(None, self._resumepoints.assetpath_to_id(None))
 
         asset_path = '/content/dam/vrt/2019/08/14/woodstock-depot_WP00157456'
         asset_id = 'contentdamvrt20190814woodstockdepotwp00157456'
         self.assertEqual(asset_id, self._resumepoints.assetpath_to_id(asset_path))
 
-    def test_update(self):
+    def test_update_none(self):
+        ''' Test updating empty resumepoints '''
         self.assertTrue(self._resumepoints.update(asset_id=None, title=None, url=None))
 
 

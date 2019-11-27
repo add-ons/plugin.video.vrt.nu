@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+''' Integration tests for changes to settings '''
 
-# pylint: disable=invalid-name,missing-docstring
+# pylint: disable=invalid-name
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
@@ -18,7 +19,10 @@ addon = xbmcaddon.Addon()
 
 
 class TestSettings(unittest.TestCase):
+    ''' TestCase class '''
+
     def tearDown(self):
+        ''' Clean up function for TestCase class '''
         addon.settings['usemenucaching'] = 'true'
         addon.settings['usehttpcaching'] = 'true'
         addon.settings['usefavorites'] = 'true'

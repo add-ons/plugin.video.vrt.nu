@@ -1,4 +1,5 @@
 ENVS := flake8,py27,py35,py36,py37,py38
+PYTHON := python
 export PYTHONPATH := $(CURDIR)/resources/lib:$(CURDIR)/test
 addon_xml := addon.xml
 
@@ -34,7 +35,11 @@ tox:
 
 pylint:
 	@echo -e "$(white)=$(blue) Starting sanity pylint test$(reset)"
-	pylint resources/lib/ test/
+	$(PYTHON) /usr/bin/pylint resources/lib/ test/
+
+pylint-warnings:
+	@echo -e "$(white)=$(blue) Starting sanity pylint test$(reset)"
+	$(PYTHON) /usr/bin/pylint -e useless-suppression resources/lib/ test/
 
 language:
 	@echo -e "$(white)=$(blue) Checking translations$(reset)"
@@ -42,20 +47,20 @@ language:
 
 addon: clean
 	@echo -e "$(white)=$(blue) Starting sanity addon tests$(reset)"
-	kodi-addon-checker . --branch=krypton
-	kodi-addon-checker . --branch=leia
+	$(PYTHON) /usr/bin/kodi-addon-checker . --branch=krypton
+	$(PYTHON) /usr/bin/kodi-addon-checker . --branch=leia
 
 unit: clean
 	@echo -e "$(white)=$(blue) Starting unit tests$(reset)"
-	-pkill -ef proxy.py
-	proxy.py &
-	python -m unittest discover
-	pkill -ef proxy.py
+	-pkill -ef /usr/bin/proxy.py
+	$(PYTHON) /usr/bin/proxy.py &
+	$(PYTHON) -m unittest discover
+	pkill -ef /usr/bin/proxy.py
 
 run:
 	@echo -e "$(white)=$(blue) Run CLI$(reset)"
-	python resources/lib/service_entry.py
-	python test/run.py /
+	$(PYTHON) resources/lib/service_entry.py
+	$(PYTHON) test/run.py /
 
 zip: clean
 	@echo -e "$(white)=$(blue) Building new package$(reset)"

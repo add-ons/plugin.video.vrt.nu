@@ -324,11 +324,11 @@ class TokenResolver:
         ''' Delete all cached tokens '''
         # Remove old tokens
         # FIXME: Deprecate and simplify this part in a future version
-        dirs, files = listdir(addon_profile())  # pylint: disable=unused-variable
+        _, files = listdir(addon_profile())
         token_files = [item for item in files if item.endswith('.tkn')]
         # Empty userdata/tokens/ directory
         if exists(get_tokens_path()):
-            dirs, files = listdir(get_tokens_path())  # pylint: disable=unused-variable
+            _, files = listdir(get_tokens_path())
             token_files += ['tokens/' + item for item in files]
         if token_files:
             for item in token_files:
