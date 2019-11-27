@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 # Copyright: (c) 2019, Dag Wieers (@dagwieers) <dag@wieers.com>
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+''' Integration tests for search functionality '''
 
-# pylint: disable=invalid-name,missing-docstring
+# pylint: disable=invalid-name
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
@@ -19,6 +20,7 @@ xbmcvfs = __import__('xbmcvfs')
 
 
 class TestSearch(unittest.TestCase):
+    ''' TestClass class '''
 
     _favorites = Favorites()
     _resumepoints = ResumePoints()

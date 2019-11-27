@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+''' Unit tests for Kodi utilities '''
 
-# pylint: disable=invalid-name,missing-docstring
+# pylint: disable=invalid-name
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
@@ -17,11 +18,15 @@ addon = xbmcaddon.Addon()
 
 
 class TestKodiUtils(unittest.TestCase):
+    ''' TestCase class '''
+
     def tearDown(self):
+        ''' Clean up function for TestCase class '''
         xbmc.settings['debug.showloginfo'] = True
         addon.settings['max_log_level'] = '3'
 
     def test_localize(self):
+        ''' Test localizing strings '''
         xbmc.settings['locale.language'] = 'resource.language.nl_nl'
 
         msg = kodiutils.localize(30958)
@@ -38,12 +43,14 @@ class TestKodiUtils(unittest.TestCase):
 
     @staticmethod
     def test_log_disabled():
+        ''' Test with logging disabled '''
         xbmc.settings['debug.showloginfo'] = False
         addon.settings['max_log_level'] = '0'
         kodiutils.log(3, 'No logging when quiet')
 
     @staticmethod
     def test_debug_logging():
+        ''' Test with debug logging enabled '''
         xbmc.settings['debug.showloginfo'] = True
         addon.settings['max_log_level'] = '3'
         kodiutils.log(0, 'Logging as quiet')
@@ -54,19 +61,23 @@ class TestKodiUtils(unittest.TestCase):
 
     @staticmethod
     def test_input_down():
+        ''' Test pressing down key '''
         kodiutils.input_down()
 
     @staticmethod
     def test_container_refresh():
+        ''' Test refreshing the current container '''
         kodiutils.container_refresh()
         kodiutils.container_refresh('plugin://plugin.video.vrt.nu/')
 
     @staticmethod
     def test_container_update():
+        ''' Test updating the current container '''
         kodiutils.container_update()
         kodiutils.container_update('plugin://plugin.video.vrt.nu/')
 
     def test_supports_drm(self):
+        ''' Test if Kodi supports DRM '''
         self.assertTrue(kodiutils.supports_drm())
 
 

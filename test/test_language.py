@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+''' Unit tests for language-related functionality '''
 
-# pylint: disable=invalid-name,missing-docstring
+# pylint: disable=invalid-name
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
@@ -15,7 +16,10 @@ xbmcvfs = __import__('xbmcvfs')
 
 
 class TestLanguage(unittest.TestCase):
+    ''' TestCase class '''
+
     def tearDown(self):
+        ''' Clean up function for TestCase class '''
         xbmc.settings['locale.language'] = 'resource.language.nl_nl'
 
     @staticmethod
