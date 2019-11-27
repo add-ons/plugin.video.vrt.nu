@@ -57,7 +57,7 @@ class ResumePoints:
         if resumepoints_json:
             self._resumepoints = resumepoints_json
 
-    def update(self, asset_id, title, url, watch_later=None, position=None, total=None, whatson_id=None):
+    def update(self, asset_id, title, url, watch_later=None, position=None, total=None, whatson_id=None, asynchronous=False):
         ''' Set program resumepoint or watchLater status and update local copy '''
 
         # The video has no assetPath, so we cannot update resumepoints
@@ -76,20 +76,6 @@ class ResumePoints:
         if watch_later is None and position == self.get_position(asset_id) and total == self.get_total(asset_id):
             # resumepoint is not changed, nothing to do
             return True
-
-        # Collect header info for POST Request
-        from tokenresolver import TokenResolver
-        xvrttoken = TokenResolver().get_xvrttoken(token_variant='user')
-        if xvrttoken is None:
-            log_error('Failed to get usertoken from VRT NU')
-            notification(message=localize(30975) + title)
-            return False
-
-        headers = {
-            'authorization': 'Bearer ' + xvrttoken,
-            'content-type': 'application/json',
-            'Referer': 'https://www.vrt.be' + url,
-        }
 
         from statichelper import reformat_url
         url = reformat_url(url, 'short')
@@ -120,6 +106,35 @@ class ResumePoints:
             payload['watchLater'] = watch_later
             removes.append('watchlater-*.json')
 
+       # NOTE: Updates to resumepoints take a longer time to take effect, so we keep our own cache and use it
+        self._resumepoints[asset_id] = dict(value=payload)
+        update_cache('resume_points.json', self._resumepoints)
+        invalidate_caches(*removes)
+
+        if asynchronous:
+            from threading import Thread
+            Thread(target=self.update_online, name='ResumePointsUpdate', args=(asset_id, title, url, payload)).start()
+        else:
+            return self.update_online(asset_id, title, url, payload)
+
+        return True
+
+    @staticmethod
+    def update_online(asset_id, title, url, payload):
+        ''' Update resumepoints online '''
+        # Collect header info for POST Request
+        from tokenresolver import TokenResolver
+        xvrttoken = TokenResolver().get_xvrttoken(token_variant='user')
+        if xvrttoken is None:
+            log_error('Failed to get usertoken from VRT NU')
+            notification(message=localize(30975) + title)
+            return False
+
+        headers = {
+            'authorization': 'Bearer ' + xvrttoken,
+            'content-type': 'application/json',
+            'Referer': 'https://www.vrt.be' + url,
+        }
         from json import dumps
         data = dumps(payload).encode()
         log(2, 'URL post: https://video-user-data.vrt.be/resume_points/{asset_id}', asset_id=asset_id)
@@ -131,11 +146,6 @@ class ResumePoints:
             log_error('Failed to (un)watch episode at VRT NU ({error})', error=exc)
             notification(message=localize(30977))
             return False
-
-        # NOTE: Updates to resumepoints take a longer time to take effect, so we keep our own cache and use it
-        self._resumepoints[asset_id] = dict(value=payload)
-        update_cache('resume_points.json', self._resumepoints)
-        invalidate_caches(*removes)
         return True
 
     def is_watchlater(self, asset_id):
