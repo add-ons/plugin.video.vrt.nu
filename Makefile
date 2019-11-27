@@ -68,6 +68,10 @@ zip: clean
 	cd ..; zip -r $(zip_name) $(include_paths) -x $(exclude_files)
 	@echo -e "$(white)=$(blue) Successfully wrote package as: $(white)../$(zip_name)$(reset)"
 
+codecov:
+	@echo -e "$(white)=$(blue) Test .codecov.yml syntax$(reset)"
+	curl --data-binary @.codecov.yml https://codecov.io/validate
+
 clean:
 	find . -name '*.pyc' -type f -delete
 	find . -name '*.pyo' -type f -delete
