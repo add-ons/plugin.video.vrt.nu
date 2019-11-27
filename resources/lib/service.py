@@ -108,7 +108,7 @@ class VrtMonitor(Monitor):
         title = episode.get('program')
         url = url_to_episode(episode.get('url', ''))
         # Push resumepoint to VRT NU
-        self._resumepoints.update(asset_id=asset_id, title=title, url=url, watch_later=None, position=info.get('position'), total=info.get('total'))
+        self._resumepoints.update(asset_id=asset_id, title=title, url=url, watch_later=None, position=info.get('position'), total=info.get('total'), asynchronous=True)
         # Only update container if the play action was initiated from it
         current_container = current_container_url()
         log(2, '[PlayerPosition] resumepoint update {info} {container}', info=episode.get('title'), container=current_container)
