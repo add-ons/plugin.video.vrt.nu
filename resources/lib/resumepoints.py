@@ -106,7 +106,7 @@ class ResumePoints:
             payload['watchLater'] = watch_later
             removes.append('watchlater-*.json')
 
-       # NOTE: Updates to resumepoints take a longer time to take effect, so we keep our own cache and use it
+        # NOTE: Updates to resumepoints take a longer time to take effect, so we keep our own cache and use it
         self._resumepoints[asset_id] = dict(value=payload)
         update_cache('resume_points.json', self._resumepoints)
         invalidate_caches(*removes)

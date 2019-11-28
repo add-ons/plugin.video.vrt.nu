@@ -139,6 +139,7 @@ def show_listing(list_items, category=None, sort='unsorted', ascending=True, con
     from addon import plugin
     from xbmcgui import ListItem
 
+    set_property('container.url', 'plugin://' + addon_id() + plugin.path)
     xbmcplugin.setPluginFanart(handle=plugin.handle, image=from_unicode(addon_fanart()))
 
     usemenucaching = get_setting('usemenucaching', 'true') == 'true'
@@ -407,6 +408,24 @@ def get_global_setting(key):
     ''' Get a Kodi setting '''
     result = jsonrpc(method='Settings.GetSettingValue', params=dict(setting=key))
     return result.get('result', {}).get('value')
+
+
+def get_property(key, window_id=10000):
+    ''' Get a Window property '''
+    from xbmcgui import Window
+    return to_unicode(Window(window_id).getProperty(key))
+
+
+def set_property(key, value, window_id=10000):
+    ''' Set a Window property '''
+    from xbmcgui import Window
+    return Window(window_id).setProperty(key, from_unicode(str(value)))
+
+
+def clear_property(key, window_id=10000):
+    ''' Clear a Window property '''
+    from xbmcgui import Window
+    return Window(window_id).clearProperty(key)
 
 
 def notify(sender, message, data):

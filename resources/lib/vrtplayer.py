@@ -8,9 +8,8 @@ from favorites import Favorites
 from helperobjects import TitleItem
 from resumepoints import ResumePoints
 from statichelper import find_entry
-from kodiutils import (addon_id, current_container_url, delete_cached_thumbnail, end_of_directory,
-                       get_addon_info, get_setting, has_credentials, localize, log_error, notify,
-                       ok_dialog, play, set_setting, show_listing, url_for)
+from kodiutils import (delete_cached_thumbnail, end_of_directory, get_addon_info, get_setting, has_credentials,
+                       localize, log_error, ok_dialog, play, set_setting, show_listing, url_for)
 
 
 class VRTPlayer:
@@ -362,6 +361,3 @@ class VRTPlayer:
         if stream is None:
             return
         play(stream, video.get('listitem'))
-        source_container = current_container_url()
-        if source_container:
-            notify(sender=addon_id(), message='source_container', data=dict(container=current_container_url()))
