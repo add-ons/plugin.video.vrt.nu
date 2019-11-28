@@ -1,11 +1,10 @@
-ENVS := flake8,py27,py35,py36,py37,py38
 PYTHON := python
 export PYTHONPATH := $(CURDIR)/resources/lib:$(CURDIR)/test
 addon_xml := addon.xml
 
 # Collect information to build as sensible package name
-name = $(shell xmllint --xpath 'string(/addon/@id)' $(addon_xml))
-version = $(shell xmllint --xpath 'string(/addon/@version)' $(addon_xml))
+name = $(shell xmllint --xpath 'string(/addon/@id)' addon_xml)
+version = $(shell xmllint --xpath 'string(/addon/@version)' addon_xml)
 git_branch = $(shell git rev-parse --abbrev-ref HEAD)
 git_hash = $(shell git rev-parse --short HEAD)
 
@@ -31,7 +30,7 @@ sanity: tox pylint language
 
 tox:
 	@echo -e "$(white)=$(blue) Starting sanity tox test$(reset)"
-	tox -q -e $(ENVS)
+	tox -q
 
 pylint:
 	@echo -e "$(white)=$(blue) Starting sanity pylint test$(reset)"
