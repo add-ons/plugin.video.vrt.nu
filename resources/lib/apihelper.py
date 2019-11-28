@@ -12,7 +12,7 @@ except ImportError:  # Python 2
     from urllib import quote_plus
     from urllib2 import build_opener, install_opener, ProxyHandler, Request, HTTPError, unquote, urlopen
 
-from data import CHANNELS, SECONDS_MARGIN
+from data import CHANNELS
 from helperobjects import TitleItem
 from kodiutils import (delete_cached_thumbnail, get_cache, get_global_setting, get_proxies, get_setting,
                        has_addon, localize, localize_from_data, log, log_error, ok_dialog, update_cache,
@@ -350,7 +350,6 @@ class ApiHelper:
             current_episode=current_episode,
             next_episode=next_episode,
             play_info=play_info,
-            notification_time=SECONDS_MARGIN,
         )
         return next_info
 

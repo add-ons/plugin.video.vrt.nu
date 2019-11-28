@@ -81,7 +81,7 @@ class SafeDict(dict):
 
 
 def addon_icon():
-    ''' Cache and return VRT NU Add-on icon '''
+    ''' Cache and return add-on icon '''
     if not hasattr(addon_icon, 'cached'):
         from xbmcaddon import Addon
         addon_icon.cached = to_unicode(Addon().getAddonInfo('icon'))
@@ -89,7 +89,7 @@ def addon_icon():
 
 
 def addon_id():
-    ''' Cache and return VRT NU Add-on ID '''
+    ''' Cache and return add-on ID '''
     if not hasattr(addon_id, 'cached'):
         from xbmcaddon import Addon
         addon_id.cached = to_unicode(Addon().getAddonInfo('id'))
@@ -97,7 +97,7 @@ def addon_id():
 
 
 def addon_fanart():
-    ''' Cache and return VRT NU Add-on fanart '''
+    ''' Cache and return add-on fanart '''
     if not hasattr(addon_fanart, 'cached'):
         from xbmcaddon import Addon
         addon_fanart.cached = to_unicode(Addon().getAddonInfo('fanart'))
@@ -105,7 +105,7 @@ def addon_fanart():
 
 
 def addon_name():
-    ''' Cache and return VRT NU Add-on name '''
+    ''' Cache and return add-on name '''
     if not hasattr(addon_name, 'cached'):
         from xbmcaddon import Addon
         addon_name.cached = to_unicode(Addon().getAddonInfo('name'))
@@ -113,7 +113,7 @@ def addon_name():
 
 
 def addon_path():
-    ''' Cache and return VRT NU Add-on path '''
+    ''' Cache and return add-on path '''
     if not hasattr(addon_path, 'cached'):
         from xbmcaddon import Addon
         addon_path.cached = to_unicode(Addon().getAddonInfo('path'))
@@ -121,7 +121,7 @@ def addon_path():
 
 
 def addon_profile():
-    ''' Cache and return VRT NU Add-on profile '''
+    ''' Cache and return add-on profile '''
     if not hasattr(addon_profile, 'cached'):
         from xbmcaddon import Addon
         addon_profile.cached = to_unicode(xbmc.translatePath(Addon().getAddonInfo('profile')))
@@ -395,7 +395,7 @@ def get_setting(key, default=None):
 def set_setting(key, value):
     ''' Set an add-on setting '''
     from xbmcaddon import Addon
-    return Addon().setSetting(key, value)
+    return Addon().setSetting(key, from_unicode(str(value)))
 
 
 def open_settings():
@@ -451,7 +451,7 @@ def get_playerid():
 
 
 def get_max_bandwidth():
-    ''' Get the max bandwidth based on Kodi and VRT NU add-on settings '''
+    ''' Get the max bandwidth based on Kodi and add-on settings '''
     vrtnu_max_bandwidth = int(get_setting('max_bandwidth', '0'))
     global_max_bandwidth = int(get_global_setting('network.bandwidth'))
     if vrtnu_max_bandwidth != 0 and global_max_bandwidth != 0:

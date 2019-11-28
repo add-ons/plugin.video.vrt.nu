@@ -1,6 +1,5 @@
-PYTHON := python
 export PYTHONPATH := $(CURDIR)/resources/lib:$(CURDIR)/test
-addon_xml := addon.xml
+PYTHON := python
 
 # Collect information to build as sensible package name
 name = $(shell xmllint --xpath 'string(/addon/@id)' addon_xml)
