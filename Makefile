@@ -35,11 +35,7 @@ tox:
 
 pylint:
 	@echo -e "$(white)=$(blue) Starting sanity pylint test$(reset)"
-	$(PYTHON) /usr/bin/pylint resources/lib/ test/
-
-pylint-warnings:
-	@echo -e "$(white)=$(blue) Starting sanity pylint test$(reset)"
-	$(PYTHON) /usr/bin/pylint -e useless-suppression resources/lib/ test/
+	$(PYTHON) -m pylint resources/lib/ test/
 
 language:
 	@echo -e "$(white)=$(blue) Checking translations$(reset)"
@@ -47,15 +43,15 @@ language:
 
 addon: clean
 	@echo -e "$(white)=$(blue) Starting sanity addon tests$(reset)"
-	$(PYTHON) /usr/bin/kodi-addon-checker . --branch=krypton
-	$(PYTHON) /usr/bin/kodi-addon-checker . --branch=leia
+	$(PYTHON) -m kodi-addon-checker . --branch=krypton
+	$(PYTHON) -m kodi-addon-checker . --branch=leia
 
 unit: clean
 	@echo -e "$(white)=$(blue) Starting unit tests$(reset)"
-	-pkill -ef /usr/bin/proxy.py
-	$(PYTHON) /usr/bin/proxy.py &
+	-pkill -ef proxy.py
+	$(PYTHON) -m proxy.py &
 	$(PYTHON) -m unittest discover
-	pkill -ef /usr/bin/proxy.py
+	pkill -ef proxy.py
 
 run:
 	@echo -e "$(white)=$(blue) Run CLI$(reset)"
