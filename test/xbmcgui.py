@@ -274,9 +274,6 @@ class Window:
         ''' A stub constructor for the xbmcgui Window class '''
         return None
 
-    def clearProperty(self):
-        ''' A stub implementation for the xbmcgui Window class clearProperty() method '''
-
     def close(self):
         ''' A stub implementation for the xbmcgui Window class close() method '''
 
@@ -298,6 +295,11 @@ class Window:
     @staticmethod
     def setProperty(key, value):
         ''' A stub implementation for the xbmcgui Window class setProperty() method '''
+        return
+
+    @staticmethod
+    def clearProperty(key):
+        ''' A stub implementation for the xbmcgui Window class clearProperty() method '''
         return
 
     def show(self):

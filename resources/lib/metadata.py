@@ -192,13 +192,11 @@ class Metadata:
 
                 position = self._resumepoints.get_position(asset_id)
                 total = self._resumepoints.get_total(asset_id)
+                # Master over Kodi watch status
                 if position and total and SECONDS_MARGIN < position < total - SECONDS_MARGIN:
                     properties['resumetime'] = position
+                    properties['totaltime'] = total
                     log(2, '[Metadata] manual resumetime set to %d' % position)
-
-            duration = self.get_duration(api_data)
-            if duration:
-                properties['totaltime'] = duration
 
             episode = self.get_episode(api_data)
             season = self.get_season(api_data)
