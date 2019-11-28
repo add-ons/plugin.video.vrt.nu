@@ -64,10 +64,10 @@ class PlayerInfo(Player):
     def onAVChange(self):  # pylint: disable=invalid-name
         ''' Called when Kodi has a video, audio or subtitle stream. Also happens when the stream changes. '''
 
-    def onPlayBackSeek(self):  # pylint: disable=invalid-name
+    def onPlayBackSeek(self, time, seekOffset):  # pylint: disable=invalid-name
         ''' Called when user seeks to a time '''
-        log(3, '[PlayerInfo] %d onPlayBackSeek' % self.thread_id)
-        self.push_position(position=self.last_pos, total=self.total)
+        log(3, '[PlayerInfo] %d onPlayBackSeek time=%d offset=%d' % (self.thread_id, time, seekOffset))
+        self.last_pos = time // 1000
 
     def onPlayBackPaused(self):  # pylint: disable=invalid-name
         ''' Called when user pauses a playing file '''
@@ -147,7 +147,7 @@ class PlayerInfo(Player):
         )
         # Refresh Kodi watch status only needed after playing Up Next episodes
         # or to overwrite watched/unwatched
-        if (self.path.startswith('plugin://plugin.video.vrt.nu/play/upnext/')
+        if ((self.path and self.path.startswith('plugin://plugin.video.vrt.nu/play/upnext/'))
                 or SECONDS_MARGIN > position or position > total - SECONDS_MARGIN):
             # Only update container if the play action was initiated from it
             original_container = get_property('container.url')

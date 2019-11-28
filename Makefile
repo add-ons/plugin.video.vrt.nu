@@ -2,8 +2,8 @@ export PYTHONPATH := $(CURDIR)/resources/lib:$(CURDIR)/test
 PYTHON := python
 
 # Collect information to build as sensible package name
-name = $(shell xmllint --xpath 'string(/addon/@id)' addon_xml)
-version = $(shell xmllint --xpath 'string(/addon/@version)' addon_xml)
+name = $(shell xmllint --xpath 'string(/addon/@id)' addon.xml)
+version = $(shell xmllint --xpath 'string(/addon/@version)' addon.xml)
 git_branch = $(shell git rev-parse --abbrev-ref HEAD)
 git_hash = $(shell git rev-parse --short HEAD)
 
@@ -29,7 +29,7 @@ sanity: tox pylint language
 
 tox:
 	@echo -e "$(white)=$(blue) Starting sanity tox test$(reset)"
-	tox -q
+	$(PYTHON) -m tox -q
 
 pylint:
 	@echo -e "$(white)=$(blue) Starting sanity pylint test$(reset)"
@@ -41,15 +41,15 @@ language:
 
 addon: clean
 	@echo -e "$(white)=$(blue) Starting sanity addon tests$(reset)"
-	$(PYTHON) -m kodi-addon-checker . --branch=krypton
-	$(PYTHON) -m kodi-addon-checker . --branch=leia
+	kodi-addon-checker . --branch=krypton
+	kodi-addon-checker . --branch=leia
 
 unit: clean
 	@echo -e "$(white)=$(blue) Starting unit tests$(reset)"
-	-pkill -ef proxy.py
-	$(PYTHON) -m proxy.py &
+	-pkill -ef '$(PYTHON) -m proxy'
+	$(PYTHON) -m proxy &
 	$(PYTHON) -m unittest discover
-	pkill -ef proxy.py
+	pkill -ef '$(PYTHON) -m proxy'
 
 run:
 	@echo -e "$(white)=$(blue) Run CLI$(reset)"
