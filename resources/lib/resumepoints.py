@@ -14,7 +14,7 @@ except ImportError:  # Python 2
 from data import SECONDS_MARGIN
 from kodiutils import (container_refresh, get_cache, get_proxies, get_setting, has_credentials,
                        input_down, invalidate_caches, localize, log, log_error, notification,
-                       update_cache)
+                       to_unicode, update_cache)
 
 
 class ResumePoints:
@@ -46,9 +46,9 @@ class ResumePoints:
                 }
                 req = Request('https://video-user-data.vrt.be/resume_points', headers=headers)
                 log(2, 'URL get: https://video-user-data.vrt.be/resume_points')
-                from json import load
+                from json import loads
                 try:
-                    resumepoints_json = load(urlopen(req))
+                    resumepoints_json = loads(to_unicode(urlopen(req).read()))
                 except (TypeError, ValueError):  # No JSON object could be decoded
                     # Force resumepoints from cache
                     resumepoints_json = get_cache('resume_points.json', ttl=None)
