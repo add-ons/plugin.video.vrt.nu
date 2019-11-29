@@ -287,13 +287,14 @@ class ApiHelper:
         next_ep = upnext.get('next')
 
         if next_ep is None:
-            if current_ep is not None and current_ep.get('episodeNumber') == current_ep.get('seasonNbOfEpisodes'):
-                log_error(message='[Up Next] Last episode of season, next season not implemented for "{program} S{season}E{episode}"',
-                          program=program, season=season, episode=current_ep_no)
-                return None
-
-            log_error(message='[Up Next] No api data found for "{program} S{season}E{episode}"',
-                      program=program, season=season, episode=current_ep_no)
+            if current_ep is not None and current_ep.get('episodeNumber') == current_ep.get('seasonNbOfEpisodes') is not None:
+                log(2, '[Up Next] Already at last episode of last season for {program} S{season}E{episode}',
+                    program=program, season=season, episode=current_ep_no)
+            elif season and current_ep_no:
+                log(2, '[Up Next] No api data found for {program} S{season}E{episode}',
+                    program=program, season=season, episode=current_ep_no)
+            else:
+                log(2, '[Up Next] No api data found for {program}', program=program)
             return None
 
         art = self._metadata.get_art(current_ep)
