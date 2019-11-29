@@ -200,7 +200,7 @@ def show_listing(list_items, category=None, sort='unsorted', ascending=True, con
             for key, value in list(title_item.prop_dict.items()):
                 list_item.setProperty(key=key, value=str(value))
 
-        # FIXME: The setIsFolder method is new in Kodi18, so we cannot use it just yet.
+        # FIXME: The setIsFolder method is new in Kodi18, so we cannot use it just yet
         # list_item.setIsFolder(is_folder)
 
         if title_item.art_dict:
@@ -323,13 +323,14 @@ def set_locale():
     ''' Load the proper locale for date strings, only once '''
     if hasattr(set_locale, 'cached'):
         return getattr(set_locale, 'cached')
-    from locale import LC_ALL, setlocale
+    from locale import Error, LC_ALL, setlocale
     locale_lang = get_global_setting('locale.language').split('.')[-1]
+    locale_lang = locale_lang[:-2] + locale_lang[-2:].upper()
+    # NOTE: setlocale() only works if the platform supports the Kodi configured locale
     try:
-        # NOTE: This only works if the platform supports the Kodi configured locale
         setlocale(LC_ALL, locale_lang)
-    except Exception as exc:  # pylint: disable=broad-except
-        if locale_lang != 'en_gb':
+    except (Error, ValueError) as exc:
+        if locale_lang != 'en_GB':
             log(3, "Your system does not support locale '{locale}': {error}", locale=locale_lang, error=exc)
             set_locale.cached = False
             return False
@@ -403,10 +404,13 @@ def get_global_setting(key):
     return result.get('result', {}).get('value')
 
 
-def get_property(key, window_id=10000):
+def get_property(key, default=None, window_id=10000):
     ''' Get a Window property '''
     from xbmcgui import Window
-    return to_unicode(Window(window_id).getProperty(key))
+    value = to_unicode(Window(window_id).getProperty(key))
+    if value == '' and default is not None:
+        return default
+    return value
 
 
 def set_property(key, value, window_id=10000):

@@ -33,10 +33,11 @@ class Metadata:
             if brands:
                 try:
                     channel = next(c for c in CHANNELS if c.get('name') == brands[0])
-                    studio = channel.get('studio')
                 except StopIteration:
                     # Retain original (unknown) brand, unless it is empty
                     studio = brands[0] or 'VRT'
+                else:
+                    studio = channel.get('studio')
             else:
                 # No brands ? Use VRT instead
                 studio = 'VRT'
@@ -651,10 +652,11 @@ class Metadata:
                         and api_data.get('seasonName') and api_data.get('episodeNumber')):
                     try:
                         label = 'S%02dE%02d: %s' % (int(api_data.get('seasonName')), int(api_data.get('episodeNumber')), label)
-                        sort = 'dateadded'
                     except ValueError:
                         # Season may not always be a perfect number
                         sort = 'episode'
+                    else:
+                        sort = 'dateadded'
                 elif display_options.get('showEpisodeNumber') and api_data.get('episodeNumber') and ascending:
                     # NOTE: Do not prefix with "Episode X" when sorting by episode
                     # label = '%s %s: %s' % (localize(30132), api_data.get('episodeNumber'), label)

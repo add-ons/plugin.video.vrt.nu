@@ -139,8 +139,8 @@ class ResumePoints:
         data = dumps(payload).encode()
         log(2, 'URL post: https://video-user-data.vrt.be/resume_points/{asset_id}', asset_id=asset_id)
         log(2, 'URL post data: {data}', data=data)
+        req = Request('https://video-user-data.vrt.be/resume_points/%s' % asset_id, data=data, headers=headers)
         try:
-            req = Request('https://video-user-data.vrt.be/resume_points/%s' % asset_id, data=data, headers=headers)
             urlopen(req)
         except HTTPError as exc:
             log_error('Failed to (un)watch episode at VRT NU ({error})', error=exc)

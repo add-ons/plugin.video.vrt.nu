@@ -22,11 +22,11 @@ class Search:
     def read_history(self):
         ''' Read search history from disk '''
         from json import load
-        try:
-            with open_file(self._search_history, 'r') as fdesc:
+        with open_file(self._search_history, 'r') as fdesc:
+            try:
                 history = load(fdesc)
-        except (TypeError, ValueError):  # No JSON object could be decoded
-            history = []
+            except (TypeError, ValueError):  # No JSON object could be decoded
+                history = []
         return history
 
     def write_history(self, history):
