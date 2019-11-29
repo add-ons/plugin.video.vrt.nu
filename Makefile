@@ -1,7 +1,6 @@
 export PYTHONPATH := $(CURDIR)/resources/lib:$(CURDIR)/test
 PYTHON := python
 
-# Collect information to build as sensible package name
 name = $(shell xmllint --xpath 'string(/addon/@id)' addon.xml)
 version = $(shell xmllint --xpath 'string(/addon/@version)' addon.xml)
 git_branch = $(shell git rev-parse --abbrev-ref HEAD)
@@ -12,6 +11,8 @@ include_files = addon.xml LICENSE README.md resources/
 include_paths = $(patsubst %,$(name)/%,$(include_files))
 exclude_files = \*.new \*.orig \*.pyc \*.pyo
 zip_dir = $(name)/
+
+languages = $(filter-out en_gb, $(patsubst resources/language/resource.language.%, %, $(wildcard resources/language/*)))
 
 blue = \e[1;34m
 white = \e[1;37m
@@ -36,8 +37,10 @@ pylint:
 	$(PYTHON) -m pylint resources/lib/ test/
 
 language:
-	@echo -e "$(white)=$(blue) Checking translations$(reset)"
-	msgcmp resources/language/resource.language.nl_nl/strings.po resources/language/resource.language.en_gb/strings.po
+	@echo -e "$(white)=$(blue) Starting language test$(reset)"
+	@-$(foreach lang,$(languages), \
+		msgcmp resources/language/resource.language.$(lang)/strings.po resources/language/resource.language.en_gb/strings.po; \
+	)
 
 addon: clean
 	@echo -e "$(white)=$(blue) Starting sanity addon tests$(reset)"
@@ -64,7 +67,7 @@ zip: clean
 
 codecov:
 	@echo -e "$(white)=$(blue) Test .codecov.yml syntax$(reset)"
-	curl --data-binary @.codecov.yml https://codecov.io/validate
+	curl --data-binary @.github/codecov.yml https://codecov.io/validate
 
 clean:
 	find . -name '*.pyc' -type f -delete
