@@ -19,6 +19,7 @@ class PlayerInfo(Player):
     def __init__(self):
         ''' PlayerInfo initialisation '''
         self.path = None
+        self.listen = False
         self.resumepoints = ResumePoints()
         self.apihelper = ApiHelper(Favorites(), self.resumepoints)
         self.paused = False
@@ -36,8 +37,14 @@ class PlayerInfo(Player):
 
     def onPlayBackStarted(self):  # pylint: disable=invalid-name
         ''' Called when user starts playing a file '''
-        # Get asset_id, title and url from api
         self.path = getInfoLabel('Player.Filenameandpath')
+        if self.path.startswith('plugin://plugin.video.vrt.nu/'):
+            self.listen = True
+        else:
+            self.listen = False
+            return
+
+        # Get asset_id, title and url from api
         ep_id = play_url_to_id(self.path)
 
         if ep_id.get('video_id'):
@@ -54,6 +61,8 @@ class PlayerInfo(Player):
 
     def onAVStarted(self):  # pylint: disable=invalid-name
         ''' Called when Kodi has a video or audiostream '''
+        if not self.listen:
+            return
         log(3, '[PlayerInfo] %d onAVStarted' % self.thread_id)
         self.stop.clear()
         self.last_pos = 0
@@ -66,17 +75,23 @@ class PlayerInfo(Player):
 
     def onPlayBackSeek(self, time, seekOffset):  # pylint: disable=invalid-name
         ''' Called when user seeks to a time '''
+        if not self.listen:
+            return
         log(3, '[PlayerInfo] %d onPlayBackSeek time=%d offset=%d' % (self.thread_id, time, seekOffset))
         self.last_pos = time // 1000
 
     def onPlayBackPaused(self):  # pylint: disable=invalid-name
         ''' Called when user pauses a playing file '''
+        if not self.listen:
+            return
         log(3, '[PlayerInfo] %d onPlayBackPaused' % self.thread_id)
         self.paused = True
         self.push_position(position=self.last_pos, total=self.total)
 
     def onPlayBackResumed(self):  # pylint: disable=invalid-name
         ''' Called when user resumes a paused file or a next playlist item is started '''
+        if not self.listen:
+            return
         suffix = 'after pausing' if self.paused else 'after playlist change'
         log(3, '[PlayerInfo] %d onPlayBackResumed %s' % (self.thread_id, suffix))
         if not self.paused:
@@ -85,18 +100,24 @@ class PlayerInfo(Player):
 
     def onPlayBackEnded(self):  # pylint: disable=invalid-name
         ''' Called when Kodi has ended playing a file '''
+        if not self.listen:
+            return
         log(3, '[PlayerInfo] %d onPlayBackEnded' % self.thread_id)
         self.push_position(position=self.total, total=self.total)
         self.stop.set()
 
     def onPlayBackError(self):  # pylint: disable=invalid-name
         ''' Called when playback stops due to an error '''
+        if not self.listen:
+            return
         log(3, '[PlayerInfo] %d onPlayBackError' % self.thread_id)
         self.push_position(position=self.last_pos, total=self.total)
         self.stop.set()
 
     def onPlayBackStopped(self):  # pylint: disable=invalid-name
         ''' Called when user stops Kodi playing a file '''
+        if not self.listen:
+            return
         log(3, '[PlayerInfo] %d onPlayBackStopped' % self.thread_id)
         self.push_position(position=self.last_pos, total=self.total)
         self.stop.set()
