@@ -4,9 +4,12 @@
 
 from __future__ import absolute_import, division, unicode_literals
 from contextlib import contextmanager
+from xbmcaddon import Addon
 import xbmc
 import xbmcplugin
 from statichelper import from_unicode, to_unicode
+
+ADDON = Addon()
 
 SORT_METHODS = dict(
     # date=xbmcplugin.SORT_METHOD_DATE,
@@ -82,50 +85,32 @@ class SafeDict(dict):
 
 def addon_icon():
     ''' Cache and return add-on icon '''
-    if not hasattr(addon_icon, 'cached'):
-        from xbmcaddon import Addon
-        addon_icon.cached = to_unicode(Addon().getAddonInfo('icon'))
-    return getattr(addon_icon, 'cached')
+    return get_addon_info('icon')
 
 
 def addon_id():
     ''' Cache and return add-on ID '''
-    if not hasattr(addon_id, 'cached'):
-        from xbmcaddon import Addon
-        addon_id.cached = to_unicode(Addon().getAddonInfo('id'))
-    return getattr(addon_id, 'cached')
+    return get_addon_info('id')
 
 
 def addon_fanart():
     ''' Cache and return add-on fanart '''
-    if not hasattr(addon_fanart, 'cached'):
-        from xbmcaddon import Addon
-        addon_fanart.cached = to_unicode(Addon().getAddonInfo('fanart'))
-    return getattr(addon_fanart, 'cached')
+    return get_addon_info('fanart')
 
 
 def addon_name():
     ''' Cache and return add-on name '''
-    if not hasattr(addon_name, 'cached'):
-        from xbmcaddon import Addon
-        addon_name.cached = to_unicode(Addon().getAddonInfo('name'))
-    return getattr(addon_name, 'cached')
+    return get_addon_info('name')
 
 
 def addon_path():
     ''' Cache and return add-on path '''
-    if not hasattr(addon_path, 'cached'):
-        from xbmcaddon import Addon
-        addon_path.cached = to_unicode(Addon().getAddonInfo('path'))
-    return getattr(addon_path, 'cached')
+    return get_addon_info('path')
 
 
 def addon_profile():
     ''' Cache and return add-on profile '''
-    if not hasattr(addon_profile, 'cached'):
-        from xbmcaddon import Addon
-        addon_profile.cached = to_unicode(xbmc.translatePath(Addon().getAddonInfo('profile')))
-    return getattr(addon_profile, 'cached')
+    return to_unicode(xbmc.translatePath(ADDON.getAddonInfo('profile')))
 
 
 def url_for(name, *args, **kwargs):
@@ -200,20 +185,29 @@ def show_listing(list_items, category=None, sort='unsorted', ascending=True, con
 
         list_item = ListItem(label=title_item.title)
 
+        prop_dict = dict(
+            IsInternetStream='true' if is_playable else 'false',
+            IsPlayable='true' if is_playable else 'false',
+        )
         if title_item.prop_dict:
-            # FIXME: The setProperties method is new in Kodi18, so we cannot use it just yet.
-            # list_item.setProperties(values=title_item.prop_dict)
+            title_item.prop_dict.update(prop_dict)
+        else:
+            title_item.prop_dict = prop_dict
+        # NOTE: The setProperties method is new in Kodi18
+        try:
+            list_item.setProperties(title_item.prop_dict)
+        except AttributeError:
             for key, value in list(title_item.prop_dict.items()):
                 list_item.setProperty(key=key, value=str(value))
-        list_item.setProperty(key='IsInternetStream', value='true' if is_playable else 'false')
-        list_item.setProperty(key='IsPlayable', value='true' if is_playable else 'false')
 
         # FIXME: The setIsFolder method is new in Kodi18, so we cannot use it just yet.
         # list_item.setIsFolder(is_folder)
 
         if title_item.art_dict:
-            list_item.setArt(dict(fanart=addon_fanart()))
-            list_item.setArt(title_item.art_dict)
+            title_item.art_dict.update(fanart=addon_fanart())
+        else:
+            title_item.art_dict = dict(fanart=addon_fanart())
+        list_item.setArt(title_item.art_dict)
 
         if title_item.info_dict:
             # type is one of: video, music, pictures, game
@@ -344,12 +338,10 @@ def set_locale():
 
 def localize(string_id, **kwargs):
     ''' Return the translated string from the .po language files, optionally translating variables '''
-    from xbmcaddon import Addon
     if kwargs:
         from string import Formatter
-        return Formatter().vformat(Addon().getLocalizedString(string_id), (), SafeDict(**kwargs))
-
-    return Addon().getLocalizedString(string_id)
+        return Formatter().vformat(ADDON.getLocalizedString(string_id), (), SafeDict(**kwargs))
+    return ADDON.getLocalizedString(string_id)
 
 
 def localize_date(date, strftime):
@@ -385,9 +377,11 @@ def localize_from_data(name, data):
 
 def get_setting(key, default=None):
     ''' Get an add-on setting '''
-    from xbmcaddon import Addon
+    # global ADDON  # pylint: disable=global-statement
+    # from xbmcaddon import Addon # pylint: disable=redefined-outer-name,reimported
+    # ADDON = Addon()
     try:
-        value = to_unicode(Addon().getSetting(key))
+        value = to_unicode(ADDON.getSetting(key))
     except RuntimeError:  # Occurs when the add-on is disabled
         return default
     if value == '' and default is not None:
@@ -397,14 +391,12 @@ def get_setting(key, default=None):
 
 def set_setting(key, value):
     ''' Set an add-on setting '''
-    from xbmcaddon import Addon
-    return Addon().setSetting(key, from_unicode(str(value)))
+    return ADDON.setSetting(key, from_unicode(str(value)))
 
 
 def open_settings():
     ''' Open the add-in settings window, shows Credentials '''
-    from xbmcaddon import Addon
-    Addon().openSettings()
+    ADDON.openSettings()
 
 
 def get_global_setting(key):
@@ -573,8 +565,7 @@ def get_cache_path():
 
 def get_addon_info(key):
     ''' Return addon information '''
-    from xbmcaddon import Addon
-    return Addon().getAddonInfo(key)
+    return to_unicode(ADDON.getAddonInfo(key))
 
 
 def listdir(path):
