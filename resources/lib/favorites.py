@@ -13,7 +13,7 @@ except ImportError:  # Python 2
 
 from kodiutils import (container_refresh, get_cache, get_proxies, get_setting, has_credentials,
                        input_down, invalidate_caches, localize, log, log_error, multiselect,
-                       notification, ok_dialog, update_cache)
+                       notification, ok_dialog, to_unicode, update_cache)
 
 
 class Favorites:
@@ -45,9 +45,9 @@ class Favorites:
                 }
                 req = Request('https://video-user-data.vrt.be/favorites', headers=headers)
                 log(2, 'URL get: https://video-user-data.vrt.be/favorites')
-                from json import load
+                from json import loads
                 try:
-                    favorites_json = load(urlopen(req))
+                    favorites_json = loads(to_unicode(urlopen(req).read()))
                 except (TypeError, ValueError):  # No JSON object could be decoded
                     # Force favorites from cache
                     favorites_json = get_cache('favorites.json', ttl=None)
