@@ -386,7 +386,10 @@ def localize_from_data(name, data):
 def get_setting(key, default=None):
     ''' Get an add-on setting '''
     from xbmcaddon import Addon
-    value = to_unicode(Addon().getSetting(key))
+    try:
+        value = to_unicode(Addon().getSetting(key))
+    except RuntimeError:  # Occurs when the add-on is disabled
+        return default
     if value == '' and default is not None:
         return default
     return value
