@@ -34,6 +34,7 @@ REGIONS = {
 }
 
 settings = global_settings()
+LANGUAGE = import_language(language=settings.get('locale.language'))
 
 
 class Keyboard:
@@ -203,7 +204,7 @@ def getInfoLabel(key):
 
 def getLocalizedString(msgctxt):
     ''' A reimplementation of the xbmc getLocalizedString() function '''
-    for entry in import_language(language=settings.get('locale.language')):
+    for entry in LANGUAGE:
         if entry.msgctxt == '#%s' % msgctxt:
             return entry.msgstr or entry.msgid
     if int(msgctxt) >= 30000:

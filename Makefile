@@ -14,6 +14,8 @@ zip_dir = $(name)/
 
 languages = $(filter-out en_gb, $(patsubst resources/language/resource.language.%, %, $(wildcard resources/language/*)))
 
+path := /
+
 blue = \e[1;34m
 white = \e[1;37m
 reset = \e[0;39m
@@ -57,7 +59,11 @@ unit: clean
 run:
 	@echo -e "$(white)=$(blue) Run CLI$(reset)"
 	$(PYTHON) resources/lib/service_entry.py
-	$(PYTHON) test/run.py /
+	$(PYTHON) test/run.py $(path)
+
+profile:
+	@echo -e "$(white)=$(blue) Profiling $(white)$(path)$(reset)"
+	$(PYTHON) -m cProfile -o profiling_stats-$(git_branch)-$(git_hash).bin test/run.py $(path)
 
 zip: clean
 	@echo -e "$(white)=$(blue) Building new package$(reset)"
