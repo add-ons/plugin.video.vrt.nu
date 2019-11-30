@@ -113,6 +113,12 @@ def addon_profile():
     return to_unicode(xbmc.translatePath(ADDON.getAddonInfo('profile')))
 
 
+def reinitialize_addon():
+    ''' Re-initialize addon '''
+    global ADDON  # pylint: disable=global-statement
+    ADDON = Addon()
+
+
 def url_for(name, *args, **kwargs):
     ''' Wrapper for routing.url_for() to lookup by name '''
     import addon
@@ -377,9 +383,6 @@ def localize_from_data(name, data):
 
 def get_setting(key, default=None):
     ''' Get an add-on setting '''
-    # global ADDON  # pylint: disable=global-statement
-    # from xbmcaddon import Addon # pylint: disable=redefined-outer-name,reimported
-    # ADDON = Addon()
     try:
         value = to_unicode(ADDON.getSetting(key))
     except RuntimeError:  # Occurs when the add-on is disabled
