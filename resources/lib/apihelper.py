@@ -187,8 +187,8 @@ class ApiHelper:
 
         for season in seasons:
             season_key = season.get('key', '')
+            # If more than 300 episodes exist, we may end up with an empty season (Winteruur)
             try:
-                # If more than 300 episodes exist, we may end up with an empty season (Winteruur)
                 episode = random.choice([e for e in episodes if e.get('seasonName') == season_key])
             except IndexError:
                 episode = episodes[0]
@@ -276,12 +276,14 @@ class ApiHelper:
                 season = episode.get('seasonTitle')
                 current_ep_no = episode.get('episodeNumber')
                 program = episode.get('program')
+                upnext['current'] = episode
                 try:
-                    upnext['current'] = episode
                     next_episode = episodes[episodes.index(episode) + 1]
-                    upnext['next'] = next_episode if next_episode.get('program') == program else None
                 except IndexError:
                     pass
+                else:
+                    if next_episode.get('program') == program:
+                        upnext['next'] = next_episode
 
         current_ep = upnext.get('current')
         next_ep = upnext.get('next')

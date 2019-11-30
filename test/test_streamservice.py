@@ -45,9 +45,10 @@ class TestStreamService(unittest.TestCase):
         video = dict(video_url='https://www.vrt.be/vrtnu/a-z/het-journaal/2017/het-journaal-het-journaal-laat-20170501/', video_id=None, publication_id=None)
         try:
             stream = self._streamservice.get_stream(video)
-            self.assertEqual(stream.stream_url, video['video_url'])
         except HTTPError:
             pass
+        else:
+            self.assertEqual(stream.stream_url, video['video_url'])
 
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
