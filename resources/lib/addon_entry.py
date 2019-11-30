@@ -3,6 +3,12 @@
 ''' This is the actual VRT NU video plugin entry point '''
 
 from __future__ import absolute_import, division, unicode_literals
-from sys import argv
-from addon import run
-run(argv)
+import kodiutils
+import xbmcaddon
+
+kodiutils.ADDON = xbmcaddon.Addon()
+
+if __name__ == '__main__':
+    from sys import argv
+    from addon import run
+    run(argv)
