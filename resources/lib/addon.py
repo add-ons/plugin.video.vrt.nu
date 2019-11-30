@@ -13,8 +13,7 @@ except ImportError:  # Python 2
 from kodiutils import localize, log_access, notification, refresh_caches
 from statichelper import from_unicode, to_unicode
 
-# pylint: disable=invalid-name
-plugin = Plugin()
+plugin = Plugin()  # pylint: disable=invalid-name
 
 
 @plugin.route('/')

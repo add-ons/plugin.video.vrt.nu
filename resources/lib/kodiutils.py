@@ -4,12 +4,10 @@
 
 from __future__ import absolute_import, division, unicode_literals
 from contextlib import contextmanager
-from xbmcaddon import Addon
 import xbmc
 import xbmcplugin
+from addon_entry import ADDON
 from statichelper import from_unicode, to_unicode
-
-ADDON = Addon()
 
 SORT_METHODS = dict(
     # date=xbmcplugin.SORT_METHOD_DATE,
@@ -121,8 +119,8 @@ def url_for(name, *args, **kwargs):
 
 def show_listing(list_items, category=None, sort='unsorted', ascending=True, content=None, cache=None, selected=None):
     ''' Show a virtual directory in Kodi '''
-    from addon import plugin
     from xbmcgui import ListItem
+    from addon import plugin
 
     set_property('container.url', 'plugin://' + addon_id() + plugin.path)
     xbmcplugin.setPluginFanart(handle=plugin.handle, image=from_unicode(addon_fanart()))
@@ -244,8 +242,9 @@ def play(stream, video=None):
     except ImportError:  # Python 2
         from urllib2 import unquote
 
-    from addon import plugin
     from xbmcgui import ListItem
+    from addon import plugin
+
     play_item = ListItem(path=stream.stream_url)
     if video and hasattr(video, 'info_dict'):
         play_item.setProperty('subtitle', video.title)
@@ -377,9 +376,6 @@ def localize_from_data(name, data):
 
 def get_setting(key, default=None):
     ''' Get an add-on setting '''
-    # global ADDON  # pylint: disable=global-statement
-    # from xbmcaddon import Addon # pylint: disable=redefined-outer-name,reimported
-    # ADDON = Addon()
     try:
         value = to_unicode(ADDON.getSetting(key))
     except RuntimeError:  # Occurs when the add-on is disabled
@@ -524,9 +520,9 @@ def has_inputstream_adaptive():
     return get_setting('useinputstreamadaptive', 'true') == 'true' and has_addon('inputstream.adaptive')
 
 
-def has_addon(addon):
+def has_addon(name):
     ''' Checks if add-on is installed '''
-    return xbmc.getCondVisibility('System.HasAddon(%s)' % addon) == 1
+    return xbmc.getCondVisibility('System.HasAddon(%s)' % name) == 1
 
 
 def has_credentials():
