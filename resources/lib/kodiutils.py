@@ -416,7 +416,7 @@ def get_property(key, default=None, window_id=10000):
 def set_property(key, value, window_id=10000):
     ''' Set a Window property '''
     from xbmcgui import Window
-    return Window(window_id).setProperty(key, from_unicode(str(value)))
+    return Window(window_id).setProperty(key, from_unicode(value))
 
 
 def clear_property(key, window_id=10000):
