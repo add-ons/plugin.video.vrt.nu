@@ -477,10 +477,11 @@ class ApiHelper:
         if page:
             page = realpage(page)
             all_items = False
+            items_per_page = int(get_setting('itemsperpage', 50))
             params = {
-                'from': ((page - 1) * 50) + 1,
+                'from': ((page - 1) * items_per_page) + 1,
                 'i': 'video',
-                'size': 50,
+                'size': items_per_page,
             }
         elif variety == 'single':
             all_items = False
