@@ -5,9 +5,11 @@
 from __future__ import absolute_import, division, unicode_literals
 from contextlib import contextmanager
 import xbmc
+import xbmcaddon
 import xbmcplugin
-from addon_entry import ADDON
 from statichelper import from_unicode, to_unicode
+
+ADDON = xbmcaddon.Addon()
 
 SORT_METHODS = dict(
     # date=xbmcplugin.SORT_METHOD_DATE,
