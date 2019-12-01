@@ -20,7 +20,7 @@ from metadata import Metadata
 from resumepoints import ResumePoints
 from statichelper import find_entry, to_unicode
 from kodiutils import (get_cache, get_proxies, has_addon, localize, localize_datelong, log,
-                       show_listing, update_cache, url_for)
+                       show_listing, ttl, update_cache, url_for)
 
 
 class TVGuide:
@@ -152,12 +152,12 @@ class TVGuide:
         epg = self.parse(date, now)
         epg_url = epg.strftime(self.VRT_TVGUIDE)
 
-        self._favorites.refresh(ttl=60 * 60)
+        self._favorites.refresh(ttl=ttl('indirect'))
 
         cache_file = 'schedule.%s.json' % date
         if date in ('today', 'yesterday', 'tomorrow'):
             # Try the cache if it is fresh
-            schedule = get_cache(cache_file, ttl=60 * 60)
+            schedule = get_cache(cache_file, ttl=ttl('indirect'))
             if not schedule:
                 from json import loads
                 log(2, 'URL get: {url}', url=epg_url)
@@ -209,7 +209,7 @@ class TVGuide:
         if epg.hour < 6:
             epg += timedelta(days=-1)
         # Try the cache if it is fresh
-        schedule = get_cache('schedule.today.json', ttl=60 * 60)
+        schedule = get_cache('schedule.today.json', ttl=ttl('indirect'))
         if not schedule:
             from json import loads
             epg_url = epg.strftime(self.VRT_TVGUIDE)
@@ -247,7 +247,7 @@ class TVGuide:
         if epg.hour < 6:
             epg += timedelta(days=-1)
         # Try the cache if it is fresh
-        schedule = get_cache('schedule.today.json', ttl=60 * 60)
+        schedule = get_cache('schedule.today.json', ttl=ttl('indirect'))
         if not schedule:
             from json import loads
             epg_url = epg.strftime(self.VRT_TVGUIDE)

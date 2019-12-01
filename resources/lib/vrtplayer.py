@@ -9,7 +9,7 @@ from helperobjects import TitleItem
 from resumepoints import ResumePoints
 from statichelper import find_entry
 from kodiutils import (delete_cached_thumbnail, end_of_directory, get_addon_info, get_setting, has_credentials,
-                       localize, log_error, ok_dialog, play, set_setting, show_listing, url_for)
+                       localize, log_error, ok_dialog, play, set_setting, show_listing, ttl, url_for)
 
 
 class VRTPlayer:
@@ -23,7 +23,7 @@ class VRTPlayer:
 
     def show_main_menu(self):
         ''' The VRT NU add-on main menu '''
-        # self._favorites.refresh(ttl=60 * 60)
+        # self._favorites.refresh(ttl=ttl('indirect'))
         main_items = []
 
         # Only add 'My favorites' when it has been activated
@@ -120,7 +120,7 @@ class VRTPlayer:
 
     def show_favorites_menu(self):
         ''' The VRT NU addon 'My programs' menu '''
-        self._favorites.refresh(ttl=60 * 60)
+        self._favorites.refresh(ttl=ttl('indirect'))
         favorites_items = [
             TitleItem(title=localize(30040),  # My programs
                       path=url_for('favorites_programs'),
@@ -175,24 +175,24 @@ class VRTPlayer:
 
     def show_favorites_docu_menu(self):
         ''' The VRT NU add-on 'My documentaries' listing menu '''
-        self._favorites.refresh(ttl=60 * 60)
-        self._resumepoints.refresh(ttl=60 * 60)
+        self._favorites.refresh(ttl=ttl('indirect'))
+        self._resumepoints.refresh(ttl=ttl('indirect'))
         episode_items, sort, ascending, content = self._apihelper.list_episodes(category='docu', season='allseasons', programtype='oneoff')
         show_listing(episode_items, category=30044, sort=sort, ascending=ascending, content=content, cache=False)
 
     def show_tvshow_menu(self, use_favorites=False):
         ''' The VRT NU add-on 'All programs' listing menu '''
         # My favorites menus may need more up-to-date favorites
-        self._favorites.refresh(ttl=5 * 60 if use_favorites else 60 * 60)
-        self._resumepoints.refresh(ttl=5 * 60 if use_favorites else 60 * 60)
+        self._favorites.refresh(ttl=ttl('direct' if use_favorites else 'indirect'))
+        self._resumepoints.refresh(ttl=ttl('direct' if use_favorites else 'indirect'))
         tvshow_items = self._apihelper.list_tvshows(use_favorites=use_favorites)
         show_listing(tvshow_items, category=30440, sort='label', content='tvshows')  # A-Z
 
     def show_category_menu(self, category=None):
         ''' The VRT NU add-on 'Categories' listing menu '''
         if category:
-            self._favorites.refresh(ttl=60 * 60)
-            self._resumepoints.refresh(ttl=60 * 60)
+            self._favorites.refresh(ttl=ttl('indirect'))
+            self._resumepoints.refresh(ttl=ttl('indirect'))
             tvshow_items = self._apihelper.list_tvshows(category=category)
             from data import CATEGORIES
             category_msgctxt = find_entry(CATEGORIES, 'id', category).get('msgctxt')
@@ -205,8 +205,8 @@ class VRTPlayer:
         ''' The VRT NU add-on 'Channels' listing menu '''
         if channel:
             from tvguide import TVGuide
-            self._favorites.refresh(ttl=60 * 60)
-            self._resumepoints.refresh(ttl=60 * 60)
+            self._favorites.refresh(ttl=ttl('indirect'))
+            self._resumepoints.refresh(ttl=ttl('indirect'))
             channel_items = self._apihelper.list_channels(channels=[channel])  # Live TV
             channel_items.extend(TVGuide().get_channel_items(channel=channel))  # TV guide
             channel_items.extend(self._apihelper.list_youtube(channels=[channel]))  # YouTube
@@ -221,8 +221,8 @@ class VRTPlayer:
     def show_featured_menu(self, feature=None):
         ''' The VRT NU add-on 'Featured content' listing menu '''
         if feature:
-            self._favorites.refresh(ttl=60 * 60)
-            self._resumepoints.refresh(ttl=60 * 60)
+            self._favorites.refresh(ttl=ttl('indirect'))
+            self._resumepoints.refresh(ttl=ttl('indirect'))
             tvshow_items = self._apihelper.list_tvshows(feature=feature)
             from data import FEATURED
             feature_msgctxt = find_entry(FEATURED, 'id', feature).get('msgctxt')
@@ -238,8 +238,8 @@ class VRTPlayer:
 
     def show_episodes_menu(self, program, season=None):
         ''' The VRT NU add-on episodes listing menu '''
-        self._favorites.refresh(ttl=60 * 60)
-        self._resumepoints.refresh(ttl=60 * 60)
+        self._favorites.refresh(ttl=ttl('indirect'))
+        self._resumepoints.refresh(ttl=ttl('indirect'))
         episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program, season=season)
         # FIXME: Translate program in Program Title
         show_listing(episode_items, category=program.title(), sort=sort, ascending=ascending, content=content, cache=False)
@@ -249,8 +249,8 @@ class VRTPlayer:
         from statichelper import realpage
 
         # My favorites menus may need more up-to-date favorites
-        self._favorites.refresh(ttl=5 * 60 if use_favorites else 60 * 60)
-        self._resumepoints.refresh(ttl=5 * 60 if use_favorites else 60 * 60)
+        self._favorites.refresh(ttl=ttl('direct' if use_favorites else 'indirect'))
+        self._resumepoints.refresh(ttl=ttl('direct' if use_favorites else 'indirect'))
         page = realpage(page)
         episode_items, sort, ascending, content = self._apihelper.list_episodes(page=page, use_favorites=use_favorites, variety='recent')
 
@@ -274,8 +274,8 @@ class VRTPlayer:
         from statichelper import realpage
 
         # My favorites menus may need more up-to-date favorites
-        self._favorites.refresh(ttl=5 * 60 if use_favorites else 60 * 60)
-        self._resumepoints.refresh(ttl=5 * 60 if use_favorites else 60 * 60)
+        self._favorites.refresh(ttl=ttl('direct' if use_favorites else 'indirect'))
+        self._resumepoints.refresh(ttl=ttl('direct' if use_favorites else 'indirect'))
         page = realpage(page)
         episode_items, sort, ascending, content = self._apihelper.list_episodes(page=page, use_favorites=use_favorites, variety='offline')
 
@@ -299,8 +299,8 @@ class VRTPlayer:
         from statichelper import realpage
 
         # My watch later menu may need more up-to-date favorites
-        self._favorites.refresh(ttl=5 * 60)
-        self._resumepoints.refresh(ttl=5 * 60)
+        self._favorites.refresh(ttl=ttl('direct'))
+        self._resumepoints.refresh(ttl=ttl('direct'))
         page = realpage(page)
         episode_items, sort, ascending, content = self._apihelper.list_episodes(page=page, variety='watchlater')
         show_listing(episode_items, category=30050, sort=sort, ascending=ascending, content=content, cache=False)
@@ -310,8 +310,8 @@ class VRTPlayer:
         from statichelper import realpage
 
         # Continue watching menu may need more up-to-date favorites
-        self._favorites.refresh(ttl=5 * 60)
-        self._resumepoints.refresh(ttl=5 * 60)
+        self._favorites.refresh(ttl=ttl('direct'))
+        self._resumepoints.refresh(ttl=ttl('direct'))
         page = realpage(page)
         episode_items, sort, ascending, content = self._apihelper.list_episodes(page=page, variety='continue')
         show_listing(episode_items, category=30052, sort=sort, ascending=ascending, content=content, cache=False)

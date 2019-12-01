@@ -666,7 +666,7 @@ def human_delta(seconds):
     return '%d second%s' % (seconds, 's' if seconds != 1 else '')
 
 
-def get_cache(path, ttl=None):
+def get_cache(path, ttl=None):  # pylint: disable=redefined-outer-name
     ''' Get the content from cache, if it's still fresh '''
     if get_setting('usehttpcaching', 'true') == 'false':
         return None
@@ -723,6 +723,15 @@ def update_cache(path, data):
         from os import utime
         log(3, "Cache '{path}' has not changed, updating mtime only.", path=path)
         utime(path)
+
+
+def ttl(kind='direct'):
+    ''' Return the HTTP cache ttl in seconds based on kind of relation '''
+    if kind == 'direct':
+        return int(get_setting('httpcachettldirect', 5)) * 60
+    if kind == 'indirect':
+        return int(get_setting('httpcachettlindirect', 60)) * 60
+    return 5 * 60
 
 
 def refresh_caches(cache_file=None):
