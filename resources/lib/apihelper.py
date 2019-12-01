@@ -15,7 +15,7 @@ except ImportError:  # Python 2
 from data import CHANNELS
 from helperobjects import TitleItem
 from kodiutils import (delete_cached_thumbnail, get_cache, get_global_setting, get_proxies, get_setting,
-                       has_addon, localize, localize_from_data, log, log_error, ok_dialog, update_cache,
+                       has_addon, localize, localize_from_data, log, log_error, ok_dialog, ttl, update_cache,
                        url_for)
 from statichelper import (add_https_method, convert_html_to_kodilabel, find_entry, from_unicode, play_url_to_id,
                           program_to_url, realpage, to_unicode, strip_newlines, url_to_program)
@@ -57,7 +57,7 @@ class ApiHelper:
         if not category and not channel and not feature:
             params['facets[transcodingStatus]'] = 'AVAILABLE'  # Required for getting results in Suggests API
             cache_file = 'programs.json'
-        tvshows = get_cache(cache_file, ttl=60 * 60)  # Try the cache if it is fresh
+        tvshows = get_cache(cache_file, ttl=ttl('indirect'))  # Try the cache if it is fresh
         if not tvshows:
             from json import loads
             querystring = '&'.join('{}={}'.format(key, value) for key, value in list(params.items()))
@@ -508,12 +508,12 @@ class ApiHelper:
                 params['facets[programType]'] = 'oneoff'
 
             if variety == 'watchlater':
-                self._resumepoints.refresh(ttl=5 * 60)
+                self._resumepoints.refresh(ttl=ttl('direct'))
                 episode_urls = self._resumepoints.watchlater_urls()
                 params['facets[url]'] = '[%s]' % (','.join(episode_urls))
 
             if variety == 'continue':
-                self._resumepoints.refresh(ttl=5 * 60)
+                self._resumepoints.refresh(ttl=ttl('direct'))
                 episode_urls = self._resumepoints.resumepoints_urls()
                 params['facets[url]'] = '[%s]' % (','.join(episode_urls))
 
@@ -564,7 +564,7 @@ class ApiHelper:
         from json import loads
         if cache_file:
             # Get api data from cache if it is fresh
-            search_json = get_cache(cache_file, ttl=60 * 60)
+            search_json = get_cache(cache_file, ttl=ttl('indirect'))
             if not search_json:
                 log(2, 'URL get: {url}', url=unquote(search_url))
                 req = Request(search_url)

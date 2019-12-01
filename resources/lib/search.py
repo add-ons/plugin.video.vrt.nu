@@ -7,7 +7,7 @@ from __future__ import absolute_import, division, unicode_literals
 from favorites import Favorites
 from resumepoints import ResumePoints
 from kodiutils import (addon_profile, container_refresh, end_of_directory, get_search_string,
-                       get_setting, localize, ok_dialog, open_file, show_listing, url_for)
+                       get_setting, localize, ok_dialog, open_file, show_listing, ttl, url_for)
 
 
 class Search:
@@ -103,7 +103,7 @@ class Search:
                 info_dict=dict(),
             ))
 
-        self._favorites.refresh(ttl=60 * 60)
+        self._favorites.refresh(ttl=ttl('indirect'))
         show_listing(search_items, category=30032, sort=sort, ascending=ascending, content=content, cache=False)
 
     def clear(self):

@@ -59,7 +59,6 @@ class Favorites:
     def update(self, program, title, value=True):
         ''' Set a program as favorite, and update local copy '''
 
-        self.refresh(ttl=60)
         if value is self.is_favorite(program):
             # Already followed/unfollowed, nothing to do
             return True
@@ -70,6 +69,8 @@ class Favorites:
             log_error('Failed to get favorites token from VRT NU')
             notification(message=localize(30975))
             return False
+
+        self.refresh(ttl=0)
 
         headers = {
             'authorization': 'Bearer ' + xvrttoken,

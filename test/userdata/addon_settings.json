@@ -6,6 +6,8 @@
         "_comment": "do-not-add-username-and-password-here",
         "canvas": "true",
         "een": "true",
+        "httpcachettldirect": "5",
+        "httpcachettlindirect": "60",
         "ketnet": "false",
         "ketnet-jr": "false",
         "klara": "true",

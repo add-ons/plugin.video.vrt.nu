@@ -733,66 +733,74 @@ msgid "Expert"
 msgstr ""
 
 msgctxt "#30901"
-msgid "Cache"
-msgstr ""
-
-msgctxt "#30903"
-msgid "Clear VRT tokens"
-msgstr ""
-
-msgctxt "#30905"
-msgid "Refresh favorites"
-msgstr ""
-
-msgctxt "#30907"
-msgid "Refresh watching activity"
-msgstr ""
-
-msgctxt "#30909"
-msgid "Use menu caching"
-msgstr ""
-
-msgctxt "#30910"
-msgid "When enabled, menus are being cached so they work more quickly. Only in very specific use-cases this is problematic as new episodes may not appear when they are expected. You can also use [B]Refresh[/B] from the context-menu."
-msgstr ""
-
-msgctxt "#30911"
-msgid "Use local HTTP caching"
-msgstr ""
-
-msgctxt "#30913"
-msgid "Invalidate local HTTP caches"
-msgstr ""
-
-msgctxt "#30915"
 msgid "Streaming"
 msgstr ""
 
-msgctxt "#30917"
+msgctxt "#30903"
 msgid "Please install or enable InputStream Adaptive to use this setting"
 msgstr ""
 
-msgctxt "#30919"
+msgctxt "#30905"
 msgid "Use InputStream Adaptive"
 msgstr ""
 
-msgctxt "#30921"
+msgctxt "#30907"
 msgid "InputStream Adaptive settings…"
 msgstr ""
 
-msgctxt "#30923"
+msgctxt "#30909"
 msgid "InputStream Helper information"
 msgstr ""
 
-msgctxt "#30925"
+msgctxt "#30911"
 msgid "InputStream Helper settings… [COLOR gray][I](for protected content)[/I][/COLOR]"
 msgstr ""
 
+msgctxt "#30913"
+msgid "Cache"
+msgstr ""
+
+msgctxt "#30915"
+msgid "Clear VRT tokens"
+msgstr ""
+
+msgctxt "#30917"
+msgid "Refresh favorites"
+msgstr ""
+
+msgctxt "#30919"
+msgid "Refresh watching activity"
+msgstr ""
+
+msgctxt "#30921"
+msgid "Use menu caching"
+msgstr ""
+
+msgctxt "#30922"
+msgid "When enabled, menus are being cached so they work more quickly. Only in very specific use-cases this is problematic as new episodes may not appear when they are expected. You can also use [B]Refresh[/B] from the context-menu."
+msgstr ""
+
+msgctxt "#30923"
+msgid "Use local HTTP caching"
+msgstr ""
+
+msgctxt "#30925"
+msgid "Invalidate local HTTP caches"
+msgstr ""
+
 msgctxt "#30927"
-msgid "Logging"
+msgid "Direct HTTP cache time-to-live [COLOR gray](in minutes)[/COLOR]"
 msgstr ""
 
 msgctxt "#30929"
+msgid "Indirect HTTP cache time-to-live [COLOR gray](in minutes)[/COLOR]"
+msgstr ""
+
+msgctxt "#30931"
+msgid "Logging"
+msgstr ""
+
+msgctxt "#30933"
 msgid "Log level"
 msgstr ""
 
