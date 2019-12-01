@@ -17,6 +17,7 @@
         <setting type="sep"/>
         <setting label="30753" help="30754" type="bool" id="showoneoff" default="true"/>
         <setting label="30755" help="30756" type="bool" id="showfanart" default="true"/>
+        <setting label="30757" help="30758" type="slider" id="itemsperpage" default="50" range="10,10,300" option="int"/>
         <setting label="30759" help="30760" type="bool" id="showpermalink" default="false"/>
     </category>
     <category label="30780"> <!-- Playback -->

@@ -564,6 +564,10 @@ msgctxt "#30755"
 msgid "Show fanart"
 msgstr ""
 
+msgctxt "#30757"
+msgid "Number of items per page"
+msgstr ""
+
 msgctxt "#30759"
 msgid "Show episode permalink in plot"
 msgstr ""

@@ -255,7 +255,7 @@ class VRTPlayer:
         episode_items, sort, ascending, content = self._apihelper.list_episodes(page=page, use_favorites=use_favorites, variety='recent')
 
         # Add 'More...' entry at the end
-        if len(episode_items) == 50:
+        if len(episode_items) == int(get_setting('itemsperpage', 50)):
             if use_favorites:
                 recent = 'favorites_recent'
             else:
@@ -280,7 +280,7 @@ class VRTPlayer:
         episode_items, sort, ascending, content = self._apihelper.list_episodes(page=page, use_favorites=use_favorites, variety='offline')
 
         # Add 'More...' entry at the end
-        if len(episode_items) == 50:
+        if len(episode_items) == int(get_setting('itemsperpage', 50)):
             if use_favorites:
                 offline = 'favorites_offline'
             else:
