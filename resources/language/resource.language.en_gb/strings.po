@@ -585,7 +585,7 @@ msgid "Subtitles"
 msgstr ""
 
 msgctxt "#30783"
-msgid "Show subtitles when available"
+msgid "Always show subtitles when available"
 msgstr ""
 
 msgctxt "#30784"
@@ -593,7 +593,7 @@ msgid "This enables subtitles by default for all content that includes subtitles
 msgstr ""
 
 msgctxt "#30785"
-msgid "Streaming"
+msgid "Streaming and DRM"
 msgstr ""
 
 msgctxt "#30787"
@@ -605,7 +605,7 @@ msgid "Most live streams are available in 720p HD-quality, but may require DRM t
 msgstr ""
 
 msgctxt "#30789"
-msgid "Maximum bandwidth (kbps)"
+msgid "Maximum bandwidth [COLOR gray](in kbps)[/COLOR]"
 msgstr ""
 
 msgctxt "#30790"
@@ -733,7 +733,7 @@ msgid "Expert"
 msgstr ""
 
 msgctxt "#30901"
-msgid "Streaming"
+msgid "Streaming and DRM"
 msgstr ""
 
 msgctxt "#30903"

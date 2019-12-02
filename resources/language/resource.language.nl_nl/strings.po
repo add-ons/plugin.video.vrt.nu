@@ -585,16 +585,16 @@ msgid "Subtitles"
 msgstr "Ondertiteling"
 
 msgctxt "#30783"
-msgid "Show subtitles when available"
-msgstr "Toon ondertiteling indien beschikbaar"
+msgid "Always show subtitles when available"
+msgstr "Toon altijd ondertiteling indien beschikbaar"
 
 msgctxt "#30784"
 msgid "This enables subtitles by default for all content that includes subtitles."
 msgstr "Dit zet ondertitels standaard aan voor alle video's met ondertitels."
 
 msgctxt "#30785"
-msgid "Streaming"
-msgstr "Streaming"
+msgid "Streaming and DRM"
+msgstr "Streaming en DRM"
 
 msgctxt "#30787"
 msgid "Use Widevine DRM [COLOR gray][I](for protected content)[/I][/COLOR]"
@@ -605,8 +605,8 @@ msgid "Most live streams are available in 720p HD-quality, but may require DRM t
 msgstr "De meeste livestreams zijn beschikbaar in 720p HD-kwaliteit, maar hiervoor moet mogelijk DRM worden ingeschakeld."
 
 msgctxt "#30789"
-msgid "Maximum bandwidth (kbps)"
-msgstr "Maximale bandbreedte (kbps)"
+msgid "Maximum bandwidth [COLOR gray](in kbps)[/COLOR]"
+msgstr "Maximale bandbreedte [COLOR gray](in kbps)[/COLOR]"
 
 msgctxt "#30790"
 msgid "In case you have limited bandwidth available, you may want to specify a maximum bandwidth so that a lower bitrate stream can be selected for playback."
@@ -733,8 +733,8 @@ msgid "Expert"
 msgstr "Expert"
 
 msgctxt "#30901"
-msgid "Streaming"
-msgstr "Streaming"
+msgid "Streaming and DRM"
+msgstr "Streaming en DRM"
 
 msgctxt "#30903"
 msgid "Please install or enable InputStream Adaptive to use this setting"
