@@ -59,7 +59,7 @@ class PlayerInfo(Player):
         self.asset_id = self.resumepoints.assetpath_to_id(episode.get('assetPath'))
         self.title = episode.get('program')
         self.url = url_to_episode(episode.get('url', ''))
-        self.whatson_id = episode.get('whatsonId')
+        self.whatson_id = episode.get('whatsonId') if episode.get('whatsonId') else None
 
         self.update_position()
         self.push_position(position=self.last_pos, total=self.total, event='onPlayBackStarted')
