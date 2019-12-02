@@ -6,7 +6,7 @@ from __future__ import absolute_import, division, unicode_literals
 from xbmc import Monitor
 from apihelper import ApiHelper
 from favorites import Favorites
-from kodiutils import (container_refresh, invalidate_caches, jsonrpc, log)
+from kodiutils import container_refresh, invalidate_caches, jsonrpc, log
 from playerinfo import PlayerInfo
 from resumepoints import ResumePoints
 from statichelper import to_unicode

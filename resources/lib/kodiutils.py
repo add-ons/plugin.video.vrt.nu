@@ -789,6 +789,15 @@ def container_update(url=None):
         container_refresh()
 
 
+def container_reload(url=None):
+    ''' Only update container if the play action was initiated from it '''
+    if url is None:
+        url = get_property('container.url')
+    if current_container_url() != url:
+        return
+    container_update(url)
+
+
 def end_of_directory():
     ''' Close a virtual directory, required to avoid a waiting Kodi '''
     from addon import plugin
