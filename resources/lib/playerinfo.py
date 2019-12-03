@@ -4,7 +4,7 @@
 
 from __future__ import absolute_import, division, unicode_literals
 from threading import Event, Thread
-from xbmc import getInfoLabel, Player
+from xbmc import getInfoLabel, Player, PlayList
 from apihelper import ApiHelper
 from favorites import Favorites
 from resumepoints import ResumePoints
@@ -22,12 +22,14 @@ class PlayerInfo(Player):
         self.last_pos = None
         self.listen = False
         self.paused = False
-        self.total = 900
+        self.total = None
+        self.positionthread = None
         self.quit = Event()
 
         self.asset_id = None
         self.path = None
         self.title = None
+        self.ep_id = None
         self.url = None
         self.whatson_id = None
         from random import randint
@@ -49,20 +51,19 @@ class PlayerInfo(Player):
         # Get asset_id, title and url from api
         ep_id = play_url_to_id(self.path)
 
-        if ep_id.get('video_id'):
-            episode = self.apihelper.get_episodes(video_id=ep_id.get('video_id'), variety='single')[0]
-        elif ep_id.get('whatson_id'):
-            episode = self.apihelper.get_episodes(whatson_id=ep_id.get('whatson_id'), variety='single')[0]
-        elif ep_id.get('video_url'):
-            episode = self.apihelper.get_episodes(video_url=ep_id.get('video_url'), variety='single')[0]
+        # Get episode data
+        episode = self.apihelper.get_single_episode_data(video_id=ep_id.get('video_id'), whatson_id=ep_id.get('whatson_id'), video_url=ep_id.get('video_url'))
 
         self.asset_id = self.resumepoints.assetpath_to_id(episode.get('assetPath'))
         self.title = episode.get('program')
         self.url = url_to_episode(episode.get('url', ''))
+        self.ep_id = 'S%sE%s' % (episode.get('seasonTitle'), episode.get('episodeNumber'))
         self.whatson_id = episode.get('whatsonId') if episode.get('whatsonId') else None
-
         self.update_position()
-        self.push_position(position=self.last_pos, total=self.total, event='onPlayBackStarted')
+        self.update_total()
+
+        # Reset VRT NU resumepoint
+        self.push_position()
 
     def onAVStarted(self):  # pylint: disable=invalid-name
         ''' Called when Kodi has a video or audiostream '''
@@ -72,8 +73,13 @@ class PlayerInfo(Player):
         self.quit.clear()
         self.update_position()
         self.update_total()
+        self.push_upnext()
 
-        Thread(target=self.stream_position, name='StreamPosition').start()
+        # StreamPosition thread keeps running when watching multiple episode with "Up Next"
+        # only start StreamPosition thread when it doesn't exist yet.
+        if not self.positionthread:
+            self.positionthread = Thread(target=self.stream_position, name='StreamPosition')
+            self.positionthread.start()
 
     def onAVChange(self):  # pylint: disable=invalid-name
         ''' Called when Kodi has a video, audio or subtitle stream. Also happens when the stream changes. '''
@@ -96,7 +102,7 @@ class PlayerInfo(Player):
             return
         log(3, '[PlayerInfo %d] Event onPlayBackPaused' % self.thread_id)
         self.update_position()
-        self.push_position(position=self.last_pos, total=self.total, event='onPlayBackPaused')
+        self.push_position(position=self.last_pos, total=self.total)
         self.paused = True
 
     def onPlayBackResumed(self):  # pylint: disable=invalid-name
@@ -106,8 +112,7 @@ class PlayerInfo(Player):
         suffix = 'after pausing' if self.paused else 'after playlist change'
         log(3, '[PlayerInfo %d] Event onPlayBackResumed %s' % (self.thread_id, suffix))
         if not self.paused:
-            self.update_position()
-            self.push_position(position=self.last_pos, total=self.total, event='onPlayBackResumed')
+            self.push_position(position=self.last_pos, total=self.total)
         self.paused = False
 
     def onPlayBackEnded(self):  # pylint: disable=invalid-name
@@ -117,7 +122,6 @@ class PlayerInfo(Player):
         self.quit.set()
         log(3, '[PlayerInfo %d] Event onPlayBackEnded' % self.thread_id)
         self.last_pos = self.total
-        # self.push_position(position=self.total, total=self.total, event='onPlayBackEnded')
 
     def onPlayBackError(self):  # pylint: disable=invalid-name
         ''' Called when playback stops due to an error '''
@@ -125,7 +129,6 @@ class PlayerInfo(Player):
             return
         self.quit.set()
         log(3, '[PlayerInfo %d] Event onPlayBackError' % self.thread_id)
-        # self.push_position(position=self.last_pos, total=self.total, event='onPlayBackError')
 
     def onPlayBackStopped(self):  # pylint: disable=invalid-name
         ''' Called when user stops Kodi playing a file '''
@@ -133,21 +136,32 @@ class PlayerInfo(Player):
             return
         self.quit.set()
         log(3, '[PlayerInfo %d] Event onPlayBackStopped' % self.thread_id)
-        # self.push_position(position=self.last_pos, total=self.total, event='onPlayBackStopped')
 
     def onThreadExit(self):  # pylint: disable=invalid-name
         ''' Called when player stops, before the player exited, so before the menu refresh '''
         log(3, '[PlayerInfo %d] Event onThreadExit' % self.thread_id)
-        self.push_position(position=self.last_pos, total=self.total, event='onThreadExit')
+        self.positionthread = None
+        self.push_position(position=self.last_pos, total=self.total)
 
     def stream_position(self):
         ''' Get latest stream position while playing '''
-        self.push_upnext()
         while self.isPlaying() and not self.quit.is_set():
             self.update_position()
             if self.quit.wait(timeout=0.2):
                 break
         self.onThreadExit()
+
+    def add_upnext(self, video_id):
+        ''' Add Up Next url to Kodi Player '''
+        url = 'plugin://plugin.video.vrt.nu/play/upnext/%s' % video_id
+        self.update_position()
+        self.update_total()
+        if self.isPlaying() and self.total - self.last_pos < 1:
+            log(3, '[PlayerInfo] %d Add %s to Kodi Playlist' % (self.thread_id, url))
+            PlayList(1).add(url)
+        else:
+            log(3, '[PlayerInfo] %d Add %s to Kodi Player' % (self.thread_id, url))
+            self.play(url)
 
     def push_upnext(self):
         ''' Push episode info to Up Next service add-on'''
@@ -181,7 +195,7 @@ class PlayerInfo(Player):
         except RuntimeError:
             pass
 
-    def push_position(self, position=0, total=100, event=None):
+    def push_position(self, position=0, total=100):
         ''' Push player position to VRT NU resumepoints API '''
         # Not all content has an asset_id
         if not self.asset_id:
@@ -198,13 +212,15 @@ class PlayerInfo(Player):
             asynchronous=True
         )
 
-        # Do not reload container when we are not done playing
-        if event not in ('onPlayBackEnded', 'onPlayBackError', 'onPlayBackStopped'):
+        # Do not reload container and rely on Kodi internal watch status, when watching a single episode.
+        # Kodi internal watch status is only updated when the play action is initiated from the GUI, so this only works for single episodes.
+        if not self.path.startswith('plugin://plugin.video.vrt.nu/play/upnext'):
             return
 
         # Do not reload container when playing or not stopped
         if self.isPlaying() or not self.quit.is_set():
             return
 
-        # Only reload if we originated from this menu
+        # A container reload is needed when watching multiple episodes with "Up Next", because Kodi doesn't update the last watched episode.
+        # Only reload container we originated from this menu
         container_reload()

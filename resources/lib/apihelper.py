@@ -356,16 +356,25 @@ class ApiHelper:
         )
         return next_info
 
-    def get_single_episode(self, video_id=None, whatson_id=None):
-        ''' Get single episode by whatsonId or videoId '''
-        video = None
+    def get_single_episode_data(self, video_id=None, whatson_id=None, video_url=None):
+        ''' Get single episode api data by videoId, whatsonId or url '''
+        episode = None
         api_data = list()
         if video_id:
             api_data = self.get_episodes(video_id=video_id, variety='single')
         elif whatson_id:
             api_data = self.get_episodes(whatson_id=whatson_id, variety='single')
+        elif video_url:
+            api_data = self.get_episodes(video_url=video_url, variety='single')
         if len(api_data) == 1:
             episode = api_data[0]
+        return episode
+
+    def get_single_episode(self, video_id=None, whatson_id=None, video_url=None):
+        ''' Get single episode by videoId, whatsonId or url '''
+        video = None
+        episode = self.get_single_episode_data(video_id=video_id, whatson_id=whatson_id, video_url=video_url)
+        if episode:
             video_item = TitleItem(
                 title=self._metadata.get_label(episode),
                 art_dict=self._metadata.get_art(episode),

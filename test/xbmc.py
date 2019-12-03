@@ -127,12 +127,15 @@ class Player:
 class PlayList:
     ''' A stub implementation of the xbmc PlayList class '''
 
-    def __init__(self):
+    def __init__(self, playList):
         ''' A stub constructor for the xbmc PlayList class '''
 
     def getposition(self):
         ''' A stub implementation for the xbmc PlayList class getposition() method '''
         return 0
+
+    def add(self, url, listitem=None, index=-1):
+        ''' A stub implementation for the xbmc PlayList class add() method '''
 
     def size(self):
         ''' A stub implementation for the xbmc PlayList class size() method '''

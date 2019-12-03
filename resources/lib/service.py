@@ -6,7 +6,7 @@ from __future__ import absolute_import, division, unicode_literals
 from xbmc import Monitor
 from apihelper import ApiHelper
 from favorites import Favorites
-from kodiutils import container_refresh, invalidate_caches, jsonrpc, log
+from kodiutils import container_refresh, invalidate_caches, log
 from playerinfo import PlayerInfo
 from resumepoints import ResumePoints
 from statichelper import to_unicode
@@ -42,8 +42,7 @@ class VrtMonitor(Monitor):
             if not self._apihelper:
                 self._apihelper = ApiHelper(self._favorites, self._resumepoints)
 
-    @staticmethod
-    def onNotification(sender, method, data):  # pylint: disable=invalid-name
+    def onNotification(self, sender, method, data):  # pylint: disable=invalid-name
         ''' Handler for notifications '''
         # log(2, '[Notification] sender={sender}, method={method}, data={data}', sender=sender, method=method, data=to_unicode(data))
 
@@ -59,7 +58,7 @@ class VrtMonitor(Monitor):
             from binascii import unhexlify
             data = loads(to_unicode(unhexlify(hexdata[0])))
             log(2, '[Up Next notification] sender={sender}, method={method}, data={data}', sender=sender, method=method, data=to_unicode(data))
-            jsonrpc(method='Player.Open', params=dict(item=dict(file='plugin://plugin.video.vrt.nu/play/upnext/%s' % data.get('video_id'))))
+            self._playerinfo.add_upnext(data.get('video_id'))
 
     def onSettingsChanged(self):  # pylint: disable=invalid-name
         ''' Handler for changes to settings '''
