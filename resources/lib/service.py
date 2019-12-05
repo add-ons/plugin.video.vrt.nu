@@ -55,8 +55,8 @@ class VrtMonitor(Monitor):
                 return
 
             # NOTE: With Python 3.5 and older json.loads() does not support bytes or bytearray, so we convert to unicode
-            from binascii import unhexlify
-            data = loads(to_unicode(unhexlify(hexdata[0])))
+            from base64 import b64decode
+            data = loads(to_unicode(b64decode(hexdata[0])))
             log(2, '[Up Next notification] sender={sender}, method={method}, data={data}', sender=sender, method=method, data=to_unicode(data))
             self._playerinfo.add_upnext(data.get('video_id'))
 

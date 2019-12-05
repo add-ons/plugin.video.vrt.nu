@@ -175,9 +175,9 @@ class PlayerInfo(Player):
                 runtime=self.total,
             ))
             if next_info:
-                from binascii import hexlify
+                from base64 import b64encode
                 from json import dumps
-                data = [to_unicode(hexlify(dumps(next_info).encode()))]
+                data = [to_unicode(b64encode(dumps(next_info).encode()))]
                 sender = '%s.SIGNAL' % addon_id()
                 notify(sender=sender, message='upnext_data', data=data)
 
