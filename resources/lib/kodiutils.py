@@ -404,6 +404,24 @@ def get_global_setting(key):
     return result.get('result', {}).get('value')
 
 
+def get_advanced_setting(key, default=None):
+    ''' Get a setting from advancedsettings.xml '''
+    as_path = xbmc.translatePath('special://masterprofile/advancedsettings.xml')
+    if not exists(as_path):
+        return default
+    from xml.etree.ElementTree import parse, ParseError
+    try:
+        as_root = parse(as_path).getroot()
+    except ParseError:
+        return default
+    value = as_root.find(key)
+    if value is not None:
+        if value.text is None:
+            return default
+        return value.text
+    return default
+
+
 def get_property(key, default=None, window_id=10000):
     ''' Get a Window property '''
     from xbmcgui import Window
