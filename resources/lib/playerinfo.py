@@ -6,10 +6,11 @@ from __future__ import absolute_import, division, unicode_literals
 from threading import Event, Thread
 from xbmc import getInfoLabel, Player, PlayList
 from apihelper import ApiHelper
+from data import SECONDS_MARGIN
 from favorites import Favorites
 from resumepoints import ResumePoints
 from statichelper import play_url_to_id, to_unicode, url_to_episode
-from kodiutils import addon_id, container_reload, get_setting, has_addon, log, notify
+from kodiutils import addon_id, container_reload, get_advanced_setting, get_setting, has_addon, log, notify
 
 
 class PlayerInfo(Player):
@@ -201,20 +202,35 @@ class PlayerInfo(Player):
         if not self.asset_id:
             return
 
+        watch_later = None
+        # Disable watch_later when completely watched
+        if self.resumepoints.is_watchlater(self.asset_id) and position > total - SECONDS_MARGIN:
+            watch_later = False
+
         # Push resumepoint to VRT NU
         self.resumepoints.update(
             asset_id=self.asset_id,
             title=self.title,
             url=self.url,
+            watch_later=watch_later,
             position=position,
             total=total,
             whatson_id=self.whatson_id,
             asynchronous=True
         )
 
-        # Do not reload container and rely on Kodi internal watch status, when watching a single episode.
+        # Kodi uses different resumepoint margins than VRT NU, to obey to VRT NU resumepoint margins we need to reload the container
+        # to overwrite Kodi watch status when the position is in these margins.
+        # Use setting from advancedsettings.xml or default value
+        # https://github.com/xbmc/xbmc/blob/master/xbmc/settings/AdvancedSettings.cpp
+        # https://kodi.wiki/view/HOW-TO:Modify_automatic_watch_and_resume_points
+        ignoresecondsatstart = get_advanced_setting('video/ignoresecondsatstart', default=180)
+        ignorepercentatend = get_advanced_setting('video/ignorepercentatend', default=8)
+
+        # Do not reload container and rely on Kodi internal watch status when watching a single episode that is partly watched.
         # Kodi internal watch status is only updated when the play action is initiated from the GUI, so this only works for single episodes.
-        if not self.path.startswith('plugin://plugin.video.vrt.nu/play/upnext'):
+        if (not self.path.startswith('plugin://plugin.video.vrt.nu/play/upnext') and
+                ignoresecondsatstart < position < (100 - ignorepercentatend) / 100 * total):
             return
 
         # Do not reload container when playing or not stopped
