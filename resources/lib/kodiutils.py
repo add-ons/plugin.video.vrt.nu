@@ -702,8 +702,11 @@ def get_cache(path, ttl=None):  # pylint: disable=redefined-outer-name
             log(3, "Cache '{path}' is forced from cache.", path=path)
         else:
             log(3, "Cache '{path}' is fresh, expires in {time}.", path=path, time=human_delta(mtime + ttl - now))
+        cache_data = None
         with open_file(fullpath, 'r') as fdesc:
-            return loads(to_unicode(fdesc.read()))
+            cache_data = to_unicode(fdesc.read())
+        if cache_data:
+            return loads(cache_data)
     return None
 
 
