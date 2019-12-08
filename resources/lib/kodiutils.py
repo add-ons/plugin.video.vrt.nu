@@ -704,12 +704,12 @@ def get_cache(path, ttl=None):  # pylint: disable=redefined-outer-name
             log(3, "Cache '{path}' is fresh, expires in {time}.", path=path, time=human_delta(mtime + ttl - now))
         cache_data = None
         with open_file(fullpath, 'r') as fdesc:
-            try:
-                cache_data = to_unicode(fdesc.read())
-                if cache_data:
+            cache_data = to_unicode(fdesc.read())
+            if cache_data:
+                try:
                     return loads(cache_data)
-            except (TypeError, ValueError):
-                return None
+                except (TypeError, ValueError):  # No JSON object could be decoded
+                    return None
     return None
 
 
