@@ -699,9 +699,10 @@ def get_cache(path, ttl=None):  # pylint: disable=redefined-outer-name
     if ttl is None or now - mtime < ttl:
         try:  # Python 3
             from json import loads, JSONDecodeError
+            ValueError = BaseException  # pylint: disable=invalid-name, redefined-builtin
         except ImportError:  # Python 2
             from json import loads
-            JSONDecodeError = None
+            JSONDecodeError = BaseException
         if ttl is None:
             log(3, "Cache '{path}' is forced from cache.", path=path)
         else:
@@ -712,7 +713,7 @@ def get_cache(path, ttl=None):  # pylint: disable=redefined-outer-name
                 cache_data = to_unicode(fdesc.read())
                 if cache_data:
                     return loads(cache_data)
-            except (JSONDecodeError, TypeError, ValueError):  # No JSON object could be decoded
+            except (JSONDecodeError, TypeError, ValueError):  # pylint: disable=broad-except
                 return None
     return None
 
