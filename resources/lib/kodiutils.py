@@ -696,21 +696,23 @@ def get_cache(path, ttl=None):  # pylint: disable=redefined-outer-name
     from time import localtime, mktime
     mtime = stat_file(fullpath).st_mtime()
     now = mktime(localtime())
-    if ttl is None or now - mtime < ttl:
-        from json import loads
-        if ttl is None:
-            log(3, "Cache '{path}' is forced from cache.", path=path)
-        else:
-            log(3, "Cache '{path}' is fresh, expires in {time}.", path=path, time=human_delta(mtime + ttl - now))
-        cache_data = None
-        with open_file(fullpath, 'r') as fdesc:
-            cache_data = to_unicode(fdesc.read())
-            if cache_data:
-                try:
-                    return loads(cache_data)
-                except (TypeError, ValueError):  # No JSON object could be decoded
-                    return None
-    return None
+    if ttl and now >= mtime + ttl:
+        return None
+
+    if ttl is None:
+        log(3, "Cache '{path}' is forced from cache.", path=path)
+    else:
+        log(3, "Cache '{path}' is fresh, expires in {time}.", path=path, time=human_delta(mtime + ttl - now))
+    with open_file(fullpath, 'r') as fdesc:
+        cache_data = to_unicode(fdesc.read())
+    if not cache_data:
+        return None
+
+    from json import loads
+    try:
+        return loads(cache_data)
+    except (TypeError, ValueError):  # No JSON object could be decoded
+        return None
 
 
 def update_cache(path, data):
