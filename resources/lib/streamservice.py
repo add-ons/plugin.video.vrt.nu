@@ -157,7 +157,7 @@ class StreamService:
             return None
         api_url = api_data.media_api_url + '/videos/' + api_data.publication_id + \
             api_data.video_id + '?vrtPlayerToken=' + playertoken + '&client=' + api_data.client
-        return get_url_json(url=api_url, fail={})
+        return get_url_json(url=api_url)
 
     @staticmethod
     def _fix_virtualsubclip(manifest_url, duration):

@@ -6,10 +6,11 @@
 from __future__ import absolute_import, division, unicode_literals
 
 try:  # Python 3
+    from urllib.error import HTTPError
     from urllib.parse import unquote
-    from urllib.request import build_opener, install_opener, ProxyHandler, Request, urlopen
+    from urllib.request import build_opener, install_opener, ProxyHandler
 except ImportError:  # Python 2
-    from urllib2 import build_opener, install_opener, ProxyHandler, Request, unquote, urlopen
+    from urllib2 import build_opener, HTTPError, install_opener, ProxyHandler, unquote
 
 from kodiutils import (container_refresh, get_cache, get_proxies, get_setting, get_url_json,
                        has_credentials, input_down, invalidate_caches, localize, log, log_error,
@@ -76,10 +77,10 @@ class Favorites:
         data = dumps(payload).encode('utf-8')
         program_id = self.program_to_id(program)
         log(2, 'URL post: https://video-user-data.vrt.be/favorites/{program_id}', program_id=program_id)
-        req = Request('https://video-user-data.vrt.be/favorites/%s' % program_id, data=data, headers=headers)
-        result = urlopen(req)
-        if result.getcode() != 200:
-            log_error("Failed to (un)follow program '{program}' at VRT NU", program=program)
+        try:
+            get_url_json('https://video-user-data.vrt.be/favorites/%s' % program_id, headers=headers, data=data)
+        except HTTPError as exc:
+            log_error("Failed to (un)follow program '{program}' at VRT NU ({error})", program=program, error=exc)
             notification(message=localize(30976, program=program))
             return False
         # NOTE: Updates to favorites take a longer time to take effect, so we keep our own cache and use it
