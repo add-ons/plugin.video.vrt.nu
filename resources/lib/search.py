@@ -5,10 +5,10 @@
 
 from __future__ import absolute_import, division, unicode_literals
 from favorites import Favorites
+from kodiutils import (addon_profile, container_refresh, end_of_directory, get_json_data,
+                       get_search_string, get_setting, localize, log_error, ok_dialog, open_file,
+                       show_listing, ttl, url_for)
 from resumepoints import ResumePoints
-from kodiutils import (addon_profile, container_refresh, end_of_directory, get_search_string,
-                       get_setting, localize, log_error, ok_dialog, open_file, show_listing, url_for)
-from utils import ttl
 
 
 class Search:
@@ -22,15 +22,12 @@ class Search:
 
     def read_history(self):
         ''' Read search history from disk '''
-        from json import load
         with open_file(self._search_history, 'r') as fdesc:
             try:
-                history = load(fdesc)
-            except (TypeError, ValueError) as exc:  # No JSON object could be decoded
-                fdesc.seek(0, 0)
-                log_error('{exc}\nDATA: {data}', exc=exc, data=fdesc.read())
-                history = []
-        return history
+                return get_json_data(fdesc)
+            except ValueError as exc:  # No JSON object could be decoded
+                log_error('JSON Error: {exc}', exc=exc)
+                return []
 
     def write_history(self, history):
         ''' Write search history to disk '''
@@ -84,12 +81,12 @@ class Search:
             end_of_directory()
             return
 
-        from statichelper import realpage
+        from apihelper import ApiHelper
+        from utils import realpage
         page = realpage(page)
 
         self.add(keywords)
 
-        from apihelper import ApiHelper
         search_items, sort, ascending, content = ApiHelper(self._favorites, self._resumepoints).list_search(keywords, page=page)
         if not search_items:
             ok_dialog(heading=localize(30135), message=localize(30136, keywords=keywords))

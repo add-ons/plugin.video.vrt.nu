@@ -3,11 +3,11 @@
 ''' This module contains all functionality for VRT NU API authentication. '''
 
 from __future__ import absolute_import, division, unicode_literals
-from statichelper import from_unicode
-from kodiutils import (addon_profile, delete, exists, get_proxies, get_setting, get_tokens_path,
-                       has_credentials, listdir, localize, log, log_error, mkdir, notification,
-                       ok_dialog, open_file, open_settings, set_setting)
-from utils import get_url_json, invalidate_caches
+from kodiutils import (addon_profile, delete, exists, get_json_data, get_proxies, get_setting,
+                       get_tokens_path, get_url_json, has_credentials, invalidate_caches, listdir,
+                       localize, log, log_error, mkdir, notification, ok_dialog, open_file,
+                       open_settings, set_setting)
+from utils import from_unicode
 
 try:  # Python 3
     import http.cookiejar as cookielib
@@ -97,13 +97,11 @@ class TokenResolver:
         if not exists(path):
             return None
 
-        from json import load
         with open_file(path) as fdesc:
             try:
-                token = load(fdesc)
-            except (TypeError, ValueError) as exc:  # No JSON object could be decoded
-                fdesc.seek(0, 0)
-                log_error('{exc}\nDATA: {data}', exc=exc, data=fdesc.read())
+                token = get_json_data(fdesc)
+            except ValueError as exc:  # No JSON object could be decoded
+                log_error('JSON Error: {exc}', exc=exc)
                 return None
 
         from datetime import datetime
@@ -134,7 +132,7 @@ class TokenResolver:
     def _get_new_playertoken(self, token_url, headers, token_variant=None):
         ''' Get new playertoken from VRT Token API '''
         playertoken = get_url_json(url=token_url, headers=headers, data=b'')
-        if not playertoken:
+        if playertoken is None:
             return None
 
         self._set_cached_token(playertoken, token_variant)
@@ -185,14 +183,11 @@ class TokenResolver:
             targetEnv='jssdk',
         )
         data = urlencode(payload).encode()
-        json_data = get_url_json(self._LOGIN_URL, data=data)
-        if not json_data:
-            return dict()
-        return json_data
+        return get_url_json(self._LOGIN_URL, data=data, fail={})
 
     def _get_new_xvrttoken(self, login_json, token_variant=None):
         ''' Get new X-VRT-Token from VRT NU website '''
-        login_token = login_json.get('sessionInfo', dict()).get('login_token')
+        login_token = login_json.get('sessionInfo', {}).get('login_token')
         if not login_token:
             return None
 

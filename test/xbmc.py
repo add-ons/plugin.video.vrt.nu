@@ -11,7 +11,7 @@ import os
 import json
 import time
 from xbmcextra import ADDON_ID, global_settings, import_language
-from statichelper import to_unicode
+from utils import to_unicode
 
 LOGLEVELS = ['Debug', 'Info', 'Notice', 'Warning', 'Error', 'Severe', 'Fatal', 'None']
 LOGDEBUG = 0

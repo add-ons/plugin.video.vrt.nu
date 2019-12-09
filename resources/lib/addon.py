@@ -10,9 +10,8 @@ try:  # Python 3
 except ImportError:  # Python 2
     from urllib import unquote_plus
 
-from kodiutils import localize, log_access, notification
-from statichelper import from_unicode, to_unicode
-from utils import refresh_caches
+from kodiutils import localize, log_access, notification, refresh_caches
+from utils import from_unicode, to_unicode
 
 plugin = Plugin()  # pylint: disable=invalid-name
 

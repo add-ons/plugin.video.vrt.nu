@@ -14,10 +14,9 @@ except ImportError:  # Python 2
 
 from helperobjects import ApiData, StreamURLS
 from kodiutils import (addon_profile, can_play_drm, exists, end_of_directory, get_max_bandwidth,
-                       get_proxies, get_setting, has_inputstream_adaptive, kodi_version,
-                       localize, log, log_error, mkdir, ok_dialog, open_settings, supports_drm)
-from statichelper import to_unicode
-from utils import get_url_json
+                       get_proxies, get_setting, get_url_json, has_inputstream_adaptive,
+                       kodi_version, localize, log, log_error, mkdir, ok_dialog, open_settings,
+                       supports_drm, to_unicode)
 
 
 class StreamService:
@@ -41,9 +40,8 @@ class StreamService:
 
     def _get_vualto_license_url(self):
         ''' Get Widevine license URL from Vualto API '''
-        json_data = get_url_json(url=self._VUPLAY_API_URL)
-        if json_data:
-            self._vualto_license_url = json_data.get('drm_providers', dict()).get('widevine', dict()).get('la_url')
+        json_data = get_url_json(url=self._VUPLAY_API_URL, fail={})
+        self._vualto_license_url = json_data.get('drm_providers', {}).get('widevine', {}).get('la_url')
 
     @staticmethod
     def _create_settings_dir():
@@ -148,7 +146,6 @@ class StreamService:
 
     def _get_stream_json(self, api_data, roaming=False):
         ''' Get JSON with stream details from VRT API '''
-        json_data = None
         token_url = api_data.media_api_url + '/tokens'
         if api_data.is_live_stream:
             playertoken = self._tokenresolver.get_playertoken(token_url, token_variant='live', roaming=roaming)
@@ -160,8 +157,7 @@ class StreamService:
             return None
         api_url = api_data.media_api_url + '/videos/' + api_data.publication_id + \
             api_data.video_id + '?vrtPlayerToken=' + playertoken + '&client=' + api_data.client
-        json_data = get_url_json(url=api_url)
-        return json_data
+        return get_url_json(url=api_url, fail={})
 
     @staticmethod
     def _fix_virtualsubclip(manifest_url, duration):

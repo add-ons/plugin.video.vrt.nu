@@ -16,11 +16,11 @@ except ImportError:  # Python 2
 from data import CHANNELS, RELATIVE_DATES
 from favorites import Favorites
 from helperobjects import TitleItem
+from kodiutils import (get_cached_url_json, get_proxies, get_url_json, has_addon, localize,
+                       localize_datelong, show_listing, ttl, url_for)
 from metadata import Metadata
 from resumepoints import ResumePoints
-from statichelper import find_entry
-from kodiutils import get_proxies, has_addon, localize, localize_datelong, show_listing, url_for
-from utils import get_cached_url_json, get_url_json, ttl
+from utils import add_https_proto, find_entry, url_to_program
 
 
 class TVGuide:
@@ -156,11 +156,9 @@ class TVGuide:
 
         cache_file = 'schedule.%s.json' % date
         if date in ('today', 'yesterday', 'tomorrow'):
-            schedule = get_cached_url_json(url=epg_url, cache=cache_file, ttl=ttl('indirect'))
+            schedule = get_cached_url_json(url=epg_url, cache=cache_file, ttl=ttl('indirect'), fail={})
         else:
-            schedule = get_url_json(url=epg_url)
-            if not schedule:
-                return []
+            schedule = get_url_json(url=epg_url, fail={})
 
         entry = find_entry(CHANNELS, 'name', channel)
         if entry:
@@ -175,8 +173,7 @@ class TVGuide:
             context_menu = []
             path = None
             if episode.get('url'):
-                from statichelper import add_https_method, url_to_program
-                video_url = add_https_method(episode.get('url'))
+                video_url = add_https_proto(episode.get('url'))
                 path = url_for('play_url', video_url=video_url)
                 program = url_to_program(episode.get('url'))
                 context_menu, favorite_marker, watchlater_marker = self._metadata.get_context_menu(episode, program, cache_file)
@@ -203,13 +200,12 @@ class TVGuide:
         if epg.hour < 6:
             epg += timedelta(days=-1)
 
-        epg_url = epg.strftime(self.VRT_TVGUIDE)
-        schedule = get_cached_url_json(url=epg_url, cache='schedule.today.json', ttl=ttl('indirect'))
-
         entry = find_entry(CHANNELS, 'name', channel)
         if not entry:
             return ''
 
+        epg_url = epg.strftime(self.VRT_TVGUIDE)
+        schedule = get_cached_url_json(url=epg_url, cache='schedule.today.json', ttl=ttl('indirect'), fail={})
         episodes = iter(schedule.get(entry.get('id'), []))
 
         while True:
@@ -236,13 +232,12 @@ class TVGuide:
         if epg.hour < 6:
             epg += timedelta(days=-1)
 
-        epg_url = epg.strftime(self.VRT_TVGUIDE)
-        schedule = get_cached_url_json(url=epg_url, cache='schedule.today.json', ttl=ttl('indirect'))
-
         entry = find_entry(CHANNELS, 'name', channel)
         if not entry:
             return ''
 
+        epg_url = epg.strftime(self.VRT_TVGUIDE)
+        schedule = get_cached_url_json(url=epg_url, cache='schedule.today.json', ttl=ttl('indirect'), fail={})
         episodes = iter(schedule.get(entry.get('id'), []))
 
         description = ''

@@ -8,10 +8,9 @@ from favorites import Favorites
 from helperobjects import TitleItem
 from kodiutils import (delete_cached_thumbnail, end_of_directory, get_addon_info, get_setting,
                        has_credentials, localize, log_error, ok_dialog, play, set_setting,
-                       show_listing, url_for)
+                       show_listing, ttl, url_for)
 from resumepoints import ResumePoints
-from statichelper import find_entry
-from utils import ttl
+from utils import find_entry, realpage
 
 
 class VRTPlayer:
@@ -248,7 +247,6 @@ class VRTPlayer:
 
     def show_recent_menu(self, page=0, use_favorites=False):
         ''' The VRT NU add-on 'Most recent' and 'My most recent' listing menu '''
-        from statichelper import realpage
 
         # My favorites menus may need more up-to-date favorites
         self._favorites.refresh(ttl=ttl('direct' if use_favorites else 'indirect'))
@@ -273,7 +271,6 @@ class VRTPlayer:
 
     def show_offline_menu(self, page=0, use_favorites=False):
         ''' The VRT NU add-on 'Soon offline' and 'My soon offline' listing menu '''
-        from statichelper import realpage
 
         # My favorites menus may need more up-to-date favorites
         self._favorites.refresh(ttl=ttl('direct' if use_favorites else 'indirect'))
@@ -298,7 +295,6 @@ class VRTPlayer:
 
     def show_watchlater_menu(self, page=0):
         ''' The VRT NU add-on 'My watch later' listing menu '''
-        from statichelper import realpage
 
         # My watch later menu may need more up-to-date favorites
         self._favorites.refresh(ttl=ttl('direct'))
@@ -309,7 +305,6 @@ class VRTPlayer:
 
     def show_continue_menu(self, page=0):
         ''' The VRT NU add-on 'Continue waching' listing menu '''
-        from statichelper import realpage
 
         # Continue watching menu may need more up-to-date favorites
         self._favorites.refresh(ttl=ttl('direct'))

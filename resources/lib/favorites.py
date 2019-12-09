@@ -11,9 +11,9 @@ try:  # Python 3
 except ImportError:  # Python 2
     from urllib2 import build_opener, install_opener, ProxyHandler, Request, unquote, urlopen
 
-from kodiutils import (container_refresh, get_proxies, get_setting, has_credentials, input_down,
-                       localize, log, log_error, multiselect, notification, ok_dialog)
-from utils import get_cache, get_url_json, invalidate_caches, update_cache
+from kodiutils import (container_refresh, get_cache, get_proxies, get_setting, get_url_json,
+                       has_credentials, input_down, invalidate_caches, localize, log, log_error,
+                       multiselect, notification, ok_dialog, update_cache)
 
 
 class Favorites:
@@ -45,7 +45,7 @@ class Favorites:
                 }
                 favorites_url = 'https://video-user-data.vrt.be/favorites'
                 favorites_json = get_url_json(url=favorites_url, cache='favorites.json', headers=headers)
-        if favorites_json:
+        if favorites_json is not None:
             self._favorites = favorites_json
 
     def update(self, program, title, value=True):
@@ -70,9 +70,9 @@ class Favorites:
             'Referer': 'https://www.vrt.be/vrtnu',
         }
 
-        from statichelper import program_to_url
-        payload = dict(isFavorite=value, programUrl=program_to_url(program, 'short'), title=title)
         from json import dumps
+        from utils import program_to_url
+        payload = dict(isFavorite=value, programUrl=program_to_url(program, 'short'), title=title)
         data = dumps(payload).encode('utf-8')
         program_id = self.program_to_id(program)
         log(2, 'URL post: https://video-user-data.vrt.be/favorites/{program_id}', program_id=program_id)
@@ -124,12 +124,12 @@ class Favorites:
 
     def programs(self):
         ''' Return all favorite programs '''
-        from statichelper import url_to_program
+        from utils import url_to_program
         return [url_to_program(value.get('value').get('programUrl')) for value in list(self._favorites.values()) if value.get('value').get('isFavorite')]
 
     def manage(self):
         ''' Allow the user to unselect favorites to be removed from the listing '''
-        from statichelper import url_to_program
+        from utils import url_to_program
         self.refresh(ttl=0)
         if not self._favorites:
             ok_dialog(heading=localize(30418), message=localize(30419))  # No favorites found

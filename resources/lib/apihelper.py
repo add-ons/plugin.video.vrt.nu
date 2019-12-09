@@ -13,12 +13,12 @@ except ImportError:  # Python 2
 
 from data import CHANNELS
 from helperobjects import TitleItem
-from kodiutils import (delete_cached_thumbnail, get_global_setting, get_proxies, get_setting,
-                       has_addon, localize, localize_from_data, log, url_for)
+from kodiutils import (delete_cached_thumbnail, get_cache, get_cached_url_json, get_global_setting,
+                       get_proxies, get_setting, get_url_json, has_addon, localize, localize_from_data,
+                       log, ttl, update_cache, url_for)
 from metadata import Metadata
-from statichelper import (add_https_method, convert_html_to_kodilabel, find_entry, from_unicode, play_url_to_id,
-                          program_to_url, realpage, strip_newlines, url_to_program)
-from utils import get_cache, get_cached_url_json, get_url_json, ttl, update_cache
+from utils import (add_https_proto, html_to_kodilabel, find_entry, from_unicode, play_url_to_id,
+                   program_to_url, realpage, strip_newlines, url_to_program)
 
 
 class ApiHelper:
@@ -38,7 +38,7 @@ class ApiHelper:
 
     def get_tvshows(self, category=None, channel=None, feature=None):
         ''' Get all TV shows for a given category, channel or feature, optionally filtered by favorites '''
-        params = dict()
+        params = {}
 
         if category:
             params['facets[categories]'] = category
@@ -59,7 +59,7 @@ class ApiHelper:
 
         querystring = '&'.join('{}={}'.format(key, value) for key, value in list(params.items()))
         suggest_url = self._VRTNU_SUGGEST_URL + '?' + querystring
-        return get_cached_url_json(url=suggest_url, cache=cache_file, ttl=ttl('indirect'))
+        return get_cached_url_json(url=suggest_url, cache=cache_file, ttl=ttl('indirect'), fail=[])
 
     def list_tvshows(self, category=None, channel=None, feature=None, use_favorites=False):
         ''' List all TV shows for a given category, channel or feature, optionally filtered by favorites '''
@@ -144,7 +144,7 @@ class ApiHelper:
             highlight = episode.get('highlight')
             if highlight:
                 for key in highlight:
-                    episode[key] = convert_html_to_kodilabel(highlight.get(key)[0])
+                    episode[key] = html_to_kodilabel(highlight.get(key)[0])
 
             list_item, sort, ascending = self.episode_to_listitem(episode, program, cache_file, titletype)
             episode_items.append(list_item)
@@ -261,7 +261,7 @@ class ApiHelper:
 
         # Get all episodes from current program and sort by program, seasonTitle and episodeNumber
         episodes = sorted(self.get_episodes(keywords=program), key=lambda k: (k.get('program'), k.get('seasonTitle'), k.get('episodeNumber')))
-        upnext = dict()
+        upnext = {}
         for episode in episodes:
             if ep_id.get('whatson_id') == episode.get('whatsonId') or \
                ep_id.get('video_id') == episode.get('videoId') or \
@@ -406,7 +406,7 @@ class ApiHelper:
             schedule_date = onairdate
         schedule_datestr = schedule_date.isoformat().split('T')[0]
         url = 'https://www.vrt.be/bin/epg/schedule.%s.json' % schedule_datestr
-        schedule_json = get_url_json(url)
+        schedule_json = get_url_json(url, fail={})
         episodes = schedule_json.get(channel.get('id'), [])
         if not episodes:
             return None
@@ -562,15 +562,16 @@ class ApiHelper:
         querystring = '&'.join('{}={}'.format(key, value) for key, value in list(params.items()))
         search_url = self._VRTNU_SEARCH_URL + '?' + querystring.replace(' ', '%20')  # Only encode spaces to minimize url length
         if cache_file:
-            search_json = get_cached_url_json(url=search_url, cache=cache_file, ttl=ttl('indirect'))
+            search_json = get_cached_url_json(url=search_url, cache=cache_file, ttl=ttl('indirect'), fail={})
         else:
-            search_json = get_url_json(url=search_url)
+            search_json = get_url_json(url=search_url, fail={})
 
         # Check for multiple seasons
-        seasons = None
+        seasons = []
         if 'facets[seasonTitle]' not in unquote(search_url):
-            facets = search_json.get('facets', dict()).get('facets')
-            seasons = next((f.get('buckets', []) for f in facets if f.get('name') == 'seasons' and len(f.get('buckets', [])) > 1), None)
+            facets = search_json.get('facets', {}).get('facets')
+            if facets:
+                seasons = next((f.get('buckets', []) for f in facets if f.get('name') == 'seasons' and len(f.get('buckets', [])) > 1), None)
 
         episodes = search_json.get('results', [{}])
         show_seasons = bool(season != 'allseasons')
@@ -587,7 +588,7 @@ class ApiHelper:
             for api_page in range(1, api_pages):
                 api_page_url = search_url + '&from=' + str(api_page * api_page_size + 1)
                 api_page_json = get_url_json(api_page_url)
-                if api_page_json:
+                if api_page_json is not None:
                     episodes += api_page_json.get('results', [{}])
 
         # Return episodes
@@ -610,7 +611,7 @@ class ApiHelper:
                 continue
 
             context_menu = []
-            art_dict = dict()
+            art_dict = {}
 
             # Try to use the white icons for thumbnails (used for icons as well)
             if has_addon('resource.images.studios.white'):
@@ -681,7 +682,7 @@ class ApiHelper:
                 continue
 
             context_menu = []
-            art_dict = dict()
+            art_dict = {}
 
             # Try to use the white icons for thumbnails (used for icons as well)
             if has_addon('resource.images.studios.white'):
@@ -818,7 +819,7 @@ class ApiHelper:
         ''' Return a category thumbnail, if available '''
         if get_setting('showfanart', 'true') == 'true':
             raw_thumbnail = element.find(class_='media').get('data-responsive-image', 'DefaultGenre.png')
-            return add_https_method(raw_thumbnail)
+            return add_https_proto(raw_thumbnail)
         return 'DefaultGenre.png'
 
     @staticmethod
