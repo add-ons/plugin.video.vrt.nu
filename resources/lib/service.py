@@ -6,11 +6,12 @@ from __future__ import absolute_import, division, unicode_literals
 from xbmc import Monitor
 from apihelper import ApiHelper
 from favorites import Favorites
-from kodiutils import container_refresh, invalidate_caches, log
+from kodiutils import container_refresh, log
 from playerinfo import PlayerInfo
 from resumepoints import ResumePoints
 from statichelper import to_unicode
 from tokenresolver import TokenResolver
+from utils import invalidate_caches
 
 
 class VrtMonitor(Monitor):

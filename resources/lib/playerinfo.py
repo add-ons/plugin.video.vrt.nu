@@ -229,8 +229,8 @@ class PlayerInfo(Player):
 
         # Do not reload container and rely on Kodi internal watch status when watching a single episode that is partly watched.
         # Kodi internal watch status is only updated when the play action is initiated from the GUI, so this only works for single episodes.
-        if (not self.path.startswith('plugin://plugin.video.vrt.nu/play/upnext') and
-                ignoresecondsatstart < position < (100 - ignorepercentatend) / 100 * total):
+        if (not self.path.startswith('plugin://plugin.video.vrt.nu/play/upnext')
+                and ignoresecondsatstart < position < (100 - ignorepercentatend) / 100 * total):
             return
 
         # Do not reload container when playing or not stopped

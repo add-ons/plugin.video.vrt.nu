@@ -11,9 +11,9 @@ try:  # Python 3
 except ImportError:  # Python 2
     from urllib2 import build_opener, install_opener, ProxyHandler, Request, unquote, urlopen
 
-from kodiutils import (container_refresh, get_cache, get_proxies, get_setting, has_credentials,
-                       input_down, invalidate_caches, localize, log, log_error, multiselect,
-                       notification, ok_dialog, to_unicode, update_cache)
+from kodiutils import (container_refresh, get_proxies, get_setting, has_credentials, input_down,
+                       localize, log, log_error, multiselect, notification, ok_dialog)
+from utils import get_cache, get_url_json, invalidate_caches, update_cache
 
 
 class Favorites:
@@ -43,16 +43,8 @@ class Favorites:
                     'content-type': 'application/json',
                     'Referer': 'https://www.vrt.be/vrtnu',
                 }
-                req = Request('https://video-user-data.vrt.be/favorites', headers=headers)
-                log(2, 'URL get: https://video-user-data.vrt.be/favorites')
-                from json import loads
-                try:
-                    favorites_json = loads(to_unicode(urlopen(req).read()))
-                except (TypeError, ValueError):  # No JSON object could be decoded
-                    # Force favorites from cache
-                    favorites_json = get_cache('favorites.json', ttl=None)
-                else:
-                    update_cache('favorites.json', favorites_json)
+                favorites_url = 'https://video-user-data.vrt.be/favorites'
+                favorites_json = get_url_json(url=favorites_url, cache='favorites.json', headers=headers)
         if favorites_json:
             self._favorites = favorites_json
 

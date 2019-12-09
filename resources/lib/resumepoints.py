@@ -12,9 +12,9 @@ except ImportError:  # Python 2
     from urllib2 import build_opener, install_opener, ProxyHandler, Request, HTTPError, urlopen
 
 from data import SECONDS_MARGIN
-from kodiutils import (container_refresh, get_cache, get_proxies, get_setting, has_credentials,
-                       input_down, invalidate_caches, localize, log, log_error, notification,
-                       to_unicode, update_cache)
+from kodiutils import (container_refresh, get_proxies, get_setting, has_credentials, input_down,
+                       localize, log, log_error, notification)
+from utils import get_cache, get_url_json, invalidate_caches, update_cache
 
 
 class ResumePoints:
@@ -44,16 +44,8 @@ class ResumePoints:
                     'content-type': 'application/json',
                     'Referer': 'https://www.vrt.be/vrtnu',
                 }
-                req = Request('https://video-user-data.vrt.be/resume_points', headers=headers)
-                log(2, 'URL get: https://video-user-data.vrt.be/resume_points')
-                from json import loads
-                try:
-                    resumepoints_json = loads(to_unicode(urlopen(req).read()))
-                except (TypeError, ValueError):  # No JSON object could be decoded
-                    # Force resumepoints from cache
-                    resumepoints_json = get_cache('resume_points.json', ttl=None)
-                else:
-                    update_cache('resume_points.json', resumepoints_json)
+                resumepoints_url = 'https://video-user-data.vrt.be/resume_points'
+                resumepoints_json = get_url_json(url=resumepoints_url, cache='resume_points.json', headers=headers)
         if resumepoints_json:
             self._resumepoints = resumepoints_json
 

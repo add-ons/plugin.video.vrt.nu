@@ -6,10 +6,12 @@ from __future__ import absolute_import, division, unicode_literals
 from apihelper import ApiHelper
 from favorites import Favorites
 from helperobjects import TitleItem
+from kodiutils import (delete_cached_thumbnail, end_of_directory, get_addon_info, get_setting,
+                       has_credentials, localize, log_error, ok_dialog, play, set_setting,
+                       show_listing, url_for)
 from resumepoints import ResumePoints
 from statichelper import find_entry
-from kodiutils import (delete_cached_thumbnail, end_of_directory, get_addon_info, get_setting, has_credentials,
-                       localize, log_error, ok_dialog, play, set_setting, show_listing, ttl, url_for)
+from utils import ttl
 
 
 class VRTPlayer:
