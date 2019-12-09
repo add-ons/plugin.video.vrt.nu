@@ -14,9 +14,9 @@ except ImportError:  # Python 2
 
 from helperobjects import ApiData, StreamURLS
 from kodiutils import (addon_profile, can_play_drm, exists, end_of_directory, get_max_bandwidth,
-                       get_proxies, get_setting, has_inputstream_adaptive, kodi_version,
-                       localize, log, log_error, mkdir, ok_dialog, open_settings, supports_drm)
-from statichelper import to_unicode
+                       get_proxies, get_setting, get_url_json, has_inputstream_adaptive,
+                       kodi_version, localize, log, log_error, mkdir, ok_dialog, open_settings,
+                       supports_drm, to_unicode)
 
 
 class StreamService:
@@ -40,9 +40,8 @@ class StreamService:
 
     def _get_vualto_license_url(self):
         ''' Get Widevine license URL from Vualto API '''
-        from json import loads
-        log(2, 'URL get: {url}', url=unquote(self._VUPLAY_API_URL))
-        self._vualto_license_url = loads(to_unicode(urlopen(self._VUPLAY_API_URL).read())).get('drm_providers', dict()).get('widevine', dict()).get('la_url')
+        json_data = get_url_json(url=self._VUPLAY_API_URL, fail={})
+        self._vualto_license_url = json_data.get('drm_providers', {}).get('widevine', {}).get('la_url')
 
     @staticmethod
     def _create_settings_dir():
@@ -154,18 +153,11 @@ class StreamService:
             playertoken = self._tokenresolver.get_playertoken(token_url, token_variant='ondemand', roaming=roaming)
 
         # Construct api_url and get video json
-        stream_json = None
-        if playertoken:
-            from json import loads
-            api_url = api_data.media_api_url + '/videos/' + api_data.publication_id + \
-                api_data.video_id + '?vrtPlayerToken=' + playertoken + '&client=' + api_data.client
-            log(2, 'URL get: {url}', url=unquote(api_url))
-            try:
-                stream_json = loads(to_unicode(urlopen(api_url).read()))
-            except HTTPError as exc:
-                stream_json = loads(to_unicode(exc.read()))
-
-        return stream_json
+        if not playertoken:
+            return None
+        api_url = api_data.media_api_url + '/videos/' + api_data.publication_id + \
+            api_data.video_id + '?vrtPlayerToken=' + playertoken + '&client=' + api_data.client
+        return get_url_json(url=api_url, fail={})
 
     @staticmethod
     def _fix_virtualsubclip(manifest_url, duration):

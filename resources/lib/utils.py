@@ -26,7 +26,33 @@ HTML_MAPPING = [
 ]
 
 
-def convert_html_to_kodilabel(text):
+def to_unicode(text, encoding='utf-8', errors='strict'):
+    ''' Force text to unicode '''
+    if isinstance(text, bytes):
+        return text.decode(encoding, errors=errors)
+    return text
+
+
+def from_unicode(text, encoding='utf-8', errors='strict'):
+    ''' Force unicode to text '''
+    import sys
+    if sys.version_info.major == 2 and isinstance(text, unicode):  # noqa: F821; pylint: disable=undefined-variable
+        return text.encode(encoding, errors)
+    return text
+
+
+def capitalize(string):
+    ''' Ensure the first character is uppercase '''
+    string = string.strip()
+    return string[0].upper() + string[1:]
+
+
+def strip_newlines(text):
+    ''' Strip newlines and whitespaces '''
+    return text.replace('\n', '').strip()
+
+
+def html_to_kodilabel(text):
     ''' Convert VRT HTML content into Kodit formatted text '''
     for key, val in HTML_MAPPING:
         text = key.sub(val, text)
@@ -146,21 +172,6 @@ def play_url_to_id(url):
     return play_id
 
 
-def to_unicode(text, encoding='utf-8', errors='strict'):
-    ''' Force text to unicode '''
-    if isinstance(text, bytes):
-        return text.decode(encoding, errors=errors)
-    return text
-
-
-def from_unicode(text, encoding='utf-8', errors='strict'):
-    ''' Force unicode to text '''
-    import sys
-    if sys.version_info.major == 2 and isinstance(text, unicode):  # noqa: F821; pylint: disable=undefined-variable
-        return text.encode(encoding, errors)
-    return text
-
-
 def shorten_link(url):
     ''' Create a link that is as short as possible '''
     if url is None:
@@ -174,12 +185,7 @@ def shorten_link(url):
     return url
 
 
-def strip_newlines(text):
-    ''' Strip newlines and whitespaces '''
-    return text.replace('\n', '').strip()
-
-
-def add_https_method(url):
+def add_https_proto(url):
     ''' Add HTTPS protocol to URL that lacks it '''
     if url.startswith('//'):
         return 'https:' + url
@@ -202,9 +208,3 @@ def realpage(page):
 def find_entry(dlist, key, value, default=None):
     ''' Find (the first) dictionary in a list where key matches value '''
     return next((entry for entry in dlist if entry.get(key) == value), default)
-
-
-def capitalize(string):
-    ''' Ensure the first character is uppercase '''
-    string = string.strip()
-    return string[0].upper() + string[1:]

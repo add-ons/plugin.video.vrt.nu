@@ -9,18 +9,18 @@ import dateutil.parser
 import dateutil.tz
 
 try:  # Python 3
-    from urllib.request import build_opener, install_opener, ProxyHandler, urlopen
+    from urllib.request import build_opener, install_opener, ProxyHandler
 except ImportError:  # Python 2
-    from urllib2 import build_opener, install_opener, ProxyHandler, urlopen
+    from urllib2 import build_opener, install_opener, ProxyHandler
 
 from data import CHANNELS, RELATIVE_DATES
 from favorites import Favorites
 from helperobjects import TitleItem
+from kodiutils import (get_cached_url_json, get_proxies, get_url_json, has_addon, localize,
+                       localize_datelong, show_listing, ttl, url_for)
 from metadata import Metadata
 from resumepoints import ResumePoints
-from statichelper import find_entry, to_unicode
-from kodiutils import (get_cache, get_proxies, has_addon, localize, localize_datelong, log,
-                       show_listing, ttl, update_cache, url_for)
+from utils import add_https_proto, find_entry, url_to_program
 
 
 class TVGuide:
@@ -156,17 +156,9 @@ class TVGuide:
 
         cache_file = 'schedule.%s.json' % date
         if date in ('today', 'yesterday', 'tomorrow'):
-            # Try the cache if it is fresh
-            schedule = get_cache(cache_file, ttl=ttl('indirect'))
-            if not schedule:
-                from json import loads
-                log(2, 'URL get: {url}', url=epg_url)
-                schedule = loads(to_unicode(urlopen(epg_url).read()))
-                update_cache(cache_file, schedule)
+            schedule = get_cached_url_json(url=epg_url, cache=cache_file, ttl=ttl('indirect'), fail={})
         else:
-            from json import loads
-            log(2, 'URL get: {url}', url=epg_url)
-            schedule = loads(to_unicode(urlopen(epg_url).read()))
+            schedule = get_url_json(url=epg_url, fail={})
 
         entry = find_entry(CHANNELS, 'name', channel)
         if entry:
@@ -181,8 +173,7 @@ class TVGuide:
             context_menu = []
             path = None
             if episode.get('url'):
-                from statichelper import add_https_method, url_to_program
-                video_url = add_https_method(episode.get('url'))
+                video_url = add_https_proto(episode.get('url'))
                 path = url_for('play_url', video_url=video_url)
                 program = url_to_program(episode.get('url'))
                 context_menu, favorite_marker, watchlater_marker = self._metadata.get_context_menu(episode, program, cache_file)
@@ -208,19 +199,13 @@ class TVGuide:
         # Daily EPG information shows information from 6AM until 6AM
         if epg.hour < 6:
             epg += timedelta(days=-1)
-        # Try the cache if it is fresh
-        schedule = get_cache('schedule.today.json', ttl=ttl('indirect'))
-        if not schedule:
-            from json import loads
-            epg_url = epg.strftime(self.VRT_TVGUIDE)
-            log(2, 'URL get: {url}', url=epg_url)
-            schedule = loads(to_unicode(urlopen(epg_url).read()))
-            update_cache('schedule.today.json', schedule)
 
         entry = find_entry(CHANNELS, 'name', channel)
         if not entry:
             return ''
 
+        epg_url = epg.strftime(self.VRT_TVGUIDE)
+        schedule = get_cached_url_json(url=epg_url, cache='schedule.today.json', ttl=ttl('indirect'), fail={})
         episodes = iter(schedule.get(entry.get('id'), []))
 
         while True:
@@ -246,19 +231,13 @@ class TVGuide:
         # Daily EPG information shows information from 6AM until 6AM
         if epg.hour < 6:
             epg += timedelta(days=-1)
-        # Try the cache if it is fresh
-        schedule = get_cache('schedule.today.json', ttl=ttl('indirect'))
-        if not schedule:
-            from json import loads
-            epg_url = epg.strftime(self.VRT_TVGUIDE)
-            log(2, 'URL get: {url}', url=epg_url)
-            schedule = loads(to_unicode(urlopen(epg_url).read()))
-            update_cache('schedule.today.json', schedule)
 
         entry = find_entry(CHANNELS, 'name', channel)
         if not entry:
             return ''
 
+        epg_url = epg.strftime(self.VRT_TVGUIDE)
+        schedule = get_cached_url_json(url=epg_url, cache='schedule.today.json', ttl=ttl('indirect'), fail={})
         episodes = iter(schedule.get(entry.get('id'), []))
 
         description = ''

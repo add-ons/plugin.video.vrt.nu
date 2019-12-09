@@ -5,12 +5,13 @@
 from __future__ import absolute_import, division, unicode_literals
 from threading import Event, Thread
 from xbmc import getInfoLabel, Player, PlayList
+
 from apihelper import ApiHelper
 from data import SECONDS_MARGIN
 from favorites import Favorites
-from resumepoints import ResumePoints
-from statichelper import play_url_to_id, to_unicode, url_to_episode
 from kodiutils import addon_id, container_reload, get_advanced_setting, get_setting, has_addon, log, notify
+from resumepoints import ResumePoints
+from utils import play_url_to_id, to_unicode, url_to_episode
 
 
 class PlayerInfo(Player):
@@ -54,6 +55,10 @@ class PlayerInfo(Player):
 
         # Get episode data
         episode = self.apihelper.get_single_episode_data(video_id=ep_id.get('video_id'), whatson_id=ep_id.get('whatson_id'), video_url=ep_id.get('video_url'))
+
+        # This may be a live stream?
+        if episode is None:
+            return
 
         self.asset_id = self.resumepoints.assetpath_to_id(episode.get('assetPath'))
         self.title = episode.get('program')
@@ -229,8 +234,8 @@ class PlayerInfo(Player):
 
         # Do not reload container and rely on Kodi internal watch status when watching a single episode that is partly watched.
         # Kodi internal watch status is only updated when the play action is initiated from the GUI, so this only works for single episodes.
-        if (not self.path.startswith('plugin://plugin.video.vrt.nu/play/upnext') and
-                ignoresecondsatstart < position < (100 - ignorepercentatend) / 100 * total):
+        if (not self.path.startswith('plugin://plugin.video.vrt.nu/play/upnext')
+                and ignoresecondsatstart < position < (100 - ignorepercentatend) / 100 * total):
             return
 
         # Do not reload container when playing or not stopped

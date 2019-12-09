@@ -11,9 +11,10 @@ try:  # Python 3
 except ImportError:  # Python 2
     from urllib import quote_plus
 
-import statichelper
 from data import CHANNELS, SECONDS_MARGIN
 from kodiutils import get_setting, localize, localize_datelong, log, url_for
+from utils import (add_https_proto, capitalize, find_entry, from_unicode, html_to_kodilabel,
+                   reformat_url, shorten_link, to_unicode, unescape, url_to_episode)
 
 
 class Metadata:
@@ -73,24 +74,24 @@ class Metadata:
 
             if assetpath is not None:
                 # We need to ensure forward slashes are quoted
-                program_title = statichelper.to_unicode(quote_plus(statichelper.from_unicode(program_title)))
-                url = statichelper.url_to_episode(api_data.get('url', ''))
+                program_title = to_unicode(quote_plus(from_unicode(program_title)))
+                url = url_to_episode(api_data.get('url', ''))
                 asset_id = self._resumepoints.assetpath_to_id(assetpath)
                 if self._resumepoints.is_watchlater(asset_id):
-                    extras = dict()
+                    extras = {}
                     # If we are in a watchlater menu, move cursor down before removing a favorite
                     if plugin.path.startswith('/resumepoints/watchlater'):
                         extras = dict(move_down=True)
                     # Unwatch context menu
                     context_menu.append((
-                        statichelper.capitalize(localize(30402)),
+                        capitalize(localize(30402)),
                         'RunPlugin(%s)' % url_for('unwatchlater', asset_id=asset_id, title=program_title, url=url, **extras)
                     ))
                     watchlater_marker = '[COLOR yellow]ᶫ[/COLOR]'
                 else:
                     # Watch context menu
                     context_menu.append((
-                        statichelper.capitalize(localize(30401)),
+                        capitalize(localize(30401)),
                         'RunPlugin(%s)' % url_for('watchlater', asset_id=asset_id, title=program_title, url=url)
                     ))
 
@@ -117,9 +118,9 @@ class Metadata:
                 follow_enabled = bool(api_data.get('url'))
 
             if follow_enabled:
-                program_title = statichelper.to_unicode(quote_plus(statichelper.from_unicode(program_title)))  # We need to ensure forward slashes are quoted
+                program_title = to_unicode(quote_plus(from_unicode(program_title)))  # We need to ensure forward slashes are quoted
                 if self._favorites.is_favorite(program):
-                    extras = dict()
+                    extras = {}
                     # If we are in a favorites menu, move cursor down before removing a favorite
                     if plugin.path.startswith('/favorites'):
                         extras = dict(move_down=True)
@@ -178,17 +179,17 @@ class Metadata:
 
     def get_properties(self, api_data):
         ''' Get properties from single item json api data '''
-        properties = dict()
+        properties = {}
 
         # Only fill in properties when using VRT NU resumepoints because setting resumetime/totaltime breaks standard Kodi watched status
         if self._resumepoints.is_activated():
             assetpath = self.get_assetpath(api_data)
             if assetpath:
                 # We need to ensure forward slashes are quoted
-                program_title = statichelper.to_unicode(quote_plus(statichelper.from_unicode(api_data.get('program'))))
+                program_title = to_unicode(quote_plus(from_unicode(api_data.get('program'))))
 
                 asset_id = self._resumepoints.assetpath_to_id(assetpath)
-                url = statichelper.reformat_url(api_data.get('url', ''), 'medium')
+                url = reformat_url(api_data.get('url', ''), 'medium')
                 properties.update(asset_id=asset_id, url=url, title=program_title)
 
                 position = self._resumepoints.get_position(asset_id)
@@ -263,7 +264,7 @@ class Metadata:
         # VRT NU Search API
         if api_data.get('type') == 'episode':
             if season:
-                plot = statichelper.convert_html_to_kodilabel(api_data.get('programDescription'))
+                plot = html_to_kodilabel(api_data.get('programDescription'))
 
                 # Add additional metadata to plot
                 plot_meta = ''
@@ -304,20 +305,20 @@ class Metadata:
                     plot_meta += '  '
                 plot_meta += localize(30201)  # Geo-blocked
 
-            plot = statichelper.convert_html_to_kodilabel(api_data.get('description'))
+            plot = html_to_kodilabel(api_data.get('description'))
 
             if plot_meta:
                 plot = '%s\n\n%s' % (plot_meta, plot)
 
-            permalink = statichelper.shorten_link(api_data.get('permalink')) or api_data.get('externalPermalink')
+            permalink = shorten_link(api_data.get('permalink')) or api_data.get('externalPermalink')
             if permalink and get_setting('showpermalink', 'false') == 'true':
                 plot = '%s\n\n[COLOR yellow]%s[/COLOR]' % (plot, permalink)
             return plot
 
         # VRT NU Suggest API
         if api_data.get('type') == 'program':
-            plot = statichelper.unescape(api_data.get('description', '???'))
-            # permalink = statichelper.shorten_link(api_data.get('programUrl'))
+            plot = unescape(api_data.get('description', '???'))
+            # permalink = shorten_link(api_data.get('programUrl'))
             # if permalink and get_setting('showpermalink', 'false') == 'true':
             #     plot = '%s\n\n[COLOR yellow]%s[/COLOR]' % (plot, permalink)
             return plot
@@ -342,11 +343,11 @@ class Metadata:
         # VRT NU Search API
         if api_data.get('type') == 'episode':
             if season:
-                plotoutline = statichelper.convert_html_to_kodilabel(api_data.get('programDescription'))
+                plotoutline = html_to_kodilabel(api_data.get('programDescription'))
                 return plotoutline
 
-            if api_data.get('displayOptions', dict()).get('showShortDescription'):
-                plotoutline = statichelper.convert_html_to_kodilabel(api_data.get('shortDescription'))
+            if api_data.get('displayOptions', {}).get('showShortDescription'):
+                plotoutline = html_to_kodilabel(api_data.get('shortDescription'))
                 return plotoutline
 
             plotoutline = api_data.get('subtitle')
@@ -510,24 +511,24 @@ class Metadata:
     @staticmethod
     def get_art(api_data, season=False):
         ''' Get art dict from single item json api data '''
-        art_dict = dict()
+        art_dict = {}
 
         # VRT NU Search API
         if api_data.get('type') == 'episode':
             if season:
                 if get_setting('showfanart', 'true') == 'true':
-                    art_dict['fanart'] = statichelper.add_https_method(api_data.get('programImageUrl', 'DefaultSets.png'))
+                    art_dict['fanart'] = add_https_proto(api_data.get('programImageUrl', 'DefaultSets.png'))
                     art_dict['banner'] = art_dict.get('fanart')
                     if season != 'allseasons':
-                        art_dict['thumb'] = statichelper.add_https_method(api_data.get('videoThumbnailUrl', art_dict.get('fanart')))
+                        art_dict['thumb'] = add_https_proto(api_data.get('videoThumbnailUrl', art_dict.get('fanart')))
                     else:
                         art_dict['thumb'] = art_dict.get('fanart')
                 else:
                     art_dict['thumb'] = 'DefaultSets.png'
             else:
                 if get_setting('showfanart', 'true') == 'true':
-                    art_dict['thumb'] = statichelper.add_https_method(api_data.get('videoThumbnailUrl', 'DefaultAddonVideo.png'))
-                    art_dict['fanart'] = statichelper.add_https_method(api_data.get('programImageUrl', art_dict.get('thumb')))
+                    art_dict['thumb'] = add_https_proto(api_data.get('videoThumbnailUrl', 'DefaultAddonVideo.png'))
+                    art_dict['fanart'] = add_https_proto(api_data.get('programImageUrl', art_dict.get('thumb')))
                     art_dict['banner'] = art_dict.get('fanart')
                 else:
                     art_dict['thumb'] = 'DefaultAddonVideo.png'
@@ -537,7 +538,7 @@ class Metadata:
         # VRT NU Suggest API
         if api_data.get('type') == 'program':
             if get_setting('showfanart', 'true') == 'true':
-                art_dict['thumb'] = statichelper.add_https_method(api_data.get('thumbnail', 'DefaultAddonVideo.png'))
+                art_dict['thumb'] = add_https_proto(api_data.get('thumbnail', 'DefaultAddonVideo.png'))
                 art_dict['fanart'] = art_dict.get('thumb')
                 art_dict['banner'] = art_dict.get('fanart')
             else:
@@ -610,7 +611,7 @@ class Metadata:
             return info_labels
 
         # Not Found
-        return dict()
+        return {}
 
     @staticmethod
     def get_label(api_data, titletype=None, return_sort=False):
@@ -618,7 +619,7 @@ class Metadata:
 
         # VRT NU Search API
         if api_data.get('type') == 'episode':
-            display_options = api_data.get('displayOptions', dict())
+            display_options = api_data.get('displayOptions', {})
 
             # NOTE: Hard-code showing seasons because it is unreliable (i.e; Thuis or Down the Road have it disabled)
             display_options['showSeason'] = True
@@ -628,11 +629,11 @@ class Metadata:
                 titletype = program_type
 
             if display_options.get('showEpisodeTitle'):
-                label = statichelper.convert_html_to_kodilabel(api_data.get('title') or api_data.get('shortDescription'))
+                label = html_to_kodilabel(api_data.get('title') or api_data.get('shortDescription'))
             elif display_options.get('showShortDescription'):
-                label = statichelper.convert_html_to_kodilabel(api_data.get('shortDescription') or api_data.get('title'))
+                label = html_to_kodilabel(api_data.get('shortDescription') or api_data.get('title'))
             else:
-                label = statichelper.convert_html_to_kodilabel(api_data.get('title') or api_data.get('shortDescription'))
+                label = html_to_kodilabel(api_data.get('title') or api_data.get('shortDescription'))
 
             sort = 'unsorted'
             ascending = True
@@ -715,7 +716,7 @@ class Metadata:
         # VRT NU Search API
         if api_data.get('type') == 'episode':
             from data import CATEGORIES
-            return sorted([localize(statichelper.find_entry(CATEGORIES, 'id', category).get('msgctxt'))
+            return sorted([localize(find_entry(CATEGORIES, 'id', category).get('msgctxt'))
                            for category in api_data.get('categories')])
 
         # VRT NU Suggest API

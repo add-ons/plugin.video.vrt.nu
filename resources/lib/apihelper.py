@@ -5,21 +5,20 @@
 from __future__ import absolute_import, division, unicode_literals
 
 try:  # Python 3
-    from urllib.error import HTTPError
     from urllib.parse import quote_plus, unquote
-    from urllib.request import build_opener, install_opener, ProxyHandler, Request, urlopen
+    from urllib.request import build_opener, install_opener, ProxyHandler, urlopen
 except ImportError:  # Python 2
     from urllib import quote_plus
-    from urllib2 import build_opener, install_opener, ProxyHandler, Request, HTTPError, unquote, urlopen
+    from urllib2 import build_opener, install_opener, ProxyHandler, unquote, urlopen
 
 from data import CHANNELS
 from helperobjects import TitleItem
-from kodiutils import (delete_cached_thumbnail, get_cache, get_global_setting, get_proxies, get_setting,
-                       has_addon, localize, localize_from_data, log, log_error, ok_dialog, ttl, update_cache,
-                       url_for)
-from statichelper import (add_https_method, convert_html_to_kodilabel, find_entry, from_unicode, play_url_to_id,
-                          program_to_url, realpage, to_unicode, strip_newlines, url_to_program)
+from kodiutils import (delete_cached_thumbnail, get_cache, get_cached_url_json, get_global_setting,
+                       get_proxies, get_setting, get_url_json, has_addon, localize, localize_from_data,
+                       log, ttl, update_cache, url_for)
 from metadata import Metadata
+from utils import (add_https_proto, html_to_kodilabel, find_entry, from_unicode, play_url_to_id,
+                   program_to_url, realpage, strip_newlines, url_to_program)
 
 
 class ApiHelper:
@@ -39,7 +38,7 @@ class ApiHelper:
 
     def get_tvshows(self, category=None, channel=None, feature=None):
         ''' Get all TV shows for a given category, channel or feature, optionally filtered by favorites '''
-        params = dict()
+        params = {}
 
         if category:
             params['facets[categories]'] = category
@@ -57,16 +56,10 @@ class ApiHelper:
         if not category and not channel and not feature:
             params['facets[transcodingStatus]'] = 'AVAILABLE'  # Required for getting results in Suggests API
             cache_file = 'programs.json'
-        tvshows = get_cache(cache_file, ttl=ttl('indirect'))  # Try the cache if it is fresh
-        if not tvshows:
-            from json import loads
-            querystring = '&'.join('{}={}'.format(key, value) for key, value in list(params.items()))
-            suggest_url = self._VRTNU_SUGGEST_URL + '?' + querystring
-            log(2, 'URL get: {url}', url=unquote(suggest_url))
-            tvshows = loads(to_unicode(urlopen(suggest_url).read()))
-            update_cache(cache_file, tvshows)
 
-        return tvshows
+        querystring = '&'.join('{}={}'.format(key, value) for key, value in list(params.items()))
+        suggest_url = self._VRTNU_SUGGEST_URL + '?' + querystring
+        return get_cached_url_json(url=suggest_url, cache=cache_file, ttl=ttl('indirect'), fail=[])
 
     def list_tvshows(self, category=None, channel=None, feature=None, use_favorites=False):
         ''' List all TV shows for a given category, channel or feature, optionally filtered by favorites '''
@@ -151,7 +144,7 @@ class ApiHelper:
             highlight = episode.get('highlight')
             if highlight:
                 for key in highlight:
-                    episode[key] = convert_html_to_kodilabel(highlight.get(key)[0])
+                    episode[key] = html_to_kodilabel(highlight.get(key)[0])
 
             list_item, sort, ascending = self.episode_to_listitem(episode, program, cache_file, titletype)
             episode_items.append(list_item)
@@ -268,7 +261,7 @@ class ApiHelper:
 
         # Get all episodes from current program and sort by program, seasonTitle and episodeNumber
         episodes = sorted(self.get_episodes(keywords=program), key=lambda k: (k.get('program'), k.get('seasonTitle'), k.get('episodeNumber')))
-        upnext = dict()
+        upnext = {}
         for episode in episodes:
             if ep_id.get('whatson_id') == episode.get('whatsonId') or \
                ep_id.get('video_id') == episode.get('videoId') or \
@@ -413,8 +406,7 @@ class ApiHelper:
             schedule_date = onairdate
         schedule_datestr = schedule_date.isoformat().split('T')[0]
         url = 'https://www.vrt.be/bin/epg/schedule.%s.json' % schedule_datestr
-        from json import loads
-        schedule_json = loads(to_unicode(urlopen(url).read()))
+        schedule_json = get_url_json(url, fail={})
         episodes = schedule_json.get(channel.get('id'), [])
         if not episodes:
             return None
@@ -569,41 +561,17 @@ class ApiHelper:
         # Construct VRT NU Search API Url and get api data
         querystring = '&'.join('{}={}'.format(key, value) for key, value in list(params.items()))
         search_url = self._VRTNU_SEARCH_URL + '?' + querystring.replace(' ', '%20')  # Only encode spaces to minimize url length
-
-        from json import loads
         if cache_file:
-            # Get api data from cache if it is fresh
-            search_json = get_cache(cache_file, ttl=ttl('indirect'))
-            if not search_json:
-                log(2, 'URL get: {url}', url=unquote(search_url))
-                req = Request(search_url)
-                try:
-                    search_json = loads(to_unicode(urlopen(req).read()))
-                except (TypeError, ValueError):  # No JSON object could be decoded
-                    return []
-                except HTTPError as exc:
-                    url_length = len(req.get_selector())
-                    if exc.code == 413 and url_length > 8192:
-                        ok_dialog(heading='HTTP Error 413', message=localize(30967))
-                        log_error('HTTP Error 413: Exceeded maximum url length: '
-                                  'VRT Search API url has a length of {length} characters.', length=url_length)
-                        return []
-                    if exc.code == 400 and 7600 <= url_length <= 8192:
-                        ok_dialog(heading='HTTP Error 400', message=localize(30967))
-                        log_error('HTTP Error 400: Probably exceeded maximum url length: '
-                                  'VRT Search API url has a length of {length} characters.', length=url_length)
-                        return []
-                    raise
-                update_cache(cache_file, search_json)
+            search_json = get_cached_url_json(url=search_url, cache=cache_file, ttl=ttl('indirect'), fail={})
         else:
-            log(2, 'URL get: {url}', url=unquote(search_url))
-            search_json = loads(to_unicode(urlopen(search_url).read()))
+            search_json = get_url_json(url=search_url, fail={})
 
         # Check for multiple seasons
-        seasons = None
+        seasons = []
         if 'facets[seasonTitle]' not in unquote(search_url):
-            facets = search_json.get('facets', dict()).get('facets')
-            seasons = next((f.get('buckets', []) for f in facets if f.get('name') == 'seasons' and len(f.get('buckets', [])) > 1), None)
+            facets = search_json.get('facets', {}).get('facets')
+            if facets:
+                seasons = next((f.get('buckets', []) for f in facets if f.get('name') == 'seasons' and len(f.get('buckets', [])) > 1), None)
 
         episodes = search_json.get('results', [{}])
         show_seasons = bool(season != 'allseasons')
@@ -619,8 +587,9 @@ class ApiHelper:
         if all_items and total_results > api_page_size:
             for api_page in range(1, api_pages):
                 api_page_url = search_url + '&from=' + str(api_page * api_page_size + 1)
-                api_page_json = loads(to_unicode(urlopen(api_page_url).read()))
-                episodes += api_page_json.get('results', [{}])
+                api_page_json = get_url_json(api_page_url)
+                if api_page_json is not None:
+                    episodes += api_page_json.get('results', [{}])
 
         # Return episodes
         return episodes
@@ -642,7 +611,7 @@ class ApiHelper:
                 continue
 
             context_menu = []
-            art_dict = dict()
+            art_dict = {}
 
             # Try to use the white icons for thumbnails (used for icons as well)
             if has_addon('resource.images.studios.white'):
@@ -713,7 +682,7 @@ class ApiHelper:
                 continue
 
             context_menu = []
-            art_dict = dict()
+            art_dict = {}
 
             # Try to use the white icons for thumbnails (used for icons as well)
             if has_addon('resource.images.studios.white'):
@@ -850,7 +819,7 @@ class ApiHelper:
         ''' Return a category thumbnail, if available '''
         if get_setting('showfanart', 'true') == 'true':
             raw_thumbnail = element.find(class_='media').get('data-responsive-image', 'DefaultGenre.png')
-            return add_https_method(raw_thumbnail)
+            return add_https_proto(raw_thumbnail)
         return 'DefaultGenre.png'
 
     @staticmethod
