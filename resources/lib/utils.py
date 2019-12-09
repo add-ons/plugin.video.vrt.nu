@@ -103,21 +103,25 @@ def ttl(kind='direct'):
         return int(get_setting('httpcachettlindirect', 60)) * 60
     return 5 * 60
 
+def get_json_data(response):
+    ''' Return json object from HTTP response '''
+    from json import load, loads
+    if (3, 0, 0) <= version_info <= (3, 5, 9):  # the JSON object must be str, not 'bytes'
+        json_data = loads(to_unicode(response.read()))
+    else:
+        json_data = load(response)
+    return json_data
 
 def get_url_json(url, cache=None, headers=None, data=None):
     ''' Return HTTP data '''
     if headers is None:
         headers = dict()
-    from json import load, loads
     log(2, 'URL get: {url}', url=unquote(url))
     req = Request(url, headers=headers)
     if data is not None:
         req.data = data
     try:
-        if (3, 0, 0) <= version_info <= (3, 5, 9):  # the JSON object must be str, not 'bytes'
-            json_data = loads(to_unicode(urlopen(req).read()))
-        else:
-            json_data = load(urlopen(req))
+        json_data = get_json_data(urlopen(req))
     except ValueError as exc:  # No JSON object could be decoded
         log_error('JSON Error: {exc}', exc=exc)
         return []
@@ -135,6 +139,11 @@ def get_url_json(url, cache=None, headers=None, data=None):
             ok_dialog(heading='HTTP Error 400', message=localize(30967))
             log_error('HTTP Error 400: Probably exceeded maximum url length: '
                       'VRT Search API url has a length of {length} characters.', length=url_length)
+            return []
+        try:
+            return get_json_data(exc)
+        except ValueError as exc:  # No JSON object could be decoded
+            log_error('JSON Error: {exc}', exc=exc)
             return []
         raise
     else:

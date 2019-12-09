@@ -148,6 +148,7 @@ class StreamService:
 
     def _get_stream_json(self, api_data, roaming=False):
         ''' Get JSON with stream details from VRT API '''
+        json_data = None
         token_url = api_data.media_api_url + '/tokens'
         if api_data.is_live_stream:
             playertoken = self._tokenresolver.get_playertoken(token_url, token_variant='live', roaming=roaming)
@@ -159,13 +160,7 @@ class StreamService:
             return None
         api_url = api_data.media_api_url + '/videos/' + api_data.publication_id + \
             api_data.video_id + '?vrtPlayerToken=' + playertoken + '&client=' + api_data.client
-        try:
-            json_data = get_url_json(url=api_url)
-        except HTTPError as exc:
-            from json import load
-            return load(exc)
-        if not json_data:
-            return None
+        json_data = get_url_json(url=api_url)
         return json_data
 
     @staticmethod
