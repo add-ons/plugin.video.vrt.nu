@@ -7,9 +7,9 @@ from __future__ import absolute_import, division, unicode_literals
 
 try:  # Python 3
     from urllib.error import HTTPError
-    from urllib.request import build_opener, install_opener, ProxyHandler, Request, urlopen
+    from urllib.request import build_opener, install_opener, ProxyHandler
 except ImportError:  # Python 2
-    from urllib2 import build_opener, install_opener, ProxyHandler, Request, HTTPError, urlopen
+    from urllib2 import build_opener, install_opener, ProxyHandler, HTTPError
 
 from data import SECONDS_MARGIN
 from kodiutils import (container_refresh, get_cache, get_proxies, get_setting, get_url_json,
@@ -131,9 +131,8 @@ class ResumePoints:
         data = dumps(payload).encode()
         log(2, 'URL post: https://video-user-data.vrt.be/resume_points/{asset_id}', asset_id=asset_id)
         log(2, 'URL post data: {data}', data=data)
-        req = Request('https://video-user-data.vrt.be/resume_points/%s' % asset_id, data=data, headers=headers)
         try:
-            urlopen(req)
+            get_url_json('https://video-user-data.vrt.be/resume_points/%s' % asset_id, headers=headers, data=data)
         except HTTPError as exc:
             log_error('Failed to (un)watch episode at VRT NU ({error})', error=exc)
             notification(message=localize(30977))
