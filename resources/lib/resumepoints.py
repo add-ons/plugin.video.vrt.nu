@@ -22,7 +22,7 @@ class ResumePoints:
 
     def __init__(self):
         ''' Initialize resumepoints, relies on XBMC vfs and a special VRT token '''
-        self._resumepoints = dict()  # Our internal representation
+        self._data = dict()  # Our internal representation
         install_opener(build_opener(ProxyHandler(get_proxies())))
 
     @staticmethod
@@ -47,7 +47,7 @@ class ResumePoints:
                 resumepoints_url = 'https://video-user-data.vrt.be/resume_points'
                 resumepoints_json = get_url_json(url=resumepoints_url, cache='resume_points.json', headers=headers)
         if resumepoints_json is not None:
-            self._resumepoints = resumepoints_json
+            self._data = resumepoints_json
 
     def update(self, asset_id, title, url, watch_later=None, position=None, total=None, whatson_id=None, asynchronous=False):
         ''' Set program resumepoint or watchLater status and update local copy '''
@@ -72,9 +72,9 @@ class ResumePoints:
         from utils import reformat_url
         url = reformat_url(url, 'short')
 
-        if asset_id in self._resumepoints:
+        if asset_id in self._data:
             # Update existing resumepoint values
-            payload = self._resumepoints[asset_id]['value']
+            payload = self._data[asset_id]['value']
             payload['url'] = url
         else:
             # Create new resumepoint values
@@ -99,8 +99,8 @@ class ResumePoints:
             removes.append('watchlater-*.json')
 
         # NOTE: Updates to resumepoints take a longer time to take effect, so we keep our own cache and use it
-        self._resumepoints[asset_id] = dict(value=payload)
-        update_cache('resume_points.json', self._resumepoints)
+        self._data[asset_id] = dict(value=payload)
+        update_cache('resume_points.json', self._data)
         invalidate_caches(*removes)
 
         if asynchronous:
@@ -141,7 +141,7 @@ class ResumePoints:
 
     def is_watchlater(self, asset_id):
         ''' Is a program set to watch later ? '''
-        return self._resumepoints.get(asset_id, {}).get('value', {}).get('watchLater') is True
+        return self._data.get(asset_id, {}).get('value', {}).get('watchLater') is True
 
     def watchlater(self, asset_id, title, url):
         ''' Watch an episode later '''
@@ -162,16 +162,16 @@ class ResumePoints:
 
     def get_position(self, asset_id):
         ''' Return the stored position of a video '''
-        return self._resumepoints.get(asset_id, {}).get('value', {}).get('position', 0)
+        return self._data.get(asset_id, {}).get('value', {}).get('position', 0)
 
     def get_total(self, asset_id):
         ''' Return the stored total length of a video '''
-        return self._resumepoints.get(asset_id, {}).get('value', {}).get('total', 100)
+        return self._data.get(asset_id, {}).get('value', {}).get('total', 100)
 
     def get_url(self, asset_id, url_type='medium'):
         ''' Return the stored url a video '''
         from utils import reformat_url
-        return reformat_url(self._resumepoints.get(asset_id, {}).get('value', {}).get('url'), url_type)
+        return reformat_url(self._data.get(asset_id, {}).get('value', {}).get('url'), url_type)
 
     @staticmethod
     def assetpath_to_id(assetpath):
@@ -184,9 +184,9 @@ class ResumePoints:
 
     def watchlater_urls(self):
         ''' Return all watchlater urls '''
-        return [self.get_url(asset_id) for asset_id in self._resumepoints if self.is_watchlater(asset_id)]
+        return [self.get_url(asset_id) for asset_id in self._data if self.is_watchlater(asset_id)]
 
     def resumepoints_urls(self):
         ''' Return all urls that have not been finished watching '''
-        return [self.get_url(asset_id) for asset_id in self._resumepoints
+        return [self.get_url(asset_id) for asset_id in self._data
                 if SECONDS_MARGIN < self.get_position(asset_id) < (self.get_total(asset_id) - SECONDS_MARGIN)]
