@@ -350,14 +350,10 @@ class ApiHelper:
             runtime=self._metadata.get_duration(next_ep),
         )
 
-        play_info = dict(
-            video_id=next_ep.get('videoId'),
-        )
-
         next_info = dict(
             current_episode=current_episode,
             next_episode=next_episode,
-            play_info=play_info,
+            play_url='plugin://plugin.video.vrt.nu/play/upnext/{video_id}'.format(video_id=next_ep.get('videoId')),
         )
         return next_info
 
