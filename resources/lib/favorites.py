@@ -22,7 +22,7 @@ class Favorites:
 
     def __init__(self):
         ''' Initialize favorites, relies on XBMC vfs and a special VRT token '''
-        self._favorites = dict()  # Our internal representation
+        self._data = dict()  # Our internal representation
         install_opener(build_opener(ProxyHandler(get_proxies())))
 
     @staticmethod
@@ -47,7 +47,7 @@ class Favorites:
                 favorites_url = 'https://video-user-data.vrt.be/favorites'
                 favorites_json = get_url_json(url=favorites_url, cache='favorites.json', headers=headers)
         if favorites_json is not None:
-            self._favorites = favorites_json
+            self._data = favorites_json
 
     def update(self, program, title, value=True):
         ''' Set a program as favorite, and update local copy '''
@@ -84,15 +84,15 @@ class Favorites:
             notification(message=localize(30976, program=program))
             return False
         # NOTE: Updates to favorites take a longer time to take effect, so we keep our own cache and use it
-        self._favorites[program_id] = dict(value=payload)
-        update_cache('favorites.json', self._favorites)
+        self._data[program_id] = dict(value=payload)
+        update_cache('favorites.json', self._data)
         invalidate_caches('my-offline-*.json', 'my-recent-*.json')
         return True
 
     def is_favorite(self, program):
         ''' Is a program a favorite ? '''
         value = False
-        favorite = self._favorites.get(self.program_to_id(program))
+        favorite = self._data.get(self.program_to_id(program))
         if favorite:
             value = favorite.get('value', {}).get('isFavorite')
         return value is True
@@ -121,18 +121,18 @@ class Favorites:
 
     def titles(self):
         ''' Return all favorite titles '''
-        return [value.get('value').get('title') for value in list(self._favorites.values()) if value.get('value').get('isFavorite')]
+        return [value.get('value').get('title') for value in list(self._data.values()) if value.get('value').get('isFavorite')]
 
     def programs(self):
         ''' Return all favorite programs '''
         from utils import url_to_program
-        return [url_to_program(value.get('value').get('programUrl')) for value in list(self._favorites.values()) if value.get('value').get('isFavorite')]
+        return [url_to_program(value.get('value').get('programUrl')) for value in list(self._data.values()) if value.get('value').get('isFavorite')]
 
     def manage(self):
         ''' Allow the user to unselect favorites to be removed from the listing '''
         from utils import url_to_program
         self.refresh(ttl=0)
-        if not self._favorites:
+        if not self._data:
             ok_dialog(heading=localize(30418), message=localize(30419))  # No favorites found
             return
 
@@ -142,7 +142,7 @@ class Favorites:
 
         items = [dict(program=url_to_program(value.get('value').get('programUrl')),
                       title=unquote(value.get('value').get('title')),
-                      enabled=value.get('value').get('isFavorite')) for value in list(sorted(list(self._favorites.values()), key=by_title))]
+                      enabled=value.get('value').get('isFavorite')) for value in list(sorted(list(self._data.values()), key=by_title))]
         titles = [item['title'] for item in items]
         preselect = [idx for idx in range(0, len(items) - 1) if items[idx]['enabled']]
         selected = multiselect(localize(30420), options=titles, preselect=preselect)  # Please select/unselect to follow/unfollow
