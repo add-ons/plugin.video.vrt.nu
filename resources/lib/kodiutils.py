@@ -795,7 +795,7 @@ def get_cache(path, ttl=None):  # pylint: disable=redefined-outer-name
         try:
             return get_json_data(fdesc)
         except ValueError as exc:  # No JSON object could be decoded
-            log_error('JSON Error: {exc}', exc=exc)
+            log_error('JSON Error {path}: {exc}', exc=exc, path=path)
             return None
 
 
@@ -867,7 +867,7 @@ def get_url_json(url, cache=None, headers=None, data=None, fail=None):
     try:
         json_data = get_json_data(urlopen(req))
     except ValueError as exc:  # No JSON object could be decoded
-        log_error('JSON Error: {exc}', exc=exc)
+        log_error('JSON Error {url}: {exc}', exc=exc, url=url)
         return fail
     except HTTPError as exc:
         if hasattr(req, 'selector'):  # Python 3.4+
@@ -887,7 +887,7 @@ def get_url_json(url, cache=None, headers=None, data=None, fail=None):
         try:
             return get_json_data(exc)
         except ValueError as exc:  # No JSON object could be decoded
-            log_error('JSON Error: {exc}', exc=exc)
+            log_error('JSON Error {url}: {exc}', exc=exc, url=url)
             return fail
         raise
     else:
