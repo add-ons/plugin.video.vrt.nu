@@ -81,6 +81,19 @@ class TestKodiUtils(unittest.TestCase):
         ''' Test if Kodi supports DRM '''
         self.assertTrue(kodiutils.supports_drm())
 
+    def test_jsonrpc(self):
+        ''' Test jsonrpc functionality '''
+        ret = kodiutils.jsonrpc(method='Input.Down')
+        self.assertTrue(isinstance(ret, dict))
+
+        ret = kodiutils.jsonrpc(dict(method='Input.Down'))
+        self.assertTrue(isinstance(ret, list))
+        self.assertEqual(len(ret), 1)
+
+        ret = kodiutils.jsonrpc(dict(method='Input.Down'), dict(method='Player.Open'))
+        self.assertTrue(isinstance(ret, list))
+        self.assertEqual(len(ret), 2)
+
 
 if __name__ == '__main__':
     unittest.main()

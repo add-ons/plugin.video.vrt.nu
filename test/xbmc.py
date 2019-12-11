@@ -176,19 +176,35 @@ def executebuiltin(string, wait=False):  # pylint: disable=unused-argument
 def executeJSONRPC(jsonrpccommand):
     ''' A reimplementation of the xbmc executeJSONRPC() function '''
     command = json.loads(jsonrpccommand)
-    if command.get('method') == 'Settings.GetSettingValue':
+
+    # Handle a list of commands sequentially
+    if isinstance(command, list):
+        ret = []
+        for action in command:
+            ret.append(executeJSONRPC(json.dumps(action)))
+        return json.dumps(ret)
+
+    ret = dict(id=command.get('id'), jsonrpc='2.0', result='OK')
+    if command.get('method').startswith('Input'):
+        pass
+    elif command.get('method') == 'Player.Open':
+        pass
+    elif command.get('method') == 'Settings.GetSettingValue':
         key = command.get('params').get('setting')
-        return json.dumps(dict(id=1, jsonrpc='2.0', result=dict(value=settings.get(key))))
-    if command.get('method') == 'Addons.GetAddonDetails':
+        ret.update(result=dict(value=settings.get(key)))
+    elif command.get('method') == 'Addons.GetAddonDetails':
         if command.get('params', {}).get('addonid') == 'script.module.inputstreamhelper':
-            return json.dumps(dict(id=1, jsonrpc='2.0', result=dict(addon=dict(enabled='true', version='0.3.5'))))
-        return json.dumps(dict(id=1, jsonrpc='2.0', result=dict(addon=dict(enabled='true', version='1.2.3'))))
-    if command.get('method') == 'Textures.GetTextures':
-        return json.dumps(dict(id=1, jsonrpc='2.0', result=dict(textures=[dict(cachedurl="", imagehash="", lasthashcheck="", textureid=4837, url="")])))
-    if command.get('method') == 'Textures.RemoveTexture':
-        return json.dumps(dict(id=1, jsonrpc='2.0', result="OK"))
-    log("executeJSONRPC does not implement method '{method}'".format(**command), LOGERROR)
-    return json.dumps(dict(error=dict(code=-1, message='Not implemented'), id=1, jsonrpc='2.0'))
+            ret.update(result=dict(addon=dict(enabled='true', version='0.3.5')))
+        else:
+            ret.update(result=dict(addon=dict(enabled='true', version='1.2.3')))
+    elif command.get('method') == 'Textures.GetTextures':
+        ret.update(result=dict(textures=[dict(cachedurl="", imagehash="", lasthashcheck="", textureid=4837, url="")]))
+    elif command.get('method') == 'Textures.RemoveTexture':
+        pass
+    else:
+        log("executeJSONRPC does not implement method '{method}'".format(**command), LOGERROR)
+        return json.dumps(dict(error=dict(code=-1, message='Not implemented'), id=command.get('id'), jsonrpc='2.0'))
+    return json.dumps(ret)
 
 
 def getCondVisibility(string):

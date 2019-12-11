@@ -747,12 +747,28 @@ def log_error(message, **kwargs):
     xbmc.log(from_unicode(message), 4)
 
 
-def jsonrpc(**kwargs):
+def jsonrpc(*args, **kwargs):
     ''' Perform JSONRPC calls '''
     from json import dumps, loads
-    if 'id' not in kwargs:
-        kwargs.update(id=1)
-    if 'jsonrpc' not in kwargs:
+
+    # We do not accept both args and kwargs
+    if args and kwargs:
+        log_error('Wrong use of jsonrpc()')
+        return None
+
+    # Process a list of actions
+    if args:
+        for (idx, cmd) in enumerate(args):
+            if cmd.get('id') is None:
+                cmd.update(id=idx)
+            if cmd.get('jsonrpc') is None:
+                cmd.update(jsonrpc='2.0')
+        return loads(xbmc.executeJSONRPC(dumps(args)))
+
+    # Process a single action
+    if kwargs.get('id') is None:
+        kwargs.update(id=0)
+    if kwargs.get('jsonrpc') is None:
         kwargs.update(jsonrpc='2.0')
     return loads(xbmc.executeJSONRPC(dumps(kwargs)))
 
