@@ -692,7 +692,7 @@ def container_refresh(url=None):
 
 
 def container_update(url=None):
-    ''' Update the current container with respect for the path history. '''
+    ''' Update the current container while respecting the path history. '''
     if url:
         log(3, 'Execute: Container.Update({url})', url=url)
         xbmc.executebuiltin('Container.Update({url})'.format(url=url))
@@ -839,14 +839,19 @@ def ttl(kind='direct'):
     return 5 * 60
 
 
-def get_json_data(response):
+def get_json_data(response, fail=None):
     ''' Return json object from HTTP response '''
     from json import load, loads
-    if (3, 0, 0) <= version_info <= (3, 5, 9):  # the JSON object must be str, not 'bytes'
-        json_data = loads(to_unicode(response.read()))
-    else:
-        json_data = load(response)
-    return json_data
+    try:
+        if (3, 0, 0) <= version_info <= (3, 5, 9):  # the JSON object must be str, not 'bytes'
+            return loads(to_unicode(response.read()))
+        return load(response)
+    except TypeError as exc:  # 'NoneType' object is not callable
+        log_error('JSON TypeError: {exc}', exc=exc)
+        return fail
+    except ValueError as exc:  # No JSON object could be decoded
+        log_error('JSON ValueError: {exc}', exc=exc)
+        return fail
 
 
 def get_url_json(url, cache=None, headers=None, data=None, fail=None):
@@ -860,15 +865,16 @@ def get_url_json(url, cache=None, headers=None, data=None, fail=None):
 
     if headers is None:
         headers = dict()
-    log(2, 'URL get: {url}', url=unquote(url))
     req = Request(url, headers=headers)
+
     if data is not None:
+        log(2, 'URL post: {url}', url=unquote(url))
+        log(2, 'URL post data: {data}', data=data)
         req.data = data
+    else:
+        log(2, 'URL get: {url}', url=unquote(url))
     try:
-        json_data = get_json_data(urlopen(req))
-    except ValueError as exc:  # No JSON object could be decoded
-        log_error('JSON Error {url}: {exc}', exc=exc, url=url)
-        return fail
+        json_data = get_json_data(urlopen(req), fail=fail)
     except HTTPError as exc:
         if hasattr(req, 'selector'):  # Python 3.4+
             url_length = len(req.selector)
@@ -885,7 +891,7 @@ def get_url_json(url, cache=None, headers=None, data=None, fail=None):
                       'VRT Search API url has a length of {length} characters.', length=url_length)
             return fail
         try:
-            return get_json_data(exc)
+            return get_json_data(exc, fail=fail)
         except ValueError as exc:  # No JSON object could be decoded
             log_error('JSON Error {url}: {exc}', exc=exc, url=url)
             return fail
