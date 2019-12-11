@@ -29,7 +29,7 @@ class TestVRTPlayer(unittest.TestCase):
     _vrtplayer = VRTPlayer()
 
     def test_show_videos_single_episode_shows_videos(self):
-        ''' Test listing single episode for a given program '''
+        ''' Test listing single episode for a given program (marathonradio) '''
         program = 'marathonradio'
         episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program)
         self.assertTrue(episode_items, msg=program)
@@ -40,18 +40,18 @@ class TestVRTPlayer(unittest.TestCase):
         self._vrtplayer.show_episodes_menu(program)
 
     def test_show_videos_single_season_shows_videos(self):
-        ''' Test listing single season for a given program '''
+        ''' Test listing single season for a given program (het-weer) '''
         program = 'het-weer'
         episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program)
         self.assertTrue(episode_items, msg=program)
-        self.assertEqual(sort, 'dateadded')
+        self.assertEqual(sort, 'label')
         self.assertFalse(ascending)
-        self.assertEqual(content, 'episodes')
+        self.assertEqual(content, 'seasons')
 
         self._vrtplayer.show_episodes_menu(program)
 
     def test_show_videos_multiple_seasons_shows_videos(self):
-        ''' Test listing multiple season for a given program '''
+        ''' Test listing multiple season for a given program (pano) '''
         program = 'pano'
         episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program)
         self.assertTrue(episode_items)
@@ -62,7 +62,7 @@ class TestVRTPlayer(unittest.TestCase):
         self._vrtplayer.show_episodes_menu(program)
 
     def test_show_videos_specific_seasons_shows_videos(self):
-        ''' Test listing specific seasons for a given program '''
+        ''' Test listing specific seasons for a given program (thuis) '''
         program = 'thuis'
         episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program)
         self.assertTrue(episode_items, msg=program)

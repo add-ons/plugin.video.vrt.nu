@@ -20,6 +20,7 @@ xbmcvfs = __import__('xbmcvfs')
 
 addon = xbmcaddon.Addon()
 addon.settings['usefavorites'] = 'true'
+itemsperpage = int(addon.settings.get('itemsperpage'))
 
 
 class TestFavorites(unittest.TestCase):
@@ -32,7 +33,7 @@ class TestFavorites(unittest.TestCase):
     def test_get_recent_episodes(self):
         ''' Test items, sort and order '''
         episode_items, sort, ascending, content = self._apihelper.list_episodes(page=1, variety='recent')
-        self.assertEqual(len(episode_items), 50)
+        self.assertEqual(len(episode_items), itemsperpage)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
