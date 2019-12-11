@@ -18,6 +18,9 @@ xbmcgui = __import__('xbmcgui')
 xbmcplugin = __import__('xbmcplugin')
 xbmcvfs = __import__('xbmcvfs')
 
+addon = xbmcaddon.Addon()
+itemsperpage = int(addon.settings.get('itemsperpage'))
+
 
 class TestApiHelper(unittest.TestCase):
     ''' TestCase class '''
@@ -61,7 +64,7 @@ class TestApiHelper(unittest.TestCase):
     def test_get_recent_episodes(self):
         ''' Test items, sort and order '''
         episode_items, sort, ascending, content = self._apihelper.list_episodes(page=1, variety='recent')
-        self.assertEqual(len(episode_items), 50)
+        self.assertEqual(len(episode_items), itemsperpage)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
@@ -69,7 +72,7 @@ class TestApiHelper(unittest.TestCase):
     def test_get_recent_episodes_page1(self):
         ''' Test items, sort and order '''
         episode_items, sort, ascending, content = self._apihelper.list_episodes(page=2, variety='recent')
-        self.assertEqual(len(episode_items), 50)
+        self.assertEqual(len(episode_items), itemsperpage)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
@@ -77,7 +80,7 @@ class TestApiHelper(unittest.TestCase):
     def test_get_recent_episodes_page2(self):
         ''' Test items, sort and order '''
         episode_items, sort, ascending, content = self._apihelper.list_episodes(page=3, variety='recent')
-        self.assertEqual(len(episode_items), 50)
+        self.assertEqual(len(episode_items), itemsperpage)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')

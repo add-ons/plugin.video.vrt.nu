@@ -18,6 +18,9 @@ xbmcgui = __import__('xbmcgui')
 xbmcplugin = __import__('xbmcplugin')
 xbmcvfs = __import__('xbmcvfs')
 
+addon = xbmcaddon.Addon()
+itemsperpage = int(addon.settings.get('itemsperpage'))
+
 
 class TestSearch(unittest.TestCase):
     ''' TestClass class '''
@@ -31,7 +34,7 @@ class TestSearch(unittest.TestCase):
         search_items, sort, ascending, content = self._apihelper.list_search('journaal', page=1)
 
         # Test we get a non-empty search result
-        self.assertEqual(len(search_items), 50)
+        self.assertEqual(len(search_items), itemsperpage)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
@@ -41,7 +44,7 @@ class TestSearch(unittest.TestCase):
         search_items, sort, ascending, content = self._apihelper.list_search('journaal', page=2)
 
         # Test we get a non-empty search result
-        self.assertEqual(len(search_items), 50)
+        self.assertEqual(len(search_items), itemsperpage)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
@@ -51,7 +54,7 @@ class TestSearch(unittest.TestCase):
         search_items, sort, ascending, content = self._apihelper.list_search('weer', page=1)
 
         # Test we get a non-empty search result
-        self.assertEqual(len(search_items), 50)
+        self.assertEqual(len(search_items), itemsperpage)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
