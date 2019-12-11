@@ -694,8 +694,11 @@ def container_refresh(url=None):
 def container_update(url=None):
     ''' Update the current container with respect for the path history. '''
     if url:
-        log(3, 'Execute: Container.Update({url})', url=url)
-        xbmc.executebuiltin('Container.Update({url})'.format(url=url))
+        # log(3, 'Execute: Container.Update({url})', url=url)
+        # xbmc.executebuiltin('Container.Update({url})'.format(url=url))
+        # ActivateWindow seems to work better after closing Kodi Player
+        log(3, 'Execute: ActivateWindow(Videos,{url})', url=url)
+        xbmc.executebuiltin('ActivateWindow(Videos,{url})'.format(url=url))
     else:
         # URL is a mandatory argument for Container.Update, use Container.Refresh instead
         container_refresh()
