@@ -171,7 +171,7 @@ class PlayerInfo(Player):
 
     def push_upnext(self):
         ''' Push episode info to Up Next service add-on'''
-        if has_addon('service.upnext') and get_setting('useupnext', 'true') == 'true':
+        if has_addon('service.upnext') and get_setting('useupnext', 'true') == 'true' and self.isPlaying():
             info_tag = self.getVideoInfoTag()
             next_info = self.apihelper.get_upnext(dict(
                 program=to_unicode(info_tag.getTVShowTitle()),
