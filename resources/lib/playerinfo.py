@@ -171,7 +171,7 @@ class PlayerInfo(Player):
 
     def push_upnext(self):
         ''' Push episode info to Up Next service add-on'''
-        if has_addon('service.upnext') and get_setting('useupnext', 'true') == 'true':
+        if has_addon('service.upnext') and get_setting('useupnext', 'true') == 'true' and self.isPlaying():
             info_tag = self.getVideoInfoTag()
             next_info = self.apihelper.get_upnext(dict(
                 program=to_unicode(info_tag.getTVShowTitle()),
@@ -189,17 +189,15 @@ class PlayerInfo(Player):
 
     def update_position(self):
         ''' Update the player position, when possible '''
-        try:
-            self.last_pos = self.getTime()
-        except RuntimeError:
-            pass
+        if not self.isPlaying():
+            return
+        self.last_pos = self.getTime()
 
     def update_total(self):
         ''' Update the total video time '''
-        try:
-            self.total = self.getTotalTime()
-        except RuntimeError:
-            pass
+        if not self.isPlaying():
+            return
+        self.total = self.getTotalTime()
 
     def push_position(self, position=0, total=100):
         ''' Push player position to VRT NU resumepoints API '''
