@@ -59,7 +59,8 @@ class ResumePoints:
         if position is not None and total is not None and position >= total - 30:
             watch_later = False
 
-        self.refresh(ttl=0)
+        # Survive any recent updates
+        self.refresh(ttl=5)
 
         if watch_later is not None and position is None and total is None and watch_later is self.is_watchlater(asset_id):
             # watchLater status is not changed, nothing to do

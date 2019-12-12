@@ -53,7 +53,8 @@ class Favorites:
     def update(self, program, title, value=True):
         ''' Set a program as favorite, and update local copy '''
 
-        self.refresh(ttl=0)
+        # Survive any recent updates
+        self.refresh(ttl=5)
 
         if value is self.is_favorite(program):
             # Already followed/unfollowed, nothing to do

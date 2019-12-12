@@ -6,8 +6,8 @@
 from __future__ import absolute_import, division, unicode_literals
 from favorites import Favorites
 from kodiutils import (addon_profile, container_refresh, end_of_directory, get_json_data,
-                       get_search_string, get_setting, localize, log_error, ok_dialog, open_file,
-                       show_listing, ttl, url_for)
+                       get_search_string, get_setting, localize, ok_dialog, open_file, show_listing,
+                       ttl, url_for)
 from resumepoints import ResumePoints
 
 
@@ -23,11 +23,7 @@ class Search:
     def read_history(self):
         ''' Read search history from disk '''
         with open_file(self._search_history, 'r') as fdesc:
-            try:
-                return get_json_data(fdesc)
-            except ValueError as exc:  # No JSON object could be decoded
-                log_error('JSON Error: {exc}', exc=exc)
-                return []
+            return get_json_data(fdesc, fail=[])
 
     def write_history(self, history):
         ''' Write search history to disk '''

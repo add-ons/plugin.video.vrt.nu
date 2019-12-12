@@ -691,7 +691,7 @@ def container_refresh(url=None):
         xbmc.executebuiltin('Container.Refresh')
 
 
-def container_update(url=None):
+def container_update(url):
     ''' Update the current container while respecting the path history. '''
     if url:
         log(3, 'Execute: Container.Update({url})', url=url)
@@ -784,7 +784,7 @@ def get_cache(path, ttl=None):  # pylint: disable=redefined-outer-name
     from time import localtime, mktime
     mtime = stat_file(fullpath).st_mtime()
     now = mktime(localtime())
-    if ttl and now >= mtime + ttl:
+    if ttl is not None and now >= mtime + ttl:
         return None
 
     if ttl is None:
@@ -792,11 +792,7 @@ def get_cache(path, ttl=None):  # pylint: disable=redefined-outer-name
     else:
         log(3, "Cache '{path}' is fresh, expires in {time}.", path=path, time=human_delta(mtime + ttl - now))
     with open_file(fullpath, 'r') as fdesc:
-        try:
-            return get_json_data(fdesc)
-        except ValueError as exc:  # No JSON object could be decoded
-            log_error('JSON Error {path}: {exc}', exc=exc, path=path)
-            return None
+        return get_json_data(fdesc)
 
 
 def update_cache(path, data):
@@ -890,12 +886,9 @@ def get_url_json(url, cache=None, headers=None, data=None, fail=None):
             log_error('HTTP Error 400: Probably exceeded maximum url length: '
                       'VRT Search API url has a length of {length} characters.', length=url_length)
             return fail
-        try:
-            return get_json_data(exc, fail=fail)
-        except ValueError as exc:  # No JSON object could be decoded
-            log_error('JSON Error {url}: {exc}', exc=exc, url=url)
-            return fail
-        raise
+        json_data = get_json_data(exc, fail=fail)
+        if json_data is None:
+            raise
     else:
         if cache:
             update_cache(cache, json_data)
