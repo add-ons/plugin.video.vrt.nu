@@ -177,6 +177,7 @@ def show_listing(list_items, category=None, sort='unsorted', ascending=True, con
 #        xbmcplugin.setProperty(handle=plugin.handle, key='sort.order', value=str(SORT_METHODS['unsorted']))
 
     listing = []
+    showfanart = bool(get_setting('showfanart', 'true') == 'true')
     for title_item in list_items:
         # Three options:
         #  - item is a virtual directory/folder (not playable, path)
@@ -205,11 +206,13 @@ def show_listing(list_items, category=None, sort='unsorted', ascending=True, con
         # FIXME: The setIsFolder method is new in Kodi18, so we cannot use it just yet
         # list_item.setIsFolder(is_folder)
 
-        if title_item.art_dict:
-            title_item.art_dict.update(fanart=addon_fanart())
-        else:
-            title_item.art_dict = dict(fanart=addon_fanart())
-        list_item.setArt(title_item.art_dict)
+        if showfanart:
+            # Add add-on fanart when fanart is missing
+            if not title_item.art_dict:
+                title_item.art_dict = dict(fanart=addon_fanart())
+            elif not title_item.art_dict.get('fanart'):
+                title_item.art_dict.update(fanart=addon_fanart())
+            list_item.setArt(title_item.art_dict)
 
         if title_item.info_dict:
             # type is one of: video, music, pictures, game
