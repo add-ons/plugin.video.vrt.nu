@@ -220,24 +220,47 @@ class PlayerInfo(Player):
             asynchronous=True
         )
 
-        # Kodi uses different resumepoint margins than VRT NU, to obey to VRT NU resumepoint margins we need to reload the container
-        # to overwrite Kodi watch status when the position is in these margins.
-        # Use setting from advancedsettings.xml or default value
-        # https://github.com/xbmc/xbmc/blob/master/xbmc/settings/AdvancedSettings.cpp
-        # https://kodi.wiki/view/HOW-TO:Modify_automatic_watch_and_resume_points
-        ignoresecondsatstart = get_advanced_setting('video/ignoresecondsatstart', default=180)
-        ignorepercentatend = get_advanced_setting('video/ignorepercentatend', default=8)
-
-        # Do not reload container and rely on Kodi internal watch status when watching a single episode that is partly watched.
-        # Kodi internal watch status is only updated when the play action is initiated from the GUI, so this only works for single episodes.
+        # Kodi internal watch status is only updated when the play action is initiated from the GUI, so this doesn't work after quitting "Up Next"
         if (not self.path.startswith('plugin://plugin.video.vrt.nu/play/upnext')
-                and ignoresecondsatstart < position < (100 - ignorepercentatend) / 100 * total):
+                and not self.overrule_kodi_watchstatus(position, total)):
             return
 
         # Do not reload container when playing or not stopped
         if self.isPlaying() or not self.quit.is_set():
             return
 
-        # A container reload is needed when watching multiple episodes with "Up Next", because Kodi doesn't update the last watched episode.
-        # Only reload container we originated from this menu
         container_reload()
+
+    @staticmethod
+    def overrule_kodi_watchstatus(position, total):
+        ''' Determine if we need to overrule the Kodi watch status '''
+
+        # Kodi uses different resumepoint margins than VRT NU, to obey to VRT NU resumepoint margins
+        # we sometimes need to overrule Kodi watch status.
+        # Use setting from advancedsettings.xml or default value
+        # https://github.com/xbmc/xbmc/blob/master/xbmc/settings/AdvancedSettings.cpp
+        # https://kodi.wiki/view/HOW-TO:Modify_automatic_watch_and_resume_points
+
+        ignoresecondsatstart = get_advanced_setting('video/ignoresecondsatstart', default=180)
+        ignorepercentatend = get_advanced_setting('video/ignorepercentatend', default=8)
+
+        # Convert percentage to seconds
+        ignoresecondsatend = round(total - (100 - ignorepercentatend) / 100.0 * total)
+
+        if position <= max(SECONDS_MARGIN, ignoresecondsatstart):
+            # Check start margins
+            if ignoresecondsatstart >= SECONDS_MARGIN:
+                if SECONDS_MARGIN <= position <= ignoresecondsatstart:
+                    return True
+            elif ignoresecondsatstart <= position <= SECONDS_MARGIN:
+                return True
+
+        if position >= min(total - SECONDS_MARGIN, total - ignoresecondsatend):
+            # Check end margins
+            if ignoresecondsatend >= SECONDS_MARGIN:
+                if SECONDS_MARGIN <= total - position <= ignoresecondsatend:
+                    return True
+            elif ignoresecondsatend <= total - position <= SECONDS_MARGIN:
+                return True
+
+        return False
