@@ -691,8 +691,8 @@ def container_refresh(url=None):
         xbmc.executebuiltin('Container.Refresh')
 
 
-def container_update(url=None):
-    ''' Update the current container with respect for the path history. '''
+def container_update(url):
+    ''' Update the current container while respecting the path history. '''
     if url:
         log(3, 'Execute: Container.Update({url})', url=url)
         xbmc.executebuiltin('Container.Update({url})'.format(url=url))
@@ -784,7 +784,7 @@ def get_cache(path, ttl=None):  # pylint: disable=redefined-outer-name
     from time import localtime, mktime
     mtime = stat_file(fullpath).st_mtime()
     now = mktime(localtime())
-    if ttl and now >= mtime + ttl:
+    if ttl is not None and now >= mtime + ttl:
         return None
 
     if ttl is None:
@@ -792,11 +792,7 @@ def get_cache(path, ttl=None):  # pylint: disable=redefined-outer-name
     else:
         log(3, "Cache '{path}' is fresh, expires in {time}.", path=path, time=human_delta(mtime + ttl - now))
     with open_file(fullpath, 'r') as fdesc:
-        try:
-            return get_json_data(fdesc)
-        except ValueError as exc:  # No JSON object could be decoded
-            log_error('JSON Error {path}: {exc}', exc=exc, path=path)
-            return None
+        return get_json_data(fdesc)
 
 
 def update_cache(path, data):
@@ -839,14 +835,19 @@ def ttl(kind='direct'):
     return 5 * 60
 
 
-def get_json_data(response):
+def get_json_data(response, fail=None):
     ''' Return json object from HTTP response '''
     from json import load, loads
-    if (3, 0, 0) <= version_info <= (3, 5, 9):  # the JSON object must be str, not 'bytes'
-        json_data = loads(to_unicode(response.read()))
-    else:
-        json_data = load(response)
-    return json_data
+    try:
+        if (3, 0, 0) <= version_info <= (3, 5, 9):  # the JSON object must be str, not 'bytes'
+            return loads(to_unicode(response.read()))
+        return load(response)
+    except TypeError as exc:  # 'NoneType' object is not callable
+        log_error('JSON TypeError: {exc}', exc=exc)
+        return fail
+    except ValueError as exc:  # No JSON object could be decoded
+        log_error('JSON ValueError: {exc}', exc=exc)
+        return fail
 
 
 def get_url_json(url, cache=None, headers=None, data=None, fail=None):
@@ -860,15 +861,16 @@ def get_url_json(url, cache=None, headers=None, data=None, fail=None):
 
     if headers is None:
         headers = dict()
-    log(2, 'URL get: {url}', url=unquote(url))
     req = Request(url, headers=headers)
+
     if data is not None:
+        log(2, 'URL post: {url}', url=unquote(url))
+        log(2, 'URL post data: {data}', data=data)
         req.data = data
+    else:
+        log(2, 'URL get: {url}', url=unquote(url))
     try:
-        json_data = get_json_data(urlopen(req))
-    except ValueError as exc:  # No JSON object could be decoded
-        log_error('JSON Error {url}: {exc}', exc=exc, url=url)
-        return fail
+        json_data = get_json_data(urlopen(req), fail=fail)
     except HTTPError as exc:
         if hasattr(req, 'selector'):  # Python 3.4+
             url_length = len(req.selector)
@@ -884,12 +886,9 @@ def get_url_json(url, cache=None, headers=None, data=None, fail=None):
             log_error('HTTP Error 400: Probably exceeded maximum url length: '
                       'VRT Search API url has a length of {length} characters.', length=url_length)
             return fail
-        try:
-            return get_json_data(exc)
-        except ValueError as exc:  # No JSON object could be decoded
-            log_error('JSON Error {url}: {exc}', exc=exc, url=url)
-            return fail
-        raise
+        json_data = get_json_data(exc, fail=fail)
+        if json_data is None:
+            raise
     else:
         if cache:
             update_cache(cache, json_data)

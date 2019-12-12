@@ -68,12 +68,13 @@ class TestKodiUtils(unittest.TestCase):
     def test_container_refresh():
         ''' Test refreshing the current container '''
         kodiutils.container_refresh()
+        kodiutils.container_refresh(None)
         kodiutils.container_refresh('plugin://plugin.video.vrt.nu/')
 
     @staticmethod
     def test_container_update():
         ''' Test updating the current container '''
-        kodiutils.container_update()
+        kodiutils.container_update(None)
         kodiutils.container_update('plugin://plugin.video.vrt.nu/')
 
     def test_supports_drm(self):

@@ -15,6 +15,7 @@ except ImportError:  # Python 2
 from kodiutils import (container_refresh, get_cache, get_proxies, get_setting, get_url_json,
                        has_credentials, input_down, invalidate_caches, localize, log, log_error,
                        multiselect, notification, ok_dialog, update_cache)
+from utils import program_to_id
 
 
 class Favorites:
@@ -52,7 +53,8 @@ class Favorites:
     def update(self, program, title, value=True):
         ''' Set a program as favorite, and update local copy '''
 
-        self.refresh(ttl=0)
+        # Survive any recent updates
+        self.refresh(ttl=5)
 
         if value is self.is_favorite(program):
             # Already followed/unfollowed, nothing to do
@@ -75,7 +77,7 @@ class Favorites:
         from utils import program_to_url
         payload = dict(isFavorite=value, programUrl=program_to_url(program, 'short'), title=title)
         data = dumps(payload).encode('utf-8')
-        program_id = self.program_to_id(program)
+        program_id = program_to_id(program)
         log(2, 'URL post: https://video-user-data.vrt.be/favorites/{program_id}', program_id=program_id)
         try:
             get_url_json('https://video-user-data.vrt.be/favorites/%s' % program_id, headers=headers, data=data)
@@ -92,7 +94,7 @@ class Favorites:
     def is_favorite(self, program):
         ''' Is a program a favorite ? '''
         value = False
-        favorite = self._data.get(self.program_to_id(program))
+        favorite = self._data.get(program_to_id(program))
         if favorite:
             value = favorite.get('value', {}).get('isFavorite')
         return value is True
@@ -113,11 +115,6 @@ class Favorites:
             if move_down:
                 input_down()
             container_refresh()
-
-    @staticmethod
-    def program_to_id(program):
-        ''' Convert a program url component (e.g. de-campus-cup) to a favorite program_id (e.g. vrtnuazdecampuscup), used for lookups in favorites dict '''
-        return 'vrtnuaz' + program.replace('-', '')
 
     def titles(self):
         ''' Return all favorite titles '''

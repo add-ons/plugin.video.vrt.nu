@@ -98,11 +98,10 @@ class TokenResolver:
             return None
 
         with open_file(path) as fdesc:
-            try:
-                token = get_json_data(fdesc)
-            except ValueError as exc:  # No JSON object could be decoded
-                log_error('JSON Error: {exc}', exc=exc)
-                return None
+            token = get_json_data(fdesc)
+
+        if token is None:
+            return None
 
         from datetime import datetime
         import dateutil.parser

@@ -10,6 +10,7 @@ import unittest
 from apihelper import ApiHelper
 from favorites import Favorites
 from resumepoints import ResumePoints
+from utils import assetpath_to_id
 
 xbmc = __import__('xbmc')
 xbmcaddon = __import__('xbmcaddon')
@@ -64,11 +65,11 @@ class TestResumePoints(unittest.TestCase):
 
     def test_assetpath_to_id(self):
         ''' Test converting assetpath to assetid '''
-        self.assertEqual(None, self._resumepoints.assetpath_to_id(None))
+        self.assertEqual(None, assetpath_to_id(None))
 
         asset_path = '/content/dam/vrt/2019/08/14/woodstock-depot_WP00157456'
         asset_id = 'contentdamvrt20190814woodstockdepotwp00157456'
-        self.assertEqual(asset_id, self._resumepoints.assetpath_to_id(asset_path))
+        self.assertEqual(asset_id, assetpath_to_id(asset_path))
 
     def test_update_none(self):
         ''' Test updating empty resumepoints '''
