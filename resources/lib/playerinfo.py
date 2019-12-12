@@ -65,11 +65,6 @@ class PlayerInfo(Player):
         self.url = url_to_episode(episode.get('url', ''))
         self.ep_id = 'S%sE%s' % (episode.get('seasonTitle'), episode.get('episodeNumber'))
         self.whatson_id = episode.get('whatsonId') if episode.get('whatsonId') else None
-        self.update_position()
-        self.update_total()
-
-        # Reset VRT NU resumepoint
-        self.push_position()
 
     def onAVStarted(self):  # pylint: disable=invalid-name
         ''' Called when Kodi has a video or audiostream '''
@@ -79,6 +74,7 @@ class PlayerInfo(Player):
         self.quit.clear()
         self.update_position()
         self.update_total()
+        self.push_position()
         self.push_upnext()
 
         # StreamPosition thread keeps running when watching multiple episode with "Up Next"
