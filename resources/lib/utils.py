@@ -158,6 +158,21 @@ def video_to_api_url(url):
     return url
 
 
+def program_to_id(program):
+    ''' Convert a program url component (e.g. de-campus-cup)
+        to a favorite program_id (e.g. vrtnuazdecampuscup), used for lookups in favorites dict '''
+    return 'vrtnuaz' + program.replace('-', '')
+
+
+def assetpath_to_id(assetpath):
+    ''' Convert an assetpath (e.g. /content/dam/vrt/2019/08/14/woodstock-depot_WP00157456)
+        to a resumepoint asset_id (e.g. contentdamvrt20190814woodstockdepotwp00157456) '''
+    # The video has no assetPath, so we return None instead
+    if assetpath is None:
+        return None
+    return assetpath.translate({ord(char): None for char in '/-_'}).lower()
+
+
 def play_url_to_id(url):
     ''' Convert a plugin:// url (e.g. plugin://plugin.video.vrt.nu/play/id/vid-5b12c0f6-b8fe-426f-a600-557f501f3be9/pbs-pub-7e2764cf-a8c0-4e78-9cbc-46d39381c237)
         to an id dictionary (e.g. {'video_id': 'vid-5b12c0f6-b8fe-426f-a600-557f501f3be9'}

@@ -13,8 +13,9 @@ except ImportError:  # Python 2
 
 from data import CHANNELS, SECONDS_MARGIN
 from kodiutils import get_setting, localize, localize_datelong, log, url_for
-from utils import (add_https_proto, capitalize, find_entry, from_unicode, html_to_kodilabel,
-                   reformat_url, shorten_link, to_unicode, unescape, url_to_episode)
+from utils import (add_https_proto, assetpath_to_id, capitalize, find_entry, from_unicode,
+                   html_to_kodilabel, reformat_url, shorten_link, to_unicode, unescape,
+                   url_to_episode)
 
 
 class Metadata:
@@ -76,7 +77,7 @@ class Metadata:
                 # We need to ensure forward slashes are quoted
                 program_title = to_unicode(quote_plus(from_unicode(program_title)))
                 url = url_to_episode(api_data.get('url', ''))
-                asset_id = self._resumepoints.assetpath_to_id(assetpath)
+                asset_id = assetpath_to_id(assetpath)
                 if self._resumepoints.is_watchlater(asset_id):
                     extras = {}
                     # If we are in a watchlater menu, move cursor down before removing a favorite
@@ -170,7 +171,7 @@ class Metadata:
         if self._resumepoints.is_activated():
             assetpath = self.get_assetpath(api_data)
             if assetpath:
-                asset_id = self._resumepoints.assetpath_to_id(assetpath)
+                asset_id = assetpath_to_id(assetpath)
                 position = self._resumepoints.get_position(asset_id)
                 total = self._resumepoints.get_total(asset_id)
                 if position and total and position > total - SECONDS_MARGIN:
@@ -188,7 +189,7 @@ class Metadata:
                 # We need to ensure forward slashes are quoted
                 program_title = to_unicode(quote_plus(from_unicode(api_data.get('program'))))
 
-                asset_id = self._resumepoints.assetpath_to_id(assetpath)
+                asset_id = assetpath_to_id(assetpath)
                 url = reformat_url(api_data.get('url', ''), 'medium')
                 properties.update(asset_id=asset_id, url=url, title=program_title)
 

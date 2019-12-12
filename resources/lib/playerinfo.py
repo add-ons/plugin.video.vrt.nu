@@ -11,7 +11,7 @@ from data import SECONDS_MARGIN
 from favorites import Favorites
 from kodiutils import addon_id, container_reload, get_advanced_setting, get_setting, has_addon, log, notify
 from resumepoints import ResumePoints
-from utils import play_url_to_id, to_unicode, url_to_episode
+from utils import assetpath_to_id, play_url_to_id, to_unicode, url_to_episode
 
 
 class PlayerInfo(Player):
@@ -60,7 +60,7 @@ class PlayerInfo(Player):
         if episode is None:
             return
 
-        self.asset_id = self.resumepoints.assetpath_to_id(episode.get('assetPath'))
+        self.asset_id = assetpath_to_id(episode.get('assetPath'))
         self.title = episode.get('program')
         self.url = url_to_episode(episode.get('url', ''))
         self.ep_id = 'S%sE%s' % (episode.get('seasonTitle'), episode.get('episodeNumber'))

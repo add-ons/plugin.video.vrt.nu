@@ -13,7 +13,7 @@ except ImportError:  # Python 2
 
 from data import SECONDS_MARGIN
 from kodiutils import (container_refresh, get_cache, get_proxies, get_setting, get_url_json,
-                       has_credentials, input_down, invalidate_caches, localize, log, log_error,
+                       has_credentials, input_down, invalidate_caches, localize, log_error,
                        notification, update_cache)
 
 
@@ -106,10 +106,8 @@ class ResumePoints:
         if asynchronous:
             from threading import Thread
             Thread(target=self.update_online, name='ResumePointsUpdate', args=(asset_id, title, url, payload)).start()
-        else:
-            return self.update_online(asset_id, title, url, payload)
-
-        return True
+            return True
+        return self.update_online(asset_id, title, url, payload)
 
     @staticmethod
     def update_online(asset_id, title, url, payload):
@@ -129,8 +127,6 @@ class ResumePoints:
         }
         from json import dumps
         data = dumps(payload).encode()
-        log(2, 'URL post: https://video-user-data.vrt.be/resume_points/{asset_id}', asset_id=asset_id)
-        log(2, 'URL post data: {data}', data=data)
         try:
             get_url_json('https://video-user-data.vrt.be/resume_points/%s' % asset_id, headers=headers, data=data)
         except HTTPError as exc:
@@ -172,15 +168,6 @@ class ResumePoints:
         ''' Return the stored url a video '''
         from utils import reformat_url
         return reformat_url(self._data.get(asset_id, {}).get('value', {}).get('url'), url_type)
-
-    @staticmethod
-    def assetpath_to_id(assetpath):
-        ''' Convert an assetpath (e.g. /content/dam/vrt/2019/08/14/woodstock-depot_WP00157456)
-            to a resumepoint asset_id (e.g. contentdamvrt20190814woodstockdepotwp00157456) '''
-        # The video has no assetPath, so we return None instead
-        if assetpath is None:
-            return None
-        return assetpath.translate({ord(char): None for char in '/-_'}).lower()
 
     def watchlater_urls(self):
         ''' Return all watchlater urls '''
