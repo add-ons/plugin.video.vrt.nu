@@ -75,6 +75,16 @@ class TestResumePoints(unittest.TestCase):
         ''' Test updating empty resumepoints '''
         self.assertTrue(self._resumepoints.update(asset_id=None, title=None, url=None))
 
+    def test_overrule_kodi_watchstatus(self):
+        ''' Test the overrule Kodi watch status function '''
+        from playerinfo import PlayerInfo
+        self.assertTrue(PlayerInfo.overrule_kodi_watchstatus(45, 2584))
+        self.assertFalse(PlayerInfo.overrule_kodi_watchstatus(10, 2584))
+        self.assertFalse(PlayerInfo.overrule_kodi_watchstatus(181, 2584))
+        self.assertFalse(PlayerInfo.overrule_kodi_watchstatus(2360, 2584))
+        self.assertTrue(PlayerInfo.overrule_kodi_watchstatus(2553, 2584))
+        self.assertFalse(PlayerInfo.overrule_kodi_watchstatus(2580, 2584))
+
 
 if __name__ == '__main__':
     unittest.main()
