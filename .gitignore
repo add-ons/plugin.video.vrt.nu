@@ -87,6 +87,9 @@ msbuild.wrn
 kodi-addon-checker-report.log
 kodi-addon-checker.log
 
+# Temporary
+experiment/
+
 # Userdata
 test/cdm/
 test/userdata/cache/

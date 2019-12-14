@@ -760,7 +760,8 @@ class ApiHelper:
             except Exception:  # pylint: disable=broad-except
                 categories = []
             else:
-                update_cache('categories.json', categories)
+                from json import dumps
+                update_cache('categories.json', dumps(categories))
 
         # Use the cache anyway (better than hard-coded)
         if not categories:

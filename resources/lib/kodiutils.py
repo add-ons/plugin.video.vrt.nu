@@ -806,10 +806,10 @@ def get_cache(path, ttl=None):  # pylint: disable=redefined-outer-name
     if ttl is not None and now >= mtime + ttl:
         return None
 
-    if ttl is None:
-        log(3, "Cache '{path}' is forced from cache.", path=path)
-    else:
-        log(3, "Cache '{path}' is fresh, expires in {time}.", path=path, time=human_delta(mtime + ttl - now))
+#    if ttl is None:
+#        log(3, "Cache '{path}' is forced from cache.", path=path)
+#    else:
+#        log(3, "Cache '{path}' is fresh, expires in {time}.", path=path, time=human_delta(mtime + ttl - now))
     with open_file(fullpath, 'r') as fdesc:
         return get_json_data(fdesc)
 
@@ -819,30 +819,40 @@ def update_cache(path, data):
     if get_setting('usehttpcaching', 'true') == 'false':
         return
 
-    from hashlib import md5
-    from json import dump, dumps
     fullpath = get_cache_path() + path
-    if exists(fullpath):
-        with open_file(fullpath) as fdesc:
-            cachefile = fdesc.read().encode('utf-8')
-        md5_cache = md5(cachefile)
-    else:
-        md5_cache = 0
+    if not exists(fullpath):
         # Create cache directory if missing
         if not exists(get_cache_path()):
             mkdirs(get_cache_path())
+        write_cache(path, data)
+        return
+
+    with open_file(fullpath, 'r') as fdesc:
+        cache = fdesc.read()
 
     # Avoid writes if possible (i.e. SD cards)
-    if md5_cache != md5(dumps(data).encode('utf-8')):
-        log(3, "Write cache '{path}'.", path=path)
-        with open_file(fullpath, 'w') as fdesc:
-            # dump(data, fdesc, encoding='utf-8')
-            dump(data, fdesc)
-    else:
-        # Update timestamp
-        from os import utime
-        log(3, "Cache '{path}' has not changed, updating mtime only.", path=path)
-        utime(path)
+    if cache == data:
+        update_timestamp(path)
+        return
+
+    write_cache(path, data)
+
+
+def write_cache(path, data):
+    ''' Write data to cache '''
+    log(3, "Write cache '{path}'.", path=path)
+    fullpath = get_cache_path() + path
+    with open_file(fullpath, 'w') as fdesc:
+        # dump(data, fdesc, encoding='utf-8')
+        fdesc.write(data)
+
+
+def update_timestamp(path):
+    ''' Update a file's timestamp '''
+    from os import utime
+    fullpath = get_cache_path() + path
+    log(3, "Cache '{path}' has not changed, updating mtime only.", path=path)
+    utime(fullpath, None)
 
 
 def ttl(kind='direct'):
@@ -910,7 +920,8 @@ def get_url_json(url, cache=None, headers=None, data=None, fail=None):
             raise
     else:
         if cache:
-            update_cache(cache, json_data)
+            from json import dumps
+            update_cache(cache, dumps(json_data))
     return json_data
 
 
