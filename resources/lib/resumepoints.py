@@ -101,7 +101,8 @@ class ResumePoints:
 
         # NOTE: Updates to resumepoints take a longer time to take effect, so we keep our own cache and use it
         self._data[asset_id] = dict(value=payload)
-        update_cache('resume_points.json', self._data)
+        from json import dumps
+        update_cache('resume_points.json', dumps(self._data))
         invalidate_caches(*removes)
 
         if asynchronous:

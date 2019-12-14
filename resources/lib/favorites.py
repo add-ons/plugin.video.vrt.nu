@@ -13,7 +13,7 @@ except ImportError:  # Python 2
     from urllib2 import build_opener, HTTPError, install_opener, ProxyHandler, unquote
 
 from kodiutils import (container_refresh, get_cache, get_proxies, get_setting, get_url_json,
-                       has_credentials, input_down, invalidate_caches, localize, log, log_error,
+                       has_credentials, input_down, invalidate_caches, localize, log_error,
                        multiselect, notification, ok_dialog, update_cache)
 from utils import program_to_id
 
@@ -78,7 +78,6 @@ class Favorites:
         payload = dict(isFavorite=value, programUrl=program_to_url(program, 'short'), title=title)
         data = dumps(payload).encode('utf-8')
         program_id = program_to_id(program)
-        log(2, 'URL post: https://video-user-data.vrt.be/favorites/{program_id}', program_id=program_id)
         try:
             get_url_json('https://video-user-data.vrt.be/favorites/%s' % program_id, headers=headers, data=data)
         except HTTPError as exc:
@@ -87,7 +86,7 @@ class Favorites:
             return False
         # NOTE: Updates to favorites take a longer time to take effect, so we keep our own cache and use it
         self._data[program_id] = dict(value=payload)
-        update_cache('favorites.json', self._data)
+        update_cache('favorites.json', dumps(self._data))
         invalidate_caches('my-offline-*.json', 'my-recent-*.json')
         return True
 
