@@ -427,6 +427,16 @@ def get_advanced_setting(key, default=None):
     return default
 
 
+def get_advanced_setting_int(key, default=0):
+    ''' Get a setting from advancedsettings.xml as an integer '''
+    if not isinstance(default, int):
+        default = 0
+    setting = get_advanced_setting(key, default)
+    if not isinstance(setting, int):
+        setting = int(setting.strip()) if setting.strip().isdigit() else default
+    return setting
+
+
 def get_property(key, default=None, window_id=10000):
     ''' Get a Window property '''
     from xbmcgui import Window

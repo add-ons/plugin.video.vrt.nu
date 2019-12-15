@@ -9,7 +9,7 @@ from xbmc import getInfoLabel, Player, PlayList
 from apihelper import ApiHelper
 from data import SECONDS_MARGIN
 from favorites import Favorites
-from kodiutils import addon_id, container_reload, get_advanced_setting, get_setting, has_addon, log, notify
+from kodiutils import addon_id, container_reload, get_advanced_setting_int, get_setting, has_addon, log, notify
 from resumepoints import ResumePoints
 from utils import assetpath_to_id, play_url_to_id, to_unicode, url_to_episode
 
@@ -241,8 +241,8 @@ class PlayerInfo(Player):
         # https://github.com/xbmc/xbmc/blob/master/xbmc/settings/AdvancedSettings.cpp
         # https://kodi.wiki/view/HOW-TO:Modify_automatic_watch_and_resume_points
 
-        ignoresecondsatstart = get_advanced_setting('video/ignoresecondsatstart', default=180)
-        ignorepercentatend = get_advanced_setting('video/ignorepercentatend', default=8)
+        ignoresecondsatstart = get_advanced_setting_int('video/ignoresecondsatstart', default=180)
+        ignorepercentatend = get_advanced_setting_int('video/ignorepercentatend', default=8)
 
         # Convert percentage to seconds
         ignoresecondsatend = round(total - (100 - ignorepercentatend) / 100.0 * total)
