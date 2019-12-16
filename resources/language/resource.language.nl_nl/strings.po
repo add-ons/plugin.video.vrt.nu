@@ -900,11 +900,11 @@ msgstr "Caches werden ongeldig gemaakt."
 
 msgctxt "#30982"
 msgid "Successfully refreshed favorites."
-msgstr "Favoriete programmma's werden verversd."
+msgstr "Favoriete programmma's werden ververst."
 
 msgctxt "#30983"
 msgid "Successfully refreshed watching activity."
-msgstr "Kijkactiviteit werd verversd."
+msgstr "Kijkactiviteit werd ververst."
 
 msgctxt "#30985"
 msgid "Successfully cleared VRT tokens."
