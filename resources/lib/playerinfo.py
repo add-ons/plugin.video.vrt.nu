@@ -193,7 +193,10 @@ class PlayerInfo(Player):
     def update_total(self):
         ''' Update the total video time '''
         try:
-            self.total = self.getTotalTime()
+            total = self.getTotalTime()
+            # Kodi Player sometimes returns a total time of 0.0 and this causes unwanted behaviour with VRT NU Resumepoints API.
+            if total > 0.0:
+                self.total = total
         except RuntimeError:
             pass
 
