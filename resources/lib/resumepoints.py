@@ -160,6 +160,8 @@ class ResumePoints:
         if watch_later is False:
             self.refresh_watchlater()
 
+        self.refresh_continuewatching()
+
         if asynchronous:
             from threading import Thread
             Thread(target=self.delete_online, name='ResumePointsDelete', args=(asset_id,)).start()
@@ -181,6 +183,12 @@ class ResumePoints:
     def refresh_watchlater():
         ''' Refresh Watch Later menu '''
         invalidate_caches('watchlater-*.json')
+        container_refresh()
+
+    @staticmethod
+    def refresh_continuewatching():
+        ''' Refresh Continue Watching menu '''
+        invalidate_caches('continue-*.json')
         container_refresh()
 
     def is_watchlater(self, asset_id):
