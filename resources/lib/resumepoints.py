@@ -12,7 +12,7 @@ except ImportError:  # Python 2
     from urllib2 import build_opener, HTTPError, install_opener, ProxyHandler, Request, urlopen
 
 from data import SECONDS_MARGIN
-from kodiutils import (container_refresh, get_advanced_setting_int, get_cache, get_proxies, get_setting,
+from kodiutils import (container_refresh, get_cache, get_proxies, get_setting,
                        get_url_json, has_credentials, input_down, invalidate_caches, localize, log,
                        log_error, notification, update_cache)
 
@@ -238,22 +238,10 @@ class ResumePoints:
     def still_watching(position, total):
         ''' Determine if the video is still being watched '''
 
-        # Kodi uses different resumepoint margins than VRT NU, to obey to VRT NU resumepoint margins
-        # we sometimes need to overrule Kodi watch status.
-        # Use setting from advancedsettings.xml or default value
-        # https://github.com/xbmc/xbmc/blob/master/xbmc/settings/AdvancedSettings.cpp
-        # https://kodi.wiki/view/HOW-TO:Modify_automatic_watch_and_resume_points
-
-        ignoresecondsatstart = get_advanced_setting_int('video/ignoresecondsatstart', default=180)
-        ignorepercentatend = get_advanced_setting_int('video/ignorepercentatend', default=8)
-
-        # Convert percentage to seconds
-        ignoresecondsatend = round(total * (100 - ignorepercentatend) / 100.0)
-
-        if position <= min(SECONDS_MARGIN, ignoresecondsatstart):
+        if position <= SECONDS_MARGIN:
             return False
 
-        if position >= min(total - SECONDS_MARGIN, ignoresecondsatend):
+        if position >= total - SECONDS_MARGIN:
             return False
 
         return True
