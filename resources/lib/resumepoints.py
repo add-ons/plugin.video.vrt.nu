@@ -98,7 +98,7 @@ class ResumePoints:
             payload['url'] = url
         else:
             # Create new resumepoint values
-            payload = dict(position=0, total=100, url=url)
+            payload = dict(url=url, position=0, total=100, watchLater=watch_later)
 
         if position is not None:
             payload['position'] = position
