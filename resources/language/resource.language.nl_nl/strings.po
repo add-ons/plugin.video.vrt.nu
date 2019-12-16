@@ -883,8 +883,8 @@ msgid "Failed to (un)follow program '{program}' at VRT NU"
 msgstr "Het programma '{program}' op VRT NU volgen of vergeten is mislukt"
 
 msgctxt "#30977"
-msgid "Failed to update watch activity at VRT NU"
-msgstr "Updaten van kijkactiviteit bij VRT NU is mislukt"
+msgid "Failed to update watch activity '{title}' at VRT NU"
+msgstr "Updaten van kijkactiviteit '{title}' bij VRT NU is mislukt"
 
 msgctxt "#30978"
 msgid "Welcome to VRT NU add-on v2.0.0"

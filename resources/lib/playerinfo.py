@@ -203,17 +203,11 @@ class PlayerInfo(Player):
         if not self.asset_id:
             return
 
-        watch_later = None
-        # Disable watch_later when completely watched
-        if self.resumepoints.is_watchlater(self.asset_id) and position > total - SECONDS_MARGIN:
-            watch_later = False
-
         # Push resumepoint to VRT NU
         self.resumepoints.update(
             asset_id=self.asset_id,
             title=self.title,
             url=self.url,
-            watch_later=watch_later,
             position=position,
             total=total,
             whatson_id=self.whatson_id,
@@ -245,22 +239,20 @@ class PlayerInfo(Player):
         ignorepercentatend = get_advanced_setting_int('video/ignorepercentatend', default=8)
 
         # Convert percentage to seconds
-        ignoresecondsatend = round(total - (100 - ignorepercentatend) / 100.0 * total)
+        ignoresecondsatend = round(total * (100 - ignorepercentatend) / 100.0)
 
         if position <= max(SECONDS_MARGIN, ignoresecondsatstart):
             # Check start margins
-            if ignoresecondsatstart >= SECONDS_MARGIN:
-                if SECONDS_MARGIN <= position <= ignoresecondsatstart:
-                    return True
-            elif ignoresecondsatstart <= position <= SECONDS_MARGIN:
+            if SECONDS_MARGIN <= position <= ignoresecondsatstart:
+                return True
+            if ignoresecondsatstart <= position <= SECONDS_MARGIN:
                 return True
 
-        if position >= min(total - SECONDS_MARGIN, total - ignoresecondsatend):
+        if position >= min(total - SECONDS_MARGIN, ignoresecondsatend):
             # Check end margins
-            if ignoresecondsatend >= SECONDS_MARGIN:
-                if SECONDS_MARGIN <= total - position <= ignoresecondsatend:
-                    return True
-            elif ignoresecondsatend <= total - position <= SECONDS_MARGIN:
+            if total - SECONDS_MARGIN <= position <= ignoresecondsatend:
+                return True
+            if ignoresecondsatend <= position <= total - SECONDS_MARGIN:
                 return True
 
         return False

@@ -883,7 +883,7 @@ msgid "Failed to (un)follow program '{program}' at VRT NU"
 msgstr ""
 
 msgctxt "#30977"
-msgid "Failed to update watch activity at VRT NU"
+msgid "Failed to update watch activity '{title}' at VRT NU"
 msgstr ""
 
 msgctxt "#30978"
