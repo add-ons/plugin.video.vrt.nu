@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-''' Implements an ApiHelper class with common VRT NU API functionality '''
+"""Implements an ApiHelper class with common VRT NU API functionality"""
 
 from __future__ import absolute_import, division, unicode_literals
 
@@ -22,7 +22,7 @@ from utils import (add_https_proto, html_to_kodilabel, find_entry, from_unicode,
 
 
 class ApiHelper:
-    ''' A class with common VRT NU API functionality '''
+    """A class with common VRT NU API functionality"""
 
     _VRT_BASE = 'https://www.vrt.be'
     _VRTNU_SEARCH_URL = 'https://vrtnu-api.vrt.be/search'
@@ -30,14 +30,14 @@ class ApiHelper:
     _VRTNU_SCREENSHOT_URL = 'https://vrtnu-api.vrt.be/screenshots'
 
     def __init__(self, _favorites, _resumepoints):
-        ''' Constructor for the ApiHelper class '''
+        """Constructor for the ApiHelper class"""
         self._favorites = _favorites
         self._resumepoints = _resumepoints
         self._metadata = Metadata(_favorites, _resumepoints)
         install_opener(build_opener(ProxyHandler(get_proxies())))
 
     def get_tvshows(self, category=None, channel=None, feature=None):
-        ''' Get all TV shows for a given category, channel or feature, optionally filtered by favorites '''
+        """Get all TV shows for a given category, channel or feature, optionally filtered by favorites"""
         params = {}
 
         if category:
@@ -62,7 +62,7 @@ class ApiHelper:
         return get_cached_url_json(url=suggest_url, cache=cache_file, ttl=ttl('indirect'), fail=[])
 
     def list_tvshows(self, category=None, channel=None, feature=None, use_favorites=False):
-        ''' List all TV shows for a given category, channel or feature, optionally filtered by favorites '''
+        """List all TV shows for a given category, channel or feature, optionally filtered by favorites"""
 
         # Get tvshows
         tvshows = self.get_tvshows(category=category, channel=channel, feature=feature)
@@ -78,7 +78,7 @@ class ApiHelper:
         return self.__map_tvshows(tvshows, oneoffs, use_favorites=use_favorites, cache_file=cache_file)
 
     def tvshow_to_listitem(self, tvshow, program, cache_file):
-        ''' Return a ListItem based on a Suggests API result '''
+        """Return a ListItem based on a Suggests API result"""
 
         label = self._metadata.get_label(tvshow)
 
@@ -95,7 +95,7 @@ class ApiHelper:
         )
 
     def list_episodes(self, program=None, season=None, category=None, feature=None, programtype=None, page=None, use_favorites=False, variety=None):
-        ''' Construct a list of episode or season TitleItems from VRT NU Search API data and filtered by favorites '''
+        """Construct a list of episode or season TitleItems from VRT NU Search API data and filtered by favorites"""
         # Caching
         cache_file = None
         if variety:
@@ -121,7 +121,7 @@ class ApiHelper:
         return self.__map_episodes(episodes, titletype=titletype, season=season, use_favorites=use_favorites, cache_file=cache_file)
 
     def __map_episodes(self, episodes, titletype=None, season=None, use_favorites=False, cache_file=None):
-        ''' Construct a list of TV show episodes TitleItems based on Search API query and filtered by favorites '''
+        """Construct a list of TV show episodes TitleItems based on Search API query and filtered by favorites"""
         episode_items = []
         sort = 'episode'
         ascending = True
@@ -197,7 +197,7 @@ class ApiHelper:
         return season_items, sort, ascending, content
 
     def __map_tvshows(self, tvshows, oneoffs, use_favorites=False, cache_file=None):
-        ''' Construct a list of TV show and Oneoff TitleItems and filtered by favorites '''
+        """Construct a list of TV show and Oneoff TitleItems and filtered by favorites"""
         items = []
 
         if use_favorites:
@@ -223,7 +223,7 @@ class ApiHelper:
         return items
 
     def episode_to_listitem(self, episode, program, cache_file, titletype):
-        ''' Return a ListItem based on a Search API result '''
+        """Return a ListItem based on a Search API result"""
 
         label, sort, ascending = self._metadata.get_label(episode, titletype, return_sort=True)
 
@@ -245,12 +245,12 @@ class ApiHelper:
         ), sort, ascending
 
     def list_search(self, keywords, page=0):
-        ''' Search VRT NU content for a given string '''
+        """Search VRT NU content for a given string"""
         episodes = self.get_episodes(keywords=keywords, page=page)
         return self.__map_episodes(episodes, titletype='recent')
 
     def get_upnext(self, info):
-        ''' Get up next data from VRT Search API '''
+        """Get up next data from VRT Search API"""
         program = info.get('program')
         path = info.get('path')
         season = None
@@ -350,7 +350,7 @@ class ApiHelper:
         return next_info
 
     def get_single_episode_data(self, video_id=None, whatson_id=None, video_url=None):
-        ''' Get single episode api data by videoId, whatsonId or url '''
+        """Get single episode api data by videoId, whatsonId or url"""
         episode = None
         api_data = list()
         if video_id:
@@ -364,7 +364,7 @@ class ApiHelper:
         return episode
 
     def get_single_episode(self, video_id=None, whatson_id=None, video_url=None):
-        ''' Get single episode by videoId, whatsonId or url '''
+        """Get single episode by videoId, whatsonId or url"""
         video = None
         episode = self.get_single_episode_data(video_id=video_id, whatson_id=whatson_id, video_url=video_url)
         if episode:
@@ -378,7 +378,7 @@ class ApiHelper:
         return video
 
     def get_episode_by_air_date(self, channel_name, start_date, end_date=None):
-        ''' Get an episode of a program given the channel and the air date in iso format (2019-07-06T19:35:00) '''
+        """Get an episode of a program given the channel and the air date in iso format (2019-07-06T19:35:00)"""
         channel = find_entry(CHANNELS, 'name', channel_name)
         if not channel:
             return None
@@ -455,7 +455,7 @@ class ApiHelper:
         return video
 
     def get_latest_episode(self, program):
-        ''' Get the latest episode of a program '''
+        """Get the latest episode of a program"""
         api_data = self.get_episodes(program=program, variety='single')
         if len(api_data) != 1:
             return None
@@ -472,7 +472,7 @@ class ApiHelper:
 
     def get_episodes(self, program=None, season=None, episodes=None, category=None, feature=None, programtype=None, keywords=None,
                      whatson_id=None, video_id=None, video_url=None, page=None, use_favorites=False, variety=None, cache_file=None):
-        ''' Get episodes or season data from VRT NU Search API '''
+        """Get episodes or season data from VRT NU Search API"""
 
         # Contruct params
         if page:
@@ -595,13 +595,13 @@ class ApiHelper:
         return episodes
 
     def get_live_screenshot(self, channel):
-        ''' Get a live screenshot for a given channel, only supports Eén, Canvas and Ketnet '''
+        """Get a live screenshot for a given channel, only supports Eén, Canvas and Ketnet"""
         url = '%s/%s.jpg' % (self._VRTNU_SCREENSHOT_URL, channel)
         delete_cached_thumbnail(url)
         return url
 
     def list_channels(self, channels=None, live=True):
-        ''' Construct a list of channel ListItems, either for Live TV or the TV Guide listing '''
+        """Construct a list of channel ListItems, either for Live TV or the TV Guide listing"""
         from tvguide import TVGuide
         _tvguide = TVGuide()
 
@@ -670,7 +670,7 @@ class ApiHelper:
 
     @staticmethod
     def list_youtube(channels=None):
-        ''' Construct a list of youtube ListItems, either for Live TV or the TV Guide listing '''
+        """Construct a list of youtube ListItems, either for Live TV or the TV Guide listing"""
 
         youtube_items = []
 
@@ -719,7 +719,7 @@ class ApiHelper:
         return youtube_items
 
     def list_featured(self):
-        ''' Construct a list of featured Listitems '''
+        """Construct a list of featured Listitems"""
         from data import FEATURED
 
         featured_items = []
@@ -735,7 +735,7 @@ class ApiHelper:
 
     @staticmethod
     def localize_features(featured):
-        ''' Return a localized and sorted listing '''
+        """Return a localized and sorted listing"""
         from copy import deepcopy
         features = deepcopy(featured)
 
@@ -747,7 +747,7 @@ class ApiHelper:
         return sorted(features, key=lambda x: x.get('name'))
 
     def list_categories(self):
-        ''' Construct a list of category ListItems '''
+        """Construct a list of category ListItems"""
         categories = []
 
         # Try the cache if it is fresh
@@ -788,7 +788,7 @@ class ApiHelper:
 
     @staticmethod
     def localize_categories(categories, categories2):
-        ''' Return a localized and sorted listing '''
+        """Return a localized and sorted listing"""
 
         for category in categories:
             for key, val in list(category.items()):
@@ -798,7 +798,7 @@ class ApiHelper:
         return sorted(categories, key=lambda x: x.get('name'))
 
     def get_categories(self):
-        ''' Return a list of categories by scraping the website '''
+        """Return a list of categories by scraping the website"""
         from bs4 import BeautifulSoup, SoupStrainer
         log(2, 'URL get: https://www.vrt.be/vrtnu/categorieen/')
         response = urlopen('https://www.vrt.be/vrtnu/categorieen/')
@@ -817,7 +817,7 @@ class ApiHelper:
 
     @staticmethod
     def get_category_thumbnail(element):
-        ''' Return a category thumbnail, if available '''
+        """Return a category thumbnail, if available"""
         if get_setting('showfanart', 'true') == 'true':
             raw_thumbnail = element.find(class_='media').get('data-responsive-image', 'DefaultGenre.png')
             return add_https_proto(raw_thumbnail)
@@ -825,7 +825,7 @@ class ApiHelper:
 
     @staticmethod
     def get_category_title(element):
-        ''' Return a category title, if available '''
+        """Return a category title, if available"""
         found_element = element.find('a')
         if found_element:
             return strip_newlines(found_element.contents[0])

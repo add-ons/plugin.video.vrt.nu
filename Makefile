@@ -76,8 +76,7 @@ codecov:
 	curl --data-binary @.github/codecov.yml https://codecov.io/validate
 
 clean:
-	find . -name '*.pyc' -type f -delete
-	find . -name '*.pyo' -type f -delete
+	find . -name '*.py[cod]' -type f -delete
 	find . -name '__pycache__' -type d -delete
 	rm -rf .pytest_cache/ .tox/
 	rm -f *.log test/userdata/tokens/*.tkn

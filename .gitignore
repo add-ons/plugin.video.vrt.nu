@@ -71,8 +71,7 @@ msbuild.wrn
 .vscode
 
 # Test caches
-*.pyc
-*.pyo
+*.py[cod]
 .coverage
 .pytest_cache/
 .tox/
@@ -84,8 +83,8 @@ msbuild.wrn
 *.zip
 
 # Logs
-kodi-addon-checker-report.log
 kodi-addon-checker.log
+kodi-addon-checker-report.log
 
 # Temporary
 experiment/

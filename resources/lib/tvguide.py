@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright: (c) 2019, Dag Wieers (@dagwieers) <dag@wieers.com>
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-''' Implements a VRT NU TV guide '''
+"""Implements a VRT NU TV guide"""
 
 from __future__ import absolute_import, division, unicode_literals
 from datetime import datetime, timedelta
@@ -24,19 +24,19 @@ from utils import add_https_proto, find_entry, url_to_program
 
 
 class TVGuide:
-    ''' This implements a VRT TV-guide that offers Kodi menus and TV guide info '''
+    """This implements a VRT TV-guide that offers Kodi menus and TV guide info"""
 
     VRT_TVGUIDE = 'https://www.vrt.be/bin/epg/schedule.%Y-%m-%d.json'
 
     def __init__(self):
-        ''' Initializes TV-guide object '''
+        """Initializes TV-guide object"""
         self._favorites = Favorites()
         self._resumepoints = ResumePoints()
         self._metadata = Metadata(self._favorites, self._resumepoints)
         install_opener(build_opener(ProxyHandler(get_proxies())))
 
     def show_tvguide(self, date=None, channel=None):
-        ''' Offer a menu depending on the information provided '''
+        """Offer a menu depending on the information provided"""
 
         if not date and not channel:
             date_items = self.get_date_items()
@@ -62,7 +62,7 @@ class TVGuide:
 
     @staticmethod
     def get_date_items(channel=None):
-        ''' Offer a menu to select the TV-guide date '''
+        """Offer a menu to select the TV-guide date"""
 
         epg = datetime.now(dateutil.tz.tzlocal())
         # Daily EPG information shows information from 6AM until 6AM
@@ -105,7 +105,7 @@ class TVGuide:
         return date_items
 
     def get_channel_items(self, date=None, channel=None):
-        ''' Offer a menu to select the channel '''
+        """Offer a menu to select the channel"""
         if date:
             now = datetime.now(dateutil.tz.tzlocal())
             epg = self.parse(date, now)
@@ -147,7 +147,7 @@ class TVGuide:
         return channel_items
 
     def get_episode_items(self, date, channel):
-        ''' Show episodes for a given date and channel '''
+        """Show episodes for a given date and channel"""
         now = datetime.now(dateutil.tz.tzlocal())
         epg = self.parse(date, now)
         epg_url = epg.strftime(self.VRT_TVGUIDE)
@@ -193,7 +193,7 @@ class TVGuide:
         return episode_items
 
     def playing_now(self, channel):
-        ''' Return the EPG information for what is playing now '''
+        """Return the EPG information for what is playing now"""
         now = datetime.now(dateutil.tz.tzlocal())
         epg = now
         # Daily EPG information shows information from 6AM until 6AM
@@ -221,11 +221,11 @@ class TVGuide:
 
     @staticmethod
     def episode_description(episode):
-        ''' Return a formatted description for an episode '''
+        """Return a formatted description for an episode"""
         return '{start} - {end}\n» {title}'.format(**episode)
 
     def live_description(self, channel):
-        ''' Return the EPG information for current and next live program '''
+        """Return the EPG information for current and next live program"""
         now = datetime.now(dateutil.tz.tzlocal())
         epg = now
         # Daily EPG information shows information from 6AM until 6AM
@@ -269,10 +269,10 @@ class TVGuide:
 
     @staticmethod
     def parse(date, now):
-        ''' Parse a given string and return a datetime object
+        """Parse a given string and return a datetime object
             This supports 'today', 'yesterday' and 'tomorrow'
             It also compensates for TV-guides covering from 6AM to 6AM
-        '''
+       """
         entry = find_entry(RELATIVE_DATES, 'id', date)
         if not entry:
             return dateutil.parser.parse(date)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-''' Integration tests for changes to settings '''
+"""Integration tests for changes to settings"""
 
 # pylint: disable=invalid-name
 
@@ -19,10 +19,10 @@ addon = xbmcaddon.Addon()
 
 
 class TestSettings(unittest.TestCase):
-    ''' TestCase class '''
+    """TestCase class"""
 
     def tearDown(self):
-        ''' Clean up function for TestCase class '''
+        """Clean up function for TestCase class"""
         addon.settings['usemenucaching'] = 'true'
         addon.settings['usehttpcaching'] = 'true'
         addon.settings['usefavorites'] = 'true'
@@ -31,7 +31,7 @@ class TestSettings(unittest.TestCase):
 
     @staticmethod
     def test_menucaching_disabled():
-        ''' Test without menu caching '''
+        """Test without menu caching"""
         addon.settings['usemenucaching'] = 'false'
         addon.settings['usehttpcaching'] = 'true'
         plugin.run(['plugin://plugin.video.vrt.nu/recent', '0', ''])
@@ -39,7 +39,7 @@ class TestSettings(unittest.TestCase):
 
     @staticmethod
     def test_httpcaching_disabled():
-        ''' Test without http caching '''
+        """Test without http caching"""
         addon.settings['usehttpcaching'] = 'false'
         addon.settings['usemenucaching'] = 'true'
         plugin.run(['plugin://plugin.video.vrt.nu/offline', '0', ''])
@@ -48,7 +48,7 @@ class TestSettings(unittest.TestCase):
 
     @staticmethod
     def test_favorites_disabled():
-        ''' Test without favorites '''
+        """Test without favorites"""
         plugin.run(['plugin://plugin.video.vrt.nu/', '0', ''])
         addon.settings['usefavorites'] = 'false'
         addon.settings['useresumepoints'] = 'true'
@@ -60,7 +60,7 @@ class TestSettings(unittest.TestCase):
 
     @staticmethod
     def test_resumepoints_disabled():
-        ''' Test without resumepoints '''
+        """Test without resumepoints"""
         plugin.run(['plugin://plugin.video.vrt.nu/favorites', '0', ''])
         addon.settings['useresumepoints'] = 'false'
         addon.settings['usefavorites'] = 'true'
@@ -70,12 +70,12 @@ class TestSettings(unittest.TestCase):
 
     @staticmethod
     def test_opensettings():
-        ''' Test open_settings '''
+        """Test open_settings"""
         open_settings()
 
     @staticmethod
     def test_youtube_disabled():
-        ''' Test without youtube '''
+        """Test without youtube"""
         plugin.run(['plugin://plugin.video.vrt.nu/channels/radio1', '0', ''])
         addon.settings['showyoutube'] = 'false'
         plugin.run(['plugin://plugin.video.vrt.nu/channels/radio1', '0', ''])

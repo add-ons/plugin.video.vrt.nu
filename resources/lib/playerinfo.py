@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-''' Implementation of PlayerInfo class '''
+"""Implementation of PlayerInfo class"""
 
 from __future__ import absolute_import, division, unicode_literals
 from threading import Event, Thread
@@ -14,11 +14,11 @@ from resumepoints import ResumePoints
 from utils import assetpath_to_id, play_url_to_id, to_unicode, url_to_episode
 
 
-class PlayerInfo(Player):
-    ''' Class for communication with Kodi player '''
+class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
+    """Class for communication with Kodi player"""
 
     def __init__(self):
-        ''' PlayerInfo initialisation '''
+        """PlayerInfo initialisation"""
         self.resumepoints = ResumePoints()
         self.apihelper = ApiHelper(Favorites(), self.resumepoints)
         self.last_pos = None
@@ -37,10 +37,10 @@ class PlayerInfo(Player):
         from random import randint
         self.thread_id = randint(1, 10001)
         log(3, '[PlayerInfo %d] Initialized' % self.thread_id)
-        Player.__init__(self)
+        super(PlayerInfo, self).__init__(self)
 
     def onPlayBackStarted(self):  # pylint: disable=invalid-name
-        ''' Called when user starts playing a file '''
+        """Called when user starts playing a file"""
         self.path = getInfoLabel('Player.Filenameandpath')
         if self.path.startswith('plugin://plugin.video.vrt.nu/'):
             self.listen = True
@@ -67,7 +67,7 @@ class PlayerInfo(Player):
         self.whatson_id = episode.get('whatsonId') if episode.get('whatsonId') else None
 
     def onAVStarted(self):  # pylint: disable=invalid-name
-        ''' Called when Kodi has a video or audiostream '''
+        """Called when Kodi has a video or audiostream"""
         if not self.listen:
             return
         log(3, '[PlayerInfo %d] Event onAVStarted' % self.thread_id)
@@ -84,10 +84,10 @@ class PlayerInfo(Player):
             self.positionthread.start()
 
     def onAVChange(self):  # pylint: disable=invalid-name
-        ''' Called when Kodi has a video, audio or subtitle stream. Also happens when the stream changes. '''
+        """Called when Kodi has a video, audio or subtitle stream. Also happens when the stream changes."""
 
     def onPlayBackSeek(self, time, seekOffset):  # pylint: disable=invalid-name
-        ''' Called when user seeks to a time '''
+        """Called when user seeks to a time"""
         if not self.listen:
             return
         log(3, '[PlayerInfo %d] Event onPlayBackSeek time=%d offset=%d' % (self.thread_id, time, seekOffset))
@@ -99,7 +99,7 @@ class PlayerInfo(Player):
             self.stop()
 
     def onPlayBackPaused(self):  # pylint: disable=invalid-name
-        ''' Called when user pauses a playing file '''
+        """Called when user pauses a playing file"""
         if not self.listen:
             return
         log(3, '[PlayerInfo %d] Event onPlayBackPaused' % self.thread_id)
@@ -108,7 +108,7 @@ class PlayerInfo(Player):
         self.paused = True
 
     def onPlayBackResumed(self):  # pylint: disable=invalid-name
-        ''' Called when user resumes a paused file or a next playlist item is started '''
+        """Called when user resumes a paused file or a next playlist item is started"""
         if not self.listen:
             return
         suffix = 'after pausing' if self.paused else 'after playlist change'
@@ -118,7 +118,7 @@ class PlayerInfo(Player):
         self.paused = False
 
     def onPlayBackEnded(self):  # pylint: disable=invalid-name
-        ''' Called when Kodi has ended playing a file '''
+        """Called when Kodi has ended playing a file"""
         if not self.listen:
             return
         self.quit.set()
@@ -126,27 +126,27 @@ class PlayerInfo(Player):
         self.last_pos = self.total
 
     def onPlayBackError(self):  # pylint: disable=invalid-name
-        ''' Called when playback stops due to an error '''
+        """Called when playback stops due to an error"""
         if not self.listen:
             return
         self.quit.set()
         log(3, '[PlayerInfo %d] Event onPlayBackError' % self.thread_id)
 
     def onPlayBackStopped(self):  # pylint: disable=invalid-name
-        ''' Called when user stops Kodi playing a file '''
+        """Called when user stops Kodi playing a file"""
         if not self.listen:
             return
         self.quit.set()
         log(3, '[PlayerInfo %d] Event onPlayBackStopped' % self.thread_id)
 
     def onThreadExit(self):  # pylint: disable=invalid-name
-        ''' Called when player stops, before the player exited, so before the menu refresh '''
+        """Called when player stops, before the player exited, so before the menu refresh"""
         log(3, '[PlayerInfo %d] Event onThreadExit' % self.thread_id)
         self.positionthread = None
         self.push_position(position=self.last_pos, total=self.total)
 
     def stream_position(self):
-        ''' Get latest stream position while playing '''
+        """Get latest stream position while playing"""
         while self.isPlaying() and not self.quit.is_set():
             self.update_position()
             if self.quit.wait(timeout=0.2):
@@ -154,7 +154,7 @@ class PlayerInfo(Player):
         self.onThreadExit()
 
     def add_upnext(self, video_id):
-        ''' Add Up Next url to Kodi Player '''
+        """Add Up Next url to Kodi Player"""
         url = 'plugin://plugin.video.vrt.nu/play/upnext/%s' % video_id
         self.update_position()
         self.update_total()
@@ -166,7 +166,7 @@ class PlayerInfo(Player):
             self.play(url)
 
     def push_upnext(self):
-        ''' Push episode info to Up Next service add-on'''
+        """Push episode info to Up Next service add-on"""
         if has_addon('service.upnext') and get_setting('useupnext', 'true') == 'true' and self.isPlaying():
             info_tag = self.getVideoInfoTag()
             next_info = self.apihelper.get_upnext(dict(
@@ -184,14 +184,14 @@ class PlayerInfo(Player):
                 notify(sender=sender, message='upnext_data', data=data)
 
     def update_position(self):
-        ''' Update the player position, when possible '''
+        """Update the player position, when possible"""
         try:
             self.last_pos = self.getTime()
         except RuntimeError:
             pass
 
     def update_total(self):
-        ''' Update the total video time '''
+        """Update the total video time"""
         try:
             total = self.getTotalTime()
             # Kodi Player sometimes returns a total time of 0.0 and this causes unwanted behaviour with VRT NU Resumepoints API.
@@ -201,7 +201,7 @@ class PlayerInfo(Player):
             pass
 
     def push_position(self, position=0, total=100):
-        ''' Push player position to VRT NU resumepoints API '''
+        """Push player position to VRT NU resumepoints API"""
         # Not all content has an asset_id
         if not self.asset_id:
             return
@@ -230,7 +230,7 @@ class PlayerInfo(Player):
 
     @staticmethod
     def overrule_kodi_watchstatus(position, total):
-        ''' Determine if we need to overrule the Kodi watch status '''
+        """Determine if we need to overrule the Kodi watch status"""
 
         # Kodi uses different resumepoint margins than VRT NU, to obey to VRT NU resumepoint margins
         # we sometimes need to overrule Kodi watch status.

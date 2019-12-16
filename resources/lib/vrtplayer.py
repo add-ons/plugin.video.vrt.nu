@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-''' Implements a VRTPlayer class '''
+"""Implements a VRTPlayer class"""
 
 from __future__ import absolute_import, division, unicode_literals
 from apihelper import ApiHelper
@@ -14,16 +14,16 @@ from utils import find_entry, realpage
 
 
 class VRTPlayer:
-    ''' An object providing all methods for Kodi menu generation '''
+    """An object providing all methods for Kodi menu generation"""
 
     def __init__(self):
-        ''' Initialise object '''
+        """Initialise object"""
         self._favorites = Favorites()
         self._resumepoints = ResumePoints()
         self._apihelper = ApiHelper(self._favorites, self._resumepoints)
 
     def show_main_menu(self):
-        ''' The VRT NU add-on main menu '''
+        """The VRT NU add-on main menu"""
         # self._favorites.refresh(ttl=ttl('indirect'))
         main_items = []
 
@@ -120,7 +120,7 @@ class VRTPlayer:
         return False, settings_version, addon_version
 
     def show_favorites_menu(self):
-        ''' The VRT NU addon 'My programs' menu '''
+        """The VRT NU addon 'My programs' menu"""
         self._favorites.refresh(ttl=ttl('indirect'))
         favorites_items = [
             TitleItem(title=localize(30040),  # My programs
@@ -175,14 +175,14 @@ class VRTPlayer:
             ok_dialog(heading=localize(30415), message=localize(30416))
 
     def show_favorites_docu_menu(self):
-        ''' The VRT NU add-on 'My documentaries' listing menu '''
+        """The VRT NU add-on 'My documentaries' listing menu"""
         self._favorites.refresh(ttl=ttl('indirect'))
         self._resumepoints.refresh(ttl=ttl('indirect'))
         episode_items, sort, ascending, content = self._apihelper.list_episodes(category='docu', season='allseasons', programtype='oneoff')
         show_listing(episode_items, category=30044, sort=sort, ascending=ascending, content=content, cache=False)
 
     def show_tvshow_menu(self, use_favorites=False):
-        ''' The VRT NU add-on 'All programs' listing menu '''
+        """The VRT NU add-on 'All programs' listing menu"""
         # My favorites menus may need more up-to-date favorites
         self._favorites.refresh(ttl=ttl('direct' if use_favorites else 'indirect'))
         self._resumepoints.refresh(ttl=ttl('direct' if use_favorites else 'indirect'))
@@ -190,7 +190,7 @@ class VRTPlayer:
         show_listing(tvshow_items, category=30440, sort='label', content='tvshows')  # A-Z
 
     def show_category_menu(self, category=None):
-        ''' The VRT NU add-on 'Categories' listing menu '''
+        """The VRT NU add-on 'Categories' listing menu"""
         if category:
             self._favorites.refresh(ttl=ttl('indirect'))
             self._resumepoints.refresh(ttl=ttl('indirect'))
@@ -203,7 +203,7 @@ class VRTPlayer:
             show_listing(category_items, category=30014, sort='unsorted', content='files')  # Categories
 
     def show_channels_menu(self, channel=None):
-        ''' The VRT NU add-on 'Channels' listing menu '''
+        """The VRT NU add-on 'Channels' listing menu"""
         if channel:
             from tvguide import TVGuide
             self._favorites.refresh(ttl=ttl('indirect'))
@@ -220,7 +220,7 @@ class VRTPlayer:
             show_listing(channel_items, category=30016, cache=False)
 
     def show_featured_menu(self, feature=None):
-        ''' The VRT NU add-on 'Featured content' listing menu '''
+        """The VRT NU add-on 'Featured content' listing menu"""
         if feature:
             self._favorites.refresh(ttl=ttl('indirect'))
             self._resumepoints.refresh(ttl=ttl('indirect'))
@@ -233,12 +233,12 @@ class VRTPlayer:
             show_listing(featured_items, category=30024, sort='label', content='files')
 
     def show_livetv_menu(self):
-        ''' The VRT NU add-on 'Live TV' listing menu '''
+        """The VRT NU add-on 'Live TV' listing menu"""
         channel_items = self._apihelper.list_channels()
         show_listing(channel_items, category=30018, cache=False)
 
     def show_episodes_menu(self, program, season=None):
-        ''' The VRT NU add-on episodes listing menu '''
+        """The VRT NU add-on episodes listing menu"""
         self._favorites.refresh(ttl=ttl('indirect'))
         self._resumepoints.refresh(ttl=ttl('indirect'))
         episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program, season=season)
@@ -246,7 +246,7 @@ class VRTPlayer:
         show_listing(episode_items, category=program.title(), sort=sort, ascending=ascending, content=content, cache=False)
 
     def show_recent_menu(self, page=0, use_favorites=False):
-        ''' The VRT NU add-on 'Most recent' and 'My most recent' listing menu '''
+        """The VRT NU add-on 'Most recent' and 'My most recent' listing menu"""
 
         # My favorites menus may need more up-to-date favorites
         self._favorites.refresh(ttl=ttl('direct' if use_favorites else 'indirect'))
@@ -270,7 +270,7 @@ class VRTPlayer:
         show_listing(episode_items, category=30020, sort=sort, ascending=ascending, content=content, cache=False)
 
     def show_offline_menu(self, page=0, use_favorites=False):
-        ''' The VRT NU add-on 'Soon offline' and 'My soon offline' listing menu '''
+        """The VRT NU add-on 'Soon offline' and 'My soon offline' listing menu"""
 
         # My favorites menus may need more up-to-date favorites
         self._favorites.refresh(ttl=ttl('direct' if use_favorites else 'indirect'))
@@ -294,7 +294,7 @@ class VRTPlayer:
         show_listing(episode_items, category=30022, sort=sort, ascending=ascending, content=content, cache=False)
 
     def show_watchlater_menu(self, page=0):
-        ''' The VRT NU add-on 'My watch later' listing menu '''
+        """The VRT NU add-on 'My watch later' listing menu"""
 
         # My watch later menu may need more up-to-date favorites
         self._favorites.refresh(ttl=ttl('direct'))
@@ -304,7 +304,7 @@ class VRTPlayer:
         show_listing(episode_items, category=30050, sort=sort, ascending=ascending, content=content, cache=False)
 
     def show_continue_menu(self, page=0):
-        ''' The VRT NU add-on 'Continue waching' listing menu '''
+        """The VRT NU add-on 'Continue waching' listing menu"""
 
         # Continue watching menu may need more up-to-date favorites
         self._favorites.refresh(ttl=ttl('direct'))
@@ -314,7 +314,7 @@ class VRTPlayer:
         show_listing(episode_items, category=30052, sort=sort, ascending=ascending, content=content, cache=False)
 
     def play_latest_episode(self, program):
-        ''' A hidden feature in the VRT NU add-on to play the latest episode of a program '''
+        """A hidden feature in the VRT NU add-on to play the latest episode of a program"""
         video = self._apihelper.get_latest_episode(program)
         if not video:
             log_error('Play latest episode failed, program {program}', program=program)
@@ -324,7 +324,7 @@ class VRTPlayer:
         self.play(video)
 
     def play_episode_by_air_date(self, channel, start_date, end_date):
-        ''' Play an episode of a program given the channel and the air date in iso format (2019-07-06T19:35:00) '''
+        """Play an episode of a program given the channel and the air date in iso format (2019-07-06T19:35:00)"""
         video = self._apihelper.get_episode_by_air_date(channel, start_date, end_date)
         if video and video.get('errorlabel'):
             ok_dialog(message=localize(30986, title=video.get('errorlabel')))
@@ -338,7 +338,7 @@ class VRTPlayer:
         self.play(video)
 
     def play_upnext(self, video_id):
-        ''' Play the next episode of a program by video_id '''
+        """Play the next episode of a program by video_id"""
         video = self._apihelper.get_single_episode(video_id=video_id)
         if not video:
             log_error('Play Up Next with video_id {video_id} failed', video_id=video_id)
@@ -349,7 +349,7 @@ class VRTPlayer:
 
     @staticmethod
     def play(video):
-        ''' A wrapper for playing video items '''
+        """A wrapper for playing video items"""
         from tokenresolver import TokenResolver
         from streamservice import StreamService
         _tokenresolver = TokenResolver()

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright: (c) 2019, Dag Wieers (@dagwieers) <dag@wieers.com>
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-''' Implementation of Search class '''
+"""Implementation of Search class"""
 
 from __future__ import absolute_import, division, unicode_literals
 from favorites import Favorites
@@ -12,27 +12,27 @@ from resumepoints import ResumePoints
 
 
 class Search:
-    ''' Search and cache search queries '''
+    """Search and cache search queries"""
 
     def __init__(self):
-        ''' Initialize searchtes, relies on XBMC vfs '''
+        """Initialize searchtes, relies on XBMC vfs"""
         self._favorites = Favorites()
         self._resumepoints = ResumePoints()
         self._search_history = addon_profile() + 'search_history.json'
 
     def read_history(self):
-        ''' Read search history from disk '''
+        """Read search history from disk"""
         with open_file(self._search_history, 'r') as fdesc:
             return get_json_data(fdesc, fail=[])
 
     def write_history(self, history):
-        ''' Write search history to disk '''
+        """Write search history to disk"""
         from json import dump
         with open_file(self._search_history, 'w') as fdesc:
             dump(history, fdesc)
 
     def search_menu(self):
-        ''' Main search menu '''
+        """Main search menu"""
         from helperobjects import TitleItem
         menu_items = [
             TitleItem(
@@ -69,7 +69,7 @@ class Search:
         show_listing(menu_items, category=30031, cache=False)
 
     def search(self, keywords=None, page=None):
-        ''' The VRT NU add-on Search functionality and results '''
+        """The VRT NU add-on Search functionality and results"""
         if keywords is None:
             keywords = get_search_string()
 
@@ -103,12 +103,12 @@ class Search:
         show_listing(search_items, category=30032, sort=sort, ascending=ascending, content=content, cache=False)
 
     def clear(self):
-        ''' Clear the search history '''
+        """Clear the search history"""
         self.write_history([])
         end_of_directory()
 
     def add(self, keywords):
-        ''' Add new keywords to search history '''
+        """Add new keywords to search history"""
         history = self.read_history()
 
         # Remove if keywords already was listed
@@ -122,7 +122,7 @@ class Search:
         self.write_history(history)
 
     def remove(self, keywords):
-        ''' Remove existing keywords from search history '''
+        """Remove existing keywords from search history"""
         history = self.read_history()
 
         try:

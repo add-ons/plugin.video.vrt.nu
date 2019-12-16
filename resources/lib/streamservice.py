@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-''' This module collects and prepares stream info for Kodi Player. '''
+"""This module collects and prepares stream info for Kodi Player."""
 
 from __future__ import absolute_import, division, unicode_literals
 
@@ -20,7 +20,7 @@ from kodiutils import (addon_profile, can_play_drm, exists, end_of_directory, ge
 
 
 class StreamService:
-    ''' Collect and prepare stream info for Kodi Player'''
+    """Collect and prepare stream info for Kodi Player"""
 
     _VUPLAY_API_URL = 'https://api.vuplay.co.uk'
     _VUALTO_API_URL = 'https://media-services-public.vrt.be/vualto-video-aggregator-web/rest/external/v1'
@@ -31,7 +31,7 @@ class StreamService:
     _GEOBLOCK_ERROR_CODES = (_INCOMPLETE_ROAMING_CONFIG, _INVALID_LOCATION)
 
     def __init__(self, _tokenresolver):
-        ''' Initialize Stream Service class '''
+        """Initialize Stream Service class"""
         install_opener(build_opener(ProxyHandler(get_proxies())))
         self._tokenresolver = _tokenresolver
         self._create_settings_dir()
@@ -39,20 +39,20 @@ class StreamService:
         self._vualto_license_url = None
 
     def _get_vualto_license_url(self):
-        ''' Get Widevine license URL from Vualto API '''
+        """Get Widevine license URL from Vualto API"""
         json_data = get_url_json(url=self._VUPLAY_API_URL, fail={})
         self._vualto_license_url = json_data.get('drm_providers', {}).get('widevine', {}).get('la_url')
 
     @staticmethod
     def _create_settings_dir():
-        ''' Create settings directory '''
+        """Create settings directory"""
         settingsdir = addon_profile()
         if not exists(settingsdir):
             mkdir(settingsdir)
 
     @staticmethod
     def _get_license_key(key_url, key_type='R', key_headers=None, key_value=None):
-        ''' Generates a proper Widevine license key value
+        """Generates a proper Widevine license key value
 
             # A{SSM} -> not implemented
             # R{SSM} -> raw format
@@ -76,7 +76,7 @@ class StreamService:
             @type key_value: str
             @param key_value: i
             @return:
-        '''
+       """
         header = ''
         if key_headers:
             header = urlencode(key_headers)
@@ -91,7 +91,7 @@ class StreamService:
         return '%s|%s|%s|' % (key_url, header, key_value)
 
     def _get_api_data(self, video):
-        ''' Create api data object from video dictionary '''
+        """Create api data object from video dictionary"""
         video_url = video.get('video_url')
         video_id = video.get('video_id')
         publication_id = video.get('publication_id')
@@ -107,7 +107,7 @@ class StreamService:
         return api_data
 
     def _webscrape_api_data(self, video_url):
-        ''' Scrape api data from VRT NU html page '''
+        """Scrape api data from VRT NU html page"""
         from bs4 import BeautifulSoup, SoupStrainer
         log(2, 'URL get: {url}', url=unquote(video_url))
         html_page = urlopen(video_url).read()
@@ -145,7 +145,7 @@ class StreamService:
         return ApiData(client, media_api_url, video_id, publication_id, is_live_stream)
 
     def _get_stream_json(self, api_data, roaming=False):
-        ''' Get JSON with stream details from VRT API '''
+        """Get JSON with stream details from VRT API"""
         token_url = api_data.media_api_url + '/tokens'
         if api_data.is_live_stream:
             playertoken = self._tokenresolver.get_playertoken(token_url, token_variant='live', roaming=roaming)
@@ -183,7 +183,7 @@ class StreamService:
         return manifest_url
 
     def get_stream(self, video, roaming=False, api_data=None):
-        ''' Main streamservice function '''
+        """Main streamservice function"""
         if not api_data:
             api_data = self._get_api_data(video)
 
@@ -273,7 +273,7 @@ class StreamService:
 
     @staticmethod
     def _handle_stream_api_error(message, video_json=None):
-        ''' Show localized stream api error messages in Kodi GUI '''
+        """Show localized stream api error messages in Kodi GUI"""
         if video_json:
             log_error(video_json.get('message'))
         ok_dialog(message=message)
@@ -281,10 +281,10 @@ class StreamService:
 
     @staticmethod
     def _handle_bad_stream_error(protocol, code=None, reason=None):
-        ''' Show a localized error message in Kodi GUI for a failing VRT NU stream based on protocol: hls, hls_aes, mpeg_dash)
+        """Show a localized error message in Kodi GUI for a failing VRT NU stream based on protocol: hls, hls_aes, mpeg_dash)
             message: VRT NU stream <stream_type> problem, try again with (InputStream Adaptive) (and) (DRM) enabled/disabled:
                 30959=and DRM, 30960=disabled, 30961=enabled
-        '''
+       """
         # HLS AES DRM failed
         if protocol == 'hls_aes' and not supports_drm():
             message = localize(30962, protocol=protocol.upper(), version=kodi_version())
@@ -302,7 +302,7 @@ class StreamService:
         end_of_directory()
 
     def _select_hls_substreams(self, master_hls_url, protocol):
-        ''' Select HLS substreams to speed up Kodi player start, workaround for slower kodi selection '''
+        """Select HLS substreams to speed up Kodi player start, workaround for slower kodi selection"""
         hls_variant_url = None
         subtitle_url = None
         hls_audio_id = None

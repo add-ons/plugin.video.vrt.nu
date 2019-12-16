@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright: (c) 2019, Dag Wieers (@dagwieers) <dag@wieers.com>
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-''' Unit tests for Favorites functionality '''
+"""Unit tests for Favorites functionality"""
 
 # pylint: disable=invalid-name
 
@@ -24,14 +24,14 @@ itemsperpage = int(addon.settings.get('itemsperpage'))
 
 
 class TestFavorites(unittest.TestCase):
-    ''' TestCase class '''
+    """TestCase class"""
 
     _favorites = Favorites()
     _resumepoints = ResumePoints()
     _apihelper = ApiHelper(_favorites, _resumepoints)
 
     def test_get_recent_episodes(self):
-        ''' Test items, sort and order '''
+        """Test items, sort and order"""
         episode_items, sort, ascending, content = self._apihelper.list_episodes(page=1, variety='recent')
         self.assertEqual(len(episode_items), itemsperpage)
         self.assertEqual(sort, 'dateadded')
@@ -39,7 +39,7 @@ class TestFavorites(unittest.TestCase):
         self.assertEqual(content, 'episodes')
 
     def test_get_offline_episodes(self):
-        ''' Test items, sort and order '''
+        """Test items, sort and order"""
         episode_items, sort, ascending, content = self._apihelper.list_episodes(page=1, variety='offline')
         self.assertTrue(episode_items)
         self.assertEqual(sort, 'dateadded')
@@ -48,7 +48,7 @@ class TestFavorites(unittest.TestCase):
 
     @unittest.SkipTest
     def test_unfollow_all(self):
-        ''' Test unfollowing all programs '''
+        """Test unfollowing all programs"""
         programs = self._apihelper.get_tvshows()
         for program_item in programs:
             program_title = program_item.get('title')
@@ -60,7 +60,7 @@ class TestFavorites(unittest.TestCase):
 
     @unittest.SkipTest
     def test_follow_number(self):
-        ''' Test following X programs '''
+        """Test following X programs"""
         number = 118
         programs = self._apihelper.get_tvshows()
         shuffle(programs)
@@ -80,7 +80,7 @@ class TestFavorites(unittest.TestCase):
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_follow_unfollow(self):
-        ''' Test following and unfollowing programs '''
+        """Test following and unfollowing programs"""
         programs = [
             {'program_title': 'Winteruur', 'program': 'winteruur'},
             {'program_title': 'De Campus Cup', 'program': 'de-campus-cup'},
@@ -100,7 +100,7 @@ class TestFavorites(unittest.TestCase):
             self.assertTrue(self._favorites.is_favorite(program))
 
     def test_programs(self):
-        ''' Test favorite programs list '''
+        """Test favorite programs list"""
         programs = self._favorites.programs()
         # NOTE: Getting favorites requires credentials
         if addon.settings.get('username') and addon.settings.get('password'):
@@ -108,7 +108,7 @@ class TestFavorites(unittest.TestCase):
         print(programs)
 
     def test_titles(self):
-        ''' Test favorite titles list '''
+        """Test favorite titles list"""
         titles = self._favorites.titles()
         # NOTE: Getting favorites requires credentials
         if addon.settings.get('username') and addon.settings.get('password'):

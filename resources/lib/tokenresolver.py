@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-''' This module contains all functionality for VRT NU API authentication. '''
+"""This module contains all functionality for VRT NU API authentication."""
 
 from __future__ import absolute_import, division, unicode_literals
 from kodiutils import (addon_profile, delete, exists, get_json_data, get_proxies, get_setting,
@@ -20,7 +20,7 @@ except ImportError:  # Python 2
 
 
 class NoRedirection(HTTPErrorProcessor):
-    ''' Prevent urllib from following http redirects '''
+    """Prevent urllib from following http redirects"""
 
     def http_response(self, request, response):
         return response
@@ -29,7 +29,7 @@ class NoRedirection(HTTPErrorProcessor):
 
 
 class TokenResolver:
-    ''' Get, refresh and cache tokens for VRT NU API authentication. '''
+    """Get, refresh and cache tokens for VRT NU API authentication."""
 
     _API_KEY = '3_qhEcPa5JGFROVwu5SWKqJ4mVOIkwlFNMSKwzPDAh8QZOtHqu6L4nD5Q7lk0eXOOG'
     _LOGIN_URL = 'https://accounts.vrt.be/accounts.login'
@@ -39,12 +39,12 @@ class TokenResolver:
     _ROAMING_TOKEN_GATEWAY_URL = 'https://token.vrt.be/vrtnuinitloginEU?destination=https://www.vrt.be/vrtnu/'
 
     def __init__(self):
-        ''' Initialize Token Resolver class '''
+        """Initialize Token Resolver class"""
         self._proxies = get_proxies()
         install_opener(build_opener(ProxyHandler(self._proxies)))
 
     def get_playertoken(self, token_url, token_variant=None, roaming=False):
-        ''' Get cached or new playertoken, variants: live or ondemand '''
+        """Get cached or new playertoken, variants: live or ondemand"""
         xvrttoken_variant = None
         if roaming:
             xvrttoken_variant = 'roaming'
@@ -67,7 +67,7 @@ class TokenResolver:
         return self._get_new_playertoken(token_url, headers, token_variant)
 
     def get_xvrttoken(self, token_variant=None):
-        ''' Get cached, fresh or new X-VRT-Token, variants: None, user or roaming '''
+        """Get cached, fresh or new X-VRT-Token, variants: None, user or roaming"""
         token = self._get_cached_token('X-VRT-Token', token_variant)
         if token:
             return token
@@ -85,13 +85,13 @@ class TokenResolver:
 
     @staticmethod
     def _get_token_path(token_name, token_variant):
-        ''' Create token path following predefined file naming rules '''
+        """Create token path following predefined file naming rules"""
         prefix = token_variant + '_' if token_variant else ''
         token_path = get_tokens_path() + prefix + token_name.replace('-', '') + '.tkn'
         return token_path
 
     def _get_cached_token(self, token_name, token_variant=None):
-        ''' Return a cached token '''
+        """Return a cached token"""
         path = self._get_token_path(token_name, token_variant)
 
         if not exists(path):
@@ -117,7 +117,7 @@ class TokenResolver:
         return token.get(token_name)
 
     def _set_cached_token(self, token, token_variant=None):
-        ''' Save token to cache'''
+        """Save token to cache"""
         from json import dump
         token_name = list(token.keys())[0]
         path = self._get_token_path(token_name, token_variant)
@@ -129,7 +129,7 @@ class TokenResolver:
             dump(token, fdesc)
 
     def _get_new_playertoken(self, token_url, headers, token_variant=None):
-        ''' Get new playertoken from VRT Token API '''
+        """Get new playertoken from VRT Token API"""
         playertoken = get_url_json(url=token_url, headers=headers, data=b'')
         if playertoken is None:
             return None
@@ -138,7 +138,7 @@ class TokenResolver:
         return playertoken.get('vrtPlayerToken')
 
     def login(self, refresh=False, token_variant=None):
-        ''' Kodi GUI login flow '''
+        """Kodi GUI login flow"""
         # If no credentials, ask user for credentials
         if not has_credentials():
             if refresh:
@@ -173,7 +173,7 @@ class TokenResolver:
         return self._get_new_xvrttoken(login_json, token_variant)
 
     def _get_login_json(self):
-        ''' Get login json '''
+        """Get login json"""
         payload = dict(
             loginID=from_unicode(get_setting('username')),
             password=from_unicode(get_setting('password')),
@@ -185,7 +185,7 @@ class TokenResolver:
         return get_url_json(self._LOGIN_URL, data=data, fail={})
 
     def _get_new_xvrttoken(self, login_json, token_variant=None):
-        ''' Get new X-VRT-Token from VRT NU website '''
+        """Get new X-VRT-Token from VRT NU website"""
         login_token = login_json.get('sessionInfo', {}).get('login_token')
         if not login_token:
             return None
@@ -216,7 +216,7 @@ class TokenResolver:
         return xvrttoken.get('X-VRT-Token')
 
     def _get_new_user_xvrttoken(self):
-        ''' Get new 'user' X-VRT-Token from VRT NU website '''
+        """Get new 'user' X-VRT-Token from VRT NU website"""
         # Get login json
         login_json = self._get_login_json()
 
@@ -248,7 +248,7 @@ class TokenResolver:
         return xvrttoken.get('X-VRT-Token')
 
     def _get_fresh_token(self, refresh_token, token_name, token_variant=None):
-        ''' Refresh an expired X-VRT-Token, vrtlogin-at or vrtlogin-rt token '''
+        """Refresh an expired X-VRT-Token, vrtlogin-at or vrtlogin-rt token"""
         refresh_url = self._TOKEN_GATEWAY_URL + '/refreshtoken'
         cookie_value = 'vrtlogin-rt=' + refresh_token
         headers = {'Cookie': cookie_value}
@@ -264,7 +264,7 @@ class TokenResolver:
         return list(token.values())[0]
 
     def _get_roaming_xvrttoken(self, xvrttoken):
-        ''' Get new 'roaming' X-VRT-Token from VRT NU website '''
+        """Get new 'roaming' X-VRT-Token from VRT NU website"""
         cookie_value = 'X-VRT-Token=' + xvrttoken.get('X-VRT-Token')
         headers = {'Cookie': cookie_value}
         opener = build_opener(NoRedirection, ProxyHandler(self._proxies))
@@ -297,7 +297,7 @@ class TokenResolver:
 
     @staticmethod
     def _create_token_dictionary(cookie_data, cookie_name='X-VRT-Token'):
-        ''' Create a dictionary with token name and token expirationDate from a Python cookielib.CookieJar or urllib2 Set-Cookie http header '''
+        """Create a dictionary with token name and token expirationDate from a Python cookielib.CookieJar or urllib2 Set-Cookie http header"""
         token_dictionary = None
         if isinstance(cookie_data, cookielib.CookieJar):
             # Get token dict from cookiejar
@@ -320,7 +320,7 @@ class TokenResolver:
 
     @staticmethod
     def delete_tokens():
-        ''' Delete all cached tokens '''
+        """Delete all cached tokens"""
         # Remove old tokens
         # FIXME: Deprecate and simplify this part in a future version
         _, files = listdir(addon_profile())
@@ -335,7 +335,7 @@ class TokenResolver:
             notification(message=localize(30985))
 
     def refresh_login(self):
-        ''' Refresh login if necessary '''
+        """Refresh login if necessary"""
 
         if self._credentials_changed() and has_credentials():
             log(2, 'Credentials have changed, cleaning up userdata')
@@ -346,7 +346,7 @@ class TokenResolver:
             self.login(refresh=True)
 
     def cleanup_userdata(self):
-        ''' Cleanup userdata '''
+        """Cleanup userdata"""
 
         # Delete token cache
         self.delete_tokens()
@@ -355,12 +355,12 @@ class TokenResolver:
         invalidate_caches('continue-*.json', 'favorites.json', 'my-offline-*.json', 'my-recent-*.json', 'resume_points.json', 'watchlater-*.json')
 
     def logged_in(self):
-        ''' Whether there is an active login '''
+        """Whether there is an active login"""
         return bool(self._get_cached_token('X-VRT-Token'))
 
     @staticmethod
     def _credentials_changed():
-        ''' Check if credentials have changed '''
+        """Check if credentials have changed"""
         old_hash = get_setting('credentials_hash')
         username = get_setting('username')
         password = get_setting('password')

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright: (c) 2019, Dag Wieers (@dagwieers) <dag@wieers.com>
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-''' Implementation of Favorites class '''
+"""Implementation of Favorites class"""
 
 from __future__ import absolute_import, division, unicode_literals
 
@@ -19,20 +19,20 @@ from utils import program_to_id
 
 
 class Favorites:
-    ''' Track, cache and manage VRT favorites '''
+    """Track, cache and manage VRT favorites"""
 
     def __init__(self):
-        ''' Initialize favorites, relies on XBMC vfs and a special VRT token '''
+        """Initialize favorites, relies on XBMC vfs and a special VRT token"""
         self._data = dict()  # Our internal representation
         install_opener(build_opener(ProxyHandler(get_proxies())))
 
     @staticmethod
     def is_activated():
-        ''' Is favorites activated in the menu and do we have credentials ? '''
+        """Is favorites activated in the menu and do we have credentials ?"""
         return get_setting('usefavorites') == 'true' and has_credentials()
 
     def refresh(self, ttl=None):
-        ''' Get a cached copy or a newer favorites from VRT, or fall back to a cached file '''
+        """Get a cached copy or a newer favorites from VRT, or fall back to a cached file"""
         if not self.is_activated():
             return
         favorites_json = get_cache('favorites.json', ttl)
@@ -51,7 +51,7 @@ class Favorites:
             self._data = favorites_json
 
     def update(self, program, title, value=True):
-        ''' Set a program as favorite, and update local copy '''
+        """Set a program as favorite, and update local copy"""
 
         # Survive any recent updates
         self.refresh(ttl=5)
@@ -91,7 +91,7 @@ class Favorites:
         return True
 
     def is_favorite(self, program):
-        ''' Is a program a favorite ? '''
+        """Is a program a favorite ?"""
         value = False
         favorite = self._data.get(program_to_id(program))
         if favorite:
@@ -99,14 +99,14 @@ class Favorites:
         return value is True
 
     def follow(self, program, title):
-        ''' Follow your favorite program '''
+        """Follow your favorite program"""
         succeeded = self.update(program, title, True)
         if succeeded:
             notification(message=localize(30411, title=title))
             container_refresh()
 
     def unfollow(self, program, title, move_down=False):
-        ''' Unfollow your favorite program '''
+        """Unfollow your favorite program"""
         succeeded = self.update(program, title, False)
         if succeeded:
             notification(message=localize(30412, title=title))
@@ -116,16 +116,16 @@ class Favorites:
             container_refresh()
 
     def titles(self):
-        ''' Return all favorite titles '''
+        """Return all favorite titles"""
         return [value.get('value').get('title') for value in list(self._data.values()) if value.get('value').get('isFavorite')]
 
     def programs(self):
-        ''' Return all favorite programs '''
+        """Return all favorite programs"""
         from utils import url_to_program
         return [url_to_program(value.get('value').get('programUrl')) for value in list(self._data.values()) if value.get('value').get('isFavorite')]
 
     def manage(self):
-        ''' Allow the user to unselect favorites to be removed from the listing '''
+        """Allow the user to unselect favorites to be removed from the listing"""
         from utils import url_to_program
         self.refresh(ttl=0)
         if not self._data:
@@ -133,7 +133,7 @@ class Favorites:
             return
 
         def by_title(item):
-            ''' Sort by title '''
+            """Sort by title"""
             return item.get('value').get('title')
 
         items = [dict(program=url_to_program(value.get('value').get('programUrl')),
