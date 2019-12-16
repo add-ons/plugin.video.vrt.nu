@@ -23,7 +23,7 @@ class VrtMonitor(Monitor, object):  # pylint: disable=useless-object-inheritance
         self._favorites = None
         self._apihelper = None
         self.init_watching_activity()
-        super(VrtMonitor, self).__init__(self)
+        super(VrtMonitor, self).__init__()
 
     def run(self):
         """Main loop"""
