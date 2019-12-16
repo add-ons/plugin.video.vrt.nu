@@ -37,7 +37,7 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
         from random import randint
         self.thread_id = randint(1, 10001)
         log(3, '[PlayerInfo %d] Initialized' % self.thread_id)
-        super(PlayerInfo, self).__init__(self)
+        super(PlayerInfo, self).__init__()
 
     def onPlayBackStarted(self):  # pylint: disable=invalid-name
         """Called when user starts playing a file"""
