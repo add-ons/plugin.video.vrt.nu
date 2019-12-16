@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright: (c) 2019, Dag Wieers (@dagwieers) <dag@wieers.com>
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-''' Extra functions for testing '''
+"""Extra functions for testing"""
 
 # pylint: disable=invalid-name
 
@@ -12,7 +12,7 @@ import polib
 
 
 def kodi_to_ansi(string):
-    ''' Convert Kodi format tags to ANSI codes '''
+    """Convert Kodi format tags to ANSI codes"""
     if string is None:
         return None
     string = string.replace('[B]', '\033[1m')
@@ -32,14 +32,14 @@ def kodi_to_ansi(string):
 
 
 def uri_to_path(uri):
-    ''' Shorten a plugin URI to just the path '''
+    """Shorten a plugin URI to just the path"""
     if uri is None:
         return None
     return ' \033[33m→ \033[34m%s\033[39;0m' % uri.replace('plugin://' + ADDON_ID, '')
 
 
 def read_addon_xml(path):
-    ''' Parse the addon.xml and return an info dictionary '''
+    """Parse the addon.xml and return an info dictionary"""
     info = dict(
         path='./',  # '/storage/.kodi/addons/plugin.video.vrt.nu',
         profile='special://userdata',  # 'special://profile/addon_data/plugin.video.vrt.nu/',
@@ -71,7 +71,7 @@ def read_addon_xml(path):
 
 
 def global_settings():
-    ''' Use the global_settings file '''
+    """Use the global_settings file"""
     import json
     try:
         with open('test/userdata/global_settings.json') as f:
@@ -101,7 +101,7 @@ def global_settings():
 
 
 def addon_settings(addon_id=None):
-    ''' Use the addon_settings file '''
+    """Use the addon_settings file"""
     import json
     try:
         with open('test/userdata/addon_settings.json') as f:
@@ -130,7 +130,7 @@ def addon_settings(addon_id=None):
 
 
 def import_language(language):
-    ''' Process the language.po file '''
+    """Process the language.po file"""
     try:
         return polib.pofile('resources/language/{language}/strings.po'.format(language=language))
     except IOError:

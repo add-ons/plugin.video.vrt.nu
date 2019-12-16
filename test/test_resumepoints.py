@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright: (c) 2019, Dag Wieers (@dagwieers) <dag@wieers.com>
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-''' Unit tests for ResumePoints functionality '''
+"""Unit tests for ResumePoints functionality"""
 
 # pylint: disable=invalid-name
 
@@ -23,7 +23,7 @@ addon.settings['useresumepoints'] = 'true'
 
 
 class TestResumePoints(unittest.TestCase):
-    ''' TestCase class '''
+    """TestCase class"""
 
     _favorites = Favorites()
     _resumepoints = ResumePoints()
@@ -32,7 +32,7 @@ class TestResumePoints(unittest.TestCase):
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_get_watchlater_episodes(self):
-        ''' Test items, sort and order '''
+        """Test items, sort and order"""
         episode_items, sort, ascending, content = self._apihelper.list_episodes(page=1, variety='watchlater')
         self.assertTrue(episode_items)
         self.assertEqual(sort, 'dateadded')
@@ -42,7 +42,7 @@ class TestResumePoints(unittest.TestCase):
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_get_continue_episodes(self):
-        ''' Test items, sort and order '''
+        """Test items, sort and order"""
         episode_items, sort, ascending, content = self._apihelper.list_episodes(page=1, variety='continue')
         self.assertTrue(episode_items)
         self.assertEqual(sort, 'dateadded')
@@ -52,7 +52,7 @@ class TestResumePoints(unittest.TestCase):
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_update_watchlater(self):
-        ''' Test updating the watch later list '''
+        """Test updating the watch later list"""
         self._resumepoints.refresh(ttl=0)
         asset_id, first_entry = next(iter(list(self._resumepoints._data.items())))  # pylint: disable=protected-access
         print('%s = %s' % (asset_id, first_entry))
@@ -64,7 +64,7 @@ class TestResumePoints(unittest.TestCase):
         print('%s = %s' % (asset_id, first_entry))
 
     def test_assetpath_to_id(self):
-        ''' Test converting assetpath to assetid '''
+        """Test converting assetpath to assetid"""
         self.assertEqual(None, assetpath_to_id(None))
 
         asset_path = '/content/dam/vrt/2019/08/14/woodstock-depot_WP00157456'
@@ -72,11 +72,11 @@ class TestResumePoints(unittest.TestCase):
         self.assertEqual(asset_id, assetpath_to_id(asset_path))
 
     def test_update_none(self):
-        ''' Test updating empty resumepoints '''
+        """Test updating empty resumepoints"""
         self.assertTrue(self._resumepoints.update(asset_id=None, title=None, url=None))
 
     def test_overrule_kodi_watchstatus(self):
-        ''' Test the overrule Kodi watch status function '''
+        """Test the overrule Kodi watch status function"""
         from playerinfo import PlayerInfo
         self.assertTrue(PlayerInfo.overrule_kodi_watchstatus(45, 2584))
         self.assertFalse(PlayerInfo.overrule_kodi_watchstatus(10, 2584))

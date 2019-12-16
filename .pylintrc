@@ -1,10 +1,10 @@
 [MESSAGES CONTROL]
 disable=
     bad-option-value,
-    duplicate-code,
-    fixme,
-    import-outside-toplevel,
-    line-too-long,
+    duplicate-code,  # Integration tests tend to test similar things
+    fixme,  # Allow FIXMEs in code is a useful practice
+    import-outside-toplevel,  # Done on purpose to reduce overhead at startup
+    line-too-long,  # Flake8 is used for testing line-length
     old-style-class,
     too-few-public-methods,
     too-many-arguments,

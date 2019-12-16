@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-''' Implements static functions used elsewhere in the add-on '''
+"""Implements static functions used elsewhere in the add-on"""
 
 from __future__ import absolute_import, division, unicode_literals
 import re
@@ -11,7 +11,7 @@ except ImportError:  # Python 2
     from HTMLParser import HTMLParser
 
     def unescape(string):
-        ''' Expose HTMLParser's unescape '''
+        """Expose HTMLParser's unescape"""
         return HTMLParser().unescape(string)
 
 HTML_MAPPING = [
@@ -27,14 +27,14 @@ HTML_MAPPING = [
 
 
 def to_unicode(text, encoding='utf-8', errors='strict'):
-    ''' Force text to unicode '''
+    """Force text to unicode"""
     if isinstance(text, bytes):
         return text.decode(encoding, errors=errors)
     return text
 
 
 def from_unicode(text, encoding='utf-8', errors='strict'):
-    ''' Force unicode to text '''
+    """Force unicode to text"""
     import sys
     if sys.version_info.major == 2 and isinstance(text, unicode):  # noqa: F821; pylint: disable=undefined-variable
         return text.encode(encoding, errors)
@@ -42,25 +42,25 @@ def from_unicode(text, encoding='utf-8', errors='strict'):
 
 
 def capitalize(string):
-    ''' Ensure the first character is uppercase '''
+    """Ensure the first character is uppercase"""
     string = string.strip()
     return string[0].upper() + string[1:]
 
 
 def strip_newlines(text):
-    ''' Strip newlines and whitespaces '''
+    """Strip newlines and whitespaces"""
     return text.replace('\n', '').strip()
 
 
 def html_to_kodilabel(text):
-    ''' Convert VRT HTML content into Kodit formatted text '''
+    """Convert VRT HTML content into Kodit formatted text"""
     for key, val in HTML_MAPPING:
         text = key.sub(val, text)
     return unescape(text).strip()
 
 
-def reformat_url(url, url_type):
-    ''' Convert a url '''
+def reformat_url(url, url_type, domain='www.vrt.be'):
+    """Convert a url"""
     # Clean URLs with a hash in it
     pos = url.find('#')
     if pos >= 0:
@@ -68,8 +68,8 @@ def reformat_url(url, url_type):
     # long url
     if url_type == 'long':
         if url.startswith('/vrtnu/a-z'):
-            return 'https://www.vrt.be' + url
-        if url.startswith('//www.vrt.be'):
+            return 'https://' + domain + url
+        if url.startswith('//'):  # This could be //www.vrt.be, or //images.vrt.be
             return 'https:' + url
         return url
     # medium url
@@ -77,23 +77,23 @@ def reformat_url(url, url_type):
         if url.startswith('https:'):
             return url.replace('https:', '')
         if url.startswith('/vrtnu/a-z'):
-            return '//www.vrt.be' + url
+            return '//' + domain + url
         return url
     # short url
     if url_type == 'short':
-        if url.startswith('https://www.vrt.be'):
-            return url.replace('https://www.vrt.be', '')
-        if url.startswith('//www.vrt.be'):
-            return url.replace('//www.vrt.be', '')
+        if url.startswith('https://' + domain):
+            return url.replace('https://' + domain, '')
+        if url.startswith('//' + domain):
+            return url.replace('//' + domain, '')
     return url
 
 
 def program_to_url(program, url_type):
-    ''' Convert a program url component (e.g. de-campus-cup) to:
+    """Convert a program url component (e.g. de-campus-cup) to:
         - a short programUrl (e.g. /vrtnu/a-z/de-campus-cup/)
         - a medium programUrl (e.g. //www.vrt.be/vrtnu/a-z/de-campus-cup/)
         - a long programUrl (e.g. https://www.vrt.be/vrtnu/a-z/de-campus-cup/)
-    '''
+   """
     url = None
     if program:
         # short programUrl
@@ -109,14 +109,14 @@ def program_to_url(program, url_type):
 
 
 def url_to_program(url):
-    ''' Convert
+    """Convert
           - a targetUrl (e.g. //www.vrt.be/vrtnu/a-z/de-campus-cup.relevant/),
           - a short programUrl (e.g. /vrtnu/a-z/de-campus-cup/) or
           - a medium programUrl (e.g. //www.vrt.be/vrtnu/a-z/de-campus-cup/)
           - a long programUrl (e.g. https://www.vrt.be/vrtnu/a-z/de-campus-cup/)
         to a program url component (e.g. de-campus-cup).
         Any season or episode information is removed as well.
-    '''
+   """
     program = None
     if url.startswith('https://www.vrt.be/vrtnu/a-z/'):
         # long programUrl or targetUrl
@@ -134,9 +134,9 @@ def url_to_program(url):
 
 
 def url_to_episode(url):
-    ''' Convert a targetUrl (e.g. //www.vrt.be/vrtnu/a-z/buck/1/buck-s1a32/) to
+    """Convert a targetUrl (e.g. //www.vrt.be/vrtnu/a-z/buck/1/buck-s1a32/) to
         a short episode url (/vrtnu/a-z/buck/1/buck-s1a32/)
-    '''
+   """
     if url.startswith('https://www.vrt.be/vrtnu/a-z/'):
         # long episode url
         return url.replace('https://www.vrt.be/vrtnu/a-z/', '/vrtnu/a-z/')
@@ -147,9 +147,9 @@ def url_to_episode(url):
 
 
 def video_to_api_url(url):
-    ''' Convert a full VRT NU url (e.g. https://www.vrt.be/vrtnu/a-z/de-ideale-wereld/2019-nj/de-ideale-wereld-d20191010/)
+    """Convert a full VRT NU url (e.g. https://www.vrt.be/vrtnu/a-z/de-ideale-wereld/2019-nj/de-ideale-wereld-d20191010/)
         to a VRT Search API url (e.g. //www.vrt.be/vrtnu/a-z/de-ideale-wereld/2019-nj/de-ideale-wereld-d20191010/)
-    '''
+   """
     if url.startswith('https:'):
         url = url.replace('https:', '')
         # NOTE: add a trailing slash again because routing plugin removes it and VRT NU Search API needs it
@@ -159,14 +159,14 @@ def video_to_api_url(url):
 
 
 def program_to_id(program):
-    ''' Convert a program url component (e.g. de-campus-cup)
-        to a favorite program_id (e.g. vrtnuazdecampuscup), used for lookups in favorites dict '''
+    """Convert a program url component (e.g. de-campus-cup)
+        to a favorite program_id (e.g. vrtnuazdecampuscup), used for lookups in favorites dict"""
     return 'vrtnuaz' + program.replace('-', '')
 
 
 def assetpath_to_id(assetpath):
-    ''' Convert an assetpath (e.g. /content/dam/vrt/2019/08/14/woodstock-depot_WP00157456)
-        to a resumepoint asset_id (e.g. contentdamvrt20190814woodstockdepotwp00157456) '''
+    """Convert an assetpath (e.g. /content/dam/vrt/2019/08/14/woodstock-depot_WP00157456)
+        to a resumepoint asset_id (e.g. contentdamvrt20190814woodstockdepotwp00157456)"""
     # The video has no assetPath, so we return None instead
     if assetpath is None:
         return None
@@ -174,9 +174,9 @@ def assetpath_to_id(assetpath):
 
 
 def play_url_to_id(url):
-    ''' Convert a plugin:// url (e.g. plugin://plugin.video.vrt.nu/play/id/vid-5b12c0f6-b8fe-426f-a600-557f501f3be9/pbs-pub-7e2764cf-a8c0-4e78-9cbc-46d39381c237)
+    """Convert a plugin:// url (e.g. plugin://plugin.video.vrt.nu/play/id/vid-5b12c0f6-b8fe-426f-a600-557f501f3be9/pbs-pub-7e2764cf-a8c0-4e78-9cbc-46d39381c237)
         to an id dictionary (e.g. {'video_id': 'vid-5b12c0f6-b8fe-426f-a600-557f501f3be9'}
-    '''
+   """
     play_id = dict()
     if 'play/id/' in url:
         play_id['video_id'] = url.split('play/id/')[1].split('/')[0]
@@ -188,7 +188,7 @@ def play_url_to_id(url):
 
 
 def shorten_link(url):
-    ''' Create a link that is as short as possible '''
+    """Create a link that is as short as possible"""
     if url is None:
         return None
     if url.startswith('https://www.vrt.be/vrtnu/'):
@@ -201,7 +201,7 @@ def shorten_link(url):
 
 
 def add_https_proto(url):
-    ''' Add HTTPS protocol to URL that lacks it '''
+    """Add HTTPS protocol to URL that lacks it"""
     if url.startswith('//'):
         return 'https:' + url
     if url.startswith('/'):
@@ -210,7 +210,7 @@ def add_https_proto(url):
 
 
 def realpage(page):
-    ''' Convert a URL parameter page value into an integer '''
+    """Convert a URL parameter page value into an integer"""
     try:
         page = int(page)
     except ValueError:
@@ -221,5 +221,5 @@ def realpage(page):
 
 
 def find_entry(dlist, key, value, default=None):
-    ''' Find (the first) dictionary in a list where key matches value '''
+    """Find (the first) dictionary in a list where key matches value"""
     return next((entry for entry in dlist if entry.get(key) == value), default)

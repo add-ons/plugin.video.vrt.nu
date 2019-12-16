@@ -2,7 +2,7 @@
 
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-''' Implements a class for video metadata '''
+"""Implements a class for video metadata"""
 
 from __future__ import absolute_import, division, unicode_literals
 
@@ -19,7 +19,7 @@ from utils import (add_https_proto, assetpath_to_id, capitalize, find_entry, fro
 
 
 class Metadata:
-    ''' This class creates appropriate Kodi ListItem metadata from single item json api data '''
+    """This class creates appropriate Kodi ListItem metadata from single item json api data"""
 
     def __init__(self, _favorites, _resumepoints):
         self._favorites = _favorites
@@ -27,7 +27,7 @@ class Metadata:
 
     @staticmethod
     def get_studio(api_data):
-        ''' Get studio string from single item json api data '''
+        """Get studio string from single item json api data"""
 
         # VRT NU Search API or VRT NU Suggest API
         if api_data.get('type') == 'episode' or api_data.get('type') == 'program':
@@ -53,7 +53,7 @@ class Metadata:
         return ''
 
     def get_context_menu(self, api_data, program, cache_file):
-        ''' Get context menu '''
+        """Get context menu"""
         from addon import plugin
         favorite_marker = ''
         watchlater_marker = ''
@@ -155,7 +155,7 @@ class Metadata:
 
     @staticmethod
     def get_assetpath(api_data):
-        ''' Get assetpath from single item json api data '''
+        """Get assetpath from single item json api data"""
         assetpath = None
 
         # VRT NU Search API
@@ -165,7 +165,7 @@ class Metadata:
         return assetpath
 
     def get_playcount(self, api_data):
-        ''' Get playcount from single item json api data '''
+        """Get playcount from single item json api data"""
         playcount = -1
         # Only fill in playcount when using VRT NU resumepoints because setting playcount breaks standard Kodi watched status
         if self._resumepoints.is_activated():
@@ -179,7 +179,7 @@ class Metadata:
         return playcount
 
     def get_properties(self, api_data):
-        ''' Get properties from single item json api data '''
+        """Get properties from single item json api data"""
         properties = {}
 
         # Only fill in properties when using VRT NU resumepoints because setting resumetime/totaltime breaks standard Kodi watched status
@@ -214,7 +214,7 @@ class Metadata:
 
     @staticmethod
     def get_tvshowtitle(api_data):
-        ''' Get tvshowtitle string from single item json api data '''
+        """Get tvshowtitle string from single item json api data"""
 
         # VRT NU Search API
         if api_data.get('type') == 'episode':
@@ -233,7 +233,7 @@ class Metadata:
 
     @staticmethod
     def get_duration(api_data):
-        ''' Get duration int from single item json api data '''
+        """Get duration int from single item json api data"""
 
         # VRT NU Search API
         if api_data.get('type') == 'episode':
@@ -257,7 +257,7 @@ class Metadata:
         return ''
 
     def get_plot(self, api_data, season=False, date=None):
-        ''' Get plot string from single item json api data '''
+        """Get plot string from single item json api data"""
         from datetime import datetime
         import dateutil.parser
         import dateutil.tz
@@ -340,7 +340,7 @@ class Metadata:
 
     @staticmethod
     def get_plotoutline(api_data, season=False):
-        ''' Get plotoutline string from single item json api data '''
+        """Get plotoutline string from single item json api data"""
         # VRT NU Search API
         if api_data.get('type') == 'episode':
             if season:
@@ -367,7 +367,7 @@ class Metadata:
 
     @staticmethod
     def get_season(api_data):
-        ''' Get season int from single item json api data '''
+        """Get season int from single item json api data"""
 
         # VRT NU Search API
         if api_data.get('type') == 'episode':
@@ -393,7 +393,7 @@ class Metadata:
 
     @staticmethod
     def get_episode(api_data):
-        ''' Get episode int from single item json api data '''
+        """Get episode int from single item json api data"""
 
         # VRT NU Search API
         if api_data.get('type') == 'episode':
@@ -416,7 +416,7 @@ class Metadata:
 
     @staticmethod
     def get_date(api_data):
-        ''' Get date string from single item json api data '''
+        """Get date string from single item json api data"""
 
         # VRT NU Search API
         if api_data.get('type') == 'episode':
@@ -436,7 +436,7 @@ class Metadata:
 
     @staticmethod
     def get_aired(api_data):
-        ''' Get aired string from single item json api data '''
+        """Get aired string from single item json api data"""
 
         # VRT NU Search API
         if api_data.get('type') == 'episode':
@@ -464,7 +464,7 @@ class Metadata:
 
     @staticmethod
     def get_dateadded(api_data):
-        ''' Get dateadded string from single item json api data '''
+        """Get dateadded string from single item json api data"""
 
         # VRT NU Search API
         if api_data.get('type') == 'episode':
@@ -484,7 +484,7 @@ class Metadata:
 
     @staticmethod
     def get_year(api_data):
-        ''' Get year integer from single item json api data '''
+        """Get year integer from single item json api data"""
         from datetime import datetime
 
         # VRT NU Search API
@@ -511,7 +511,7 @@ class Metadata:
 
     @staticmethod
     def get_art(api_data, season=False):
-        ''' Get art dict from single item json api data '''
+        """Get art dict from single item json api data"""
         art_dict = {}
 
         # VRT NU Search API
@@ -562,7 +562,7 @@ class Metadata:
         return art_dict
 
     def get_info_labels(self, api_data, season=False, date=None, channel=None):
-        ''' Get infoLabels dict from single item json api data '''
+        """Get infoLabels dict from single item json api data"""
 
         # VRT NU Search API
         if api_data.get('type') == 'episode':
@@ -616,7 +616,7 @@ class Metadata:
 
     @staticmethod
     def get_label(api_data, titletype=None, return_sort=False):
-        ''' Get an appropriate label string matching the type of listing and VRT NU provided displayOptions from single item json api data '''
+        """Get an appropriate label string matching the type of listing and VRT NU provided displayOptions from single item json api data"""
 
         # VRT NU Search API
         if api_data.get('type') == 'episode':
@@ -712,7 +712,7 @@ class Metadata:
 
     @staticmethod
     def get_tag(api_data):
-        ''' Return categories for a given episode '''
+        """Return categories for a given episode"""
 
         # VRT NU Search API
         if api_data.get('type') == 'episode':
@@ -728,10 +728,10 @@ class Metadata:
 
     @staticmethod
     def parse(date, now):
-        ''' Parse a given string and return a datetime object
+        """Parse a given string and return a datetime object
             This supports 'today', 'yesterday' and 'tomorrow'
             It also compensates for TV-guides covering from 6AM to 6AM
-        '''
+       """
         from datetime import timedelta
         import dateutil.parser
 

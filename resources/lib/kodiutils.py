@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-''' All functionality that requires Kodi imports '''
+"""All functionality that requires Kodi imports"""
 
 from __future__ import absolute_import, division, unicode_literals
 from contextlib import contextmanager
@@ -79,50 +79,50 @@ MONTH_SHORT = {
 
 
 class SafeDict(dict):
-    ''' A safe dictionary implementation that does not break down on missing keys '''
+    """A safe dictionary implementation that does not break down on missing keys"""
     def __missing__(self, key):
-        ''' Replace missing keys with the original placeholder '''
+        """Replace missing keys with the original placeholder"""
         return '{' + key + '}'
 
 
 def addon_icon():
-    ''' Cache and return add-on icon '''
+    """Cache and return add-on icon"""
     return get_addon_info('icon')
 
 
 def addon_id():
-    ''' Cache and return add-on ID '''
+    """Cache and return add-on ID"""
     return get_addon_info('id')
 
 
 def addon_fanart():
-    ''' Cache and return add-on fanart '''
+    """Cache and return add-on fanart"""
     return get_addon_info('fanart')
 
 
 def addon_name():
-    ''' Cache and return add-on name '''
+    """Cache and return add-on name"""
     return get_addon_info('name')
 
 
 def addon_path():
-    ''' Cache and return add-on path '''
+    """Cache and return add-on path"""
     return get_addon_info('path')
 
 
 def addon_profile():
-    ''' Cache and return add-on profile '''
+    """Cache and return add-on profile"""
     return to_unicode(xbmc.translatePath(ADDON.getAddonInfo('profile')))
 
 
 def url_for(name, *args, **kwargs):
-    ''' Wrapper for routing.url_for() to lookup by name '''
+    """Wrapper for routing.url_for() to lookup by name"""
     import addon
     return addon.plugin.url_for(getattr(addon, name), *args, **kwargs)
 
 
 def show_listing(list_items, category=None, sort='unsorted', ascending=True, content=None, cache=None, selected=None):
-    ''' Show a virtual directory in Kodi '''
+    """Show a virtual directory in Kodi"""
     from xbmcgui import ListItem
     from addon import plugin
 
@@ -243,7 +243,7 @@ def show_listing(list_items, category=None, sort='unsorted', ascending=True, con
 
 
 def play(stream, video=None):
-    ''' Create a virtual directory listing to play its only item '''
+    """Create a virtual directory listing to play its only item"""
     try:  # Python 3
         from urllib.parse import unquote
     except ImportError:  # Python 2
@@ -289,7 +289,7 @@ def play(stream, video=None):
 
 
 def get_search_string():
-    ''' Ask the user for a search string '''
+    """Ask the user for a search string"""
     search_string = None
     keyboard = xbmc.Keyboard('', localize(30134))
     keyboard.doModal()
@@ -299,7 +299,7 @@ def get_search_string():
 
 
 def ok_dialog(heading='', message=''):
-    ''' Show Kodi's OK dialog '''
+    """Show Kodi's OK dialog"""
     from xbmcgui import Dialog
     if not heading:
         heading = addon_name()
@@ -307,7 +307,7 @@ def ok_dialog(heading='', message=''):
 
 
 def notification(heading='', message='', icon='info', time=4000):
-    ''' Show a Kodi notification '''
+    """Show a Kodi notification"""
     from xbmcgui import Dialog
     if not heading:
         heading = addon_name()
@@ -317,7 +317,7 @@ def notification(heading='', message='', icon='info', time=4000):
 
 
 def multiselect(heading='', options=None, autoclose=0, preselect=None, use_details=False):
-    ''' Show a Kodi multi-select dialog '''
+    """Show a Kodi multi-select dialog"""
     from xbmcgui import Dialog
     if not heading:
         heading = addon_name()
@@ -325,7 +325,7 @@ def multiselect(heading='', options=None, autoclose=0, preselect=None, use_detai
 
 
 def set_locale():
-    ''' Load the proper locale for date strings, only once '''
+    """Load the proper locale for date strings, only once"""
     if hasattr(set_locale, 'cached'):
         return getattr(set_locale, 'cached')
     from locale import Error, LC_ALL, setlocale
@@ -344,7 +344,7 @@ def set_locale():
 
 
 def localize(string_id, **kwargs):
-    ''' Return the translated string from the .po language files, optionally translating variables '''
+    """Return the translated string from the .po language files, optionally translating variables"""
     if kwargs:
         from string import Formatter
         return Formatter().vformat(ADDON.getLocalizedString(string_id), (), SafeDict(**kwargs))
@@ -352,7 +352,7 @@ def localize(string_id, **kwargs):
 
 
 def localize_date(date, strftime):
-    ''' Return a localized date, even if the system does not support your locale '''
+    """Return a localized date, even if the system does not support your locale"""
     has_locale = set_locale()
     # When locale is supported, return original format
     if has_locale:
@@ -370,12 +370,12 @@ def localize_date(date, strftime):
 
 
 def localize_datelong(date):
-    ''' Return a localized long date string '''
+    """Return a localized long date string"""
     return localize_date(date, xbmc.getRegion('datelong'))
 
 
 def localize_from_data(name, data):
-    ''' Return a localized name string from a Dutch data object '''
+    """Return a localized name string from a Dutch data object"""
     # Return if Kodi language is Dutch
     if get_global_setting('locale.language') == 'resource.language.nl_nl':
         return name
@@ -383,7 +383,7 @@ def localize_from_data(name, data):
 
 
 def get_setting(key, default=None):
-    ''' Get an add-on setting '''
+    """Get an add-on setting"""
     try:
         value = to_unicode(ADDON.getSetting(key))
     except RuntimeError:  # Occurs when the add-on is disabled
@@ -394,23 +394,23 @@ def get_setting(key, default=None):
 
 
 def set_setting(key, value):
-    ''' Set an add-on setting '''
+    """Set an add-on setting"""
     return ADDON.setSetting(key, from_unicode(str(value)))
 
 
 def open_settings():
-    ''' Open the add-in settings window, shows Credentials '''
+    """Open the add-in settings window, shows Credentials"""
     ADDON.openSettings()
 
 
 def get_global_setting(key):
-    ''' Get a Kodi setting '''
+    """Get a Kodi setting"""
     result = jsonrpc(method='Settings.GetSettingValue', params=dict(setting=key))
     return result.get('result', {}).get('value')
 
 
 def get_advanced_setting(key, default=None):
-    ''' Get a setting from advancedsettings.xml '''
+    """Get a setting from advancedsettings.xml"""
     as_path = xbmc.translatePath('special://masterprofile/advancedsettings.xml')
     if not exists(as_path):
         return default
@@ -428,7 +428,7 @@ def get_advanced_setting(key, default=None):
 
 
 def get_advanced_setting_int(key, default=0):
-    ''' Get a setting from advancedsettings.xml as an integer '''
+    """Get a setting from advancedsettings.xml as an integer"""
     if not isinstance(default, int):
         default = 0
     setting = get_advanced_setting(key, default)
@@ -438,7 +438,7 @@ def get_advanced_setting_int(key, default=0):
 
 
 def get_property(key, default=None, window_id=10000):
-    ''' Get a Window property '''
+    """Get a Window property"""
     from xbmcgui import Window
     value = to_unicode(Window(window_id).getProperty(key))
     if value == '' and default is not None:
@@ -447,19 +447,19 @@ def get_property(key, default=None, window_id=10000):
 
 
 def set_property(key, value, window_id=10000):
-    ''' Set a Window property '''
+    """Set a Window property"""
     from xbmcgui import Window
     return Window(window_id).setProperty(key, from_unicode(value))
 
 
 def clear_property(key, window_id=10000):
-    ''' Clear a Window property '''
+    """Clear a Window property"""
     from xbmcgui import Window
     return Window(window_id).clearProperty(key)
 
 
 def notify(sender, message, data):
-    ''' Send a notification to Kodi using JSON RPC '''
+    """Send a notification to Kodi using JSON RPC"""
     result = jsonrpc(method='JSONRPC.NotifyAll', params=dict(
         sender=sender,
         message=message,
@@ -473,7 +473,7 @@ def notify(sender, message, data):
 
 
 def get_playerid():
-    ''' Get current playerid '''
+    """Get current playerid"""
     result = dict()
     while not result.get('result'):
         result = jsonrpc(method='Player.GetActivePlayers')
@@ -481,7 +481,7 @@ def get_playerid():
 
 
 def get_max_bandwidth():
-    ''' Get the max bandwidth based on Kodi and add-on settings '''
+    """Get the max bandwidth based on Kodi and add-on settings"""
     vrtnu_max_bandwidth = int(get_setting('max_bandwidth', '0'))
     global_max_bandwidth = int(get_global_setting('network.bandwidth'))
     if vrtnu_max_bandwidth != 0 and global_max_bandwidth != 0:
@@ -494,7 +494,7 @@ def get_max_bandwidth():
 
 
 def has_socks():
-    ''' Test if socks is installed, and use a static variable to remember '''
+    """Test if socks is installed, and use a static variable to remember"""
     if hasattr(has_socks, 'cached'):
         return getattr(has_socks, 'cached')
     try:
@@ -507,7 +507,7 @@ def has_socks():
 
 
 def get_proxies():
-    ''' Return a usable proxies dictionary from Kodi proxy settings '''
+    """Return a usable proxies dictionary from Kodi proxy settings"""
     usehttpproxy = get_global_setting('network.usehttpproxy')
     if usehttpproxy is not True:
         return None
@@ -550,88 +550,88 @@ def get_proxies():
 
 
 def get_cond_visibility(condition):
-    ''' Test a condition in XBMC '''
+    """Test a condition in XBMC"""
     return xbmc.getCondVisibility(condition)
 
 
 def has_inputstream_adaptive():
-    ''' Whether InputStream Adaptive is installed and enabled in add-on settings '''
+    """Whether InputStream Adaptive is installed and enabled in add-on settings"""
     return get_setting('useinputstreamadaptive', 'true') == 'true' and has_addon('inputstream.adaptive')
 
 
 def has_addon(name):
-    ''' Checks if add-on is installed '''
+    """Checks if add-on is installed"""
     return xbmc.getCondVisibility('System.HasAddon(%s)' % name) == 1
 
 
 def has_credentials():
-    ''' Whether the add-on has credentials filled in '''
+    """Whether the add-on has credentials filled in"""
     return bool(get_setting('username') and get_setting('password'))
 
 
 def kodi_version():
-    ''' Returns major Kodi version '''
+    """Returns major Kodi version"""
     return int(xbmc.getInfoLabel('System.BuildVersion').split('.')[0])
 
 
 def can_play_drm():
-    ''' Whether this Kodi can do DRM using InputStream Adaptive '''
+    """Whether this Kodi can do DRM using InputStream Adaptive"""
     return get_setting('usedrm', 'true') == 'true' and get_setting('useinputstreamadaptive', 'true') == 'true' and supports_drm()
 
 
 def supports_drm():
-    ''' Whether this Kodi version supports DRM decryption using InputStream Adaptive '''
+    """Whether this Kodi version supports DRM decryption using InputStream Adaptive"""
     return kodi_version() > 17
 
 
 def get_tokens_path():
-    ''' Cache and return the userdata tokens path '''
+    """Cache and return the userdata tokens path"""
     if not hasattr(get_tokens_path, 'cached'):
         get_tokens_path.cached = addon_profile() + 'tokens/'
     return getattr(get_tokens_path, 'cached')
 
 
 def get_cache_path():
-    ''' Cache and return the userdata cache path '''
+    """Cache and return the userdata cache path"""
     if not hasattr(get_cache_path, 'cached'):
         get_cache_path.cached = addon_profile() + 'cache/'
     return getattr(get_cache_path, 'cached')
 
 
 def get_addon_info(key):
-    ''' Return addon information '''
+    """Return addon information"""
     return to_unicode(ADDON.getAddonInfo(key))
 
 
 def listdir(path):
-    ''' Return all files in a directory (using xbmcvfs)'''
+    """Return all files in a directory (using xbmcvfs)"""
     from xbmcvfs import listdir as vfslistdir
     return vfslistdir(path)
 
 
 def mkdir(path):
-    ''' Create a directory (using xbmcvfs) '''
+    """Create a directory (using xbmcvfs)"""
     from xbmcvfs import mkdir as vfsmkdir
     log(3, "Create directory '{path}'.", path=path)
     return vfsmkdir(path)
 
 
 def mkdirs(path):
-    ''' Create directory including parents (using xbmcvfs) '''
+    """Create directory including parents (using xbmcvfs)"""
     from xbmcvfs import mkdirs as vfsmkdirs
     log(3, "Recursively create directory '{path}'.", path=path)
     return vfsmkdirs(path)
 
 
 def exists(path):
-    ''' Whether the path exists (using xbmcvfs)'''
+    """Whether the path exists (using xbmcvfs)"""
     from xbmcvfs import exists as vfsexists
     return vfsexists(path)
 
 
 @contextmanager
 def open_file(path, flags='r'):
-    ''' Open a file (using xbmcvfs) '''
+    """Open a file (using xbmcvfs)"""
     from xbmcvfs import File
     fdesc = File(path, flags)
     yield fdesc
@@ -639,20 +639,20 @@ def open_file(path, flags='r'):
 
 
 def stat_file(path):
-    ''' Return information about a file (using xbmcvfs) '''
+    """Return information about a file (using xbmcvfs)"""
     from xbmcvfs import Stat
     return Stat(path)
 
 
 def delete(path):
-    ''' Remove a file (using xbmcvfs) '''
+    """Remove a file (using xbmcvfs)"""
     from xbmcvfs import delete as vfsdelete
     log(3, "Delete file '{path}'.", path=path)
     return vfsdelete(path)
 
 
 def delete_cached_thumbnail(url):
-    ''' Remove a cached thumbnail from Kodi in an attempt to get a realtime live screenshot '''
+    """Remove a cached thumbnail from Kodi in an attempt to get a realtime live screenshot"""
     # Get texture
     result = jsonrpc(method='Textures.GetTextures', params=dict(
         filter=dict(
@@ -682,12 +682,12 @@ def delete_cached_thumbnail(url):
 
 
 def input_down():
-    ''' Move the cursor down '''
+    """Move the cursor down"""
     jsonrpc(method='Input.Down')
 
 
 def current_container_url():
-    ''' Get current container plugin:// url '''
+    """Get current container plugin:// url"""
     url = xbmc.getInfoLabel('Container.FolderPath')
     if url == '':
         return None
@@ -695,7 +695,7 @@ def current_container_url():
 
 
 def container_refresh(url=None):
-    ''' Refresh the current container or (re)load a container by URL '''
+    """Refresh the current container or (re)load a container by URL"""
     if url:
         log(3, 'Execute: Container.Refresh({url})', url=url)
         xbmc.executebuiltin('Container.Refresh({url})'.format(url=url))
@@ -705,7 +705,7 @@ def container_refresh(url=None):
 
 
 def container_update(url):
-    ''' Update the current container while respecting the path history. '''
+    """Update the current container while respecting the path history."""
     if url:
         log(3, 'Execute: Container.Update({url})', url=url)
         xbmc.executebuiltin('Container.Update({url})'.format(url=url))
@@ -715,7 +715,7 @@ def container_update(url):
 
 
 def container_reload(url=None):
-    ''' Only update container if the play action was initiated from it '''
+    """Only update container if the play action was initiated from it"""
     if url is None:
         url = get_property('container.url')
     if current_container_url() != url:
@@ -724,13 +724,13 @@ def container_reload(url=None):
 
 
 def end_of_directory():
-    ''' Close a virtual directory, required to avoid a waiting Kodi '''
+    """Close a virtual directory, required to avoid a waiting Kodi"""
     from addon import plugin
     xbmcplugin.endOfDirectory(handle=plugin.handle, succeeded=False, updateListing=False, cacheToDisc=False)
 
 
 def log(level=1, message='', **kwargs):
-    ''' Log info messages to Kodi '''
+    """Log info messages to Kodi"""
     debug_logging = get_global_setting('debug.showloginfo')  # Returns a boolean
     max_log_level = int(get_setting('max_log_level', 0))
     if not debug_logging and not (level <= max_log_level and max_log_level != 0):
@@ -743,13 +743,13 @@ def log(level=1, message='', **kwargs):
 
 
 def log_access(url, query_string=None):
-    ''' Log addon access '''
+    """Log addon access"""
     message = 'Access: %s' % (url + ('?' + query_string if query_string else ''))
     log(1, message)
 
 
 def log_error(message, **kwargs):
-    ''' Log error messages to Kodi '''
+    """Log error messages to Kodi"""
     if kwargs:
         from string import Formatter
         message = Formatter().vformat(message, (), SafeDict(**kwargs))
@@ -758,7 +758,7 @@ def log_error(message, **kwargs):
 
 
 def jsonrpc(*args, **kwargs):
-    ''' Perform JSONRPC calls '''
+    """Perform JSONRPC calls"""
     from json import dumps, loads
 
     # We do not accept both args and kwargs
@@ -784,7 +784,7 @@ def jsonrpc(*args, **kwargs):
 
 
 def human_delta(seconds):
-    ''' Return a human-readable representation of the TTL '''
+    """Return a human-readable representation of the TTL"""
     from math import floor
     days = int(floor(seconds / (24 * 60 * 60)))
     seconds = seconds % (24 * 60 * 60)
@@ -802,7 +802,7 @@ def human_delta(seconds):
 
 
 def get_cache(path, ttl=None):  # pylint: disable=redefined-outer-name
-    ''' Get the content from cache, if it's still fresh '''
+    """Get the content from cache, if it's still fresh"""
     if get_setting('usehttpcaching', 'true') == 'false':
         return None
 
@@ -825,7 +825,7 @@ def get_cache(path, ttl=None):  # pylint: disable=redefined-outer-name
 
 
 def update_cache(path, data):
-    ''' Update the cache, if necessary '''
+    """Update the cache, if necessary"""
     if get_setting('usehttpcaching', 'true') == 'false':
         return
 
@@ -849,7 +849,7 @@ def update_cache(path, data):
 
 
 def write_cache(path, data):
-    ''' Write data to cache '''
+    """Write data to cache"""
     log(3, "Write cache '{path}'.", path=path)
     fullpath = get_cache_path() + path
     with open_file(fullpath, 'w') as fdesc:
@@ -858,7 +858,7 @@ def write_cache(path, data):
 
 
 def update_timestamp(path):
-    ''' Update a file's timestamp '''
+    """Update a file's timestamp"""
     from os import utime
     fullpath = get_cache_path() + path
     log(3, "Cache '{path}' has not changed, updating mtime only.", path=path)
@@ -866,7 +866,7 @@ def update_timestamp(path):
 
 
 def ttl(kind='direct'):
-    ''' Return the HTTP cache ttl in seconds based on kind of relation '''
+    """Return the HTTP cache ttl in seconds based on kind of relation"""
     if kind == 'direct':
         return int(get_setting('httpcachettldirect', 5)) * 60
     if kind == 'indirect':
@@ -875,7 +875,7 @@ def ttl(kind='direct'):
 
 
 def get_json_data(response, fail=None):
-    ''' Return json object from HTTP response '''
+    """Return json object from HTTP response"""
     from json import load, loads
     try:
         if (3, 0, 0) <= version_info <= (3, 5, 9):  # the JSON object must be str, not 'bytes'
@@ -890,7 +890,7 @@ def get_json_data(response, fail=None):
 
 
 def get_url_json(url, cache=None, headers=None, data=None, fail=None):
-    ''' Return HTTP data '''
+    """Return HTTP data"""
     try:  # Python 3
         from urllib.error import HTTPError
         from urllib.parse import unquote
@@ -936,7 +936,7 @@ def get_url_json(url, cache=None, headers=None, data=None, fail=None):
 
 
 def get_cached_url_json(url, cache, headers=None, ttl=None, fail=None):  # pylint: disable=redefined-outer-name
-    ''' Return data from cache, if any, else make an HTTP request '''
+    """Return data from cache, if any, else make an HTTP request"""
     # Get api data from cache if it is fresh
     json_data = get_cache(cache, ttl=ttl)
     if json_data is not None:
@@ -945,7 +945,7 @@ def get_cached_url_json(url, cache, headers=None, ttl=None, fail=None):  # pylin
 
 
 def refresh_caches(cache_file=None):
-    ''' Invalidate the needed caches and refresh container '''
+    """Invalidate the needed caches and refresh container"""
     files = ['favorites.json', 'oneoff.json', 'resume_points.json']
     if cache_file and cache_file not in files:
         files.append(cache_file)
@@ -955,7 +955,7 @@ def refresh_caches(cache_file=None):
 
 
 def invalidate_caches(*caches):
-    ''' Invalidate multiple cache files '''
+    """Invalidate multiple cache files"""
     import fnmatch
     _, files = listdir(get_cache_path())
     # Invalidate caches related to menu list refreshes

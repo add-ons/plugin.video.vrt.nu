@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-''' This is the actual VRT NU service entry point '''
+"""This is the actual VRT NU service entry point"""
 
 from __future__ import absolute_import, division, unicode_literals
 from xbmc import Monitor
@@ -13,26 +13,26 @@ from tokenresolver import TokenResolver
 from utils import to_unicode
 
 
-class VrtMonitor(Monitor):
-    ''' This is the class that monitors Kodi for the VRT NU video plugin '''
+class VrtMonitor(Monitor, object):  # pylint: disable=useless-object-inheritance
+    """This is the class that monitors Kodi for the VRT NU video plugin"""
 
     def __init__(self):
-        ''' VRT Monitor initialisiation '''
+        """VRT Monitor initialisiation"""
         self._resumepoints = ResumePoints()
         self._playerinfo = None
         self._favorites = None
         self._apihelper = None
         self.init_watching_activity()
-        Monitor.__init__(self)
+        super(VrtMonitor, self).__init__(self)
 
     def run(self):
-        ''' Main loop '''
+        """Main loop"""
         while not self.abortRequested():
             if self.waitForAbort(10):
                 break
 
     def init_watching_activity(self):
-        ''' Only load components for watching activity when needed '''
+        """Only load components for watching activity when needed"""
 
         if self._resumepoints.is_activated():
             if not self._playerinfo:
@@ -43,7 +43,7 @@ class VrtMonitor(Monitor):
                 self._apihelper = ApiHelper(self._favorites, self._resumepoints)
 
     def onNotification(self, sender, method, data):  # pylint: disable=invalid-name
-        ''' Handler for notifications '''
+        """Handler for notifications"""
         # log(2, '[Notification] sender={sender}, method={method}, data={data}', sender=sender, method=method, data=to_unicode(data))
 
         # Handle play_action events from upnextprovider
@@ -61,7 +61,7 @@ class VrtMonitor(Monitor):
             self._playerinfo.add_upnext(data.get('video_id'))
 
     def onSettingsChanged(self):  # pylint: disable=invalid-name
-        ''' Handler for changes to settings '''
+        """Handler for changes to settings"""
 
         log(1, 'Settings changed')
         TokenResolver().refresh_login()

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright: (c) 2019, Dag Wieers (@dagwieers) <dag@wieers.com>
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-''' Implementation of ResumePoints class '''
+"""Implementation of ResumePoints class"""
 
 from __future__ import absolute_import, division, unicode_literals
 
@@ -18,21 +18,21 @@ from kodiutils import (container_refresh, get_cache, get_proxies, get_setting,
 
 
 class ResumePoints:
-    ''' Track, cache and manage VRT resume points and watch list '''
+    """Track, cache and manage VRT resume points and watch list"""
 
     def __init__(self):
-        ''' Initialize resumepoints, relies on XBMC vfs and a special VRT token '''
+        """Initialize resumepoints, relies on XBMC vfs and a special VRT token"""
         self._data = dict()  # Our internal representation
         install_opener(build_opener(ProxyHandler(get_proxies())))
 
     @staticmethod
     def is_activated():
-        ''' Is resumepoints activated in the menu and do we have credentials ? '''
+        """Is resumepoints activated in the menu and do we have credentials ?"""
         return get_setting('useresumepoints') == 'true' and has_credentials()
 
     @staticmethod
     def resumepoint_headers(url=None):
-        ''' Generate http headers for VRT NU Resumepoints API '''
+        """Generate http headers for VRT NU Resumepoints API"""
         from tokenresolver import TokenResolver
         xvrttoken = TokenResolver().get_xvrttoken(token_variant='user')
         headers = dict()
@@ -46,7 +46,7 @@ class ResumePoints:
         return headers
 
     def refresh(self, ttl=None):
-        ''' Get a cached copy or a newer resumepoints from VRT, or fall back to a cached file '''
+        """Get a cached copy or a newer resumepoints from VRT, or fall back to a cached file"""
         if not self.is_activated():
             return
         resumepoints_json = get_cache('resume_points.json', ttl)
@@ -57,7 +57,7 @@ class ResumePoints:
             self._data = resumepoints_json
 
     def update(self, asset_id, title, url, watch_later=None, position=None, total=None, whatson_id=None, asynchronous=False):
-        ''' Set program resumepoint or watchLater status and update local copy '''
+        """Set program resumepoint or watchLater status and update local copy"""
         log(3, "[Resumepoints] Update resumepoint '{asset_id}' {position}/{total}", asset_id=asset_id, position=position, total=total)
         # The video has no assetPath, so we cannot update resumepoints
         if asset_id is None:
@@ -131,7 +131,7 @@ class ResumePoints:
         return self.update_online(asset_id, title, url, payload)
 
     def update_online(self, asset_id, title, url, payload):
-        ''' Update resumepoint online '''
+        """Update resumepoint online"""
         from json import dumps
         try:
             get_url_json('https://video-user-data.vrt.be/resume_points/%s' % asset_id, headers=self.resumepoint_headers(url), data=dumps(payload).encode())
@@ -142,7 +142,7 @@ class ResumePoints:
         return True
 
     def delete(self, asset_id, watch_later, asynchronous=False):
-        ''' Remove an entry from resumepoints '''
+        """Remove an entry from resumepoints"""
         # Do nothing if there is no resumepoint for this asset_id
         if not self._data.get(asset_id):
             log(3, "[Resumepoints] '{asset_id}' not present, nothing to delete", asset_id=asset_id)
@@ -169,7 +169,7 @@ class ResumePoints:
         return self.delete_online(asset_id)
 
     def delete_online(self, asset_id):
-        ''' Delete resumepoint online '''
+        """Delete resumepoint online"""
         req = Request('https://video-user-data.vrt.be/resume_points/%s' % asset_id, headers=self.resumepoint_headers())
         req.get_method = lambda: 'DELETE'
         try:
@@ -181,29 +181,29 @@ class ResumePoints:
 
     @staticmethod
     def refresh_watchlater():
-        ''' Refresh Watch Later menu '''
+        """Refresh Watch Later menu"""
         invalidate_caches('watchlater-*.json')
         container_refresh()
 
     @staticmethod
     def refresh_continuewatching():
-        ''' Refresh Continue Watching menu '''
+        """Refresh Continue Watching menu"""
         invalidate_caches('continue-*.json')
         container_refresh()
 
     def is_watchlater(self, asset_id):
-        ''' Is a program set to watch later ? '''
+        """Is a program set to watch later ?"""
         return self._data.get(asset_id, {}).get('value', {}).get('watchLater') is True
 
     def watchlater(self, asset_id, title, url):
-        ''' Watch an episode later '''
+        """Watch an episode later"""
         succeeded = self.update(asset_id=asset_id, title=title, url=url, watch_later=True)
         if succeeded:
             notification(message=localize(30403, title=title))
             container_refresh()
 
     def unwatchlater(self, asset_id, title, url, move_down=False):
-        ''' Unwatch an episode later '''
+        """Unwatch an episode later"""
         succeeded = self.update(asset_id=asset_id, title=title, url=url, watch_later=False)
         if succeeded:
             notification(message=localize(30404, title=title))
@@ -213,30 +213,30 @@ class ResumePoints:
             container_refresh()
 
     def get_position(self, asset_id):
-        ''' Return the stored position of a video '''
+        """Return the stored position of a video"""
         return self._data.get(asset_id, {}).get('value', {}).get('position', 0)
 
     def get_total(self, asset_id):
-        ''' Return the stored total length of a video '''
+        """Return the stored total length of a video"""
         return self._data.get(asset_id, {}).get('value', {}).get('total', 100)
 
     def get_url(self, asset_id, url_type='medium'):
-        ''' Return the stored url a video '''
+        """Return the stored url a video"""
         from utils import reformat_url
         return reformat_url(self._data.get(asset_id, {}).get('value', {}).get('url'), url_type)
 
     def watchlater_urls(self):
-        ''' Return all watchlater urls '''
+        """Return all watchlater urls"""
         return [self.get_url(asset_id) for asset_id in self._data if self.is_watchlater(asset_id)]
 
     def resumepoints_urls(self):
-        ''' Return all urls that have not been finished watching '''
+        """Return all urls that have not been finished watching"""
         return [self.get_url(asset_id) for asset_id in self._data
                 if SECONDS_MARGIN < self.get_position(asset_id) < (self.get_total(asset_id) - SECONDS_MARGIN)]
 
     @staticmethod
     def still_watching(position, total):
-        ''' Determine if the video is still being watched '''
+        """Determine if the video is still being watched"""
 
         if position <= SECONDS_MARGIN:
             return False

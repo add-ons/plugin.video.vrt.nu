@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-''' Unit tests for VRTPlayer functionality '''
+"""Unit tests for VRTPlayer functionality"""
 
 # pylint: disable=invalid-name
 
@@ -21,7 +21,7 @@ xbmcvfs = __import__('xbmcvfs')
 
 
 class TestVRTPlayer(unittest.TestCase):
-    ''' TestCase class '''
+    """TestCase class"""
 
     _favorites = Favorites()
     _resumepoints = ResumePoints()
@@ -29,7 +29,7 @@ class TestVRTPlayer(unittest.TestCase):
     _vrtplayer = VRTPlayer()
 
     def test_show_videos_single_episode_shows_videos(self):
-        ''' Test listing single episode for a given program (marathonradio) '''
+        """Test listing single episode for a given program (marathonradio)"""
         program = 'marathonradio'
         episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program)
         self.assertTrue(episode_items, msg=program)
@@ -40,7 +40,7 @@ class TestVRTPlayer(unittest.TestCase):
         self._vrtplayer.show_episodes_menu(program)
 
     def test_show_videos_single_season_shows_videos(self):
-        ''' Test listing single season for a given program (het-weer) '''
+        """Test listing single season for a given program (het-weer)"""
         program = 'het-weer'
         episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program)
         self.assertTrue(episode_items, msg=program)
@@ -51,7 +51,7 @@ class TestVRTPlayer(unittest.TestCase):
         self._vrtplayer.show_episodes_menu(program)
 
     def test_show_videos_multiple_seasons_shows_videos(self):
-        ''' Test listing multiple season for a given program (pano) '''
+        """Test listing multiple season for a given program (pano)"""
         program = 'pano'
         episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program)
         self.assertTrue(episode_items)
@@ -62,7 +62,7 @@ class TestVRTPlayer(unittest.TestCase):
         self._vrtplayer.show_episodes_menu(program)
 
     def test_show_videos_specific_seasons_shows_videos(self):
-        ''' Test listing specific seasons for a given program (thuis) '''
+        """Test listing specific seasons for a given program (thuis)"""
         program = 'thuis'
         episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program)
         self.assertTrue(episode_items, msg=program)
@@ -73,14 +73,14 @@ class TestVRTPlayer(unittest.TestCase):
         self._vrtplayer.show_episodes_menu(program)
 
     def test_categories_scraping(self):
-        ''' Test to ensure our hardcoded categories conforms to scraped categories '''
+        """Test to ensure our hardcoded categories conforms to scraped categories"""
         # Remove thumbnails from scraped categories first
         categories_scraped = [dict(id=c['id'], name=c['name']) for c in self._apihelper.get_categories()]
         categories_stored = [dict(id=c['id'], name=c['name']) for c in CATEGORIES]
         self.assertEqual(categories_scraped, categories_stored)
 
     def test_random_tvshow_episodes(self):
-        ''' Rest episode from a random tvshow in a random category '''
+        """Rest episode from a random tvshow in a random category"""
         categories = self._apihelper.get_categories()
         self.assertTrue(categories)
 
@@ -103,26 +103,26 @@ class TestVRTPlayer(unittest.TestCase):
             self.fail('We did not expect this, either we find episodes or it is a playable item')
 
     def test_categories(self):
-        ''' Test to ensure our hardcoded categories conforms to scraped categories '''
+        """Test to ensure our hardcoded categories conforms to scraped categories"""
         category_items = self._apihelper.list_categories()
         self.assertEqual(len(category_items), 17)
 
     def test_featured(self):
-        ''' Test to ensure our hardcoded categories conforms to scraped categories '''
+        """Test to ensure our hardcoded categories conforms to scraped categories"""
         featured_items = self._apihelper.list_featured()
         self.assertEqual(len(featured_items), 9)
 
     def test_play_unknown_program(self):
-        ''' Test playing latest episode of an unknown program '''
+        """Test playing latest episode of an unknown program"""
         self._vrtplayer.play_latest_episode(program='foobar')
 
     def test_play_unknown_airdate(self):
-        ''' Test playing unknown airdate '''
+        """Test playing unknown airdate"""
         self._vrtplayer.play_episode_by_air_date(channel='een', start_date='2100-01-01T23:59:58', end_date='2100-01-01T23:59:59')
         self._vrtplayer.play_episode_by_air_date(channel='foo', start_date='2100-01-01T23:59:58', end_date='2100-01-01T23:59:59')
 
     def test_play_unknown_video_id(self):
-        ''' Test playing unknown Up Next video_id '''
+        """Test playing unknown Up Next video_id"""
         self._vrtplayer.play_upnext(video_id='1234567890')
 
 

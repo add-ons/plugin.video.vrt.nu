@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright: (c) 2019, Dag Wieers (@dagwieers) <dag@wieers.com>
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-''' Integration tests for search functionality '''
+"""Integration tests for search functionality"""
 
 # pylint: disable=invalid-name
 
@@ -23,14 +23,14 @@ itemsperpage = int(addon.settings.get('itemsperpage'))
 
 
 class TestSearch(unittest.TestCase):
-    ''' TestClass class '''
+    """TestClass class"""
 
     _favorites = Favorites()
     _resumepoints = ResumePoints()
     _apihelper = ApiHelper(_favorites, _resumepoints)
 
     def test_search_journaal(self):
-        ''' Test for journaal '''
+        """Test for journaal"""
         search_items, sort, ascending, content = self._apihelper.list_search('journaal', page=1)
 
         # Test we get a non-empty search result
@@ -40,7 +40,7 @@ class TestSearch(unittest.TestCase):
         self.assertEqual(content, 'episodes')
 
     def test_search_journaal_page2(self):
-        ''' Test for journaal '''
+        """Test for journaal"""
         search_items, sort, ascending, content = self._apihelper.list_search('journaal', page=2)
 
         # Test we get a non-empty search result
@@ -50,7 +50,7 @@ class TestSearch(unittest.TestCase):
         self.assertEqual(content, 'episodes')
 
     def test_search_weer(self):
-        ''' Test for journaal '''
+        """Test for journaal"""
         search_items, sort, ascending, content = self._apihelper.list_search('weer', page=1)
 
         # Test we get a non-empty search result
@@ -60,7 +60,7 @@ class TestSearch(unittest.TestCase):
         self.assertEqual(content, 'episodes')
 
     def test_search_unicode(self):
-        ''' Test for unicode '''
+        """Test for unicode"""
         search_items, sort, ascending, content = self._apihelper.list_search('René', page=1)
 
         # Test we get a non-empty search result
@@ -71,7 +71,7 @@ class TestSearch(unittest.TestCase):
 
     @staticmethod
     def test_search_empty():
-        ''' Test for empty search '''
+        """Test for empty search"""
         Search().search(keywords='')
 
 
