@@ -118,12 +118,11 @@ class ResumePoints:
             payload['watchLater'] = watch_later
             removes.append('watchlater-*.json')
 
-        # NOTE: Updates to resumepoints take a longer time to take effect, so we keep our own cache and use it
-        self._data[asset_id] = dict(value=payload)
-        from json import dumps
-        update_cache('resume_points.json', dumps(self._data))
+        # First update resumepoints to a fast local cache because online resumpoints take a longer time to take effect
+        self.update_local(asset_id, dict(value=payload))
         invalidate_caches(*removes)
 
+        # Update online resumepoints
         if asynchronous:
             from threading import Thread
             Thread(target=self.update_online, name='ResumePointsUpdate', args=(asset_id, title, url, payload)).start()
@@ -134,12 +133,28 @@ class ResumePoints:
         """Update resumepoint online"""
         from json import dumps
         try:
-            get_url_json('https://video-user-data.vrt.be/resume_points/%s' % asset_id, headers=self.resumepoint_headers(url), data=dumps(payload).encode())
+            get_url_json('https://video-user-data.vrt.be/resume_points/%s' % asset_id,
+                         headers=self.resumepoint_headers(url), data=dumps(payload).encode())
         except HTTPError as exc:
             log_error('Failed to (un)watch episode {title} at VRT NU ({error})', title=title, error=exc)
             notification(message=localize(30977, title=title))
             return False
         return True
+
+    def update_local(self, asset_id, resumepoint_json):
+        """Update resumepoint locally and update cache"""
+        self._data.update({asset_id: resumepoint_json})
+        from json import dumps
+        update_cache('resume_points.json', dumps(self._data))
+
+    def delete_local(self, asset_id):
+        """Delete resumepoint locally and update cache"""
+        try:
+            del self._data[asset_id]
+            from json import dumps
+            update_cache('resume_points.json', dumps(self._data))
+        except KeyError:
+            pass
 
     def delete(self, asset_id, watch_later, asynchronous=False):
         """Remove an entry from resumepoints"""
@@ -149,13 +164,8 @@ class ResumePoints:
             return True
 
         log(3, "[Resumepoints] Remove '{asset_id}' from resumepoints", asset_id=asset_id)
-        # Delete local representation and update cache
-        try:
-            del self._data[asset_id]
-            from json import dumps
-            update_cache('resume_points.json', dumps(self._data))
-        except KeyError:
-            pass
+        # Delete local representation and cache
+        self.delete_local(asset_id)
 
         if watch_later is False:
             self.refresh_watchlater()
@@ -173,7 +183,8 @@ class ResumePoints:
         req = Request('https://video-user-data.vrt.be/resume_points/%s' % asset_id, headers=self.resumepoint_headers())
         req.get_method = lambda: 'DELETE'
         try:
-            urlopen(req)
+            result = urlopen(req)
+            log(3, "[Resumepoints] '{asset_id}' online deleted: {code}", asset_id=asset_id, code=result.getcode())
         except HTTPError as exc:
             log_error("Failed to remove '{asset_id}' from resumepoints: {error}", asset_id=asset_id, error=exc)
             return False

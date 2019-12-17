@@ -185,12 +185,13 @@ class TestRouting(unittest.TestCase):
         self.assertEqual(plugin.url_for(addon.favorites_manage), 'plugin://plugin.video.vrt.nu/favorites/manage')
 
     def test_watchlater_route(self):
-        """Watch later method: plugin://plugin.video.vrt.nu/watchlater/<url>/<asset_id>/<title>"""
+        """Watch and unwatch later method: plugin://plugin.video.vrt.nu/watchlater/<url>/<asset_id>/<title>"""
+
+        # Watchlater Winteruur met Lize Feryn (beschikbaar tot 26 maart 2025)
         addon.run(['plugin://plugin.video.vrt.nu/watchlater//vrtnu/a-z/winteruur/5/winteruur-s5a1//contentdamvrt20191015winteruurr005a0001depotwp00162177/Winteruur', '0', ''])
         self.assertEqual(plugin.url_for(addon.watchlater, url='/vrtnu/a-z/winteruur/5/winteruur-s5a1', asset_id='/contentdamvrt20191015winteruurr005a0001depotwp00162177', title='Winteruur'), 'plugin://plugin.video.vrt.nu/watchlater//vrtnu/a-z/winteruur/5/winteruur-s5a1//contentdamvrt20191015winteruurr005a0001depotwp00162177/Winteruur')
 
-    def test_unwatchlater_route(self):
-        """Unwatch later method: plugin://plugin.video.vrt.nu/unwatchlater/<url>/<asset_id>/<title>"""
+        # Unwatchlater Winteruur met Lize Feryn (beschikbaar tot 26 maart 2025)
         addon.run(['plugin://plugin.video.vrt.nu/unwatchlater//vrtnu/a-z/winteruur/5/winteruur-s5a1//contentdamvrt20191015winteruurr005a0001depotwp00162177/Winteruur', '0', ''])
         self.assertEqual(plugin.url_for(addon.unwatchlater, url='/vrtnu/a-z/winteruur/5/winteruur-s5a1', asset_id='/contentdamvrt20191015winteruurr005a0001depotwp00162177', title='Winteruur'), 'plugin://plugin.video.vrt.nu/unwatchlater//vrtnu/a-z/winteruur/5/winteruur-s5a1//contentdamvrt20191015winteruurr005a0001depotwp00162177/Winteruur')
 
