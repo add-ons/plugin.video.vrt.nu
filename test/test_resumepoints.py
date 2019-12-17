@@ -57,8 +57,8 @@ class TestResumePoints(unittest.TestCase):
         asset_id, first_entry = next(iter(list(self._resumepoints._data.items())))  # pylint: disable=protected-access
         print('%s = %s' % (asset_id, first_entry))
         url = first_entry.get('value').get('url')
-        self._resumepoints.watchlater(asset_id=asset_id, title='Foo bar', url=url)
         self._resumepoints.unwatchlater(asset_id=asset_id, title='Foo bar', url=url)
+        self._resumepoints.watchlater(asset_id=asset_id, title='Foo bar', url=url)
         self._resumepoints.refresh(ttl=0)
         asset_id, first_entry = next(iter(list(self._resumepoints._data.items())))  # pylint: disable=protected-access
         print('%s = %s' % (asset_id, first_entry))

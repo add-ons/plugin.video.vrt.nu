@@ -7,7 +7,7 @@ from threading import Event, Thread
 from xbmc import getInfoLabel, Player, PlayList
 
 from apihelper import ApiHelper
-from data import SECONDS_MARGIN
+from data import SECONDS_MARGIN, CHANNELS
 from favorites import Favorites
 from kodiutils import addon_id, container_reload, get_advanced_setting_int, get_setting, has_addon, log, notify
 from resumepoints import ResumePoints
@@ -24,7 +24,7 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
         self.last_pos = None
         self.listen = False
         self.paused = False
-        self.total = None
+        self.total = 100
         self.positionthread = None
         self.quit = Event()
 
@@ -50,21 +50,31 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
 
         log(3, '[PlayerInfo %d] Event onPlayBackStarted' % self.thread_id)
 
-        # Get asset_id, title and url from api
+        # Reset episode data
+        self.asset_id = None
+        self.title = None
+        self.url = None
+        self.whatson_id = None
+
         ep_id = play_url_to_id(self.path)
 
-        # Get episode data
+        # Avoid setting resumepoints for livestreams
+        for channel in CHANNELS:
+            if ep_id.get('video_id') == channel.get('live_stream_id'):
+                log(3, '[PlayerInfo %d] Avoid setting resumepoints for livestream %s' % (self.thread_id, ep_id.get('video_id')))
+                return
+
+        # Get episode data needed to update resumepoints
         episode = self.apihelper.get_single_episode_data(video_id=ep_id.get('video_id'), whatson_id=ep_id.get('whatson_id'), video_url=ep_id.get('video_url'))
 
-        # This may be a live stream?
+        # Avoid setting resumepoints without episode data
         if episode is None:
             return
 
         self.asset_id = assetpath_to_id(episode.get('assetPath'))
         self.title = episode.get('program')
         self.url = url_to_episode(episode.get('url', ''))
-        self.ep_id = 'S%sE%s' % (episode.get('seasonTitle'), episode.get('episodeNumber'))
-        self.whatson_id = episode.get('whatsonId') if episode.get('whatsonId') else None
+        self.whatson_id = episode.get('whatsonId') or None  # Avoid empty string
 
     def onAVStarted(self):  # pylint: disable=invalid-name
         """Called when Kodi has a video or audiostream"""
@@ -74,7 +84,7 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
         self.quit.clear()
         self.update_position()
         self.update_total()
-        self.push_position()
+        self.push_position(position=self.last_pos, total=self.total)  # Update position at start so resumepoint gets deleted
         self.push_upnext()
 
         # StreamPosition thread keeps running when watching multiple episode with "Up Next"
