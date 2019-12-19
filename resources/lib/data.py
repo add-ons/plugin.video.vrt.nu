@@ -149,6 +149,13 @@ CHANNELS = [
         # VRT NXT: https://www.youtube.com/channel/UCO-VoGCVzhYVwvQvWYJq4-Q
         youtube='plugin://plugin.video.youtube/channel/UCO-VoGCVzhYVwvQvWYJq4-Q/',
     ),
+    dict(
+        id='',
+        name='de-warmste-week',
+        label='De Warmste Week',
+        studio='De Warmste Week',
+        youtube='plugin://plugin.video.youtube/channel/UC_PsMpKLAp4hSGSXyUCPtxw/',
+    ),
 ]
 
 FEATURED = [
