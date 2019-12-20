@@ -43,11 +43,18 @@ class TestResumePoints(unittest.TestCase):
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_get_continue_episodes(self):
         """Test items, sort and order"""
+
+        # Ensure a continue episode exists (Winteruur met Lize Feryn (beschikbaar tot 26 maart 2025))
+        self._resumepoints.update(asset_id='contentdamvrt20191015winteruurr005a0001depotwp00162177', title='Winteruur', url='/vrtnu/a-z/winteruur/5/winteruur-s5a1/', watch_later=True, position=38, total=635, whatson_id='705308178527')
+
         episode_items, sort, ascending, content = self._apihelper.list_episodes(page=1, variety='continue')
         self.assertTrue(episode_items)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
+
+        # Remove Winteruur met Lize Feryn (beschikbaar tot 26 maart 2025)
+        self._resumepoints.update(asset_id='contentdamvrt20191015winteruurr005a0001depotwp00162177', title='Winteruur', url='/vrtnu/a-z/winteruur/5/winteruur-s5a1/', watch_later=False, position=635, total=635, whatson_id='705308178527')
 
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
@@ -74,16 +81,6 @@ class TestResumePoints(unittest.TestCase):
     def test_update_none(self):
         """Test updating empty resumepoints"""
         self.assertTrue(self._resumepoints.update(asset_id=None, title=None, url=None))
-
-    def test_overrule_kodi_watchstatus(self):
-        """Test the overrule Kodi watch status function"""
-        from playerinfo import PlayerInfo
-        self.assertTrue(PlayerInfo.overrule_kodi_watchstatus(45, 2584))
-        self.assertFalse(PlayerInfo.overrule_kodi_watchstatus(10, 2584))
-        self.assertFalse(PlayerInfo.overrule_kodi_watchstatus(181, 2584))
-        self.assertFalse(PlayerInfo.overrule_kodi_watchstatus(2360, 2584))
-        self.assertTrue(PlayerInfo.overrule_kodi_watchstatus(2553, 2584))
-        self.assertFalse(PlayerInfo.overrule_kodi_watchstatus(2580, 2584))
 
 
 if __name__ == '__main__':

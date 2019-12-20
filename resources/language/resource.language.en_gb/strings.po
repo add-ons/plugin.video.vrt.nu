@@ -875,7 +875,7 @@ msgid "Could not retrieve this program list. VRT Search API url is too long. Unf
 msgstr ""
 
 msgctxt "#30975"
-msgid "Failed to get favorites token from VRT NU"
+msgid "Failed to get user token from VRT NU"
 msgstr ""
 
 msgctxt "#30976"

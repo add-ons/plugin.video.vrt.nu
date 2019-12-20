@@ -875,8 +875,8 @@ msgid "Could not retrieve this program list. VRT Search API url is too long. Unf
 msgstr "Deze programmalijst kan niet opgehaald worden. VRT Search API url is te lang. Enkele favoriete programma's vergeten zal de lengte van de URL verminderen en dit probleem mogelijk oplossen."
 
 msgctxt "#30975"
-msgid "Failed to get favorites token from VRT NU"
-msgstr "Ophalen van het favorieten token van VRT NU is mislukt"
+msgid "Failed to get user token from VRT NU"
+msgstr "Ophalen van het gebruikerstoken van VRT NU is mislukt"
 
 msgctxt "#30976"
 msgid "Failed to (un)follow program '{program}' at VRT NU"

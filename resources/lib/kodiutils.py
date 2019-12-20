@@ -191,6 +191,7 @@ def show_listing(list_items, category=None, sort='unsorted', ascending=True, con
         prop_dict = dict(
             IsInternetStream='true' if is_playable else 'false',
             IsPlayable='true' if is_playable else 'false',
+            IsFolder='false' if is_folder else 'true',
         )
         if title_item.prop_dict:
             title_item.prop_dict.update(prop_dict)
