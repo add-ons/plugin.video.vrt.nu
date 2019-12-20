@@ -12,9 +12,8 @@ except ImportError:  # Python 2
     from urllib2 import build_opener, HTTPError, install_opener, ProxyHandler, Request, urlopen
 
 from data import SECONDS_MARGIN
-from kodiutils import (container_refresh, get_cache, get_proxies, get_setting,
-                       get_url_json, has_credentials, input_down, invalidate_caches, localize, log,
-                       log_error, notification, update_cache)
+from kodiutils import (container_refresh, get_cache, get_proxies, get_setting, get_url_json, has_credentials,
+                       input_down, invalidate_caches, localize, log, log_error, notification, update_cache)
 
 
 class ResumePoints:
@@ -35,7 +34,7 @@ class ResumePoints:
         """Generate http headers for VRT NU Resumepoints API"""
         from tokenresolver import TokenResolver
         xvrttoken = TokenResolver().get_xvrttoken(token_variant='user')
-        headers = dict()
+        headers = None
         if xvrttoken:
             url = 'https://www.vrt.be' + url if url else 'https://www.vrt.be/vrtnu'
             headers = {
@@ -43,6 +42,9 @@ class ResumePoints:
                 'content-type': 'application/json',
                 'Referer': url,
             }
+        else:
+            log_error('Failed to get usertoken from VRT NU')
+            notification(message=localize(30975))
         return headers
 
     def refresh(self, ttl=None):
@@ -52,82 +54,94 @@ class ResumePoints:
         resumepoints_json = get_cache('resume_points.json', ttl)
         if not resumepoints_json:
             resumepoints_url = 'https://video-user-data.vrt.be/resume_points'
-            resumepoints_json = get_url_json(url=resumepoints_url, cache='resume_points.json', headers=self.resumepoint_headers())
+            headers = self.resumepoint_headers()
+            if not headers:
+                return
+            resumepoints_json = get_url_json(url=resumepoints_url, cache='resume_points.json', headers=headers)
         if resumepoints_json is not None:
             self._data = resumepoints_json
 
-    def update(self, asset_id, title, url, watch_later=None, position=None, total=None, whatson_id=None, asynchronous=False):
+    def update(self, asset_id, title, url, watch_later=None, position=None, total=None, whatson_id=None):
         """Set program resumepoint or watchLater status and update local copy"""
-        log(3, "[Resumepoints] Update resumepoint '{asset_id}' {position}/{total}", asset_id=asset_id, position=position, total=total)
-        # The video has no assetPath, so we cannot update resumepoints
-        if asset_id is None:
-            return True
 
-        # Survive any recent updates
+        menu_caches = []
         self.refresh(ttl=5)
 
-        # Disable watch_later when completely watched
-        if position is not None and total is not None and position >= total - SECONDS_MARGIN:
-            watch_later = False
+        # Add existing position and total if None
+        if asset_id in self._data and position is None and total is None:
+            position = self.get_position(asset_id)
+            total = self.get_total(asset_id)
 
-        if watch_later is not None and position is None and total is None and watch_later is self.is_watchlater(asset_id):
-            # watchLater status is not changed, nothing to do
-            return True
+        # Update
+        if self.still_watching(position, total) or watch_later is True:
 
-        if watch_later is None and position == self.get_position(asset_id) and total == self.get_total(asset_id):
-            # Resumepoint is not changed, nothing to do
-            return True
+            log(3, "[Resumepoints] Update resumepoint '{asset_id}' {position}/{total}", asset_id=asset_id, position=position, total=total)
 
-        # Preserve watchLater status if not set
-        if watch_later is None:
-            watch_later = self.is_watchlater(asset_id)
+            if asset_id is None:
+                return True
 
-        # Check if there is still a need to keep this entry
-        if not watch_later:
-            if position is None and total is None:
-                return self.delete(asset_id, watch_later, asynchronous=asynchronous)
-            if not self.still_watching(position, total):
-                return self.delete(asset_id, watch_later, asynchronous=asynchronous)
+            if watch_later is not None and position is None and total is None and watch_later is self.is_watchlater(asset_id):
+                # watchLater status is not changed, nothing to do
+                return True
 
-        from utils import reformat_url
-        url = reformat_url(url, 'short')
+            if watch_later is None and position == self.get_position(asset_id) and total == self.get_total(asset_id):
+                # Resumepoint is not changed, nothing to do
+                return True
 
-        if asset_id in self._data:
-            # Update existing resumepoint values
-            payload = self._data[asset_id]['value']
-            payload['url'] = url
-        else:
-            # Create new resumepoint values
-            payload = dict(position=0, total=100, url=url)
+            menu_caches.append('continue-*.json')
 
-        if position is not None:
-            payload['position'] = position
+            if asset_id in self._data:
+                # Update existing resumepoint values
+                payload = self._data[asset_id]['value']
+                payload['url'] = url
+            else:
+                # Create new resumepoint values
+                payload = dict(position=0, total=100, url=url)
 
-        if total is not None:
-            payload['total'] = total
+            if watch_later is not None:
+                payload['watchLater'] = watch_later
+                menu_caches.append('watchlater-*.json')
 
-        if whatson_id is not None:
-            payload['whatsonId'] = whatson_id
+            if position is not None:
+                payload['position'] = position
 
-        removes = []
-        if position is not None or total is not None:
-            removes.append('continue-*.json')
+            if total is not None:
+                payload['total'] = total
 
-        if watch_later is not None:
-            # Add watchLater status to payload
-            payload['watchLater'] = watch_later
-            removes.append('watchlater-*.json')
+            if whatson_id is not None:
+                payload['whatsonId'] = whatson_id
 
-        # First update resumepoints to a fast local cache because online resumpoints take a longer time to take effect
-        self.update_local(asset_id, dict(value=payload))
-        invalidate_caches(*removes)
+            # First update resumepoints to a fast local cache because online resumpoints take a longer time to take effect
+            self.update_local(asset_id, dict(value=payload), menu_caches)
 
-        # Update online resumepoints
-        if asynchronous:
+            # Asynchronously update online
             from threading import Thread
             Thread(target=self.update_online, name='ResumePointsUpdate', args=(asset_id, title, url, payload)).start()
-            return True
-        return self.update_online(asset_id, title, url, payload)
+
+        else:
+
+            # Delete
+            log(3, "[Resumepoints] Delete resumepoint '{asset_id}' {position}/{total}", asset_id=asset_id, position=position, total=total)
+
+            # Do nothing if there is no resumepoint for this asset_id
+            if not self._data.get(asset_id):
+                log(3, "[Resumepoints] '{asset_id}' not present, nothing to delete", asset_id=asset_id)
+                return True
+
+            # Add menu caches
+            menu_caches.append('continue-*.json')
+
+            if self.is_watchlater(asset_id):
+                menu_caches.append('watchlater-*.json')
+
+            # Delete local representation and cache
+            self.delete_local(asset_id, menu_caches)
+
+            # Asynchronously delete online
+            from threading import Thread
+            Thread(target=self.delete_online, name='ResumePointsDelete', args=(asset_id,)).start()
+
+        return True
 
     def update_online(self, asset_id, title, url, payload):
         """Update resumepoint online"""
@@ -141,42 +155,24 @@ class ResumePoints:
             return False
         return True
 
-    def update_local(self, asset_id, resumepoint_json):
+    def update_local(self, asset_id, resumepoint_json, menu_caches=None):
         """Update resumepoint locally and update cache"""
         self._data.update({asset_id: resumepoint_json})
         from json import dumps
         update_cache('resume_points.json', dumps(self._data))
+        if menu_caches:
+            invalidate_caches(*menu_caches)
 
-    def delete_local(self, asset_id):
+    def delete_local(self, asset_id, menu_caches=None):
         """Delete resumepoint locally and update cache"""
         try:
             del self._data[asset_id]
             from json import dumps
             update_cache('resume_points.json', dumps(self._data))
+            if menu_caches:
+                invalidate_caches(*menu_caches)
         except KeyError:
             pass
-
-    def delete(self, asset_id, watch_later, asynchronous=False):
-        """Remove an entry from resumepoints"""
-        # Do nothing if there is no resumepoint for this asset_id
-        if not self._data.get(asset_id):
-            log(3, "[Resumepoints] '{asset_id}' not present, nothing to delete", asset_id=asset_id)
-            return True
-
-        log(3, "[Resumepoints] Remove '{asset_id}' from resumepoints", asset_id=asset_id)
-        # Delete local representation and cache
-        self.delete_local(asset_id)
-
-        if watch_later is False:
-            self.refresh_watchlater()
-
-        self.refresh_continuewatching()
-
-        if asynchronous:
-            from threading import Thread
-            Thread(target=self.delete_online, name='ResumePointsDelete', args=(asset_id,)).start()
-            return True
-        return self.delete_online(asset_id)
 
     def delete_online(self, asset_id):
         """Delete resumepoint online"""
@@ -189,18 +185,6 @@ class ResumePoints:
             log_error("Failed to remove '{asset_id}' from resumepoints: {error}", asset_id=asset_id, error=exc)
             return False
         return True
-
-    @staticmethod
-    def refresh_watchlater():
-        """Refresh Watch Later menu"""
-        invalidate_caches('watchlater-*.json')
-        container_refresh()
-
-    @staticmethod
-    def refresh_continuewatching():
-        """Refresh Continue Watching menu"""
-        invalidate_caches('continue-*.json')
-        container_refresh()
 
     def is_watchlater(self, asset_id):
         """Is a program set to watch later ?"""
@@ -243,16 +227,11 @@ class ResumePoints:
     def resumepoints_urls(self):
         """Return all urls that have not been finished watching"""
         return [self.get_url(asset_id) for asset_id in self._data
-                if SECONDS_MARGIN < self.get_position(asset_id) < (self.get_total(asset_id) - SECONDS_MARGIN)]
+                if self.still_watching(self.get_position(asset_id), self.get_total(asset_id))]
 
     @staticmethod
     def still_watching(position, total):
         """Determine if the video is still being watched"""
-
-        if position <= SECONDS_MARGIN:
-            return False
-
-        if position >= total - SECONDS_MARGIN:
-            return False
-
-        return True
+        if None not in (position, total) and SECONDS_MARGIN < position < (total - SECONDS_MARGIN):
+            return True
+        return False

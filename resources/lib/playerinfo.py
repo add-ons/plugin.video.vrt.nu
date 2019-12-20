@@ -7,9 +7,9 @@ from threading import Event, Thread
 from xbmc import getInfoLabel, Player, PlayList
 
 from apihelper import ApiHelper
-from data import SECONDS_MARGIN, CHANNELS
+from data import CHANNELS
 from favorites import Favorites
-from kodiutils import addon_id, container_reload, get_advanced_setting_int, get_setting, has_addon, log, notify
+from kodiutils import addon_id, container_reload, get_setting, has_addon, log, notify
 from resumepoints import ResumePoints
 from utils import assetpath_to_id, play_url_to_id, to_unicode, url_to_episode
 
@@ -50,6 +50,10 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
 
         log(3, '[PlayerInfo %d] Event onPlayBackStarted' % self.thread_id)
 
+        # Update previous episode when using "Up Next"
+        if self.path.startswith('plugin://plugin.video.vrt.nu/play/upnext'):
+            self.push_position(position=self.last_pos, total=self.total)
+
         # Reset episode data
         self.asset_id = None
         self.title = None
@@ -62,9 +66,10 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
         for channel in CHANNELS:
             if ep_id.get('video_id') == channel.get('live_stream_id'):
                 log(3, '[PlayerInfo %d] Avoid setting resumepoints for livestream %s' % (self.thread_id, ep_id.get('video_id')))
+                self.listen = False
                 return
 
-        # Get episode data needed to update resumepoints
+        # Get episode data needed to update resumepoints from VRT NU Search API
         episode = self.apihelper.get_single_episode_data(video_id=ep_id.get('video_id'), whatson_id=ep_id.get('whatson_id'), video_url=ep_id.get('video_url'))
 
         # Avoid setting resumepoints without episode data
@@ -84,7 +89,6 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
         self.quit.clear()
         self.update_position()
         self.update_total()
-        self.push_position(position=self.last_pos, total=self.total)  # Update position at start so resumepoint gets deleted
         self.push_upnext()
 
         # StreamPosition thread keeps running when watching multiple episode with "Up Next"
@@ -123,17 +127,15 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
             return
         suffix = 'after pausing' if self.paused else 'after playlist change'
         log(3, '[PlayerInfo %d] Event onPlayBackResumed %s' % (self.thread_id, suffix))
-        if not self.paused:
-            self.push_position(position=self.last_pos, total=self.total)
         self.paused = False
 
     def onPlayBackEnded(self):  # pylint: disable=invalid-name
         """Called when Kodi has ended playing a file"""
         if not self.listen:
             return
+        self.last_pos = self.total
         self.quit.set()
         log(3, '[PlayerInfo %d] Event onPlayBackEnded' % self.thread_id)
-        self.last_pos = self.total
 
     def onPlayBackError(self):  # pylint: disable=invalid-name
         """Called when playback stops due to an error"""
@@ -149,9 +151,9 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
         self.quit.set()
         log(3, '[PlayerInfo %d] Event onPlayBackStopped' % self.thread_id)
 
-    def onThreadExit(self):  # pylint: disable=invalid-name
-        """Called when player stops, before the player exited, so before the menu refresh"""
-        log(3, '[PlayerInfo %d] Event onThreadExit' % self.thread_id)
+    def onPlayerExit(self):  # pylint: disable=invalid-name
+        """Called when player exits"""
+        log(3, '[PlayerInfo %d] Event onPlayerExit' % self.thread_id)
         self.positionthread = None
         self.push_position(position=self.last_pos, total=self.total)
 
@@ -161,7 +163,7 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
             self.update_position()
             if self.quit.wait(timeout=0.2):
                 break
-        self.onThreadExit()
+        self.onPlayerExit()
 
     def add_upnext(self, video_id):
         """Add Up Next url to Kodi Player"""
@@ -210,8 +212,8 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
         except RuntimeError:
             pass
 
-    def push_position(self, position=0, total=100):
-        """Push player position to VRT NU resumepoints API"""
+    def push_position(self, position, total):
+        """Push player position to VRT NU resumepoints API and reload container"""
         # Not all content has an asset_id
         if not self.asset_id:
             return
@@ -223,49 +225,8 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
             url=self.url,
             position=position,
             total=total,
-            whatson_id=self.whatson_id,
-            asynchronous=True
+            whatson_id=self.whatson_id
         )
 
-        # Kodi internal watch status is only updated when the play action is initiated from the GUI, so this doesn't work after quitting "Up Next"
-        if (not self.path.startswith('plugin://plugin.video.vrt.nu/play/upnext')
-                and not self.overrule_kodi_watchstatus(position, total)):
-            return
-
-        # Do not reload container when playing or not stopped
-        if self.isPlaying() or not self.quit.is_set():
-            return
-
+        # Always reload container
         container_reload()
-
-    @staticmethod
-    def overrule_kodi_watchstatus(position, total):
-        """Determine if we need to overrule the Kodi watch status"""
-
-        # Kodi uses different resumepoint margins than VRT NU, to obey to VRT NU resumepoint margins
-        # we sometimes need to overrule Kodi watch status.
-        # Use setting from advancedsettings.xml or default value
-        # https://github.com/xbmc/xbmc/blob/master/xbmc/settings/AdvancedSettings.cpp
-        # https://kodi.wiki/view/HOW-TO:Modify_automatic_watch_and_resume_points
-
-        ignoresecondsatstart = get_advanced_setting_int('video/ignoresecondsatstart', default=180)
-        ignorepercentatend = get_advanced_setting_int('video/ignorepercentatend', default=8)
-
-        # Convert percentage to seconds
-        ignoresecondsatend = round(total * (100 - ignorepercentatend) / 100.0)
-
-        if position <= max(SECONDS_MARGIN, ignoresecondsatstart):
-            # Check start margins
-            if SECONDS_MARGIN <= position <= ignoresecondsatstart:
-                return True
-            if ignoresecondsatstart <= position <= SECONDS_MARGIN:
-                return True
-
-        if position >= min(total - SECONDS_MARGIN, ignoresecondsatend):
-            # Check end margins
-            if total - SECONDS_MARGIN <= position <= ignoresecondsatend:
-                return True
-            if ignoresecondsatend <= position <= total - SECONDS_MARGIN:
-                return True
-
-        return False
