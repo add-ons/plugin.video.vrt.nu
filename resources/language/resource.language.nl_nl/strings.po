@@ -773,34 +773,38 @@ msgid "Refresh watching activity"
 msgstr "Ververs kijkactiviteit"
 
 msgctxt "#30921"
+msgid "Remove watching activity"
+msgstr "Verwijder kijkactiviteit"
+
+msgctxt "#30923"
 msgid "Use menu caching"
 msgstr "Gebruik menu caching"
 
-msgctxt "#30922"
+msgctxt "#30924"
 msgid "When enabled, menus are being cached so they work more quickly. Only in very specific use-cases this is problematic as new episodes may not appear when they are expected. You can also use [B]Refresh[/B] from the context-menu."
 msgstr "Indien geactiveerd worden Kodi menus gecached zodat ze sneller werken. Enkel in heel uitzonderlijke gevallen is het interessanter noodzakelijk om altijd nieuwe episodes te zijn als ze uitkomen. Je kan ook [B]Ververs[/B] gebruiken vanuit het context-menu."
 
-msgctxt "#30923"
+msgctxt "#30925"
 msgid "Use local HTTP caching"
 msgstr "Gebruik lokale HTTP caching"
 
-msgctxt "#30925"
+msgctxt "#30927"
 msgid "Invalidate local HTTP caches"
 msgstr "Maak lokale HTTP caches ongeldig"
 
-msgctxt "#30927"
+msgctxt "#30929"
 msgid "Direct HTTP cache time-to-live [COLOR gray](in minutes)[/COLOR]"
 msgstr "Directe HTTP cache time-to-live [COLOR gray](in minuten)[/COLOR]"
 
-msgctxt "#30929"
+msgctxt "#30931"
 msgid "Indirect HTTP cache time-to-live [COLOR gray](in minutes)[/COLOR]"
 msgstr "Indirecte HTTP cache time-to-live [COLOR gray](in minuten)[/COLOR]"
 
-msgctxt "#30931"
+msgctxt "#30933"
 msgid "Logging"
 msgstr "Logboek"
 
-msgctxt "#30933"
+msgctxt "#30935"
 msgid "Log level"
 msgstr "Log niveau"
 
@@ -913,3 +917,11 @@ msgstr "VRT tokens werden verwijderd."
 msgctxt "#30986"
 msgid "No on demand stream available for {title}."
 msgstr "Geen on demand stream beschikbaar voor {title}"
+
+msgctxt "#30987"
+msgid "Are you sure you want to permantly remove all VRT NU watching activity?"
+msgstr "Ben je zeker dat je alle VRT NU kijkactiviteit permanent wil verwijderen?"
+
+msgctxt "#30988"
+msgid "Successfully removed watching activity."
+msgstr "Kijkactiviteit werd verwijderd."

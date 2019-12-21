@@ -773,34 +773,38 @@ msgid "Refresh watching activity"
 msgstr ""
 
 msgctxt "#30921"
-msgid "Use menu caching"
-msgstr ""
-
-msgctxt "#30922"
-msgid "When enabled, menus are being cached so they work more quickly. Only in very specific use-cases this is problematic as new episodes may not appear when they are expected. You can also use [B]Refresh[/B] from the context-menu."
+msgid "Remove watching activity"
 msgstr ""
 
 msgctxt "#30923"
-msgid "Use local HTTP caching"
+msgid "Use menu caching"
+msgstr ""
+
+msgctxt "#30924"
+msgid "When enabled, menus are being cached so they work more quickly. Only in very specific use-cases this is problematic as new episodes may not appear when they are expected. You can also use [B]Refresh[/B] from the context-menu."
 msgstr ""
 
 msgctxt "#30925"
-msgid "Invalidate local HTTP caches"
+msgid "Use local HTTP caching"
 msgstr ""
 
 msgctxt "#30927"
-msgid "Direct HTTP cache time-to-live [COLOR gray](in minutes)[/COLOR]"
+msgid "Invalidate local HTTP caches"
 msgstr ""
 
 msgctxt "#30929"
-msgid "Indirect HTTP cache time-to-live [COLOR gray](in minutes)[/COLOR]"
+msgid "Direct HTTP cache time-to-live [COLOR gray](in minutes)[/COLOR]"
 msgstr ""
 
 msgctxt "#30931"
-msgid "Logging"
+msgid "Indirect HTTP cache time-to-live [COLOR gray](in minutes)[/COLOR]"
 msgstr ""
 
 msgctxt "#30933"
+msgid "Logging"
+msgstr ""
+
+msgctxt "#30935"
 msgid "Log level"
 msgstr ""
 
@@ -912,4 +916,12 @@ msgstr ""
 
 msgctxt "#30986"
 msgid "No on demand stream available for {title}."
+msgstr ""
+
+msgctxt "#30987"
+msgid "Are you sure you want to permantly remove all VRT NU watching activity?"
+msgstr ""
+
+msgctxt "#30988"
+msgid "Successfully removed watching activity."
 msgstr ""

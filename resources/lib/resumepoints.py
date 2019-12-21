@@ -12,8 +12,8 @@ except ImportError:  # Python 2
     from urllib2 import build_opener, HTTPError, install_opener, ProxyHandler, Request, urlopen
 
 from data import SECONDS_MARGIN
-from kodiutils import (container_refresh, get_cache, get_proxies, get_setting, get_url_json, has_credentials,
-                       input_down, invalidate_caches, localize, log, log_error, notification, update_cache)
+from kodiutils import (addon_name, container_refresh, get_cache, get_proxies, get_setting, get_url_json, has_credentials,
+                       input_down, invalidate_caches, localize, log, log_error, notification, update_cache, yesno_dialog)
 
 
 class ResumePoints:
@@ -228,6 +228,32 @@ class ResumePoints:
         """Return all urls that have not been finished watching"""
         return [self.get_url(asset_id) for asset_id in self._data
                 if self.still_watching(self.get_position(asset_id), self.get_total(asset_id))]
+
+    def remove_resumepoints(self):
+        """Remove all VRT NU resumepoints online and locally"""
+        confirmation = yesno_dialog(heading=addon_name(), message=localize(30987))
+        if confirmation:
+            # Reset internal respresentation
+            self._data = dict()
+
+            # Invalidate all resumepoint related caches
+            caches = ['resume_points.json', 'continue-*.json', 'watchlater-*.json']
+            invalidate_caches(*caches)
+
+            # Get all VRT NU Resumepoints and delete
+            resumepoints_url = 'https://video-user-data.vrt.be/resume_points'
+            resumepoints_json = get_url_json(url=resumepoints_url, headers=self.resumepoint_headers())
+            for key, _ in resumepoints_json.items():
+                # Delete
+                url = 'https://video-user-data.vrt.be/resume_points/%s' % key
+                req = Request(url, headers=self.resumepoint_headers())
+                req.get_method = lambda: 'DELETE'
+                result = urlopen(req)
+                if result.getcode() == 200:
+                    log(3, "[Resumepoints] {key} deleted", key=key)
+            notification(message=localize(30988))
+            return True
+        return False
 
     @staticmethod
     def still_watching(position, total):

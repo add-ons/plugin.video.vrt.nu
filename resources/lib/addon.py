@@ -140,6 +140,13 @@ def resumepoints_watchlater():
     VRTPlayer().show_watchlater_menu(page=1)
 
 
+@plugin.route('/resumepoints/remove')
+def resumepoints_remove():
+    """Remove all VRT NU resumepoints online and locally"""
+    from resumepoints import ResumePoints
+    ResumePoints().remove_resumepoints()
+
+
 @plugin.route('/programs')
 @plugin.route('/programs/<program>')
 @plugin.route('/programs/<program>/<season>')

@@ -70,12 +70,13 @@
         <setting label="30915" help="30916" type="action" action="RunPlugin(plugin://plugin.video.vrt.nu/tokens/delete)"/> <!-- Delete tokens -->
         <setting label="30917" help="30918" type="action" action="RunPlugin(plugin://plugin.video.vrt.nu/favorites/refresh)"/> <!-- Refresh favorites -->
         <setting label="30919" help="30920" type="action" action="RunPlugin(plugin://plugin.video.vrt.nu/resumepoints/refresh)"/> <!-- Refresh resumepoints -->
-        <setting label="30921" help="30922" type="bool" id="usemenucaching" default="true"/>
-        <setting label="30923" help="30924" type="bool" id="usehttpcaching" default="true"/>
-        <setting label="30925" help="30926" type="action" action="RunPlugin(plugin://plugin.video.vrt.nu/cache/delete)" enable="eq(-1,true)" subsetting="true"/>
-        <setting label="30927" help="30928" type="slider" id="httpcachettldirect" default="5" range="1,1,240" option="int" enable="eq(-2,true)" subsetting="true"/>
-        <setting label="30929" help="30930" type="slider" id="httpcachettlindirect" default="60" range="1,1,240" option="int" enable="eq(-3,true)" subsetting="true"/>
-        <setting label="30931" type="lsep"/> <!-- Logging -->
-        <setting label="30933" help="30934" type="enum" id="max_log_level" lvalues="30430|30431|30432|30433" default="0"/>
+        <setting label="30921" help="30922" type="action" action="RunPlugin(plugin://plugin.video.vrt.nu/resumepoints/remove)"/> <!-- Remove resumepoints -->
+        <setting label="30923" help="30924" type="bool" id="usemenucaching" default="true"/>
+        <setting label="30925" help="30926" type="bool" id="usehttpcaching" default="true"/>
+        <setting label="30927" help="30928" type="action" action="RunPlugin(plugin://plugin.video.vrt.nu/cache/delete)" enable="eq(-1,true)" subsetting="true"/>
+        <setting label="30929" help="30930" type="slider" id="httpcachettldirect" default="5" range="1,1,240" option="int" enable="eq(-2,true)" subsetting="true"/>
+        <setting label="30931" help="30932" type="slider" id="httpcachettlindirect" default="60" range="1,1,240" option="int" enable="eq(-3,true)" subsetting="true"/>
+        <setting label="30933" type="lsep"/> <!-- Logging -->
+        <setting label="30935" help="30936" type="enum" id="max_log_level" lvalues="30430|30431|30432|30433" default="0"/>
     </category>
 </settings>
