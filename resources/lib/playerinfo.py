@@ -9,7 +9,7 @@ from xbmc import getInfoLabel, Player, PlayList
 from apihelper import ApiHelper
 from data import CHANNELS
 from favorites import Favorites
-from kodiutils import addon_id, container_reload, get_setting, has_addon, log, notify
+from kodiutils import addon_id, get_setting, has_addon, log, notify, set_property
 from resumepoints import ResumePoints
 from utils import assetpath_to_id, play_url_to_id, to_unicode, url_to_episode
 
@@ -64,7 +64,7 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
 
         # Avoid setting resumepoints for livestreams
         for channel in CHANNELS:
-            if ep_id.get('video_id') == channel.get('live_stream_id'):
+            if ep_id.get('video_id') and ep_id.get('video_id') == channel.get('live_stream_id'):
                 log(3, '[PlayerInfo %d] Avoid setting resumepoints for livestream %s' % (self.thread_id, ep_id.get('video_id')))
                 self.listen = False
                 return
@@ -107,10 +107,15 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
         log(3, '[PlayerInfo %d] Event onPlayBackSeek time=%d offset=%d' % (self.thread_id, time, seekOffset))
         self.last_pos = time // 1000
 
-        # If we seek beyond the end, quit Player
+        # If we seek beyond the start or end, set property to let wait_for_resumepoints function know that update resume is busy
         if self.last_pos >= self.total:
+            set_property('vrtnu_resumepoints', 'busy')
+            # Exit Player faster
             self.quit.set()
             self.stop()
+
+        if self.last_pos < 0:
+            set_property('vrtnu_resumepoints', 'busy')
 
     def onPlayBackPaused(self):  # pylint: disable=invalid-name
         """Called when user pauses a playing file"""
@@ -218,6 +223,9 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
         if not self.asset_id:
             return
 
+        # Set property to let wait_for_resumepoints function know that update resume is busy
+        set_property('vrtnu_resumepoints', 'busy')
+
         # Push resumepoint to VRT NU
         self.resumepoints.update(
             asset_id=self.asset_id,
@@ -228,5 +236,5 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
             whatson_id=self.whatson_id
         )
 
-        # Always reload container
-        container_reload()
+        # Set property to let wait_for_resumepoints function know that update resume is done
+        set_property('vrtnu_resumepoints', 'ready')
