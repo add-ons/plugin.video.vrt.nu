@@ -8,7 +8,7 @@ from favorites import Favorites
 from helperobjects import TitleItem
 from kodiutils import (delete_cached_thumbnail, end_of_directory, get_addon_info, get_setting,
                        has_credentials, localize, log_error, ok_dialog, play, set_setting,
-                       show_listing, ttl, url_for)
+                       show_listing, ttl, url_for, wait_for_resumepoints)
 from resumepoints import ResumePoints
 from utils import find_entry, realpage
 
@@ -21,6 +21,7 @@ class VRTPlayer:
         self._favorites = Favorites()
         self._resumepoints = ResumePoints()
         self._apihelper = ApiHelper(self._favorites, self._resumepoints)
+        wait_for_resumepoints()
 
     def show_main_menu(self):
         """The VRT NU add-on main menu"""

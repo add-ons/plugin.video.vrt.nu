@@ -730,6 +730,24 @@ def end_of_directory():
     xbmcplugin.endOfDirectory(handle=plugin.handle, succeeded=False, updateListing=False, cacheToDisc=False)
 
 
+def wait_for_resumepoints():
+    """Wait for resumepoints to be updated"""
+    update = get_property('vrtnu_resumepoints')
+    if update == 'busy':
+        import time
+        timeout = time.time() + 5  # 5 seconds timeout
+        log(3, 'Resumepoint update is busy, wait')
+        while update != 'ready':
+            if time.time() > timeout:  # Exit loop in case something goes wrong
+                break
+            xbmc.sleep(50)
+            update = get_property('vrtnu_resumepoints')
+        set_property('vrtnu_resumepoints', None)
+        log(3, 'Resumepoint update is ready, continue')
+        return True
+    return False
+
+
 def log(level=1, message='', **kwargs):
     """Log info messages to Kodi"""
     debug_logging = get_global_setting('debug.showloginfo')  # Returns a boolean

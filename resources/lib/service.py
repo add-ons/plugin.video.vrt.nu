@@ -41,6 +41,8 @@ class VrtMonitor(Monitor, object):  # pylint: disable=useless-object-inheritance
                 self._favorites = Favorites()
             if not self._apihelper:
                 self._apihelper = ApiHelper(self._favorites, self._resumepoints)
+        else:
+            self._playerinfo = None
 
     def onNotification(self, sender, method, data):  # pylint: disable=invalid-name
         """Handler for notifications"""
