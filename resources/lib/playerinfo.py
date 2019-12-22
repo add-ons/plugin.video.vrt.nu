@@ -9,7 +9,7 @@ from xbmc import getInfoLabel, Player, PlayList
 from apihelper import ApiHelper
 from data import CHANNELS
 from favorites import Favorites
-from kodiutils import addon_id, get_setting, has_addon, log, notify, set_property
+from kodiutils import addon_id, get_setting, has_addon, kodi_version, log, notify, set_property
 from resumepoints import ResumePoints
 from utils import assetpath_to_id, play_url_to_id, to_unicode, url_to_episode
 
@@ -29,6 +29,9 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
         self.quit = Event()
 
         self.asset_id = None
+        # FIXME On Kodi 17, use ListItem.Filenameandpath because Player.FilenameAndPath returns the stream manifest url and
+        # this definitely breaks "Up Next" on Kodi 17, but this is not supported or available through the Kodi add-on repo anyway
+        self.path_infolabel = 'ListItem.Filenameandpath' if kodi_version() < 18 else 'Player.FilenameAndPath'
         self.path = None
         self.title = None
         self.ep_id = None
@@ -41,8 +44,8 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
 
     def onPlayBackStarted(self):  # pylint: disable=invalid-name
         """Called when user starts playing a file"""
-        self.path = getInfoLabel('Player.Filenameandpath')
-        if self.path.startswith('plugin://plugin.video.vrt.nu/'):
+        self.path = getInfoLabel(self.path_infolabel)
+        if addon_id() == 'plugin.video.vrt.nu':
             self.listen = True
         else:
             self.listen = False
@@ -80,6 +83,10 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
         self.title = episode.get('program')
         self.url = url_to_episode(episode.get('url', ''))
         self.whatson_id = episode.get('whatsonId') or None  # Avoid empty string
+
+        # Kodi 17 doesn't have onAVStarted
+        if kodi_version() < 18:
+            self.onAVStarted()
 
     def onAVStarted(self):  # pylint: disable=invalid-name
         """Called when Kodi has a video or audiostream"""
