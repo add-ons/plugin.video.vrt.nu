@@ -53,6 +53,7 @@ v2.3.0 (2019-11-15)
 - Implement "Continue watching"
 - Add integration for Up Next add-on
 - Fixes to "Go to program", "TV guide" and "Live TV" entries
+- Fix Python 3.5 support
 
 v2.2.3 (2019-10-01)
 - Integrate new inputstreamhelper
