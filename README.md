@@ -50,6 +50,15 @@ leave a message at [our Facebook page](https://facebook.com/kodivrtnu/).
 ![](./resources/media/screenshot04.jpg)
 
 ## Releases
+### v2.3.0 (2019-12-31)
+- Add integration for Up Next add-on (@mediaminister)
+- Store resume points and watchlater at VRT NU (@dagwieers, @mediaminister)
+- Implement "Continue watching" (@mediaminister)
+- Implement "Watch later" (@dagwieers)
+- Fixes to "Go to program", "TV guide" and "Live TV" entries (@dagwieers)
+- Cosmetic changes to metadata and plot (@dagwieers)
+- Fix Python 3.5 support (@mediaminister)
+
 ### v2.2.3 (2019-10-01)
 - Integrate new inputstreamhelper (@dagwieers)
 - Support user paths with unicode characters (@mediaminister)
