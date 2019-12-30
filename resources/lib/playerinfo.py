@@ -45,7 +45,7 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
     def onPlayBackStarted(self):  # pylint: disable=invalid-name
         """Called when user starts playing a file"""
         self.path = getInfoLabel(self.path_infolabel)
-        if addon_id() == 'plugin.video.vrt.nu':
+        if self.path.startswith('plugin://plugin.video.vrt.nu/'):
             self.listen = True
         else:
             self.listen = False
