@@ -50,7 +50,7 @@ leave a message at [our Facebook page](https://facebook.com/kodivrtnu/).
 ![](./resources/media/screenshot04.jpg)
 
 ## Releases
-### v2.3.0 (2019-12-31)
+### v2.3.0 (2020-01-01)
 - Add integration for Up Next add-on (@mediaminister)
 - Store resume points and watchlater at VRT NU (@dagwieers, @mediaminister)
 - Implement "Continue watching" (@mediaminister)
