@@ -30,7 +30,7 @@ class TestSearch(unittest.TestCase):
     _apihelper = ApiHelper(_favorites, _resumepoints)
 
     def test_search_journaal(self):
-        """Test for journaal"""
+        """Test search (journaal)"""
         search_items, sort, ascending, content = self._apihelper.list_search('journaal', page=1)
 
         # Test we get a non-empty search result
@@ -40,7 +40,7 @@ class TestSearch(unittest.TestCase):
         self.assertEqual(content, 'episodes')
 
     def test_search_journaal_page2(self):
-        """Test for journaal"""
+        """Test search page 2 (journaal)"""
         search_items, sort, ascending, content = self._apihelper.list_search('journaal', page=2)
 
         # Test we get a non-empty search result
@@ -50,7 +50,7 @@ class TestSearch(unittest.TestCase):
         self.assertEqual(content, 'episodes')
 
     def test_search_weer(self):
-        """Test for journaal"""
+        """Test search (weer)"""
         search_items, sort, ascending, content = self._apihelper.list_search('weer', page=1)
 
         # Test we get a non-empty search result
@@ -60,7 +60,7 @@ class TestSearch(unittest.TestCase):
         self.assertEqual(content, 'episodes')
 
     def test_search_unicode(self):
-        """Test for unicode"""
+        """Test unicode search (René)"""
         search_items, sort, ascending, content = self._apihelper.list_search('René', page=1)
 
         # Test we get a non-empty search result

@@ -46,7 +46,7 @@ VRT NU is het video-on-demand platform van de Vlaamse publieke omroep (VRT).
   <website>https://github.com/pietje666/plugin.video.vrt.nu/wiki</website>
   <source>https://github.com/pietje666/plugin.video.vrt.nu</source>
   <news>
-v2.3.0 (2019-11-15)
+v2.3.0 (2020-01-01)
 - Cosmetic changes to metadata and plot
 - Store resume points and watchlater at VRT NU
 - Implement "Watch later"
