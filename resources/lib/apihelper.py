@@ -72,6 +72,7 @@ class ApiHelper:
             cache_file = 'oneoff.json'
             oneoffs = self.get_episodes(variety='oneoff', cache_file=cache_file)
         else:
+            cache_file = None
             # Return empty list
             oneoffs = []
 
@@ -97,12 +98,12 @@ class ApiHelper:
     def list_episodes(self, program=None, season=None, category=None, feature=None, programtype=None, page=None, use_favorites=False, variety=None):
         """Construct a list of episode or season TitleItems from VRT NU Search API data and filtered by favorites"""
         # Caching
-        cache_file = None
-        if variety:
-            if use_favorites:
-                cache_file = 'my-%s-%s.json' % (variety, page)
-            else:
-                cache_file = '%s-%s.json' % (variety, page)
+        if not variety:
+            cache_file = None
+        elif use_favorites:
+            cache_file = 'my-%s-%s.json' % (variety, page)
+        else:
+            cache_file = '%s-%s.json' % (variety, page)
 
         # Titletype
         titletype = None
