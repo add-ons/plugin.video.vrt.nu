@@ -18,7 +18,7 @@ from kodiutils import (delete_cached_thumbnail, get_cache, get_cached_url_json, 
                        log, ttl, update_cache, url_for)
 from metadata import Metadata
 from utils import (add_https_proto, html_to_kodilabel, find_entry, from_unicode, play_url_to_id,
-                   program_to_url, realpage, strip_newlines, url_to_program)
+                   program_to_url, realpage, strip_newlines, url_to_program, youtube_to_plugin_url)
 
 
 class ApiHelper:
@@ -691,31 +691,28 @@ class ApiHelper:
             else:
                 art_dict['thumb'] = 'DefaultTags.png'
 
-            if channel.get('youtube'):
-                path = channel.get('youtube')
-                label = localize(30143, **channel)  # Channel on YouTube
+            for youtube in channel.get('youtube', []):
+                path = youtube_to_plugin_url(youtube['url'])
+                label = localize(30143, **youtube)  # Channel on YouTube
                 # A single Live channel means it is the entry for channel's TV Show listing, so make it stand out
                 if channels and len(channels) == 1:
                     label = '[B]%s[/B]' % label
-                plot = localize(30144, **channel)  # Watch on YouTube
+                plot = localize(30144, **youtube)  # Watch on YouTube
                 # NOTE: Playcount is required to not have live streams as "Watched"
                 info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video', playcount=0)
                 context_menu.append((
                     localize(30413),  # Refresh menu
                     'RunPlugin(%s)' % url_for('delete_cache', cache_file='channel.%s.json' % channel)
                 ))
-            else:
-                # Not a playable channel
-                continue
 
-            youtube_items.append(TitleItem(
-                title=label,
-                path=path,
-                art_dict=art_dict,
-                info_dict=info_dict,
-                context_menu=context_menu,
-                is_playable=False,
-            ))
+                youtube_items.append(TitleItem(
+                    title=label,
+                    path=path,
+                    art_dict=art_dict,
+                    info_dict=info_dict,
+                    context_menu=context_menu,
+                    is_playable=False,
+                ))
 
         return youtube_items
 
