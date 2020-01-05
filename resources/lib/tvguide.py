@@ -153,6 +153,7 @@ class TVGuide:
         epg_url = epg.strftime(self.VRT_TVGUIDE)
 
         self._favorites.refresh(ttl=ttl('indirect'))
+        self._resumepoints.refresh(ttl=ttl('indirect'))
 
         cache_file = 'schedule.%s.json' % date
         if date in ('today', 'yesterday', 'tomorrow'):

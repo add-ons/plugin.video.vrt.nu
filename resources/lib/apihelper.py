@@ -6,19 +6,19 @@ from __future__ import absolute_import, division, unicode_literals
 
 try:  # Python 3
     from urllib.parse import quote_plus, unquote
-    from urllib.request import build_opener, install_opener, ProxyHandler, urlopen
+    from urllib.request import build_opener, install_opener, ProxyHandler
 except ImportError:  # Python 2
     from urllib import quote_plus
-    from urllib2 import build_opener, install_opener, ProxyHandler, unquote, urlopen
+    from urllib2 import build_opener, install_opener, ProxyHandler, unquote
 
 from data import CHANNELS
 from helperobjects import TitleItem
-from kodiutils import (delete_cached_thumbnail, get_cache, get_cached_url_json, get_global_setting,
+from kodiutils import (delete_cached_thumbnail, get_cached_url_json, get_global_setting,
                        get_proxies, get_setting, get_url_json, has_addon, localize, localize_from_data,
-                       log, ttl, update_cache, url_for)
+                       log, ttl, url_for)
 from metadata import Metadata
-from utils import (add_https_proto, html_to_kodilabel, find_entry, from_unicode, play_url_to_id,
-                   program_to_url, realpage, strip_newlines, url_to_program, youtube_to_plugin_url)
+from utils import (html_to_kodilabel, find_entry, from_unicode, play_url_to_id,
+                   program_to_url, realpage, url_to_program, youtube_to_plugin_url)
 
 
 class ApiHelper:
@@ -746,31 +746,10 @@ class ApiHelper:
 
     def list_categories(self):
         """Construct a list of category ListItems"""
-        categories = []
-
-        # Try the cache if it is fresh
-        categories = get_cache('categories.json', ttl=7 * 24 * 60 * 60)
-
-        # Try to scrape from the web
-        if not categories:
-            try:
-                categories = self.get_categories()
-            except Exception:  # pylint: disable=broad-except
-                categories = []
-            else:
-                from json import dumps
-                update_cache('categories.json', dumps(categories))
-
-        # Use the cache anyway (better than hard-coded)
-        if not categories:
-            categories = get_cache('categories.json', ttl=None)
-
-        # Fall back to internal hard-coded categories if all else fails
-        from data import CATEGORIES
-        if not categories:
-            categories = CATEGORIES
-
+        from webscraper import get_categories
+        categories = get_categories()
         category_items = []
+        from data import CATEGORIES
         for category in self.localize_categories(categories, CATEGORIES):
             if get_setting('showfanart', 'true') == 'true':
                 thumbnail = category.get('thumbnail', 'DefaultGenre.png')
@@ -794,38 +773,3 @@ class ApiHelper:
                     category[key] = localize_from_data(val, categories2)
 
         return sorted(categories, key=lambda x: x.get('name'))
-
-    def get_categories(self):
-        """Return a list of categories by scraping the website"""
-        from bs4 import BeautifulSoup, SoupStrainer
-        log(2, 'URL get: https://www.vrt.be/vrtnu/categorieen/')
-        response = urlopen('https://www.vrt.be/vrtnu/categorieen/')
-        tiles = SoupStrainer('nui-list--content')
-        soup = BeautifulSoup(response.read(), 'html.parser', parse_only=tiles)
-
-        categories = []
-        for tile in soup.find_all('nui-tile'):
-            categories.append(dict(
-                id=tile.get('href').split('/')[-2],
-                thumbnail=self.get_category_thumbnail(tile),
-                name=self.get_category_title(tile),
-            ))
-
-        return categories
-
-    @staticmethod
-    def get_category_thumbnail(element):
-        """Return a category thumbnail, if available"""
-        if get_setting('showfanart', 'true') == 'true':
-            raw_thumbnail = element.find(class_='media').get('data-responsive-image', 'DefaultGenre.png')
-            return add_https_proto(raw_thumbnail)
-        return 'DefaultGenre.png'
-
-    @staticmethod
-    def get_category_title(element):
-        """Return a category title, if available"""
-        found_element = element.find('a')
-        if found_element:
-            return strip_newlines(found_element.contents[0])
-        # FIXME: We should probably fall back to something sensible here, or raise an exception instead
-        return ''

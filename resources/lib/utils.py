@@ -143,6 +143,9 @@ def url_to_episode(url):
     if url.startswith('//www.vrt.be/vrtnu/a-z/'):
         # medium episode url
         return url.replace('//www.vrt.be/vrtnu/a-z/', '/vrtnu/a-z/')
+    if url.startswith('/vrtnu/a-z/'):
+        # short episode url
+        return url
     return None
 
 

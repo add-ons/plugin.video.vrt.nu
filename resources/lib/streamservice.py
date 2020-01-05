@@ -103,22 +103,15 @@ class StreamService:
             api_data = ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, '', True)
         # Webscrape api_data with video_id fallback
         elif video_url:
-            api_data = self._webscrape_api_data(video_url) or ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, '', True)
+            api_data = self._webscrape_api_data(video_url)
+            if video_id:
+                api_data = ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, '', True)
         return api_data
 
     def _webscrape_api_data(self, video_url):
         """Scrape api data from VRT NU html page"""
-        from bs4 import BeautifulSoup, SoupStrainer
-        log(2, 'URL get: {url}', url=unquote(video_url))
-        html_page = urlopen(video_url).read()
-        strainer = SoupStrainer(['section', 'div'], {'class': ['video-player', 'livestream__player']})
-        soup = BeautifulSoup(html_page, 'html.parser', parse_only=strainer)
-        try:
-            video_data = soup.find(lambda tag: tag.name == 'nui-media').attrs
-        except Exception as exc:  # pylint: disable=broad-except
-            # Web scraping failed, log error
-            log_error('Web scraping api data failed: {error}', error=exc)
-            return None
+        from webscraper import get_video_attributes
+        video_data = get_video_attributes(video_url)
 
         # Web scraping failed, log error
         if not video_data:
@@ -146,6 +139,8 @@ class StreamService:
 
     def _get_stream_json(self, api_data, roaming=False):
         """Get JSON with stream details from VRT API"""
+        if not api_data:
+            return None
         token_url = api_data.media_api_url + '/tokens'
         if api_data.is_live_stream:
             playertoken = self._tokenresolver.get_playertoken(token_url, token_variant='live', roaming=roaming)

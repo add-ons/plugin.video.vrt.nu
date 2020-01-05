@@ -8,7 +8,6 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import random
 import unittest
 from apihelper import ApiHelper
-from data import CATEGORIES
 from favorites import Favorites
 from resumepoints import ResumePoints
 from vrtplayer import VRTPlayer
@@ -72,16 +71,10 @@ class TestVRTPlayer(unittest.TestCase):
 
         self._vrtplayer.show_episodes_menu(program)
 
-    def test_categories_scraping(self):
-        """Test to ensure our hardcoded categories conforms to scraped categories"""
-        # Remove thumbnails from scraped categories first
-        categories_scraped = [dict(id=c['id'], name=c['name']) for c in self._apihelper.get_categories()]
-        categories_stored = [dict(id=c['id'], name=c['name']) for c in CATEGORIES]
-        self.assertEqual(categories_scraped, categories_stored)
-
     def test_random_tvshow_episodes(self):
         """Rest episode from a random tvshow in a random category"""
-        categories = self._apihelper.get_categories()
+        from webscraper import get_categories
+        categories = get_categories()
         self.assertTrue(categories)
 
         category = random.choice(categories)

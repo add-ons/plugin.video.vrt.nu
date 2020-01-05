@@ -11,7 +11,7 @@ from data import CHANNELS
 from favorites import Favorites
 from kodiutils import addon_id, get_setting, has_addon, kodi_version, log, notify, set_property
 from resumepoints import ResumePoints
-from utils import assetpath_to_id, play_url_to_id, to_unicode, url_to_episode
+from utils import play_url_to_id, to_unicode, url_to_episode
 
 
 class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
@@ -79,7 +79,8 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
         if episode is None:
             return
 
-        self.asset_id = assetpath_to_id(episode.get('assetPath'))
+        from metadata import Metadata
+        self.asset_id = Metadata(None, None).get_asset_id(episode)
         self.title = episode.get('program')
         self.url = url_to_episode(episode.get('url', ''))
         self.whatson_id = episode.get('whatsonId') or None  # Avoid empty string
