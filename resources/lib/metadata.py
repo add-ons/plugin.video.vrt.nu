@@ -61,23 +61,20 @@ class Metadata:
 
         # WATCH LATER
         if self._resumepoints.is_activated():
-            assetpath = None
+            asset_id = self.get_asset_id(api_data)
 
             # VRT NU Search API
             if api_data.get('type') == 'episode':
                 program_title = api_data.get('program')
-                assetpath = api_data.get('assetPath')
 
             # VRT NU Schedule API (some are missing vrt.whatson-id)
             elif api_data.get('vrt.whatson-id') or api_data.get('startTime'):
                 program_title = api_data.get('title')
-                assetpath = api_data.get('assetPath')
 
-            if assetpath is not None:
+            if asset_id is not None:
                 # We need to ensure forward slashes are quoted
                 program_title = to_unicode(quote_plus(from_unicode(program_title)))
                 url = url_to_episode(api_data.get('url', ''))
-                asset_id = assetpath_to_id(assetpath)
                 if self._resumepoints.is_watchlater(asset_id):
                     extras = {}
                     # If we are in a watchlater menu, move cursor down before removing a favorite
@@ -154,24 +151,32 @@ class Metadata:
         return context_menu, favorite_marker, watchlater_marker
 
     @staticmethod
-    def get_assetpath(api_data):
-        """Get assetpath from single item json api data"""
-        assetpath = None
+    def get_asset_id(api_data):
+        """Get asset_id from single item json api data"""
+        asset_id = None
 
         # VRT NU Search API
         if api_data.get('type') == 'episode':
-            assetpath = api_data.get('assetPath')
+            asset_id = assetpath_to_id(api_data.get('assetPath'))
 
-        return assetpath
+        # VRT NU Schedule API (some are missing vrt.whatson-id)
+        elif api_data.get('vrt.whatson-id') or api_data.get('startTime'):
+            asset_id = assetpath_to_id(api_data.get('assetPath'))
+
+        # Fallback to VRT NU website scraping
+        if not asset_id and api_data.get('url'):
+            from webscraper import get_asset_id
+            asset_id = get_asset_id(add_https_proto(api_data.get('url')))
+
+        return asset_id
 
     def get_playcount(self, api_data):
         """Get playcount from single item json api data"""
         playcount = -1
         # Only fill in playcount when using VRT NU resumepoints because setting playcount breaks standard Kodi watched status
         if self._resumepoints.is_activated():
-            assetpath = self.get_assetpath(api_data)
-            if assetpath:
-                asset_id = assetpath_to_id(assetpath)
+            asset_id = self.get_asset_id(api_data)
+            if asset_id:
                 position = self._resumepoints.get_position(asset_id)
                 total = self._resumepoints.get_total(asset_id)
                 if position and total and position > total - SECONDS_MARGIN:
@@ -184,12 +189,11 @@ class Metadata:
 
         # Only fill in properties when using VRT NU resumepoints because setting resumetime/totaltime breaks standard Kodi watched status
         if self._resumepoints.is_activated():
-            assetpath = self.get_assetpath(api_data)
-            if assetpath:
+            asset_id = self.get_asset_id(api_data)
+            if asset_id:
                 # We need to ensure forward slashes are quoted
                 program_title = to_unicode(quote_plus(from_unicode(api_data.get('program'))))
 
-                asset_id = assetpath_to_id(assetpath)
                 url = reformat_url(api_data.get('url', ''), 'medium')
                 properties.update(asset_id=asset_id, url=url, title=program_title)
 

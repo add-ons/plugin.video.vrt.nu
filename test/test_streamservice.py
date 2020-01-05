@@ -48,7 +48,7 @@ class TestStreamService(unittest.TestCase):
         except HTTPError:
             pass
         else:
-            self.assertEqual(stream.stream_url, video['video_url'])
+            self.assertEqual(None, stream)
 
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
