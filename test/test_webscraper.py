@@ -25,8 +25,8 @@ class TestWebScraper(unittest.TestCase):
         vrtnu_urls = [
             'https://www.vrt.be/vrtnu/a-z/girls-talk/2/girls-talk-s2-mannen-kunnen-beter-drinken/',
             'https://www.vrt.be/vrtnu/a-z/de-ideale-wereld/2019-nj/de-ideale-wereld-d20191219/',
-            'https://www.vrt.be/vrtnu/kanalen/een/',
-            'https://www.vrt.be/vrtnu/kanalen/canvas/',
+            'https://www.vrt.be/vrtnu/livestream/#epgchannel=O8',  # Eén
+            'https://www.vrt.be/vrtnu/livestream/#epgchannel=1H',  # Canvas
             'https://www.vrt.be/vrtnu/kanalen/ketnet/'
         ]
         for vrtnu_url in vrtnu_urls:
