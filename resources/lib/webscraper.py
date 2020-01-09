@@ -92,10 +92,19 @@ def get_video_attributes(vrtnu_url):
     except HTTPError as exc:
         log_error('Web scraping video attributes failed: {error}', error=exc)
         return None
-    strainer = SoupStrainer(['section', 'div'], {'class': ['video-player', 'livestream__player']})
+    strainer = SoupStrainer(['section', 'div'], {'class': ['video-player', 'livestream__inner']})
     soup = BeautifulSoup(html_page, 'html.parser', parse_only=strainer)
+    item = None
+    epg_channel = None
+    if '#epgchannel=' in vrtnu_url:
+        epg_channel = vrtnu_url.split('#epgchannel=')[1]
+    for item in soup:
+        if epg_channel and epg_channel == item.get('data-epgchannel'):
+            break
+    if not epg_channel and len(soup) > 1:
+        return None
     try:
-        video_attrs = soup.find(lambda tag: tag.name == 'nui-media').attrs
+        video_attrs = item.find(name='nui-media').attrs
     except AttributeError as exc:
         log_error('Web scraping video attributes failed: {error}', error=exc)
         return None
