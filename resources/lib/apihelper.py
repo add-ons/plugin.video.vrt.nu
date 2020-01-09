@@ -88,7 +88,7 @@ class ApiHelper:
             label += favorite_marker
 
         return TitleItem(
-            title=label,
+            label=label,
             path=url_for('programs', program=program),
             art_dict=self._metadata.get_art(tvshow),
             info_dict=self._metadata.get_info_labels(tvshow),
@@ -170,7 +170,7 @@ class ApiHelper:
         # Add an "* All seasons" list item
         if get_global_setting('videolibrary.showallitems') is True:
             season_items.append(TitleItem(
-                title=localize(30133),  # All seasons
+                label=localize(30133),  # All seasons
                 path=url_for('programs', program=program, season='allseasons'),
                 art_dict=self._metadata.get_art(episode, season='allseasons'),
                 info_dict=info_labels,
@@ -189,7 +189,7 @@ class ApiHelper:
 
             label = '%s %s' % (localize(30131), season_key)  # Season X
             season_items.append(TitleItem(
-                title=label,
+                label=label,
                 path=url_for('programs', program=program, season=season_key),
                 art_dict=self._metadata.get_art(episode, season=True),
                 info_dict=info_labels,
@@ -233,10 +233,11 @@ class ApiHelper:
             label += favorite_marker + watchlater_marker
 
         info_labels = self._metadata.get_info_labels(episode)
+        # FIXME: Due to a bug in Kodi, ListItem.Title is used when Sort methods are used, not ListItem.Label
         info_labels['title'] = label
 
         return TitleItem(
-            title=label,
+            label=label,
             path=url_for('play_id', video_id=episode.get('videoId'), publication_id=episode.get('publicationId')),
             art_dict=self._metadata.get_art(episode),
             info_dict=info_labels,
@@ -370,7 +371,7 @@ class ApiHelper:
         episode = self.get_single_episode_data(video_id=video_id, whatson_id=whatson_id, video_url=video_url)
         if episode:
             video_item = TitleItem(
-                title=self._metadata.get_label(episode),
+                label=self._metadata.get_label(episode),
                 art_dict=self._metadata.get_art(episode),
                 info_dict=self._metadata.get_info_labels(episode),
                 prop_dict=self._metadata.get_properties(episode),
@@ -437,7 +438,7 @@ class ApiHelper:
 
             if start_date and end_date:
                 video_item = TitleItem(
-                    title=self._metadata.get_label(episode_guess_on),
+                    label=self._metadata.get_label(episode_guess_on),
                     art_dict=self._metadata.get_art(episode_guess_on),
                     info_dict=self._metadata.get_info_labels(episode_guess_on, channel=channel, date=start_date),
                     prop_dict=self._metadata.get_properties(episode_guess_on),
@@ -463,7 +464,7 @@ class ApiHelper:
         episode = api_data[0]
         log(2, str(episode))
         video_item = TitleItem(
-            title=self._metadata.get_label(episode),
+            label=self._metadata.get_label(episode),
             art_dict=self._metadata.get_art(episode),
             info_dict=self._metadata.get_info_labels(episode),
             prop_dict=self._metadata.get_properties(episode),
@@ -658,7 +659,7 @@ class ApiHelper:
                 continue
 
             channel_items.append(TitleItem(
-                title=label,
+                label=label,
                 path=path,
                 art_dict=art_dict,
                 info_dict=info_dict,
@@ -706,7 +707,7 @@ class ApiHelper:
                 ))
 
                 youtube_items.append(TitleItem(
-                    title=label,
+                    label=label,
                     path=path,
                     art_dict=art_dict,
                     info_dict=info_dict,
@@ -724,7 +725,7 @@ class ApiHelper:
         for feature in self.localize_features(FEATURED):
             featured_name = feature.get('name')
             featured_items.append(TitleItem(
-                title=featured_name,
+                label=featured_name,
                 path=url_for('featured', feature=feature.get('id')),
                 art_dict=dict(thumb='DefaultCountry.png'),
                 info_dict=dict(plot='[B]%s[/B]' % feature.get('name'), studio='VRT'),
@@ -756,7 +757,7 @@ class ApiHelper:
             else:
                 thumbnail = 'DefaultGenre.png'
             category_items.append(TitleItem(
-                title=category.get('name'),
+                label=category.get('name'),
                 path=url_for('categories', category=category.get('id')),
                 art_dict=dict(thumb=thumbnail, icon='DefaultGenre.png'),
                 info_dict=dict(plot='[B]%s[/B]' % category.get('name'), studio='VRT'),

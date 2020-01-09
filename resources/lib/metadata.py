@@ -438,16 +438,19 @@ class Metadata:
         # Not Found
         return ''
 
-    @staticmethod
-    def get_aired(api_data):
+    def get_aired(self, api_data):
         """Get aired string from single item json api data"""
 
         # VRT NU Search API
         if api_data.get('type') == 'episode':
-            from datetime import datetime
-            import dateutil.tz
+            # FIXME: Due to a bug in Kodi, ListItem.Year, as shown in Info pane, is based on 'aired' when set
+            # If this is a oneoff (e.g. movie) and we get a year of release, do not set 'aired'
+            if api_data.get('programType') == 'oneoff' and self.get_year(api_data):
+                return ''
             aired = ''
             if api_data.get('broadcastDate'):
+                from datetime import datetime
+                import dateutil.tz
                 aired = datetime.fromtimestamp(api_data.get('broadcastDate', 0) / 1000, dateutil.tz.UTC).strftime('%Y-%m-%d')
             return aired
 
@@ -513,6 +516,30 @@ class Metadata:
         # Not Found
         return ''
 
+    def get_mediatype(self, api_data, season=False):
+        """Get art dict from single item json api data"""
+
+        # VRT NU Search API
+        if api_data.get('type') == 'episode':
+            if season:
+                return 'season'
+
+            # If this is a oneoff (e.g. movie) and we get a year of release, do not set 'aired'
+            if api_data.get('programType') == 'oneoff' and self.get_year(api_data):
+                return 'movie'
+
+            return 'episode'
+
+        # VRT NU Suggest API
+        if api_data.get('type') == 'program':
+            return ''  # NOTE: We do not use 'tvshow' as it won't show as a folder
+
+        # VRT NU Schedule API (some are missing vrt.whatson-id)
+        if api_data.get('vrt.whatson-id') or api_data.get('startTime'):
+            return 'video'
+
+        return ''
+
     @staticmethod
     def get_art(api_data, season=False):
         """Get art dict from single item json api data"""
@@ -570,12 +597,11 @@ class Metadata:
 
         # VRT NU Search API
         if api_data.get('type') == 'episode':
-            titletype = api_data.get('programType')
-            episode_label = self.get_label(api_data, titletype)
             info_labels = dict(
-                title=episode_label,
+                title=self.get_title(api_data),
+                # sorttitle=self.get_title(api_data),  # NOTE: Does not appear to work
                 tvshowtitle=self.get_tvshowtitle(api_data),
-                date=self.get_date(api_data),
+                # date=self.get_date(api_data),  # NOTE: Not sure when or how this is used
                 aired=self.get_aired(api_data),
                 dateadded=self.get_dateadded(api_data),
                 episode=self.get_episode(api_data),
@@ -585,7 +611,7 @@ class Metadata:
                 plotoutline=self.get_plotoutline(api_data, season=season),
                 tagline=self.get_plotoutline(api_data, season=season),
                 duration=self.get_duration(api_data),
-                mediatype=api_data.get('type', 'episode'),
+                mediatype=self.get_mediatype(api_data, season=season),
                 studio=self.get_studio(api_data),
                 year=self.get_year(api_data),
                 tag=self.get_tag(api_data),
@@ -597,6 +623,7 @@ class Metadata:
             info_labels = dict(
                 tvshowtitle=self.get_tvshowtitle(api_data),
                 plot=self.get_plot(api_data),
+                mediatype=self.get_mediatype(api_data, season=season),
                 studio=self.get_studio(api_data),
                 tag=self.get_tag(api_data),
             )
@@ -605,18 +632,37 @@ class Metadata:
         # VRT NU Schedule API (some are missing vrt.whatson-id)
         if api_data.get('vrt.whatson-id') or api_data.get('startTime'):
             info_labels = dict(
-                title=self.get_label(api_data),
+                title=self.get_title(api_data),
+                # sorttitle=self.get_title(api_data),  # NOTE: Does not appear to work
                 tvshowtitle=self.get_tvshowtitle(api_data),
                 aired=self.get_aired(api_data),
                 plot=self.get_plot(api_data, date=date),
                 duration=self.get_duration(api_data),
-                mediatype=api_data.get('type', 'episode'),
+                mediatype=self.get_mediatype(api_data, season=season),
                 studio=channel.get('studio'),
             )
             return info_labels
 
         # Not Found
         return {}
+
+    @staticmethod
+    def get_title(api_data):
+        """Get an appropriate video title"""
+
+        # VRT NU Search API
+        if api_data.get('type') == 'episode':
+            title = api_data.get('title') or api_data.get('shortDescription', '???')
+
+        # VRT NU Suggest API
+        elif api_data.get('type') == 'program':
+            title = api_data.get('title', '???')
+
+        # VRT NU Schedule API (some are missing vrt.whatson-id)
+        elif api_data.get('vrt.whatson-id') or api_data.get('startTime'):
+            title = api_data.get('title', '???')
+
+        return title
 
     @staticmethod
     def get_label(api_data, titletype=None, return_sort=False):
