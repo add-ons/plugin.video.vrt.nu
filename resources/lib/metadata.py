@@ -369,12 +369,14 @@ class Metadata:
         # Not Found
         return ''
 
-    @staticmethod
-    def get_season(api_data):
+    def get_season(self, api_data):
         """Get season int from single item json api data"""
 
         # VRT NU Search API
         if api_data.get('type') == 'episode':
+            # If this is a oneoff video and the season is a year, don't return a season
+            if api_data.get('programType') == 'oneoff' and self.get_year(api_data):
+                return ''
             try:
                 season = int(api_data.get('seasonTitle'))
             except ValueError:
@@ -395,12 +397,14 @@ class Metadata:
         # Not Found
         return None
 
-    @staticmethod
-    def get_episode(api_data):
+    def get_episode(self, api_data):
         """Get episode int from single item json api data"""
 
         # VRT NU Search API
         if api_data.get('type') == 'episode':
+            # If this is a oneoff video and the season is a year, don't return an episode
+            if api_data.get('programType') == 'oneoff' and self.get_year(api_data):
+                return ''
             try:
                 episode = int(api_data.get('episodeNumber'))
             except ValueError:
