@@ -21,6 +21,7 @@ SORT_METHODS = dict(
     # genre=xbmcplugin.SORT_METHOD_GENRE,
     # label=xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE,
     label=xbmcplugin.SORT_METHOD_LABEL,
+    title=xbmcplugin.SORT_METHOD_TITLE,
     # none=xbmcplugin.SORT_METHOD_UNSORTED,
     # FIXME: We would like to be able to sort by unprefixed title (ignore date/episode prefix)
     # title=xbmcplugin.SORT_METHOD_TITLE_IGNORE_THE,
@@ -186,7 +187,7 @@ def show_listing(list_items, category=None, sort='unsorted', ascending=True, con
         is_folder = bool(not title_item.is_playable and title_item.path)
         is_playable = bool(title_item.is_playable and title_item.path)
 
-        list_item = ListItem(label=title_item.title)
+        list_item = ListItem(label=title_item.label)
 
         prop_dict = dict(
             IsInternetStream='true' if is_playable else 'false',
@@ -255,7 +256,7 @@ def play(stream, video=None):
 
     play_item = ListItem(path=stream.stream_url)
     if video and hasattr(video, 'info_dict'):
-        play_item.setProperty('subtitle', video.title)
+        play_item.setProperty('subtitle', video.label)
         play_item.setArt(video.art_dict)
         play_item.setInfo(
             type='video',

@@ -88,7 +88,7 @@ class TestVRTPlayer(unittest.TestCase):
             self.assertTrue(episode_items, msg=tvshow.path.split('/')[4])
             self.assertTrue(sort in ['dateadded', 'episode', 'label', 'unsorted'])
             self.assertTrue(ascending is True or ascending is False)
-            self.assertTrue(content in ['episodes', 'seasons'], "Content for '%s' is '%s'" % (tvshow.title, content))
+            self.assertTrue(content in ['episodes', 'seasons'], "Content for '%s' is '%s'" % (tvshow.label, content))
         elif tvshow.path.startswith('plugin://plugin.video.vrt.nu/play/id/'):
             # When random program is playable item
             pass
