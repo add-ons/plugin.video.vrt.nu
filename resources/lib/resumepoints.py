@@ -12,7 +12,7 @@ except ImportError:  # Python 2
     from urllib2 import build_opener, HTTPError, install_opener, ProxyHandler, Request, urlopen
 
 from data import SECONDS_MARGIN
-from kodiutils import (container_refresh, get_cache, get_proxies, get_setting, get_url_json, has_credentials,
+from kodiutils import (container_refresh, get_cache, get_proxies, get_setting_bool, get_url_json, has_credentials,
                        input_down, invalidate_caches, localize, log, log_error, notification, update_cache)
 
 
@@ -27,7 +27,7 @@ class ResumePoints:
     @staticmethod
     def is_activated():
         """Is resumepoints activated in the menu and do we have credentials ?"""
-        return get_setting('useresumepoints') == 'true' and has_credentials()
+        return get_setting_bool('useresumepoints', default=True) and has_credentials()
 
     @staticmethod
     def resumepoint_headers(url=None):

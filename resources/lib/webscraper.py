@@ -11,7 +11,7 @@ try:  # Python 3
 except ImportError:  # Python 2
     from urllib2 import build_opener, HTTPError, install_opener, ProxyHandler, unquote, urlopen
 
-from kodiutils import get_cache, get_setting, get_proxies, log, log_error, ttl, update_cache
+from kodiutils import get_cache, get_setting_bool, get_proxies, log, log_error, ttl, update_cache
 from utils import assetpath_to_id, add_https_proto, strip_newlines
 
 install_opener(build_opener(ProxyHandler(get_proxies())))
@@ -58,7 +58,7 @@ def get_categories():
 
 def get_category_thumbnail(element):
     """Return a category thumbnail, if available"""
-    if get_setting('showfanart', 'true') == 'true':
+    if get_setting_bool('showfanart', default=True):
         raw_thumbnail = element.find(class_='media').get('data-responsive-image', 'DefaultGenre.png')
         return add_https_proto(raw_thumbnail)
     return 'DefaultGenre.png'

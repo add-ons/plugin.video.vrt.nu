@@ -40,6 +40,18 @@ class Addon:
         """A working implementation for the xbmcaddon Addon class getSetting() method"""
         return self.settings.get(key, '')
 
+    def getSettingBool(self, key):
+        """A working implementation for the xbmcaddon Addon class getSettingBool() method"""
+        return bool(self.settings.get(key, False))
+
+    def getSettingInt(self, key):
+        """A working implementation for the xbmcaddon Addon class getSettingInt() method"""
+        return int(self.settings.get(key, 0))
+
+    def getSettingNumber(self, key):
+        """A working implementation for the xbmcaddon Addon class getSettingNumber() method"""
+        return float(self.settings.get(key, 0.0))
+
     @staticmethod
     def openSettings():
         """A stub implementation for the xbmcaddon Addon class openSettings() method"""
@@ -50,3 +62,15 @@ class Addon:
         # NOTE: Disable actual writing as it is no longer needed for testing
         # with open('test/userdata/addon_settings.json', 'w') as fd:
         #     json.dump(filtered_settings, fd, sort_keys=True, indent=4)
+
+    def setSettingBool(self, key, value):
+        """A stub implementation for the xbmcaddon Addon class setSettingBool() method"""
+        self.settings[key] = value
+
+    def setSettingInt(self, key, value):
+        """A stub implementation for the xbmcaddon Addon class setSettingInt() method"""
+        self.settings[key] = value
+
+    def setSettingNumber(self, key, value):
+        """A stub implementation for the xbmcaddon Addon class setSettingNumber() method"""
+        self.settings[key] = value

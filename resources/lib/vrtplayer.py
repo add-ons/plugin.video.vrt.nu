@@ -6,9 +6,10 @@ from __future__ import absolute_import, division, unicode_literals
 from apihelper import ApiHelper
 from favorites import Favorites
 from helperobjects import TitleItem
-from kodiutils import (delete_cached_thumbnail, end_of_directory, get_addon_info, get_setting,
-                       has_credentials, localize, log_error, ok_dialog, play, set_setting,
-                       show_listing, ttl, url_for, wait_for_resumepoints)
+from kodiutils import (delete_cached_thumbnail, end_of_directory, get_addon_info,
+                       get_setting, get_setting_bool, get_setting_int, has_credentials,
+                       localize, log_error, ok_dialog, play, set_setting, show_listing,
+                       ttl, url_for, wait_for_resumepoints)
 from resumepoints import ResumePoints
 from utils import find_entry, realpage
 
@@ -81,12 +82,6 @@ class VRTPlayer:
     def _version_check(self):
         first_run, settings_version, addon_version = self._first_run()
         if first_run:
-            # 2.2.3 version: max_log_level to be an integer
-            try:
-                int(get_setting('max_log_level', 0))  # May return string
-            except ValueError:
-                set_setting('max_log_level', 0)
-
             # 2.0.0 version: changed plugin:// url interface: show warning that Kodi favourites and what-was-watched will break
             if settings_version == '' and has_credentials():
                 ok_dialog(localize(30978), localize(30979))
@@ -104,7 +99,7 @@ class VRTPlayer:
         '''Check if this add-on version is run for the first time'''
 
         # Get version from settings.xml
-        settings_version = get_setting('version', '')
+        settings_version = get_setting('version', default='')
 
         # Get version from addon.xml
         addon_version = get_addon_info('version')
@@ -153,7 +148,7 @@ class VRTPlayer:
                 info_dict=dict(plot=localize(30053)),
             ))
 
-        if get_setting('addmymovies', 'true') == 'true':
+        if get_setting_bool('addmymovies', default=True):
             favorites_items.append(
                 TitleItem(label=localize(30042),  # My movies
                           path=url_for('categories', category='films'),
@@ -161,7 +156,7 @@ class VRTPlayer:
                           info_dict=dict(plot=localize(30043))),
             )
 
-        if get_setting('addmydocu', 'true') == 'true':
+        if get_setting_bool('addmydocu', default=True):
             favorites_items.append(
                 TitleItem(label=localize(30044),  # My documentaries
                           path=url_for('favorites_docu'),
@@ -256,7 +251,7 @@ class VRTPlayer:
         episode_items, sort, ascending, content = self._apihelper.list_episodes(page=page, use_favorites=use_favorites, variety='recent')
 
         # Add 'More...' entry at the end
-        if len(episode_items) == int(get_setting('itemsperpage', 50)):
+        if len(episode_items) == get_setting_int('itemsperpage', default=50):
             if use_favorites:
                 recent = 'favorites_recent'
             else:
@@ -280,7 +275,7 @@ class VRTPlayer:
         episode_items, sort, ascending, content = self._apihelper.list_episodes(page=page, use_favorites=use_favorites, variety='offline')
 
         # Add 'More...' entry at the end
-        if len(episode_items) == int(get_setting('itemsperpage', 50)):
+        if len(episode_items) == get_setting_int('itemsperpage', default=50):
             if use_favorites:
                 offline = 'favorites_offline'
             else:

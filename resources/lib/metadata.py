@@ -12,7 +12,7 @@ except ImportError:  # Python 2
     from urllib import quote_plus
 
 from data import CHANNELS, SECONDS_MARGIN
-from kodiutils import get_setting, localize, localize_datelong, log, url_for
+from kodiutils import get_setting_bool, localize, localize_datelong, log, url_for
 from utils import (add_https_proto, assetpath_to_id, capitalize, find_entry, from_unicode,
                    html_to_kodilabel, reformat_url, shorten_link, to_unicode, unescape,
                    url_to_episode)
@@ -316,7 +316,7 @@ class Metadata:
                 plot = '%s\n\n%s' % (plot_meta, plot)
 
             permalink = shorten_link(api_data.get('permalink')) or api_data.get('externalPermalink')
-            if permalink and get_setting('showpermalink', 'false') == 'true':
+            if permalink and get_setting_bool('showpermalink', default=False):
                 plot = '%s\n\n[COLOR yellow]%s[/COLOR]' % (plot, permalink)
             return plot
 
@@ -324,7 +324,7 @@ class Metadata:
         if api_data.get('type') == 'program':
             plot = unescape(api_data.get('description', '???'))
             # permalink = shorten_link(api_data.get('programUrl'))
-            # if permalink and get_setting('showpermalink', 'false') == 'true':
+            # if permalink and get_setting_bool('showpermalink', default=False):
             #     plot = '%s\n\n[COLOR yellow]%s[/COLOR]' % (plot, permalink)
             return plot
 
@@ -548,7 +548,7 @@ class Metadata:
         # VRT NU Search API
         if api_data.get('type') == 'episode':
             if season:
-                if get_setting('showfanart', 'true') == 'true':
+                if get_setting_bool('showfanart', default=True):
                     art_dict['fanart'] = add_https_proto(api_data.get('programImageUrl', 'DefaultSets.png'))
                     art_dict['banner'] = art_dict.get('fanart')
                     if season != 'allseasons':
@@ -558,7 +558,7 @@ class Metadata:
                 else:
                     art_dict['thumb'] = 'DefaultSets.png'
             else:
-                if get_setting('showfanart', 'true') == 'true':
+                if get_setting_bool('showfanart', default=True):
                     art_dict['thumb'] = add_https_proto(api_data.get('videoThumbnailUrl', 'DefaultAddonVideo.png'))
                     art_dict['fanart'] = add_https_proto(api_data.get('programImageUrl', art_dict.get('thumb')))
                     art_dict['banner'] = art_dict.get('fanart')
@@ -569,7 +569,7 @@ class Metadata:
 
         # VRT NU Suggest API
         if api_data.get('type') == 'program':
-            if get_setting('showfanart', 'true') == 'true':
+            if get_setting_bool('showfanart', default=True):
                 art_dict['thumb'] = add_https_proto(api_data.get('thumbnail', 'DefaultAddonVideo.png'))
                 art_dict['fanart'] = art_dict.get('thumb')
                 art_dict['banner'] = art_dict.get('fanart')
@@ -580,7 +580,7 @@ class Metadata:
 
         # VRT NU Schedule API (some are missing vrt.whatson-id)
         if api_data.get('vrt.whatson-id') or api_data.get('startTime'):
-            if get_setting('showfanart', 'true') == 'true':
+            if get_setting_bool('showfanart', default=True):
                 art_dict['thumb'] = api_data.get('image', 'DefaultAddonVideo.png')
                 art_dict['fanart'] = art_dict.get('thumb')
                 art_dict['banner'] = art_dict.get('fanart')

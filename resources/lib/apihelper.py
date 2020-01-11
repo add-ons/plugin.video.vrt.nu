@@ -14,8 +14,8 @@ except ImportError:  # Python 2
 from data import CHANNELS
 from helperobjects import TitleItem
 from kodiutils import (delete_cached_thumbnail, get_cached_url_json, get_global_setting,
-                       get_proxies, get_setting, get_url_json, has_addon, localize, localize_from_data,
-                       log, ttl, url_for)
+                       get_proxies, get_setting_bool, get_setting_int, get_url_json, has_addon, localize,
+                       localize_from_data, log, ttl, url_for)
 from metadata import Metadata
 from utils import (html_to_kodilabel, find_entry, from_unicode, play_url_to_id,
                    program_to_url, realpage, url_to_program, youtube_to_plugin_url)
@@ -68,7 +68,7 @@ class ApiHelper:
         tvshows = self.get_tvshows(category=category, channel=channel, feature=feature)
 
         # Get oneoffs
-        if get_setting('showoneoff', 'true') == 'true':
+        if get_setting_bool('showoneoff', default=True):
             cache_file = 'oneoff.json'
             oneoffs = self.get_episodes(variety='oneoff', cache_file=cache_file)
         else:
@@ -480,7 +480,7 @@ class ApiHelper:
         if page:
             page = realpage(page)
             all_items = False
-            items_per_page = int(get_setting('itemsperpage', 50))
+            items_per_page = get_setting_int('itemsperpage', default=50)
             params = {
                 'from': ((page - 1) * items_per_page) + 1,
                 'i': 'video',
@@ -524,7 +524,7 @@ class ApiHelper:
                 program_urls = [program_to_url(p, 'medium') for p in self._favorites.programs()]
                 params['facets[programUrl]'] = '[%s]' % (','.join(program_urls))
             elif variety in ('offline', 'recent'):
-                channel_filter = [channel.get('name') for channel in CHANNELS if get_setting(channel.get('name'), 'true') == 'true']
+                channel_filter = [channel.get('name') for channel in CHANNELS if get_setting_bool(channel.get('name'), default=True)]
                 params['facets[programBrands]'] = '[%s]' % (','.join(channel_filter))
 
         if program:
@@ -642,7 +642,7 @@ class ApiHelper:
                     label = '[B]%s[/B]' % label
                 is_playable = True
                 if channel.get('name') in ['een', 'canvas', 'ketnet']:
-                    if get_setting('showfanart', 'true') == 'true':
+                    if get_setting_bool('showfanart', default=True):
                         art_dict['fanart'] = self.get_live_screenshot(channel.get('name', art_dict.get('fanart')))
                     plot = '%s\n\n%s' % (localize(30142, **channel), _tvguide.live_description(channel.get('name')))
                 else:
@@ -676,7 +676,7 @@ class ApiHelper:
 
         youtube_items = []
 
-        if not has_addon('plugin.video.youtube') or get_setting('showyoutube', 'true') == 'false':
+        if not has_addon('plugin.video.youtube') or not get_setting_bool('showyoutube', default=True):
             return youtube_items
 
         for channel in CHANNELS:
@@ -752,7 +752,7 @@ class ApiHelper:
         category_items = []
         from data import CATEGORIES
         for category in self.localize_categories(categories, CATEGORIES):
-            if get_setting('showfanart', 'true') == 'true':
+            if get_setting_bool('showfanart', default=True):
                 thumbnail = category.get('thumbnail', 'DefaultGenre.png')
             else:
                 thumbnail = 'DefaultGenre.png'
