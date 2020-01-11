@@ -6,7 +6,7 @@
 from __future__ import absolute_import, division, unicode_literals
 from favorites import Favorites
 from kodiutils import (addon_profile, container_refresh, end_of_directory, get_json_data,
-                       get_search_string, get_setting, localize, ok_dialog, open_file, show_listing,
+                       get_search_string, get_setting_int, localize, ok_dialog, open_file, show_listing,
                        ttl, url_for)
 from resumepoints import ResumePoints
 
@@ -91,7 +91,7 @@ class Search:
 
         # Add 'More…' entry at the end
         from helperobjects import TitleItem
-        if len(search_items) == int(get_setting('itemsperpage', 50)):
+        if len(search_items) == get_setting_int('itemsperpage', default=50):
             search_items.append(TitleItem(
                 label=localize(30300),  # More…
                 path=url_for('search_query', keywords=keywords, page=page + 1),

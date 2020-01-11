@@ -9,7 +9,7 @@ from xbmc import getInfoLabel, Player, PlayList
 from apihelper import ApiHelper
 from data import CHANNELS
 from favorites import Favorites
-from kodiutils import addon_id, get_setting, has_addon, kodi_version, log, notify, set_property
+from kodiutils import addon_id, get_setting_bool, has_addon, kodi_version, log, notify, set_property
 from resumepoints import ResumePoints
 from utils import play_url_to_id, to_unicode, url_to_episode
 
@@ -192,7 +192,7 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
 
     def push_upnext(self):
         """Push episode info to Up Next service add-on"""
-        if has_addon('service.upnext') and get_setting('useupnext', 'true') == 'true' and self.isPlaying():
+        if has_addon('service.upnext') and get_setting_bool('useupnext', default=True) and self.isPlaying():
             info_tag = self.getVideoInfoTag()
             next_info = self.apihelper.get_upnext(dict(
                 program=to_unicode(info_tag.getTVShowTitle()),
