@@ -61,7 +61,7 @@ class ResumePoints:
         if resumepoints_json is not None:
             self._data = resumepoints_json
 
-    def update(self, asset_id, title, url, watch_later=None, position=None, total=None, whatson_id=None):
+    def update(self, asset_id, title, url, watch_later=None, position=None, total=None, whatson_id=None, path=None):
         """Set program resumepoint or watchLater status and update local copy"""
 
         menu_caches = []
@@ -73,7 +73,11 @@ class ResumePoints:
             total = self.get_total(asset_id)
 
         # Update
-        if self.still_watching(position, total) or watch_later is True:
+        if (self.still_watching(position, total) or watch_later is True
+                or (path and path.startswith('plugin://plugin.video.vrt.nu/play/upnext'))):
+            # Normally, VRT NU resumepoints are deleted when an episode is (un)watched and Kodi GUI automatically sets the (un)watched status when Kodi Player exits.
+            # This mechanism doesn't work with "Up Next" episodes because these episodes are not initiated from a ListItem in Kodi GUI.
+            # For "Up Next" episodes, we should never delete the VRT NU resumepoints to make sure the watched status can be forced in Kodi GUI using the playcount infolabel.
 
             log(3, "[Resumepoints] Update resumepoint '{asset_id}' {position}/{total}", asset_id=asset_id, position=position, total=total)
 
