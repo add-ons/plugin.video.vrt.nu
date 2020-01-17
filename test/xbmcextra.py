@@ -132,10 +132,56 @@ def addon_settings(addon_id=None):
 def import_language(language):
     """Process the language.po file"""
     try:
-        return polib.pofile('resources/language/{language}/strings.po'.format(language=language))
+        podb = polib.pofile('resources/language/{language}/strings.po'.format(language=language))
     except IOError:
-        return polib.pofile('resources/language/resource.language.en_gb/strings.po')
+        podb = polib.pofile('resources/language/resource.language.en_gb/strings.po')
 
+    podb.extend([
+        # WEEKDAY_LONG
+        polib.POEntry(msgctxt='#11', msgstr='Monday'),
+        polib.POEntry(msgctxt='#12', msgstr='Tuesday'),
+        polib.POEntry(msgctxt='#13', msgstr='Wednesday'),
+        polib.POEntry(msgctxt='#14', msgstr='Thursday'),
+        polib.POEntry(msgctxt='#15', msgstr='Friday'),
+        polib.POEntry(msgctxt='#16', msgstr='Saturday'),
+        polib.POEntry(msgctxt='#17', msgstr='Sunday'),
+        # MONTH_LONG
+        polib.POEntry(msgctxt='#21', msgstr='January'),
+        polib.POEntry(msgctxt='#22', msgstr='February'),
+        polib.POEntry(msgctxt='#23', msgstr='March'),
+        polib.POEntry(msgctxt='#24', msgstr='April'),
+        polib.POEntry(msgctxt='#25', msgstr='May'),
+        polib.POEntry(msgctxt='#26', msgstr='June'),
+        polib.POEntry(msgctxt='#27', msgstr='July'),
+        polib.POEntry(msgctxt='#28', msgstr='August'),
+        polib.POEntry(msgctxt='#29', msgstr='September'),
+        polib.POEntry(msgctxt='#30', msgstr='October'),
+        polib.POEntry(msgctxt='#31', msgstr='November'),
+        polib.POEntry(msgctxt='#32', msgstr='December'),
+        # WEEKDAY_SHORT
+        polib.POEntry(msgctxt='#41', msgstr='Mon'),
+        polib.POEntry(msgctxt='#42', msgstr='Tue'),
+        polib.POEntry(msgctxt='#43', msgstr='Wed'),
+        polib.POEntry(msgctxt='#44', msgstr='Thu'),
+        polib.POEntry(msgctxt='#45', msgstr='Fri'),
+        polib.POEntry(msgctxt='#46', msgstr='Sat'),
+        polib.POEntry(msgctxt='#47', msgstr='Sun'),
+        # MONTH_LONG
+        polib.POEntry(msgctxt='#51', msgstr='Jan'),
+        polib.POEntry(msgctxt='#52', msgstr='Feb'),
+        polib.POEntry(msgctxt='#53', msgstr='Mar'),
+        polib.POEntry(msgctxt='#54', msgstr='Apr'),
+        polib.POEntry(msgctxt='#55', msgstr='May'),
+        polib.POEntry(msgctxt='#56', msgstr='Jun'),
+        polib.POEntry(msgctxt='#57', msgstr='Jul'),
+        polib.POEntry(msgctxt='#58', msgstr='Aug'),
+        polib.POEntry(msgctxt='#59', msgstr='Sep'),
+        polib.POEntry(msgctxt='#50', msgstr='Oct'),
+        polib.POEntry(msgctxt='#51', msgstr='Nov'),
+        polib.POEntry(msgctxt='#52', msgstr='Dec'),
+    ])
+
+    return podb
 
 ADDON_INFO = read_addon_xml('addon.xml')
 ADDON_ID = next(iter(list(ADDON_INFO.values()))).get('id')
