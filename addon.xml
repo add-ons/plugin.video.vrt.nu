@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.vrt.nu" name="VRT NU" version="2.3.1" provider-name="Martijn Moreel, dagwieers">
+<addon id="plugin.video.vrt.nu" name="VRT NU" version="2.3.2" provider-name="Martijn Moreel, dagwieers">
 <requires>
   <import addon="resource.images.studios.white" version="0.0.22"/>
   <import addon="script.module.beautifulsoup4" version="4.6.2"/>
@@ -42,6 +42,10 @@
   <website>https://github.com/pietje666/plugin.video.vrt.nu/wiki</website>
   <source>https://github.com/pietje666/plugin.video.vrt.nu</source>
   <news>
+v2.3.2 (2020-01-18)
+- Fix issues related to categories scraping and caching (@mediaminister)
+- Various improvements to TV guide (@dagwieers)
+
 v2.3.1 (2020-01-14)
 - Fix an issue related to type-handling for settings
 - Fix an issue related to marking played videos as watched when using Up Next
