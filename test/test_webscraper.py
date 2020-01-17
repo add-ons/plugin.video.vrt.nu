@@ -7,7 +7,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
 from data import CATEGORIES
-from webscraper import get_categories, get_video_attributes
+from webscraper import get_categories, get_video_attributes, valid_categories
 
 
 class TestWebScraper(unittest.TestCase):
@@ -18,6 +18,8 @@ class TestWebScraper(unittest.TestCase):
         # Remove thumbnails from scraped categories first
         categories_scraped = [dict(id=c['id'], name=c['name']) for c in get_categories()]
         categories_stored = [dict(id=c['id'], name=c['name']) for c in CATEGORIES]
+        self.assertTrue(valid_categories(categories_scraped))
+        self.assertTrue(valid_categories(categories_stored))
         self.assertEqual(categories_scraped, categories_stored)
 
     def test_get_video_attributes(self):
