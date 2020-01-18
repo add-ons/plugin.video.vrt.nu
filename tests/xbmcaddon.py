@@ -9,9 +9,6 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from xbmc import getLocalizedString
 from xbmcextra import ADDON_ID, ADDON_INFO, addon_settings
 
-# Ensure the addon settings are retained (as we don't write to disk)
-ADDON_SETTINGS = addon_settings(ADDON_ID)
-
 
 class Addon:
     """A reimplementation of the xbmcaddon Addon class"""
@@ -19,10 +16,7 @@ class Addon:
     def __init__(self, id=ADDON_ID):  # pylint: disable=redefined-builtin
         """A stub constructor for the xbmcaddon Addon class"""
         self.id = id
-        if id == ADDON_ID:
-            self.settings = ADDON_SETTINGS
-        else:
-            self.settings = addon_settings(id)
+        self.settings = addon_settings(id)
 
     def getAddonInfo(self, key):
         """A working implementation for the xbmcaddon Addon class getAddonInfo() method"""

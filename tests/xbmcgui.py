@@ -19,7 +19,6 @@ class Control:
     @staticmethod
     def selectItem(index):
         """A stub implementation for the xbmcgui Control class selectItem() method"""
-        return
 
 
 class ControlLabel(Control):
@@ -210,37 +209,34 @@ class ListItem:
     @staticmethod
     def addContextMenuItems(items, replaceItems=False):
         """A stub implementation for the xbmcgui ListItem class addContextMenuItems() method"""
-        return
 
     @staticmethod
     def addStreamInfo(stream_type, stream_values):
         """A stub implementation for the xbmcgui LitItem class addStreamInfo() method"""
-        return
 
     @staticmethod
     def setArt(key):
         """A stub implementation for the xbmcgui ListItem class setArt() method"""
-        return
 
     @staticmethod
     def setContentLookup(enable):
         """A stub implementation for the xbmcgui ListItem class setContentLookup() method"""
-        return
 
     @staticmethod
     def setInfo(type, infoLabels):  # pylint: disable=redefined-builtin
         """A stub implementation for the xbmcgui ListItem class setInfo() method"""
-        return
 
     @staticmethod
     def setIsFolder(isFolder):
         """A stub implementation for the xbmcgui ListItem class setIsFolder() method"""
-        return
+
+    @staticmethod
+    def setLabel2(label):
+        """A stub implementation for the xbmcgui ListItem class setLabel2() method"""
 
     @staticmethod
     def setMimeType(mimetype):
         """A stub implementation for the xbmcgui ListItem class setMimeType() method"""
-        return
 
     def setPath(self, path):
         """A stub implementation for the xbmcgui ListItem class setPath() method"""
@@ -249,22 +245,18 @@ class ListItem:
     @staticmethod
     def setProperty(key, value):
         """A stub implementation for the xbmcgui ListItem class setProperty() method"""
-        return
 
     @staticmethod
     def setProperties(dictionary):
         """A stub implementation for the xbmcgui ListItem class setProperties() method"""
-        return
 
     @staticmethod
     def setSubtitles(subtitleFiles):
         """A stub implementation for the xbmcgui ListItem class setSubtitles() method"""
-        return
 
     @staticmethod
     def setUniqueIDs(values, defaultrating=None):
         """A stub implementation for the xbmcgui ListItem class setUniqueIDs() method"""
-        return
 
 
 class Window:
@@ -272,7 +264,6 @@ class Window:
 
     def __init__(self, windowId):
         """A stub constructor for the xbmcgui Window class"""
-        return None
 
     def close(self):
         """A stub implementation for the xbmcgui Window class close() method"""
@@ -295,12 +286,10 @@ class Window:
     @staticmethod
     def setProperty(key, value):
         """A stub implementation for the xbmcgui Window class setProperty() method"""
-        return
 
     @staticmethod
     def clearProperty(key):
         """A stub implementation for the xbmcgui Window class clearProperty() method"""
-        return
 
     def show(self):
         """A stub implementation for the xbmcgui Window class show() method"""

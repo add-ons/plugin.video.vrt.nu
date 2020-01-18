@@ -79,7 +79,7 @@ def addDirectoryItems(handle, listing, length):
     return True
 
 
-def addSortMethod(handle, sortMethod):
+def addSortMethod(handle, sortMethod, label2Mask='%D'):
     """A stub implementation of the xbmcplugin addSortMethod() function"""
 
 

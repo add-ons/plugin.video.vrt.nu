@@ -414,7 +414,7 @@ class Metadata:
 
         # VRT NU Suggest API
         if api_data.get('type') == 'program':
-            return int()
+            return api_data.get('episode_count', int())  # The number of episodes
 
         # VRT NU Schedule API (some are missing vrt.whatson-id)
         if api_data.get('vrt.whatson-id') or api_data.get('startTime'):
@@ -604,7 +604,6 @@ class Metadata:
         if api_data.get('type') == 'episode':
             info_labels = dict(
                 title=self.get_title(api_data),
-                # sorttitle=self.get_title(api_data),  # NOTE: Does not appear to work
                 tvshowtitle=self.get_tvshowtitle(api_data),
                 # date=self.get_date(api_data),  # NOTE: Not sure when or how this is used
                 aired=self.get_aired(api_data),
@@ -628,6 +627,7 @@ class Metadata:
             info_labels = dict(
                 tvshowtitle=self.get_tvshowtitle(api_data),
                 plot=self.get_plot(api_data),
+                episode=self.get_episode(api_data),
                 mediatype=self.get_mediatype(api_data, season=season),
                 studio=self.get_studio(api_data),
                 tag=self.get_tag(api_data),
@@ -638,7 +638,6 @@ class Metadata:
         if api_data.get('vrt.whatson-id') or api_data.get('startTime'):
             info_labels = dict(
                 title=self.get_title(api_data),
-                # sorttitle=self.get_title(api_data),  # NOTE: Does not appear to work
                 tvshowtitle=self.get_tvshowtitle(api_data),
                 aired=self.get_aired(api_data),
                 plot=self.get_plot(api_data, date=date),

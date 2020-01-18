@@ -136,7 +136,7 @@ class TVGuide:
                 path = url_for('tvguide', date=date, channel=chan.get('name'))
                 plot = '[B]%s[/B]\n%s' % (datelong, localize(30302, **chan))
             else:
-                label = '[B]%s[/B]' % localize(30303, **chan)
+                label = '[COLOR yellow][B]%s[/B][/COLOR]' % localize(30303, **chan)
                 path = url_for('tvguide_channel', channel=chan.get('name'))
                 plot = '%s\n\n%s' % (localize(30302, **chan), self.live_description(chan.get('name')))
 

@@ -756,18 +756,6 @@ msgctxt "#30874"
 msgid "Open Up Next service add-on settings."
 msgstr ""
 
-msgctxt "#30875"
-msgid "Install Twitter add-on"
-msgstr ""
-
-msgctxt "#30877"
-msgid "Enable Twitter integration"
-msgstr ""
-
-msgctxt "#30879"
-msgid "Twitter settings…"
-msgstr ""
-
 msgctxt "#30881"
 msgid "Install PySocks library"
 msgstr ""

@@ -160,8 +160,14 @@ class ApiHelper:
         content = 'seasons'
 
         episode = random.choice(episodes)
-        info_labels = self._metadata.get_info_labels(episode, season=True)
         program_type = episode.get('programType')
+        info_labels = self._metadata.get_info_labels(episode, season=True)
+        info_labels.update(
+            episode=len(episodes),  # Total number of episodes in '* All seasons'
+            season=len(seasons),  # Total number of seasons in '* All seasons'
+            tagline=localize(30133),  # All seasons
+            title=localize(30133),  # All seasons
+        )
 
         # Reverse sort seasons if program_type is 'reeksaflopend' or 'daily'
         if program_type in ('daily', 'reeksaflopend'):
@@ -173,7 +179,7 @@ class ApiHelper:
                 label=localize(30133),  # All seasons
                 path=url_for('programs', program=program, season='allseasons'),
                 art_dict=self._metadata.get_art(episode, season='allseasons'),
-                info_dict=info_labels,
+                info_dict=info_labels.copy(),
             ))
 
         # NOTE: Sort the episodes ourselves, because Kodi does not allow to set to 'ascending'
@@ -181,18 +187,26 @@ class ApiHelper:
 
         for season in seasons:
             season_key = season.get('key', '')
+            episodelist = [e for e in episodes if e.get('seasonName') == season_key]
             # If more than 300 episodes exist, we may end up with an empty season (Winteruur)
             try:
-                episode = random.choice([e for e in episodes if e.get('seasonName') == season_key])
+                episode = random.choice(episodelist)
             except IndexError:
                 episode = episodes[0]
 
             label = '%s %s' % (localize(30131), season_key)  # Season X
+            info_labels.update(
+                episode=len(episodelist),  # Number of episodes in this folder
+                season=1,  # Number of seasons in this folder
+                tagline=label,
+                title=label,
+            )
+
             season_items.append(TitleItem(
                 label=label,
                 path=url_for('programs', program=program, season=season_key),
                 art_dict=self._metadata.get_art(episode, season=True),
-                info_dict=info_labels,
+                info_dict=info_labels.copy(),
                 prop_dict=self._metadata.get_properties(episode),
             ))
         return season_items, sort, ascending, content
@@ -641,7 +655,7 @@ class ApiHelper:
                     label += ' [COLOR=yellow]| %s[/COLOR]' % playing_now
                 # A single Live channel means it is the entry for channel's TV Show listing, so make it stand out
                 if channels and len(channels) == 1:
-                    label = '[B]%s[/B]' % label
+                    label = '[COLOR yellow][B]%s[/B][/COLOR]' % label
                 is_playable = True
                 if channel.get('name') in ['een', 'canvas', 'ketnet']:
                     if get_setting_bool('showfanart', default=True):
@@ -650,7 +664,16 @@ class ApiHelper:
                 else:
                     plot = localize(30142, **channel)  # Watch live
                 # NOTE: Playcount and resumetime are required to not have live streams as "Watched" and resumed
-                info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video', playcount=0, duration=0)
+                info_dict = dict(
+                    title=label,
+                    plot=plot,
+                    plotoutline=playing_now,
+                    tagline=playing_now,
+                    studio=channel.get('studio'),
+                    mediatype='video',
+                    playcount=0,
+                    duration=0,
+                )
                 prop_dict = dict(resumetime=0)
                 stream_dict = dict(duration=0)
                 context_menu.append((
@@ -700,10 +723,10 @@ class ApiHelper:
                 label = localize(30143, **youtube)  # Channel on YouTube
                 # A single Live channel means it is the entry for channel's TV Show listing, so make it stand out
                 if channels and len(channels) == 1:
-                    label = '[B]%s[/B]' % label
+                    label = '[COLOR yellow][B]%s[/B][/COLOR]' % label
                 plot = localize(30144, **youtube)  # Watch on YouTube
                 # NOTE: Playcount is required to not have live streams as "Watched"
-                info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video', playcount=0)
+                info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), playcount=0)
 
                 context_menu = [(
                     localize(30413),  # Refresh menu
