@@ -12,7 +12,7 @@ class TestStaticHelper(unittest.TestCase):
     """TestCase class"""
 
     def test_url_to_episode(self):
-        """Test converting URL to episode"""
+        """Test converting URL to episode (buck)"""
         long_url = 'https://www.vrt.be/vrtnu/a-z/buck/1/buck-s1a32/'
         episode = '/vrtnu/a-z/buck/1/buck-s1a32/'
         self.assertEqual(episode, utils.url_to_episode(long_url))
@@ -24,7 +24,7 @@ class TestStaticHelper(unittest.TestCase):
         self.assertEqual(None, utils.url_to_episode('foobar'))
 
     def test_url_to_program(self):
-        """Test converting URL to program"""
+        """Test converting URL to program (buck)"""
         program = 'buck'
         short_url = '/vrtnu/a-z/buck/1/buck-s1a32/'
         medium_url = '//www.vrt.be/vrtnu/a-z/buck/1/buck-s1a32/'
@@ -37,7 +37,7 @@ class TestStaticHelper(unittest.TestCase):
         self.assertEqual(program, utils.url_to_program(short_relevant_url))
 
     def test_program_to_url(self):
-        """Test converting program to URL"""
+        """Test converting program to URL (de-campus-cup)"""
         program = 'de-campus-cup'
         short_url = '/vrtnu/a-z/de-campus-cup/'
         medium_url = '//www.vrt.be/vrtnu/a-z/de-campus-cup/'
@@ -48,7 +48,7 @@ class TestStaticHelper(unittest.TestCase):
         self.assertEqual(long_url, utils.program_to_url(program, 'long'))
 
     def test_video_to_api_url(self):
-        """Test convert video to api URL"""
+        """Test convert video to api URL (de-ideale-wereld)"""
         video = 'https://www.vrt.be/vrtnu/a-z/de-ideale-wereld/2019-nj/de-ideale-wereld-d20191010/'
         api_url = '//www.vrt.be/vrtnu/a-z/de-ideale-wereld/2019-nj/de-ideale-wereld-d20191010/'
         self.assertEqual(api_url, utils.video_to_api_url(video))
@@ -72,7 +72,7 @@ class TestStaticHelper(unittest.TestCase):
         self.assertEqual(play_id, utils.play_url_to_id(url))
 
     def test_reformat_url(self):
-        """Test reformatting URLs"""
+        """Test reformatting URLs (terzake)"""
         short_url = '/vrtnu/a-z/terzake/2019/terzake-d20191017/'
         medium_url = '//www.vrt.be/vrtnu/a-z/terzake/2019/terzake-d20191017/'
         long_url = 'https://www.vrt.be/vrtnu/a-z/terzake/2019/terzake-d20191017/'
