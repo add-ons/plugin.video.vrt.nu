@@ -134,6 +134,7 @@ CHANNELS = [
         name='klara',
         label='Klara',
         studio='Klara',
+        live_stream_id='vualto_klara',
         youtube=[
             dict(label='Klara', url='https://www.youtube.com/user/klararadio'),
             dict(label='Iedereen klassiek', url='https://www.youtube.com/channel/UCgyfqQgt5_K8_zrxHgh_J2w'),
