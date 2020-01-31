@@ -9,3 +9,4 @@ pylint
 git+git://github.com/dagwieers/kodi-plugin-routing.git@setup#egg=routing
 setuptools >= 41
 tox-travis
+xmlschema==1.0.18; python_version == '2.7'
