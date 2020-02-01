@@ -290,10 +290,9 @@ def play(stream, video=None):
     xbmc.Player().showSubtitles(subtitles_visible)
 
 
-def get_search_string():
+def get_search_string(search_string=None):
     """Ask the user for a search string"""
-    search_string = None
-    keyboard = xbmc.Keyboard('', localize(30134))
+    keyboard = xbmc.Keyboard(search_string, localize(30134))
     keyboard.doModal()
     if keyboard.isConfirmed():
         search_string = to_unicode(keyboard.getText())

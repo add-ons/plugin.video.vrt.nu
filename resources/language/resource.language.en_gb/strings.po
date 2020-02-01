@@ -108,6 +108,10 @@ msgctxt "#30032"
 msgid "Search results"
 msgstr ""
 
+msgctxt "#30033"
+msgid "Edit"
+msgstr ""
+
 
 ### FAVORITES
 msgctxt "#30040"
