@@ -43,9 +43,9 @@ class TestVRTPlayer(unittest.TestCase):
         program = 'het-weer'
         episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program)
         self.assertTrue(episode_items, msg=program)
-        self.assertEqual(sort, 'label')
+        self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
-        self.assertEqual(content, 'seasons')
+        self.assertEqual(content, 'episodes')
 
         self._vrtplayer.show_episodes_menu(program)
 
