@@ -39,7 +39,7 @@
     "plugin.video.youtube": {
     },
     "script.module.inputstreamhelper": {
-        "last_update": "",
+        "last_update": 0.0,
         "version": ""
     },
     "service.upnext": {
