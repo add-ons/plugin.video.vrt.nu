@@ -5,6 +5,11 @@
     "plugin.video.vrt.nu": {
         "_comment": "do-not-add-username-and-password-here",
         "canvas": "true",
+        "colour_availability": "blue", 
+        "colour_geoblocked": "red", 
+        "colour_greyedout": "gray", 
+        "colour_highlighted": "yellow", 
+        "colour_theme": "custom",
         "een": "true",
         "httpcachettldirect": "1",
         "httpcachettlindirect": "5",

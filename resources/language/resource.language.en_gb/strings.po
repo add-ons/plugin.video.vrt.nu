@@ -319,39 +319,39 @@ msgid "Watch [B]{label}[/B] on YouTube"
 msgstr ""
 
 msgctxt "#30201"
-msgid "[COLOR red]Geo-blocked[/COLOR]"
+msgid "[COLOR={geoblocked}]Geo-blocked[/COLOR]"
 msgstr ""
 
 msgctxt "#30202"
-msgid "[COLOR blue][B]{years} more years[/B] available[/COLOR]"
+msgid "[COLOR={availability}][B]{years} more years[/B] available[/COLOR]"
 msgstr ""
 
 msgctxt "#30203"
-msgid "[COLOR blue][B]{months} more months[/B] available[/COLOR]"
+msgid "[COLOR={availability}][B]{months} more months[/B] available[/COLOR]"
 msgstr ""
 
 msgctxt "#30204"
-msgid "[COLOR blue][B]{days} more days[/B] available[/COLOR]"
+msgid "[COLOR={availability}][B]{days} more days[/B] available[/COLOR]"
 msgstr ""
 
 msgctxt "#30205"
-msgid "[COLOR blue][B]1 more day[/B] available[/COLOR]"
+msgid "[COLOR={availability}][B]1 more day[/B] available[/COLOR]"
 msgstr ""
 
 msgctxt "#30206"
-msgid "[COLOR blue][B]{hours} more hours[/B] available[/COLOR]"
+msgid "[COLOR={availability}][B]{hours} more hours[/B] available[/COLOR]"
 msgstr ""
 
 msgctxt "#30207"
-msgid "[COLOR blue][B]1 more hour[/B] available[/COLOR]"
+msgid "[COLOR={availability}][B]1 more hour[/B] available[/COLOR]"
 msgstr ""
 
 msgctxt "#30208"
-msgid "[COLOR blue][B]{minutes} more minutes[/B] available[/COLOR]"
+msgid "[COLOR={availability}][B]{minutes} more minutes[/B] available[/COLOR]"
 msgstr ""
 
 msgctxt "#30300"
-msgid "[B][COLOR yellow]More…[/COLOR][/B]"
+msgid "[B][COLOR={highlighted}]More…[/COLOR][/B]"
 msgstr ""
 
 msgctxt "#30301"
@@ -529,7 +529,7 @@ msgid "Interface"
 msgstr ""
 
 msgctxt "#30741"
-msgid "Features"
+msgid "My favorites"
 msgstr ""
 
 msgctxt "#30743"
@@ -561,23 +561,51 @@ msgid "Add Documentaries subsection"
 msgstr ""
 
 msgctxt "#30753"
-msgid "Show one-off videos in between program folders"
+msgid "Features"
 msgstr ""
 
 msgctxt "#30755"
-msgid "Show fanart"
+msgid "Show one-off videos in between program folders"
 msgstr ""
 
 msgctxt "#30757"
-msgid "Number of items per page"
+msgid "Show fanart"
 msgstr ""
 
 msgctxt "#30759"
+msgid "Number of items per page"
+msgstr ""
+
+msgctxt "#30761"
 msgid "Show episode permalink in plot"
 msgstr ""
 
-msgctxt "#30760"
+msgctxt "#30762"
 msgid "When enabled, the video description will include a permanent link that points to this episode. This is useful for quickly opening an episode or movie on a mobile device."
+msgstr ""
+
+msgctxt "#30763"
+msgid "Colour preferences"
+msgstr ""
+
+msgctxt "#30765"
+msgid "Colour theme"
+msgstr ""
+
+msgctxt "#30767"
+msgid "Highlighted text"
+msgstr ""
+
+msgctxt "#30769"
+msgid "Greyed-out text"
+msgstr ""
+
+msgctxt "#30771"
+msgid "Availability text"
+msgstr ""
+
+msgctxt "#30773"
+msgid "Geo-blocked text"
 msgstr ""
 
 msgctxt "#30780"
@@ -601,7 +629,7 @@ msgid "Streaming and DRM"
 msgstr ""
 
 msgctxt "#30787"
-msgid "Use Widevine DRM [COLOR gray][I](for protected content)[/I][/COLOR]"
+msgid "Use Widevine DRM [COLOR={greyedout}][I](for protected content)[/I][/COLOR]"
 msgstr ""
 
 msgctxt "#30788"
@@ -609,7 +637,7 @@ msgid "Most live streams are available in 720p HD-quality, but may require DRM t
 msgstr ""
 
 msgctxt "#30789"
-msgid "Maximum bandwidth [COLOR gray](in kbps)[/COLOR]"
+msgid "Maximum bandwidth [COLOR={greyedout}](in kbps)[/COLOR]"
 msgstr ""
 
 msgctxt "#30790"
@@ -757,7 +785,7 @@ msgid "InputStream Helper information"
 msgstr ""
 
 msgctxt "#30911"
-msgid "InputStream Helper settings… [COLOR gray][I](for protected content)[/I][/COLOR]"
+msgid "InputStream Helper settings… [COLOR={greyedout}][I](for protected content)[/I][/COLOR]"
 msgstr ""
 
 msgctxt "#30913"
@@ -793,11 +821,11 @@ msgid "Invalidate local HTTP caches"
 msgstr ""
 
 msgctxt "#30927"
-msgid "Direct HTTP cache time-to-live [COLOR gray](in minutes)[/COLOR]"
+msgid "Direct HTTP cache time-to-live [COLOR={greyedout}](in minutes)[/COLOR]"
 msgstr ""
 
 msgctxt "#30929"
-msgid "Indirect HTTP cache time-to-live [COLOR gray](in minutes)[/COLOR]"
+msgid "Indirect HTTP cache time-to-live [COLOR={greyedout}](in minutes)[/COLOR]"
 msgstr ""
 
 msgctxt "#30931"

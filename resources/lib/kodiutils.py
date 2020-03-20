@@ -187,7 +187,7 @@ def show_listing(list_items, category=None, sort='unsorted', ascending=True, con
         is_folder = bool(not title_item.is_playable and title_item.path)
         is_playable = bool(title_item.is_playable and title_item.path)
 
-        list_item = ListItem(label=title_item.label)
+        list_item = ListItem(label=colour(title_item.label))
 
         prop_dict = dict(
             IsInternetStream='true' if is_playable else 'false',
@@ -664,6 +664,32 @@ def get_tokens_path():
     if not hasattr(get_tokens_path, 'cached'):
         get_tokens_path.cached = addon_profile() + 'tokens/'
     return getattr(get_tokens_path, 'cached')
+
+
+COLOUR_THEMES = dict(
+    dark=dict(highlighted='yellow', availability='blue', geoblocked='red', greyedout='gray'),
+    light=dict(highlighted='brown', availability='darkblue', geoblocked='darkred', greyedout='darkgray'),
+    custom=dict(
+        highlighted=get_setting('colour_highlighted'),
+        availability=get_setting('colour_availability'),
+        geoblocked=get_setting('colour_geoblocked'),
+        greyedout=get_setting('colour_greyedout')
+    )
+)
+
+
+def themecolour(kind):
+    """Get current theme color by kind (highlighted, availability, geoblocked, greyedout)"""
+    theme = get_setting('colour_theme', 'dark')
+    color = COLOUR_THEMES.get(theme).get(kind, COLOUR_THEMES.get('dark').get(kind))
+    return color
+
+
+def colour(text):
+    """Convert stub color bbcode into colors from the settings"""
+    theme = get_setting('colour_theme', 'dark')
+    text = text.format(**COLOUR_THEMES.get(theme))
+    return text
 
 
 def get_cache_path():
