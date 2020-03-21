@@ -139,34 +139,42 @@ msgid "All [I]one-off[/I] documentaries on VRT NU"
 msgstr "Alle [I]one-off[/I] documentaires op VRT NU"
 
 msgctxt "#30046"
+msgid "Music"
+msgstr "Muziek"
+
+msgctxt "#30047"
+msgid "All [I]one-off[/I] music on VRT NU"
+msgstr "Alle [I]one-off[/I] muziek op VRT NU"
+
+msgctxt "#30048"
 msgid "Most recent"
 msgstr "Meest recent"
 
-msgctxt "#30047"
+msgctxt "#30049"
 msgid "Recently published episodes of My TV programs"
 msgstr "Recent gepubliceerde afleveringen van tv-programma's die je volgt"
 
-msgctxt "#30048"
+msgctxt "#30050"
 msgid "Soon offline"
 msgstr "Binnenkort offline"
 
-msgctxt "#30049"
+msgctxt "#30051"
 msgid "My episodes that will soon be offline"
 msgstr "Mijn afleveringen die binnenkort verdwijnen"
 
-msgctxt "#30050"
+msgctxt "#30052"
 msgid "Watch later"
 msgstr "Later bekijken"
 
-msgctxt "#30051"
+msgctxt "#30053"
 msgid "The videos you like to watch later"
 msgstr "Mijn afleveringen die ik later wil bekijken"
 
-msgctxt "#30052"
+msgctxt "#30054"
 msgid "Continue watching"
 msgstr "Verder kijken"
 
-msgctxt "#30053"
+msgctxt "#30055"
 msgid "Continue watching the videos you started earlier"
 msgstr "Bekijk de programma's verder die je eerder bent gestart"
 
@@ -561,50 +569,54 @@ msgid "Add Documentaries subsection"
 msgstr "Toon Documentaires rubriek"
 
 msgctxt "#30753"
+msgid "Add Music subsection"
+msgstr "Toon Muziek rubriek"
+
+msgctxt "#30755"
 msgid "Features"
 msgstr "Functionaliteit"
 
-msgctxt "#30755"
+msgctxt "#30757"
 msgid "Show one-off videos in between program folders"
 msgstr "Toon one-off video's tussen tv-programmafolders"
 
-msgctxt "#30757"
+msgctxt "#30759"
 msgid "Show fanart"
 msgstr "Toon fanart"
 
-msgctxt "#30759"
+msgctxt "#30761"
 msgid "Number of items per page"
 msgstr "Aantal items per pagina"
 
-msgctxt "#30761"
+msgctxt "#30763"
 msgid "Show episode permalink in plot"
 msgstr "Toon aflevering permalink in beschrijving"
 
-msgctxt "#30762"
+msgctxt "#30764"
 msgid "When enabled, the video description will include a permanent link that points to this episode. This is useful for quickly opening an episode or movie on a mobile device."
 msgstr "Indien actief zal de beschrijving van iedere video een permanent link bevatten die je rechtstreeks naar de VRT NU website brengt. Dit is handig om snel een aflevering of film to openen op een mobiel toestel."
 
-msgctxt "#30763"
+msgctxt "#30765"
 msgid "Colour preferences"
 msgstr "Kleurvoorkeuren"
 
-msgctxt "#30765"
+msgctxt "#30767"
 msgid "Colour theme"
 msgstr "Kleurenthema"
 
-msgctxt "#30767"
+msgctxt "#30769"
 msgid "Highlighted text"
 msgstr "Benadrukte tekst"
 
-msgctxt "#30769"
+msgctxt "#30771"
 msgid "Greyed-out text"
 msgstr "Vergrijsde tekst"
 
-msgctxt "#30771"
+msgctxt "#30773"
 msgid "Availability text"
 msgstr "Beschikbaarheidstekst"
 
-msgctxt "#30773"
+msgctxt "#30775"
 msgid "Geo-blocked text"
 msgstr "Geo-blocked tekst"
 
