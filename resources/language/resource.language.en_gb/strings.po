@@ -139,34 +139,42 @@ msgid "All [I]one-off[/I] documentaries on VRT NU"
 msgstr ""
 
 msgctxt "#30046"
-msgid "Most recent"
+msgid "Music"
 msgstr ""
 
 msgctxt "#30047"
-msgid "Recently published episodes of My TV programs"
+msgid "All [I]one-off[/I] music on VRT NU"
 msgstr ""
 
 msgctxt "#30048"
-msgid "Soon offline"
+msgid "Most recent"
 msgstr ""
 
 msgctxt "#30049"
-msgid "My episodes that will soon be offline"
+msgid "Recently published episodes of My TV programs"
 msgstr ""
 
 msgctxt "#30050"
-msgid "Watch later"
+msgid "Soon offline"
 msgstr ""
 
 msgctxt "#30051"
-msgid "The videos you like to watch later"
+msgid "My episodes that will soon be offline"
 msgstr ""
 
 msgctxt "#30052"
-msgid "Continue watching"
+msgid "Watch later"
 msgstr ""
 
 msgctxt "#30053"
+msgid "The videos you like to watch later"
+msgstr ""
+
+msgctxt "#30054"
+msgid "Continue watching"
+msgstr ""
+
+msgctxt "#30055"
 msgid "Continue watching the videos you started earlier"
 msgstr ""
 
@@ -561,50 +569,54 @@ msgid "Add Documentaries subsection"
 msgstr ""
 
 msgctxt "#30753"
-msgid "Features"
+msgid "Add Music subsection"
 msgstr ""
 
 msgctxt "#30755"
-msgid "Show one-off videos in between program folders"
+msgid "Features"
 msgstr ""
 
 msgctxt "#30757"
-msgid "Show fanart"
+msgid "Show one-off videos in between program folders"
 msgstr ""
 
 msgctxt "#30759"
-msgid "Number of items per page"
+msgid "Show fanart"
 msgstr ""
 
 msgctxt "#30761"
-msgid "Show episode permalink in plot"
-msgstr ""
-
-msgctxt "#30762"
-msgid "When enabled, the video description will include a permanent link that points to this episode. This is useful for quickly opening an episode or movie on a mobile device."
+msgid "Number of items per page"
 msgstr ""
 
 msgctxt "#30763"
-msgid "Colour preferences"
+msgid "Show episode permalink in plot"
+msgstr ""
+
+msgctxt "#30764"
+msgid "When enabled, the video description will include a permanent link that points to this episode. This is useful for quickly opening an episode or movie on a mobile device."
 msgstr ""
 
 msgctxt "#30765"
-msgid "Colour theme"
+msgid "Colour preferences"
 msgstr ""
 
 msgctxt "#30767"
-msgid "Highlighted text"
+msgid "Colour theme"
 msgstr ""
 
 msgctxt "#30769"
-msgid "Greyed-out text"
+msgid "Highlighted text"
 msgstr ""
 
 msgctxt "#30771"
-msgid "Availability text"
+msgid "Greyed-out text"
 msgstr ""
 
 msgctxt "#30773"
+msgid "Availability text"
+msgstr ""
+
+msgctxt "#30775"
 msgid "Geo-blocked text"
 msgstr ""
 

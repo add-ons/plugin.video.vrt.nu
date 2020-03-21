@@ -93,6 +93,14 @@ def favorites_docu():
     VRTPlayer().show_favorites_docu_menu()
 
 
+@plugin.route('/favorites/music')
+def favorites_music():
+    """The favorites music listing"""
+    from vrtplayer import VRTPlayer
+    VRTPlayer().show_favorites_music_menu()
+
+
+@plugin.route('/favorites/recent')
 @plugin.route('/favorites/recent')
 @plugin.route('/favorites/recent/<page>')
 def favorites_recent(page=1):

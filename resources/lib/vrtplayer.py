@@ -123,29 +123,29 @@ class VRTPlayer:
                       path=url_for('favorites_programs'),
                       art_dict=dict(thumb='DefaultMovieTitle.png'),
                       info_dict=dict(plot=localize(30041))),
-            TitleItem(label=localize(30046),  # My recent items
+            TitleItem(label=localize(30048),  # My recent items
                       path=url_for('favorites_recent'),
                       art_dict=dict(thumb='DefaultRecentlyAddedEpisodes.png'),
-                      info_dict=dict(plot=localize(30047))),
-            TitleItem(label=localize(30048),  # My soon offline
+                      info_dict=dict(plot=localize(30049))),
+            TitleItem(label=localize(30050),  # My soon offline
                       path=url_for('favorites_offline'),
                       art_dict=dict(thumb='DefaultYear.png'),
-                      info_dict=dict(plot=localize(30049))),
+                      info_dict=dict(plot=localize(30051))),
         ]
 
         # Only add 'My watch later' and 'Continue watching' when it has been activated
         if self._resumepoints.is_activated():
             favorites_items.append(TitleItem(
-                label=localize(30050),  # My watch later
+                label=localize(30052),  # My watch later
                 path=url_for('resumepoints_watchlater'),
                 art_dict=dict(thumb='DefaultVideoPlaylists.png'),
-                info_dict=dict(plot=localize(30051)),
+                info_dict=dict(plot=localize(30053)),
             ))
             favorites_items.append(TitleItem(
-                label=localize(30052),  # Continue Watching
+                label=localize(30054),  # Continue Watching
                 path=url_for('resumepoints_continue'),
                 art_dict=dict(thumb='DefaultInProgressShows.png'),
-                info_dict=dict(plot=localize(30053)),
+                info_dict=dict(plot=localize(30055)),
             ))
 
         if get_setting_bool('addmymovies', default=True):
@@ -164,6 +164,14 @@ class VRTPlayer:
                           info_dict=dict(plot=localize(30045))),
             )
 
+        if get_setting_bool('addmymusic', default=True):
+            favorites_items.append(
+                TitleItem(label=localize(30046),  # My music
+                          path=url_for('favorites_music'),
+                          art_dict=dict(thumb='DefaultAddonMusic.png'),
+                          info_dict=dict(plot=localize(30047))),
+            )
+
         show_listing(favorites_items, category=30010, cache=False)  # My favorites
 
         # Show dialog when no favorites were found
@@ -176,6 +184,13 @@ class VRTPlayer:
         self._resumepoints.refresh(ttl=ttl('indirect'))
         episode_items, sort, ascending, content = self._apihelper.list_episodes(category='docu', season='allseasons', programtype='oneoff')
         show_listing(episode_items, category=30044, sort=sort, ascending=ascending, content=content, cache=False)
+
+    def show_favorites_music_menu(self):
+        """The VRT NU add-on 'My music' listing menu"""
+        self._favorites.refresh(ttl=ttl('indirect'))
+        self._resumepoints.refresh(ttl=ttl('indirect'))
+        episode_items, sort, ascending, content = self._apihelper.list_episodes(category='muziek', season='allseasons', programtype='oneoff')
+        show_listing(episode_items, category=30046, sort=sort, ascending=ascending, content=content, cache=False)
 
     def show_tvshow_menu(self, use_favorites=False):
         """The VRT NU add-on 'All programs' listing menu"""
@@ -297,7 +312,7 @@ class VRTPlayer:
         self._resumepoints.refresh(ttl=ttl('direct'))
         page = realpage(page)
         episode_items, sort, ascending, content = self._apihelper.list_episodes(page=page, variety='watchlater')
-        show_listing(episode_items, category=30050, sort=sort, ascending=ascending, content=content, cache=False)
+        show_listing(episode_items, category=30052, sort=sort, ascending=ascending, content=content, cache=False)
 
     def show_continue_menu(self, page=0):
         """The VRT NU add-on 'Continue waching' listing menu"""
@@ -307,7 +322,7 @@ class VRTPlayer:
         self._resumepoints.refresh(ttl=ttl('direct'))
         page = realpage(page)
         episode_items, sort, ascending, content = self._apihelper.list_episodes(page=page, variety='continue')
-        show_listing(episode_items, category=30052, sort=sort, ascending=ascending, content=content, cache=False)
+        show_listing(episode_items, category=30054, sort=sort, ascending=ascending, content=content, cache=False)
 
     def play_latest_episode(self, program):
         """A hidden feature in the VRT NU add-on to play the latest episode of a program"""
