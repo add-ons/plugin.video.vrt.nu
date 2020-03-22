@@ -508,6 +508,7 @@ class ApiHelper:
                 params['facets[assetOffTime]'] = datetime.now(dateutil.tz.gettz('Europe/Brussels')).strftime('%Y-%m-%d')
 
             if variety == 'oneoff':
+                params['facets[episodeNumber]'] = '[0,1]'  # This to avoid VRT NU metadata errors (see #670)
                 params['facets[programType]'] = 'oneoff'
 
             if variety == 'watchlater':
