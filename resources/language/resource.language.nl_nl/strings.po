@@ -641,16 +641,16 @@ msgid "Streaming and DRM"
 msgstr "Streaming en DRM"
 
 msgctxt "#30787"
-msgid "Use Widevine DRM [COLOR={greyedout}][I](for protected content)[/I][/COLOR]"
-msgstr "Gebruik Widevine DRM [COLOR={greyedout}][I](voor beveiligde video's)[/I][/COLOR]"
+msgid "Use Widevine DRM [COLOR=gray][I](for protected content)[/I][/COLOR]"
+msgstr "Gebruik Widevine DRM [COLOR=gray][I](voor beveiligde video's)[/I][/COLOR]"
 
 msgctxt "#30788"
 msgid "Most live streams are available in 720p HD-quality, but may require DRM to be enabled."
 msgstr "De meeste livestreams zijn beschikbaar in 720p HD-kwaliteit, maar hiervoor moet mogelijk DRM worden ingeschakeld."
 
 msgctxt "#30789"
-msgid "Maximum bandwidth [COLOR={greyedout}](in kbps)[/COLOR]"
-msgstr "Maximale bandbreedte [COLOR={greyedout}](in kbps)[/COLOR]"
+msgid "Maximum bandwidth [COLOR=gray](in kbps)[/COLOR]"
+msgstr "Maximale bandbreedte [COLOR=gray](in kbps)[/COLOR]"
 
 msgctxt "#30790"
 msgid "In case you have limited bandwidth available, you may want to specify a maximum bandwidth so that a lower bitrate stream can be selected for playback."
@@ -797,8 +797,8 @@ msgid "InputStream Helper information"
 msgstr "InputStream Helper informatie"
 
 msgctxt "#30911"
-msgid "InputStream Helper settings… [COLOR={greyedout}][I](for protected content)[/I][/COLOR]"
-msgstr "InputStream Helper instellingen…[COLOR={greyedout}][I](voor beveiligde video's)[/I][/COLOR]"
+msgid "InputStream Helper settings… [COLOR=gray][I](for protected content)[/I][/COLOR]"
+msgstr "InputStream Helper instellingen…[COLOR=gray][I](voor beveiligde video's)[/I][/COLOR]"
 
 msgctxt "#30913"
 msgid "Cache"
@@ -833,12 +833,12 @@ msgid "Invalidate local HTTP caches"
 msgstr "Maak lokale HTTP caches ongeldig"
 
 msgctxt "#30927"
-msgid "Direct HTTP cache time-to-live [COLOR={greyedout}](in minutes)[/COLOR]"
-msgstr "Directe HTTP cache time-to-live [COLOR={greyedout}](in minuten)[/COLOR]"
+msgid "Direct HTTP cache time-to-live [COLOR=gray](in minutes)[/COLOR]"
+msgstr "Directe HTTP cache time-to-live [COLOR=gray](in minuten)[/COLOR]"
 
 msgctxt "#30929"
-msgid "Indirect HTTP cache time-to-live [COLOR={greyedout}](in minutes)[/COLOR]"
-msgstr "Indirecte HTTP cache time-to-live [COLOR={greyedout}](in minuten)[/COLOR]"
+msgid "Indirect HTTP cache time-to-live [COLOR=gray](in minutes)[/COLOR]"
+msgstr "Indirecte HTTP cache time-to-live [COLOR=gray](in minuten)[/COLOR]"
 
 msgctxt "#30931"
 msgid "Logging"

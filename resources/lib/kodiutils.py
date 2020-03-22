@@ -187,7 +187,7 @@ def show_listing(list_items, category=None, sort='unsorted', ascending=True, con
         is_folder = bool(not title_item.is_playable and title_item.path)
         is_playable = bool(title_item.is_playable and title_item.path)
 
-        list_item = ListItem(label=colour(title_item.label))
+        list_item = ListItem(label=title_item.label)
 
         prop_dict = dict(
             IsInternetStream='true' if is_playable else 'false',
