@@ -148,7 +148,7 @@ class Metadata:
             'RunPlugin(%s)' % url_for('delete_cache', cache_file=cache_file)
         ))
 
-        return context_menu, favorite_marker, watchlater_marker
+        return context_menu, colour(favorite_marker), colour(watchlater_marker)
 
     @staticmethod
     def get_asset_id(api_data):
@@ -766,9 +766,9 @@ class Metadata:
             label = ''
 
         if return_sort:
-            return label, sort, ascending
+            return colour(label), sort, ascending
 
-        return label
+        return colour(label)
 
     @staticmethod
     def get_tag(api_data):

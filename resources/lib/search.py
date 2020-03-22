@@ -5,7 +5,7 @@
 
 from __future__ import absolute_import, division, unicode_literals
 from favorites import Favorites
-from kodiutils import (addon_profile, container_refresh, container_update, end_of_directory, get_json_data,
+from kodiutils import (colour, addon_profile, container_refresh, container_update, end_of_directory, get_json_data,
                        get_search_string, get_setting_int, input_down, localize, ok_dialog, open_file,
                        show_listing, ttl, url_for)
 from resumepoints import ResumePoints
@@ -98,7 +98,7 @@ class Search:
         from helperobjects import TitleItem
         if len(search_items) == get_setting_int('itemsperpage', default=50):
             search_items.append(TitleItem(
-                label=localize(30300),  # More…
+                label=colour(localize(30300)),  # More…
                 path=url_for('search_query', keywords=keywords, page=page + 1),
                 art_dict=dict(thumb='DefaultAddonSearch.png'),
                 info_dict=dict(),

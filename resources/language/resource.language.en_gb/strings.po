@@ -641,7 +641,7 @@ msgid "Streaming and DRM"
 msgstr ""
 
 msgctxt "#30787"
-msgid "Use Widevine DRM [COLOR={greyedout}][I](for protected content)[/I][/COLOR]"
+msgid "Use Widevine DRM [COLOR=gray][I](for protected content)[/I][/COLOR]"
 msgstr ""
 
 msgctxt "#30788"
@@ -649,7 +649,7 @@ msgid "Most live streams are available in 720p HD-quality, but may require DRM t
 msgstr ""
 
 msgctxt "#30789"
-msgid "Maximum bandwidth [COLOR={greyedout}](in kbps)[/COLOR]"
+msgid "Maximum bandwidth [COLOR=gray](in kbps)[/COLOR]"
 msgstr ""
 
 msgctxt "#30790"
@@ -797,7 +797,7 @@ msgid "InputStream Helper information"
 msgstr ""
 
 msgctxt "#30911"
-msgid "InputStream Helper settings… [COLOR={greyedout}][I](for protected content)[/I][/COLOR]"
+msgid "InputStream Helper settings… [COLOR=gray][I](for protected content)[/I][/COLOR]"
 msgstr ""
 
 msgctxt "#30913"
@@ -833,11 +833,11 @@ msgid "Invalidate local HTTP caches"
 msgstr ""
 
 msgctxt "#30927"
-msgid "Direct HTTP cache time-to-live [COLOR={greyedout}](in minutes)[/COLOR]"
+msgid "Direct HTTP cache time-to-live [COLOR=gray](in minutes)[/COLOR]"
 msgstr ""
 
 msgctxt "#30929"
-msgid "Indirect HTTP cache time-to-live [COLOR={greyedout}](in minutes)[/COLOR]"
+msgid "Indirect HTTP cache time-to-live [COLOR=gray](in minutes)[/COLOR]"
 msgstr ""
 
 msgctxt "#30931"

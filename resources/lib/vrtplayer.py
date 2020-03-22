@@ -6,7 +6,7 @@ from __future__ import absolute_import, division, unicode_literals
 from apihelper import ApiHelper
 from favorites import Favorites
 from helperobjects import TitleItem
-from kodiutils import (delete_cached_thumbnail, end_of_directory, get_addon_info,
+from kodiutils import (colour, delete_cached_thumbnail, end_of_directory, get_addon_info,
                        get_setting, get_setting_bool, get_setting_int, has_credentials,
                        localize, log_error, ok_dialog, play, set_setting, show_listing,
                        ttl, url_for, wait_for_resumepoints)
@@ -272,7 +272,7 @@ class VRTPlayer:
             else:
                 recent = 'recent'
             episode_items.append(TitleItem(
-                label=localize(30300),
+                label=colour(localize(30300)),
                 path=url_for(recent, page=page + 1),
                 art_dict=dict(thumb='DefaultRecentlyAddedEpisodes.png'),
                 info_dict=dict(),
