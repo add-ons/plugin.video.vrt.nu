@@ -191,10 +191,10 @@ class TVGuide:
 
             info_labels = self._metadata.get_info_labels(episode, date=date, channel=entry)
             # FIXME: Due to a bug in Kodi, ListItem.Title is used when Sort methods are used, not ListItem.Label
-            info_labels['title'] = label
+            info_labels['title'] = colour(label)
 
             episode_items.append(TitleItem(
-                label=label,
+                label=colour(label),
                 path=path,
                 art_dict=self._metadata.get_art(episode),
                 info_dict=info_labels,

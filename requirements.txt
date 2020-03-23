@@ -3,10 +3,12 @@ codecov
 git+git://github.com/emilsvennesson/script.module.inputstreamhelper.git@master#egg=inputstreamhelper
 kodi-addon-checker
 polib
-proxy.py==0.3
+#proxy.py == 0.3; python_version != '2.7'
+proxy.py; python_version != '2.7'
 python-dateutil
 pylint
 git+git://github.com/tamland/kodi-plugin-routing.git@master#egg=routing
 setuptools >= 41
-tox-travis
-xmlschema==1.0.18; python_version == '2.7'
+tox
+typing-extensions == 3.7.4.1; python_version != '2.7'
+xmlschema == 1.0.18; python_version == '2.7'

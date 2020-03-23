@@ -34,7 +34,7 @@ class ResumePoints:
         """Generate http headers for VRT NU Resumepoints API"""
         from tokenresolver import TokenResolver
         xvrttoken = TokenResolver().get_xvrttoken(token_variant='user')
-        headers = None
+        headers = {}
         if xvrttoken:
             url = 'https://www.vrt.be' + url if url else 'https://www.vrt.be/vrtnu'
             headers = {

@@ -19,14 +19,14 @@ def kodi_to_ansi(string):
     string = string.replace('[/B]', '\033[21m')
     string = string.replace('[I]', '\033[3m')
     string = string.replace('[/I]', '\033[23m')
-    string = string.replace('[COLOR gray]', '\033[30;1m')
-    string = string.replace('[COLOR red]', '\033[31m')
-    string = string.replace('[COLOR green]', '\033[32m')
-    string = string.replace('[COLOR yellow]', '\033[33m')
-    string = string.replace('[COLOR blue]', '\033[34m')
-    string = string.replace('[COLOR purple]', '\033[35m')
-    string = string.replace('[COLOR cyan]', '\033[36m')
-    string = string.replace('[COLOR white]', '\033[37m')
+    string = string.replace('[COLOR=gray]', '\033[30;1m')
+    string = string.replace('[COLOR=red]', '\033[31m')
+    string = string.replace('[COLOR=green]', '\033[32m')
+    string = string.replace('[COLOR=yellow]', '\033[33m')
+    string = string.replace('[COLOR=blue]', '\033[34m')
+    string = string.replace('[COLOR=purple]', '\033[35m')
+    string = string.replace('[COLOR=cyan]', '\033[36m')
+    string = string.replace('[COLOR=white]', '\033[37m')
     string = string.replace('[/COLOR]', '\033[39;0m')
     return string
 
@@ -74,10 +74,10 @@ def global_settings():
     """Use the global_settings file"""
     import json
     try:
-        with open('test/userdata/global_settings.json') as f:
-            settings = json.load(f)
+        with open('tests/userdata/global_settings.json') as fdesc:
+            settings = json.load(fdesc)
     except OSError as e:
-        print("Error: Cannot use 'test/userdata/global_settings.json' : %s" % e)
+        print("Error: Cannot use 'tests/userdata/global_settings.json' : %s" % e)
         settings = {
             'locale.language': 'resource.language.en_gb',
             'network.bandwidth': 0,
@@ -104,10 +104,10 @@ def addon_settings(addon_id=None):
     """Use the addon_settings file"""
     import json
     try:
-        with open('test/userdata/addon_settings.json') as f:
-            settings = json.load(f)
+        with open('tests/userdata/addon_settings.json') as fdesc:
+            settings = json.load(fdesc)
     except OSError as e:
-        print("Error: Cannot use 'test/userdata/addon_settings.json' : %s" % e)
+        print("Error: Cannot use 'tests/userdata/addon_settings.json' : %s" % e)
         settings = {}
 
     # Read credentials from environment or credentials.json
@@ -115,13 +115,13 @@ def addon_settings(addon_id=None):
         # print('Using credentials from the environment variables ADDON_USERNAME and ADDON_PASSWORD')
         settings[ADDON_ID]['username'] = os.environ.get('ADDON_USERNAME')
         settings[ADDON_ID]['password'] = os.environ.get('ADDON_PASSWORD')
-    elif os.path.exists('test/userdata/credentials.json'):
-        # print('Using credentials from test/userdata/credentials.json')
-        with open('test/userdata/credentials.json') as f:
-            credentials = json.load(f)
+    elif os.path.exists('tests/userdata/credentials.json'):
+        # print('Using credentials from tests/userdata/credentials.json')
+        with open('tests/userdata/credentials.json') as fdesc:
+            credentials = json.load(fdesc)
         settings[ADDON_ID].update(credentials)
     else:
-        print("Error: Cannot use 'test/userdata/credentials.json'")
+        print("Error: Cannot use 'tests/userdata/credentials.json'")
 
     if addon_id:
         return settings[addon_id]

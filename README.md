@@ -1,5 +1,5 @@
 [![GitHub release](https://img.shields.io/github/release/pietje666/plugin.video.vrt.nu.svg)](https://github.com/pietje666/plugin.video.vrt.nu/releases)
-[![Build Status](https://travis-ci.org/pietje666/plugin.video.vrt.nu.svg?branch=master)](https://travis-ci.org/pietje666/plugin.video.vrt.nu)
+[![Build status](https://github.com/pietje666/plugin.video.vrt.nu/workflows/CI/badge.svg)](https://github.com/pietje666/plugin.video.vrt.nu/actions)
 [![Codecov status](https://img.shields.io/codecov/c/github/pietje666/plugin.video.vrt.nu/master)](https://codecov.io/gh/pietje666/plugin.video.vrt.nu/branch/master)
 [![License: GPLv3](https://img.shields.io/badge/License-GPLv3-yellow.svg)](https://opensource.org/licenses/GPL-3.0)
 [![Contributors](https://img.shields.io/github/contributors/pietje666/plugin.video.vrt.nu.svg)](https://github.com/pietje666/plugin.video.vrt.nu/graphs/contributors)

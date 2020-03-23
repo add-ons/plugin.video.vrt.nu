@@ -88,10 +88,11 @@ kodi-addon-checker-report.log
 
 # Temporary
 experiment/
+nohup.out
 
 # Userdata
-test/cdm/
-test/userdata/cache/
-test/userdata/credentials.json
-test/userdata/search_history.json
-test/userdata/tokens/
+tests/cdm/
+tests/userdata/cache/
+tests/userdata/credentials.json
+tests/userdata/search_history.json
+tests/userdata/tokens/

@@ -798,7 +798,7 @@ msgstr "InputStream Helper informatie"
 
 msgctxt "#30911"
 msgid "InputStream Helper settings… [COLOR=gray][I](for protected content)[/I][/COLOR]"
-msgstr "InputStream Helper instellingen…[COLOR=gray][I](voor beveiligde video's)[/I][/COLOR]"
+msgstr "InputStream Helper instellingen… [COLOR=gray][I](voor beveiligde video's)[/I][/COLOR]"
 
 msgctxt "#30913"
 msgid "Cache"
@@ -834,11 +834,11 @@ msgstr "Maak lokale HTTP caches ongeldig"
 
 msgctxt "#30927"
 msgid "Direct HTTP cache time-to-live [COLOR=gray](in minutes)[/COLOR]"
-msgstr "Directe HTTP cache time-to-live [COLOR=gray](in minuten)[/COLOR]"
+msgstr "Directe HTTP cache levensduur [COLOR=gray](in minuten)[/COLOR]"
 
 msgctxt "#30929"
 msgid "Indirect HTTP cache time-to-live [COLOR=gray](in minutes)[/COLOR]"
-msgstr "Indirecte HTTP cache time-to-live [COLOR=gray](in minuten)[/COLOR]"
+msgstr "Indirecte HTTP cache levensduur [COLOR=gray](in minuten)[/COLOR]"
 
 msgctxt "#30931"
 msgid "Logging"
@@ -956,4 +956,4 @@ msgstr "VRT tokens werden verwijderd."
 
 msgctxt "#30986"
 msgid "No on demand stream available for {title}."
-msgstr "Geen on demand stream beschikbaar voor {title}"
+msgstr "Geen on demand stream beschikbaar voor {title}."
