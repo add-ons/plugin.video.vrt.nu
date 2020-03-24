@@ -314,7 +314,7 @@ class StreamService:
         max_bandwidth = get_max_bandwidth()
         stream_bandwidth = None
 
-        # Get hls variant url based on max_bandwith setting
+        # Get hls variant url based on max_bandwidth setting
         import re
         hls_variant_regex = re.compile(r'#EXT-X-STREAM-INF:[\w\-.,=\"]*?BANDWIDTH=(?P<BANDWIDTH>\d+),'
                                        r'[\w\-.,=\"]+\d,(?:AUDIO=\"(?P<AUDIO>[\w\-]+)\",)?(?:SUBTITLES=\"'

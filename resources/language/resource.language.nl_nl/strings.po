@@ -859,7 +859,7 @@ msgid "Login succeeded."
 msgstr "Inloggen gelukt."
 
 msgctxt "#30953"
-msgid "Invalid email adress or password. Only VRT logins are supported, no Google or Facebook logins."
+msgid "Invalid email address or password. Only VRT logins are supported, no Google or Facebook logins."
 msgstr "Ongeldig e-mailadres of wachtwoord. Alleen VRT-logins worden ondersteund, geen Google- of Facebook-logins."
 
 msgctxt "#30954"
