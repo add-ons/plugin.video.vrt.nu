@@ -39,8 +39,8 @@
   <platform>all</platform>
   <license>GPL-3.0-only</license>
   <forum>https://www.facebook.com/kodivrtnu/</forum>
-  <website>https://github.com/pietje666/plugin.video.vrt.nu/wiki</website>
-  <source>https://github.com/pietje666/plugin.video.vrt.nu</source>
+  <website>https://github.com/add-ons/plugin.video.vrt.nu/wiki</website>
+  <source>https://github.com/add-ons/plugin.video.vrt.nu</source>
   <news>
 v2.3.2 (2020-01-18)
 - Fix issues related to categories scraping and caching (@mediaminister)
