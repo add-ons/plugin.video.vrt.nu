@@ -10,4 +10,4 @@ coverage:
     patch: false
 comment: false
 ignore:
-- test/
+- tests/

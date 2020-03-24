@@ -109,7 +109,7 @@ class TokenResolver:
         now = datetime.now(dateutil.tz.tzlocal())
         exp = dateutil.parser.parse(token.get('expirationDate'))
         if exp <= now:
-            log(2, "Cached token '{path}' deleted", path=path)
+            log(2, "Token expired, cached token '{path}' deleted", path=path)
             delete(path)
             return None
 
@@ -298,7 +298,8 @@ class TokenResolver:
     @staticmethod
     def _create_token_dictionary(cookie_data, cookie_name='X-VRT-Token'):
         """Create a dictionary with token name and token expirationDate from a Python cookielib.CookieJar or urllib2 Set-Cookie http header"""
-        token_dictionary = None
+        if cookie_data is None:
+            return None
         if isinstance(cookie_data, cookielib.CookieJar):
             # Get token dict from cookiejar
             token_cookie = next((cookie for cookie in cookie_data if cookie.name == cookie_name), None)
@@ -308,6 +309,8 @@ class TokenResolver:
                     token_cookie.name: token_cookie.value,
                     'expirationDate': datetime.utcfromtimestamp(token_cookie.expires).strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
                 }
+            else:
+                token_dictionary = None
         elif cookie_name in cookie_data:
             # Get token dict from http header
             import dateutil.parser
@@ -316,6 +319,8 @@ class TokenResolver:
                 cookie_name: cookie_data[0],
                 'expirationDate': dateutil.parser.parse(cookie_data[2].strip('Expires=')).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
             }
+        else:
+            token_dictionary = None
         return token_dictionary
 
     @staticmethod

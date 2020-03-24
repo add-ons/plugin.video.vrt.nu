@@ -18,7 +18,7 @@ xbmcvfs = __import__('xbmcvfs')
 plugin = addon.plugin
 
 
-@unittest.skipIf(sys.version_info[0] < 3, 'Skipping proxy tests on Python 2')
+@unittest.skipIf(sys.version_info < (3, 6, 0), 'Skipping proxy tests on Python 3.5 and older')
 class TestProxy(unittest.TestCase):
     """TestCase class"""
 
@@ -26,7 +26,7 @@ class TestProxy(unittest.TestCase):
         """Build up  function for TestCase class"""
         xbmc.settings['network.usehttpproxy'] = True
         xbmc.settings['network.httpproxytype'] = 0
-        xbmc.settings['network.httpproxyserver'] = '127.0.0.1'
+        xbmc.settings['network.httpproxyserver'] = 'localhost'
         xbmc.settings['network.httpproxyport'] = '8899'
 
     def tearDown(self):

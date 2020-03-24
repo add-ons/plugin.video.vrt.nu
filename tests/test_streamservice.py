@@ -67,7 +67,7 @@ class TestStreamService(unittest.TestCase):
         video = dict(video_url=CHANNELS[1]['live_stream'], video_id=None, publication_id=None)
         stream = self._streamservice.get_stream(video)
         # NOTE: Testing live streams only works within Europe
-        if os.environ.get('TRAVIS') != 'true':
+        if os.environ.get('GITHUB_ACTIONS') != 'true':
             self.assertTrue(stream is not None)
 #            self.assertTrue(stream.license_key is not None)
 
@@ -78,7 +78,7 @@ class TestStreamService(unittest.TestCase):
         video = dict(video_url=CHANNELS[1]['live_stream'], video_id=None, publication_id=None)
         stream = self._streamservice.get_stream(video)
         # NOTE: Testing live streams only works within Europe
-        if os.environ.get('TRAVIS') != 'true':
+        if os.environ.get('GITHUB_ACTIONS') != 'true':
             self.assertTrue(stream is not None)
 
     def test_get_mpd_live_stream_from_url_does_not_crash(self):
@@ -87,7 +87,7 @@ class TestStreamService(unittest.TestCase):
         video = dict(video_url=CHANNELS[1]['live_stream'], video_id=None, publication_id=None)
         stream = self._streamservice.get_stream(video)
         # NOTE: Testing live streams only works within Europe
-        if os.environ.get('TRAVIS') != 'true':
+        if os.environ.get('GITHUB_ACTIONS') != 'true':
             self.assertTrue(stream is not None)
 
     def test_get_hls_live_stream_from_url_does_not_crash(self):
@@ -97,7 +97,7 @@ class TestStreamService(unittest.TestCase):
         video = dict(video_url=CHANNELS[1]['live_stream'], video_id=None, publication_id=None)
         stream = self._streamservice.get_stream(video)
         # NOTE: Testing live streams only works within Europe
-        if os.environ.get('TRAVIS') != 'true':
+        if os.environ.get('GITHUB_ACTIONS') != 'true':
             self.assertTrue(stream is not None)
 
     def test_get_mpd_live_stream_from_id_does_not_crash(self):
@@ -107,13 +107,13 @@ class TestStreamService(unittest.TestCase):
         video = dict(video_url=None, video_id=CHANNELS[1]['live_stream_id'], publication_id=None)
         stream = self._streamservice.get_stream(video)
         # NOTE: Testing live streams only works within Europe
-        if os.environ.get('TRAVIS') != 'true':
+        if os.environ.get('GITHUB_ACTIONS') != 'true':
             self.assertTrue(stream is not None)
 
         video = dict(video_url=None, video_id=CHANNELS[3]['live_stream_id'], publication_id=None)
         stream = self._streamservice.get_stream(video)
         # NOTE: Testing live streams only works within Europe
-        if os.environ.get('TRAVIS') != 'true':
+        if os.environ.get('GITHUB_ACTIONS') != 'true':
             self.assertTrue(stream is not None)
 
     def test_get_hls_live_stream_from_id_does_not_crash(self):
@@ -123,13 +123,13 @@ class TestStreamService(unittest.TestCase):
         video = dict(video_url=None, video_id=CHANNELS[1]['live_stream_id'], publication_id=None)
         stream = self._streamservice.get_stream(video)
         # NOTE: Testing live streams only works within Europe
-        if os.environ.get('TRAVIS') != 'true':
+        if os.environ.get('GITHUB_ACTIONS') != 'true':
             self.assertTrue(stream is not None)
 
         video = dict(video_url=None, video_id=CHANNELS[3]['live_stream_id'], publication_id=None)
         stream = self._streamservice.get_stream(video)
         # NOTE: Testing live streams only works within Europe
-        if os.environ.get('TRAVIS') != 'true':
+        if os.environ.get('GITHUB_ACTIONS') != 'true':
             self.assertTrue(stream is not None)
 
 

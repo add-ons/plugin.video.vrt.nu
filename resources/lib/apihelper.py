@@ -638,7 +638,7 @@ class ApiHelper:
                 label = localize(30141, **channel)  # Channel live
                 playing_now = _tvguide.playing_now(channel.get('name'))
                 if playing_now:
-                    label += ' [COLOR yellow]| %s[/COLOR]' % playing_now
+                    label += ' [COLOR=yellow]| %s[/COLOR]' % playing_now
                 # A single Live channel means it is the entry for channel's TV Show listing, so make it stand out
                 if channels and len(channels) == 1:
                     label = '[B]%s[/B]' % label

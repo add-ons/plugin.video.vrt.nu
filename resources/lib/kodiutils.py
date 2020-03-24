@@ -997,7 +997,7 @@ def get_json_data(response, fail=None):
     """Return json object from HTTP response"""
     from json import load, loads
     try:
-        if (3, 0, 0) <= version_info <= (3, 5, 9):  # the JSON object must be str, not 'bytes'
+        if (3, 0, 0) <= version_info < (3, 6, 0):  # the JSON object must be str, not 'bytes'
             return loads(to_unicode(response.read()))
         return load(response)
     except TypeError as exc:  # 'NoneType' object is not callable
