@@ -77,18 +77,6 @@ v2.2.1 (2019-08-16)
 - Small unicode fix
 - Implement Kodi-approved thumb removal
 - Fix broken streamservice webscraper (again)
-
-v2.2.0 (2019-08-14)
-- Add breadcrumbs support
-- Support unicode characters in credentials
-- Add a 'Go to program' context menu
-- Fix the ordering of categories and features
-- New icon and fanart
-- Fixes to credentials, tokens, favorites and roaming
-- Fix broken streamservice webscraper
-- Fix play-by-airdate API interface
-- Add TV guide to channel menu
-- Add a context menu to remove search queries from history
   </news>
   <assets>
     <icon>resources/media/icon.png</icon>
