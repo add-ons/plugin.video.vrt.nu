@@ -53,20 +53,15 @@ jobs:
     - name: Upload code coverage to CodeCov
       uses: codecov/codecov-action@v1
       continue-on-error: true
-    - name: Prepare for SonarCloud
-      run: |
-        cat <<EOF >sonar-project.properties
-        sonar.language=python
-        sonar.organization=add-ons
-        sonar.python.coverage.reportPaths=coverage.xml
-        sonar.projectKey=add-ons_plugin.video.vrt.nu
-        sonar.pullrequest.provider=GitHub
-        sonar.sourceEncoding=UTF-8
-        sonar.sources=resources/lib
-        sonar.test.exclusions=tests/**
-        EOF
+    # FIXME: Requires changes from SonarSource/sonarcloud-github-action#9
     - name: Analyze with SonarCloud
-      uses: sonarsource/sonarcloud-github-action@master
+      uses: dagwieers/sonarcloud-github-action@more-options
+      with:
+        organization: add-ons
+        projectKey: add-ons_plugin.video.vrt.nu
+        sources: resources/lib/
+        tests: tests/
+        verbose: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
