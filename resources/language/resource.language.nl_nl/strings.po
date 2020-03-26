@@ -957,3 +957,7 @@ msgstr "VRT tokens werden verwijderd."
 msgctxt "#30986"
 msgid "No on demand stream available for {title}."
 msgstr "Geen on demand stream beschikbaar voor {title}."
+
+msgctxt "#30987"
+msgid "No stream found, please try again!"
+msgstr "Geen stream gevonden, gelieve opnieuw te proberen!"

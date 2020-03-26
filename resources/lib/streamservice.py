@@ -13,9 +13,9 @@ except ImportError:  # Python 2
     from urllib2 import build_opener, install_opener, urlopen, ProxyHandler, quote, unquote, HTTPError
 
 from helperobjects import ApiData, StreamURLS
-from kodiutils import (addon_profile, can_play_drm, exists, end_of_directory, get_max_bandwidth,
+from kodiutils import (addon_profile, can_play_drm, container_reload, exists, end_of_directory, get_max_bandwidth,
                        get_proxies, get_setting_bool, get_url_json, has_inputstream_adaptive,
-                       kodi_version, localize, log, log_error, mkdir, ok_dialog, open_settings,
+                       invalidate_caches, kodi_version, localize, log, log_error, mkdir, ok_dialog, open_settings,
                        supports_drm, to_unicode)
 
 
@@ -260,6 +260,12 @@ class StreamService:
                 return self._handle_stream_api_error(message, stream_json)
 
             message = localize(30964)  # Geoblock error: Cannot be played, need Belgian phone number validation
+            return self._handle_stream_api_error(message, stream_json)
+        if stream_json.get('code') == 'VIDEO_NOT_FOUND':
+            # Refresh listing
+            invalidate_caches('*.json')
+            container_reload()
+            message = localize(30987)  # No stream found
             return self._handle_stream_api_error(message, stream_json)
 
         # Failed to get stream, handle error
