@@ -57,8 +57,14 @@ jobs:
     - name: Prepare for SonarCloud
       run: |
         cat <<EOF >sonar-project.properties
-        sonar.organization=Add-ons
-        sonar.projectKey=${{ github.repository }}
+        sonar.language=python
+        sonar.organization=add-ons
+        sonar.python.coverage.reportPaths=coverage.xml
+        sonar.projectKey=add-ons_plugin.video.vrt.nu
+        sonar.pullrequest.provider=GitHub
+        sonar.sourceEncoding=UTF-8
+        sonar.sources=resources/lib
+        sonar.test.exclusions=tests/**
         EOF
     - name: Analyze with SonarCloud
       uses: sonarsource/sonarcloud-github-action@master
