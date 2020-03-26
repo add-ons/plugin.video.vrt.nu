@@ -45,6 +45,9 @@ jobs:
         ADDON_USERNAME: ${{ secrets.ADDON_USERNAME }}
     - name: Run addon service
       run: coverage run -a resources/lib/service_entry.py
+      env:
+        ADDON_PASSWORD: ${{ secrets.ADDON_PASSWORD }}
+        ADDON_USERNAME: ${{ secrets.ADDON_USERNAME }}
     - name: Run addon using cli
       run: coverage run -a tests/run.py /
     - name: Upload code coverage to CodeCov
