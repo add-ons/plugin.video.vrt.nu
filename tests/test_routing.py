@@ -30,6 +30,11 @@ class TestRouting(unittest.TestCase):
         addon.run(['plugin://plugin.video.vrt.nu/', '0', ''])
         self.assertEqual(plugin.url_for(addon.main_menu), 'plugin://plugin.video.vrt.nu/')
 
+    def test_noop(self):
+        """No operation: /noop"""
+        addon.run(['plugin://plugin.video.vrt.nu/noop', '0', ''])
+        self.assertEqual(plugin.url_for(addon.noop), 'plugin://plugin.video.vrt.nu/noop')
+
     def test_favorites(self):
         """Favorites menu: /favorites"""
         addon.run(['plugin://plugin.video.vrt.nu/favorites', '0', ''])
@@ -41,6 +46,7 @@ class TestRouting(unittest.TestCase):
         addon.run(['plugin://plugin.video.vrt.nu/resumepoints/watchlater', '0', ''])
         addon.run(['plugin://plugin.video.vrt.nu/resumepoints/continue', '0', ''])
         addon.run(['plugin://plugin.video.vrt.nu/favorites/docu', '0', ''])
+        addon.run(['plugin://plugin.video.vrt.nu/favorites/music', '0', ''])
 
     def test_az_menu(self):
         """Programs menu: /programs"""
@@ -125,6 +131,10 @@ class TestRouting(unittest.TestCase):
         self.assertEqual(plugin.url_for(addon.add_search, keywords='foobar'), 'plugin://plugin.video.vrt.nu/search/add/foobar')
         addon.run(['plugin://plugin.video.vrt.nu/search/query/foobar', '0', ''])
         self.assertEqual(plugin.url_for(addon.add_search, keywords='foobar'), 'plugin://plugin.video.vrt.nu/search/add/foobar')
+        addon.run(['plugin://plugin.video.vrt.nu/search/edit', '0', ''])
+        self.assertEqual(plugin.url_for(addon.edit_search), 'plugin://plugin.video.vrt.nu/search/edit')
+        addon.run(['plugin://plugin.video.vrt.nu/search/edit/foobar', '0', ''])
+        self.assertEqual(plugin.url_for(addon.edit_search, keywords='foobar'), 'plugin://plugin.video.vrt.nu/search/edit/foobar')
         addon.run(['plugin://plugin.video.vrt.nu/search/remove/foobar', '0', ''])
         self.assertEqual(plugin.url_for(addon.remove_search, keywords='foobar'), 'plugin://plugin.video.vrt.nu/search/remove/foobar')
         addon.run(['plugin://plugin.video.vrt.nu/search/remove/foobar', '0', ''])

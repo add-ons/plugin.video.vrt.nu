@@ -19,7 +19,7 @@ xbmcplugin = __import__('xbmcplugin')
 xbmcvfs = __import__('xbmcvfs')
 
 addon = xbmcaddon.Addon()
-addon.settings['usefavorites'] = 'true'
+addon.settings['usefavorites'] = True
 itemsperpage = int(addon.settings.get('itemsperpage'))
 
 

@@ -267,10 +267,7 @@ class VRTPlayer:
 
         # Add 'More...' entry at the end
         if len(episode_items) == get_setting_int('itemsperpage', default=50):
-            if use_favorites:
-                recent = 'favorites_recent'
-            else:
-                recent = 'recent'
+            recent = 'favorites_recent' if use_favorites else 'recent'
             episode_items.append(TitleItem(
                 label=colour(localize(30300)),
                 path=url_for(recent, page=page + 1),
@@ -291,10 +288,7 @@ class VRTPlayer:
 
         # Add 'More...' entry at the end
         if len(episode_items) == get_setting_int('itemsperpage', default=50):
-            if use_favorites:
-                offline = 'favorites_offline'
-            else:
-                offline = 'offline'
+            offline = 'favorites_offline' if use_favorites else 'offline'
             episode_items.append(TitleItem(
                 label=localize(30300),
                 path=url_for(offline, page=page + 1),

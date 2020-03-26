@@ -169,14 +169,12 @@ class ResumePoints:
 
     def delete_local(self, asset_id, menu_caches=None):
         """Delete resumepoint locally and update cache"""
-        try:
+        if asset_id in self._data:
             del self._data[asset_id]
             from json import dumps
             update_cache('resume_points.json', dumps(self._data))
             if menu_caches:
                 invalidate_caches(*menu_caches)
-        except KeyError:
-            pass
 
     def delete_online(self, asset_id):
         """Delete resumepoint online"""
