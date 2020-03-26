@@ -26,7 +26,7 @@ xbmcplugin = __import__('xbmcplugin')
 xbmcvfs = __import__('xbmcvfs')
 
 addon = xbmcaddon.Addon()
-addon.settings['usedrm'] = 'false'
+addon.settings['usedrm'] = False
 
 now = datetime.now(dateutil.tz.tzlocal())
 yesterday = now + timedelta(days=-1)
@@ -62,8 +62,8 @@ class TestStreamService(unittest.TestCase):
 
     def test_get_mpd_live_stream_from_url_does_not_crash_returns_stream_and_licensekey(self):
         """Test getting MPD stream from URL"""
-        addon.settings['usedrm'] = 'true'
-        addon.settings['useinputstreamadaptive'] = 'true'
+        addon.settings['usedrm'] = True
+        addon.settings['useinputstreamadaptive'] = True
         video = dict(video_url=CHANNELS[1]['live_stream'], video_id=None, publication_id=None)
         stream = self._streamservice.get_stream(video)
         # NOTE: Testing live streams only works within Europe
@@ -103,7 +103,7 @@ class TestStreamService(unittest.TestCase):
     def test_get_mpd_live_stream_from_id_does_not_crash(self):
         """Test getting MPD stream from URL"""
         addon.settings['usedrm'] = 'false'
-        addon.settings['useinputstreamadaptive'] = 'true'
+        addon.settings['useinputstreamadaptive'] = True
         video = dict(video_url=None, video_id=CHANNELS[1]['live_stream_id'], publication_id=None)
         stream = self._streamservice.get_stream(video)
         # NOTE: Testing live streams only works within Europe

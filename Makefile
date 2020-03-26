@@ -58,7 +58,7 @@ run: test-run
 test-unit: clean kill-proxy
 	@echo -e "$(white)=$(blue) Starting unit tests$(reset)"
 	-$(PYTHON) -m proxy --hostname 127.0.0.1 --log-level DEBUG &
-	$(PYTHON) -m unittest discover
+	$(PYTHON) -m unittest discover -v
 	-pkill -ef '$(PYTHON) -m proxy'
 
 test-service:

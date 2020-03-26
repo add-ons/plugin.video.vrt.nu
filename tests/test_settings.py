@@ -23,25 +23,27 @@ class TestSettings(unittest.TestCase):
 
     def tearDown(self):
         """Clean up function for TestCase class"""
-        addon.settings['usemenucaching'] = 'true'
-        addon.settings['usehttpcaching'] = 'true'
-        addon.settings['usefavorites'] = 'true'
-        addon.settings['useresumepoints'] = 'true'
-        addon.settings['showyoutube'] = 'true'
+        addon.settings['showfanart'] = True
+        addon.settings['showoneoff'] = True
+        addon.settings['showyoutube'] = True
+        addon.settings['usefavorites'] = True
+        addon.settings['usehttpcaching'] = True
+        addon.settings['usemenucaching'] = True
+        addon.settings['useresumepoints'] = True
 
     @staticmethod
     def test_menucaching_disabled():
         """Test without menu caching"""
-        addon.settings['usemenucaching'] = 'false'
-        addon.settings['usehttpcaching'] = 'true'
+        addon.settings['usehttpcaching'] = True
+        addon.settings['usemenucaching'] = False
         plugin.run(['plugin://plugin.video.vrt.nu/recent', '0', ''])
         plugin.run(['plugin://plugin.video.vrt.nu/recent', '0', ''])
 
     @staticmethod
     def test_httpcaching_disabled():
         """Test without http caching"""
-        addon.settings['usehttpcaching'] = 'false'
-        addon.settings['usemenucaching'] = 'true'
+        addon.settings['usehttpcaching'] = False
+        addon.settings['usemenucaching'] = True
         plugin.run(['plugin://plugin.video.vrt.nu/offline', '0', ''])
         plugin.run(['plugin://plugin.video.vrt.nu/offline', '0', ''])
         plugin.run(['plugin://plugin.video.vrt.nu/tvguide/date/today/canvas', '0', ''])
@@ -50,8 +52,8 @@ class TestSettings(unittest.TestCase):
     def test_favorites_disabled():
         """Test without favorites"""
         plugin.run(['plugin://plugin.video.vrt.nu/', '0', ''])
-        addon.settings['usefavorites'] = 'false'
-        addon.settings['useresumepoints'] = 'true'
+        addon.settings['usefavorites'] = False
+        addon.settings['useresumepoints'] = True
         plugin.run(['plugin://plugin.video.vrt.nu/', '0', ''])
         plugin.run(['plugin://plugin.video.vrt.nu/favorites', '0', ''])
         plugin.run(['plugin://plugin.video.vrt.nu/favorites/recent', '0', ''])
@@ -62,8 +64,8 @@ class TestSettings(unittest.TestCase):
     def test_resumepoints_disabled():
         """Test without resumepoints"""
         plugin.run(['plugin://plugin.video.vrt.nu/favorites', '0', ''])
-        addon.settings['useresumepoints'] = 'false'
-        addon.settings['usefavorites'] = 'true'
+        addon.settings['usefavorites'] = True
+        addon.settings['useresumepoints'] = False
         plugin.run(['plugin://plugin.video.vrt.nu/favorites', '0', ''])
         plugin.run(['plugin://plugin.video.vrt.nu/resumepoints/watchlater', '0', ''])
         plugin.run(['plugin://plugin.video.vrt.nu/resumepoints/continue', '0', ''])
@@ -75,10 +77,21 @@ class TestSettings(unittest.TestCase):
 
     @staticmethod
     def test_youtube_disabled():
-        """Test without youtube"""
+        """Test with showyoutube disabled"""
+        addon.settings['showyoutube'] = False
         plugin.run(['plugin://plugin.video.vrt.nu/channels/radio1', '0', ''])
-        addon.settings['showyoutube'] = 'false'
-        plugin.run(['plugin://plugin.video.vrt.nu/channels/radio1', '0', ''])
+
+    @staticmethod
+    def test_showfanart_disabled():
+        """Test with showfanart disabled"""
+        addon.settings['showfanart'] = False
+        plugin.run(['plugin://plugin.video.vrt.nu/categories', '0', ''])
+
+    @staticmethod
+    def test_showoneoff_disabled():
+        """Test with showoneofff disabled"""
+        addon.settings['showoneoff'] = False
+        plugin.run(['plugin://plugin.video.vrt.nu/programs', '0', ''])
 
 
 if __name__ == '__main__':

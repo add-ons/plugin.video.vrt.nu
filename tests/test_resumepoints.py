@@ -19,7 +19,7 @@ xbmcplugin = __import__('xbmcplugin')
 xbmcvfs = __import__('xbmcvfs')
 
 addon = xbmcaddon.Addon()
-addon.settings['useresumepoints'] = 'true'
+addon.settings['useresumepoints'] = True
 
 
 class TestResumePoints(unittest.TestCase):
