@@ -56,7 +56,7 @@ jobs:
       continue-on-error: true
     - name: Prepare for SonarCloud
       run: |
-        cat <<EOF >.sonarcloud.properties
+        cat <<EOF >sonar-project.properties
         sonar.organization=Add-ons
         sonar.projectKey=${{ github.repository }}
         EOF
