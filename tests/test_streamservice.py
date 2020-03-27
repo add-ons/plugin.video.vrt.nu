@@ -52,6 +52,18 @@ class TestStreamService(unittest.TestCase):
 
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    def test_get_ondemand_stream_from_invalid_videoid(self):
+        """Test getting stream from invalid video_id"""
+        video = dict(video_url=None, video_id='invalid_vid-4662107f-fc26-4f66-9076-984ee4bb80ee', publication_id='pbs-pub-be74b2e3-5054-4e4c-b8aa-42e9cd4877b6')
+        try:
+            stream = self._streamservice.get_stream(video)
+        except HTTPError:
+            pass
+        else:
+            self.assertEqual(None, stream)
+
+    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_get_ondemand_stream_from_url_gets_stream_does_not_crash(self):
         """Test getting stream from URL does not crash"""
         video = dict(video_url=yesterday.strftime('https://www.vrt.be/vrtnu/a-z/het-journaal/%Y/het-journaal-het-journaal-laat-%Y%m%d/'),
