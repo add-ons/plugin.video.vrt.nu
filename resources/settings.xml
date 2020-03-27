@@ -60,10 +60,6 @@
         <setting label="30869" help="30870" type="action" action="InstallAddon(service.upnext)" option="close" visible="!System.HasAddon(service.upnext)"/> <!-- Install Up Next add-on -->
         <setting label="30871" help="30872" type="bool" id="useupnext" default="true" visible="System.HasAddon(service.upnext)" />
         <setting label="30873" help="30874" type="action" action="Addon.OpenSettings(service.upnext)" enable="eq(-1,true)" option="close" visible="System.HasAddon(service.upnext)" subsetting="true"/> <!-- Up Next settings -->
-        <!-- Twitter -->
-        <!-- setting label="30875" help="30876" type="action" action="InstallAddon(service.twitter)" option="close" visible="!System.HasAddon(service.twitter)"/ -->
-        <setting label="30877" help="30878" type="bool" id="usetwitter" default="true" visible="System.HasAddon(service.twitter)"/>
-        <setting label="30879" help="30880" type="action" option="close" action="Addon.OpenSettings(service.twitter)" enable="eq(-1,true)" visible="System.HasAddon(service.twitter)" subsetting="true"/>
         <!-- PySocks -->
         <setting label="30881" help="30882" type="action" action="InstallAddon(script.module.pysocks)" option="close" visible="!System.HasAddon(script.module.pysocks)"/>
     </category>

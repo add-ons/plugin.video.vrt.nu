@@ -11,8 +11,8 @@ import os
 import json
 import time
 import weakref
-from xbmcextra import ADDON_ID, global_settings, import_language
 from utils import to_unicode
+from xbmcextra import ADDON_ID, GLOBAL_SETTINGS as settings, LANGUAGE
 
 LOGLEVELS = ['Debug', 'Info', 'Notice', 'Warning', 'Error', 'Severe', 'Fatal', 'None']
 LOGDEBUG = 0
@@ -33,9 +33,6 @@ REGIONS = {
     'datelong': '%A, %e %B %Y',
     'dateshort': '%Y-%m-%d',
 }
-
-settings = global_settings()
-LANGUAGE = import_language(language=settings.get('locale.language'))
 
 
 class Keyboard(object):  # pylint: disable=useless-object-inheritance

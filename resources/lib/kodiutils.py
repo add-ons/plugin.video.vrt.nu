@@ -15,17 +15,17 @@ ADDON = xbmcaddon.Addon()
 
 SORT_METHODS = dict(
     # date=xbmcplugin.SORT_METHOD_DATE,
-    dateadded=xbmcplugin.SORT_METHOD_DATEADDED,
-    duration=xbmcplugin.SORT_METHOD_DURATION,
-    episode=xbmcplugin.SORT_METHOD_EPISODE,
-    # genre=xbmcplugin.SORT_METHOD_GENRE,
-    # label=xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE,
-    label=xbmcplugin.SORT_METHOD_LABEL,
-    title=xbmcplugin.SORT_METHOD_TITLE,
-    # none=xbmcplugin.SORT_METHOD_UNSORTED,
+    dateadded=dict(method=xbmcplugin.SORT_METHOD_DATEADDED, label2='%a'),
+    duration=dict(method=xbmcplugin.SORT_METHOD_DURATION, label2='%D'),
+    episode=dict(method=xbmcplugin.SORT_METHOD_EPISODE, label2='%D'),
+    # genre=dict(method=xbmcplugin.SORT_METHOD_GENRE, label2='%D'),
+    # label=dict(method=xbmcplugin.SORT_METHOD_LABEL_IGNORE_THE, label2='%D'),
+    label=dict(method=xbmcplugin.SORT_METHOD_LABEL, label2='%D'),
+    title=dict(method=xbmcplugin.SORT_METHOD_TITLE, label2='%D'),
+    # none=dict(method=xbmcplugin.SORT_METHOD_UNSORTED, label2='%D'),
     # FIXME: We would like to be able to sort by unprefixed title (ignore date/episode prefix)
-    # title=xbmcplugin.SORT_METHOD_TITLE_IGNORE_THE,
-    unsorted=xbmcplugin.SORT_METHOD_UNSORTED,
+    # title=dict(method=xbmcplugin.SORT_METHOD_TITLE_IGNORE_THE, label2='%D'),
+    unsorted=dict(method=xbmcplugin.SORT_METHOD_UNSORTED, label2='%D'),
 )
 
 WEEKDAY_LONG = {
@@ -86,6 +86,16 @@ class SafeDict(dict):
         return '{' + key + '}'
 
 
+def translate_path(path):
+    """Translate special xbmc paths"""
+    return to_unicode(xbmc.translatePath(path))
+
+
+def get_addon_info(key):
+    """Return addon information"""
+    return to_unicode(ADDON.getAddonInfo(key))
+
+
 def addon_icon():
     """Cache and return add-on icon"""
     return get_addon_info('icon')
@@ -108,12 +118,17 @@ def addon_name():
 
 def addon_path():
     """Cache and return add-on path"""
-    return get_addon_info('path')
+    return translate_path(get_addon_info('path'))
 
 
 def addon_profile():
     """Cache and return add-on profile"""
-    return to_unicode(xbmc.translatePath(ADDON.getAddonInfo('profile')))
+    return translate_path(ADDON.getAddonInfo('profile'))
+
+
+def addon_version():
+    """Cache and return add-on version"""
+    return get_addon_info('version')
 
 
 def url_for(name, *args, **kwargs):
@@ -164,12 +179,12 @@ def show_listing(list_items, category=None, sort='unsorted', ascending=True, con
         sort = 'unsorted'
 
     # Add all sort methods to GUI (start with preferred)
-    xbmcplugin.addSortMethod(handle=plugin.handle, sortMethod=SORT_METHODS[sort])
+    xbmcplugin.addSortMethod(handle=plugin.handle, sortMethod=SORT_METHODS[sort]['method'], label2Mask=SORT_METHODS[sort]['label2'])
     for key in sorted(SORT_METHODS):
         if key != sort:
-            xbmcplugin.addSortMethod(handle=plugin.handle, sortMethod=SORT_METHODS[key])
+            xbmcplugin.addSortMethod(handle=plugin.handle, sortMethod=SORT_METHODS[key]['method'], label2Mask=SORT_METHODS[key]['label2'])
 
-    # FIXME: This does not appear to be working, we have to order it ourselves
+    # FIXME: This does not appear to be working, we have to order it ourselves and use 'unsorted' method
 #    xbmcplugin.setProperty(handle=plugin.handle, key='sort.ascending', value='true' if ascending else 'false')
 #    if ascending:
 #        xbmcplugin.setProperty(handle=plugin.handle, key='sort.order', value=str(SORT_METHODS[sort]))
@@ -185,7 +200,7 @@ def show_listing(list_items, category=None, sort='unsorted', ascending=True, con
         #  - item is a playable file (playable, path)
         #  - item is non-actionable item (not playable, no path)
         is_folder = bool(not title_item.is_playable and title_item.path)
-        is_playable = bool(title_item.is_playable and title_item.path)
+        is_playable = bool(title_item.is_playable and not title_item.path.endswith('/noop'))
 
         list_item = ListItem(label=title_item.label)
 
@@ -219,6 +234,10 @@ def show_listing(list_items, category=None, sort='unsorted', ascending=True, con
         if title_item.info_dict:
             # type is one of: video, music, pictures, game
             list_item.setInfo(type='video', infoLabels=title_item.info_dict)
+
+            # Add number of episodes to folders
+            if is_folder and title_item.info_dict.get('episode'):
+                list_item.setLabel2(str(title_item.info_dict.get('episode')))
 
         if title_item.stream_dict:
             # type is one of: video, audio, subtitle
@@ -299,6 +318,14 @@ def get_search_string(search_string=None):
     return search_string
 
 
+def multiselect(heading='', options=None, autoclose=0, preselect=None, use_details=False):
+    """Show a Kodi multi-select dialog"""
+    from xbmcgui import Dialog
+    if not heading:
+        heading = addon_name()
+    return Dialog().multiselect(heading=heading, options=options, autoclose=autoclose, preselect=preselect, useDetails=use_details)
+
+
 def ok_dialog(heading='', message=''):
     """Show Kodi's OK dialog"""
     from xbmcgui import Dialog
@@ -315,14 +342,6 @@ def notification(heading='', message='', icon='info', time=4000):
     if not icon:
         icon = addon_icon()
     Dialog().notification(heading=heading, message=message, icon=icon, time=time)
-
-
-def multiselect(heading='', options=None, autoclose=0, preselect=None, use_details=False):
-    """Show a Kodi multi-select dialog"""
-    from xbmcgui import Dialog
-    if not heading:
-        heading = addon_name()
-    return Dialog().multiselect(heading=heading, options=options, autoclose=autoclose, preselect=preselect, useDetails=use_details)
 
 
 def set_locale():
@@ -355,7 +374,7 @@ def localize(string_id, **kwargs):
 def localize_time(time):
     """Return localized time"""
     time_format = xbmc.getRegion('time').replace(':%S', '')  # Strip off seconds
-    return time.strftime(time_format).lstrip('0')  # Remove leading zero on all platforms
+    return time.strftime(time_format)
 
 
 def localize_date(date, strftime):
@@ -697,11 +716,6 @@ def get_cache_path():
     if not hasattr(get_cache_path, 'cached'):
         get_cache_path.cached = addon_profile() + 'cache/'
     return getattr(get_cache_path, 'cached')
-
-
-def get_addon_info(key):
-    """Return addon information"""
-    return to_unicode(ADDON.getAddonInfo(key))
 
 
 def listdir(path):

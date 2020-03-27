@@ -186,3 +186,5 @@ def import_language(language):
 
 ADDON_INFO = read_addon_xml('addon.xml')
 ADDON_ID = next(iter(list(ADDON_INFO.values()))).get('id')
+GLOBAL_SETTINGS = global_settings()
+LANGUAGE = import_language(language=GLOBAL_SETTINGS.get('locale.language'))
