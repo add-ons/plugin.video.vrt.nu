@@ -1,0 +1,34 @@
+name: Status
+on:
+  schedule:
+  - cron:  '0 * * * *'
+jobs:
+  tests:
+    name: Status testing
+    runs-on: ubuntu-latest
+    env:
+      ADDON_PASSWORD: ${{ secrets.ADDON_PASSWORD }}
+      ADDON_USERNAME: ${{ secrets.ADDON_USERNAME }}
+      PYTHONIOENCODING: utf-8
+      PYTHONPATH: ${{ github.workspace }}/resources/lib:${{ github.workspace }}/tests
+    strategy:
+      fail-fast: false
+    steps:
+    - name: Check out ${{ github.sha }} from repository ${{ github.repository }}
+      uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - name: Authentication framework
+      run: python -m unittest -v test_tokenresolver.TestTokenResolver.test_successful_login
+    - name: Favorites framework
+      run: python -m unittest -v test_favorites.TestFavorites.test_programs
+    - name: Search framework
+      run: python -m unittest -v test_search.TestSearch.test_search_journaal
+    - name: Suggest framework
+      run: python -m unittest -v test_apihelper.TestApiHelper.test_get_tvshows
+    - name: Categories webscraper
+      run: python -m unittest -v test_webscraper.TestWebScraper.test_get_categories
+    - name: Video attributes webscraper
+      run: python -m unittest -v test_webscraper.TestWebScraper.test_get_categories
