@@ -4,7 +4,7 @@ on:
   - cron:  '0 * * * *'
 jobs:
   tests:
-    name: Status testing
+    name: Checks
     runs-on: ubuntu-latest
     env:
       ADDON_PASSWORD: ${{ secrets.ADDON_PASSWORD }}
@@ -18,15 +18,17 @@ jobs:
       uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v1
-      with:
-        python-version: 3.8
-    - name: Authentication framework
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: Authentication
       run: python -m unittest -v test_tokenresolver.TestTokenResolver.test_successful_login
-    - name: Favorites framework
+    - name: Favorites
       run: python -m unittest -v test_favorites.TestFavorites.test_programs
-    - name: Search framework
+    - name: Search
       run: python -m unittest -v test_search.TestSearch.test_search_journaal
-    - name: Suggest framework
+    - name: Suggest
       run: python -m unittest -v test_apihelper.TestApiHelper.test_get_tvshows
     - name: Categories webscraper
       run: python -m unittest -v test_webscraper.TestWebScraper.test_get_categories
