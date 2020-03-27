@@ -5,7 +5,6 @@ tests/ export-ignore
 .gitignore export-ignore
 .pylintrc export-ignore
 Build-Zip.ps1 export-ignore
-codecov.yml export-ignore
 Makefile export-ignore
 requirements.txt export-ignore
 tox.ini export-ignore
