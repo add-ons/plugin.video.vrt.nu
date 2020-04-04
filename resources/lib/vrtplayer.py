@@ -105,8 +105,8 @@ class VRTPlayer:
         addon_version = get_addon_info('version')
 
         # Compare versions (settings_version was not present in version 1.10.0 and older)
-        settings_comp = tuple(map(int, settings_version.split('.'))) if settings_version != '' else (1, 10, 0)
-        addon_comp = tuple(map(int, addon_version.split('.')))
+        settings_comp = tuple(map(int, settings_version.split('+')[0].split('.'))) if settings_version != '' else (1, 10, 0)
+        addon_comp = tuple(map(int, addon_version.split('+')[0].split('.')))
 
         if addon_comp > settings_comp:
             # New version found, save addon version to settings
