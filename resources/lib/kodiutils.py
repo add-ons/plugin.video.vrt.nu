@@ -304,7 +304,9 @@ def ok_dialog(heading='', message=''):
     from xbmcgui import Dialog
     if not heading:
         heading = addon_name()
-    return Dialog().ok(heading=heading, line1=message)
+    if kodi_version_major() < 19:
+        return Dialog().ok(heading=heading, line1=message)
+    return Dialog().ok(heading=heading, message=message)
 
 
 def notification(heading='', message='', icon='info', time=4000):
@@ -645,8 +647,13 @@ def has_credentials():
 
 
 def kodi_version():
-    """Returns major Kodi version"""
-    return int(xbmc.getInfoLabel('System.BuildVersion').split('.')[0])
+    """Returns full Kodi version as string"""
+    return xbmc.getInfoLabel('System.BuildVersion').split(' ')[0]
+
+
+def kodi_version_major():
+    """Returns major Kodi version as integer"""
+    return int(kodi_version().split('.')[0])
 
 
 def can_play_drm():
@@ -656,7 +663,7 @@ def can_play_drm():
 
 def supports_drm():
     """Whether this Kodi version supports DRM decryption using InputStream Adaptive"""
-    return kodi_version() > 17
+    return kodi_version_major() > 17
 
 
 def get_tokens_path():

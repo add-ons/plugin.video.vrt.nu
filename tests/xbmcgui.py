@@ -52,11 +52,11 @@ class Dialog:
         print('\033[37;44;1mNOTIFICATION:\033[35;49;1m [%s] \033[37;1m%s\033[39;0m' % (heading, message))
 
     @staticmethod
-    def ok(heading, line1, line2=None, line3=None):
+    def ok(heading, message='', line1='', line2='', line3=''):
         """A stub implementation for the xbmcgui Dialog class ok() method"""
         heading = kodi_to_ansi(heading)
-        line1 = kodi_to_ansi(line1)
-        print('\033[37;44;1mOK:\033[35;49;1m [%s] \033[37;1m%s\033[39;0m' % (heading, line1))
+        message = kodi_to_ansi(message)
+        print('\033[37;44;1mOK:\033[35;49;1m [%s] \033[37;1m%s\033[39;0m' % (heading, message or line1))
 
     @staticmethod
     def info(listitem):
@@ -87,11 +87,11 @@ class Dialog:
         return -1
 
     @staticmethod
-    def yesno(heading, line1, line2=None, line3=None, nolabel=None, yeslabel=None, autoclose=0):
+    def yesno(heading, message='', line1='', line2='', line3='', nolabel=None, yeslabel=None, autoclose=0):
         """A stub implementation for the xbmcgui Dialog class yesno() method"""
         heading = kodi_to_ansi(heading)
-        line1 = kodi_to_ansi(line1)
-        print('\033[37;44;1mYESNO:\033[35;49;1m [%s] \033[37;1m%s\033[39;0m' % (heading, line1))
+        message = kodi_to_ansi(message)
+        print('\033[37;44;1mYESNO:\033[35;49;1m [%s] \033[37;1m%s\033[39;0m' % (heading, message or line1))
         return True
 
     @staticmethod
@@ -105,7 +105,7 @@ class Dialog:
     def browseSingle(type, heading, shares, mask=None, useThumbs=None, treatAsFolder=None, defaultt=None):  # pylint: disable=redefined-builtin
         """A stub implementation for the xbmcgui Dialog class browseSingle() method"""
         print('\033[37;44;1mBROWSESINGLE:\033[35;49;1m [%s] \033[37;1m%s\033[39;0m' % (type, heading))
-        return 'special://masterprofile/addon_data/script.module.inputstreamhelper/'
+        return 'special://masterprofile/addon_data/plugin.video.vrt.nu/'
 
 
 class DialogProgress:
@@ -113,38 +113,38 @@ class DialogProgress:
 
     def __init__(self):
         """A stub constructor for the xbmcgui DialogProgress class"""
-        self.percentage = 0
+        self.percent = 0
 
     def close(self):
         """A stub implementation for the xbmcgui DialogProgress class close() method"""
-        self.percentage = 0
+        self.percent = 0
         print()
         sys.stdout.flush()
 
-    def create(self, heading, line1, line2=None, line3=None):
+    def create(self, heading, message='', line1='', line2='', line3=''):
         """A stub implementation for the xbmcgui DialogProgress class create() method"""
-        self.percentage = 0
+        self.percent = 0
         heading = kodi_to_ansi(heading)
         line1 = kodi_to_ansi(line1)
-        print('\033[37;44;1mPROGRESS:\033[35;49;1m [%s] \033[37;1m%s\033[39;0m' % (heading, line1))
+        print('\033[37;44;1mPROGRESS:\033[35;49;1m [%s] \033[37;1m%s\033[39;0m' % (heading, message or line1))
         sys.stdout.flush()
 
-    @staticmethod
-    def iscanceled():
+    def iscanceled(self):
         """A stub implementation for the xbmcgui DialogProgress class iscanceled() method"""
+        return self.percent > 5  # Cancel at 5%
 
-    def update(self, percentage, line1=None, line2=None, line3=None):
+    def update(self, percent, message='', line1='', line2='', line3=''):
         """A stub implementation for the xbmcgui DialogProgress class update() method"""
-        if (percentage - 5) < self.percentage:
+        if (percent - 5) < self.percent:
             return
-        self.percentage = percentage
+        self.percent = percent
         line1 = kodi_to_ansi(line1)
         line2 = kodi_to_ansi(line2)
         line3 = kodi_to_ansi(line3)
         if line1 or line2 or line3:
-            print('\033[1G\033[37;44;1mPROGRESS:\033[35;49;1m [%d%%] \033[37;1m%s\033[39;0m' % (percentage, line1 or line2 or line3), end='')
+            print('\033[1G\033[37;44;1mPROGRESS:\033[35;49;1m [%d%%] \033[37;1m%s\033[39;0m' % (percent, message or line1 or line2 or line3), end='')
         else:
-            print('\033[1G\033[37;44;1mPROGRESS:\033[35;49;1m [%d%%]\033[39;0m' % (percentage), end='')
+            print('\033[1G\033[37;44;1mPROGRESS:\033[35;49;1m [%d%%]\033[39;0m' % (percent), end='')
         sys.stdout.flush()
 
 
@@ -183,25 +183,10 @@ class DialogProgressBG:
             print('\033[1G\033[37;44;1mPROGRESS:\033[35;49;1m [%d%%]\033[39;0m' % (percentage), end='')
 
 
-class DialogBusy:
-    """A reimplementation of the xbmcgui DialogBusy"""
-
-    def __init__(self):
-        """A stub constructor for the xbmcgui DialogBusy class"""
-
-    @staticmethod
-    def close():
-        """A stub implementation for the xbmcgui DialogBusy class close() method"""
-
-    @staticmethod
-    def create():
-        """A stub implementation for the xbmcgui DialogBusy class create() method"""
-
-
 class ListItem:
     """A reimplementation of the xbmcgui ListItem class"""
 
-    def __init__(self, label='', label2='', iconImage='', thumbnailImage='', path='', offscreen=False):
+    def __init__(self, label='', label2='', path='', offscreen=False):
         """A stub constructor for the xbmcgui ListItem class"""
         self.label = kodi_to_ansi(label)
         self.label2 = kodi_to_ansi(label2)
