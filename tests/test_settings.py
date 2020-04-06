@@ -8,6 +8,8 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import unittest
 from addon import plugin
 from kodiutils import open_settings
+from streamservice import StreamService
+from tokenresolver import TokenResolver
 
 xbmc = __import__('xbmc')
 xbmcaddon = __import__('xbmcaddon')
@@ -21,13 +23,18 @@ addon = xbmcaddon.Addon()
 class TestSettings(unittest.TestCase):
     """TestCase class"""
 
+    _tokenresolver = TokenResolver()
+    _streamservice = StreamService(_tokenresolver)
+
     def tearDown(self):
         """Clean up function for TestCase class"""
         addon.settings['showfanart'] = True
         addon.settings['showoneoff'] = True
         addon.settings['showyoutube'] = True
+        addon.settings['usedrm'] = True
         addon.settings['usefavorites'] = True
         addon.settings['usehttpcaching'] = True
+        addon.settings['useinputstreamadaptive'] = True
         addon.settings['usemenucaching'] = True
         addon.settings['useresumepoints'] = True
 
@@ -92,6 +99,46 @@ class TestSettings(unittest.TestCase):
         """Test with showoneofff disabled"""
         addon.settings['showoneoff'] = False
         plugin.run(['plugin://plugin.video.vrt.nu/programs', '0', ''])
+
+    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    def test_ondemand_stream(self):
+        """Test ondemand stream"""
+        addon.settings['usedrm'] = False
+        addon.settings['useinputstreamadaptive'] = False
+        video = dict(video_url='https://www.vrt.be/vrtnu/a-z/winteruur/1/winteruur-s1a1/')
+        stream = self._streamservice.get_stream(video)
+        self.assertTrue(stream is not None)
+
+    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    def test_ondemand_stream_ia(self):
+        """Test with usedrm disabled"""
+        addon.settings['usedrm'] = False
+        addon.settings['useinputstreamadaptive'] = True
+        video = dict(video_url='https://www.vrt.be/vrtnu/a-z/winteruur/1/winteruur-s1a1/')
+        stream = self._streamservice.get_stream(video)
+        self.assertTrue(stream is not None)
+
+    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    def test_ondemand_stream_drm(self):
+        """Test with useinputstreamadaptive disabled"""
+        addon.settings['usedrm'] = True
+        addon.settings['useinputstreamadaptive'] = False
+        video = dict(video_url='https://www.vrt.be/vrtnu/a-z/winteruur/1/winteruur-s1a1/')
+        stream = self._streamservice.get_stream(video)
+        self.assertTrue(stream is not None)
+
+    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    def test_ondemand_stream_drm_ia(self):
+        """Test with usedrm and useinputstreamadaptive disabled"""
+        addon.settings['usedrm'] = True
+        addon.settings['useinputstreamadaptive'] = True
+        video = dict(video_url='https://www.vrt.be/vrtnu/a-z/winteruur/1/winteruur-s1a1/')
+        stream = self._streamservice.get_stream(video)
+        self.assertTrue(stream is not None)
 
 
 if __name__ == '__main__':
