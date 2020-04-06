@@ -15,7 +15,7 @@ except ImportError:  # Python 2
 from helperobjects import ApiData, StreamURLS
 from kodiutils import (addon_profile, can_play_drm, container_reload, exists, end_of_directory, get_max_bandwidth,
                        get_proxies, get_setting_bool, get_url_json, has_inputstream_adaptive,
-                       invalidate_caches, kodi_version, localize, log, log_error, mkdir, ok_dialog, open_settings,
+                       invalidate_caches, kodi_version_major, localize, log, log_error, mkdir, ok_dialog, open_settings,
                        supports_drm, to_unicode)
 
 
@@ -288,7 +288,7 @@ class StreamService:
        """
         # HLS AES DRM failed
         if protocol == 'hls_aes' and not supports_drm():
-            message = localize(30962, protocol=protocol.upper(), version=kodi_version())
+            message = localize(30962, protocol=protocol.upper(), version=kodi_version_major())
         elif protocol == 'hls_aes' and not has_inputstream_adaptive() and not get_setting_bool('usedrm', default=True):
             message = localize(30958, protocol=protocol.upper(), component=localize(30959), state=localize(30961))
         elif protocol == 'hls_aes' and has_inputstream_adaptive():
