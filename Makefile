@@ -45,10 +45,6 @@ check-addon: clean
 	kodi-addon-checker . --branch=krypton
 	kodi-addon-checker . --branch=leia
 
-check-codecov:
-	@echo -e "$(white)=$(blue) Test codecov.yml syntax$(reset)"
-	curl --data-binary @codecov.yml https://codecov.io/validate
-
 kill-proxy:
 	-pkill -ef '$(PYTHON) -m proxy'
 
@@ -80,6 +76,7 @@ build: clean
 	@echo -e "$(white)=$(blue) Successfully wrote package as: $(white)../$(zip_name)$(reset)"
 
 clean:
+	@echo -e "$(white)=$(blue) Cleaning up$(reset)"
 	find . -name '*.py[cod]' -type f -delete
 	find . -name '__pycache__' -type d -delete
 	rm -rf .pytest_cache/ .tox/
