@@ -496,7 +496,7 @@ msgstr "Info"
 
 msgctxt "#30432"
 msgid "Verbose"
-msgstr "Meer"
+msgstr "Uitgebreid"
 
 msgctxt "#30433"
 msgid "Debug"
@@ -915,8 +915,8 @@ msgid "Using a SOCKS proxy requires the PySocks library (script.module.pysocks) 
 msgstr "Het gebruik van SOCKS proxies vereist dat de PySocks library (script.module.pysocks) geïnstalleerd is."
 
 msgctxt "#30967"
-msgid "Could not retrieve this program list. VRT Search API url is too long. Unfollowing some favorite programs will reduce url length and may fix this problem."
-msgstr "Deze programmalijst kan niet opgehaald worden. VRT Search API url is te lang. Enkele favoriete programma's vergeten zal de lengte van de URL verminderen en dit probleem mogelijk oplossen."
+msgid "Could not retrieve this program list. VRT Search API url is too long. Go to [B]VRT NU settings » Interface » Manage My favorites…[/B] and unfollow older favorite programs to fix this problem."
+msgstr "Deze programmalijst kan niet opgehaald worden. VRT Search API url is te lang. Ga naar [B]VRT NU instellingen » Interface » Beheer Mijn favorieten[/B] en verwijder een aantal favoriete programma's om dit probleem op te lossen. "
 
 msgctxt "#30975"
 msgid "Failed to get user token from VRT NU"
