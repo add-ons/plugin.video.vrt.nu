@@ -1041,14 +1041,19 @@ def get_url_json(url, cache=None, headers=None, data=None, fail=None):
             url_length = len(req.selector)
         else:  # Python 2.7
             url_length = len(req.get_selector())
+        if exc.code == 400 and 7600 <= url_length <= 8192:
+            ok_dialog(heading='HTTP Error 400', message=localize(30967))
+            log_error('HTTP Error 400: Probably exceeded maximum url length: '
+                      'VRT Search API url has a length of {length} characters.', length=url_length)
+            return fail
         if exc.code == 413 and url_length > 8192:
             ok_dialog(heading='HTTP Error 413', message=localize(30967))
             log_error('HTTP Error 413: Exceeded maximum url length: '
                       'VRT Search API url has a length of {length} characters.', length=url_length)
             return fail
-        if exc.code == 400 and 7600 <= url_length <= 8192:
-            ok_dialog(heading='HTTP Error 400', message=localize(30967))
-            log_error('HTTP Error 400: Probably exceeded maximum url length: '
+        if exc.code == 431:
+            ok_dialog(heading='HTTP Error 431', message=localize(30967))
+            log_error('HTTP Error 431: Request header fields too large: '
                       'VRT Search API url has a length of {length} characters.', length=url_length)
             return fail
         json_data = get_json_data(exc, fail=fail)

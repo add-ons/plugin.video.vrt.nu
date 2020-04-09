@@ -915,7 +915,7 @@ msgid "Using a SOCKS proxy requires the PySocks library (script.module.pysocks) 
 msgstr ""
 
 msgctxt "#30967"
-msgid "Could not retrieve this program list. VRT Search API url is too long. Unfollowing some favorite programs will reduce url length and may fix this problem."
+msgid "Could not retrieve this program list. VRT Search API url is too long. Go to [B]VRT NU settings » Interface » Manage My favorites…[/B] and unfollow older favorite programs to fix this problem."
 msgstr ""
 
 msgctxt "#30975"
