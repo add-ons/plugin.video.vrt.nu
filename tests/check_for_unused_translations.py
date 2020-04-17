@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """ Quick and dirty way to check if all translations might be used. """
 
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name,superfluous-parens
 
 import subprocess
 import sys
