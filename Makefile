@@ -39,7 +39,7 @@ check-translations:
 	@-$(foreach lang,$(languages), \
 		msgcmp resources/language/resource.language.$(lang)/strings.po resources/language/resource.language.en_gb/strings.po; \
 	)
-	@tests/check-for-unused-translations.py
+	@tests/check_for_unused_translations.py
 
 check-addon: clean
 	@echo -e "$(white)=$(blue) Starting sanity addon tests$(reset)"

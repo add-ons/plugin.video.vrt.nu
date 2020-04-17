@@ -1,8 +1,11 @@
 #!/usr/bin/env python
-""" Quick and dirty way to check if all translations might be used. """
 # -*- coding: utf-8 -*-
+""" Quick and dirty way to check if all translations might be used. """
+
+# pylint: disable=invalid-name
 
 import subprocess
+import sys
 
 import polib
 
@@ -22,4 +25,4 @@ for entry in po:
         print(entry)
         error = 1
 
-exit(error)
+sys.exit(error)
