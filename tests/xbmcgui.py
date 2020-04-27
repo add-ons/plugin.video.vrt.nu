@@ -255,7 +255,7 @@ class ListItem:
 class Window:
     """A reimplementation of the xbmcgui Window"""
 
-    def __init__(self, windowId):
+    def __init__(self, existingwindowId=-1):
         """A stub constructor for the xbmcgui Window class"""
         return None
 
