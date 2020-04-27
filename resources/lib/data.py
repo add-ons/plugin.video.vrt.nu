@@ -113,8 +113,7 @@ CHANNELS = [
         name='radio1',
         label='Radio 1',
         studio='Radio 1',
-        # live_stream_id='vualto_radio1',
-        live_stream_id='vualto_events3_geo',
+        live_stream_id='vualto_radio1',
         youtube=[
             dict(label='Radio 1', url='https://www.youtube.com/user/vrtradio1'),
             dict(label='Universiteit van Vlaanderen', url='https://www.youtube.com/channel/UC7WpOKbKfzOOnD0PyUN_SYg'),
