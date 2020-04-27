@@ -255,7 +255,7 @@ class ListItem:
 class Window:
     """A reimplementation of the xbmcgui Window"""
 
-    def __init__(self, windowId):
+    def __init__(self, windowId=0):
         """A stub constructor for the xbmcgui Window class"""
         return None
 
@@ -294,9 +294,9 @@ class Window:
 class WindowXML(Window):
     """A reimplementation of the xbmcgui WindowXML"""
 
-    def __init__(self):
+    def __init__(self, windowId=0):
         """A stub constructor for the xbmcgui WindowXML class"""
-        super(WindowXML, self).__init__()
+        super(WindowXML, self).__init__(windowId=windowId)
 
 
 class WindowXMLDialog(WindowXML):
