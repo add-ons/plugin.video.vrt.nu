@@ -50,6 +50,16 @@ leave a message at [our Facebook page](https://facebook.com/kodivrtnu/).
 ![](./resources/media/screenshot04.jpg)
 
 ## Releases
+### v2.3.3 (2020-04-30)
+- Fix Radio 1 livestream (@dagwieers)
+- Fix watching VRT NU abroad (@mediaminister)
+- Add support for Kodi 19 Matrix "pre-release" builds (@mediaminister)
+- Add colour preferences to accomodate light skins (@dagwieers @mediaminister)
+- Add a favourites music subsection (@dagwieers)
+- Allow editing a search query from search history (@dagwieers)
+- Expand TV guide range (@dagwieers)
+- Add livestreams for Radio 2 and Klara (@dagwieers @mediaminister)
+
 ### v2.3.2 (2020-01-18)
 - Fix issues related to categories scraping and caching (@mediaminister)
 - Various improvements to TV guide (@dagwieers)
