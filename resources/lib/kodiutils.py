@@ -640,8 +640,10 @@ def has_inputstream_adaptive():
 
 
 def has_addon(name):
-    """Checks if add-on is installed"""
-    return xbmc.getCondVisibility('System.HasAddon(%s)' % name) == 1
+    """Checks if add-on is installed and enabled"""
+    if kodi_version_major() < 19:
+        return xbmc.getCondVisibility('System.HasAddon(%s)' % name) == 1
+    return xbmc.getCondVisibility('System.AddonIsEnabled(%s)' % name) == 1
 
 
 def has_credentials():
