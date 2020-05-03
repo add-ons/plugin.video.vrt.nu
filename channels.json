@@ -1,0 +1,81 @@
+{
+  "streams": [
+    {
+      "group": "VRT NU",
+      "logo": "https://images.vrt.be/height100/logo/een/een_LOGO_zwart.png",
+      "name": "Eén",
+      "stream": "plugin://plugin.video.vrt.nu/play/id/vualto_een_geo"
+    },{
+      "group": "VRT NU",
+      "logo": "https://images.vrt.be/height100/logo/canvas/CANVAS_logo_lichtblauw.jpg",
+      "name": "Canvas",
+      "stream": "plugin://plugin.video.vrt.nu/play/id/vualto_canvas_geo"
+    },{
+      "group": "VRT NU",
+      "logo": "https://images.vrt.be/height100/logo/ketnet/ketnet_LOGO_rood_geel.png",
+      "name": "Ketnet",
+      "stream": "plugin://plugin.video.vrt.nu/play/id/vualto_ketnet_geo"
+
+    },{
+      "group": "VRT NU",
+      "logo": "https://images.vrt.be/height100/logo/ketnet/ketnet_LOGO_rood_geel.png",
+      "name": "Ketnet Junior",
+      "stream": "plugin://plugin.video.vrt.nu/play/id/ketnet_jr"
+
+    },{
+      "group": "VRT NU",
+      "logo": "https://images.vrt.be/height100/logo/sporza/sporza_logo_zwart.png",
+      "name": "Sporza",
+      "stream": "plugin://plugin.video.vrt.nu/play/id/vualto_sporza_geo"
+
+    },{
+      "group": "VRT NU",
+      "logo": "https://images.vrt.be/height100/logos/vrtnws.png",
+      "name": "VRT NWS",
+      "stream": "plugin://plugin.video.vrt.nu/play/id/vualto_nieuws"
+
+    },{
+      "group": "VRT NU",
+      "logo": "https://images.vrt.be/height100/logos/radio1.png",
+      "name": "Radio 1",
+      "stream": "plugin://plugin.video.vrt.nu/play/id/vualto_radio1"
+
+    },{
+      "group": "VRT NU",
+      "logo": "https://images.vrt.be/height100/logo/radio2/RADIO2_RED_RGB.png",
+      "name": "Radio 2",
+      "stream": "plugin://plugin.video.vrt.nu/play/id/vualto_radio2"
+    },{
+      "group": "VRT NU",
+      "logo": "https://images.vrt.be/height100/logos/klara.png",
+      "name": "Klara",
+      "stream": "plugin://plugin.video.vrt.nu/play/id/vualto_klara"
+    },{
+      "group": "VRT NU",
+      "logo": "https://images.vrt.be/orig/2019/03/12/1e383cf5-44a7-11e9-abcc-02b7b76bf47f.png",
+      "name": "Studio Brussel",
+      "stream": "plugin://plugin.video.vrt.nu/play/id/vualto_stubru"
+    },{
+      "group": "VRT NU",
+      "logo": "https://images.vrt.be/height100/logo/mnm/logo_witte_achtergrond.png",
+      "name": "MNM",
+      "stream": "plugin://plugin.video.vrt.nu/play/id/vualto_mnm"
+    },{
+      "group": "VRT NU",
+      "logo": "https://images.vrt.be/orig/logo/vrt.png",
+      "name": "VRT Events stream 1",
+      "stream": "plugin://plugin.video.vrt.nu/play/id/vualto_events1_geo"
+    },{
+      "group": "VRT NU",
+      "logo": "https://images.vrt.be/orig/logo/vrt.png",
+      "name": "VRT Events stream 2",
+      "stream": "plugin://plugin.video.vrt.nu/play/id/vualto_events2_geo"
+    },{
+      "group": "VRT NU",
+      "logo": "https://images.vrt.be/orig/logo/vrt.png",
+      "name": "VRT Events stream 3",
+      "stream": "plugin://plugin.video.vrt.nu/play/id/vualto_events3_geo"
+    }
+  ],
+  "version": 1
+}
