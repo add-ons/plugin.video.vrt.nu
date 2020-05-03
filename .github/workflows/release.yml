@@ -71,6 +71,6 @@ jobs:
           addon-id: plugin.video.vrt.nu
           kodi-matrix: true
         env:
-          GH_USERNAME: ${{ github.actor }}
+          GH_USERNAME: ${{secrets.GH_USERNAME}}
           GH_TOKEN: ${{secrets.GH_TOKEN}}
           EMAIL: ${{secrets.EMAIL}}
