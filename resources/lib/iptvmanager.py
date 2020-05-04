@@ -11,22 +11,29 @@ from data import CHANNELS
 class IPTVManager:
     """Interface to IPTV Manager"""
 
-    @staticmethod
-    def __init__():
+    def __init__(self, port):
         """Initialize IPTV Manager object"""
+        self.port = port
 
-    def send_data(self, host, port, data):
-        """Send data to IPTV Manager"""
-        import json
-        import socket
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect((host, port))
-        try:
-            sock.send(json.dumps(data))
-        finally:
-            sock.close()
+    def via_socket(func):  # pylint: disable=no-self-argument
+        """Send the output of the wrapped function to socket"""
 
-    def channels(self, port):
+        def send(self):
+            """Decorator to send over a socket"""
+            import json
+            import socket
+            log(2, "Sending data output to IPTV Manager using port {port}", port=self.port)
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.connect(('127.0.0.1', self.port))
+            try:
+                sock.send(json.dumps(func()))  # pylint: disable=not-callable
+            finally:
+                sock.close()
+
+        return send
+
+    @via_socket
+    def send_channels():  # pylint: disable=no-method-argument
         """Return JSON-M3U formatted information to IPTV Manager"""
         streams = []
         for channel in CHANNELS:
@@ -37,14 +44,12 @@ class IPTVManager:
                 name=channel.get('label'),
                 logo=channel.get('epg_logo'),
                 stream='plugin://plugin.video.vrt.nu/play/id/{live_stream_id}'.format(**channel),
-                radio=False,
             ))
-        log(2, 'Sending channels to IPTV Manager on port {port}', port=port)
-        self.send_data('localhost', port, dict(version=1, streams=streams))
+        return dict(version=1, streams=streams)
 
-    def epg(self, port):
+    @via_socket
+    def send_epg():  # pylint: disable=no-method-argument
         """Return JSONTV formatted information to IPTV Manager"""
         from tvguide import TVGuide
         epg_data = TVGuide().get_epg_data()
-        log(2, 'Sending EPG to IPTV Manager on port {port}', port=port)
-        self.send_data('localhost', port, dict(version=1, epg=epg_data))
+        return dict(version=1, epg=epg_data)
