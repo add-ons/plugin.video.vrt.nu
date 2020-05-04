@@ -314,6 +314,22 @@ def play_by_air_date(channel, start_date, end_date=None):
     VRTPlayer().play_episode_by_air_date(channel, start_date, end_date)
 
 
+@plugin.route('/iptv/channels')
+def iptv_channels():
+    """Return JSON-M3U formatted data for all live channels"""
+    from iptvmanager import IPTVManager
+    port = int(plugin.args.get('port')[0])
+    IPTVManager().channels(port)
+
+
+@plugin.route('/iptv/epg')
+def iptv_epg():
+    """Return JSONTV formatted data for all live channel EPG data"""
+    from iptvmanager import IPTVManager
+    port = int(plugin.args.get('port')[0])
+    IPTVManager().epg(port)
+
+
 def run(argv):
     """Addon entry point from wrapper"""
     log_access(argv)

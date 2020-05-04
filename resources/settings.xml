@@ -2,7 +2,8 @@
 <settings>
     <setting id="version" default="" visible="false"/>
     <setting id="iptv.enabled" default="true" visible="false"/>
-    <setting id="iptv.channels_url" default="channels.json" visible="false"/>
+    <setting id="iptv.channels_uri" default="plugin://plugin.video.vrt.nu/iptv/channels?port=$PORT" visible="false"/>
+    <setting id="iptv.epg_uri" default="plugin://plugin.video.vrt.nu/iptv/epg?port=$PORT" visible="false"/>
     <category label="30700"> <!-- Credentials -->
         <setting label="30701" type="lsep"/> <!-- VRT NU login -->
         <setting label="30703" help="30704" type="text" id="username"/>
