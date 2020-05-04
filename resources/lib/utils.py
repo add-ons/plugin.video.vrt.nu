@@ -53,7 +53,7 @@ def strip_newlines(text):
     return text.replace('\n', '').strip()
 
 
-def html_to_kodilabel(text):
+def html_to_kodi(text):
     """Convert VRT HTML content into Kodit formatted text"""
     for key, val in HTML_MAPPING:
         text = key.sub(val, text)

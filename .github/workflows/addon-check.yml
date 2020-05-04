@@ -29,7 +29,10 @@ jobs:
       run: awk '/export-ignore/ { print $1 }' .gitattributes | xargs rm -rf --
       working-directory: ${{ github.repository }}
     - name: Rewrite addon.xml for Matrix
-      run: xmlstarlet ed -L -u '/addon/requires/import[@addon="xbmc.python"]/@version' -v "3.0.0" addon.xml
+      run: |
+        xmlstarlet ed -L -u '/addon/requires/import[@addon="xbmc.python"]/@version' -v "3.0.0" addon.xml
+        version=$(xmllint --xpath 'string(/addon/@version)' addon.xml)
+        xmlstarlet ed -L -u '/addon/@version' -v "${version}+matrix.99" addon.xml
       working-directory: ${{ github.repository }}
       if: matrix.kodi-branch == 'matrix'
     - name: Run kodi-addon-checker

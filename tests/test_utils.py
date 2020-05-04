@@ -24,12 +24,12 @@ class TestUtils(unittest.TestCase):
         self.assertEqual('foo bar  baz', utils.strip_newlines(' \n\n  foo bar\n  baz \n \n '))
 
     # FIXME: Add more examples related to <p>, <br> and &nbsp; later
-    def test_html_to_kodilabel(self):
-        """Test html_to_kodilabel"""
-        self.assertEqual('foo [I]bar[/I] baz', utils.html_to_kodilabel('foo <i>bar</i> baz'))
-        self.assertEqual('foo [B]bar[/B] baz', utils.html_to_kodilabel('foo <b>bar</b> baz'))
-        self.assertEqual('foo [B][COLOR={highlighted}]bar[/COLOR][/B] baz', utils.html_to_kodilabel('foo <em>bar</em> baz'))
-        self.assertEqual('blah\n- foo\n- bar\n\nbaz', utils.html_to_kodilabel('blah<ul><li>foo</li><li>bar</li></ul>baz'))
+    def test_html_to_kodi(self):
+        """Test html_to_kodi"""
+        self.assertEqual('foo [I]bar[/I] baz', utils.html_to_kodi('foo <i>bar</i> baz'))
+        self.assertEqual('foo [B]bar[/B] baz', utils.html_to_kodi('foo <b>bar</b> baz'))
+        self.assertEqual('foo [B][COLOR={highlighted}]bar[/COLOR][/B] baz', utils.html_to_kodi('foo <em>bar</em> baz'))
+        self.assertEqual('blah\n- foo\n- bar\n\nbaz', utils.html_to_kodi('blah<ul><li>foo</li><li>bar</li></ul>baz'))
 
     def test_reformat_url(self):
         """Test reformatting URLs (terzake)"""
