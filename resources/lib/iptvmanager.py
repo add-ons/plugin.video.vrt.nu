@@ -11,6 +11,10 @@ from data import CHANNELS
 class IPTVManager:
     """Interface to IPTV Manager"""
 
+    @staticmethod
+    def __init__():
+        """Initialize IPTV Manager object"""
+
     def send_data(self, host, port, data):
         """Send data to IPTV Manager"""
         import json
@@ -20,7 +24,6 @@ class IPTVManager:
         try:
             sock.send(json.dumps(data))
         finally:
-            # Close our connection
             sock.close()
 
     def channels(self, port):
@@ -34,7 +37,6 @@ class IPTVManager:
                 name=channel.get('label'),
                 logo=channel.get('epg_logo'),
                 stream='plugin://plugin.video.vrt.nu/play/id/{live_stream_id}'.format(**channel),
-                group='VRT',
                 radio=False,
             ))
         log(2, 'Sending channels to IPTV Manager on port {port}', port=port)
@@ -42,5 +44,7 @@ class IPTVManager:
 
     def epg(self, port):
         """Return JSONTV formatted information to IPTV Manager"""
+        from tvguide import TVGuide
+        epg_data = TVGuide().get_epg_data()
         log(2, 'Sending EPG to IPTV Manager on port {port}', port=port)
-        self.send_data('localhost', port, dict(version=1, epg=dict()))
+        self.send_data('localhost', port, dict(version=1, epg=epg_data))

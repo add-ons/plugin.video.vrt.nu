@@ -757,18 +757,14 @@ msgid "Open Up Next service add-on settings."
 msgstr "Open de Up Next service add-on instellingen."
 
 msgctxt "#30875"
-msgid "Install Twitter add-on"
-msgstr "Installeer de Twitter add-on"
+msgid "Install IPTV Manager add-on"
+msgstr "Installeer de IPTV Manager add-on"
 
 msgctxt "#30877"
-msgid "Enable Twitter integration"
-msgstr "Activeer Twitter integratie"
+msgid "Enable IPTV Manager integration"
+msgstr "Activeer IPTV Manager integratie"
 
 msgctxt "#30879"
-msgid "Twitter settings…"
-msgstr "Twitter instellingen…"
-
-msgctxt "#30881"
 msgid "Install PySocks library"
 msgstr "Installeer de PySocks library"
 
