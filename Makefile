@@ -14,7 +14,7 @@ else
 	zip_name = $(name)-$(version)-$(git_branch)-$(git_hash).zip
 endif
 
-include_files = addon.xml LICENSE README.md resources/
+include_files = addon.xml channels.m3u8 LICENSE README.md resources/
 include_paths = $(patsubst %,$(name)/%,$(include_files))
 exclude_files = \*.new \*.orig \*.pyc \*.pyo
 zip_dir = $(name)/
