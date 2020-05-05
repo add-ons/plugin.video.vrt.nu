@@ -873,10 +873,9 @@ def log(level=1, message='', **kwargs):
     xbmc.log(from_unicode(message), level % 3 if debug_logging else 2)
 
 
-def log_access(url, query_string=None):
+def log_access(argv):
     """Log addon access"""
-    message = 'Access: %s' % (url + ('?' + query_string if query_string else ''))
-    log(1, message)
+    log(1, 'Access: {url}{qs}', url=argv[0], qs=argv[2] if len(argv) > 2 else '')
 
 
 def log_error(message, **kwargs):

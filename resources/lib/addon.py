@@ -316,5 +316,5 @@ def play_by_air_date(channel, start_date, end_date=None):
 
 def run(argv):
     """Addon entry point from wrapper"""
-    log_access(argv[0])
+    log_access(argv)
     plugin.run(argv)
