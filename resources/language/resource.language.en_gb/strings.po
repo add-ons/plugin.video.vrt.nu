@@ -765,6 +765,10 @@ msgid "Enable IPTV Manager integration"
 msgstr ""
 
 msgctxt "#30879"
+msgid "Open IPTV Manager service add-on settings."
+msgstr ""
+
+msgctxt "#30881"
 msgid "Install PySocks library"
 msgstr ""
 
