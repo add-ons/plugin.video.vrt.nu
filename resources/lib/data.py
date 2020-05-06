@@ -47,7 +47,7 @@ CHANNELS = [
             dict(label='Muziek bij Eén', url='https://www.youtube.com/channel/UC7mPNmdg7ADGt0gH8xOrXpQ'),
         ],
         has_tvguide=True,
-        epg_logo='https://images.vrt.be/height100/logo/een/een_LOGO_zwart.png',
+        epg_logo='https://images.vrt.be/orig/logo/een/een_LOGO_zwart.png',
     ),
     dict(
         id='1H',
@@ -62,7 +62,7 @@ CHANNELS = [
             dict(label='Terzake', url='https://www.youtube.com/user/terzaketv'),
         ],
         has_tvguide=True,
-        epg_logo='https://images.vrt.be/height100/logo/canvas/CANVAS_logo_lichtblauw.jpg',
+        epg_logo='https://images.vrt.be/orig/logo/canvas/CANVAS_logo_lichtblauw.jpg',
     ),
     dict(
         id='O9',
@@ -77,7 +77,7 @@ CHANNELS = [
             dict(label='Karrewiet', url='https://www.youtube.com/channel/UCCUHHJrtsoC1oyihO86mnMg'),
         ],
         has_tvguide=True,
-        epg_logo='https://www.ketnet.be/sites/all/themes/ketnet/images/logo.png',
+        epg_logo='https://images.vrt.be/orig/logo/ketnet/ketnet_LOGO_rood_geel.png',
     ),
     dict(
         id='',
@@ -88,7 +88,7 @@ CHANNELS = [
         youtube=[
             dict(label='Ketnet Junior', url='https://www.youtube.com/channel/UCTxm_H52WlKWBEB_h7PjzFA'),
         ],
-        epg_logo='https://www.ketnet.be/sites/all/themes/ketnet/images/logo.png',
+        epg_logo='https://images.vrt.be/orig/2019/07/19/c309360a-aa10-11e9-abcc-02b7b76bf47f.png',
     ),
     dict(
         id='12',
@@ -99,7 +99,7 @@ CHANNELS = [
         youtube=[
             dict(label='Sporza', url='https://www.youtube.com/user/SporzaOfficial'),
         ],
-        epg_logo='https://images.vrt.be/height100/logo/sporza/sporza_logo_zwart.png',
+        epg_logo='https://images.vrt.be/orig/logo/sporza/sporza_logo_zwart.png',
     ),
     dict(
         id='13',
@@ -112,7 +112,7 @@ CHANNELS = [
             dict(label='VRT NWS', url='https://www.youtube.com/channel/UC59gT3bFTFNSqafRcluDIsQ'),
             dict(label='Terzake', url='https://www.youtube.com/user/terzaketv'),
         ],
-        epg_logo='https://images.vrt.be/height100/logos/vrtnws.png',
+        epg_logo='https://images.vrt.be/orig/logos/vrtnws.png',
     ),
     dict(
         id='11',
@@ -124,7 +124,7 @@ CHANNELS = [
             dict(label='Radio 1', url='https://www.youtube.com/user/vrtradio1'),
             dict(label='Universiteit van Vlaanderen', url='https://www.youtube.com/channel/UC7WpOKbKfzOOnD0PyUN_SYg'),
         ],
-        epg_logo='https://images.vrt.be/height100/logos/radio1.png',
+        epg_logo='https://images.vrt.be/orig/logos/radio1.png',
     ),
     dict(
         id='24',
@@ -136,7 +136,7 @@ CHANNELS = [
             dict(label='Radio 2', url='https://www.youtube.com/user/radio2inbeeld'),
             dict(label='Aha!', url='https://www.youtube.com/channel/UCa9lGLvXB-xJg3d0BjK_tIQ'),
         ],
-        epg_logo='https://images.vrt.be/height100/logos/radio2.png',
+        epg_logo='https://images.vrt.be/orig/logos/radio2.png',
     ),
     dict(
         id='31',
@@ -148,7 +148,7 @@ CHANNELS = [
             dict(label='Klara', url='https://www.youtube.com/user/klararadio'),
             dict(label='Iedereen klassiek', url='https://www.youtube.com/channel/UCgyfqQgt5_K8_zrxHgh_J2w'),
         ],
-        epg_logo='https://images.vrt.be/height100/logos/klara.png',
+        epg_logo='https://images.vrt.be/orig/logos/klara.png',
     ),
     dict(
         id='41',
@@ -160,7 +160,7 @@ CHANNELS = [
         youtube=[
             dict(label='Studio Brussel', url='https://www.youtube.com/user/StuBru'),
         ],
-        epg_logo='https://images.vrt.be/height100/2019/03/12/1e383cf5-44a7-11e9-abcc-02b7b76bf47f.png',
+        epg_logo='https://images.vrt.be/orig/2019/03/12/1e383cf5-44a7-11e9-abcc-02b7b76bf47f.png',
     ),
     dict(
         id='55',
@@ -172,7 +172,7 @@ CHANNELS = [
         youbube=[
             dict(label='MNM', url='https://www.youtube.com/user/MNMbe'),
         ],
-        epg_logo='https://images.vrt.be/height100/logo/mnm/logo_witte_achtergrond.png',
+        epg_logo='https://images.vrt.be/orig/logo/mnm/logo_witte_achtergrond.png',
     ),
     dict(
         id='',
