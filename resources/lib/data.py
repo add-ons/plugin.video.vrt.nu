@@ -77,7 +77,7 @@ CHANNELS = [
             dict(label='Karrewiet', url='https://www.youtube.com/channel/UCCUHHJrtsoC1oyihO86mnMg'),
         ],
         has_tvguide=True,
-        epg_logo='https://images.vrt.be/height100/logo/ketnet/ketnet_LOGO_rood_geel.png',
+        epg_logo='https://www.ketnet.be/sites/all/themes/ketnet/images/logo.png',
     ),
     dict(
         id='',
@@ -88,7 +88,7 @@ CHANNELS = [
         youtube=[
             dict(label='Ketnet Junior', url='https://www.youtube.com/channel/UCTxm_H52WlKWBEB_h7PjzFA'),
         ],
-        epg_logo='https://images.vrt.be/height100/logo/ketnet/ketnet_LOGO_rood_geel.png',
+        epg_logo='https://www.ketnet.be/sites/all/themes/ketnet/images/logo.png',
     ),
     dict(
         id='12',
@@ -136,7 +136,7 @@ CHANNELS = [
             dict(label='Radio 2', url='https://www.youtube.com/user/radio2inbeeld'),
             dict(label='Aha!', url='https://www.youtube.com/channel/UCa9lGLvXB-xJg3d0BjK_tIQ'),
         ],
-        epg_logo='https://images.vrt.be/height100/logo/radio2/RADIO2_RED_RGB.png',
+        epg_logo='https://images.vrt.be/height100/logos/radio2.png',
     ),
     dict(
         id='31',
@@ -160,7 +160,7 @@ CHANNELS = [
         youtube=[
             dict(label='Studio Brussel', url='https://www.youtube.com/user/StuBru'),
         ],
-        epg_logo='https://images.vrt.be/orig/2019/03/12/1e383cf5-44a7-11e9-abcc-02b7b76bf47f.png',
+        epg_logo='https://images.vrt.be/height100/2019/03/12/1e383cf5-44a7-11e9-abcc-02b7b76bf47f.png',
     ),
     dict(
         id='55',
