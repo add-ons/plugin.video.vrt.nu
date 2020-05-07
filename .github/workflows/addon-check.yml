@@ -20,7 +20,7 @@ jobs:
         python-version: 3.8
     - name: Install dependencies
       run: |
-        sudo apt-get install libxml2-utils xmlstarlet
+        sudo apt-get install xmlstarlet
         python -m pip install --upgrade pip
         # FIXME: Requires changes from xbmc/addon-check#217
         #pip install kodi-addon-checker
@@ -31,7 +31,7 @@ jobs:
     - name: Rewrite addon.xml for Matrix
       run: |
         xmlstarlet ed -L -u '/addon/requires/import[@addon="xbmc.python"]/@version' -v "3.0.0" addon.xml
-        version=$(xmllint --xpath 'string(/addon/@version)' addon.xml)
+        version=$(xmlstarlet sel -t -v 'string(/addon/@version)' addon.xml)
         xmlstarlet ed -L -u '/addon/@version' -v "${version}+matrix.99" addon.xml
       working-directory: ${{ github.repository }}
       if: matrix.kodi-branch == 'matrix'
