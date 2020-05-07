@@ -43,6 +43,7 @@ class IPTVManager:
                 id='{name}.be'.format(**channel),
                 name=channel.get('label'),
                 logo=channel.get('epg_logo'),
+                preset=channel.get('epg_preset'),
                 stream='plugin://plugin.video.vrt.nu/play/id/{live_stream_id}'.format(**channel),
             ))
         return dict(version=1, streams=streams)

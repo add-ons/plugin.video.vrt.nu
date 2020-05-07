@@ -48,6 +48,7 @@ CHANNELS = [
         ],
         has_tvguide=True,
         epg_logo='https://images.vrt.be/orig/logo/een/een_LOGO_zwart.png',
+        epg_preset=1,
     ),
     dict(
         id='1H',
@@ -63,6 +64,7 @@ CHANNELS = [
         ],
         has_tvguide=True,
         epg_logo='https://images.vrt.be/orig/logo/canvas/CANVAS_logo_lichtblauw.jpg',
+        epg_preset=2,
     ),
     dict(
         id='O9',
@@ -78,6 +80,7 @@ CHANNELS = [
         ],
         has_tvguide=True,
         epg_logo='https://images.vrt.be/orig/logo/ketnet/ketnet_LOGO_rood_geel.png',
+        epg_preset=12,
     ),
     dict(
         id='',
@@ -89,6 +92,7 @@ CHANNELS = [
             dict(label='Ketnet Junior', url='https://www.youtube.com/channel/UCTxm_H52WlKWBEB_h7PjzFA'),
         ],
         epg_logo='https://images.vrt.be/orig/2019/07/19/c309360a-aa10-11e9-abcc-02b7b76bf47f.png',
+        epg_preset=11,
     ),
     dict(
         id='12',
@@ -100,6 +104,7 @@ CHANNELS = [
             dict(label='Sporza', url='https://www.youtube.com/user/SporzaOfficial'),
         ],
         epg_logo='https://images.vrt.be/orig/logo/sporza/sporza_logo_zwart.png',
+        epg_preset=801,
     ),
     dict(
         id='13',
@@ -113,6 +118,7 @@ CHANNELS = [
             dict(label='Terzake', url='https://www.youtube.com/user/terzaketv'),
         ],
         epg_logo='https://images.vrt.be/orig/logos/vrtnws.png',
+        epg_preset=802,
     ),
     dict(
         id='11',
@@ -125,6 +131,7 @@ CHANNELS = [
             dict(label='Universiteit van Vlaanderen', url='https://www.youtube.com/channel/UC7WpOKbKfzOOnD0PyUN_SYg'),
         ],
         epg_logo='https://images.vrt.be/orig/logos/radio1.png',
+        epg_preset=901,
     ),
     dict(
         id='24',
@@ -137,6 +144,7 @@ CHANNELS = [
             dict(label='Aha!', url='https://www.youtube.com/channel/UCa9lGLvXB-xJg3d0BjK_tIQ'),
         ],
         epg_logo='https://images.vrt.be/orig/logos/radio2.png',
+        epg_preset=902,
     ),
     dict(
         id='31',
@@ -149,6 +157,7 @@ CHANNELS = [
             dict(label='Iedereen klassiek', url='https://www.youtube.com/channel/UCgyfqQgt5_K8_zrxHgh_J2w'),
         ],
         epg_logo='https://images.vrt.be/orig/logos/klara.png',
+        epg_preset=903,
     ),
     dict(
         id='41',
@@ -161,6 +170,7 @@ CHANNELS = [
             dict(label='Studio Brussel', url='https://www.youtube.com/user/StuBru'),
         ],
         epg_logo='https://images.vrt.be/orig/2019/03/12/1e383cf5-44a7-11e9-abcc-02b7b76bf47f.png',
+        epg_preset=904,
     ),
     dict(
         id='55',
@@ -173,6 +183,7 @@ CHANNELS = [
             dict(label='MNM', url='https://www.youtube.com/user/MNMbe'),
         ],
         epg_logo='https://images.vrt.be/orig/logo/mnm/logo_witte_achtergrond.png',
+        epg_preset=905,
     ),
     dict(
         id='',
@@ -199,6 +210,7 @@ CHANNELS = [
         studio='VRT',
         live_stream_id='vualto_events1_geo',
         epg_logo='https://images.vrt.be/orig/logo/vrt.png',
+        epg_preset=851,
     ),
     dict(
         id='',
@@ -207,6 +219,7 @@ CHANNELS = [
         studio='VRT',
         live_stream_id='vualto_events2_geo',
         epg_logo='https://images.vrt.be/orig/logo/vrt.png',
+        epg_preset=852,
     ),
     dict(
         id='',
@@ -215,6 +228,7 @@ CHANNELS = [
         studio='VRT',
         live_stream_id='vualto_events3_geo',
         epg_logo='https://images.vrt.be/orig/logo/vrt.png',
+        epg_preset=853,
     ),
 ]
 
