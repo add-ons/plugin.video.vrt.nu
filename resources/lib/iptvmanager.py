@@ -40,10 +40,10 @@ class IPTVManager:
             if not channel.get('live_stream_id'):
                 continue
             streams.append(dict(
-                id='{name}.be'.format(**channel),
+                id=channel.get('epg_id'),
                 name=channel.get('label'),
-                logo=channel.get('epg_logo'),
-                preset=channel.get('epg_preset'),
+                logo=channel.get('logo'),
+                preset=channel.get('preset'),
                 stream='plugin://plugin.video.vrt.nu/play/id/{live_stream_id}'.format(**channel),
             ))
         return dict(version=1, streams=streams)
