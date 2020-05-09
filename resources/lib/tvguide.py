@@ -214,7 +214,7 @@ class TVGuide:
             schedule = get_url_json(url=epg_url, fail={})
             for channel_id, episodes in schedule.iteritems():
                 channel = find_entry(CHANNELS, 'id', channel_id)
-                epg_id = '{name}.be'.format(**channel)
+                epg_id = channel.get('epg_id')
                 if epg_id not in epg_data:
                     epg_data[epg_id] = []
                 for episode in episodes:
