@@ -356,7 +356,7 @@ class Metadata:
                 plotoutline = html_to_kodi(api_data.get('shortDescription', ''))
                 return plotoutline
 
-            plotoutline = api_data.get('subtitle')
+            plotoutline = html_to_kodi(api_data.get('subtitle'))
             return plotoutline
 
         # VRT NU Suggest API
@@ -657,7 +657,7 @@ class Metadata:
 
         # VRT NU Search API
         if api_data.get('type') == 'episode':
-            title = api_data.get('title') or api_data.get('shortDescription', '???')
+            title = html_to_kodi(api_data.get('title') or api_data.get('shortDescription', '???'))
 
         # VRT NU Suggest API
         elif api_data.get('type') == 'program':
@@ -665,7 +665,7 @@ class Metadata:
 
         # VRT NU Schedule API (some are missing vrt.whatson-id)
         elif api_data.get('vrt.whatson-id') or api_data.get('startTime'):
-            title = api_data.get('subtitle', '???')
+            title = html_to_kodi(api_data.get('subtitle', '???'))
 
         return title
 
