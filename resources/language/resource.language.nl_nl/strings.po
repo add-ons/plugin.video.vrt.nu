@@ -918,6 +918,30 @@ msgctxt "#30967"
 msgid "Could not retrieve this program list. VRT Search API url is too long. Go to [B]VRT NU settings » Interface » Manage My favorites…[/B] and unfollow older favorite programs to fix this problem."
 msgstr "Deze programmalijst kan niet opgehaald worden. VRT Search API url is te lang. Ga naar [B]VRT NU instellingen » Interface » Beheer Mijn favorieten[/B] en verwijder een aantal favoriete programma's om dit probleem op te lossen. "
 
+msgctxt "#30968"
+msgid "There is a problem connecting to the Internet. This could be related to Kodi, your network, your ISP or VRT NU.\n\nError: {error}\nURL: {url}"
+msgstr "Er is een fout opgetreden met het Internet gebruik. Dit kan liggen aan Kodi, aan jouw netwerk, aan jouw ISP of aan VRT NU.\n\nFout: {error}\nURL: {url}"
+
+msgctxt "#30969"
+msgid "Unable to open URL"
+msgstr "Probleem bij het openen van een URL"
+
+msgctxt "#30971"
+msgid "Install Widevine using 'InputStream Helper' add-on"
+msgstr "Installeer Widevine met de 'InputStream Helper' add-on"
+
+msgctxt "#30972"
+msgid "Installing Widevine libraries using the 'InputStream Helper' add-on is done at your own risk and the VRT NU add-on is not responsible for any results. Nor is it guaranteed that Widevine will be (re)installed correctly."
+msgstr "Het installeren van de Widevine bestanden met de 'InputStream Helper' add-on is op eigen risico en de VRT NU add-on is niet verantwoordelijk voor enig resultaat. Ook wordt het niet gegarandeerd dat Widevine succesvol kan worden geinstalleerd."
+
+msgctxt "#30973"
+msgid "Installation of Widevine failed!"
+msgstr "Widevine installatie mislukt!"
+
+msgctxt "#30974"
+msgid "Installation of Widevine completed!"
+msgstr "Widevine installatie gelukt"
+
 msgctxt "#30975"
 msgid "Failed to get user token from VRT NU"
 msgstr "Ophalen van het gebruikerstoken van VRT NU is mislukt"
