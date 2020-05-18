@@ -3,7 +3,7 @@ on:
   pull_request:
   push:
   schedule:
-  - cron:  '0 * * * *'
+  - cron:  '0/30 * * * *'
 jobs:
   tests:
     name: Checks
@@ -26,20 +26,27 @@ jobs:
         pip install -r requirements.txt
     - name: TEST Authentication
       run: python -m unittest -v test_tokenresolver.TestTokenResolver.test_successful_login
+      if: always()
     # FIXME: Add a better test for favorites that does not fail
     #- name: TEST Favorites
     #  run: python -m unittest -v test_favorites.TestFavorites.test_programs
     - name: TEST ResumePoints
       run: python -m unittest -v test_resumepoints.TestResumePoints.test_get_continue_episodes
+      if: always()
     - name: TEST Search
       run: python -m unittest -v test_search.TestSearch.test_search_journaal
+      if: always()
     - name: TEST Suggest
       run: python -m unittest -v test_apihelper.TestApiHelper.test_get_tvshows
+      if: always()
     # FIXME: Add a better test for testing EPG
     - name: TEST TV guide
       run: python -m unittest -v test_tvguide.TestTVGuide.test_livetv_description
+      if: always()
     # FIXME: Add a better test for the webscraper that prints the categories as well
     - name: TEST Categories webscraper
       run: python -m unittest -v test_webscraper.TestWebScraper.test_get_categories
+      if: always()
     - name: TEST Video attributes webscraper
       run: python -m unittest -v test_webscraper.TestWebScraper.test_get_video_attributes
+      if: always()
