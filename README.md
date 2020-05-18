@@ -47,7 +47,16 @@ You can report issues at [our GitHub project](https://github.com/add-ons/plugin.
 leave a message at [our Facebook page](https://facebook.com/kodivrtnu/).
 
 ## Screenshots
-![](./resources/media/screenshot04.jpg)
+<table>
+  <tr>
+    <td><img src="resources/media/screenshot01.jpg" width="400"></td>
+    <td><img src="resources/media/screenshot02.jpg" width="400"></td>
+  </tr>
+  <tr>
+    <td><img src="resources/media/screenshot03.jpg" width="400"></td>
+    <td><img src="resources/media/screenshot04.jpg" width="400"></td>
+  </tr>
+</table>
 
 ## Releases
 ### v2.3.3 (2020-04-30)
