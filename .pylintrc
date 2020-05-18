@@ -4,7 +4,6 @@ disable=
     duplicate-code,  # Integration tests tend to test similar things
     fixme,  # Allow FIXMEs in code is a useful practice
     import-outside-toplevel,  # Done on purpose to reduce overhead at startup
-    line-too-long,  # Flake8 is used for testing line-length
     old-style-class,
     too-few-public-methods,
     too-many-arguments,
@@ -16,3 +15,4 @@ disable=
     too-many-public-methods,
     too-many-return-statements,
     too-many-statements,
+max-line-length=160

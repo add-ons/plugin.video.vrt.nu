@@ -43,7 +43,15 @@ class TestResumePoints(unittest.TestCase):
         """Test items, sort and order"""
 
         # Ensure a continue episode exists (Winteruur met Lize Feryn (beschikbaar tot 26 maart 2025))
-        self._resumepoints.update(asset_id='contentdamvrt20191015winteruurr005a0001depotwp00162177', title='Winteruur', url='/vrtnu/a-z/winteruur/5/winteruur-s5a1/', watch_later=True, position=38, total=635, whatson_id='705308178527')
+        self._resumepoints.update(
+            asset_id='contentdamvrt20191015winteruurr005a0001depotwp00162177',
+            title='Winteruur',
+            url='/vrtnu/a-z/winteruur/5/winteruur-s5a1/',
+            watch_later=True,
+            position=38,
+            total=635,
+            whatson_id='705308178527',
+        )
 
         episode_items, sort, ascending, content = self._apihelper.list_episodes(page=1, variety='continue')
         self.assertTrue(episode_items)
@@ -80,7 +88,15 @@ class TestResumePoints(unittest.TestCase):
         print('%s = %s' % (asset_id, first_entry))
 
         # Remove Winteruur met Lize Feryn (beschikbaar tot 26 maart 2025)
-        self._resumepoints.update(asset_id='contentdamvrt20191015winteruurr005a0001depotwp00162177', title='Winteruur', url='/vrtnu/a-z/winteruur/5/winteruur-s5a1/', watch_later=False, position=635, total=635, whatson_id='705308178527')
+        self._resumepoints.update(
+            asset_id='contentdamvrt20191015winteruurr005a0001depotwp00162177',
+            title='Winteruur',
+            url='/vrtnu/a-z/winteruur/5/winteruur-s5a1/',
+            watch_later=False,
+            position=635,
+            total=635,
+            whatson_id='705308178527',
+        )
 
 
 if __name__ == '__main__':

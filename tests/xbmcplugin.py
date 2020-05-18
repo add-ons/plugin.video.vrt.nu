@@ -7,6 +7,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from xbmc import LOGFATAL, LOGINFO, log
+from xbmcaddon import Addon
 from xbmcextra import kodi_to_ansi, uri_to_path
 
 try:  # Python 3
@@ -88,6 +89,11 @@ def endOfDirectory(handle, succeeded=True, updateListing=True, cacheToDisc=True)
     # print(kodi_to_ansi('[B]-=( [COLOR=cyan]--------[/COLOR] )=-[/B]'))
 
 
+def getSetting(handle, key):
+    """A stub implementation of the xbmcplugin getSetting() function"""
+    return Addon().getSetting(key)
+
+
 def setContent(handle, content):
     """A stub implementation of the xbmcplugin setContent() function"""
 
@@ -103,6 +109,12 @@ def setPluginCategory(handle, category):
 
 def setResolvedUrl(handle, succeeded, listitem):
     """A stub implementation of the xbmcplugin setResolvedUrl() function"""
+
+    print(kodi_to_ansi('[B][COLOR=yellow]Title[/COLOR]: {label}[/B]'.format(label=listitem.label)))
+    print(kodi_to_ansi('[COLOR=yellow]URL[/COLOR]:\n{url}'.format(url=listitem.path)))
+    if listitem.info.get('plot'):
+        print(kodi_to_ansi('[COLOR=yellow]Plot[/COLOR]:\n{plot}'.format(**listitem.info)))
+
     request = Request(listitem.path)
     request.get_method = lambda: 'HEAD'
     try:
