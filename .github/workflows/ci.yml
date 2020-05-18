@@ -29,10 +29,13 @@ jobs:
         pip install -r requirements.txt
     - name: Run tox
       run: python -m tox -q -e flake8,py
+      if: always()
     - name: Run pylint
       run: python -m pylint resources/lib/ tests/
+      if: always()
     - name: Compare translations
       run: make check-translations
+      if: always()
     # Python 2.7 and Python 3.5 are no longer supported by proxy.py
     - name: Start proxy server, when supported
       run: python -m proxy --hostname 127.0.0.1 --log-level DEBUG &
@@ -43,13 +46,16 @@ jobs:
       env:
         ADDON_PASSWORD: ${{ secrets.ADDON_PASSWORD }}
         ADDON_USERNAME: ${{ secrets.ADDON_USERNAME }}
+      if: always()
     - name: Run addon service
       run: coverage run -a resources/lib/service_entry.py
       env:
         ADDON_PASSWORD: ${{ secrets.ADDON_PASSWORD }}
         ADDON_USERNAME: ${{ secrets.ADDON_USERNAME }}
+      if: always()
     - name: Run addon using cli
       run: coverage run -a tests/run.py /
+      if: always()
     - name: Upload code coverage to CodeCov
       uses: codecov/codecov-action@v1
       continue-on-error: true
