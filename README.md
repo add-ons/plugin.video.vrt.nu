@@ -59,6 +59,11 @@ leave a message at [our Facebook page](https://facebook.com/kodivrtnu/).
 </table>
 
 ## Releases
+### v2.3.4 (2020-05-18)
+- Fix token issue caused by new cross-site request forgery (XSRF) checks (@mediaminister)
+- Add experimental IPTV Manager support (@dagwieers)
+- Always unescape HTML in outline and description (@mediaminister)
+
 ### v2.3.3 (2020-04-30)
 - Fix Radio 1 livestream (@dagwieers)
 - Fix watching VRT NU abroad (@mediaminister)
