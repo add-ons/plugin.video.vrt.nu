@@ -76,17 +76,6 @@ v2.3.0 (2020-01-01)
 - Add integration for Up Next add-on
 - Fixes to "Go to program", "TV guide" and "Live TV" entries
 - Fix Python 3.5 support
-
-v2.2.3 (2019-10-01)
-- Integrate new inputstreamhelper
-- Support user paths with unicode characters
-- Manage My favorites
-- Improve breadcrumbs support
-- Various translation fixes
-
-v2.2.2 (2019-09-01)
-- "Go to program" will now got to "All seasons" listing
-- Rename "My programs" to "My favorites"
   </news>
   <assets>
     <icon>resources/media/icon.png</icon>
