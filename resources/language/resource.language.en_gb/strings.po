@@ -761,7 +761,7 @@ msgid "Install IPTV Manager add-on…"
 msgstr ""
 
 msgctxt "#30877"
-msgid "Enable IPTV Manager integration"
+msgid "Enable IPTV Manager integration (experimental)"
 msgstr ""
 
 msgctxt "#30879"
