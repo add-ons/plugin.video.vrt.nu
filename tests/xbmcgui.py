@@ -191,65 +191,75 @@ class ListItem:
         self.label = kodi_to_ansi(label)
         self.label2 = kodi_to_ansi(label2)
         self.path = path
+        self.offscreen = offscreen
 
-    @staticmethod
-    def addContextMenuItems(items, replaceItems=False):
+        self.art = dict()
+        self.content_lookup = None
+        self.context_menu = list()
+        self.info = dict()
+        self.info_type = None
+        self.is_folder = False
+        self.mimetype = None
+        self.properties = dict()
+        self.rating = None
+        self.stream_info = dict()
+        self.stream_type = None
+        self.subtitles = list()
+        self.unique_ids = list()
+
+    def addContextMenuItems(self, items, replaceItems=False):
         """A stub implementation for the xbmcgui ListItem class addContextMenuItems() method"""
-        return
+        if replaceItems:
+            self.context_menu = items
+        else:
+            self.context_menu.append(items)
 
-    @staticmethod
-    def addStreamInfo(stream_type, stream_values):
+    def addStreamInfo(self, stream_type, stream_values):
         """A stub implementation for the xbmcgui LitItem class addStreamInfo() method"""
-        return
+        self.stream_type = stream_type
+        self.stream_info = stream_values
 
-    @staticmethod
-    def setArt(key):
+    def setArt(self, key):
         """A stub implementation for the xbmcgui ListItem class setArt() method"""
-        return
+        self.art = key
 
-    @staticmethod
-    def setContentLookup(enable):
+    def setContentLookup(self, enable):
         """A stub implementation for the xbmcgui ListItem class setContentLookup() method"""
-        return
+        self.content_lookup = enable
 
-    @staticmethod
-    def setInfo(type, infoLabels):  # pylint: disable=redefined-builtin
+    def setInfo(self, type, infoLabels):  # pylint: disable=redefined-builtin
         """A stub implementation for the xbmcgui ListItem class setInfo() method"""
-        return
+        self.info_type = type
+        self.info = infoLabels
 
-    @staticmethod
-    def setIsFolder(isFolder):
+    def setIsFolder(self, isFolder):
         """A stub implementation for the xbmcgui ListItem class setIsFolder() method"""
-        return
+        self.is_folder = isFolder
 
-    @staticmethod
-    def setMimeType(mimetype):
+    def setMimeType(self, mimetype):
         """A stub implementation for the xbmcgui ListItem class setMimeType() method"""
-        return
+        self.mimetype = mimetype
 
     def setPath(self, path):
         """A stub implementation for the xbmcgui ListItem class setPath() method"""
         self.path = path
 
-    @staticmethod
-    def setProperty(key, value):
+    def setProperty(self, key, value):
         """A stub implementation for the xbmcgui ListItem class setProperty() method"""
-        return
+        self.properties[key] = value
 
-    @staticmethod
-    def setProperties(dictionary):
+    def setProperties(self, dictionary):
         """A stub implementation for the xbmcgui ListItem class setProperties() method"""
-        return
+        self.properties.update(dictionary)
 
-    @staticmethod
-    def setSubtitles(subtitleFiles):
+    def setSubtitles(self, subtitleFiles):
         """A stub implementation for the xbmcgui ListItem class setSubtitles() method"""
-        return
+        self.subtitles = subtitleFiles
 
-    @staticmethod
-    def setUniqueIDs(values, defaultrating=None):
+    def setUniqueIDs(self, values, defaultrating=None):
         """A stub implementation for the xbmcgui ListItem class setUniqueIDs() method"""
-        return
+        self.unique_ids = values
+        self.rating = defaultrating
 
 
 class Window:

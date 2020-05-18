@@ -2,7 +2,7 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Integration tests for Routing functionality"""
 
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name,line-too-long
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 from datetime import datetime, timedelta
