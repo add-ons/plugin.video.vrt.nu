@@ -212,11 +212,6 @@ class StreamService:
             else:
                 protocol = 'hls'
 
-            # Workaround for Radio 1 live stream slow starts with HTTP 415
-            # https://github.com/add-ons/plugin.video.vrt.nu/issues/735
-            if video.get('video_id') == 'vualto_radio1':
-                protocol = 'hls'
-
             # Get stream manifest url
             manifest_url = next(stream.get('url') for stream in stream_json.get('targetUrls') if stream.get('type') == protocol)
 
