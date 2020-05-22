@@ -247,7 +247,7 @@ class TokenResolver:
     def _get_roaming_xvrttoken(self):
         """Get a X-VRT-Token for roaming"""
         vrtlogin_at = self.get_token('vrtlogin-at')
-        if not vrtlogin_at:
+        if vrtlogin_at is None:
             return None
         cookie_value = 'vrtlogin-at=' + vrtlogin_at
         headers = {'Cookie': cookie_value}
@@ -260,6 +260,8 @@ class TokenResolver:
         log(2, 'URL get: {url}', url=unquote(url))
         url = opener.open(url).info().get('Location')
         headers = {'Cookie': cookie_value}
+        if url is None:
+            return None
         req = Request(url, headers=headers)
         log(2, 'URL get: {url}', url=unquote(url))
         setcookie_header = opener.open(req).info().get('Set-Cookie')
