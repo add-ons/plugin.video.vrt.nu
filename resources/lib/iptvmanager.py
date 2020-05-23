@@ -45,6 +45,7 @@ class IPTVManager:
                 logo=channel.get('logo'),
                 preset=channel.get('preset'),
                 stream='plugin://plugin.video.vrt.nu/play/id/{live_stream_id}'.format(**channel),
+                vod='plugin://plugin.video.vrt.nu/play/airdate/{name}/{{date}}'.format(**channel) if channel.get('has_tvguide') else None,
             ))
         return dict(version=1, streams=streams)
 
