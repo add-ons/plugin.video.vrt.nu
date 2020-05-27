@@ -182,20 +182,20 @@ class TokenResolver:
         if name == 'vrtPlayerToken':
             return self._get_playertoken(variant, url, roaming)
 
-        if name in ('vrtlogin-at', 'vrtlogin-expiry', 'vrtlogin-rt', 'SESSION', 'XSRF-TOKEN', 'state'):
+        if name in ('vrtlogin-at', 'vrtlogin-expiry', 'vrtlogin-rt', 'SESSION', 'OIDCXSRF', 'state'):
             return self._get_usertoken(name)
 
         return None
 
     def _get_usertoken(self, name=None, login_json=None):
-        """Get a user X-VRT-Token, vrtlogin-at, vrtlogin-expiry, vrtlogin-rt, SESSION, XSRF-TOKEN or state token"""
+        """Get a user X-VRT-Token, vrtlogin-at, vrtlogin-expiry, vrtlogin-rt, SESSION, OIDCXSRF or state token"""
         if not login_json:
             login_json = self._get_login_json()
         cookiejar = cookielib.CookieJar()
         opener = build_opener(HTTPCookieProcessor(cookiejar), ProxyHandler(self._proxies))
         log(2, 'URL get: {url}', url=unquote(self._USER_TOKEN_GATEWAY_URL))
         opener.open(self._USER_TOKEN_GATEWAY_URL)
-        xsrf = next((cookie for cookie in cookiejar if cookie.name == 'XSRF-TOKEN'), None)
+        xsrf = next((cookie for cookie in cookiejar if cookie.name == 'OIDCXSRF'), None)
         if xsrf is None:
             return None
         payload = dict(
