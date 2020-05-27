@@ -506,6 +506,14 @@ msgctxt "#30440"
 msgid "A-Z"
 msgstr "A-Z"
 
+msgctxt "#30450"
+msgid "Update add-on repositories"
+msgstr "Add-on repositories worden bijgewerkt"
+
+msgctxt "#30451"
+msgid "If a VRT NU add-on update is available, it will now be updated and you will be notified.\nMake sure the VRT NU add-on has [I]Auto-update[/I] enabled."
+msgstr "Als een VRT NU update beschikbaar is, zal deze nu worden geïnstalleerd en krijg je hiervan een melding.\nControleer wel dat [I]Automatische update[/I] is ingesteld voor de VRT NU add-on."
+
 
 ### SETTINGS
 msgctxt "#30700"
@@ -771,6 +779,18 @@ msgstr "IPTV Manager instellingen…"
 msgctxt "#30881"
 msgid "Install PySocks library…"
 msgstr "Installeer de PySocks library…"
+
+msgctxt "#30890"
+msgid "Updates"
+msgstr "Updates"
+
+msgctxt "#30891"
+msgid "Update the VRT NU add-on"
+msgstr "Bijwerken van de VRT NU add-on"
+
+msgctxt "#30892"
+msgid "Update Kodi repositories and install add-on updates…"
+msgstr "Werk de Kodi repositories bij en installeer nieuwe add-ons…"
 
 msgctxt "#30900"
 msgid "Expert"

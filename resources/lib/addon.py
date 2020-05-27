@@ -10,7 +10,7 @@ try:  # Python 3
 except ImportError:  # Python 2
     from urllib import unquote_plus
 
-from kodiutils import end_of_directory, localize, log_access, notification, refresh_caches
+from kodiutils import end_of_directory, execute_builtin, localize, log_access, notification, ok_dialog, refresh_caches
 from utils import from_unicode, to_unicode
 
 plugin = Plugin()  # pylint: disable=invalid-name
@@ -328,6 +328,13 @@ def iptv_epg():
     from iptvmanager import IPTVManager
     port = int(plugin.args.get('port')[0])
     IPTVManager(port).send_epg()
+
+
+@plugin.route('/update/repos')
+def update_repos():
+    """Force an update of the repositories"""
+    execute_builtin('UpdateAddonRepos')
+    ok_dialog(heading=localize(30450), message=localize(30451))
 
 
 def run(argv):
