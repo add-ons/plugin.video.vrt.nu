@@ -51,14 +51,13 @@ class TokenResolver:
         if isinstance(cookie_data, cookielib.CookieJar):
             # Get token dict from cookiejar
             token_cookie = next((cookie for cookie in cookie_data if cookie.name == cookie_name), None)
-            if token_cookie:
-                from datetime import datetime
-                token_dictionary = {
-                    token_cookie.name: token_cookie.value,
-                    'expirationDate': datetime.utcfromtimestamp(token_cookie.expires).strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
-                }
-            else:
-                token_dictionary = None
+            if token_cookie is None:
+                return None
+            from datetime import datetime
+            token_dictionary = {
+                token_cookie.name: token_cookie.value,
+                'expirationDate': datetime.utcfromtimestamp(token_cookie.expires).strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
+            }
         elif cookie_name in cookie_data:
             # Get token dict from http header
             import dateutil.parser
@@ -71,7 +70,7 @@ class TokenResolver:
                 'expirationDate': dateutil.parser.parse(expires).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
             }
         else:
-            token_dictionary = None
+            return None
         return token_dictionary
 
     @staticmethod
@@ -196,13 +195,15 @@ class TokenResolver:
         opener = build_opener(HTTPCookieProcessor(cookiejar), ProxyHandler(self._proxies))
         log(2, 'URL get: {url}', url=unquote(self._USER_TOKEN_GATEWAY_URL))
         opener.open(self._USER_TOKEN_GATEWAY_URL)
-        xsrf = next((cookie for cookie in cookiejar if cookie.name == 'XSRF-TOKEN'), None).value
+        xsrf = next((cookie for cookie in cookiejar if cookie.name == 'XSRF-TOKEN'), None)
+        if xsrf is None:
+            return None
         payload = dict(
             UID=login_json.get('UID'),
             UIDSignature=login_json.get('UIDSignature'),
             signatureTimestamp=login_json.get('signatureTimestamp'),
             client_id='vrtnu-site',
-            _csrf=xsrf
+            _csrf=xsrf.value
         )
         data = urlencode(payload).encode()
         log(2, 'URL post: {url}', url=unquote(self._VRT_LOGIN_URL))
