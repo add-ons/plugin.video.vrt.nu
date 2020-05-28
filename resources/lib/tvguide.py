@@ -212,7 +212,7 @@ class TVGuide:
             epg = self.parse(date, now)
             epg_url = epg.strftime(self.VRT_TVGUIDE)
             schedule = get_url_json(url=epg_url, fail={})
-            for channel_id, episodes in schedule.iteritems():
+            for channel_id, episodes in list(schedule.items()):
                 channel = find_entry(CHANNELS, 'id', channel_id)
                 epg_id = channel.get('epg_id')
                 if epg_id not in epg_data:
