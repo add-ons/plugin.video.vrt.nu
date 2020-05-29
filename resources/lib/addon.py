@@ -10,7 +10,7 @@ try:  # Python 3
 except ImportError:  # Python 2
     from urllib import unquote_plus
 
-from kodiutils import end_of_directory, execute_builtin, localize, log_access, notification, ok_dialog, refresh_caches
+from kodiutils import end_of_directory, execute_builtin, get_global_setting, localize, log_access, notification, ok_dialog, refresh_caches
 from utils import from_unicode, to_unicode
 
 plugin = Plugin()  # pylint: disable=invalid-name
@@ -333,8 +333,24 @@ def iptv_epg():
 @plugin.route('/update/repos')
 def update_repos():
     """Force an update of the repositories"""
-    execute_builtin('UpdateAddonRepos')
-    ok_dialog(heading=localize(30450), message=localize(30451))
+    if get_global_setting('general.addonupdates') == 0:  # Automatic updates is enabled
+        execute_builtin('UpdateAddonRepos')
+        ok_dialog(heading=localize(30450), message=localize(30451))  # Repositories are being updated
+    else:
+        ok_dialog(heading=localize(30452), message=localize(30453))  # Automatic updates is disabled
+        show_settings_addons()
+
+
+@plugin.route('/show/settings/addons')
+def show_settings_addons():
+    """Open the Kodi System Settings in the Add-ons category"""
+    execute_builtin('ActivateWindow(SystemSettings,addons)')
+
+
+@plugin.route('/open/information')
+def show_information():
+    """Show the Add-on information pane"""
+    execute_builtin('ActivateWindow(SystemSettings,addons)')
 
 
 def run(argv):
