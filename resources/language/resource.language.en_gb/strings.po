@@ -511,7 +511,7 @@ msgid "Update add-on repositories"
 msgstr ""
 
 msgctxt "#30451"
-msgid "If a VRT NU add-on update is available, it will now be updated and you will be notified.\nMake sure the VRT NU add-on has [I]Auto-update[/I] enabled."
+msgid "If a VRT NU add-on update is available, it will now be updated and you will be notified.\nMake sure you have [I]Auto-update[/I] enabled in Kodi and the VRT NU add-on."
 msgstr ""
 
 
