@@ -844,6 +844,11 @@ def container_reload(url=None):
     container_update(url)
 
 
+def execute_builtin(builtin):
+    """Run an internal Kodi builtin"""
+    xbmc.executebuiltin(builtin)
+
+
 def end_of_directory():
     """Close a virtual directory, required to avoid a waiting Kodi"""
     from addon import plugin

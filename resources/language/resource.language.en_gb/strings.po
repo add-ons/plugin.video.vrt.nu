@@ -506,6 +506,14 @@ msgctxt "#30440"
 msgid "A-Z"
 msgstr ""
 
+msgctxt "#30450"
+msgid "Update add-on repositories"
+msgstr ""
+
+msgctxt "#30451"
+msgid "If a VRT NU add-on update is available, it will now be updated and you will be notified.\nMake sure you have [I]Auto-update[/I] enabled in Kodi and the VRT NU add-on."
+msgstr ""
+
 
 ### SETTINGS
 msgctxt "#30700"
@@ -770,6 +778,18 @@ msgstr ""
 
 msgctxt "#30881"
 msgid "Install PySocks library…"
+msgstr ""
+
+msgctxt "#30890"
+msgid "Updates"
+msgstr ""
+
+msgctxt "#30891"
+msgid "Update the VRT NU add-on"
+msgstr ""
+
+msgctxt "#30892"
+msgid "Update Kodi repositories and install add-on updates…"
 msgstr ""
 
 msgctxt "#30900"
