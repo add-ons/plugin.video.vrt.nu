@@ -185,7 +185,7 @@ class TVGuide:
                 is_playable = True
             else:
                 label = '[COLOR={greyedout}]%s[/COLOR]' % self._metadata.get_label(episode)
-                path = url_for('noop')
+                path = url_for('noop', whatsonid=episode.get('vrt.whatson-id', ''))
                 context_menu, _, _ = self._metadata.get_context_menu(episode, program, cache_file)
                 is_playable = False
 
