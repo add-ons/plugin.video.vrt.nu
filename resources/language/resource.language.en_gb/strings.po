@@ -799,15 +799,15 @@ msgstr ""
 
 msgctxt "#30893"
 msgid "Install the latest add-on updates…"
-msgstr "Installeer de recentste add-on updates…"
+msgstr ""
 
 msgctxt "#30895"
 msgid "Open Kodi add-ons settings… [COLOR=gray]to enable Kodi auto-updates)[/COLOR]"
-msgstr "Open de Kodi add-ons instellingen… [COLOR=gray](voor Kodi automatische updates)[/COLOR]"
+msgstr ""
 
 msgctxt "#30897"
 msgid "Open VRT NU add-on information…"
-msgstr "Open VRT NU add-on informatie… [COLOR=gray](voor VRT NU automatisch updates)[/COLOR]"
+msgstr ""
 
 msgctxt "#30900"
 msgid "Expert"
