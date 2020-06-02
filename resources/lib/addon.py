@@ -347,12 +347,6 @@ def show_settings_addons():
     execute_builtin('ActivateWindow(SystemSettings,addons)')
 
 
-@plugin.route('/open/information')
-def show_information():
-    """Show the Add-on information pane"""
-    execute_builtin('ActivateWindow(SystemSettings,addons)')
-
-
 def run(argv):
     """Addon entry point from wrapper"""
     log_access(argv)
