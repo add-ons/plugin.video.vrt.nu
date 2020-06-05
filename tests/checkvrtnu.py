@@ -4,11 +4,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from datetime import datetime, timedelta
 import json
 import re
-
-try:  # Python 3
-    from urllib.request import urlopen, Request
-except ImportError:  # Python 2
-    from urllib2 import urlopen, Request
+import requests
 
 
 class NewVersionException(Exception):
@@ -24,12 +20,18 @@ def google_play_info():
     app_id = 'be.vrt.vrtnu'
     url = 'https://play.google.com/store/apps/details?id={}'.format(app_id)
     headers = {'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:76.0) Gecko/20100101 Firefox/76.0'}
-    req = Request(url, headers=headers)
-    response = urlopen(req)
+    req = requests.get(url, headers=headers)
+
+    if req.status_code != 200:
+        raise Exception('HTTP request failed with %s' % req.status_code)
+
     regex = re.compile(r'AF_initDataCallback\(([\s\S]*?return[\s\S]*?)\);<\/')
-    match = re.findall(regex, response.read().decode('utf-8'))
+    match = re.findall(regex, req.text)
     key_regex = re.compile(r'key: \'ds:(.*?)\',')
     value_regex = re.compile(r'return ([\s\S]*?)}}')
+    version = None
+    changelog = None
+    published = None
     for prop in match:
         key = re.search(key_regex, prop).group(1)
         info = json.loads(re.search(value_regex, prop).group(1))
@@ -38,6 +40,12 @@ def google_play_info():
             published = info[0][12][8][0]
         elif key == '8':
             version = info[1]
+
+    if version is None or published is None:
+        print("HTTP request returned: %s" % req.text)
+        print("ERROR: Could not find 'version' or 'published' from %s" % json.dumps(match, indent=2))
+        raise Exception("Could not find 'version' or 'published'")
+
     return dict(version=version, changelog=changelog, published=published)
 
 
