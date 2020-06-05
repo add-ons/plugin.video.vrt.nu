@@ -3,10 +3,10 @@
 """This module contains all functionality for VRT NU API authentication."""
 
 from __future__ import absolute_import, division, unicode_literals
-from kodiutils import (addon_profile, delete, exists, get_json_data, get_proxies, get_setting,
-                       get_tokens_path, get_url_json, has_credentials, invalidate_caches, listdir,
-                       localize, log, log_error, mkdir, notification, ok_dialog, open_file,
-                       open_settings, set_setting)
+from kodiutils import (addon_profile, delete, delete_cache, exists, get_cache, get_cache_dir, get_proxies, get_setting,
+                       get_url_json, has_credentials, invalidate_caches, listdir,
+                       localize, log, log_error, notification, ok_dialog,
+                       open_settings, set_setting, update_cache)
 from utils import from_unicode
 
 try:  # Python 3
@@ -37,6 +37,7 @@ class TokenResolver:
     _TOKEN_GATEWAY_URL = 'https://token.vrt.be'
     _USER_TOKEN_GATEWAY_URL = 'https://token.vrt.be/vrtnuinitlogin?provider=site&destination=https://www.vrt.be/vrtnu/'
     _ROAMING_TOKEN_GATEWAY_URL = 'https://token.vrt.be/vrtnuinitloginEU?destination=https://www.vrt.be/vrtnu/'
+    _TOKEN_CACHE_DIR = 'tokens'
 
     def __init__(self):
         """Initialize Token Resolver class"""
@@ -74,49 +75,11 @@ class TokenResolver:
         return token_dictionary
 
     @staticmethod
-    def _get_token_path(name, variant):
-        """Create token path following predefined file naming rules"""
+    def _get_token_filename(name, variant=None):
+        """Create token filename following predefined file naming rules"""
         prefix = variant + '_' if variant else ''
-        token_path = get_tokens_path() + prefix + name.replace('-', '') + '.tkn'
-        return token_path
-
-    def _get_cached_token(self, name, variant=None):
-        """Return a cached token"""
-        path = self._get_token_path(name, variant)
-
-        if not exists(path):
-            return None
-
-        with open_file(path) as fdesc:
-            token = get_json_data(fdesc)
-
-        if token is None:
-            return None
-
-        from datetime import datetime
-        import dateutil.parser
-        import dateutil.tz
-        now = datetime.now(dateutil.tz.tzlocal())
-        exp = dateutil.parser.parse(token.get('expirationDate'))
-        if exp <= now:
-            log(2, "Token expired, cached token '{path}' deleted", path=path)
-            delete(path)
-            return None
-
-        log(3, "Got cached token '{path}'", path=path)
-        return token
-
-    def _set_cached_token(self, token, variant=None):
-        """Save token to cache"""
-        from json import dump
-        name = list(token.keys())[0]
-        path = self._get_token_path(name, variant)
-
-        if not exists(get_tokens_path()):
-            mkdir(get_tokens_path())
-
-        with open_file(path, 'w') as fdesc:
-            dump(token, fdesc)
+        token_filename = prefix + name.replace('-', '') + '.tkn'
+        return token_filename
 
     def _get_login_json(self):
         """Get login json"""
@@ -213,9 +176,13 @@ class TokenResolver:
         refreshtoken = TokenResolver._create_token_dictionary(cookiejar, cookie_name='vrtlogin-rt')
         accesstoken = TokenResolver._create_token_dictionary(cookiejar, cookie_name='vrtlogin-at')
         if refreshtoken is not None:
-            self._set_cached_token(refreshtoken)
+            from json import dumps
+            cache_file = self._get_token_filename('vrtlogin-rt')
+            update_cache(cache_file, dumps(refreshtoken), self._TOKEN_CACHE_DIR)
         if accesstoken is not None:
-            self._set_cached_token(accesstoken)
+            from json import dumps
+            cache_file = self._get_token_filename('vrtlogin-at')
+            update_cache(cache_file, dumps(accesstoken), self._TOKEN_CACHE_DIR)
 
         return TokenResolver._create_token_dictionary(cookiejar, name)
 
@@ -272,23 +239,29 @@ class TokenResolver:
         """Get a token"""
         # Try to get a cached token
         if not roaming:
-            token = self._get_cached_token(name, variant)
+            cache_file = self._get_token_filename(name, variant)
+            token = get_cache(cache_file, cache_dir=self._TOKEN_CACHE_DIR)
             if token:
                 return token.get(name)
         # Try to refresh a token
         if variant != 'roaming' and name in ('X-VRT-Token', 'vrtlogin-at', 'vrtlogin-rt'):
-            refresh_token = self._get_cached_token('vrtlogin-rt')
+            cache_file = self._get_token_filename('vrtlogin-rt')
+            refresh_token = get_cache(cache_file, cache_dir=self._TOKEN_CACHE_DIR)
             if refresh_token:
                 token = self._get_fresh_token(refresh_token.get('vrtlogin-rt'), name)
                 if token:
                     # Save token to cache
-                    self._set_cached_token(token, variant)
+                    from json import dumps
+                    cache_file = self._get_token_filename(list(token.keys())[0], variant)
+                    update_cache(cache_file, dumps(token), self._TOKEN_CACHE_DIR)
                     return token.get(name)
         # Get a new token
         token = self._get_new_token(name, variant, url, roaming)
         if token:
             # Save token to cache
-            self._set_cached_token(token, variant)
+            from json import dumps
+            cache_file = self._get_token_filename(list(token.keys())[0], variant)
+            update_cache(cache_file, dumps(token), self._TOKEN_CACHE_DIR)
             return token.get(name)
         return None
 
@@ -312,9 +285,8 @@ class TokenResolver:
         if roaming or variant == 'ondemand':
             if roaming:
                 # Delete cached vrtPlayerToken
-                path = self._get_token_path('vrtPlayerToken', variant)
-                if exists(path):
-                    delete(path)
+                cache_file = self._get_token_filename('vrtPlayerToken', variant)
+                delete_cache(cache_file, self._TOKEN_CACHE_DIR)
                 xvrttoken = self.get_token('X-VRT-Token', 'roaming')
             elif variant == 'ondemand':
                 xvrttoken = self.get_token('X-VRT-Token')
@@ -327,16 +299,16 @@ class TokenResolver:
             return playertoken
         return None
 
-    @staticmethod
-    def delete_tokens():
+    def delete_tokens(self):
         """Delete all cached tokens"""
         # Remove old tokens
         # FIXME: Deprecate and simplify this part in a future version
         _, files = listdir(addon_profile())
         token_files = [item for item in files if item.endswith('.tkn')]
         # Empty userdata/tokens/ directory
-        if exists(get_tokens_path()):
-            _, files = listdir(get_tokens_path())
+        tokens_path = get_cache_dir(self._TOKEN_CACHE_DIR)
+        if exists(tokens_path):
+            _, files = listdir(tokens_path)
             token_files += ['tokens/' + item for item in files]
         if token_files:
             for item in token_files:
@@ -365,7 +337,8 @@ class TokenResolver:
 
     def logged_in(self):
         """Whether there is an active login"""
-        return bool(self._get_cached_token('X-VRT-Token'))
+        cache_file = self._get_token_filename('X-VRT-Token')
+        return bool(get_cache(cache_file, cache_dir=self._TOKEN_CACHE_DIR))
 
     @staticmethod
     def _credentials_changed():
