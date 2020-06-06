@@ -25,7 +25,7 @@ def google_play_info():
     if req.status_code != 200:
         raise Exception('HTTP request failed with %s' % req.status_code)
 
-    regex = re.compile(r'AF_initDataCallback\(([\s\S]*?return[\s\S]*?)\);<\/')
+    regex = re.compile(r'<script[\s\S]*?AF_initDataCallback\(([\s\S]*?\));<\/script>')
     match = re.findall(regex, req.text)
     key_regex = re.compile(r'key: \'ds:(.*?)\',')
     value_regex = re.compile(r'return ([\s\S]*?)}}')
@@ -33,13 +33,16 @@ def google_play_info():
     changelog = None
     published = None
     for prop in match:
-        key = re.search(key_regex, prop).group(1)
-        info = json.loads(re.search(value_regex, prop).group(1))
-        if key == '5':
-            changelog = info[0][12][6][1]
-            published = info[0][12][8][0]
-        elif key == '8':
-            version = info[1]
+        key = re.search(key_regex, prop)
+        value = re.search(value_regex, prop)
+        if key and value:
+            key = key.group(1)
+            info = json.loads(value.group(1))
+            if key == '5':
+                changelog = info[0][12][6][1]
+                published = info[0][12][8][0]
+            elif key == '8':
+                version = info[1]
 
     if version is None or published is None:
         print("HTTP request returned: %s" % req.text)
