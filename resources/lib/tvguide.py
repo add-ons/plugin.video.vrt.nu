@@ -218,12 +218,18 @@ class TVGuide:
                 if epg_id not in epg_data:
                     epg_data[epg_id] = []
                 for episode in episodes:
+                    if episode.get('url'):
+                        path = url_for('play_url', video_url=add_https_proto(episode.get('url')))
+                    else:
+                        path = None
                     epg_data[epg_id].append(dict(
                         start=episode.get('startTime'),
                         stop=episode.get('endTime'),
                         image=add_https_proto(episode.get('image', '')),
                         title=episode.get('title'),
+                        subtitle=episode.get('subtitle'),
                         description=html_to_kodi(episode.get('description', '')),
+                        stream=path,
                     ))
         return epg_data
 
