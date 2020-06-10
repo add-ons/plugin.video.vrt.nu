@@ -13,7 +13,7 @@ except ImportError:  # Python 2
 
 from data import CHANNELS
 from helperobjects import TitleItem
-from kodiutils import (delete_cached_thumbnail, get_cached_url_json, get_global_setting,
+from kodiutils import (delete_cached_thumbnail, get_cache, get_cached_url_json, get_global_setting,
                        get_proxies, get_setting_bool, get_setting_int, get_url_json, has_addon, localize,
                        localize_from_data, log, ttl, url_for)
 from metadata import Metadata
@@ -751,8 +751,19 @@ class ApiHelper:
 
     def list_categories(self):
         """Construct a list of category ListItems"""
-        from webscraper import get_categories
+        from webscraper import get_categories, valid_categories
         categories = get_categories()
+
+        # Use the cache anyway (better than hard-coded)
+        if not valid_categories(categories):
+            categories = get_cache('categories.json', ttl=None)
+
+        # Fall back to internal hard-coded categories
+        if not valid_categories(categories):
+            from data import CATEGORIES
+            log(2, 'Fall back to internal hard-coded categories')
+            categories = CATEGORIES
+
         category_items = []
         from data import CATEGORIES
         for category in self.localize_categories(categories, CATEGORIES):

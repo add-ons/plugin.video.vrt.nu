@@ -50,14 +50,6 @@ def get_categories():
             from json import dumps
             update_cache('categories.json', dumps(categories))
 
-    # Use the cache anyway (better than hard-coded)
-    if not valid_categories(categories):
-        categories = get_cache(cache_file, ttl=None)
-
-    # Fall back to internal hard-coded categories if all else fails
-    if not valid_categories(categories):
-        from data import CATEGORIES
-        categories = CATEGORIES
     return categories
 
 
