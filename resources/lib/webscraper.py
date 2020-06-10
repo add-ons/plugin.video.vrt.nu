@@ -50,14 +50,6 @@ def get_categories():
             from json import dumps
             update_cache('categories.json', dumps(categories))
 
-    # Use the cache anyway (better than hard-coded)
-    if not valid_categories(categories):
-        categories = get_cache(cache_file, ttl=None)
-
-    # Fall back to internal hard-coded categories if all else fails
-    if not valid_categories(categories):
-        from data import CATEGORIES
-        categories = CATEGORIES
     return categories
 
 
@@ -73,7 +65,7 @@ def get_category_title(element):
     """Return a category title, if available"""
     found_element = element.find('h3')
     if found_element:
-        return strip_newlines(found_element.contents[0])
+        return strip_newlines(found_element.a.contents[0])
     # FIXME: We should probably fall back to something sensible here, or raise an exception instead
     return ''
 

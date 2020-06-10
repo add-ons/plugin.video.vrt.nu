@@ -209,7 +209,7 @@ msgid "Comedy"
 msgstr ""
 
 msgctxt "#30077"
-msgid "Children"
+msgid "Children and youth"
 msgstr ""
 
 msgctxt "#30078"
@@ -246,6 +246,10 @@ msgstr ""
 
 msgctxt "#30086"
 msgid "Science and nature"
+msgstr ""
+
+msgctxt "#30087"
+msgid "Worldview"
 msgstr ""
 
 ### FEATURED

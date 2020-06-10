@@ -209,8 +209,8 @@ msgid "Comedy"
 msgstr "Humor"
 
 msgctxt "#30077"
-msgid "Children"
-msgstr "Kinderen"
+msgid "Children and youth"
+msgstr "Kinderen en jongeren"
 
 msgctxt "#30078"
 msgid "Cooking"
@@ -247,6 +247,10 @@ msgstr "Vlaamse Gebarentaal"
 msgctxt "#30086"
 msgid "Science and nature"
 msgstr "Wetenschap en natuur"
+
+msgctxt "#30087"
+msgid "Worldview"
+msgstr "Levensbeschouwing"
 
 ### FEATURED
 msgctxt "#30100"
