@@ -19,6 +19,7 @@ CATEGORIES = [
     dict(name='Humor', id='humor', msgctxt=30076),
     dict(name='Kinderen', id='voor-kinderen', msgctxt=30077),
     dict(name='Koken', id='koken', msgctxt=30078),
+    dict(name='Levensbeschouwing', id='levensbeschouwing', msgctxt=30087),
     dict(name='Lifestyle', id='lifestyle', msgctxt=30079),
     dict(name='Muziek', id='muziek', msgctxt=30080),
     dict(name='Nieuws en actua', id='nieuws-en-actua', msgctxt=30081),
