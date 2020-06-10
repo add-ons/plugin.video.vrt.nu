@@ -209,7 +209,7 @@ msgid "Comedy"
 msgstr ""
 
 msgctxt "#30077"
-msgid "Children"
+msgid "Children and youth"
 msgstr ""
 
 msgctxt "#30078"

@@ -209,8 +209,8 @@ msgid "Comedy"
 msgstr "Humor"
 
 msgctxt "#30077"
-msgid "Children"
-msgstr "Kinderen"
+msgid "Children and youth"
+msgstr "Kinderen en jongeren"
 
 msgctxt "#30078"
 msgid "Cooking"
