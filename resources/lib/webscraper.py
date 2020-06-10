@@ -65,7 +65,7 @@ def get_category_title(element):
     """Return a category title, if available"""
     found_element = element.find('h3')
     if found_element:
-        return strip_newlines(found_element.contents[0])
+        return strip_newlines(found_element.a.contents[0])
     # FIXME: We should probably fall back to something sensible here, or raise an exception instead
     return ''
 
