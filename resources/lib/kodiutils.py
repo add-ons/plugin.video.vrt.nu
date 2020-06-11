@@ -12,6 +12,7 @@ import xbmcplugin
 from utils import from_unicode, to_unicode
 
 ADDON = xbmcaddon.Addon()
+DEFAULT_CACHE_DIR = 'cache'
 
 SORT_METHODS = dict(
     # date=xbmcplugin.SORT_METHOD_DATE,
@@ -679,13 +680,6 @@ def supports_drm():
     return kodi_version_major() > 17
 
 
-def get_tokens_path():
-    """Cache and return the userdata tokens path"""
-    if not hasattr(get_tokens_path, 'cached'):
-        get_tokens_path.cached = addon_profile() + 'tokens/'
-    return getattr(get_tokens_path, 'cached')
-
-
 COLOUR_THEMES = dict(
     dark=dict(highlighted='yellow', availability='blue', geoblocked='red', greyedout='gray'),
     light=dict(highlighted='brown', availability='darkblue', geoblocked='darkred', greyedout='darkgray'),
@@ -712,11 +706,16 @@ def colour(text):
     return text
 
 
-def get_cache_path():
-    """Cache and return the userdata cache path"""
-    if not hasattr(get_cache_path, 'cached'):
-        get_cache_path.cached = addon_profile() + 'cache/'
-    return getattr(get_cache_path, 'cached')
+def get_cache_path(cache_file, cache_dir=DEFAULT_CACHE_DIR):
+    """Return a specified cache path"""
+    cache_dir = get_cache_dir(cache_dir)
+    return cache_dir + '/' + cache_file
+
+
+def get_cache_dir(cache_dir=DEFAULT_CACHE_DIR):
+    """Create and return a specified cache directory"""
+    cache_dir = addon_profile() + cache_dir
+    return cache_dir
 
 
 def get_addon_info(key):
@@ -944,40 +943,59 @@ def human_delta(seconds):
     return '%d second%s' % (seconds, 's' if seconds != 1 else '')
 
 
-def get_cache(path, ttl=None):  # pylint: disable=redefined-outer-name
+def get_cache(cache_file, ttl=None, cache_dir=DEFAULT_CACHE_DIR):  # pylint: disable=redefined-outer-name
     """Get the content from cache, if it is still fresh"""
     if not get_setting_bool('usehttpcaching', default=True):
         return None
 
-    fullpath = get_cache_path() + path
+    fullpath = get_cache_path(cache_file, cache_dir)
     if not exists(fullpath):
         return None
 
-    from time import localtime, mktime
-    mtime = stat_file(fullpath).st_mtime()
-    now = mktime(localtime())
-    if ttl is not None and now >= mtime + ttl:
-        return None
+    if ttl is not None:
+        from time import localtime, mktime
+        mtime = stat_file(fullpath).st_mtime()
+        now = mktime(localtime())
+        if now >= mtime + ttl:
+            return None
 
 #    if ttl is None:
 #        log(3, "Cache '{path}' is forced from cache.", path=path)
 #    else:
 #        log(3, "Cache '{path}' is fresh, expires in {time}.", path=path, time=human_delta(mtime + ttl - now))
     with open_file(fullpath, 'r') as fdesc:
-        return get_json_data(fdesc)
+        json = get_json_data(fdesc)
+
+    if json is None:
+        return None
+
+    if ttl is None and isinstance(json, dict):
+        expiration_date = json.get('expirationDate', None)
+        if expiration_date:
+            from datetime import datetime
+            import dateutil.parser
+            import dateutil.tz
+            now = datetime.now(dateutil.tz.tzlocal())
+            exp = dateutil.parser.parse(expiration_date)
+            if exp <= now:
+                log(2, "Cache expired: '{path}'", path=fullpath)
+                return None
+    log(2, "Got item from cache '{path}'", path=fullpath)
+    return json
 
 
-def update_cache(path, data):
+def update_cache(cache_file, data, cache_dir=DEFAULT_CACHE_DIR):
     """Update the cache, if necessary"""
     if not get_setting_bool('usehttpcaching', default=True):
         return
 
-    fullpath = get_cache_path() + path
+    fullpath = get_cache_path(cache_file, cache_dir)
     if not exists(fullpath):
         # Create cache directory if missing
-        if not exists(get_cache_path()):
-            mkdirs(get_cache_path())
-        write_cache(path, data)
+        directory = get_cache_dir(cache_dir)
+        if not exists(directory):
+            mkdirs(directory)
+        write_cache(fullpath, data)
         return
 
     with open_file(fullpath, 'r') as fdesc:
@@ -985,26 +1003,23 @@ def update_cache(path, data):
 
     # Avoid writes if possible (i.e. SD cards)
     if cache == data:
-        update_timestamp(path)
+        update_timestamp(fullpath)
         return
 
-    write_cache(path, data)
+    write_cache(fullpath, data)
 
 
-def write_cache(path, data):
+def write_cache(fullpath, data):
     """Write data to cache"""
-    log(3, "Write cache '{path}'.", path=path)
-    fullpath = get_cache_path() + path
+    log(3, "Write cache '{path}'.", path=fullpath)
     with open_file(fullpath, 'w') as fdesc:
-        # dump(data, fdesc, encoding='utf-8')
         fdesc.write(data)
 
 
-def update_timestamp(path):
+def update_timestamp(fullpath):
     """Update a file's timestamp"""
     from os import utime
-    fullpath = get_cache_path() + path
-    log(3, "Cache '{path}' has not changed, updating mtime only.", path=path)
+    log(3, "Cache '{path}' has not changed, updating mtime only.", path=fullpath)
     utime(fullpath, None)
 
 
@@ -1083,6 +1098,13 @@ def get_url_json(url, cache=None, headers=None, data=None, fail=None):
     return json_data
 
 
+def delete_cache(cache_file, cache_dir=DEFAULT_CACHE_DIR):
+    """Delete a cached file"""
+    path = get_cache_path(cache_file, cache_dir)
+    if exists(path):
+        delete(path)
+
+
 def get_cached_url_json(url, cache, headers=None, ttl=None, fail=None):  # pylint: disable=redefined-outer-name
     """Return data from cache, if any, else make an HTTP request"""
     # Get api data from cache if it is fresh
@@ -1105,10 +1127,10 @@ def refresh_caches(cache_file=None):
 def invalidate_caches(*caches):
     """Invalidate multiple cache files"""
     import fnmatch
-    _, files = listdir(get_cache_path())
+    _, files = listdir(get_cache_dir())
     # Invalidate caches related to menu list refreshes
     removes = set()
     for expr in caches:
         removes.update(fnmatch.filter(files, expr))
     for filename in removes:
-        delete(get_cache_path() + filename)
+        delete(get_cache_path(filename))
