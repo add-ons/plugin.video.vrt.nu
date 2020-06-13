@@ -48,7 +48,7 @@ class IPTVManager:
                 stream='plugin://plugin.video.vrt.nu/play/id/{live_stream_id}'.format(**channel),
             )
             if channel.get('has_tvguide'):
-                item.update(dict(vod='plugin://plugin.video.vrt.nu/play/airdate/{name}/{{date}}'.format(**channel)))
+                item.update(dict(vod='plugin://plugin.video.vrt.nu/play/airdate/{name}/{{start}}/{{stop}}'.format(**channel)))
 
             streams.append(item)
         return dict(version=1, streams=streams)

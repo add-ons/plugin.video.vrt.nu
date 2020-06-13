@@ -400,7 +400,6 @@ class ApiHelper:
             except ValueError:
                 return None
         video = None
-        episode_guess_off = None
         now = datetime.now(dateutil.tz.gettz('Europe/Brussels'))
         if onairdate.hour < 6:
             schedule_date = onairdate - timedelta(days=1)
@@ -412,22 +411,34 @@ class ApiHelper:
         episodes = schedule_json.get(channel.get('id'), [])
         if not episodes:
             return None
-        if offairdate:
-            mindate = min(abs(offairdate - dateutil.parser.parse(episode.get('endTime'))) for episode in episodes)
-            episode_guess_off = next((episode for episode in episodes if abs(offairdate - dateutil.parser.parse(episode.get('endTime'))) == mindate), None)
 
-        mindate = min(abs(onairdate - dateutil.parser.parse(episode.get('startTime'))) for episode in episodes)
-        episode_guess_on = next((episode for episode in episodes if abs(onairdate - dateutil.parser.parse(episode.get('startTime'))) == mindate), None)
-        offairdate_guess = dateutil.parser.parse(episode_guess_on.get('endTime'))
-        if (episode_guess_off and episode_guess_on.get('vrt.whatson-id') == episode_guess_off.get('vrt.whatson-id')
-                or (not episode_guess_off and episode_guess_on)):
-            video = self.get_single_episode(whatson_id=episode_guess_on.get('vrt.whatson-id'))
+        # Guess the episode
+        episode_guess = None
+        if not offairdate:
+            mindate = min(abs(onairdate - dateutil.parser.parse(episode.get('startTime'))) for episode in episodes)
+            episode_guess = next((episode for episode in episodes if abs(onairdate - dateutil.parser.parse(episode.get('startTime'))) == mindate), None)
+        else:
+            duration = offairdate - onairdate
+            midairdate = onairdate + timedelta(seconds=duration.total_seconds() / 2)
+            mindate = min(abs(midairdate
+                              - (dateutil.parser.parse(episode.get('startTime'))
+                                 + timedelta(seconds=(dateutil.parser.parse(episode.get('endTime'))
+                                                      - dateutil.parser.parse(episode.get('startTime'))).total_seconds() / 2))) for episode in episodes)
+            episode_guess = next((episode for episode in episodes
+                                  if abs(midairdate
+                                         - (dateutil.parser.parse(episode.get('startTime'))
+                                            + timedelta(seconds=(dateutil.parser.parse(episode.get('endTime'))
+                                                                 - dateutil.parser.parse(episode.get('startTime'))).total_seconds() / 2))) == mindate), None)
+
+        if episode_guess and episode_guess.get('vrt.whatson-id', None):
+            offairdate_guess = dateutil.parser.parse(episode_guess.get('endTime'))
+            video = self.get_single_episode(whatson_id=episode_guess.get('vrt.whatson-id'))
             if video:
                 return video
 
             # Airdate live2vod feature: use livestream cache of last 24 hours if no video was found
 
-            if now - timedelta(hours=24) <= dateutil.parser.parse(episode_guess_on.get('endTime')) <= now:
+            if now - timedelta(hours=24) <= dateutil.parser.parse(episode_guess.get('endTime')) <= now:
                 start_date = onairdate.astimezone(dateutil.tz.UTC).isoformat()[0:19]
                 end_date = offairdate_guess.astimezone(dateutil.tz.UTC).isoformat()[0:19]
 
@@ -438,10 +449,10 @@ class ApiHelper:
 
             if start_date and end_date:
                 video_item = TitleItem(
-                    label=self._metadata.get_label(episode_guess_on),
-                    art_dict=self._metadata.get_art(episode_guess_on),
-                    info_dict=self._metadata.get_info_labels(episode_guess_on, channel=channel, date=start_date),
-                    prop_dict=self._metadata.get_properties(episode_guess_on),
+                    label=self._metadata.get_label(episode_guess),
+                    art_dict=self._metadata.get_art(episode_guess),
+                    info_dict=self._metadata.get_info_labels(episode_guess, channel=channel, date=start_date),
+                    prop_dict=self._metadata.get_properties(episode_guess),
                 )
                 video = dict(
                     listitem=video_item,
@@ -452,7 +463,7 @@ class ApiHelper:
                 return video
 
             video = dict(
-                errorlabel=episode_guess_on.get('title')
+                errorlabel=episode_guess.get('title')
             )
         return video
 
