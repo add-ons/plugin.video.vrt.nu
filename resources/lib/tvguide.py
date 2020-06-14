@@ -227,7 +227,7 @@ class TVGuide:
                         stop=episode.get('endTime'),
                         image=add_https_proto(episode.get('image', '')),
                         title=episode.get('title'),
-                        subtitle=episode.get('subtitle'),
+                        subtitle=html_to_kodi(episode.get('subtitle', '')),
                         description=html_to_kodi(episode.get('description', '')),
                         stream=path,
                     ))
