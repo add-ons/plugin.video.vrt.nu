@@ -526,6 +526,10 @@ msgctxt "#30453"
 msgid "Kodi is configured to not update add-ons automatically, so you will not get VRT NU updates unless you fix this setting.\nWe will open de Kodi settings, please change this setting."
 msgstr "Kodi is ingesteld om add-ons niet automatisch bij te werken, dus je zal geen VRT NU updates ontvangen tenzij je deze instelling aanpast.\nWe openen nu de Kodi-instellingen zodat je dit kan wijzigen."
 
+msgctxt "#30454"
+msgid "from livestream cache"
+msgstr "uit de livestream-cache"
+
 
 ### SETTINGS
 msgctxt "#30700"

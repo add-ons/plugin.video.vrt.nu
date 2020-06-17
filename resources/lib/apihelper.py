@@ -444,14 +444,17 @@ class ApiHelper:
 
             # Offairdate defined
             if offairdate and now - timedelta(hours=24) <= offairdate <= now:
-                start_date = onairdate.astimezone(dateutil.tz.UTC).isoformat()[0:19]
-                end_date = offairdate.astimezone(dateutil.tz.UTC).isoformat()[0:19]
+                start_date = onairdate.astimezone(dateutil.tz.UTC).isoformat()[:19]
+                end_date = offairdate.astimezone(dateutil.tz.UTC).isoformat()[:19]
 
             if start_date and end_date:
+                info = self._metadata.get_info_labels(episode_guess, channel=channel, date=start_date)
+                live2vod_title = '{} ({})'.format(info.get('tvshowtitle'), localize(30454))  # from livestream cache
+                info.update(tvshowtitle=live2vod_title)
                 video_item = TitleItem(
                     label=self._metadata.get_label(episode_guess),
                     art_dict=self._metadata.get_art(episode_guess),
-                    info_dict=self._metadata.get_info_labels(episode_guess, channel=channel, date=start_date),
+                    info_dict=info,
                     prop_dict=self._metadata.get_properties(episode_guess),
                 )
                 video = dict(

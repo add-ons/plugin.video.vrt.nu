@@ -526,6 +526,9 @@ msgctxt "#30453"
 msgid "Kodi is configured to not update add-ons automatically, so you will not get VRT NU updates unless you fix this setting.\nWe will open de Kodi settings, please change this setting."
 msgstr ""
 
+msgctxt "#30454"
+msgid "from livestream cache"
+msgstr ""
 
 
 ### SETTINGS
@@ -662,7 +665,7 @@ msgid "Streaming and DRM"
 msgstr ""
 
 msgctxt "#30787"
-msgid "Use Widevine DRM [COLOR=gray]for protected content)[/COLOR]"
+msgid "Use Widevine DRM [COLOR=gray](for protected content)[/COLOR]"
 msgstr ""
 
 msgctxt "#30788"

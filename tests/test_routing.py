@@ -249,13 +249,13 @@ class TestRouting(unittest.TestCase):
         """Play episode by air date method: /play/airdate/<channel>/<start_date>"""
         # Test Het Journaal
         addon.run([lastweek.strftime('plugin://plugin.video.vrt.nu/play/airdate/een/%Y-%m-%dT19:00:00'), '0', ''])
-        self.assertEqual(plugin.url_for(addon.play_by_air_date,
+        self.assertEqual(plugin.url_for(addon.play_air_date,
                                         channel='een',
                                         start_date=lastweek.strftime('%Y-%m-%dT19:00:00')),
                          lastweek.strftime('plugin://plugin.video.vrt.nu/play/airdate/een/%Y-%m-%dT19:00:00'))
         # Test TerZake
         addon.run([lastweek.strftime('plugin://plugin.video.vrt.nu/play/airdate/canvas/%Y-%m-%dT20:00:00'), '0', ''])
-        self.assertEqual(plugin.url_for(addon.play_by_air_date,
+        self.assertEqual(plugin.url_for(addon.play_air_date,
                                         channel='canvas',
                                         start_date=lastweek.strftime('%Y-%m-%dT20:00:00')),
                          lastweek.strftime('plugin://plugin.video.vrt.nu/play/airdate/canvas/%Y-%m-%dT20:00:00'))
