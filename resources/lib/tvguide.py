@@ -177,17 +177,26 @@ class TVGuide:
         episode_items = []
         for episode in episodes:
             program = url_to_program(episode.get('url', ''))
-            if episode.get('url'):
-                video_url = add_https_proto(episode.get('url'))
-                path = url_for('play_url', video_url=video_url)
-                context_menu, favorite_marker, watchlater_marker = self._metadata.get_context_menu(episode, program, cache_file)
-                label = self._metadata.get_label(episode) + favorite_marker + watchlater_marker
+            context_menu, favorite_marker, watchlater_marker = self._metadata.get_context_menu(episode, program, cache_file)
+            label = self._metadata.get_label(episode)
+            path = self.get_episode_path(episode, channel)
+            # Playable item
+            if '/play/' in path:
                 is_playable = True
+                label += favorite_marker + watchlater_marker
+            # Non-actionable item
             else:
-                label = '[COLOR={greyedout}]%s[/COLOR]' % self._metadata.get_label(episode)
-                path = url_for('noop', whatsonid=episode.get('vrt.whatson-id', ''))
-                context_menu, _, _ = self._metadata.get_context_menu(episode, program, cache_file)
                 is_playable = False
+                label = '[COLOR={greyedout}]%s[/COLOR]' % label
+
+            # Now playing
+            start_date = dateutil.parser.parse(episode.get('startTime'))
+            end_date = dateutil.parser.parse(episode.get('endTime'))
+            if start_date <= now <= end_date:
+                if is_playable:
+                    label = '[COLOR={highlighted}]%s[/COLOR] %s' % (label, localize(30301))
+                else:
+                    label += localize(30301)
 
             info_labels = self._metadata.get_info_labels(episode, date=date, channel=entry)
             # FIXME: Due to a bug in Kodi, ListItem.Title is used when Sort methods are used, not ListItem.Label
@@ -202,6 +211,17 @@ class TVGuide:
                 is_playable=is_playable,
             ))
         return episode_items
+
+    @staticmethod
+    def get_episode_path(episode, channel):
+        """Return a playable plugin:// path for an episode"""
+        now = datetime.now(dateutil.tz.tzlocal())
+        end_date = dateutil.parser.parse(episode.get('endTime'))
+        if episode.get('url') and episode.get('vrt.whatson-id'):
+            return url_for('play_whatson_id', whatson_id=episode.get('vrt.whatson-id'))
+        if now - timedelta(hours=24) <= end_date <= now:
+            return url_for('play_air_date', channel, episode.get('startTime')[:19], episode.get('endTime')[:19])
+        return url_for('noop', whatsonid=episode.get('vrt.whatson-id', ''))
 
     def get_epg_data(self):
         """Return EPG data"""
@@ -218,8 +238,8 @@ class TVGuide:
                 if epg_id not in epg_data:
                     epg_data[epg_id] = []
                 for episode in episodes:
-                    if episode.get('url'):
-                        path = url_for('play_url', video_url=add_https_proto(episode.get('url')))
+                    if episode.get('url') and episode.get('vrt.whatson-id'):
+                        path = url_for('play_whatson_id', whatson_id=episode.get('vrt.whatson-id'))
                     else:
                         path = None
                     epg_data[epg_id].append(dict(

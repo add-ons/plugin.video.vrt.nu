@@ -308,10 +308,17 @@ def play_upnext(video_id):
 
 @plugin.route('/play/airdate/<channel>/<start_date>')
 @plugin.route('/play/airdate/<channel>/<start_date>/<end_date>')
-def play_by_air_date(channel, start_date, end_date=None):
-    """The API interface to play an episode of a program given the channel and the air date in iso format (2019-07-06T19:35:00)"""
+def play_air_date(channel, start_date, end_date=None):
+    """The API interface to play an episode of a program given the channel, start (and end) timestamp(s) in ISO 8601 format (e.g. 2020-06-15T10:35:00)"""
     from vrtplayer import VRTPlayer
     VRTPlayer().play_episode_by_air_date(channel, start_date, end_date)
+
+
+@plugin.route('/play/whatson/<whatson_id>')
+def play_whatson_id(whatson_id):
+    """The API interface to play a video by using a whatson_id"""
+    from vrtplayer import VRTPlayer
+    VRTPlayer().play_episode_by_whatson_id(whatson_id=whatson_id)
 
 
 @plugin.route('/iptv/channels')
