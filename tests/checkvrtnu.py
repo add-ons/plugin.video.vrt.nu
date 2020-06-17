@@ -28,7 +28,7 @@ def google_play_info():
     regex = re.compile(r'<script[\s\S]*?AF_initDataCallback\(([\s\S]*?\));<\/script>')
     match = re.findall(regex, req.text)
     key_regex = re.compile(r'key: \'ds:(.*?)\',')
-    value_regex = re.compile(r'return ([\s\S]*?)}}')
+    value_regex = re.compile(r'data:([\s\S]*?)}\)')
     version = None
     changelog = None
     published = None
