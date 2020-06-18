@@ -157,10 +157,9 @@ class ApiHelper:
         season_items = []
         sort = 'label'
         ascending = True
-        content = 'seasons'
+        content = 'files'
 
         episode = random.choice(episodes)
-        info_labels = self._metadata.get_info_labels(episode, season=True)
         program_type = episode.get('programType')
 
         # Reverse sort seasons if program_type is 'reeksaflopend' or 'daily'
@@ -173,7 +172,13 @@ class ApiHelper:
                 label=localize(30133),  # All seasons
                 path=url_for('programs', program=program, season='allseasons'),
                 art_dict=self._metadata.get_art(episode, season='allseasons'),
-                info_dict=info_labels,
+                info_dict=dict(tvshowtitle=self._metadata.get_tvshowtitle(episode),
+                               plot=self._metadata.get_plot(episode, season='allseasons'),
+                               plotoutline=self._metadata.get_plotoutline(episode, season='allseasons'),
+                               tagline=self._metadata.get_plotoutline(episode, season='allseasons'),
+                               mediatype=self._metadata.get_mediatype(episode, season='allseasons'),
+                               studio=self._metadata.get_studio(episode),
+                               tag=self._metadata.get_tag(episode)),
             ))
 
         # NOTE: Sort the episodes ourselves, because Kodi does not allow to set to 'ascending'
@@ -192,7 +197,7 @@ class ApiHelper:
                 label=label,
                 path=url_for('programs', program=program, season=season_key),
                 art_dict=self._metadata.get_art(episode, season=True),
-                info_dict=info_labels,
+                info_dict=self._metadata.get_info_labels(episode, season=True),
                 prop_dict=self._metadata.get_properties(episode),
             ))
         return season_items, sort, ascending, content
