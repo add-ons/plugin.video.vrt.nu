@@ -9,9 +9,16 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import os
 from shutil import copyfile
 
+try:  # Python 2
+    basestring
+except NameError:  # Python 3
+    basestring = str  # pylint: disable=redefined-builtin
+
 
 def File(path, flags='r'):
     """A reimplementation of the xbmcvfs File() function"""
+    assert isinstance(path, basestring)
+    assert isinstance(flags, basestring)
     return open(path, flags)
 
 
@@ -23,6 +30,7 @@ def Stat(path):
 
         def __init__(self, path):
             """The constructor xbmcvfs stat class"""
+            assert isinstance(path, basestring)
             self._stat = os.stat(path)
 
         def st_mtime(self):
@@ -34,11 +42,14 @@ def Stat(path):
 
 def copy(src, dst):
     """A reimplementation of the xbmcvfs mkdir() function"""
+    assert isinstance(src, basestring)
+    assert isinstance(dst, basestring)
     return copyfile(src, dst) == dst
 
 
 def delete(path):
     """A reimplementation of the xbmcvfs delete() function"""
+    assert isinstance(path, basestring)
     try:
         os.remove(path)
     except OSError:
@@ -47,11 +58,13 @@ def delete(path):
 
 def exists(path):
     """A reimplementation of the xbmcvfs exists() function"""
+    assert isinstance(path, basestring)
     return os.path.exists(path)
 
 
 def listdir(path):
     """A reimplementation of the xbmcvfs listdir() function"""
+    assert isinstance(path, basestring)
     files = []
     dirs = []
     if not exists(path):
@@ -67,14 +80,17 @@ def listdir(path):
 
 def mkdir(path):
     """A reimplementation of the xbmcvfs mkdir() function"""
+    assert isinstance(path, basestring)
     return os.mkdir(path)
 
 
 def mkdirs(path):
     """A reimplementation of the xbmcvfs mkdirs() function"""
+    assert isinstance(path, basestring)
     return os.makedirs(path)
 
 
 def rmdir(path):
     """A reimplementation of the xbmcvfs rmdir() function"""
+    assert isinstance(path, basestring)
     return os.rmdir(path)

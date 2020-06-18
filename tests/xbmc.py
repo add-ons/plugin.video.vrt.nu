@@ -14,6 +14,11 @@ import weakref
 from xbmcextra import ADDON_ID, global_settings, import_language
 from utils import to_unicode
 
+try:  # Python 2
+    basestring
+except NameError:  # Python 3
+    basestring = str  # pylint: disable=redefined-builtin
+
 LOGLEVELS = ['Debug', 'Info', 'Notice', 'Warning', 'Error', 'Severe', 'Fatal', 'None']
 LOGDEBUG = 0
 LOGINFO = 1
@@ -185,11 +190,13 @@ class VideoInfoTag(object):  # pylint: disable=useless-object-inheritance
 
 def executebuiltin(string, wait=False):  # pylint: disable=unused-argument
     """A stub implementation of the xbmc executebuiltin() function"""
-    return
+    assert isinstance(string, basestring)
+    assert isinstance(wait, bool)
 
 
 def executeJSONRPC(jsonrpccommand):
     """A reimplementation of the xbmc executeJSONRPC() function"""
+    assert isinstance(jsonrpccommand, basestring)
     command = json.loads(jsonrpccommand)
 
     # Handle a list of commands sequentially
@@ -233,6 +240,7 @@ def executeJSONRPC(jsonrpccommand):
 
 def getCondVisibility(string):
     """A reimplementation of the xbmc getCondVisibility() function"""
+    assert isinstance(string, basestring)
     if string == 'system.platform.android':
         return False
     if string.startswith('System.HasAddon'):
@@ -242,11 +250,13 @@ def getCondVisibility(string):
 
 def getInfoLabel(key):
     """A reimplementation of the xbmc getInfoLabel() function"""
+    assert isinstance(key, basestring)
     return INFO_LABELS.get(key)
 
 
 def getLocalizedString(msgctxt):
     """A reimplementation of the xbmc getLocalizedString() function"""
+    assert isinstance(msgctxt, int)
     for entry in LANGUAGE:
         if entry.msgctxt == '#%s' % msgctxt:
             return entry.msgstr or entry.msgid
@@ -257,11 +267,14 @@ def getLocalizedString(msgctxt):
 
 def getRegion(key):
     """A reimplementation of the xbmc getRegion() function"""
+    assert isinstance(key, basestring)
     return REGIONS.get(key)
 
 
 def log(msg, level=0):
     """A reimplementation of the xbmc log() function"""
+    assert isinstance(msg, basestring)
+    assert isinstance(level, int)
     color1 = '\033[32;1m'
     color2 = '\033[32;0m'
     name = LOGLEVELS[level]
@@ -276,18 +289,15 @@ def log(msg, level=0):
     print('{color1}{name}: {color2}{msg}\033[39;0m'.format(name=name, color1=color1, color2=color2, msg=to_unicode(msg)))
 
 
-def setContent(self, content):
-    """A stub implementation of the xbmc setContent() function"""
-    return
-
-
 def sleep(timemillis):
     """A reimplementation of the xbmc sleep() function"""
+    assert isinstance(timemillis, int)
     time.sleep(timemillis / 1000)
 
 
 def translatePath(path):
     """A stub implementation of the xbmc translatePath() function"""
+    assert isinstance(path, basestring)
     if path.startswith('special://home'):
         return path.replace('special://home', os.path.join(os.getcwd(), 'tests/'))
     if path.startswith('special://masterprofile'):
