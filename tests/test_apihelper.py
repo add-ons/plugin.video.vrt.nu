@@ -43,7 +43,7 @@ class TestApiHelper(unittest.TestCase):
         self.assertTrue(len(title_items) < 5)
         self.assertEqual(sort, 'label')
         self.assertFalse(ascending)
-        self.assertEqual(content, 'seasons')
+        self.assertEqual(content, 'files')
 
     def test_get_api_data_specific_season(self):
         """Test listing episodes for a specific season (pano)"""
@@ -51,7 +51,7 @@ class TestApiHelper(unittest.TestCase):
         self.assertEqual(len(title_items), 6)
         self.assertEqual(sort, 'label')
         self.assertFalse(ascending)
-        self.assertEqual(content, 'seasons')
+        self.assertEqual(content, 'files')
 
     def test_get_api_data_specific_season_without_broadcastdate(self):
         """Test listing episodes without broadcast date (postbus-x)"""
@@ -59,7 +59,7 @@ class TestApiHelper(unittest.TestCase):
         self.assertEqual(len(title_items), 4)
         self.assertEqual(sort, 'label')
         self.assertTrue(ascending)
-        self.assertEqual(content, 'seasons')
+        self.assertEqual(content, 'files')
 
     def test_get_recent_episodes(self):
         """Test items, sort and order"""

@@ -56,7 +56,7 @@ class TestVRTPlayer(unittest.TestCase):
         self.assertTrue(episode_items)
         self.assertEqual(sort, 'label')
         self.assertFalse(ascending)
-        self.assertEqual(content, 'seasons')
+        self.assertEqual(content, 'files')
 
         self._vrtplayer.show_episodes_menu(program)
 
@@ -67,7 +67,7 @@ class TestVRTPlayer(unittest.TestCase):
         self.assertTrue(episode_items, msg=program)
         self.assertEqual(sort, 'label')
         self.assertFalse(ascending)
-        self.assertEqual(content, 'seasons')
+        self.assertEqual(content, 'files')
 
         self._vrtplayer.show_episodes_menu(program)
 
