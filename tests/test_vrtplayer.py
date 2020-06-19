@@ -72,7 +72,7 @@ class TestVRTPlayer(unittest.TestCase):
         self._vrtplayer.show_episodes_menu(program)
 
     def test_random_tvshow_episodes(self):
-        """Rest episode from a random tvshow in a random category"""
+        """Test episode from a random tvshow in a random category"""
         from webscraper import get_categories
         categories = get_categories()
         self.assertTrue(categories)
@@ -88,7 +88,7 @@ class TestVRTPlayer(unittest.TestCase):
             self.assertTrue(episode_items, msg=tvshow.path.split('/')[4])
             self.assertTrue(sort in ['dateadded', 'episode', 'label', 'unsorted'])
             self.assertTrue(ascending is True or ascending is False)
-            self.assertTrue(content in ['episodes', 'seasons'], "Content for '%s' is '%s'" % (tvshow.label, content))
+            self.assertTrue(content in ['episodes', 'files'], "Content for '%s' is '%s'" % (tvshow.label, content))
         elif tvshow.path.startswith('plugin://plugin.video.vrt.nu/play/id/'):
             # When random program is playable item
             pass
