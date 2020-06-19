@@ -16,6 +16,11 @@ try:  # Python 3
 except ImportError:  # Python 2
     from urllib2 import HTTPError, Request, urlopen
 
+try:  # Python 2
+    basestring
+except NameError:  # Python 3
+    basestring = str  # pylint: disable=redefined-builtin
+
 SORT_METHOD_NONE = 0
 SORT_METHOD_LABEL = 1
 SORT_METHOD_LABEL_IGNORE_THE = 2
@@ -91,11 +96,13 @@ def endOfDirectory(handle, succeeded=True, updateListing=True, cacheToDisc=True)
 
 def getSetting(handle, key):
     """A stub implementation of the xbmcplugin getSetting() function"""
+    assert isinstance(key, basestring)
     return Addon().getSetting(key)
 
 
 def setContent(handle, content):
     """A stub implementation of the xbmcplugin setContent() function"""
+    assert content in ['albums', 'artists', 'episodes', 'files', 'movies', 'musicvideos', 'songs', 'tvshows']
 
 
 def setPluginFanart(handle, image, color1=None, color2=None, color3=None):
