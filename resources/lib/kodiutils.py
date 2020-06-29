@@ -708,13 +708,15 @@ def colour(text):
 
 def get_cache_path(cache_file, cache_dir=DEFAULT_CACHE_DIR):
     """Return a specified cache path"""
+    import os
     cache_dir = get_cache_dir(cache_dir)
-    return cache_dir + '/' + cache_file
+    return os.path.join(cache_dir, cache_file)
 
 
 def get_cache_dir(cache_dir=DEFAULT_CACHE_DIR):
     """Create and return a specified cache directory"""
-    cache_dir = addon_profile() + cache_dir
+    import os
+    cache_dir = os.path.join(addon_profile(), cache_dir, '')
     return cache_dir
 
 
