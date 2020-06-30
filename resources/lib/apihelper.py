@@ -6,15 +6,14 @@ from __future__ import absolute_import, division, unicode_literals
 
 try:  # Python 3
     from urllib.parse import quote_plus, unquote
-    from urllib.request import build_opener, install_opener, ProxyHandler
 except ImportError:  # Python 2
     from urllib import quote_plus
-    from urllib2 import build_opener, install_opener, ProxyHandler, unquote
+    from urllib2 import unquote
 
 from data import CHANNELS
 from helperobjects import TitleItem
 from kodiutils import (delete_cached_thumbnail, get_cache, get_cached_url_json, get_global_setting,
-                       get_proxies, get_setting_bool, get_setting_int, get_url_json, has_addon, localize,
+                       get_setting_bool, get_setting_int, get_url_json, has_addon, localize,
                        localize_from_data, log, ttl, url_for)
 from metadata import Metadata
 from utils import (html_to_kodi, find_entry, from_unicode, play_url_to_id,
@@ -34,7 +33,6 @@ class ApiHelper:
         self._favorites = _favorites
         self._resumepoints = _resumepoints
         self._metadata = Metadata(_favorites, _resumepoints)
-        install_opener(build_opener(ProxyHandler(get_proxies())))
 
     def get_tvshows(self, category=None, channel=None, feature=None):
         """Get all TV shows for a given category, channel or feature, optionally filtered by favorites"""

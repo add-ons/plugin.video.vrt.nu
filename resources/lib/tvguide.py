@@ -8,15 +8,10 @@ from datetime import datetime, timedelta
 import dateutil.parser
 import dateutil.tz
 
-try:  # Python 3
-    from urllib.request import build_opener, install_opener, ProxyHandler
-except ImportError:  # Python 2
-    from urllib2 import build_opener, install_opener, ProxyHandler
-
 from data import CHANNELS, RELATIVE_DATES
 from favorites import Favorites
 from helperobjects import TitleItem
-from kodiutils import (colour, get_cached_url_json, get_proxies, get_url_json, has_addon, localize,
+from kodiutils import (colour, get_cached_url_json, get_url_json, has_addon, localize,
                        localize_datelong, show_listing, themecolour, ttl, url_for)
 from metadata import Metadata
 from resumepoints import ResumePoints
@@ -33,7 +28,6 @@ class TVGuide:
         self._favorites = Favorites()
         self._resumepoints = ResumePoints()
         self._metadata = Metadata(self._favorites, self._resumepoints)
-        install_opener(build_opener(ProxyHandler(get_proxies())))
 
     def show_tvguide(self, date=None, channel=None):
         """Offer a menu depending on the information provided"""
@@ -302,6 +296,7 @@ class TVGuide:
         episodes = iter(schedule.get(entry.get('id'), []))
 
         description = ''
+        episode = None
         while True:
             try:
                 episode = next(episodes)
@@ -323,7 +318,7 @@ class TVGuide:
                 except StopIteration:
                     break
                 break
-        if not description:
+        if episode and not description:
             # Add a final 'No transmission' program
             description = '[COLOR={highlighted}][B]%s[/B] %s - 06:00\n» %s[/COLOR]' % (localize(30421), episode.get('end'), localize(30423))
         return colour(description)
