@@ -1112,7 +1112,7 @@ def open_url(url, data=None, headers=None, method=None, cookiejar=None, follow_r
             ok_dialog(heading='HTTP Error {code}'.format(code=exc.code), message='{}\n{}'.format(url, exc.reason))
             log_error('HTTP Error {code}: {reason}', code=exc.code, reason=exc.reason)
             return None
-        if exc.code 403 and exc.headers.get('Content-Type') == 'application/json':
+        if exc.code in (400, 403) and exc.headers.get('Content-Type') == 'application/json':
             return exc
         reason = exc.reason
         code = exc.code

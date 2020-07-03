@@ -25,7 +25,7 @@ class ResumePoints:
     @staticmethod
     def is_activated():
         """Is resumepoints activated in the menu and do we have credentials ?"""
-        return get_setting_bool('useresumepoints', default=True) and has_credentials()
+        return get_setting_bool('usefavorites', default=True) and get_setting_bool('useresumepoints', default=True) and has_credentials()
 
     @staticmethod
     def resumepoint_headers(url=None):

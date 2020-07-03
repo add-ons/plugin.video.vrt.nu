@@ -978,6 +978,10 @@ msgctxt "#30971"
 msgid "There is an unknown problem authenticating your user credentials at VRT NU. Please check your VRT NU account at https://www.vrt.be/vrtnu/"
 msgstr ""
 
+msgctxt "#30972"
+msgid "There is a problem authenticating at VRT NU to enable favorites. Please check your VRT NU account at https://www.vrt.be/vrtnu/ or disable favorites in the add-on settings."
+msgstr ""
+
 msgctxt "#30975"
 msgid "Failed to get user token from VRT NU"
 msgstr ""

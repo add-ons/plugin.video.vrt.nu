@@ -158,7 +158,12 @@ class TokenResolver:
             _csrf=xsrf.value
         )
         data = urlencode(payload).encode()
-        open_url(self._VRT_LOGIN_URL, data=data, cookiejar=cookiejar)
+        destination = open_url(self._VRT_LOGIN_URL, data=data, cookiejar=cookiejar).geturl()
+        usertoken = TokenResolver._create_token_dictionary(cookiejar, name)
+        if not usertoken and not destination.startswith('https://www.vrt.be/vrtnu'):
+            ok_dialog(heading=localize(30970), message=localize(30972))
+            return None
+
         # Cache additional tokens for later use
         refreshtoken = TokenResolver._create_token_dictionary(cookiejar, cookie_name='vrtlogin-rt')
         accesstoken = TokenResolver._create_token_dictionary(cookiejar, cookie_name='vrtlogin-at')
@@ -170,8 +175,7 @@ class TokenResolver:
             from json import dumps
             cache_file = self._get_token_filename('vrtlogin-at')
             update_cache(cache_file, dumps(accesstoken), self._TOKEN_CACHE_DIR)
-
-        return TokenResolver._create_token_dictionary(cookiejar, name)
+        return usertoken
 
     def _get_xvrttoken(self, login_json=None):
         """Get a one year valid X-VRT-Token"""
