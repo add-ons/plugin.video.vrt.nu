@@ -371,5 +371,6 @@ class VRTPlayer:
         _streamservice = StreamService(_tokenresolver)
         stream = _streamservice.get_stream(video)
         if stream is None:
+            end_of_directory()
             return
         play(stream, video.get('listitem'))
