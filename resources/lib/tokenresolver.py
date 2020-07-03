@@ -137,11 +137,11 @@ class TokenResolver:
             return self._get_playertoken(variant, url, roaming)
 
         if name in ('vrtlogin-at', 'vrtlogin-expiry', 'vrtlogin-rt', 'SESSION', 'OIDCXSRF', 'state'):
-            return self._get_usertoken(name)
+            return self._get_usertoken(name, roaming=roaming)
 
         return None
 
-    def _get_usertoken(self, name=None, login_json=None):
+    def _get_usertoken(self, name=None, login_json=None, roaming=False):
         """Get a user X-VRT-Token, vrtlogin-at, vrtlogin-expiry, vrtlogin-rt, SESSION, OIDCXSRF or state token"""
         if not login_json:
             login_json = self._get_login_json()
@@ -161,7 +161,8 @@ class TokenResolver:
         destination = open_url(self._VRT_LOGIN_URL, data=data, cookiejar=cookiejar).geturl()
         usertoken = TokenResolver._create_token_dictionary(cookiejar, name)
         if not usertoken and not destination.startswith('https://www.vrt.be/vrtnu'):
-            ok_dialog(heading=localize(30970), message=localize(30972))
+            if roaming is False:
+                ok_dialog(heading=localize(30970), message=localize(30972))
             return None
 
         # Cache additional tokens for later use
@@ -203,7 +204,7 @@ class TokenResolver:
 
     def _get_roaming_xvrttoken(self):
         """Get a X-VRT-Token for roaming"""
-        vrtlogin_at = self.get_token('vrtlogin-at')
+        vrtlogin_at = self.get_token('vrtlogin-at', roaming=True)
         if vrtlogin_at is None:
             return None
         cookie_value = 'vrtlogin-at=' + vrtlogin_at
