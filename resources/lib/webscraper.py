@@ -6,15 +6,11 @@ from __future__ import absolute_import, division, unicode_literals
 
 try:  # Python 3
     from urllib.error import HTTPError
-    from urllib.parse import unquote
-    from urllib.request import build_opener, install_opener, urlopen, ProxyHandler
 except ImportError:  # Python 2
-    from urllib2 import build_opener, HTTPError, install_opener, ProxyHandler, unquote, urlopen
+    from urllib2 import HTTPError
 
-from kodiutils import get_cache, get_setting_bool, get_proxies, log, log_error, ttl, update_cache
+from kodiutils import get_cache, get_setting_bool, log_error, open_url, ttl, update_cache
 from utils import assetpath_to_id, add_https_proto, strip_newlines
-
-install_opener(build_opener(ProxyHandler(get_proxies())))
 
 
 def valid_categories(categories):
@@ -34,8 +30,7 @@ def get_categories():
     # Try to scrape from the web
     if not valid_categories(categories):
         from bs4 import BeautifulSoup, SoupStrainer
-        log(2, 'URL get: https://www.vrt.be/vrtnu/categorieen/')
-        response = urlopen('https://www.vrt.be/vrtnu/categorieen/')
+        response = open_url('https://www.vrt.be/vrtnu/categorieen/')
         tiles = SoupStrainer('nui-list--content')
         soup = BeautifulSoup(response.read(), 'html.parser', parse_only=tiles)
 
@@ -83,9 +78,8 @@ def get_video_attributes(vrtnu_url):
 
     # Scrape video attributes
     from bs4 import BeautifulSoup, SoupStrainer
-    log(2, 'URL get: {url}', url=unquote(vrtnu_url))
     try:
-        html_page = urlopen(vrtnu_url).read()
+        html_page = open_url(vrtnu_url, raise_errors='all').read()
     except HTTPError as exc:
         log_error('Web scraping video attributes failed: {error}', error=exc)
         return None

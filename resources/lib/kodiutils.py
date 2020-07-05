@@ -5,11 +5,18 @@
 from __future__ import absolute_import, division, unicode_literals
 from contextlib import contextmanager
 from sys import version_info
+from socket import timeout
+from ssl import SSLError
 
 import xbmc
 import xbmcaddon
 import xbmcplugin
 from utils import from_unicode, to_unicode
+
+try:  # Python 3
+    from urllib.request import HTTPErrorProcessor
+except ImportError:  # Python 2
+    from urllib2 import HTTPErrorProcessor
 
 ADDON = xbmcaddon.Addon()
 DEFAULT_CACHE_DIR = 'cache'
@@ -78,6 +85,15 @@ MONTH_SHORT = {
     '11': xbmc.getLocalizedString(61),
     '12': xbmc.getLocalizedString(62),
 }
+
+
+class NoRedirection(HTTPErrorProcessor):
+    """Prevent urllib from following http redirects"""
+
+    def http_response(self, request, response):
+        return response
+
+    https_response = http_response
 
 
 class SafeDict(dict):
@@ -861,10 +877,10 @@ def wait_for_resumepoints():
     update = get_property('vrtnu_resumepoints')
     if update == 'busy':
         import time
-        timeout = time.time() + 5  # 5 seconds timeout
+        time_out = time.time() + 5  # 5 seconds timeout
         log(3, 'Resumepoint update is busy, wait')
         while update != 'ready':
-            if time.time() > timeout:  # Exit loop in case something goes wrong
+            if time.time() > time_out:  # Exit loop in case something goes wrong
                 break
             xbmc.sleep(50)
             update = get_property('vrtnu_resumepoints')
@@ -1034,6 +1050,85 @@ def ttl(kind='direct'):
     return 5 * 60
 
 
+def open_url(url, data=None, headers=None, method=None, cookiejar=None, follow_redirects=True, raise_errors=None):
+    """Return a urllib http response"""
+    try:  # Python 3
+        from urllib.error import HTTPError, URLError
+        from urllib.parse import unquote
+        from urllib.request import build_opener, HTTPCookieProcessor, ProxyHandler, Request
+    except ImportError:  # Python 2
+        from urllib2 import build_opener, HTTPError, HTTPCookieProcessor, ProxyHandler, Request, URLError, unquote
+
+    opener_args = []
+    if not follow_redirects:
+        opener_args.append(NoRedirection)
+    if cookiejar is not None:
+        opener_args.append(HTTPCookieProcessor(cookiejar))
+    proxies = get_proxies()
+    if proxies:
+        opener_args.append(ProxyHandler(proxies))
+    opener = build_opener(*opener_args)
+
+    if not headers:
+        headers = dict()
+    req = Request(url, headers=headers)
+    if data is not None:
+        req.data = data
+        log(2, 'URL post: {url}', url=unquote(url))
+        log(2, 'URL post data: {data}', data=data)
+    else:
+        log(2, 'URL get: {url}', url=unquote(url))
+
+    if method is not None:
+        req.get_method = lambda: method
+
+    if raise_errors is None:
+        raise_errors = list()
+    try:
+        return opener.open(req)
+    except HTTPError as exc:
+        if isinstance(raise_errors, list) and 401 in raise_errors or raise_errors == 'all':
+            raise
+        if hasattr(req, 'selector'):  # Python 3.4+
+            url_length = len(req.selector)
+        else:  # Python 2.7
+            url_length = len(req.get_selector())
+        if exc.code == 400 and 7600 <= url_length <= 8192:
+            ok_dialog(heading='HTTP Error 400', message=localize(30967))
+            log_error('HTTP Error 400: Probably exceeded maximum url length: '
+                      'VRT Search API url has a length of {length} characters.', length=url_length)
+            return None
+        if exc.code == 413 and url_length > 8192:
+            ok_dialog(heading='HTTP Error 413', message=localize(30967))
+            log_error('HTTP Error 413: Exceeded maximum url length: '
+                      'VRT Search API url has a length of {length} characters.', length=url_length)
+            return None
+        if exc.code == 431:
+            ok_dialog(heading='HTTP Error 431', message=localize(30967))
+            log_error('HTTP Error 431: Request header fields too large: '
+                      'VRT Search API url has a length of {length} characters.', length=url_length)
+            return None
+        if exc.code == 401:
+            ok_dialog(heading='HTTP Error {code}'.format(code=exc.code), message='{}\n{}'.format(url, exc.reason))
+            log_error('HTTP Error {code}: {reason}', code=exc.code, reason=exc.reason)
+            return None
+        if exc.code in (400, 403) and exc.headers.get('Content-Type') and 'application/json' in exc.headers.get('Content-Type'):
+            return exc
+        reason = exc.reason
+        code = exc.code
+        ok_dialog(heading='HTTP Error {code}'.format(code=code), message='{}\n{}'.format(url, reason))
+        log_error('HTTP Error {code}: {reason}', code=code, reason=reason)
+        return None
+    except URLError as exc:
+        ok_dialog(heading=localize(30968), message=localize(30969))
+        log_error('URLError: {error}\nurl: {url}', error=exc.reason, url=url)
+        return None
+    except (timeout, SSLError) as exc:
+        ok_dialog(heading=localize(30968), message=localize(30969))
+        log_error('{error}\nurl: {url}', error=exc.reason, url=url)
+        return None
+
+
 def get_json_data(response, fail=None):
     """Return json object from HTTP response"""
     from json import load, loads
@@ -1049,55 +1144,17 @@ def get_json_data(response, fail=None):
         return fail
 
 
-def get_url_json(url, cache=None, headers=None, data=None, fail=None):
+def get_url_json(url, cache=None, headers=None, data=None, fail=None, raise_errors=None):
     """Return HTTP data"""
-    try:  # Python 3
-        from urllib.error import HTTPError
-        from urllib.parse import unquote
-        from urllib.request import urlopen, Request
-    except ImportError:  # Python 2
-        from urllib2 import HTTPError, unquote, urlopen, Request
-
-    if headers is None:
-        headers = dict()
-    req = Request(url, headers=headers)
-
-    if data is not None:
-        log(2, 'URL post: {url}', url=unquote(url))
-        log(2, 'URL post data: {data}', data=data)
-        req.data = data
-    else:
-        log(2, 'URL get: {url}', url=unquote(url))
-    try:
-        json_data = get_json_data(urlopen(req), fail=fail)
-    except HTTPError as exc:
-        if hasattr(req, 'selector'):  # Python 3.4+
-            url_length = len(req.selector)
-        else:  # Python 2.7
-            url_length = len(req.get_selector())
-        if exc.code == 400 and 7600 <= url_length <= 8192:
-            ok_dialog(heading='HTTP Error 400', message=localize(30967))
-            log_error('HTTP Error 400: Probably exceeded maximum url length: '
-                      'VRT Search API url has a length of {length} characters.', length=url_length)
-            return fail
-        if exc.code == 413 and url_length > 8192:
-            ok_dialog(heading='HTTP Error 413', message=localize(30967))
-            log_error('HTTP Error 413: Exceeded maximum url length: '
-                      'VRT Search API url has a length of {length} characters.', length=url_length)
-            return fail
-        if exc.code == 431:
-            ok_dialog(heading='HTTP Error 431', message=localize(30967))
-            log_error('HTTP Error 431: Request header fields too large: '
-                      'VRT Search API url has a length of {length} characters.', length=url_length)
-            return fail
-        json_data = get_json_data(exc, fail=fail)
-        if json_data is None:
-            raise
-    else:
-        if cache:
-            from json import dumps
-            update_cache(cache, dumps(json_data))
-    return json_data
+    response = open_url(url, headers=headers, data=data, raise_errors=raise_errors)
+    if response:
+        json_data = get_json_data(response, fail=fail)
+        if json_data:
+            if cache:
+                from json import dumps
+                update_cache(cache, dumps(json_data))
+            return json_data
+    return fail
 
 
 def delete_cache(cache_file, cache_dir=DEFAULT_CACHE_DIR):

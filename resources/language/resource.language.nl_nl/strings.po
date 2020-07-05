@@ -962,6 +962,26 @@ msgctxt "#30967"
 msgid "Could not retrieve this program list. VRT Search API url is too long. Go to [B]VRT NU settings » Interface » Manage My favorites…[/B] and unfollow older favorite programs to fix this problem."
 msgstr "Deze programmalijst kan niet opgehaald worden. VRT Search API url is te lang. Ga naar [B]VRT NU instellingen » Interface » Beheer Mijn favorieten[/B] en verwijder een aantal favoriete programma's om dit probleem op te lossen. "
 
+msgctxt "#30968"
+msgid "No connection"
+msgstr "Geen verbinding"
+
+msgctxt "#30969"
+msgid "There is a problem connecting to the Internet. This could be related to Kodi, your network, your ISP or VRT NU. Check out the Kodi log for more details."
+msgstr "Er is een probleem met het verbinden met internet. Dit kan liggen aan Kodi, aan jouw netwerk, aan jouw ISP of aan VRT NU. Bekijk de Kodi-log voor meer details."
+
+msgctxt "#30970"
+msgid "VRT NU authentication failed"
+msgstr "VRT NU-verificatie is mislukt"
+
+msgctxt "#30971"
+msgid "There is an unknown problem authenticating your user credentials at VRT NU. Please check your VRT NU account at https://www.vrt.be/vrtnu/"
+msgstr "Er is een onbekend probleem bij het verifiëren van je gebruikersgegevens bij VRT NU. Controleer je VRT NU-account op https://www.vrt.be/vrtnu/"
+
+msgctxt "#30972"
+msgid "There is a problem authenticating at VRT NU to enable favorites. Please check your VRT NU account at https://www.vrt.be/vrtnu/ or disable favorites in the add-on settings."
+msgstr "Er is een probleem met de authenticatie bij VRT NU om favorieten in te schakelen. Controleer je VRT NU-account op https://www.vrt.be/vrtnu/ of schakel favorieten uit in de add-on-instellingen."
+
 msgctxt "#30975"
 msgid "Failed to get user token from VRT NU"
 msgstr "Ophalen van het gebruikerstoken van VRT NU is mislukt"
