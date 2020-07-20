@@ -154,25 +154,28 @@ class StreamService:
 
     @staticmethod
     def _fix_virtualsubclip(manifest_url, duration):
-        '''VRT NU uses virtual subclips to provide on demand programs (mostly current affair programs)
-           already from a livestream while or shortly after live broadcasting them.
-           But this feature doesn't work always as expected because Kodi doesn't play the program from
-           the beginning when the ending timestamp of the program is missing from the stream_url.
-           When begintime is present in the stream_url and endtime is missing, we must add endtime
-           to the stream_url so Kodi treats the program as an on demand program and starts the stream
-           from the beginning like a real on demand program.'''
+        '''VRT NU already offers some programs (mostly current affairs programs) as video on demand from the moment the live broadcast has started.
+           To do so, VRT NU adds start (and stop) timestamps to the livestream url to indicate the beginning (and the end) of a program.
+           So Unified Origin streaming platform knows it should return a time bounded manifest file, this is called a Live-to-VOD stream or virtual subclip:
+           https://docs.unified-streaming.com/documentation/vod/player-urls.html#virtual-subclips
+           e.g. https://live-cf-vrt.akamaized.net/groupc/live/8edf3bdf-7db3-41c3-a318-72cb7f82de66/live.isml/.mpd?t=2020-07-20T11:07:00
+
+           But Unified Origin streaming platform needs a past stop timestamp to return a virtual subclip.
+
+           When a past stop timestamp is missing Unified Origin streaming platform treats the stream as an ordinary livestream
+           and doesn't return a virtual subclip. Therefore we must try to add a past stop timestamp to the manifest_url.'''
         begin = manifest_url.split('?t=')[1] if '?t=' in manifest_url else None
         if begin and len(begin) == 19:
             from datetime import datetime, timedelta
             import dateutil.parser
             begin_time = dateutil.parser.parse(begin)
             end_time = begin_time + duration
-            # If on demand program is not yet broadcasted completely,
-            # use current time minus 5 seconds safety margin as endtime.
+            # We always need a past stop timestamp so if a program is not yet broadcasted completely,
+            # we should use the current time minus 5 seconds safety margin as a stop timestamp.
             now = datetime.utcnow()
             if end_time > now:
                 end_time = now - timedelta(seconds=5)
-                manifest_url += '-' + end_time.strftime('%Y-%m-%dT%H:%M:%S')
+            manifest_url += '-' + end_time.strftime('%Y-%m-%dT%H:%M:%S')
         return manifest_url
 
     def get_stream(self, video, roaming=False, api_data=None):
