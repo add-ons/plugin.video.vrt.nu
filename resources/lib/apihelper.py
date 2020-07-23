@@ -93,15 +93,14 @@ class ApiHelper:
             context_menu=context_menu,
         )
 
-    def list_episodes(self, program=None, season=None, category=None, feature=None, programtype=None, page=None, use_favorites=False, variety=None):
+    def list_episodes(self, program=None, season=None, category=None, feature=None, programtype=None,
+                      page=None, items_per_page=None, use_favorites=False, variety=None, sort_key=None):
         """Construct a list of episode or season TitleItems from VRT NU Search API data and filtered by favorites"""
         # Caching
         if not variety:
             cache_file = None
-        elif use_favorites:
-            cache_file = 'my-{variety}-{page}.json'.format(variety=variety, page=page)
         else:
-            cache_file = '{variety}-{page}.json'.format(variety=variety, page=page)
+            cache_file = '{}{}{}.json'.format('my-' if use_favorites else '', variety, '-{}'.format(page) if sort_key is None else '')
 
         # Titletype
         titletype = None
@@ -109,8 +108,13 @@ class ApiHelper:
             titletype = variety
 
         # Get data from api or cache
-        episodes = self.get_episodes(program=program, season=season, category=category, feature=feature, programtype=programtype,
-                                     page=page, use_favorites=use_favorites, variety=variety, cache_file=cache_file)
+        if sort_key:
+            episodes = self.get_episodes(program=program, season=season, category=category, feature=feature, programtype=programtype,
+                                         use_favorites=use_favorites, variety=variety, cache_file=cache_file)
+            episodes = sorted(episodes, key=lambda k: k[sort_key])[(page * items_per_page) - items_per_page:page * items_per_page]
+        else:
+            episodes = self.get_episodes(program=program, season=season, category=category, feature=feature, programtype=programtype,
+                                         page=page, use_favorites=use_favorites, variety=variety, cache_file=cache_file)
 
         if isinstance(episodes, tuple):
             seasons = episodes[0]
@@ -520,9 +524,11 @@ class ApiHelper:
             season = 'allseasons'
 
             if variety == 'offline':
-                from datetime import datetime
+                from datetime import datetime, timedelta
                 import dateutil.tz
-                params['facets[assetOffTime]'] = datetime.now(dateutil.tz.gettz('Europe/Brussels')).strftime('%Y-%m-%d')
+                now = datetime.now(dateutil.tz.gettz('Europe/Brussels'))
+                off_dates = [(now + timedelta(days=day)).strftime('%Y-%m-%d') for day in range(0, 7)]
+                params['facets[assetOffTime]'] = '[%s]' % (','.join(off_dates))
 
             if variety == 'oneoff':
                 params['facets[episodeNumber]'] = '[0,1]'  # This to avoid VRT NU metadata errors (see #670)
