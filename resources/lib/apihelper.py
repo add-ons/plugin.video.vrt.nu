@@ -280,7 +280,7 @@ class ApiHelper:
                 except IndexError:
                     pass
                 else:
-                    if next_episode.get('program') == program:
+                    if next_episode.get('program') == program and next_episode.get('episodeNumber') != current_ep_no:
                         upnext['next'] = next_episode
 
         current_ep = upnext.get('current')
@@ -299,9 +299,9 @@ class ApiHelper:
 
         art = self._metadata.get_art(current_ep)
         current_episode = dict(
-            episodeid=current_ep.get('whatsonId'),
-            tvshowid=current_ep.get('programWhatsonId'),
-            title=self._metadata.get_plotoutline(current_ep),
+            episodeid=current_ep.get('videoId'),
+            tvshowid=current_ep.get('programUrl'),
+            title=self._metadata.get_title(current_ep),
             art={
                 'tvshow.poster': art.get('thumb'),
                 'thumb': art.get('thumb'),
@@ -322,9 +322,9 @@ class ApiHelper:
 
         art = self._metadata.get_art(next_ep)
         next_episode = dict(
-            episodeid=next_ep.get('whatsonId'),
-            tvshowid=next_ep.get('programWhatsonId'),
-            title=self._metadata.get_plotoutline(next_ep),
+            episodeid=next_ep.get('videoId'),
+            tvshowid=next_ep.get('programUrl'),
+            title=self._metadata.get_title(next_ep),
             art={
                 'tvshow.poster': art.get('thumb'),
                 'thumb': art.get('thumb'),
