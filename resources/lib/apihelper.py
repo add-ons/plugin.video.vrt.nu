@@ -100,7 +100,11 @@ class ApiHelper:
         if not variety:
             cache_file = None
         else:
-            cache_file = '{}{}{}.json'.format('my-' if use_favorites else '', variety, '-{}'.format(page) if sort_key is None else '')
+            cache_file = '{my}{variety}{page}.json'.format(
+                my='my-' if use_favorites else '',
+                variety=variety,
+                page='-{}'.format(page) if sort_key is None else '',
+            )
 
         # Titletype
         titletype = None
