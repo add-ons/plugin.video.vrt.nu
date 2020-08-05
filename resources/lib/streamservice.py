@@ -246,7 +246,7 @@ class StreamService:
             else:
                 log(2, 'Protocol: {protocol}', protocol=protocol)
                 # Fix 720p quality for HLS livestreams
-                manifest_url += '?hd' if '.m3u8?' not in manifest_url else '&hd'
+                manifest_url = manifest_url.replace('.m3u8?', '.m3u8?hd&') if '.m3u8?' in manifest_url else manifest_url + '?hd'
                 stream = self._select_hls_substreams(manifest_url, protocol)
             return stream
 
