@@ -113,7 +113,7 @@ class TestApiHelper(unittest.TestCase):
         self.assertTrue(tvshow_items)
 
         # Test every brand is a known channel studio name
-        bogus_brands = ['lang-zullen-we-lezen', 'VRT']
+        bogus_brands = ['lang-zullen-we-lezen', 'VRT', 'mediafastforward']
         channel_studios = [c.get('studio') for c in CHANNELS] + bogus_brands
         for tvshow in tvshow_items:
             self.assertTrue(tvshow.info_dict['studio'] in channel_studios, '%s | %s | %s' % (tvshow.label, tvshow.info_dict['studio'], channel_studios))
