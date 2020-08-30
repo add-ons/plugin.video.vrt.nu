@@ -1123,9 +1123,19 @@ def open_url(url, data=None, headers=None, method=None, cookiejar=None, follow_r
         ok_dialog(heading=localize(30968), message=localize(30969))
         log_error('URLError: {error}\nurl: {url}', error=exc.reason, url=url)
         return None
-    except (timeout, SSLError) as exc:
+    except SSLError as exc:
+        # TODO: Include the error message in the notification window
         ok_dialog(heading=localize(30968), message=localize(30969))
-        log_error('{error}\nurl: {url}', error=exc.reason, url=url)
+        if hasattr(exc, 'reason'):  # Python 2.7.9+, but still failed on Python 2.7.16
+            log_error('SSLError: {error} ({library})\nurl: {url}', error=exc.reason, library=exc.library, url=url)
+        elif isinstance(exc, list):
+            log_error('SSLError: {error} ({errno})\nurl: {url}', errno=exc[0], error=exc[1], url=url)
+        else:
+            log_error('SSLError: {error}\nurl: {url}', error=str(exc), url=url)
+        return None
+    except timeout as exc:
+        ok_dialog(heading=localize(30968), message=localize(30969))
+        log_error('Timeout: {error}\nurl: {url}', error=exc.reason, url=url)
         return None
 
 
