@@ -58,7 +58,7 @@ def run():
     info = google_play_info()
     published = datetime.fromtimestamp(info.get('published'), dateutil.tz.UTC)
     published_string = published.astimezone(dateutil.tz.gettz('Europe/Brussels')).strftime('%A %e %B %Y at %H:%M')
-    if published > datetime.now(dateutil.tz.UTC) - timedelta(hours=1):
+    if published > datetime.now(dateutil.tz.UTC) - timedelta(minutes=90):
         message = 'VRT NU for Android is updated to version {} released on {}\nChangelog:\n {}'.format(
             info.get('version'), published_string, info.get('changelog'))
         raise NewVersionException(message)
