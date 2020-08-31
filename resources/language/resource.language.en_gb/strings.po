@@ -967,7 +967,7 @@ msgid "No connection"
 msgstr ""
 
 msgctxt "#30969"
-msgid "There is a problem connecting to the Internet. This could be related to Kodi, your network, your ISP or VRT NU. Check out the Kodi log for more details."
+msgid "There is a problem connecting to the Internet. This could be related to Kodi, your network, your ISP or VRT NU. Check out the Kodi log for more details.\n[COLOR=yellow]{reason}[/COLOR]"
 msgstr ""
 
 msgctxt "#30970"

@@ -596,6 +596,10 @@ class ApiHelper:
         else:
             search_json = get_url_json(url=search_url, fail={})
 
+        # Fail more gracefully on network errors
+        if not search_json:
+            return []
+
         # Check for multiple seasons
         seasons = []
         if 'facets[seasonTitle]' not in unquote(search_url):
