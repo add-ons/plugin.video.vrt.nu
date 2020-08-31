@@ -158,7 +158,11 @@ class TokenResolver:
             _csrf=xsrf.value
         )
         data = urlencode(payload).encode()
-        destination = open_url(self._VRT_LOGIN_URL, data=data, cookiejar=cookiejar).geturl()
+        response = open_url(self._VRT_LOGIN_URL, data=data, cookiejar=cookiejar)
+        if response is None:
+            return None
+
+        destination = response.geturl()
         usertoken = TokenResolver._create_token_dictionary(cookiejar, name)
         if not usertoken and not destination.startswith('https://www.vrt.be/vrtnu'):
             if roaming is False:
