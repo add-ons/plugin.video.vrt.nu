@@ -31,6 +31,8 @@ def get_categories():
     if not valid_categories(categories):
         from bs4 import BeautifulSoup, SoupStrainer
         response = open_url('https://www.vrt.be/vrtnu/categorieen/')
+        if response is None:
+            return categories
         tiles = SoupStrainer('nui-list--content')
         soup = BeautifulSoup(response.read(), 'html.parser', parse_only=tiles)
 
@@ -79,10 +81,13 @@ def get_video_attributes(vrtnu_url):
     # Scrape video attributes
     from bs4 import BeautifulSoup, SoupStrainer
     try:
-        html_page = open_url(vrtnu_url, raise_errors='all').read()
+        response = open_url(vrtnu_url, raise_errors='all')
     except HTTPError as exc:
         log_error('Web scraping video attributes failed: {error}', error=exc)
         return None
+    if response is None:
+        return None
+    html_page = response.read()
     strainer = SoupStrainer(['section', 'div'], {'class': ['video-player', 'livestream__inner']})
     soup = BeautifulSoup(html_page, 'html.parser', parse_only=strainer)
     item = None
