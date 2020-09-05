@@ -72,22 +72,6 @@ class TestStreamService(unittest.TestCase):
         stream = self._streamservice.get_stream(video)
         self.assertTrue(stream is not None)
 
-    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
-    def test_get_journaal_stream_from_url_test_virtual_subclip_format(self):
-        """Test if virtual subclip stream_url has a past stop timestamp"""
-        video = dict(video_url='https://www.vrt.be/vrtnu/a-z/het-journaal.relevant/',
-                     video_id=None,
-                     publication_id=None)
-        stream = self._streamservice.get_stream(video)
-        if '?t=' in stream.stream_url:
-            import re
-            timestamps = stream.stream_url.split('?t=')[1]
-            rgx = re.compile(r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}-\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}')
-            end_time = dateutil.parser.parse(timestamps[20:39], default=datetime.now(dateutil.tz.UTC))
-            self.assertTrue(bool(re.match(rgx, timestamps)))
-            self.assertTrue(bool(end_time < now))
-
     def test_get_mpd_live_stream_from_url_does_not_crash_returns_stream_and_licensekey(self):
         """Test getting MPD stream from URL"""
         addon.settings['usedrm'] = True
