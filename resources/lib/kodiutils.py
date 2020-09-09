@@ -4,9 +4,9 @@
 
 from __future__ import absolute_import, division, unicode_literals
 from contextlib import contextmanager
-from sys import version_info
 from socket import timeout
 from ssl import SSLError
+from sys import exit as sysexit, version_info
 
 import xbmc
 import xbmcaddon
@@ -1097,17 +1097,17 @@ def open_url(url, data=None, headers=None, method=None, cookiejar=None, follow_r
             ok_dialog(heading='HTTP Error 400: {reason}'.format(reason=exc.reason), message=localize(30967))
             log_error('HTTP Error 400: Probably exceeded maximum url length: '
                       'VRT Search API url has a length of {length} characters.', length=url_length)
-            return None
+            sysexit('HTTP Error 400')
         if exc.code == 413 and url_length > 8192:
             ok_dialog(heading='HTTP Error 413: {reason}'.format(reason=exc.reason), message=localize(30967))
             log_error('HTTP Error 413: Exceeded maximum url length: '
                       'VRT Search API url has a length of {length} characters.', length=url_length)
-            return None
+            sysexit('HTTP Error 413')
         if exc.code == 431:
             ok_dialog(heading='HTTP Error 431: {reason}'.format(reason=exc.reason), message=localize(30967))
             log_error('HTTP Error 431: Request header fields too large: '
                       'VRT Search API url has a length of {length} characters.', length=url_length)
-            return None
+            sysexit('HTTP Error 431')
         if exc.code == 401:
             ok_dialog(heading='HTTP Error 401: {reason}'.format(reason=exc.reason), message='{}\n{}'.format(url, exc.reason))
             log_error('HTTP Error {code}: {reason}', code=exc.code, reason=exc.reason)
