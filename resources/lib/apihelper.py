@@ -14,9 +14,9 @@ from data import CHANNELS
 from helperobjects import TitleItem
 from kodiutils import (delete_cached_thumbnail, get_cache, get_cached_url_json, get_global_setting,
                        get_setting_bool, get_setting_int, get_url_json, has_addon, localize,
-                       localize_from_data, log, ttl, url_for)
+                       localize_from_data, log, ttl, update_cache, url_for)
 from metadata import Metadata
-from utils import (html_to_kodi, find_entry, from_unicode, play_url_to_id,
+from utils import (add_https_proto, html_to_kodi, find_entry, from_unicode, play_url_to_id,
                    program_to_url, realpage, url_to_program, youtube_to_plugin_url)
 
 
@@ -776,21 +776,50 @@ class ApiHelper:
 
         return sorted(features, key=lambda x: x.get('name'))
 
-    def list_categories(self):
-        """Construct a list of category ListItems"""
-        from webscraper import get_categories, valid_categories
-        categories = get_categories()
+    @staticmethod
+    def valid_categories(categories):
+        """Check if categories contain all necessary keys and values"""
+        return bool(categories) and all(item.get('id') and item.get('name') for item in categories)
 
-        # Use the cache anyway (better than hard-coded)
-        if not valid_categories(categories):
-            categories = get_cache('categories.json', ttl=None)
+    @staticmethod
+    def get_online_categories():
+        """Return a list of categories from the VRT NU website"""
+        categories = []
+        categories_json = get_url_json('https://www.vrt.be/vrtnu/categorieen/jcr:content/par/categories.model.json')
+        if categories_json is not None:
+            categories = []
+            for category in categories_json.get('items'):
+                categories.append(dict(
+                    id=category.get('name'),
+                    thumbnail=add_https_proto(category.get('image').get('src')),
+                    name=category.get('title'),
+                ))
+        return categories
+
+    def get_categories(self):
+        """Return a list of categories"""
+        cache_file = 'categories.json'
+
+        # Try the cache if it is fresh
+        categories = get_cache(cache_file, ttl=7 * 24 * 60 * 60)
+        if self.valid_categories(categories):
+            return categories
+
+        # Try online categories json
+        categories = self.get_online_categories()
+        if self.valid_categories(categories):
+            from json import dumps
+            update_cache(cache_file, dumps(categories))
+            return categories
 
         # Fall back to internal hard-coded categories
-        if not valid_categories(categories):
-            from data import CATEGORIES
-            log(2, 'Fall back to internal hard-coded categories')
-            categories = CATEGORIES
+        from data import CATEGORIES
+        log(2, 'Fall back to internal hard-coded categories')
+        return CATEGORIES
 
+    def list_categories(self):
+        """Construct a list of category ListItems"""
+        categories = self.get_categories()
         category_items = []
         from data import CATEGORIES
         for category in self.localize_categories(categories, CATEGORIES):

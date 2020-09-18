@@ -7,7 +7,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
 from apihelper import ApiHelper
-from data import CHANNELS
+from data import CATEGORIES, CHANNELS
 from favorites import Favorites
 from resumepoints import ResumePoints
 from xbmcextra import kodi_to_ansi
@@ -145,6 +145,19 @@ class TestApiHelper(unittest.TestCase):
         )
         next_episode = self._apihelper.get_upnext(info=current_episode)
         print(next_episode)
+
+    def test_get_categories(self):
+        """Test to ensure our local hardcoded categories conforms to online categories"""
+        # Remove thumbnails from scraped categories first
+        online_categories = [dict(id=c['id'], name=c['name']) for c in self._apihelper.get_online_categories()]
+        local_categories = [dict(id=c['id'], name=c['name']) for c in CATEGORIES]
+        print('Categories:')
+        for category in online_categories:
+            print('%s | %s' % (kodi_to_ansi(category.get('name')), kodi_to_ansi(category.get('id'))))
+
+        self.assertTrue(self._apihelper.valid_categories(online_categories))
+        self.assertTrue(self._apihelper.valid_categories(local_categories))
+        self.assertEqual(online_categories, local_categories)
 
 
 if __name__ == '__main__':

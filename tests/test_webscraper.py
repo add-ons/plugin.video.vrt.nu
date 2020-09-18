@@ -6,21 +6,11 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
-from data import CATEGORIES
-from webscraper import get_categories, get_video_attributes, valid_categories
+from webscraper import get_video_attributes
 
 
 class TestWebScraper(unittest.TestCase):
     """TestCase class"""
-
-    def test_get_categories(self):
-        """Test to ensure our hardcoded categories conforms to scraped categories"""
-        # Remove thumbnails from scraped categories first
-        categories_scraped = [dict(id=c['id'], name=c['name']) for c in get_categories()]
-        categories_stored = [dict(id=c['id'], name=c['name']) for c in CATEGORIES]
-        self.assertTrue(valid_categories(categories_scraped))
-        self.assertTrue(valid_categories(categories_stored))
-        self.assertEqual(categories_scraped, categories_stored)
 
     def test_get_video_attributes(self):
         """Test getting video attributes"""
