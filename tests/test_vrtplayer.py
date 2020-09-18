@@ -73,8 +73,7 @@ class TestVRTPlayer(unittest.TestCase):
 
     def test_random_tvshow_episodes(self):
         """Test episode from a random tvshow in a random category"""
-        from webscraper import get_categories
-        categories = get_categories()
+        categories = self._apihelper.get_categories()
         self.assertTrue(categories)
 
         category = random.choice(categories)

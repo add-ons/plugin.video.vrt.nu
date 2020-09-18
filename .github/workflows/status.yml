@@ -43,9 +43,8 @@ jobs:
     - name: TEST TV guide
       run: python -m unittest -v test_tvguide.TestTVGuide.test_livetv_description
       if: always()
-    # FIXME: Add a better test for the webscraper that prints the categories as well
-    - name: TEST Categories webscraper
-      run: python -m unittest -v test_webscraper.TestWebScraper.test_get_categories
+    - name: TEST Categories
+      run: python -m unittest -v test_apihelper.TestApiHelper.test_get_categories
       if: always()
     - name: TEST Video attributes webscraper
       run: python -m unittest -v test_webscraper.TestWebScraper.test_get_video_attributes
