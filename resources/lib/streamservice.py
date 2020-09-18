@@ -154,28 +154,35 @@ class StreamService:
 
     @staticmethod
     def _fix_virtualsubclip(manifest_url, duration):
-        '''VRT NU already offers some programs (mostly current affairs programs) as video on demand from the moment the live broadcast has started.
+        """VRT NU already offers some programs (mostly current affairs programs) as video on demand from the moment the live broadcast has started.
            To do so, VRT NU adds start (and stop) timestamps to the livestream url to indicate the beginning (and the end) of a program.
            So Unified Origin streaming platform knows it should return a time bounded manifest file, this is called a Live-to-VOD stream or virtual subclip:
            https://docs.unified-streaming.com/documentation/vod/player-urls.html#virtual-subclips
            e.g. https://live-cf-vrt.akamaized.net/groupc/live/8edf3bdf-7db3-41c3-a318-72cb7f82de66/live.isml/.mpd?t=2020-07-20T11:07:00
 
-           But Unified Origin streaming platform needs a past stop timestamp to return a virtual subclip.
+           Right after a program is completely broadcasted, the stop timestamp is usually missing and should be added to the manifest_url.
+        """
+        if '?t=' in manifest_url:
+            try:  # Python 3
+                from urllib.parse import parse_qs, urlsplit
+            except ImportError:  # Python 2
+                from urlparse import parse_qs, urlsplit
+            import re
 
-           When a past stop timestamp is missing Unified Origin streaming platform treats the stream as an ordinary livestream
-           and doesn't return a virtual subclip. Therefore we must try to add a past stop timestamp to the manifest_url.'''
-        begin = manifest_url.split('?t=')[1] if '?t=' in manifest_url else None
-        if begin and len(begin) == 19:
-            from datetime import datetime, timedelta
-            import dateutil.parser
-            begin_time = dateutil.parser.parse(begin)
-            end_time = begin_time + duration
-            # We always need a past stop timestamp so if a program is not yet broadcasted completely,
-            # we should use the current time minus 5 seconds safety margin as a stop timestamp.
-            now = datetime.utcnow()
-            if end_time > now:
-                end_time = now - timedelta(seconds=5)
-            manifest_url += '-' + end_time.strftime('%Y-%m-%dT%H:%M:%S')
+            # Detect single start timestamp
+            begin = parse_qs(urlsplit(manifest_url).query).get('t')[0]
+            rgx = re.compile(r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$')
+            is_single_start_timestamp = bool(re.match(rgx, begin))
+            if begin and is_single_start_timestamp:
+                from datetime import datetime, timedelta
+                import dateutil.parser
+                begin_time = dateutil.parser.parse(begin)
+                # Calculate end_time with a safety margin
+                end_time = begin_time + duration + timedelta(seconds=10)
+                # Add stop timestamp if a program is broadcasted completely
+                now = datetime.utcnow()
+                if end_time < now:
+                    manifest_url += '-' + end_time.strftime('%Y-%m-%dT%H:%M:%S')
         return manifest_url
 
     def get_stream(self, video, roaming=False, api_data=None):
