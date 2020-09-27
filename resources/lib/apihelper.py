@@ -78,15 +78,23 @@ class ApiHelper:
 
     def tvshow_to_listitem(self, tvshow, program, cache_file):
         """Return a ListItem based on a Suggests API result"""
+        from addon import plugin
+
         label = self._metadata.get_label(tvshow)
 
         if program:
             context_menu, favorite_marker, _ = self._metadata.get_context_menu(tvshow, program, cache_file)
             label += favorite_marker
 
+        # Support Kodi library source scanning
+        if plugin.path.startswith('/library'):
+            path = url_for('library_tvshows', program=program)
+        else:
+            path = url_for('programs', program=program)
+
         return TitleItem(
             label=label,
-            path=url_for('programs', program=program),
+            path=path,
             art_dict=self._metadata.get_art(tvshow),
             info_dict=self._metadata.get_info_labels(tvshow),
             context_menu=context_menu,

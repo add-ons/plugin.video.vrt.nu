@@ -337,6 +337,24 @@ def iptv_epg():
     IPTVManager(port).send_epg()
 
 
+@plugin.route('/library/movies')
+def library_movies():
+    """Show movie listitems to be used as a Kodi source"""
+    from vrtplayer import VRTPlayer
+    VRTPlayer().show_library_movies()
+
+
+@plugin.route('/library/tvshows')
+@plugin.route('/library/tvshows/<program>')
+def library_tvshows(program=None):
+    """Show tvshow listitems to be used as a Kodi source"""
+    from vrtplayer import VRTPlayer
+    if program:
+        VRTPlayer().show_episodes_menu(program=program, season='allseasons')
+    else:
+        VRTPlayer().show_library_tvshows()
+
+
 @plugin.route('/update/repos')
 def update_repos():
     """Force an update of the repositories"""

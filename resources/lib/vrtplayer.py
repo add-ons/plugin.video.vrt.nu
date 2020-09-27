@@ -197,6 +197,24 @@ class VRTPlayer:
         episode_items, sort, ascending, content = self._apihelper.list_episodes(category='muziek', season='allseasons', programtype='oneoff')
         show_listing(episode_items, category=30046, sort=sort, ascending=ascending, content=content, cache=False)
 
+    def show_library_movies(self):
+        """Show movie listitems to be used as a Kodi source"""
+        docu_items = []
+        music_items = []
+        if get_setting_bool('library_include_docu', default=True):
+            docu_items, _, _, _ = self._apihelper.list_episodes(category='docu', season='allseasons', programtype='oneoff')
+        if get_setting_bool('library_include_music', default=True):
+            music_items, _, _, _ = self._apihelper.list_episodes(category='muziek', season='allseasons', programtype='oneoff')
+        movie_items, sort, _, _ = self._apihelper.list_episodes(category='films', season='allseasons', programtype='oneoff')
+        show_listing(movie_items + docu_items + music_items, sort=sort, content='movies')
+
+    def show_library_tvshows(self):
+        """Show tvshow listitems to be used as a Kodi source"""
+        self._favorites.refresh(ttl=ttl('direct'))
+        self._resumepoints.refresh(ttl=ttl('direct'))
+        tvshow_items = self._apihelper.list_tvshows(use_favorites=get_setting_bool('library_use_favorites', default=True))
+        show_listing(tvshow_items, sort='label', content='tvshows')
+
     def show_tvshow_menu(self, use_favorites=False):
         """The VRT NU add-on 'All programs' listing menu"""
         # My favorites menus may need more up-to-date favorites

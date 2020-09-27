@@ -271,6 +271,18 @@ class TestRouting(unittest.TestCase):
         addon.run(['plugin://plugin.video.vrt.nu/play/whatson/490431755527', '0', ''])
         self.assertEqual(plugin.url_for(addon.play_whatson_id, whatson_id='490431755527'), 'plugin://plugin.video.vrt.nu/play/whatson/490431755527')
 
+    def test_library_movies(self):
+        """Library Movies scan: /library/movies"""
+        addon.run(['plugin://plugin.video.vrt.nu/library/movies', '0', ''])
+        self.assertEqual(plugin.url_for(addon.library_movies), 'plugin://plugin.video.vrt.nu/library/movies')
+
+    def test_library_tvshows(self):
+        """Library TV shows scan: /library/tvshows"""
+        addon.run(['plugin://plugin.video.vrt.nu/library/tvshows', '0', ''])
+        self.assertEqual(plugin.url_for(addon.library_tvshows), 'plugin://plugin.video.vrt.nu/library/tvshows')
+        addon.run(['plugin://plugin.video.vrt.nu/library/tvshows/het-journaal', '0', ''])
+        self.assertEqual(plugin.url_for(addon.library_tvshows, program='het-journaal'), 'plugin://plugin.video.vrt.nu/library/tvshows/het-journaal')
+
     def test_update_repos(self):
         """Update repositories: /update/repos"""
         addon.run(['plugin://plugin.video.vrt.nu/update/repos', '0', ''])
