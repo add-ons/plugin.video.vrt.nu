@@ -265,6 +265,22 @@ class TestRouting(unittest.TestCase):
         addon.run(['plugin://plugin.video.vrt.nu/play/upnext/vid-a39ab219-9598-4a79-b676-98b724cceff1', '0', ''])
         self.assertEqual(plugin.url_for(addon.play_upnext, video_id='vid-a39ab219-9598-4a79-b676-98b724cceff1'), 'plugin://plugin.video.vrt.nu/play/upnext/vid-a39ab219-9598-4a79-b676-98b724cceff1')
 
+    def test_play_whatson_id(self):
+        """Play video by whatsonid method: /play/whatson/<whatson_id>"""
+        # Pano S2018E05 is available until 9999-12-31
+        addon.run(['plugin://plugin.video.vrt.nu/play/whatson/490431755527', '0', ''])
+        self.assertEqual(plugin.url_for(addon.play_whatson_id, whatson_id='490431755527'), 'plugin://plugin.video.vrt.nu/play/whatson/490431755527')
+
+    def test_update_repos(self):
+        """Update repositories: /update/repos"""
+        addon.run(['plugin://plugin.video.vrt.nu/update/repos', '0', ''])
+        self.assertEqual(plugin.url_for(addon.update_repos), 'plugin://plugin.video.vrt.nu/update/repos')
+
+    def test_show_settings_addons(self):
+        """Open the Kodi System settings: /show/settings/addons"""
+        addon.run(['plugin://plugin.video.vrt.nu/show/settings/addons', '0', ''])
+        self.assertEqual(plugin.url_for(addon.show_settings_addons), 'plugin://plugin.video.vrt.nu/show/settings/addons')
+
 
 if __name__ == '__main__':
     unittest.main()
