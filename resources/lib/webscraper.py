@@ -12,6 +12,7 @@ except ImportError:  # Python 2
 from kodiutils import get_cache, log_error, open_url, ttl, update_cache
 from utils import assetpath_to_id
 
+
 def get_video_attributes(vrtnu_url):
     """Return a dictionary with video attributes by scraping the VRT NU website"""
 

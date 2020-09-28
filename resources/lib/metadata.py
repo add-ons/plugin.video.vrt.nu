@@ -236,6 +236,18 @@ class Metadata:
         return ''
 
     @staticmethod
+    def get_mpaa(api_data):
+        """Get film rating string from single item json api data"""
+
+        # VRT NU Search API
+        if api_data.get('type') == 'episode':
+            if api_data.get('ageGroup'):
+                return api_data.get('ageGroup')
+
+        # Not Found
+        return ''
+
+    @staticmethod
     def get_duration(api_data):
         """Get duration int from single item json api data"""
 
@@ -309,6 +321,19 @@ class Metadata:
                 if plot_meta:
                     plot_meta += '  '
                 plot_meta += localize(30201)  # Geo-blocked
+
+            # Add product placement
+            if api_data.get('productPlacement') is True:
+                if plot_meta:
+                    plot_meta += '  '
+                plot_meta += '[B]PP[/B]'
+
+            # Add film rating
+            rating = self.get_mpaa(api_data)
+            if rating:
+                if plot_meta:
+                    plot_meta += '  '
+                plot_meta += '[B]%s[/B]' % rating
 
             plot = html_to_kodi(api_data.get('description', ''))
 
@@ -614,6 +639,7 @@ class Metadata:
                 playcount=self.get_playcount(api_data),
                 plot=self.get_plot(api_data, season=season),
                 plotoutline=self.get_plotoutline(api_data, season=season),
+                mpaa=self.get_mpaa(api_data),
                 tagline=self.get_plotoutline(api_data, season=season),
                 duration=self.get_duration(api_data),
                 mediatype=self.get_mediatype(api_data, season=season),
