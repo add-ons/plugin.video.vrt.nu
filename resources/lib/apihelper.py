@@ -78,7 +78,6 @@ class ApiHelper:
 
     def tvshow_to_listitem(self, tvshow, program, cache_file):
         """Return a ListItem based on a Suggests API result"""
-
         label = self._metadata.get_label(tvshow)
 
         if program:
