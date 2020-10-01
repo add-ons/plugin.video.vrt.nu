@@ -4,9 +4,9 @@
 
 from __future__ import absolute_import, division, unicode_literals
 from contextlib import contextmanager
-from sys import version_info
 from socket import timeout
 from ssl import SSLError
+from sys import exit as sysexit, version_info
 
 import xbmc
 import xbmcaddon
@@ -1094,48 +1094,48 @@ def open_url(url, data=None, headers=None, method=None, cookiejar=None, follow_r
         else:  # Python 2.7
             url_length = len(req.get_selector())
         if exc.code == 400 and 7600 <= url_length <= 8192:
-            ok_dialog(heading='HTTP Error 400', message=localize(30967))
+            ok_dialog(heading='HTTP Error 400: {reason}'.format(reason=exc.reason), message=localize(30967))
             log_error('HTTP Error 400: Probably exceeded maximum url length: '
                       'VRT Search API url has a length of {length} characters.', length=url_length)
-            return None
+            sysexit('HTTP Error 400')
         if exc.code == 413 and url_length > 8192:
-            ok_dialog(heading='HTTP Error 413', message=localize(30967))
+            ok_dialog(heading='HTTP Error 413: {reason}'.format(reason=exc.reason), message=localize(30967))
             log_error('HTTP Error 413: Exceeded maximum url length: '
                       'VRT Search API url has a length of {length} characters.', length=url_length)
-            return None
+            sysexit('HTTP Error 413')
         if exc.code == 431:
-            ok_dialog(heading='HTTP Error 431', message=localize(30967))
+            ok_dialog(heading='HTTP Error 431: {reason}'.format(reason=exc.reason), message=localize(30967))
             log_error('HTTP Error 431: Request header fields too large: '
                       'VRT Search API url has a length of {length} characters.', length=url_length)
-            return None
+            sysexit('HTTP Error 431')
         if exc.code == 401:
-            ok_dialog(heading='HTTP Error {code}'.format(code=exc.code), message='{}\n{}'.format(url, exc.reason))
+            ok_dialog(heading='HTTP Error 401: {reason}'.format(reason=exc.reason), message='{}\n{}'.format(url, exc.reason))
             log_error('HTTP Error {code}: {reason}', code=exc.code, reason=exc.reason)
             return None
         if exc.code in (400, 403) and exc.headers.get('Content-Type') and 'application/json' in exc.headers.get('Content-Type'):
             return exc
-        reason = exc.reason
-        code = exc.code
-        ok_dialog(heading='HTTP Error {code}'.format(code=code), message='{}\n{}'.format(url, reason))
-        log_error('HTTP Error {code}: {reason}', code=code, reason=reason)
+        ok_dialog(heading='HTTP Error {code}: {reason}'.format(code=exc.code, reason=exc.reason), message='{}\n{}'.format(url, exc.reason))
+        log_error('HTTP Error {code}: {reason}', code=exc.code, reason=exc.reason)
         return None
     except URLError as exc:
-        ok_dialog(heading=localize(30968), message=localize(30969))
-        log_error('URLError: {error}\nurl: {url}', error=exc.reason, url=url)
+        ok_dialog(heading=localize(30968), message=localize(30969, reason=exc.reason))
+        log_error('URLError: {reason}\nurl: {url}', reason=exc.reason, url=url)
         return None
     except SSLError as exc:
         # TODO: Include the error message in the notification window
-        ok_dialog(heading=localize(30968), message=localize(30969))
         if hasattr(exc, 'reason'):  # Python 2.7.9+, but still failed on Python 2.7.16
-            log_error('SSLError: {error} ({library})\nurl: {url}', error=exc.reason, library=exc.library, url=url)
+            ok_dialog(heading=localize(30968), message=localize(30969, reason=exc.reason))
+            log_error('SSLError: {reason} ({library})\nurl: {url}', reason=exc.reason, library=exc.library, url=url)
         elif isinstance(exc, list):
-            log_error('SSLError: {error} ({errno})\nurl: {url}', errno=exc[0], error=exc[1], url=url)
+            ok_dialog(heading=localize(30968), message=localize(30969, reason='{e[1]} ({e[0]})'.format(e=exc)))
+            log_error('SSLError: {reason} ({errno})\nurl: {url}', errno=exc[0], reason=exc[1], url=url)
         else:
-            log_error('SSLError: {error}\nurl: {url}', error=str(exc), url=url)
+            ok_dialog(heading=localize(30968), message=localize(30969, reason=str(exc)))
+            log_error('SSLError: {reason}\nurl: {url}', reason=str(exc), url=url)
         return None
     except timeout as exc:
-        ok_dialog(heading=localize(30968), message=localize(30969))
-        log_error('Timeout: {error}\nurl: {url}', error=exc.reason, url=url)
+        ok_dialog(heading=localize(30968), message=localize(30969, reason=exc.reason))
+        log_error('Timeout: {reason}\nurl: {url}', reason=exc.reason, url=url)
         return None
 
 

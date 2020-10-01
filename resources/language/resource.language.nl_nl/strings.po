@@ -967,8 +967,8 @@ msgid "No connection"
 msgstr "Geen verbinding"
 
 msgctxt "#30969"
-msgid "There is a problem connecting to the Internet. This could be related to Kodi, your network, your ISP or VRT NU. Check out the Kodi log for more details."
-msgstr "Er is een probleem met het verbinden met internet. Dit kan liggen aan Kodi, aan jouw netwerk, aan jouw ISP of aan VRT NU. Bekijk de Kodi-log voor meer details."
+msgid "There is a problem connecting to the Internet. This could be related to Kodi, your network, your ISP or VRT NU. Check out the Kodi log for more details.\n[COLOR=yellow]{reason}[/COLOR]"
+msgstr "Er is een probleem met het verbinden met internet. Dit kan liggen aan Kodi, aan jouw netwerk, aan jouw ISP of aan VRT NU. Bekijk de Kodi-log voor meer details.\n[COLOR=yellow]{reason}[/COLOR]"
 
 msgctxt "#30970"
 msgid "VRT NU authentication failed"
