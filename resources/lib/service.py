@@ -10,7 +10,6 @@ from kodiutils import container_refresh, invalidate_caches, log
 from playerinfo import PlayerInfo
 from resumepoints import ResumePoints
 from tokenresolver import TokenResolver
-from utils import to_unicode
 
 
 class VrtMonitor(Monitor, object):  # pylint: disable=useless-object-inheritance
@@ -43,24 +42,6 @@ class VrtMonitor(Monitor, object):  # pylint: disable=useless-object-inheritance
                 self._apihelper = ApiHelper(self._favorites, self._resumepoints)
         else:
             self._playerinfo = None
-
-    def onNotification(self, sender, method, data):  # pylint: disable=invalid-name
-        """Handler for notifications"""
-        # log(2, '[Notification] sender={sender}, method={method}, data={data}', sender=sender, method=method, data=to_unicode(data))
-
-        # Handle play_action events from upnextprovider
-        if sender.startswith('upnextprovider') and method.endswith('plugin.video.vrt.nu_play_action'):
-            from json import loads
-            hexdata = loads(data)
-
-            if not hexdata:
-                return
-
-            # NOTE: With Python 3.5 and older json.loads() does not support bytes or bytearray, so we convert to unicode
-            from base64 import b64decode
-            data = loads(to_unicode(b64decode(hexdata[0])))
-            log(2, '[Up Next notification] sender={sender}, method={method}, data={data}', sender=sender, method=method, data=to_unicode(data))
-            self._playerinfo.add_upnext(data.get('video_id'))
 
     def onSettingsChanged(self):  # pylint: disable=invalid-name
         """Handler for changes to settings"""

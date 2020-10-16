@@ -4,7 +4,7 @@
 
 from __future__ import absolute_import, division, unicode_literals
 from threading import Event, Thread
-from xbmc import getInfoLabel, Player, PlayList
+from xbmc import getInfoLabel, Player
 
 from apihelper import ApiHelper
 from data import CHANNELS
@@ -184,21 +184,6 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
             if self.quit.wait(timeout=0.2):
                 break
         self.onPlayerExit()
-
-    def add_upnext(self, video_id):
-        """Add Up Next url to Kodi Player"""
-        # Reset vrtnu_resumepoints property
-        set_property('vrtnu_resumepoints', None)
-
-        url = 'plugin://plugin.video.vrt.nu/play/upnext/{video_id}'.format(video_id=video_id)
-        self.update_position()
-        self.update_total()
-        if self.isPlaying() and self.total - self.last_pos < 1:
-            log(3, '[PlayerInfo {id}] Add {url} to Kodi Playlist', id=self.thread_id, url=url)
-            PlayList(1).add(url)
-        else:
-            log(3, '[PlayerInfo {id}] Add {url} to Kodi Player', id=self.thread_id, url=url)
-            self.play(url)
 
     def push_upnext(self):
         """Push episode info to Up Next service add-on"""
