@@ -580,11 +580,14 @@ class Metadata:
             if season:
                 if get_setting_bool('showfanart', default=True):
                     art_dict['fanart'] = add_https_proto(api_data.get('programImageUrl', 'DefaultSets.png'))
-                    art_dict['banner'] = art_dict.get('fanart')
                     if season != 'allseasons':
                         art_dict['thumb'] = add_https_proto(api_data.get('videoThumbnailUrl', art_dict.get('fanart')))
                     else:
                         art_dict['thumb'] = art_dict.get('fanart')
+                    art_dict['banner'] = art_dict.get('fanart')
+                    if api_data.get('programAlternativeImageUrl'):
+                        art_dict['cover'] = add_https_proto(api_data.get('programAlternativeImageUrl'))
+                        art_dict['poster'] = add_https_proto(api_data.get('programAlternativeImageUrl'))
                 else:
                     art_dict['thumb'] = 'DefaultSets.png'
             else:
@@ -592,6 +595,9 @@ class Metadata:
                     art_dict['thumb'] = add_https_proto(api_data.get('videoThumbnailUrl', 'DefaultAddonVideo.png'))
                     art_dict['fanart'] = add_https_proto(api_data.get('programImageUrl', art_dict.get('thumb')))
                     art_dict['banner'] = art_dict.get('fanart')
+                    if api_data.get('programAlternativeImageUrl'):
+                        art_dict['cover'] = add_https_proto(api_data.get('programAlternativeImageUrl'))
+                        art_dict['poster'] = add_https_proto(api_data.get('programAlternativeImageUrl'))
                 else:
                     art_dict['thumb'] = 'DefaultAddonVideo.png'
 
@@ -603,6 +609,9 @@ class Metadata:
                 art_dict['thumb'] = add_https_proto(api_data.get('thumbnail', 'DefaultAddonVideo.png'))
                 art_dict['fanart'] = art_dict.get('thumb')
                 art_dict['banner'] = art_dict.get('fanart')
+                if api_data.get('alternativeImage'):
+                    art_dict['cover'] = add_https_proto(api_data.get('alternativeImage'))
+                    art_dict['poster'] = add_https_proto(api_data.get('alternativeImage'))
             else:
                 art_dict['thumb'] = 'DefaultAddonVideo.png'
 
