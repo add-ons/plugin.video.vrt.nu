@@ -9,7 +9,7 @@ from xbmc import getInfoLabel, Player, PlayList
 from apihelper import ApiHelper
 from data import CHANNELS
 from favorites import Favorites
-from kodiutils import addon_id, get_setting_bool, has_addon, jsonrpc, kodi_version_major, log, log_error, notify, set_property
+from kodiutils import addon_id, get_setting_bool, has_addon, jsonrpc, kodi_version_major, log, log_error, notify, set_property, url_for
 from resumepoints import ResumePoints
 from utils import play_url_to_id, to_unicode, url_to_episode
 
@@ -190,7 +190,7 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
         # Reset vrtnu_resumepoints property
         set_property('vrtnu_resumepoints', None)
 
-        url = 'plugin://plugin.video.vrt.nu/play/upnext/{video_id}'.format(video_id=video_id)
+        url = url_for('play_upnext', video_id=video_id)
         self.update_position()
         self.update_total()
         if self.isPlaying() and self.total - self.last_pos < 1:
