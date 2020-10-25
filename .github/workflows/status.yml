@@ -1,3 +1,7 @@
+# This workflow performs status checks to identify broken code paths due to
+# backend changes. It tests authentication, resumepoints, search, suggest,
+# TV guide, webscrapers and reports new Android app releases.
+
 name: Status
 on:
   pull_request:

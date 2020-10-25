@@ -1,3 +1,6 @@
+# This workflow performs the required add-on checks for a submission
+# to the official Kodi repository
+
 name: Kodi
 on:
 - pull_request

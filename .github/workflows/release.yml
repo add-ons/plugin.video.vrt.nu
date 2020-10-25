@@ -1,3 +1,6 @@
+# This workflow performs an automated release to GitHub and to the official
+# Kodi repository, for a pre-Matrix and a post-Matrix release.
+
 name: Release
 on:
   push:
