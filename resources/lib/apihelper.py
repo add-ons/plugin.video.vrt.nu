@@ -162,7 +162,7 @@ class ApiHelper:
         season_items = []
         sort = 'label'
         ascending = True
-        content = 'files'
+        content = 'seasons'
 
         episode = random.choice(episodes)
         program_type = episode.get('programType')
@@ -668,7 +668,7 @@ class ApiHelper:
                 label = channel.get('label')
                 plot = '[B]%s[/B]' % channel.get('label')
                 is_playable = False
-                info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video')
+                info_dict = dict(title=label, plot=plot, studio=channel.get('studio'))
                 stream_dict = []
                 prop_dict = {}
             elif channel.get('live_stream') or channel.get('live_stream_id'):
@@ -691,7 +691,7 @@ class ApiHelper:
                 else:
                     plot = localize(30142, **channel)  # Watch live
                 # NOTE: Playcount and resumetime are required to not have live streams as "Watched" and resumed
-                info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video', playcount=0, duration=0)
+                info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), playcount=0, duration=0)
                 prop_dict = dict(resumetime=0)
                 stream_dict = dict(duration=0)
                 context_menu.append((
@@ -744,7 +744,7 @@ class ApiHelper:
                     label = '[B]%s[/B]' % label
                 plot = localize(30144, **youtube)  # Watch on YouTube
                 # NOTE: Playcount is required to not have live streams as "Watched"
-                info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), mediatype='video', playcount=0)
+                info_dict = dict(title=label, plot=plot, studio=channel.get('studio'), playcount=0)
 
                 context_menu = [(
                     localize(30413),  # Refresh menu
@@ -773,7 +773,7 @@ class ApiHelper:
                 label=featured_name,
                 path=url_for('featured', feature=feature.get('id')),
                 art_dict=dict(thumb='DefaultCountry.png'),
-                info_dict=dict(plot='[B]%s[/B]' % feature.get('name'), studio='VRT'),
+                info_dict=dict(title=feature.get('name'), plot='[B]%s[/B]' % feature.get('name'), studio='VRT'),
             ))
         return featured_items
 
@@ -844,8 +844,8 @@ class ApiHelper:
             category_items.append(TitleItem(
                 label=category.get('name'),
                 path=url_for('categories', category=category.get('id')),
-                art_dict=dict(thumb=thumbnail, icon='DefaultGenre.png'),
-                info_dict=dict(plot='[B]%s[/B]' % category.get('name'), studio='VRT'),
+                art_dict=dict(thumb=thumbnail, fanart=thumbnail, icon='DefaultGenre.png'),
+                info_dict=dict(title=category.get('name'), plot='[B]%s[/B]' % category.get('name'), studio='VRT'),
             ))
         return category_items
 

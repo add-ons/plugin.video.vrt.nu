@@ -547,12 +547,14 @@ class Metadata:
         return ''
 
     def get_mediatype(self, api_data, season=False):
-        """Get art dict from single item json api data"""
+        """Get mediatype from single item json api data"""
 
         # VRT NU Search API
         if api_data.get('type') == 'episode':
+
+            # Don't set mediatype on seasons to get a folder icon in the Kodi skin
             if season is not False:
-                return 'season'
+                return ''
 
             # If this is a oneoff (e.g. movie) and we get a year of release, do not set 'aired'
             if api_data.get('programType') == 'oneoff' and self.get_year(api_data):

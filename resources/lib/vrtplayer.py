@@ -216,7 +216,7 @@ class VRTPlayer:
             show_listing(tvshow_items, category=category_msgctxt, sort='label', content='tvshows')
         else:
             category_items = self._apihelper.list_categories()
-            show_listing(category_items, category=30014, sort='unsorted', content='files')  # Categories
+            show_listing(category_items, category=30014, sort='unsorted', content='tvshows')  # Categories
 
     def show_channels_menu(self, channel=None):
         """The VRT NU add-on 'Channels' listing menu"""
