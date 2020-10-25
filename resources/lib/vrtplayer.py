@@ -35,47 +35,47 @@ class VRTPlayer:
             main_items.append(TitleItem(
                 label=localize(30010),  # My favorites
                 path=url_for('favorites_menu'),
-                art_dict=dict(thumb='DefaultFavourites.png'),
-                info_dict=dict(plot=localize(30011)),
+                art_dict=dict(thumb='DefaultFavourites.png', fanart='DefaultFavourites.png'),
+                info_dict=dict(title=localize(30010), plot=localize(30011)),
             ))
 
         main_items.extend([
             TitleItem(label=localize(30012),  # All programs
                       path=url_for('programs'),
-                      art_dict=dict(thumb='DefaultMovieTitle.png'),
-                      info_dict=dict(plot=localize(30013))),
+                      art_dict=dict(thumb='DefaultMovieTitle.png', fanart='DefaultMovieTitle.png'),
+                      info_dict=dict(title=localize(30012), plot=localize(30013))),
             TitleItem(label=localize(30014),  # Categories
                       path=url_for('categories'),
-                      art_dict=dict(thumb='DefaultGenre.png'),
-                      info_dict=dict(plot=localize(30015))),
+                      art_dict=dict(thumb='DefaultGenre.png', fanart='DefaultGenre.png'),
+                      info_dict=dict(title=localize(30014), plot=localize(30015))),
             TitleItem(label=localize(30016),  # Channels
                       path=url_for('channels'),
-                      art_dict=dict(thumb='DefaultTags.png'),
-                      info_dict=dict(plot=localize(30017))),
+                      art_dict=dict(thumb='DefaultTags.png', fanart='DefaultTags.png'),
+                      info_dict=dict(title=localize(30016), plot=localize(30017))),
             TitleItem(label=localize(30018),  # Live TV
                       path=url_for('livetv'),
-                      art_dict=dict(thumb='DefaultTVShows.png'),
-                      info_dict=dict(plot=localize(30019))),
+                      art_dict=dict(thumb='DefaultTVShows.png', fanart='DefaultTVShows.png'),
+                      info_dict=dict(title=localize(30018), plot=localize(30019))),
             TitleItem(label=localize(30020),  # Recent items
                       path=url_for('recent'),
-                      art_dict=dict(thumb='DefaultRecentlyAddedEpisodes.png'),
-                      info_dict=dict(plot=localize(30021))),
+                      art_dict=dict(thumb='DefaultRecentlyAddedEpisodes.png', fanart='DefaultRecentlyAddedEpisodes.png'),
+                      info_dict=dict(title=localize(30020), plot=localize(30021))),
             TitleItem(label=localize(30022),  # Soon offline
                       path=url_for('offline'),
-                      art_dict=dict(thumb='DefaultYear.png'),
-                      info_dict=dict(plot=localize(30023))),
+                      art_dict=dict(thumb='DefaultYear.png', fanart='DefaultYear.png'),
+                      info_dict=dict(title=localize(30022), plot=localize(30023))),
             TitleItem(label=localize(30024),  # Featured content
                       path=url_for('featured'),
-                      art_dict=dict(thumb='DefaultCountry.png'),
-                      info_dict=dict(plot=localize(30025))),
+                      art_dict=dict(thumb='DefaultCountry.png', fanart='DefaultCountry.png'),
+                      info_dict=dict(title=localize(30024), plot=localize(30025))),
             TitleItem(label=localize(30026),  # TV guide
                       path=url_for('tvguide'),
-                      art_dict=dict(thumb='DefaultAddonTvInfo.png'),
-                      info_dict=dict(plot=localize(30027))),
+                      art_dict=dict(thumb='DefaultAddonTvInfo.png', fanart='DefaultAddonTvInfo.png'),
+                      info_dict=dict(title=localize(30026), plot=localize(30027))),
             TitleItem(label=localize(30028),  # Search
                       path=url_for('search'),
-                      art_dict=dict(thumb='DefaultAddonsSearch.png'),
-                      info_dict=dict(plot=localize(30029))),
+                      art_dict=dict(thumb='DefaultAddonsSearch.png', fanart='DefaultAddonsSearch.png'),
+                      info_dict=dict(title=localize(30028), plot=localize(30029))),
         ])
         show_listing(main_items, cache=False)  # No category
         self._version_check()
@@ -126,16 +126,16 @@ class VRTPlayer:
         favorites_items = [
             TitleItem(label=localize(30040),  # My programs
                       path=url_for('favorites_programs'),
-                      art_dict=dict(thumb='DefaultMovieTitle.png'),
-                      info_dict=dict(plot=localize(30041))),
+                      art_dict=dict(thumb='DefaultMovieTitle.png', fanart='DefaultMovieTitle.png'),
+                      info_dict=dict(title=localize(30040), plot=localize(30041))),
             TitleItem(label=localize(30048),  # My recent items
                       path=url_for('favorites_recent'),
-                      art_dict=dict(thumb='DefaultRecentlyAddedEpisodes.png'),
-                      info_dict=dict(plot=localize(30049))),
+                      art_dict=dict(thumb='DefaultRecentlyAddedEpisodes.png', fanart='DefaultRecentlyAddedEpisodes.png'),
+                      info_dict=dict(title=localize(30048), plot=localize(30049))),
             TitleItem(label=localize(30050),  # My soon offline
                       path=url_for('favorites_offline'),
-                      art_dict=dict(thumb='DefaultYear.png'),
-                      info_dict=dict(plot=localize(30051))),
+                      art_dict=dict(thumb='DefaultYear.png', fanart='DefaultYear.png'),
+                      info_dict=dict(title=localize(30050), plot=localize(30051))),
         ]
 
         # Only add 'My watch later' and 'Continue watching' when it has been activated
@@ -143,38 +143,38 @@ class VRTPlayer:
             favorites_items.append(TitleItem(
                 label=localize(30052),  # My watch later
                 path=url_for('resumepoints_watchlater'),
-                art_dict=dict(thumb='DefaultVideoPlaylists.png'),
-                info_dict=dict(plot=localize(30053)),
+                art_dict=dict(thumb='DefaultVideoPlaylists.png', fanart='DefaultVideoPlaylists.png'),
+                info_dict=dict(title=localize(30052), plot=localize(30053)),
             ))
             favorites_items.append(TitleItem(
                 label=localize(30054),  # Continue Watching
                 path=url_for('resumepoints_continue'),
-                art_dict=dict(thumb='DefaultInProgressShows.png'),
-                info_dict=dict(plot=localize(30055)),
+                art_dict=dict(thumb='DefaultInProgressShows.png', fanart='DefaultInProgressShows.png'),
+                info_dict=dict(title=localize(30054), plot=localize(30055)),
             ))
 
         if get_setting_bool('addmymovies', default=True):
             favorites_items.append(
                 TitleItem(label=localize(30042),  # My movies
                           path=url_for('categories', category='films'),
-                          art_dict=dict(thumb='DefaultAddonVideo.png'),
-                          info_dict=dict(plot=localize(30043))),
+                          art_dict=dict(thumb='DefaultAddonVideo.png', fanart='DefaultAddonVideo.png'),
+                          info_dict=dict(title=localize(30042), plot=localize(30043))),
             )
 
         if get_setting_bool('addmydocu', default=True):
             favorites_items.append(
                 TitleItem(label=localize(30044),  # My documentaries
                           path=url_for('favorites_docu'),
-                          art_dict=dict(thumb='DefaultMovies.png'),
-                          info_dict=dict(plot=localize(30045))),
+                          art_dict=dict(thumb='DefaultMovies.png', fanart='DefaultMovies.png'),
+                          info_dict=dict(title=localize(30044), plot=localize(30045))),
             )
 
         if get_setting_bool('addmymusic', default=True):
             favorites_items.append(
                 TitleItem(label=localize(30046),  # My music
                           path=url_for('favorites_music'),
-                          art_dict=dict(thumb='DefaultAddonMusic.png'),
-                          info_dict=dict(plot=localize(30047))),
+                          art_dict=dict(thumb='DefaultAddonMusic.png', fanart='DefaultAddonMusic.png'),
+                          info_dict=dict(title=localize(30046), plot=localize(30047))),
             )
 
         show_listing(favorites_items, category=30010, cache=False)  # My favorites
@@ -216,7 +216,7 @@ class VRTPlayer:
             show_listing(tvshow_items, category=category_msgctxt, sort='label', content='tvshows')
         else:
             category_items = self._apihelper.list_categories()
-            show_listing(category_items, category=30014, sort='unsorted', content='tvshows')  # Categories
+            show_listing(category_items, category=30014, sort='unsorted', content='videos')  # Categories
 
     def show_channels_menu(self, channel=None):
         """The VRT NU add-on 'Channels' listing menu"""
@@ -246,7 +246,7 @@ class VRTPlayer:
             show_listing(tvshow_items, category=feature_msgctxt, sort='label', content='tvshows', cache=False)
         else:
             featured_items = self._apihelper.list_featured()
-            show_listing(featured_items, category=30024, sort='label', content='files')
+            show_listing(featured_items, category=30024, sort='label', content='videos')
 
     def show_livetv_menu(self):
         """The VRT NU add-on 'Live TV' listing menu"""
