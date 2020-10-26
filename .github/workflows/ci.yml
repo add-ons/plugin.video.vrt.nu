@@ -1,3 +1,7 @@
+# This workflow performs the various sanity tests, integration tests and
+# may run parts of the add-on and add-on service to get a better testing
+# coverage. It also runs Codecov and SonarCloud actions.
+
 name: CI
 on:
 - pull_request
