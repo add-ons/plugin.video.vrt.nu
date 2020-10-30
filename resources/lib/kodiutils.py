@@ -368,6 +368,8 @@ def set_locale():
 
 def localize(string_id, **kwargs):
     """Return the translated string from the .po language files, optionally translating variables"""
+    if not isinstance(string_id, int) and not string_id.isdecimal():
+        return string_id
     if kwargs:
         from string import Formatter
         return Formatter().vformat(ADDON.getLocalizedString(string_id), (), SafeDict(**kwargs))
