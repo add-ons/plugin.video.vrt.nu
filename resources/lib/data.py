@@ -23,6 +23,7 @@ CATEGORIES = [
     dict(name='Lifestyle', id='lifestyle', msgctxt=30079),
     dict(name='Muziek', id='muziek', msgctxt=30080),
     dict(name='Nieuws en actua', id='nieuws-en-actua', msgctxt=30081),
+    dict(name='Nostalgie', id='nostalgie', msgctxt=30088),
     dict(name='Serie', id='series', msgctxt=30082),
     dict(name='Sport', id='sport', msgctxt=30083),
     dict(name='Talkshows', id='talkshows', msgctxt=30084),

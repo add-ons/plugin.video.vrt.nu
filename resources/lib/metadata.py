@@ -797,8 +797,8 @@ class Metadata:
         # VRT NU Search API
         if api_data.get('type') == 'episode':
             from data import CATEGORIES
-            return sorted([localize(find_entry(CATEGORIES, 'id', category).get('msgctxt'))
-                           for category in api_data.get('categories')])
+            return sorted([localize(find_entry(CATEGORIES, 'id', category, {}).get('msgctxt', 30135))
+                           for category in api_data.get('categories', [])])
 
         # VRT NU Suggest API
         if api_data.get('type') == 'program':

@@ -97,7 +97,7 @@ class TestVRTPlayer(unittest.TestCase):
     def test_categories(self):
         """Test to ensure our hardcoded categories conforms to scraped categories"""
         category_items = self._apihelper.list_categories()
-        self.assertEqual(len(category_items), 18)
+        self.assertEqual(len(category_items), 19)
 
     def test_featured(self):
         """Test to ensure our hardcoded categories conforms to scraped categories"""
