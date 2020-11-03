@@ -17,7 +17,7 @@ jobs:
       fail-fast: false
       matrix:
 #        max-parallel: 2
-        python-version: [ 2.7, 3.5, 3.6, 3.7, 3.8 ]
+        python-version: [ 2.7, 3.5, 3.6, 3.7, 3.8, 3.9 ]
     steps:
     - name: Check out ${{ github.sha }} from repository ${{ github.repository }}
       uses: actions/checkout@v2
@@ -43,8 +43,8 @@ jobs:
     # Python 2.7 and Python 3.5 are no longer supported by proxy.py
     - name: Start proxy server, when supported
       run: python -m proxy --hostname 127.0.0.1 --log-level DEBUG &
-      if: matrix.python-version == '3.6' || matrix.python-version == '3.7' || matrix.python-version == '3.8'
-      #if: contains(["3.6", "3.7", "3.8"], matrix.python-version)
+      if: matrix.python-version == '3.6' || matrix.python-version == '3.7' || matrix.python-version == '3.8' || matrix.python-version == '3.9'
+      #if: contains(['3.6', '3.7', '3.8', '3.9'], matrix.python-version)
     - name: Run unit tests
       run: coverage run -m unittest discover
       env:
