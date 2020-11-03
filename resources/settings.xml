@@ -92,5 +92,7 @@
         <setting label="30929" help="30930" type="slider" id="httpcachettlindirect" default="60" range="1,1,240" option="int" enable="eq(-3,true)" subsetting="true"/>
         <setting label="30931" type="lsep"/> <!-- Logging -->
         <setting label="30933" help="30934" type="enum" id="max_log_level" lvalues="30430|30431|30432|30433" default="0"/>
+        <setting label="30935" help="30936" type="action" action="InstallAddon(script.kodi.loguploader)" option="close" visible="!System.HasAddon(script.kodi.loguploader)"/> <!-- Install Kodi Logfile Uploader -->
+        <setting label="30937" help="30938" type="action" action="RunAddon(script.kodi.loguploader)" visible="String.StartsWith(System.BuildVersion,18) + System.HasAddon(script.kodi.loguploader) | System.AddonIsEnabled(script.kodi.loguploader)" /> <!-- Open Kodi Logfile Uploader -->
     </category>
 </settings>
