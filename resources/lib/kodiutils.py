@@ -11,6 +11,12 @@ from ssl import SSLError
 import xbmc
 import xbmcaddon
 import xbmcplugin
+
+try:  # Kodi 19 alpha 2 and higher
+    from xbmcvfs import translatePath
+except ImportError:  # Kodi 19 alpha 1 and lower
+    from xbmc import translatePath  # pylint: disable=ungrouped-imports
+
 from utils import from_unicode, to_unicode
 
 try:  # Python 3
@@ -128,9 +134,14 @@ def addon_path():
     return get_addon_info('path')
 
 
+def translate_path(path):
+    """Converts a Kodi special:// path to the corresponding OS-specific path"""
+    return to_unicode(translatePath(from_unicode(path)))
+
+
 def addon_profile():
     """Return add-on profile"""
-    return to_unicode(xbmc.translatePath(ADDON.getAddonInfo('profile')))
+    return translate_path(ADDON.getAddonInfo('profile'))
 
 
 def url_for(name, *args, **kwargs):
@@ -519,7 +530,7 @@ def get_global_setting(key):
 
 def get_advanced_setting(key, default=None):
     """Get a setting from advancedsettings.xml"""
-    as_path = xbmc.translatePath('special://masterprofile/advancedsettings.xml')
+    as_path = translate_path('special://masterprofile/advancedsettings.xml')
     if not exists(as_path):
         return default
     from xml.etree.ElementTree import parse, ParseError
