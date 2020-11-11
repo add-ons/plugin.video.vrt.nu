@@ -897,6 +897,14 @@ msgctxt "#30933"
 msgid "Log level"
 msgstr ""
 
+msgctxt "#30935"
+msgid "Install Kodi Logfile Uploader…"
+msgstr ""
+
+msgctxt "#30937"
+msgid "Open Kodi Logfile Uploader…"
+msgstr ""
+
 
 ### MESSAGES
 msgctxt "#30951"
