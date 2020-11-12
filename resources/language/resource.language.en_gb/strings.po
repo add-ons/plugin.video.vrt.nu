@@ -741,6 +741,10 @@ msgctxt "#30834"
 msgid "VRT NWS"
 msgstr ""
 
+msgctxt "#30835"
+msgid "De Warmste Week"
+msgstr ""
+
 msgctxt "#30860"
 msgid "Integration"
 msgstr ""
