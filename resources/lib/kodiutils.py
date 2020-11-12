@@ -598,7 +598,7 @@ def get_playerid():
 
 def get_max_bandwidth():
     """Get the max bandwidth based on Kodi and add-on settings"""
-    vrtnu_max_bandwidth = get_setting_int('max_bandwidth', default=0)
+    vrtnu_max_bandwidth = int(get_setting('max_bandwidth', default='0'))
     global_max_bandwidth = int(get_global_setting('network.bandwidth'))
     if vrtnu_max_bandwidth != 0 and global_max_bandwidth != 0:
         return min(vrtnu_max_bandwidth, global_max_bandwidth)
