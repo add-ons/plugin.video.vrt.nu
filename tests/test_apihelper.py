@@ -38,9 +38,9 @@ class TestApiHelper(unittest.TestCase):
         self.assertEqual(content, 'episodes')
 
     def test_get_api_data_multiple_seasons(self):
-        """Test listing episodes for multiple seasons (thuis)"""
-        title_items, sort, ascending, content = self._apihelper.list_episodes(program='thuis')
-        self.assertTrue(len(title_items) < 5)
+        """Test listing episodes for multiple seasons (winteruur)"""
+        title_items, sort, ascending, content = self._apihelper.list_episodes(program='winteruur')
+        self.assertTrue(5 < len(title_items) < 10)
         self.assertEqual(sort, 'label')
         self.assertFalse(ascending)
         self.assertEqual(content, 'files')

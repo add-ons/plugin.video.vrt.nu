@@ -91,12 +91,12 @@ class TestUtils(unittest.TestCase):
 
     def test_video_to_api_url(self):
         """Test convert video to api URL (de-ideale-wereld)"""
-        video = 'https://www.vrt.be/vrtnu/a-z/de-ideale-wereld/2019-nj/de-ideale-wereld-d20191010/'
-        api_url = '//www.vrt.be/vrtnu/a-z/de-ideale-wereld/2019-nj/de-ideale-wereld-d20191010/'
+        video = 'https://www.vrt.be/vrtnu/a-z/winteruur/1/winteruur-s1a61/'
+        api_url = '//www.vrt.be/vrtnu/a-z/winteruur/1/winteruur-s1a61/'
         self.assertEqual(api_url, utils.video_to_api_url(video))
 
-        video = 'https://www.vrt.be/vrtnu/a-z/de-ideale-wereld/2019-nj/de-ideale-wereld-d20191010'
-        api_url = '//www.vrt.be/vrtnu/a-z/de-ideale-wereld/2019-nj/de-ideale-wereld-d20191010/'
+        video = 'https://www.vrt.be/vrtnu/a-z/winteruur/1/winteruur-s1a61'
+        api_url = '//www.vrt.be/vrtnu/a-z/winteruur/1/winteruur-s1a61/'
         self.assertEqual(api_url, utils.video_to_api_url(video))
 
     def test_play_url_to_id(self):
