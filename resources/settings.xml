@@ -49,6 +49,7 @@
         <setting label="30832" type="bool" id="mnm" default="true"/> <!-- MNM -->
         <setting label="30833" type="bool" id="vrtnws" default="true"/> <!-- VRT NWS -->
         <setting label="30834" type="bool" id="vrtnxt" default="true"/> <!-- VRT NXT -->
+        <setting label="30835" type="bool" id="de-warmste-week" default="false"/> <!-- De Warmste Week -->
     </category>
     <category label="30860"> <!--Integration -->
         <setting label="30861" type="lsep"/> <!-- Integration with other add-ons -->

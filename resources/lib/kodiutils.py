@@ -471,15 +471,12 @@ def get_setting_int(key, default=None):
 
 
 def get_setting_float(key, default=None):
-    """Get an add-on setting"""
+    """Get an add-on setting as float"""
+    value = get_setting(key, default)
     try:
-        return ADDON.getSettingNumber(key)
-    except (AttributeError, TypeError):  # On Krypton or older, or when not a float
-        value = get_setting(key, default)
-        try:
-            return float(value)
-        except ValueError:
-            return default
+        return float(value)
+    except ValueError:
+        return default
     except RuntimeError:  # Occurs when the add-on is disabled
         return default
 
@@ -601,7 +598,7 @@ def get_playerid():
 
 def get_max_bandwidth():
     """Get the max bandwidth based on Kodi and add-on settings"""
-    vrtnu_max_bandwidth = get_setting_int('max_bandwidth', default=0)
+    vrtnu_max_bandwidth = int(get_setting('max_bandwidth', default='0'))
     global_max_bandwidth = int(get_global_setting('network.bandwidth'))
     if vrtnu_max_bandwidth != 0 and global_max_bandwidth != 0:
         return min(vrtnu_max_bandwidth, global_max_bandwidth)

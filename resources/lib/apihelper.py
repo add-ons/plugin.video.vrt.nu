@@ -551,7 +551,10 @@ class ApiHelper:
                 program_urls = [program_to_url(p, 'medium') for p in self._favorites.programs()]
                 params['facets[programUrl]'] = '[%s]' % (','.join(program_urls))
             elif variety in ('offline', 'recent'):
-                channel_filter = [channel.get('name') for channel in CHANNELS if get_setting_bool(channel.get('name'), default=True)]
+                channel_filter = []
+                for channel in CHANNELS:
+                    if channel.get('vod') is True and get_setting_bool(channel.get('name'), default=True):
+                        channel_filter.append(channel.get('name'))
                 params['facets[programBrands]'] = '[%s]' % (','.join(channel_filter))
 
         if program:
