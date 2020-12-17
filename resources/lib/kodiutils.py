@@ -416,6 +416,11 @@ def localize_date(date, strftime):
         strftime = strftime.replace('%B', MONTH_LONG[date.strftime('%m')])
     elif '%b' in strftime:
         strftime = strftime.replace('%b', MONTH_SHORT[date.strftime('%m')])
+
+    # %e isn't supported on Python 2.7 on Windows
+    if '%e' in strftime:
+        strftime = strftime.replace('%e', str(int(date.strftime('%d'))))
+
     return date.strftime(strftime)
 
 
