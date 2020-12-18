@@ -604,6 +604,19 @@ class ApiHelper:
             facets = search_json.get('facets', {}).get('facets')
             if facets:
                 seasons = next((f.get('buckets', []) for f in facets if f.get('name') == 'seasons' and len(f.get('buckets', [])) > 1), None)
+            # Experimental: VRT Search API only returns a maximum of 10 seasons, to get all seasons we need to use the "model.json" API
+            if seasons and program and len(seasons) == 10:
+                season_json = get_url_json('https://www.vrt.be/vrtnu/a-z/%s.model.json' % program)
+                season_items = None
+                try:
+                    season_items = season_json.get(':items').get('parsys').get(':items').get('container') \
+                                              .get(':items').get('banner').get(':items').get('navigation').get(':items')
+                except AttributeError:
+                    pass
+                if season_items:
+                    seasons = []
+                    for item in season_items:
+                        seasons.append(dict(key=item.lstrip('0')))
 
         episodes = search_json.get('results', [{}])
         show_seasons = bool(season != 'allseasons')
