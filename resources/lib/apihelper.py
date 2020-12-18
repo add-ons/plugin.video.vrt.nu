@@ -197,12 +197,11 @@ class ApiHelper:
             except IndexError:
                 episode = episodes[0]
 
-            label = '%s %s' % (localize(30131), season_key)  # Season X
             season_items.append(TitleItem(
-                label=label,
+                label=self._metadata.get_title(episode, season=season_key),
                 path=url_for('programs', program=program, season=season_key),
-                art_dict=self._metadata.get_art(episode, season=True),
-                info_dict=self._metadata.get_info_labels(episode, season=True),
+                art_dict=self._metadata.get_art(episode, season=season_key),
+                info_dict=self._metadata.get_info_labels(episode, season=season_key),
                 prop_dict=self._metadata.get_properties(episode),
             ))
         return season_items, sort, ascending, content
