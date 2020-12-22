@@ -1092,7 +1092,7 @@ def open_url(url, data=None, headers=None, method=None, cookiejar=None, follow_r
         log(2, 'URL post: {url}', url=unquote(url))
         # Make sure we don't log the password
         debug_data = data
-        if 'password' in debug_data:
+        if 'password' in to_unicode(debug_data):
             debug_data = '**redacted**'
         log(2, 'URL post data: {data}', data=debug_data)
     else:
