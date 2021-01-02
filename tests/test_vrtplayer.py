@@ -5,8 +5,10 @@
 # pylint: disable=invalid-name
 
 from __future__ import absolute_import, division, print_function, unicode_literals
+from datetime import datetime
 import random
 import unittest
+import dateutil.tz
 from apihelper import ApiHelper
 from favorites import Favorites
 from resumepoints import ResumePoints
@@ -18,6 +20,7 @@ xbmcgui = __import__('xbmcgui')
 xbmcplugin = __import__('xbmcplugin')
 xbmcvfs = __import__('xbmcvfs')
 
+now = datetime.now(dateutil.tz.tzlocal())
 
 class TestVRTPlayer(unittest.TestCase):
     """TestCase class"""
@@ -41,7 +44,8 @@ class TestVRTPlayer(unittest.TestCase):
     def test_show_videos_single_season_shows_videos(self):
         """Test listing single season for a given program (het-weer)"""
         program = 'het-weer'
-        episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program)
+        season = str(now.year)
+        episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program, season=season)
         self.assertTrue(episode_items, msg=program)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
