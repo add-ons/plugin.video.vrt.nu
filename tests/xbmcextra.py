@@ -15,6 +15,7 @@ def kodi_to_ansi(string):
     """Convert Kodi format tags to ANSI codes"""
     if string is None:
         return None
+    string = string.replace('[BR]', '\n')
     string = string.replace('[B]', '\033[1m')
     string = string.replace('[/B]', '\033[21m')
     string = string.replace('[I]', '\033[3m')

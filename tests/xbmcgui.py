@@ -18,15 +18,68 @@ class Control:
         """A stub constructor for the xbmcgui Control class"""
 
     @staticmethod
+    def addControl(pControl):
+        """A stub implementation for the xbmcgui Control class addControl() method"""
+
+    @staticmethod
+    def doModal():
+        """A stub implementation for the xbmcgui Control class doModal() method"""
+
+    @staticmethod
+    def getId():
+        """A stub implementation for the xbmcgui Control class getId() method"""
+        return 0
+
+    @staticmethod
     def selectItem(index):
         """A stub implementation for the xbmcgui Control class selectItem() method"""
-        return
+
+    @staticmethod
+    def setAnimations(eventAttr):
+        """A stub implementation for the xbmcgui Control class setAnimations() method"""
+
+    @staticmethod
+    def setEnabled(enabled):
+        """A stub implementation for the xbmcgui Control class setEnabled() method"""
+
+    @staticmethod
+    def setFocus(pControl):
+        """A stub implementation for the xbmcgui Control class setFocus() method"""
+
+    @staticmethod
+    def setImage(imageFilename, useCache=True):
+        """A stub implementation for the xbmcgui Control class setImage() method"""
+
+    @staticmethod
+    def setPosition(x, y):
+        """A stub implementation for the xbmcgui Control class setPosition() method"""
+
+    @staticmethod
+    def setVisible(visible):
+        """A stub implementation for the xbmcgui Control class setVisible() method"""
+
+
+class ControlButton(Control):
+    """A reimplementation of the xbmcgui ControlButton class"""
+
+    def __init__(self, x, y, width, height, label, focusTexture=None, noFocusTexture=None, textOffsetX=10, textOffsetY=2, alignment=4, font=None,
+                 textColor=None, disabledColor=None, angle=0, shadowColor=None, focusedColor=None):
+        """A stub constructor for the xbmcgui Control class"""
+        super(ControlButton, self).__init__()
+
+
+class ControlImage(Control):
+    """A reimplementation of the xbmcgui ControlImage class"""
+
+    def __init__(self, x, y, width, height, filename, aspectRatio=0, colorDiffuse=None):
+        """A stub constructor for the xbmcgui Control class"""
+        super(ControlImage, self).__init__()
 
 
 class ControlLabel(Control):
     """A reimplementation of the xbmcgui ControlLabel class"""
 
-    def __init__(self):  # pylint: disable=super-init-not-called
+    def __init__(self, x, y, width, height, label, font=None, textColor=None, disabledColor=None, alignment=0, hasPath=False, angle=0):  # pylint: disable=super-init-not-called
         """A stub constructor for the xbmcgui ControlLabel class"""
 
     @staticmethod
@@ -37,6 +90,18 @@ class ControlLabel(Control):
     @staticmethod
     def setLabel(label='', font=None, textColor=None, disabledColor=None, shadowColor=None, focusedColor=None, label2=''):
         """A stub implementation for the xbmcgui ControlLabel class getLabel() method"""
+
+
+class ControlTextBox(Control):
+    """A reimplementation of the xbmcgui ControlTextiBox class"""
+
+    def __init__(self, x, y, width, height, font=None, textColor=None):  # pylint: disable=super-init-not-called
+        """A stub constructor for the xbmcgui ControlLabel class"""
+
+    @staticmethod
+    def setText(text):
+        """A stub implementation for the xbmcgui Control class setText() method"""
+        print(kodi_to_ansi(text))
 
 
 class Dialog:
@@ -270,13 +335,22 @@ class Window:
         """A stub constructor for the xbmcgui Window class"""
         return None
 
+    @staticmethod
+    def addControl(pControl):
+        """A stub implementation for the xbmcgui Window class addControl() method"""
+
     def close(self):
         """A stub implementation for the xbmcgui Window class close() method"""
 
+    def doModal(self):
+        """A stub implementation for the xbmcgui Window class doModal() method"""
+        self.onInit()
+        self.onClick(self.button_run_id)
+
     @staticmethod
-    def getControl():
+    def getControl(iControlId):
         """A stub implementation for the xbmcgui Window class getControl() method"""
-        return ControlLabel()
+        return Control()
 
     @staticmethod
     def getFocusId():
@@ -298,14 +372,30 @@ class Window:
         """A stub implementation for the xbmcgui Window class clearProperty() method"""
         return
 
+    @staticmethod
+    def setFocus(pControl):
+        """A stub implementation for the xbmcgui Window class setFocus() method"""
+
     def show(self):
         """A stub implementation for the xbmcgui Window class show() method"""
+
+    @staticmethod
+    def onClick():
+        """A stub implementation for the xbmcgui Window class onClick() method"""
+
+    @staticmethod
+    def onInit():
+        """A stub implementation for the xbmcgui Window class onInit() method"""
+
+    @staticmethod
+    def button_run_id():
+        """A stub implementation for the xbmcgui Window class button_run_id() method"""
 
 
 class WindowXML(Window):
     """A reimplementation of the xbmcgui WindowXML"""
 
-    def __init__(self):
+    def __init__(self, xmlFilename, scriptPath, defaultSkin='Default', defaultRes='720p'):
         """A stub constructor for the xbmcgui WindowXML class"""
         super(WindowXML, self).__init__()
 
@@ -313,9 +403,9 @@ class WindowXML(Window):
 class WindowXMLDialog(WindowXML):
     """A reimplementation of the xbmcgui WindowXMLDialog"""
 
-    def __init__(self):
+    def __init__(self, xmlFilename, scriptPath, defaultSkin='Default', defaultRes='720p'):
         """A stub constructor for the xbmcgui WindowXMLDialog class"""
-        super(WindowXMLDialog, self).__init__()
+        WindowXML.__init__(self, xmlFilename, scriptPath, defaultSkin, defaultRes)
 
 
 def getCurrentWindowId():

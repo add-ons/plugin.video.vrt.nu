@@ -94,3 +94,17 @@ def rmdir(path):
     """A reimplementation of the xbmcvfs rmdir() function"""
     assert isinstance(path, basestring)
     return os.rmdir(path)
+
+
+def translatePath(path):
+    """A stub implementation of the xbmc translatePath() function"""
+    assert isinstance(path, basestring)
+    if path.startswith('special://home'):
+        return path.replace('special://home', os.path.join(os.getcwd(), 'tests/'))
+    if path.startswith('special://masterprofile'):
+        return path.replace('special://masterprofile', os.path.join(os.getcwd(), 'tests/userdata/'))
+    if path.startswith('special://profile'):
+        return path.replace('special://profile', os.path.join(os.getcwd(), 'tests/userdata/'))
+    if path.startswith('special://userdata'):
+        return path.replace('special://userdata', os.path.join(os.getcwd(), 'tests/userdata/'))
+    return path

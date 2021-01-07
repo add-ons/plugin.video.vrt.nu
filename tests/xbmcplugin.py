@@ -6,7 +6,6 @@
 # pylint: disable=invalid-name,unused-argument
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-from xbmc import LOGFATAL, LOGINFO, log
 from xbmcaddon import Addon
 from xbmcextra import kodi_to_ansi, uri_to_path
 
@@ -68,19 +67,19 @@ SORT_METHOD_BITRATE = 43
 SORT_METHOD_DATE_TAKEN = 44
 
 
-def addDirectoryItem(handle, path, listitem, isFolder=False):
+def addDirectoryItem(handle, url, listitem, isFolder=False, totalItems=0):
     """A reimplementation of the xbmcplugin addDirectoryItems() function"""
     label = kodi_to_ansi(listitem.label)
-    path = uri_to_path(path) if path else ''
+    path = uri_to_path(url) if url else ''
     # perma = kodi_to_ansi(listitem.label)  # FIXME: Add permalink
     bullet = '»' if isFolder else '·'
     print('{bullet} {label}{path}'.format(bullet=bullet, label=label, path=path))
     return True
 
 
-def addDirectoryItems(handle, listing, length):
+def addDirectoryItems(handle, items, totalItems=0):
     """A reimplementation of the xbmcplugin addDirectoryItems() function"""
-    for item in listing:
+    for item in items:
         addDirectoryItem(handle, item[0], item[1], item[2])
     return True
 
@@ -102,7 +101,7 @@ def getSetting(handle, key):
 
 def setContent(handle, content):
     """A stub implementation of the xbmcplugin setContent() function"""
-    assert content in ['albums', 'artists', 'episodes', 'files', 'movies', 'musicvideos', 'songs', 'tvshows']
+    assert content in ['albums', 'artists', 'episodes', 'files', 'games', 'images', 'movies', 'musicvideos', 'songs', 'tvshows', 'videos']
 
 
 def setPluginFanart(handle, image, color1=None, color2=None, color3=None):
@@ -116,6 +115,7 @@ def setPluginCategory(handle, category):
 
 def setResolvedUrl(handle, succeeded, listitem):
     """A stub implementation of the xbmcplugin setResolvedUrl() function"""
+    from xbmc import LOGFATAL, LOGINFO, log
 
     print(kodi_to_ansi('[B][COLOR=yellow]Title[/COLOR]: {label}[/B]'.format(label=listitem.label)))
     print(kodi_to_ansi('[COLOR=yellow]URL[/COLOR]:\n{url}'.format(url=listitem.path)))

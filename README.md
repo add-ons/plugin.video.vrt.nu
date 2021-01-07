@@ -73,7 +73,7 @@ leave a message at [our Facebook page](https://facebook.com/kodivrtnu/).
 - Get categories from online JSON (@mediaminister)
 - Improvements to connection error handling (@dagwieers)
 - Improvements to virtual subclip support (@mediaminister)
-- Extend soon offline menu to seven days (@mediaminster)
+- Extend soon offline menu to seven days (@mediaminister)
 - Improve Up Next support (@mediaminister)
 
 ### v2.4.0 (2020-07-18)
