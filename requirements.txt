@@ -4,8 +4,8 @@ git+git://github.com/emilsvennesson/script.module.inputstreamhelper.git@master#e
 kodi-addon-checker
 polib
 proxy.py; python_version != '2.7'
-python-dateutil
 pylint
+python-dateutil
 git+git://github.com/tamland/kodi-plugin-routing.git@master#egg=routing
 setuptools >= 41
 tox

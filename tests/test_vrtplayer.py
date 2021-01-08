@@ -22,6 +22,7 @@ xbmcvfs = __import__('xbmcvfs')
 
 now = datetime.now(dateutil.tz.tzlocal())
 
+
 class TestVRTPlayer(unittest.TestCase):
     """TestCase class"""
 

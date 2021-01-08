@@ -9,7 +9,6 @@ from socket import timeout
 from ssl import SSLError
 
 import xbmc
-import xbmcaddon
 import xbmcplugin
 
 try:  # Kodi 19 alpha 2 and higher
@@ -17,6 +16,7 @@ try:  # Kodi 19 alpha 2 and higher
 except ImportError:  # Kodi 19 alpha 1 and lower
     from xbmc import translatePath  # pylint: disable=ungrouped-imports
 
+from xbmcaddon import Addon
 from utils import from_unicode, to_unicode
 
 try:  # Python 3
@@ -24,7 +24,7 @@ try:  # Python 3
 except ImportError:  # Python 2
     from urllib2 import HTTPErrorProcessor
 
-ADDON = xbmcaddon.Addon()
+ADDON = Addon()
 DEFAULT_CACHE_DIR = 'cache'
 
 SORT_METHODS = dict(
