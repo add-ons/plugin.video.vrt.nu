@@ -254,7 +254,11 @@ class StreamService:
                 log(2, 'Protocol: {protocol}', protocol=protocol)
                 # Fix 720p quality for HLS livestreams
                 manifest_url = manifest_url.replace('.m3u8?', '.m3u8?hd&') if '.m3u8?' in manifest_url else manifest_url + '?hd'
-                stream = self._select_hls_substreams(manifest_url, protocol)
+                # Play HLS directly in Kodi Player on Kodi 17
+                if kodi_version_major() < 18 or not has_inputstream_adaptive():
+                    stream = self._select_hls_substreams(manifest_url, protocol)
+                else:
+                    stream = StreamURLS(manifest_url, use_inputstream_adaptive=True)
             return stream
 
         # VRT Geoblock: failed to get stream, now try again with roaming enabled
@@ -311,7 +315,7 @@ class StreamService:
         end_of_directory()
 
     def _select_hls_substreams(self, master_hls_url, protocol):
-        """Select HLS substreams to speed up Kodi player start, workaround for slower kodi selection"""
+        """Select HLS substreams to speed up Kodi player start, workaround for slower Kodi selection"""
         hls_variant_url = None
         subtitle_url = None
         hls_audio_id = None
