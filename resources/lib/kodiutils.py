@@ -292,14 +292,23 @@ def play(stream, video=None):
         )
     play_item.setProperty('inputstream.adaptive.max_bandwidth', str(get_max_bandwidth() * 1000))
     play_item.setProperty('network.bandwidth', str(get_max_bandwidth() * 1000))
+
     if stream.stream_url is not None and stream.use_inputstream_adaptive:
         if kodi_version_major() < 19:
             play_item.setProperty('inputstreamaddon', 'inputstream.adaptive')
         else:
             play_item.setProperty('inputstream', 'inputstream.adaptive')
-        play_item.setProperty('inputstream.adaptive.manifest_type', 'mpd')
+
         play_item.setContentLookup(False)
-        play_item.setMimeType('application/dash+xml')
+
+        if '.mpd' in stream.stream_url:
+            play_item.setProperty('inputstream.adaptive.manifest_type', 'mpd')
+            play_item.setMimeType('application/dash+xml')
+
+        if '.m3u8' in stream.stream_url:
+            play_item.setProperty('inputstream.adaptive.manifest_type', 'hls')
+            play_item.setMimeType('application/vnd.apple.mpegurl')
+
         if stream.license_key is not None:
             import inputstreamhelper
             is_helper = inputstreamhelper.Helper('mpd', drm='com.widevine.alpha')
