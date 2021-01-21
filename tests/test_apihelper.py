@@ -113,10 +113,13 @@ class TestApiHelper(unittest.TestCase):
         self.assertTrue(tvshow_items)
 
         # Test every brand is a known channel studio name
-        bogus_brands = ['lang-zullen-we-lezen', 'VRT', 'mediafastforward']
+        bogus_brands = ['lang-zullen-we-lezen', 'VRT', 'mediafastforward', 'throwback']
         channel_studios = [c.get('studio') for c in CHANNELS] + bogus_brands
         for tvshow in tvshow_items:
-            self.assertTrue(tvshow.info_dict['studio'] in channel_studios, '%s | %s | %s' % (tvshow.label, tvshow.info_dict['studio'], channel_studios))
+            self.assertTrue(
+                tvshow.info_dict['studio'] in channel_studios,
+                "Program '%s' has brand '%s' missing from all brands: %s" % (tvshow.label, tvshow.info_dict['studio'], channel_studios)
+            )
 
     def test_get_latest_episode(self):
         """Test getting the latest episode of a program (het-journaal)"""
