@@ -1193,6 +1193,13 @@ def get_url_json(url, cache=None, headers=None, data=None, fail=None, raise_erro
     return fail
 
 
+def generate_expiration_date(hours=2):
+    """Return ISO 8601 formatted expirationDate"""
+    from datetime import datetime, timedelta
+    import dateutil.tz
+    return (datetime.now(dateutil.tz.UTC) + timedelta(hours=hours)).isoformat()
+
+
 def delete_cache(cache_file, cache_dir=DEFAULT_CACHE_DIR):
     """Delete a cached file"""
     path = get_cache_path(cache_file, cache_dir)
