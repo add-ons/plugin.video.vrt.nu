@@ -745,6 +745,42 @@ msgctxt "#30835"
 msgid "De Warmste Week"
 msgstr ""
 
+msgctxt "#30840"
+msgid "Kodi Library"
+msgstr ""
+
+msgctxt "#30841"
+msgid "Indexing"
+msgstr ""
+
+msgctxt "#30843"
+msgid "Add video locations to the Kodi Library… [COLOR gray](See README.md)[/COLOR]"
+msgstr ""
+
+msgctxt "#30845"
+msgid "Index documentaries also"
+msgstr ""
+
+msgctxt "#30847"
+msgid "Index music videos also"
+msgstr ""
+
+msgctxt "#30849"
+msgid "Index only TV shows you follow"
+msgstr ""
+
+msgctxt "#30851"
+msgid "Maintenance"
+msgstr ""
+
+msgctxt "#30853"
+msgid "Refresh Library…"
+msgstr ""
+
+msgctxt "#30855"
+msgid "Clean Library…"
+msgstr ""
+
 msgctxt "#30860"
 msgid "Integration"
 msgstr ""
