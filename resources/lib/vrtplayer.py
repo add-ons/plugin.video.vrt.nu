@@ -9,7 +9,7 @@ from helperobjects import TitleItem
 from kodiutils import (colour, delete_cached_thumbnail, end_of_directory, get_addon_info,
                        get_setting, get_setting_bool, get_setting_int, has_credentials,
                        localize, log_error, ok_dialog, play, set_setting, show_listing,
-                       ttl, url_for, wait_for_resumepoints)
+                       ttl, url_for, wait_for_resumepoints, has_inputstream_adaptive, kodi_version_major)
 from resumepoints import ResumePoints
 from utils import find_entry, realpage
 
@@ -93,6 +93,10 @@ class VRTPlayer:
                 # 2.2.1 version: moved tokens: delete old tokens
                 from tokenresolver import TokenResolver
                 TokenResolver().delete_tokens()
+            
+            # Make user aware that timeshift funxtionalty will not work without ISA when user starts up the first time  
+            if settings_version == '' and kodi_version_major() > 17 and not has_inputstream_adaptive():
+                ok_dialog(message=localize(30988))
 
     @staticmethod
     def _first_run():
