@@ -93,8 +93,8 @@ class VRTPlayer:
                 # 2.2.1 version: moved tokens: delete old tokens
                 from tokenresolver import TokenResolver
                 TokenResolver().delete_tokens()
-            
-            # Make user aware that timeshift funxtionalty will not work without ISA when user starts up the first time  
+
+            # Make user aware that timeshift funxtionalty will not work without ISA when user starts up the first time
             if settings_version == '' and kodi_version_major() > 17 and not has_inputstream_adaptive():
                 ok_dialog(message=localize(30988))
 
