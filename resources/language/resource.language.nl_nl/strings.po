@@ -1045,4 +1045,4 @@ msgstr "Geen stream gevonden, gelieve opnieuw te proberen!"
 
 msgctxt "#30988"
 msgid "InputStream Adaptive is not installed/enabled, pause/play and timeshift of live streams will not work"
-msgstr "InputStream Adaptive is niet geinstalleerd/actief, pauzeren/afspelen en timeshift van live tv zullen niet werken"
+msgstr "InputStream Adaptive is niet geïnstalleerd, daarom kan het pauzeren en timeshift van live tv niet werken"
