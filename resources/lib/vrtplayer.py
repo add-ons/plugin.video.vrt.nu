@@ -8,8 +8,9 @@ from favorites import Favorites
 from helperobjects import TitleItem
 from kodiutils import (colour, delete_cached_thumbnail, end_of_directory, get_addon_info,
                        get_setting, get_setting_bool, get_setting_int, has_credentials,
-                       localize, log_error, ok_dialog, play, set_setting, show_listing,
-                       ttl, url_for, wait_for_resumepoints, has_inputstream_adaptive, kodi_version_major)
+                       has_inputstream_adaptive,localize, kodi_version_major, log_error,
+                       ok_dialog, play, set_setting, show_listing,ttl, url_for,
+                       wait_for_resumepoints)
 from resumepoints import ResumePoints
 from utils import find_entry, realpage
 
