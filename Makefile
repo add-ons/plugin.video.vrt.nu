@@ -13,10 +13,6 @@ ifdef release
 else
 	zip_name = $(name)-$(version)-$(git_branch)-$(git_hash).zip
 endif
-
-include_files = addon.xml channels.m3u8 LICENSE README.md resources/
-include_paths = $(patsubst %,$(name)/%,$(include_files))
-exclude_files = \*.new \*.orig \*.pyc \*.pyo
 zip_dir = $(name)/
 
 languages = $(filter-out en_gb, $(patsubst resources/language/resource.language.%, %, $(wildcard resources/language/*)))
@@ -79,7 +75,7 @@ profile:
 build: clean
 	@printf "$(white)=$(blue) Building new package$(reset)\n"
 	@rm -f ../$(zip_name)
-	cd ..; zip -r $(zip_name) $(include_paths) -x $(exclude_files)
+	@git archive --format zip --worktree-attributes -v -o ../$(zip_name) --prefix $(zip_dir) $(or $(shell git stash create), HEAD)
 	@printf "$(white)=$(blue) Successfully wrote package as: $(white)../$(zip_name)$(reset)\n"
 
 multizip: clean
