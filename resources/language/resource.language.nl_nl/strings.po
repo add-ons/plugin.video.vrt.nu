@@ -1046,3 +1046,7 @@ msgstr "Geen stream gevonden, gelieve opnieuw te proberen!"
 msgctxt "#30988"
 msgid "InputStream Adaptive is not available, therefore pause and timeshift of live streams may not work"
 msgstr "InputStream Adaptive is niet geïnstalleerd, daarom kan het pauzeren en timeshift van live tv niet werken"
+
+msgctxt "#30989"
+msgid "Failed to load a compatible stream, please try toggling 'Use Widevine DRM' in the add-on Playback settings."
+msgstr "Kan geen compatibele stream laden, probeer 'Gebruik Widevine DRM' in of uit te schakelen in de add-on afspeelinstellingen."

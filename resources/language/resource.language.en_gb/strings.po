@@ -1046,3 +1046,7 @@ msgstr ""
 msgctxt "#30988"
 msgid "InputStream Adaptive is not installed, therefore pause and timeshift of live streams may not work"
 msgstr ""
+
+msgctxt "#30989"
+msgid "Failed to load a compatible stream, please try toggling 'Use Widevine DRM' in the add-on Playback settings."
+msgstr ""
