@@ -242,7 +242,10 @@ class VRTPlayer:
             self._resumepoints.refresh(ttl=ttl('indirect'))
             tvshow_items = self._apihelper.list_tvshows(feature=feature)
             from data import FEATURED
-            feature_msgctxt = find_entry(FEATURED, 'id', feature).get('msgctxt')
+            feature_msgctxt = None
+            feature = find_entry(FEATURED, 'id', feature)
+            if feature:
+                feature_msgctxt = feature.get('msgctxt')
             show_listing(tvshow_items, category=feature_msgctxt, sort='label', content='tvshows', cache=False)
         else:
             featured_items = self._apihelper.list_featured()

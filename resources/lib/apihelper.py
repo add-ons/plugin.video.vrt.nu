@@ -521,6 +521,7 @@ class ApiHelper:
                 'i': 'video',
                 'size': '300',
             }
+            params['facets[allowedRegion]'] = '[BE,WORLD]'
 
         if variety:
             season = 'allseasons'
@@ -762,12 +763,16 @@ class ApiHelper:
 
         return youtube_items
 
-    def list_featured(self):
+    def list_featured(self, online=False):
         """Construct a list of featured Listitems"""
-        from data import FEATURED
+        if online:
+            featured = self.get_online_featured()
+        else:
+            from data import FEATURED
+            featured = FEATURED
 
         featured_items = []
-        for feature in self.localize_features(FEATURED):
+        for feature in featured:
             featured_name = feature.get('name')
             featured_items.append(TitleItem(
                 label=featured_name,
@@ -776,6 +781,21 @@ class ApiHelper:
                 info_dict=dict(plot='[B]%s[/B]' % feature.get('name'), studio='VRT'),
             ))
         return featured_items
+
+    def get_online_featured(self):
+        """Return a list of featured items from VRT NU Search API"""
+        episodes = self.get_episodes(season='allseasons')
+        taglist = []
+        featured = []
+        for episode in episodes:
+            for tag in episode.get('programTags'):
+                if tag.get('parentTitle') not in ['Kanaal', 'Categorie', 'brands']:
+                    title = tag.get('title').capitalize()
+                    name = tag.get('name')
+                    if name not in taglist:
+                        taglist.append(name)
+                        featured.append(dict(name=title, id=name))
+        return featured
 
     @staticmethod
     def localize_features(featured):
