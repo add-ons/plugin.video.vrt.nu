@@ -100,7 +100,7 @@ class ApiHelper:
         )
 
     def list_episodes(self, program=None, season=None, category=None, feature=None, programtype=None,
-                      page=None, items_per_page=None, use_favorites=False, variety=None, sort_key=None):
+                      page=None, items_per_page=None, use_favorites=False, variety=None, sort_key=None, whatson_id=None):
         """Construct a list of episode or season TitleItems from VRT NU Search API data and filtered by favorites"""
         # Caching
         if not variety:
@@ -109,22 +109,25 @@ class ApiHelper:
             cache_file = '{my}{variety}{page}.json'.format(
                 my='my-' if use_favorites else '',
                 variety=variety,
-                page='-{}'.format(page) if sort_key is None else '',
+                page='-{}'.format(page) if sort_key is None and page is not None else '',
             )
 
         # Titletype
         titletype = None
-        if variety:
+        # FIXME: Find a better way to determine cache file and mixed episodes titletype
+        if variety and variety.startswith('featured.') or variety in ('continue', 'offline', 'recent', 'watchlater'):
+            titletype = 'mixed_episodes'
+        else:
             titletype = variety
 
         # Get data from api or cache
         if sort_key:
             episodes = self.get_episodes(program=program, season=season, category=category, feature=feature, programtype=programtype,
-                                         use_favorites=use_favorites, variety=variety, cache_file=cache_file)
+                                         use_favorites=use_favorites, variety=variety, cache_file=cache_file, whatson_id=whatson_id)
             episodes = sorted(episodes, key=lambda k: k[sort_key])[(page * items_per_page) - items_per_page:page * items_per_page]
         else:
             episodes = self.get_episodes(program=program, season=season, category=category, feature=feature, programtype=programtype,
-                                         page=page, use_favorites=use_favorites, variety=variety, cache_file=cache_file)
+                                         page=page, use_favorites=use_favorites, variety=variety, cache_file=cache_file, whatson_id=whatson_id)
 
         if isinstance(episodes, tuple):
             seasons = episodes[0]
@@ -139,7 +142,6 @@ class ApiHelper:
         sort = 'episode'
         ascending = True
         content = 'episodes'
-
         if use_favorites:
             favorite_programs = self._favorites.programs()
 
@@ -265,7 +267,7 @@ class ApiHelper:
     def list_search(self, keywords, page=0):
         """Search VRT NU content for a given string"""
         episodes = self.get_episodes(keywords=keywords, page=page)
-        return self.__map_episodes(episodes, titletype='recent')
+        return self.__map_episodes(episodes, titletype='mixed_episodes')
 
     def get_upnext(self, info):
         """Get up next data from VRT Search API"""
@@ -589,7 +591,11 @@ class ApiHelper:
             params['highlight'] = 'true'
 
         if whatson_id:
-            params['facets[whatsonId]'] = whatson_id
+            if isinstance(whatson_id, list):
+                season = 'allseasons'
+                params['facets[whatsonId]'] = '[%s]' % (','.join(str(item) for item in whatson_id))
+            else:
+                params['facets[whatsonId]'] = whatson_id
 
         if video_id:
             params['facets[videoId]'] = video_id
@@ -774,12 +780,12 @@ class ApiHelper:
         """Construct a list of featured Listitems"""
         featured = []
         if online:
-            featured = self.get_online_featured()
+            featured = self.get_featured_from_api()
         else:
             from data import FEATURED
 
-            # Add VRT NU Website featured items
-            featured.extend(self.get_jcr_featured())
+            # Add VRT NU website featured items
+            featured.extend(self.get_featured_from_web())
 
             # Add hardcoded VRT Search API featured items
             featured.extend(FEATURED)
@@ -795,7 +801,7 @@ class ApiHelper:
             ))
         return featured_items
 
-    def get_online_featured(self):
+    def get_featured_from_api(self):
         """Return a list of featured items from VRT NU Search API"""
         episodes = self.get_episodes(season='allseasons')
         taglist = []
@@ -811,8 +817,8 @@ class ApiHelper:
         return featured
 
     @staticmethod
-    def get_jcr_featured():
-        """Return a list of featured items from VRT NU Homepage"""
+    def get_featured_from_web():
+        """Return a list of featured items from VRT NU website using AEM JSON Exporter"""
         featured = []
         data = get_url_json('https://www.vrt.be/vrtnu/jcr:content/par.model.json')
         if data is not None:
@@ -825,16 +831,21 @@ class ApiHelper:
         return featured
 
     @staticmethod
-    def get_jcr_featured_programs(feature):
-        """Return a list of featured programNames from VRT NU Homepage"""
-        programs = []
+    def get_featured_media_from_web(feature):
+        """Return a list of featured media from VRT NU website using AEM JSON Exporter"""
+        media = []
         data = get_url_json('https://www.vrt.be/vrtnu/jcr:content/par/%s.model.json' % feature)
         if data is not None:
-            items = data.get('items')
-            if items:
-                for item in items:
-                    programs.append(item.get('id'))
-        return programs
+            for item in data.get('items'):
+                mediatype = 'tvshows'
+                for action in item.get('actions'):
+                    if 'episode' in action.get('type'):
+                        mediatype = 'episodes'
+                if mediatype == 'episodes':
+                    media.append(item.get('whatsonId'))
+                else:
+                    media.append(item.get('programName'))
+        return dict(name=data.get('title'), mediatype=mediatype, medialist=media)
 
     @staticmethod
     def localize_features(featured):

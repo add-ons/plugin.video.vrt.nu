@@ -733,7 +733,7 @@ class Metadata:
             sort = 'unsorted'
             ascending = True
 
-            if titletype in ('continue', 'offline', 'recent', 'watchlater'):
+            if titletype == 'mixed_episodes':
                 ascending = False
                 label = '[B]%s[/B] - %s' % (api_data.get('program'), label)
                 sort = 'dateadded'

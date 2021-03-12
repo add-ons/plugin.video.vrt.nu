@@ -241,16 +241,24 @@ class VRTPlayer:
             self._favorites.refresh(ttl=ttl('indirect'))
             self._resumepoints.refresh(ttl=ttl('indirect'))
             programs = None
+            sort = 'label'
+            content = 'tvshows'
             if feature.startswith('jcr_'):
-                programs = self._apihelper.get_jcr_featured_programs(feature.split('jcr_')[1])
-                feature = None
-            tvshow_items = self._apihelper.list_tvshows(feature=feature, programs=programs)
+                media = self._apihelper.get_featured_media_from_web(feature.split('jcr_')[1])
+                if media.get('mediatype') == 'episodes':
+                    variety = 'featured.{name}'.format(name=media.get('name').strip().lower().replace(' ', '_'))
+                    media_items, sort, _, content = self._apihelper.list_episodes(whatson_id=media.get('medialist'), variety=variety)
+                elif media.get('mediatype') == 'tvshows':
+                    feature = None
+                    media_items = self._apihelper.list_tvshows(feature=feature, programs=media.get('medialist'))
+            else:
+                media_items = self._apihelper.list_tvshows(feature=feature, programs=programs)
             from data import FEATURED
             feature_msgctxt = None
             feature = find_entry(FEATURED, 'id', feature)
             if feature:
                 feature_msgctxt = feature.get('msgctxt')
-            show_listing(tvshow_items, category=feature_msgctxt, sort='label', content='tvshows', cache=False)
+            show_listing(media_items, category=feature_msgctxt, sort=sort, content=content, cache=False)
         else:
             featured_items = self._apihelper.list_featured()
             show_listing(featured_items, category=30024, sort='label', content='files')
