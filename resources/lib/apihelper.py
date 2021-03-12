@@ -23,7 +23,6 @@ from utils import (add_https_proto, html_to_kodi, find_entry, from_unicode, play
 class ApiHelper:
     """A class with common VRT NU API functionality"""
 
-    _VRT_BASE = 'https://www.vrt.be'
     _VRTNU_SEARCH_URL = 'https://vrtnu-api.vrt.be/search'
     _VRTNU_SUGGEST_URL = 'https://vrtnu-api.vrt.be/suggest'
     _VRTNU_SCREENSHOT_URL = 'https://vrtnu-api.vrt.be/screenshots'
@@ -59,11 +58,19 @@ class ApiHelper:
         suggest_url = self._VRTNU_SUGGEST_URL + '?' + querystring
         return get_cached_url_json(url=suggest_url, cache=cache_file, ttl=ttl('indirect'), fail=[])
 
-    def list_tvshows(self, category=None, channel=None, feature=None, use_favorites=False):
-        """List all TV shows for a given category, channel or feature, optionally filtered by favorites"""
+    def list_tvshows(self, category=None, channel=None, feature=None, programs=None, use_favorites=False):
+        """List all TV shows for a given category, channel, feature or list of programNames, optionally filtered by favorites"""
 
         # Get tvshows
         tvshows = self.get_tvshows(category=category, channel=channel, feature=feature)
+
+        # Filter tvshows using a list of programNames
+        if programs:
+            filtered_tvshows = []
+            for tvshow in tvshows:
+                if tvshow.get('programName') in programs:
+                    filtered_tvshows.append(tvshow)
+            tvshows = filtered_tvshows
 
         # Get oneoffs
         if get_setting_bool('showoneoff', default=True):
@@ -765,11 +772,17 @@ class ApiHelper:
 
     def list_featured(self, online=False):
         """Construct a list of featured Listitems"""
+        featured = []
         if online:
             featured = self.get_online_featured()
         else:
             from data import FEATURED
-            featured = FEATURED
+
+            # Add VRT NU Website featured items
+            featured.extend(self.get_jcr_featured())
+
+            # Add hardcoded VRT Search API featured items
+            featured.extend(FEATURED)
 
         featured_items = []
         for feature in featured:
@@ -796,6 +809,32 @@ class ApiHelper:
                         taglist.append(name)
                         featured.append(dict(name=title, id=name))
         return featured
+
+    @staticmethod
+    def get_jcr_featured():
+        """Return a list of featured items from VRT NU Homepage"""
+        featured = []
+        data = get_url_json('https://www.vrt.be/vrtnu/jcr:content/par.model.json')
+        if data is not None:
+            items = data.get(':items')
+            if items:
+                for item in items:
+                    filled = items.get(item).get('items')
+                    if filled:
+                        featured.append(dict(name=items.get(item).get('title'), id='jcr_%s' % item))
+        return featured
+
+    @staticmethod
+    def get_jcr_featured_programs(feature):
+        """Return a list of featured programNames from VRT NU Homepage"""
+        programs = []
+        data = get_url_json('https://www.vrt.be/vrtnu/jcr:content/par/%s.model.json' % feature)
+        if data is not None:
+            items = data.get('items')
+            if items:
+                for item in items:
+                    programs.append(item.get('id'))
+        return programs
 
     @staticmethod
     def localize_features(featured):

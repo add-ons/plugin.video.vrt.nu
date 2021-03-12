@@ -240,7 +240,11 @@ class VRTPlayer:
         if feature:
             self._favorites.refresh(ttl=ttl('indirect'))
             self._resumepoints.refresh(ttl=ttl('indirect'))
-            tvshow_items = self._apihelper.list_tvshows(feature=feature)
+            programs = None
+            if feature.startswith('jcr_'):
+                programs = self._apihelper.get_jcr_featured_programs(feature.split('jcr_')[1])
+                feature = None
+            tvshow_items = self._apihelper.list_tvshows(feature=feature, programs=programs)
             from data import FEATURED
             feature_msgctxt = None
             feature = find_entry(FEATURED, 'id', feature)
