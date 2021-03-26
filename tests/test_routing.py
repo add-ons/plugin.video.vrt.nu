@@ -246,7 +246,7 @@ class TestRouting(unittest.TestCase):
         self.assertEqual(plugin.url_for(addon.play_latest, program='winteruur'), 'plugin://plugin.video.vrt.nu/play/latest/winteruur')
 
     def test_play_airdateepisode_route(self):
-        """Play episode by air date method: /play/airdate/<channel>/<start_date>"""
+        """Play episode by air date method: /play/airdate/<channel>/<start_date>/<end_date>"""
         # Test Het Journaal
         addon.run([lastweek.strftime('plugin://plugin.video.vrt.nu/play/airdate/een/%Y-%m-%dT19:00:00'), '0', ''])
         self.assertEqual(plugin.url_for(addon.play_air_date,
@@ -259,6 +259,17 @@ class TestRouting(unittest.TestCase):
                                         channel='canvas',
                                         start_date=lastweek.strftime('%Y-%m-%dT20:00:00')),
                          lastweek.strftime('plugin://plugin.video.vrt.nu/play/airdate/canvas/%Y-%m-%dT20:00:00'))
+        # Test Livestream cache for morning tv from 9h to 10h
+        if now.hour < 10:
+            mostrecent = now + timedelta(days=-1)
+        else:
+            mostrecent = now
+        addon.run([mostrecent.strftime('plugin://plugin.video.vrt.nu/play/airdate/een/%Y-%m-%dT09:00:00/%Y-%m-%dT10:00:00'), '0', ''])
+        self.assertEqual(plugin.url_for(addon.play_air_date,
+                                        channel='een',
+                                        start_date=mostrecent.strftime('%Y-%m-%dT09:00:00'),
+                                        end_date=mostrecent.strftime('%Y-%m-%dT10:00:00')),
+                         mostrecent.strftime('plugin://plugin.video.vrt.nu/play/airdate/een/%Y-%m-%dT09:00:00/%Y-%m-%dT10:00:00'))
 
     def test_play_upnext_route(self):
         """Play Up Next episode method: /play/upnext/<video_id>"""

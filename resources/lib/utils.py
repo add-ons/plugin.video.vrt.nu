@@ -193,6 +193,8 @@ def play_url_to_id(url):
         play_id['video_id'] = url.split('play/upnext/')[1]
     elif '/play/url/' in url:
         play_id['video_url'] = video_to_api_url(url.split('play/url/')[1])
+    elif 'play/whatson/' in url:
+        play_id['whatson_id'] = url.split('play/whatson/')[1]
     return play_id
 
 

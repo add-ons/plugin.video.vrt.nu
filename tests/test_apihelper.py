@@ -105,6 +105,11 @@ class TestApiHelper(unittest.TestCase):
         tvshow_items = self._apihelper.list_tvshows(category=category)
         self.assertTrue(tvshow_items)
 
+    def test_predefined_tvshows(self):
+        """Test getting a predefined list of tvshows"""
+        tvshow_items = self._apihelper.list_tvshows(programs=['thuis', 'terzake'])
+        self.assertTrue(tvshow_items)
+
     def test_tvshows(self):
         """Test A-Z tvshow listing and CHANNELS list"""
         tvshow_items = self._apihelper.list_tvshows(category=None)
@@ -147,6 +152,7 @@ class TestApiHelper(unittest.TestCase):
             runtime='600',
         )
         next_episode = self._apihelper.get_upnext(info=current_episode)
+        self.assertTrue(next_episode)
         print(next_episode)
 
     def test_get_categories(self):
