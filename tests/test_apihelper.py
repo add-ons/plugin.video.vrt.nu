@@ -93,6 +93,11 @@ class TestApiHelper(unittest.TestCase):
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
 
+    def test_predefined_episodes(self):
+        """Test getting a predefined list of episodes by whatsonId"""
+        episode_items = self._apihelper.list_episodes(whatson_id=['922554855527', '922554851527'], variety='featured.episodes')
+        self.assertTrue(episode_items)
+
     def test_get_tvshows(self):
         """Test get tvshows (humor)"""
         category = 'humor'
