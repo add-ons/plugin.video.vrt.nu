@@ -84,6 +84,11 @@ class TestRouting(unittest.TestCase):
         addon.run(['plugin://plugin.video.vrt.nu/featured/kortfilm', '0', ''])
         self.assertEqual(plugin.url_for(addon.featured, feature='kortfilm'), 'plugin://plugin.video.vrt.nu/featured/kortfilm')
 
+    def test_featured_episode_menu(self):
+        """Featured episodes menu: /featured/<cfeatured>"""
+        addon.run(['plugin://plugin.video.vrt.nu/featured/jcr_list', '0', ''])
+        self.assertEqual(plugin.url_for(addon.featured, feature='jcr_list'), 'plugin://plugin.video.vrt.nu/featured/jcr_list')
+
     def test_channels_menu(self):
         """Channels menu = /channels/<channel>"""
         addon.run(['plugin://plugin.video.vrt.nu/channels', '0', ''])

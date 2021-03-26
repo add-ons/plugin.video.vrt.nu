@@ -449,7 +449,7 @@ msgstr "Er werden geen gevolgde programma's gevonden."
 
 msgctxt "#30420"
 msgid "Please unselect/select favorites to unfollow/follow."
-msgstr "Duidt aan welke programma's je als favorieten wil volgen."
+msgstr "Duid aan welke programma's je als favorieten wil volgen."
 
 msgctxt "#30421"
 msgid "Now:"

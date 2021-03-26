@@ -788,7 +788,8 @@ class ApiHelper:
             featured.extend(self.get_featured_from_web())
 
             # Add hardcoded VRT Search API featured items
-            featured.extend(FEATURED)
+            for feature in self.localize_features(FEATURED):
+                featured.append(feature)
 
         featured_items = []
         for feature in featured:
