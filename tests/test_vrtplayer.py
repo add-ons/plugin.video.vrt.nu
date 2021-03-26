@@ -105,9 +105,14 @@ class TestVRTPlayer(unittest.TestCase):
         self.assertEqual(len(category_items), 19)
 
     def test_featured(self):
-        """Test to ensure our hardcoded categories conforms to scraped categories"""
-        featured_items = self._apihelper.list_featured()
-        self.assertEqual(len(featured_items), 9)
+        """Test to ensure our hardcoded featured conforms to scraped featured"""
+        featured_items = self._apihelper.list_featured(online=True)
+        from data import FEATURED
+        for feature in featured_items:
+            self.assertTrue(feature.label in [item.get('name') for item in FEATURED], msg='%s is missing' % feature.label)
+        for feature in FEATURED:
+            self.assertTrue(feature.get('name') in [item.label for item in featured_items], msg='%s doesn\'t exist online' % feature.get('name'))
+        self.assertEqual(len(featured_items), 6)
 
     def test_play_unknown_program(self):
         """Test playing latest episode of an unknown program"""
