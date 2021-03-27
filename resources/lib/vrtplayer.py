@@ -243,11 +243,12 @@ class VRTPlayer:
             programs = None
             sort = 'label'
             content = 'tvshows'
+            ascending = True
             if feature.startswith('jcr_'):
                 media = self._apihelper.get_featured_media_from_web(feature.split('jcr_')[1])
                 if media.get('mediatype') == 'episodes':
                     variety = 'featured.{name}'.format(name=media.get('name').strip().lower().replace(' ', '_'))
-                    media_items, sort, _, content = self._apihelper.list_episodes(whatson_id=media.get('medialist'), variety=variety)
+                    media_items, sort, ascending, content = self._apihelper.list_episodes(whatson_id=media.get('medialist'), variety=variety)
                 elif media.get('mediatype') == 'tvshows':
                     feature = None
                     media_items = self._apihelper.list_tvshows(feature=feature, programs=media.get('medialist'))
@@ -258,7 +259,7 @@ class VRTPlayer:
             feature = find_entry(FEATURED, 'id', feature)
             if feature:
                 feature_msgctxt = feature.get('msgctxt')
-            show_listing(media_items, category=feature_msgctxt, sort=sort, content=content, cache=False)
+            show_listing(media_items, category=feature_msgctxt, sort=sort, ascending=ascending, content=content, cache=False)
         else:
             featured_items = self._apihelper.list_featured()
             show_listing(featured_items, category=30024, sort='label', content='files')
