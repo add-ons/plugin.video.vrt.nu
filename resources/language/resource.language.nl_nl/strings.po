@@ -282,6 +282,10 @@ msgctxt "#30130"
 msgid "Climate"
 msgstr "Klimaat"
 
+msgctxt "#30131"
+msgid "Cycling"
+msgstr "Koers"
+
 ### APPLICATION
 msgctxt "#30131"
 msgid "Season"
