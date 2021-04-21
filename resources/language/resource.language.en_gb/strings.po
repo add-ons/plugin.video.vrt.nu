@@ -762,38 +762,54 @@ msgid "YouTube settings…"
 msgstr ""
 
 msgctxt "#30869"
-msgid "Install Up Next add-on…"
+msgid "Install Tubed add-on…"
 msgstr ""
 
 msgctxt "#30870"
-msgid "This enables a Netflix style pop up notification for watching the next episode using the Up Next service add-on."
+msgid "Show YouTube channel content in the Channels menu."
 msgstr ""
 
 msgctxt "#30871"
-msgid "Enable Up Next integration"
+msgid "Enable Tubed integration"
 msgstr ""
 
 msgctxt "#30873"
-msgid "Up Next settings…"
-msgstr ""
-
-msgctxt "#30874"
-msgid "Open Up Next service add-on settings."
+msgid "Tubed settings…"
 msgstr ""
 
 msgctxt "#30875"
-msgid "Install IPTV Manager add-on…"
+msgid "Install Up Next add-on…"
+msgstr ""
+
+msgctxt "#30876"
+msgid "This enables a Netflix style pop up notification for watching the next episode using the Up Next service add-on."
 msgstr ""
 
 msgctxt "#30877"
-msgid "Enable IPTV Manager integration"
+msgid "Enable Up Next integration"
 msgstr ""
 
 msgctxt "#30879"
-msgid "IPTV Manager settings…"
+msgid "Up Next settings…"
+msgstr ""
+
+msgctxt "#30880"
+msgid "Open Up Next service add-on settings."
 msgstr ""
 
 msgctxt "#30881"
+msgid "Install IPTV Manager add-on…"
+msgstr ""
+
+msgctxt "#30883"
+msgid "Enable IPTV Manager integration"
+msgstr ""
+
+msgctxt "#30885"
+msgid "IPTV Manager settings…"
+msgstr ""
+
+msgctxt "#30887"
 msgid "Install PySocks library…"
 msgstr ""
 

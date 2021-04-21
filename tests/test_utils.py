@@ -158,11 +158,6 @@ class TestUtils(unittest.TestCase):
         needle = utils.find_entry(haystack, 'foo', 'blah', dict(foo='f', bar='r', baz='z'))
         self.assertEqual(needle, dict(foo='f', bar='r', baz='z'))
 
-    def test_youtube_to_plugin_url(self):
-        """youtube_to_plugin_url"""
-        self.assertEqual('plugin://plugin.video.youtube/foo/bar/', utils.youtube_to_plugin_url('https://www.youtube.com/foo/bar'))
-        self.assertEqual('plugin://plugin.video.youtube/foo/bar/baz/', utils.youtube_to_plugin_url('https://www.youtube.com/foo/bar/baz/'))
-
 
 if __name__ == '__main__':
     unittest.main()

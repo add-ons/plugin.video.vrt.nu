@@ -150,6 +150,18 @@ def url_for(name, *args, **kwargs):
     return addon.plugin.url_for(getattr(addon, name), *args, **kwargs)
 
 
+def youtube_to_plugin_url(url):
+    """Convert a YouTube URL to a Kodi plugin URL"""
+    if kodi_version_major() > 18 and has_addon('plugin.video.tubed'):
+        replace_str = 'plugin://plugin.video.tubed/'
+    else:
+        replace_str = 'plugin://plugin.video.youtube/'
+    url = url.replace('https://www.youtube.com/', replace_str)
+    if not url.endswith('/'):
+        url += '/'
+    return url
+
+
 def show_listing(list_items, category=None, sort='unsorted', ascending=True, content=None, cache=None, selected=None):
     """Show a virtual directory in Kodi"""
     from xbmcgui import ListItem

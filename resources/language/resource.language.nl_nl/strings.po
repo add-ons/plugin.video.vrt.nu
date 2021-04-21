@@ -762,38 +762,54 @@ msgid "YouTube settings…"
 msgstr "YouTube instellingen…"
 
 msgctxt "#30869"
+msgid "Install Tubed add-on…"
+msgstr "Installeer de Tubed add-on…"
+
+msgctxt "#30870"
+msgid "Show YouTube channel content in the Channels menu."
+msgstr "Toon YouTube kanaal video's in het Kanalen menu."
+
+msgctxt "#30871"
+msgid "Enable Tubed integration"
+msgstr "Activeer Tubed integratie"
+
+msgctxt "#30873"
+msgid "Tubed settings…"
+msgstr "Tubed instellingen…"
+
+msgctxt "#30875"
 msgid "Install Up Next add-on…"
 msgstr "Installeer de Up Next add-on…"
 
-msgctxt "#30870"
+msgctxt "#30876"
 msgid "This enables a Netflix style pop up notification for watching the next episode using the Up Next service add-on."
 msgstr "Dit activeert een pop-upmelding in Netflix-stijl voor het bekijken van de volgende aflevering met de service-add-up Up Next."
 
-msgctxt "#30871"
+msgctxt "#30877"
 msgid "Enable Up Next integration"
 msgstr "Activeer Up Next integratie"
 
-msgctxt "#30873"
+msgctxt "#30879"
 msgid "Up Next settings…"
 msgstr "Up Next instellingen…"
 
-msgctxt "#30874"
+msgctxt "#30880"
 msgid "Open Up Next service add-on settings."
 msgstr "Open de Up Next service add-on instellingen."
 
-msgctxt "#30875"
+msgctxt "#30881"
 msgid "Install IPTV Manager add-on…"
 msgstr "Installeer de IPTV Manager add-on…"
 
-msgctxt "#30877"
+msgctxt "#30883"
 msgid "Enable IPTV Manager integration"
 msgstr "Activeer IPTV Manager integratie"
 
-msgctxt "#30879"
+msgctxt "#30885"
 msgid "IPTV Manager settings…"
 msgstr "IPTV Manager instellingen…"
 
-msgctxt "#30881"
+msgctxt "#30887"
 msgid "Install PySocks library…"
 msgstr "Installeer de PySocks library…"
 

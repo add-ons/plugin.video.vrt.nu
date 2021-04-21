@@ -13,11 +13,11 @@ except ImportError:  # Python 2
 from data import CHANNELS
 from helperobjects import TitleItem
 from kodiutils import (delete_cached_thumbnail, get_cache, get_cached_url_json, get_global_setting,
-                       get_setting_bool, get_setting_int, get_url_json, has_addon, localize,
-                       localize_from_data, log, ttl, update_cache, url_for)
+                       get_setting_bool, get_setting_int, get_url_json, has_addon, kodi_version_major, localize,
+                       localize_from_data, log, ttl, update_cache, url_for, youtube_to_plugin_url)
 from metadata import Metadata
 from utils import (add_https_proto, html_to_kodi, find_entry, from_unicode, play_url_to_id,
-                   program_to_url, realpage, url_to_program, youtube_to_plugin_url)
+                   program_to_url, realpage, url_to_program)
 
 
 class ApiHelper:
@@ -735,8 +735,13 @@ class ApiHelper:
 
         youtube_items = []
 
-        if not has_addon('plugin.video.youtube') or not get_setting_bool('showyoutube', default=True):
-            return youtube_items
+        if kodi_version_major() > 18:
+            if (not (has_addon('plugin.video.youtube') and get_setting_bool('showyoutube', default=True)
+                     or has_addon('plugin.video.tubed') and get_setting_bool('showtubed', default=True))):
+                return youtube_items
+        else:
+            if not (has_addon('plugin.video.youtube') and get_setting_bool('showyoutube', default=True)):
+                return youtube_items
 
         for channel in CHANNELS:
             if channels and channel.get('name') not in channels:
