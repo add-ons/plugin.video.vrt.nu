@@ -19,7 +19,7 @@ def File(path, flags='r'):
     """A reimplementation of the xbmcvfs File() function"""
     assert isinstance(path, basestring)
     assert isinstance(flags, basestring)
-    return open(path, flags)
+    return open(path, flags)  # pylint: disable=consider-using-with
 
 
 def Stat(path):

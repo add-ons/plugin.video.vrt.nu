@@ -32,7 +32,7 @@ class TestApiHelper(unittest.TestCase):
     def test_get_api_data_single_season(self):
         """Test listing episodes for a single season (het-journaal)"""
         title_items, sort, ascending, content = self._apihelper.list_episodes(program='het-journaal', season='allseasons')
-        self.assertTrue(110 <= len(title_items) <= 140, 'We got %s items instead.' % len(title_items))
+        self.assertTrue(100 <= len(title_items) <= 140, 'We got %s items instead.' % len(title_items))
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
