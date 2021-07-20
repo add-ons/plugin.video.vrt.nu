@@ -26,7 +26,6 @@ xbmcplugin = __import__('xbmcplugin')
 xbmcvfs = __import__('xbmcvfs')
 
 addon = xbmcaddon.Addon()
-addon.settings['usedrm'] = False
 
 now = datetime.now(dateutil.tz.tzlocal())
 yesterday = now + timedelta(days=-1)
@@ -70,7 +69,9 @@ class TestStreamService(unittest.TestCase):
                      video_id=None,
                      publication_id=None)
         stream = self._streamservice.get_stream(video)
-        self.assertTrue(stream is not None)
+        # NOTE: Testing live streams only works within Europe
+        if os.environ.get('GITHUB_ACTIONS') != 'true':
+            self.assertTrue(stream is not None)
 
     def test_get_mpd_live_stream_from_url_does_not_crash_returns_stream_and_licensekey(self):
         """Test getting MPEG-DASH stream from URL"""
