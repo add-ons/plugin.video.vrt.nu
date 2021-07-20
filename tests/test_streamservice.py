@@ -73,7 +73,7 @@ class TestStreamService(unittest.TestCase):
         self.assertTrue(stream is not None)
 
     def test_get_mpd_live_stream_from_url_does_not_crash_returns_stream_and_licensekey(self):
-        """Test getting MPD stream from URL"""
+        """Test getting MPEG-DASH stream from URL"""
         addon.settings['usedrm'] = True
         addon.settings['useinputstreamadaptive'] = True
         video = dict(video_url=CHANNELS[1]['live_stream'], video_id=None, publication_id=None)
@@ -81,31 +81,12 @@ class TestStreamService(unittest.TestCase):
         # NOTE: Testing live streams only works within Europe
         if os.environ.get('GITHUB_ACTIONS') != 'true':
             self.assertTrue(stream is not None)
-#            self.assertTrue(stream.license_key is not None)
-
-    def test_get_hls_live_stream_from_url_does_not_crash_returns_stream_and_licensekey(self):
-        """Test getting HLS stream from URL"""
-        addon.settings['usedrm'] = False
-        addon.settings['useinputstreamadaptive'] = False
-        video = dict(video_url=CHANNELS[1]['live_stream'], video_id=None, publication_id=None)
-        stream = self._streamservice.get_stream(video)
-        # NOTE: Testing live streams only works within Europe
-        if os.environ.get('GITHUB_ACTIONS') != 'true':
-            self.assertTrue(stream is not None)
+            self.assertTrue(stream.license_key is not None)
 
     def test_get_mpd_live_stream_from_url_does_not_crash(self):
-        """Test getting MPD stream from URL"""
-        addon.settings['usedrm'] = False
-        video = dict(video_url=CHANNELS[1]['live_stream'], video_id=None, publication_id=None)
-        stream = self._streamservice.get_stream(video)
-        # NOTE: Testing live streams only works within Europe
-        if os.environ.get('GITHUB_ACTIONS') != 'true':
-            self.assertTrue(stream is not None)
-
-    def test_get_hls_live_stream_from_url_does_not_crash(self):
-        """Test getting HLS stream from URL"""
-        addon.settings['usedrm'] = False
-        addon.settings['useinputstreamadaptive'] = False
+        """Test getting MPEG-DASH stream from URL"""
+        addon.settings['usedrm'] = True
+        addon.settings['useinputstreamadaptive'] = True
         video = dict(video_url=CHANNELS[1]['live_stream'], video_id=None, publication_id=None)
         stream = self._streamservice.get_stream(video)
         # NOTE: Testing live streams only works within Europe
@@ -113,25 +94,9 @@ class TestStreamService(unittest.TestCase):
             self.assertTrue(stream is not None)
 
     def test_get_mpd_live_stream_from_id_does_not_crash(self):
-        """Test getting MPD stream from URL"""
-        addon.settings['usedrm'] = False
+        """Test getting MPEG-DASH stream from URL"""
+        addon.settings['usedrm'] = True
         addon.settings['useinputstreamadaptive'] = True
-        video = dict(video_url=None, video_id=CHANNELS[1]['live_stream_id'], publication_id=None)
-        stream = self._streamservice.get_stream(video)
-        # NOTE: Testing live streams only works within Europe
-        if os.environ.get('GITHUB_ACTIONS') != 'true':
-            self.assertTrue(stream is not None)
-
-        video = dict(video_url=None, video_id=CHANNELS[3]['live_stream_id'], publication_id=None)
-        stream = self._streamservice.get_stream(video)
-        # NOTE: Testing live streams only works within Europe
-        if os.environ.get('GITHUB_ACTIONS') != 'true':
-            self.assertTrue(stream is not None)
-
-    def test_get_hls_live_stream_from_id_does_not_crash(self):
-        """Test getting HLS stream from URL"""
-        addon.settings['usedrm'] = False
-        addon.settings['useinputstreamadaptive'] = False
         video = dict(video_url=None, video_id=CHANNELS[1]['live_stream_id'], publication_id=None)
         stream = self._streamservice.get_stream(video)
         # NOTE: Testing live streams only works within Europe
