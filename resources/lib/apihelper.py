@@ -23,8 +23,8 @@ from utils import (add_https_proto, html_to_kodi, find_entry, from_unicode, play
 class ApiHelper:
     """A class with common VRT NU API functionality"""
 
-    _VRTNU_SEARCH_URL = 'https://vrtnu-api.vrt.be/search'
-    _VRTNU_SUGGEST_URL = 'https://vrtnu-api.vrt.be/suggest'
+    _VRTNU_SEARCH_URL = 'https://search.vrt.be/search'
+    _VRTNU_SUGGEST_URL = 'https://search.vrt.be/suggest'
     _VRTNU_SCREENSHOT_URL = 'https://www.vrt.be/vrtnu-static/screenshots'
 
     def __init__(self, _favorites, _resumepoints):
