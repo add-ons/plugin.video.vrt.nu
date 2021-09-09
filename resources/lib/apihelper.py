@@ -372,7 +372,7 @@ class ApiHelper:
     def get_single_episode_data(self, video_id=None, whatson_id=None, video_url=None):
         """Get single episode api data by videoId, whatsonId or url"""
         episode = None
-        api_data = list()
+        api_data = []
         if video_id:
             api_data = self.get_episodes(video_id=video_id, variety='single')
         elif whatson_id:

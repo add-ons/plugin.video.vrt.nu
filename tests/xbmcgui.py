@@ -259,19 +259,19 @@ class ListItem:
         self.path = path
         self.offscreen = offscreen
 
-        self.art = dict()
+        self.art = {}
         self.content_lookup = None
-        self.context_menu = list()
-        self.info = dict()
+        self.context_menu = []
+        self.info = {}
         self.info_type = None
         self.is_folder = False
         self.mimetype = None
-        self.properties = dict()
+        self.properties = {}
         self.rating = None
-        self.stream_info = dict()
+        self.stream_info = {}
         self.stream_type = None
-        self.subtitles = list()
-        self.unique_ids = list()
+        self.subtitles = []
+        self.unique_ids = []
 
     def addContextMenuItems(self, items, replaceItems=False):
         """A stub implementation for the xbmcgui ListItem class addContextMenuItems() method"""
