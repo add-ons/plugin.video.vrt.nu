@@ -47,11 +47,11 @@ class TestApiHelper(unittest.TestCase):
 
     def test_get_api_data_specific_season(self):
         """Test listing episodes for a specific season (pano)"""
-        title_items, sort, ascending, content = self._apihelper.list_episodes(program='pano')
-        self.assertEqual(len(title_items), 8)
-        self.assertEqual(sort, 'label')
+        title_items, sort, ascending, content = self._apihelper.list_episodes(program='pano', season='2020')
+        self.assertEqual(len(title_items), 15)
+        self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
-        self.assertEqual(content, 'files')
+        self.assertEqual(content, 'episodes')
 
     def test_get_api_data_specific_season_without_broadcastdate(self):
         """Test listing episodes without broadcastDate (wereldbeeld)"""
