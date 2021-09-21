@@ -38,10 +38,10 @@ def google_play_info():
         if key and value:
             key = key.group(1)
             info = json.loads(value.group(1))
-            if key == '5':
+            if key == '6':
                 changelog = info[0][12][6][1]
                 published = info[0][12][8][0]
-            elif key == '8':
+            elif key == '3':
                 version = info[1]
 
     if version is None or published is None:
