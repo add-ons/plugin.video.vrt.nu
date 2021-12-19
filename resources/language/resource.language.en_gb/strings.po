@@ -274,8 +274,16 @@ msgctxt "#30103"
 msgid "From the archive"
 msgstr ""
 
+msgctxt "#30104"
+msgid "Last chance"
+msgstr ""
+
 msgctxt "#30120"
 msgid "Short film"
+msgstr ""
+
+msgctxt "#30121"
+msgid "12+"
 msgstr ""
 
 msgctxt "#30128"
