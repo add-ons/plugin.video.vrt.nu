@@ -73,6 +73,17 @@ class TestStreamService(unittest.TestCase):
         if os.environ.get('GITHUB_ACTIONS') != 'true':
             self.assertTrue(stream is not None)
 
+    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    def test_get_ondemand_stream_from_from_videoid_geoblocked(self):
+        """Test getting stream from geoblocked video_id"""
+        # Undercover S01E01
+        video = dict(video_url=None,
+                     video_id='vid-b77b58cb-eebf-4b00-b772-0d6b4caad6a5',
+                     publication_id=None)
+        stream = self._streamservice.get_stream(video)
+        self.assertTrue(stream is None)
+
     def test_get_mpd_live_stream_from_url_does_not_crash_returns_stream_and_licensekey(self):
         """Test getting MPEG-DASH stream from URL"""
         addon.settings['usedrm'] = True
