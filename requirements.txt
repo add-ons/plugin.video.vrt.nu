@@ -1,12 +1,12 @@
 bs4
 coverage
-git+git://github.com/emilsvennesson/script.module.inputstreamhelper.git@master#egg=inputstreamhelper
+git+https://github.com/emilsvennesson/script.module.inputstreamhelper.git@master#egg=inputstreamhelper
 kodi-addon-checker
 polib
 proxy.py; python_version != '2.7'
 pylint
 python-dateutil
-git+git://github.com/tamland/kodi-plugin-routing.git@master#egg=routing
+git+https://github.com/tamland/kodi-plugin-routing.git@master#egg=routing
 setuptools >= 41
 tox
 #typing-extensions == 3.7.4.1; python_version != '2.7'
