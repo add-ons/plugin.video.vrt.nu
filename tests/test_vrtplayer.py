@@ -32,12 +32,12 @@ class TestVRTPlayer(unittest.TestCase):
     _vrtplayer = VRTPlayer()
 
     def test_show_videos_single_episode_shows_videos(self):
-        """Test listing single episode for a given program (marathonradio)"""
-        program = 'marathonradio'
+        """Test listing single episode for a given program (wij--roger-raveel)"""
+        program = 'wij--roger-raveel'
         episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program)
         self.assertTrue(episode_items, msg=program)
-        self.assertEqual(sort, 'dateadded')
-        self.assertFalse(ascending)
+        self.assertEqual(sort, 'label')
+        self.assertTrue(ascending)
         self.assertEqual(content, 'episodes')
 
         self._vrtplayer.show_episodes_menu(program)
@@ -112,7 +112,7 @@ class TestVRTPlayer(unittest.TestCase):
             self.assertTrue(feature.label in [item.get('name') for item in FEATURED], msg='%s is missing' % feature.label)
         for feature in FEATURED:
             self.assertTrue(feature.get('name') in [item.label for item in featured_items], msg='%s doesn\'t exist online' % feature.get('name'))
-        self.assertEqual(len(featured_items), 9)
+        self.assertEqual(len(featured_items), 7)
 
     def test_play_unknown_program(self):
         """Test playing latest episode of an unknown program"""
