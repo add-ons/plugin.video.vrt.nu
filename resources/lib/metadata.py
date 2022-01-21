@@ -13,7 +13,7 @@ except ImportError:  # Python 2
 
 from data import CHANNELS, SECONDS_MARGIN
 from kodiutils import colour, get_setting_bool, localize, localize_datelong, log, url_for
-from utils import (add_https_proto, assetpath_to_id, capitalize, find_entry, from_unicode,
+from utils import (add_https_proto, capitalize, find_entry, from_unicode,
                    html_to_kodi, reformat_url, reformat_image_url, shorten_link, to_unicode, unescape,
                    url_to_episode)
 
@@ -61,21 +61,21 @@ class Metadata:
 
         # WATCH LATER
         if self._resumepoints.is_activated():
-            asset_id = self.get_asset_id(api_data)
+            episode_id = api_data.get('episodeId')
 
             # VRT NU Search API
             if api_data.get('type') == 'episode':
-                program_title = api_data.get('program')
+                title = api_data.get('title')
 
             # VRT NU Schedule API (some are missing vrt.whatson-id)
             elif api_data.get('vrt.whatson-id') or api_data.get('startTime'):
-                program_title = api_data.get('title')
+                title = api_data.get('title')
 
-            if asset_id is not None:
+            if episode_id is not None:
                 # We need to ensure forward slashes are quoted
-                program_title = to_unicode(quote_plus(from_unicode(program_title)))
+                title = to_unicode(quote_plus(from_unicode(title)))
                 url = url_to_episode(api_data.get('url', ''))
-                if self._resumepoints.is_watchlater(asset_id):
+                if self._resumepoints.is_watchlater(episode_id):
                     extras = {}
                     # If we are in a watchlater menu, move cursor down before removing a favorite
                     if plugin.path.startswith('/resumepoints/watchlater'):
@@ -83,14 +83,14 @@ class Metadata:
                     # Unwatch context menu
                     context_menu.append((
                         capitalize(localize(30402)),
-                        'RunPlugin(%s)' % url_for('unwatchlater', asset_id=asset_id, title=program_title, url=url, **extras)
+                        'RunPlugin(%s)' % url_for('unwatchlater', episode_id=episode_id, title=title, url=url, **extras)
                     ))
                     watchlater_marker = '[COLOR={highlighted}]ᶫ[/COLOR]'
                 else:
                     # Watch context menu
                     context_menu.append((
                         capitalize(localize(30401)),
-                        'RunPlugin(%s)' % url_for('watchlater', asset_id=asset_id, title=program_title, url=url)
+                        'RunPlugin(%s)' % url_for('watchlater', episode_id=episode_id, title=title, url=url)
                     ))
 
         # FOLLOW PROGRAM
@@ -149,26 +149,6 @@ class Metadata:
         ))
 
         return context_menu, colour(favorite_marker), colour(watchlater_marker)
-
-    @staticmethod
-    def get_asset_id(api_data):
-        """Get asset_id from single item json api data"""
-        asset_id = None
-
-        # VRT NU Search API
-        if api_data.get('type') == 'episode':
-            asset_id = assetpath_to_id(api_data.get('assetPath'))
-
-        # VRT NU Schedule API (some are missing vrt.whatson-id)
-        elif api_data.get('vrt.whatson-id') or api_data.get('startTime'):
-            asset_id = assetpath_to_id(api_data.get('assetPath'))
-
-        # Fallback to VRT NU website scraping
-        if not asset_id and api_data.get('url'):
-            from webscraper import get_asset_id
-            asset_id = get_asset_id(add_https_proto(api_data.get('url')))
-
-        return asset_id
 
     @staticmethod
     def get_asset_str(api_data):

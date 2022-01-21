@@ -200,15 +200,15 @@ class TestRouting(unittest.TestCase):
         self.assertEqual(plugin.url_for(addon.favorites_manage), 'plugin://plugin.video.vrt.nu/favorites/manage')
 
     def test_watchlater_route(self):
-        """Watch and unwatch later method: plugin://plugin.video.vrt.nu/watchlater/<url>/<asset_id>/<title>"""
+        """Watch and unwatch later method: plugin://plugin.video.vrt.nu/watchlater/<episode_id>/<title>"""
 
         # Watchlater Winteruur met Lize Feryn (beschikbaar tot 26 maart 2025)
-        addon.run(['plugin://plugin.video.vrt.nu/watchlater//vrtnu/a-z/winteruur/5/winteruur-s5a1//contentdamvrt20191015winteruurr005a0001depotwp00162177/Winteruur', '0', ''])
-        self.assertEqual(plugin.url_for(addon.watchlater, url='/vrtnu/a-z/winteruur/5/winteruur-s5a1', asset_id='/contentdamvrt20191015winteruurr005a0001depotwp00162177', title='Winteruur'), 'plugin://plugin.video.vrt.nu/watchlater//vrtnu/a-z/winteruur/5/winteruur-s5a1//contentdamvrt20191015winteruurr005a0001depotwp00162177/Winteruur')
+        addon.run(['plugin://plugin.video.vrt.nu/watchlater/1571140659165/Lize Feryn', '0', ''])
+        self.assertEqual(plugin.url_for(addon.watchlater, episode_id='1571140659165', title='Lize Feryn'), 'plugin://plugin.video.vrt.nu/watchlater/1571140659165/Lize Feryn')
 
         # Unwatchlater Winteruur met Lize Feryn (beschikbaar tot 26 maart 2025)
-        addon.run(['plugin://plugin.video.vrt.nu/unwatchlater//vrtnu/a-z/winteruur/5/winteruur-s5a1//contentdamvrt20191015winteruurr005a0001depotwp00162177/Winteruur', '0', ''])
-        self.assertEqual(plugin.url_for(addon.unwatchlater, url='/vrtnu/a-z/winteruur/5/winteruur-s5a1', asset_id='/contentdamvrt20191015winteruurr005a0001depotwp00162177', title='Winteruur'), 'plugin://plugin.video.vrt.nu/unwatchlater//vrtnu/a-z/winteruur/5/winteruur-s5a1//contentdamvrt20191015winteruurr005a0001depotwp00162177/Winteruur')
+        addon.run(['plugin://plugin.video.vrt.nu/unwatchlater/1571140659165/Lize Feryn', '0', ''])
+        self.assertEqual(plugin.url_for(addon.unwatchlater, episode_id='1571140659165', title='Lize Feryn'), 'plugin://plugin.video.vrt.nu/unwatchlater/1571140659165/Lize Feryn')
 
     def test_play_on_demand_by_id_route(self):
         """Play on demand by id: /play/id/<publication_id>/<video_id>"""

@@ -68,7 +68,10 @@ class VrtMonitor(Monitor, object):  # pylint: disable=useless-object-inheritance
         log(1, 'Settings changed')
         TokenResolver().refresh_login()
 
-        invalidate_caches('continue-*.json', 'favorites.json', 'my-offline-*.json', 'my-recent-*.json', 'resume_points.json', 'watchlater-*.json')
+        # Delete user-related caches
+        invalidate_caches(
+            'continue-*.json', 'favorites.json', 'my-offline-*.json', 'my-recent-*.json',
+            'resume_points.json', 'watchlater.json', 'watchlater-*.json')
 
         # Init watching activity again when settings change
         self.init_watching_activity()

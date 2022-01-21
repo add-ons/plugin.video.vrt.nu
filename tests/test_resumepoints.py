@@ -10,7 +10,6 @@ import unittest
 from apihelper import ApiHelper
 from favorites import Favorites
 from resumepoints import ResumePoints
-from utils import assetpath_to_id
 
 xbmc = __import__('xbmc')
 xbmcaddon = __import__('xbmcaddon')
@@ -28,14 +27,6 @@ class TestResumePoints(unittest.TestCase):
     _favorites = Favorites()
     _resumepoints = ResumePoints()
     _apihelper = ApiHelper(_favorites, _resumepoints)
-
-    def test_assetpath_to_id(self):
-        """Test converting assetpath to assetid"""
-        self.assertEqual(None, assetpath_to_id(None))
-
-        asset_path = '/content/dam/vrt/2019/08/14/woodstock-depot_WP00157456'
-        asset_id = 'contentdamvrt20190814woodstockdepotwp00157456'
-        self.assertEqual(asset_id, assetpath_to_id(asset_path))
 
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
@@ -76,14 +67,15 @@ class TestResumePoints(unittest.TestCase):
     def test_update_watchlater(self):
         """Test updating the watch later list"""
         self._resumepoints.refresh(ttl=0)
-        asset_id, first_entry = next(iter(list(self._resumepoints._watchlater.items())))  # pylint: disable=protected-access
-        print('%s = %s' % (asset_id, first_entry))
-        url = first_entry.get('value').get('url')
-        self._resumepoints.unwatchlater(asset_id=asset_id, title='Foo bar', url=url)
-        self._resumepoints.watchlater(asset_id=asset_id, title='Foo bar', url=url)
+        episode_id, value = next(iter(self._resumepoints._watchlater.items()))  # pylint: disable=protected-access
+        title = value.get('title')
+        print('%s - %s' % (episode_id, title))
+        self._resumepoints.unwatchlater(episode_id=episode_id, title=title)
+        self._resumepoints.watchlater(episode_id=episode_id, title=title)
         self._resumepoints.refresh(ttl=0)
-        asset_id, first_entry = next(iter(list(self._resumepoints._watchlater.items())))  # pylint: disable=protected-access
-        print('%s = %s' % (asset_id, first_entry))
+        episode_id, value = next(iter(self._resumepoints._watchlater.items()))  # pylint: disable=protected-access
+        title = value.get('title')
+        print('%s - %s' % (episode_id, title))
 
         # Remove Winteruur met Lize Feryn (beschikbaar tot 26 maart 2025)
         self._resumepoints.update_resumepoint(
