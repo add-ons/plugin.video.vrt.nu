@@ -318,7 +318,7 @@ class ResumePoints:
 
     def watchlater_ids(self):
         """Return all watchlater episode_id's"""
-        return self._watchlater.keys()
+        return list(self._watchlater.keys())
 
     def resumepoints_ids(self):
         """Return all ids that have not been finished watching"""

@@ -192,24 +192,23 @@ class Favorites:
 
     def manage(self):
         """Allow the user to unselect favorites to be removed from the listing"""
-        from utils import url_to_program
         self.refresh(ttl=0)
         if not self._favorites:
             ok_dialog(heading=localize(30418), message=localize(30419))  # No favorites found
             return
 
-        def by_title(item):
+        def by_title(tup):
             """Sort by title"""
-            return item.get('value').get('title')
+            _, value = tup
+            return value.get('title')
 
-        items = [dict(program=url_to_program(value.get('value').get('programUrl')),
-                      title=unquote(value.get('value').get('title')),
-                      enabled=value.get('value').get('isFavorite')) for value in list(sorted(list(self._favorites.values()), key=by_title))]
+        items = [dict(program_id=value.get('program_id'), program_name=key,
+                      title=unquote(value.get('title'))) for key, value in sorted(self._favorites.items(), key=by_title)]
         titles = [item['title'] for item in items]
-        preselect = [idx for idx in range(0, len(items) - 1) if items[idx]['enabled']]
+        preselect = list(range(0, len(items)))
         selected = multiselect(localize(30420), options=titles, preselect=preselect)  # Please select/unselect to follow/unfollow
         if selected is not None:
             for idx in set(preselect).difference(set(selected)):
-                self.unfollow(program_id=None, program_name=items[idx]['program'], title=items[idx]['title'])
+                self.unfollow(program_name=items[idx]['program_name'], title=items[idx]['title'], program_id=items[idx]['program_id'])
             for idx in set(selected).difference(set(preselect)):
-                self.follow(program_id=None, program_name=items[idx]['program'], title=items[idx]['title'])
+                self.follow(program_name=items[idx]['program_name'], title=items[idx]['title'], program_id=items[idx]['program_id'])

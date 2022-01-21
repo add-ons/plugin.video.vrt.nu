@@ -6,7 +6,7 @@ from __future__ import absolute_import, division, unicode_literals
 from xbmc import Monitor
 from apihelper import ApiHelper
 from favorites import Favorites
-from kodiutils import container_refresh, invalidate_caches, log
+from kodiutils import container_refresh, log
 from playerinfo import PlayerInfo
 from resumepoints import ResumePoints
 from tokenresolver import TokenResolver
@@ -67,11 +67,6 @@ class VrtMonitor(Monitor, object):  # pylint: disable=useless-object-inheritance
 
         log(1, 'Settings changed')
         TokenResolver().refresh_login()
-
-        # Delete user-related caches
-        invalidate_caches(
-            'continue-*.json', 'favorites.json', 'my-offline-*.json', 'my-recent-*.json',
-            'resume_points.json', 'watchlater.json', 'watchlater-*.json')
 
         # Init watching activity again when settings change
         self.init_watching_activity()
