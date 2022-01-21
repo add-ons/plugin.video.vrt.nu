@@ -52,11 +52,11 @@ class TestFavorites(unittest.TestCase):
         programs = self._apihelper.get_tvshows()
         for program_item in programs:
             program_title = program_item.get('title')
-            program = program_item.get('programName')
-            if self._favorites.is_favorite(program):
+            program_name = program_item.get('programName')
+            if self._favorites.is_favorite(program_name):
                 # Unfollow
-                self._favorites.unfollow(program=program, title=program_title)
-                self.assertFalse(self._favorites.is_favorite(program))
+                self._favorites.unfollow(program_name=program_name, title=program_title)
+                self.assertFalse(self._favorites.is_favorite(program_name))
 
     @unittest.SkipTest
     def test_follow_number(self):
@@ -67,37 +67,37 @@ class TestFavorites(unittest.TestCase):
         print('VRT NU has %d programs available' % len(programs))
         for program_item in programs[:number]:
             program_title = program_item.get('title')
-            program = program_item.get('programName')
+            program_name = program_item.get('programName')
 
             # Follow
-            self._favorites.follow(program=program, title=program_title)
-            self.assertTrue(self._favorites.is_favorite(program))
+            self._favorites.follow(program_name=program_name, title=program_title)
+            self.assertTrue(self._favorites.is_favorite(program_name))
 
             # Unfollow
-            # self._favorites.unfollow(program=program, title=program_title)
-            # self.assertFalse(self._favorites.is_favorite(program))
+            # self._favorites.unfollow(program_name=program_name, title=program_title)
+            # self.assertFalse(self._favorites.is_favorite(program_name))
 
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_follow_unfollow(self):
         """Test following and unfollowing programs"""
         programs = [
-            {'program_title': 'Winteruur', 'program': 'winteruur'},
-            {'program_title': 'De Campus Cup', 'program': 'de-campus-cup'},
-            {'program_title': 'Terug naar Siberië', 'program': 'terug-naar-siberie'},
-            {'program_title': 'Belle & Sebastian', 'program': 'belle---sebastian'},
+            {'program_title': 'Winteruur', 'program_name': 'winteruur'},
+            {'program_title': 'De Campus Cup', 'program_name': 'de-campus-cup'},
+            {'program_title': 'Terug naar Siberië', 'program_name': 'terug-naar-siberie'},
+            {'program_title': 'Belle & Sebastian', 'program_name': 'belle---sebastian'},
         ]
         for program_item in programs:
             program_title = program_item.get('program_title')
-            program = program_item.get('program')
-            self._favorites.follow(program=program, title=program_title)
-            self.assertTrue(self._favorites.is_favorite(program))
+            program_name = program_item.get('program_name')
+            self._favorites.follow(program_name=program_name, title=program_title)
+            self.assertTrue(self._favorites.is_favorite(program_name))
 
-            self._favorites.unfollow(program=program, title=program_title)
-            self.assertFalse(self._favorites.is_favorite(program))
+            self._favorites.unfollow(program_name=program_name, title=program_title)
+            self.assertFalse(self._favorites.is_favorite(program_name))
 
-            self._favorites.follow(program=program, title=program_title)
-            self.assertTrue(self._favorites.is_favorite(program))
+            self._favorites.follow(program_name=program_name, title=program_title)
+            self.assertTrue(self._favorites.is_favorite(program_name))
 
     def test_programs(self):
         """Test favorite programs list"""
@@ -106,14 +106,6 @@ class TestFavorites(unittest.TestCase):
         if addon.settings.get('username') and addon.settings.get('password'):
             self.assertTrue(programs)
         print(programs)
-
-    def test_titles(self):
-        """Test favorite titles list"""
-        titles = self._favorites.titles()
-        # NOTE: Getting favorites requires credentials
-        if addon.settings.get('username') and addon.settings.get('password'):
-            self.assertTrue(titles)
-        print(sorted(titles))
 
 
 if __name__ == '__main__':

@@ -52,7 +52,7 @@ class Metadata:
         # Not Found
         return ''
 
-    def get_context_menu(self, api_data, program, cache_file):
+    def get_context_menu(self, api_data, program_name, cache_file):
         """Get context menu"""
         from addon import plugin
         favorite_marker = ''
@@ -98,6 +98,7 @@ class Metadata:
 
             # VRT NU Search API
             if api_data.get('type') == 'episode':
+                program_id = api_data.get('programId')
                 program_title = api_data.get('program')
                 program_type = api_data.get('programType')
                 follow_suffix = localize(30410) if program_type != 'oneoff' else ''  # program
@@ -105,41 +106,44 @@ class Metadata:
 
             # VRT NU Suggest API
             elif api_data.get('type') == 'program':
+                # FIXME: No program_id in Suggest API
+                program_id = None
                 program_title = api_data.get('title')
                 follow_suffix = ''
                 follow_enabled = True
 
             # VRT NU Schedule API (some are missing vrt.whatson-id)
             elif api_data.get('vrt.whatson-id') or api_data.get('startTime'):
+                program_id = api_data.get('programId')
                 program_title = api_data.get('title')
                 follow_suffix = localize(30410)  # program
                 follow_enabled = bool(api_data.get('url'))
 
-            if follow_enabled and program:
+            if follow_enabled and program_name:
                 program_title = to_unicode(quote_plus(from_unicode(program_title)))  # We need to ensure forward slashes are quoted
-                if self._favorites.is_favorite(program):
+                if self._favorites.is_favorite(program_name):
                     extras = {}
                     # If we are in a favorites menu, move cursor down before removing a favorite
                     if plugin.path.startswith('/favorites'):
                         extras = dict(move_down=True)
                     context_menu.append((
                         localize(30412, title=follow_suffix),  # Unfollow
-                        'RunPlugin(%s)' % url_for('unfollow', program=program, title=program_title, **extras)
+                        'RunPlugin(%s)' % url_for('unfollow', program_name=program_name, title=program_title, program_id=program_id, **extras)
                     ))
                     favorite_marker = '[COLOR={highlighted}]ᵛ[/COLOR]'
                 else:
                     context_menu.append((
                         localize(30411, title=follow_suffix),  # Follow
-                        'RunPlugin(%s)' % url_for('follow', program=program, title=program_title)
+                        'RunPlugin(%s)' % url_for('follow', program_name=program_name, title=program_title, program_id=program_id)
                     ))
 
         # GO TO PROGRAM
-        if api_data.get('programType') != 'oneoff' and program:
+        if api_data.get('programType') != 'oneoff' and program_name:
             if plugin.path.startswith(('/favorites/offline', '/favorites/recent', '/offline', '/recent',
                                        '/resumepoints/continue', '/resumepoints/watchlater', '/tvguide')):
                 context_menu.append((
                     localize(30417),  # Go to program
-                    'Container.Update(%s)' % url_for('programs', program=program, season='allseasons')
+                    'Container.Update(%s)' % url_for('programs', program_name=program_name, season='allseasons')
                 ))
 
         # REFRESH MENU
