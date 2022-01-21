@@ -167,12 +167,12 @@ class TestRouting(unittest.TestCase):
     def test_follow_route(self):
         """Follow method: /follow/<program>/<title>"""
         addon.run(['plugin://plugin.video.vrt.nu/follow/thuis/Thuis', '0', ''])
-        self.assertEqual(plugin.url_for(addon.follow, program='thuis', title='Thuis'), 'plugin://plugin.video.vrt.nu/follow/thuis/Thuis')
+        self.assertEqual(plugin.url_for(addon.follow, program_name='thuis', title='Thuis'), 'plugin://plugin.video.vrt.nu/follow/thuis/Thuis')
 
     def test_unfollow_route(self):
         """Unfollow method: /unfollow/<program>/<title>"""
         addon.run(['plugin://plugin.video.vrt.nu/unfollow/thuis/Thuis', '0', ''])
-        self.assertEqual(plugin.url_for(addon.unfollow, program='thuis', title='Thuis'), 'plugin://plugin.video.vrt.nu/unfollow/thuis/Thuis')
+        self.assertEqual(plugin.url_for(addon.unfollow, program_name='thuis', title='Thuis'), 'plugin://plugin.video.vrt.nu/unfollow/thuis/Thuis')
 
     def test_clear_cookies_route(self):
         """Delete tokens method: /tokens/delete"""
