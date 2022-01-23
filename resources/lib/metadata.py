@@ -14,8 +14,7 @@ except ImportError:  # Python 2
 from data import CHANNELS, SECONDS_MARGIN
 from kodiutils import colour, get_setting_bool, localize, localize_datelong, log, url_for
 from utils import (add_https_proto, capitalize, find_entry, from_unicode,
-                   html_to_kodi, reformat_url, reformat_image_url, shorten_link, to_unicode, unescape,
-                   url_to_episode)
+                   html_to_kodi, reformat_url, reformat_image_url, shorten_link, to_unicode, unescape)
 
 
 class Metadata:
@@ -74,7 +73,6 @@ class Metadata:
             if episode_id is not None:
                 # We need to ensure forward slashes are quoted
                 title = to_unicode(quote_plus(from_unicode(title)))
-                url = url_to_episode(api_data.get('url', ''))
                 if self._resumepoints.is_watchlater(episode_id):
                     extras = {}
                     # If we are in a watchlater menu, move cursor down before removing a favorite
@@ -83,14 +81,14 @@ class Metadata:
                     # Unwatch context menu
                     context_menu.append((
                         capitalize(localize(30402)),
-                        'RunPlugin(%s)' % url_for('unwatchlater', episode_id=episode_id, title=title, url=url, **extras)
+                        'RunPlugin(%s)' % url_for('unwatchlater', episode_id=episode_id, title=title, **extras)
                     ))
                     watchlater_marker = '[COLOR={highlighted}]ᶫ[/COLOR]'
                 else:
                     # Watch context menu
                     context_menu.append((
                         capitalize(localize(30401)),
-                        'RunPlugin(%s)' % url_for('watchlater', episode_id=episode_id, title=title, url=url)
+                        'RunPlugin(%s)' % url_for('watchlater', episode_id=episode_id, title=title)
                     ))
 
         # FOLLOW PROGRAM

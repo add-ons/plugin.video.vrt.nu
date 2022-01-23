@@ -7,7 +7,9 @@ from __future__ import absolute_import, division, unicode_literals
 
 try:  # Python 3
     from urllib.error import HTTPError
+    from urllib.parse import urlencode
 except ImportError:  # Python 2
+    from urllib import urlencode
     from urllib2 import HTTPError
 
 from data import SECONDS_MARGIN
@@ -229,8 +231,13 @@ class ResumePoints:
                 'Authorization': 'Bearer ' + vrtlogin_at,
                 'Accept': 'application/json',
             }
-            querystring = 'tileType=mixed-content&tileContentType=episode&tileOrientation=landscape&layout=slider&title=Later+kijken'
-            watchlater_json = get_url_json(url='{}?{}'.format(self.WATCHLATER_REST_URL, querystring), cache=None, headers=headers, raise_errors='all')
+            payload = dict(
+                tileType='mixed-content',
+                tileContentType='episode',
+                tileOrientation='landscape',
+                layout='slider',
+                title='Later kijken')
+            watchlater_json = get_url_json(url='{}?{}'.format(self.WATCHLATER_REST_URL, urlencode(payload)), cache=None, headers=headers, raise_errors='all')
         return watchlater_json
 
     def set_watchlater_graphql(self, episode_id, title, watch_later=True):
@@ -270,11 +277,12 @@ class ResumePoints:
     def _generate_watchlater_dict(watchlater_json):
         """Generate a simple watchlater dict with episodeIds and episodeTitles"""
         watchlater_dict = {}
-        for item in watchlater_json.get(':items', []):
-            episode_id = watchlater_json.get(':items')[item].get('data').get('episode').get('id')
-            title = watchlater_json.get(':items')[item].get('description')
-            watchlater_dict[episode_id] = dict(
-                title=title)
+        if watchlater_json is not None:
+            for item in watchlater_json.get(':items', []):
+                episode_id = watchlater_json.get(':items')[item].get('data').get('episode').get('id')
+                title = watchlater_json.get(':items')[item].get('description')
+                watchlater_dict[episode_id] = dict(
+                    title=title)
         return watchlater_dict
 
     def is_watchlater(self, episode_id):

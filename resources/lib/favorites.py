@@ -54,7 +54,7 @@ class Favorites:
             return True
 
         # Lookup program_id
-        if program_id == 'None':
+        if program_id == 'None' or program_id is None:
             program_id = self.get_program_id_graphql(program_name)
 
         # Update local favorites cache
