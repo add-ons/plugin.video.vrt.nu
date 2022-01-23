@@ -83,9 +83,8 @@ class TestFavorites(unittest.TestCase):
         """Test following and unfollowing programs"""
         programs = [
             {'program_title': 'Winteruur', 'program_name': 'winteruur'},
-            {'program_title': 'De Campus Cup', 'program_name': 'de-campus-cup'},
-            {'program_title': 'Terug naar Siberië', 'program_name': 'terug-naar-siberie'},
-            {'program_title': 'Belle & Sebastian', 'program_name': 'belle---sebastian'},
+            {'program_title': 'Thuis', 'program_name': 'thuis'},
+            {'program_title': '#LikeMe', 'program_name': '-likeme'},
         ]
         for program_item in programs:
             program_title = program_item.get('program_title')
