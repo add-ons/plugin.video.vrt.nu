@@ -16,13 +16,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [ ubuntu-latest ]
         python-version: [ 2.7, 3.5, 3.6, 3.7, 3.8, 3.9 ]
         include:
           # Kodi Leia on Windows uses a bundled Python 2.7
           - os: windows-latest
             python-version: 2.7
-          # Kodi Matrix on Windows uses a bundled Python 3.8
+
+          # Kodi Matrix on Windows uses a bundled Python 3.8, but we test 3.9 also to be sure.
           - os: windows-latest
             python-version: 3.8
           - os: windows-latest
@@ -34,7 +35,7 @@ jobs:
       if: matrix.os == 'windows-latest'
       run: echo "PYTHONPATH=${env:PYTHONPATH};${env:GITHUB_WORKSPACE};${env:GITHUB_WORKSPACE}\resources\lib;${env:GITHUB_WORKSPACE}\tests" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf-8 -Append
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies (linux)
