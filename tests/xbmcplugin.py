@@ -16,7 +16,7 @@ except ImportError:  # Python 2
     from urllib2 import HTTPError, Request, urlopen
 
 try:  # Python 2
-    basestring
+    basestring  # pylint: disable=used-before-assignment
 except NameError:  # Python 3
     basestring = str  # pylint: disable=redefined-builtin
 
