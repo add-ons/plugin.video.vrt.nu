@@ -9,7 +9,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 from xbmcextra import ADDON_ID, ADDON_INFO, addon_settings
 
 try:  # Python 2
-    basestring
+    basestring  # pylint: disable=used-before-assignment
 except NameError:  # Python 3
     basestring = str  # pylint: disable=redefined-builtin
 

@@ -291,7 +291,8 @@ FEATURED = [
     dict(name='Kortfilm', id='kortfilm', msgctxt=30120),
     # dict(name='12+', id='12+', msgctxt=30121),
     # Thema
-    dict(name='Klimaat', id='klimaat', msgctxt=30129),
+    dict(name='Klimaat', id='klimaat', msgctxt=30128),
+    dict(name='Koers', id='koers', msgctxt=30129),
     dict(name='De warmste week', id='de-warmste-week', msgctxt=30130),
 ]
 

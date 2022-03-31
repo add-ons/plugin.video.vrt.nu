@@ -10,7 +10,7 @@ import os
 from shutil import copyfile
 
 try:  # Python 2
-    basestring
+    basestring  # pylint: disable=used-before-assignment
 except NameError:  # Python 3
     basestring = str  # pylint: disable=redefined-builtin
 

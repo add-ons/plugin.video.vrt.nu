@@ -15,7 +15,7 @@ from xbmcextra import ADDON_ID, global_settings, import_language
 from utils import to_unicode
 
 try:  # Python 2
-    basestring
+    basestring  # pylint: disable=used-before-assignment
 except NameError:  # Python 3
     basestring = str  # pylint: disable=redefined-builtin
 
