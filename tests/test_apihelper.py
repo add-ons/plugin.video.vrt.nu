@@ -47,9 +47,9 @@ class TestApiHelper(unittest.TestCase):
 
     def test_get_api_data_specific_season(self):
         """Test listing episodes for a specific season (pano)"""
-        title_items, sort, ascending, content = self._apihelper.list_episodes(program='pano', season='2020')
+        title_items, sort, ascending, content = self._apihelper.list_episodes(program='pano', season='1582104246318')
         self.assertEqual(len(title_items), 15)
-        self.assertEqual(sort, 'dateadded')
+        self.assertEqual(sort, 'episode')
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
 
@@ -94,8 +94,8 @@ class TestApiHelper(unittest.TestCase):
         self.assertEqual(content, 'episodes')
 
     def test_predefined_episodes(self):
-        """Test getting a predefined list of episodes by whatsonId"""
-        episode_items = self._apihelper.list_episodes(whatson_id=['922554855527', '922554851527'], variety='featured.episodes')
+        """Test getting a predefined list of episodes by episodeId"""
+        episode_items = self._apihelper.list_episodes(episode_id=['1649155986476', '1649161182026'], variety='featured.episodes')
         self.assertTrue(episode_items)
 
     def test_get_tvshows(self):
@@ -141,7 +141,7 @@ class TestApiHelper(unittest.TestCase):
     def test_episode_plot(self):
         """Test getting an episode plot (thuis)"""
         title_items, sort, ascending, content = self._apihelper.list_episodes(program='thuis', season='allseasons')
-        self.assertEqual(sort, 'dateadded')
+        self.assertEqual(sort, 'episode')
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
         plot = title_items[0].info_dict['plot']
