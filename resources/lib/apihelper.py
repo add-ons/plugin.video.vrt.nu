@@ -209,8 +209,8 @@ class ApiHelper:
             season_items.append(TitleItem(
                 label=self._metadata.get_title(episode, season=season.get('name', '')),
                 path=url_for('programs', program=program, season=season_key),
-                art_dict=self._metadata.get_art(episode, season=season_key),
-                info_dict=self._metadata.get_info_labels(episode, season=season_key),
+                art_dict=self._metadata.get_art(episode, season=season.get('name', '')),
+                info_dict=self._metadata.get_info_labels(episode, season=season.get('name', '')),
                 prop_dict=self._metadata.get_properties(episode),
             ))
         return season_items, sort, ascending, content
