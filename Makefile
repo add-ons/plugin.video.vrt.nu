@@ -1,6 +1,6 @@
 export PYTHONPATH := $(CURDIR)/resources/lib:$(CURDIR)/tests
 PYTHON := python
-KODI_PYTHON_ABIS := 3.0.0 2.25.0
+KODI_PYTHON_ABIS := 2.25.0 3.0.0
 
 name = $(shell xmllint --xpath 'string(/addon/@id)' addon.xml)
 version = $(shell xmllint --xpath 'string(/addon/@version)' addon.xml)
@@ -81,8 +81,8 @@ build: clean
 multizip: clean
 	@-$(foreach abi,$(KODI_PYTHON_ABIS), \
 		printf "cd /addon/requires/import[@addon='xbmc.python']/@version\nset $(abi)\nsave\nbye\n" | xmllint --shell addon.xml; \
-		matrix=$(findstring $(abi), $(word 1,$(KODI_PYTHON_ABIS))); \
-		if [ $$matrix ]; then version=$(version)+matrix.1; else version=$(version); fi; \
+		leia=$(findstring $(abi), $(word 1,$(KODI_PYTHON_ABIS))); \
+		if [ $$leia ]; then version=$(patsubst %+matrix.1,%,$(version)); else version=$(version); fi; \
 		printf "cd /addon/@version\nset $$version\nsave\nbye\n" | xmllint --shell addon.xml; \
 		make build; \
 	)
