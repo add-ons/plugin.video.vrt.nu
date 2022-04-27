@@ -614,6 +614,7 @@ class ApiHelper:
         # Construct VRT NU Search API Url and get api data
         querystring = '&'.join('{}={}'.format(key, value) for key, value in list(params.items()))
         search_url = self._VRTNU_SEARCH_URL + '?' + querystring.replace(' ', '%20')  # Only encode spaces to minimize url length
+        print(search_url)
         if cache_file:
             search_json = get_cached_url_json(url=search_url, cache=cache_file, ttl=ttl('indirect'), fail={})
         else:
@@ -638,7 +639,7 @@ class ApiHelper:
         show_seasons = bool(season != 'allseasons')
 
         # Return seasons
-        if show_seasons and seasons:
+        if show_seasons and len(seasons) > 1:
             return (seasons, episodes)
 
         api_pages = search_json.get('meta').get('pages').get('total')
