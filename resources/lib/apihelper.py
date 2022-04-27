@@ -532,6 +532,7 @@ class ApiHelper:
                 'i': 'video',
                 'size': '300',
             }
+        params['facets[transcodingStatus]'] = '[AVAILABLE]'
 
         if variety:
             season = 'allseasons'
