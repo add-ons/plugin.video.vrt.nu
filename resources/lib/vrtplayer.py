@@ -386,11 +386,11 @@ class VRTPlayer:
             return
         self.play(video)
 
-    def play_upnext(self, video_id):
-        """Play the next episode of a program by video_id"""
-        video = self._apihelper.get_single_episode(video_id=video_id)
+    def play_upnext(self, episode_id):
+        """Play the next episode of a program by episode_id"""
+        video = self._apihelper.get_single_episode(episode_id=episode_id)
         if not video:
-            log_error('Play Up Next with video_id {video_id} failed', video_id=video_id)
+            log_error('Play Up Next with episodeId {episode_id} failed', episode_id=episode_id)
             ok_dialog(message=localize(30954))
             end_of_directory()
             return
