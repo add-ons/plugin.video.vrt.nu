@@ -79,6 +79,7 @@ jobs:
       - name: Rewrite addon.xml for legacy krypton version
         id: addon-rewrite-legacy
         run: |
+          sudo apt-get install xmlstarlet
           xmlstarlet ed -L -u '/addon/requires/import[@addon="xbmc.python"]/@version' -v "2.25.0" addon.xml
           version=$(xmlstarlet sel -t -v 'string(/addon/@version)' addon.xml)
           xmlstarlet ed -L -u '/addon/@version' -v "${version%'+matrix.1'}" addon.xml
