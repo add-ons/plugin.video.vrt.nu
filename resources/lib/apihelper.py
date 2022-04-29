@@ -271,45 +271,44 @@ class ApiHelper:
 
     def get_upnext(self, info):
         """Get up next data from VRT Search API"""
-        program = info.get('programTitle')
+        program_title = info.get('program_title')
         path = info.get('path')
-        season = None
-        current_ep_no = None
+        season_num = info.get('season_number')
+        episode_num = info.get('episode_number')
 
         # Get current episode unique identifier
         ep_id = play_url_to_id(path)
 
         # Get all episodes from current program and sort by programTitle, seasonTitle and episodeNumber
-        episodes = sorted(self.get_episodes(keywords=program), key=lambda k: (k.get('programTitle'), k.get('seasonTitle'), k.get('episodeNumber')))
+        episodes = sorted(self.get_episodes(keywords=program_title), key=lambda k: (k.get('programTitle'), k.get('seasonTitle'), k.get('episodeNumber')))
         upnext = {}
         for episode in episodes:
-            if ep_id.get('whatson_id') == episode.get('whatsonId') or \
-               ep_id.get('video_id') == episode.get('videoId') or \
-               ep_id.get('video_url') == episode.get('url'):
-                season = episode.get('seasonTitle')
-                current_ep_no = episode.get('episodeNumber')
-                program = episode.get('programTitle')
+            if episode.get('whatsonId') == ep_id.get('whatson_id') or \
+               episode.get('videoId') == ep_id.get('video_id') or \
+               episode.get('url') == ep_id.get('video_url') or \
+               episode.get('episodeId') == ep_id.get('episode_id'):
                 upnext['current'] = episode
                 try:
                     next_episode = episodes[episodes.index(episode) + 1]
                 except IndexError:
                     pass
                 else:
-                    if next_episode.get('programTitle') == program and next_episode.get('episodeNumber') != current_ep_no:
+                    if next_episode.get('programTitle') == program_title and next_episode.get('episodeNumber') != episode_num:
                         upnext['next'] = next_episode
+                        break
 
         current_ep = upnext.get('current')
         next_ep = upnext.get('next')
 
         if next_ep is None:
             if current_ep is not None and current_ep.get('episodeNumber') == current_ep.get('seasonNbOfEpisodes') is not None:
-                log(2, '[Up Next] Already at last episode of last season for {program} S{season}E{episode}',
-                    program=program, season=season, episode=current_ep_no)
-            elif season and current_ep_no:
-                log(2, '[Up Next] No api data found for {program} S{season}E{episode}',
-                    program=program, season=season, episode=current_ep_no)
+                log(2, '[Up Next] Already at last episode of last season for {program_title} S{season_num}E{episode_num}',
+                    program_title=program_title, season_num=season_num, episode_num=episode_num)
+            elif season_num and program_title:
+                log(2, '[Up Next] No api data found for {program_title} S{season_num}E{episode_num}',
+                    program_title=program_title, season_num=season_num, episode_num=episode_num)
             else:
-                log(2, '[Up Next] No api data found for {program}', program=program)
+                log(2, '[Up Next] No api data found for {program_title}', program_title=program_title)
             return None
 
         art = self._metadata.get_art(current_ep)
@@ -359,7 +358,7 @@ class ApiHelper:
         )
 
         play_info = dict(
-            video_id=next_ep.get('videoId'),
+            episode_id=next_ep.get('episodeId'),
         )
 
         next_info = dict(
@@ -614,7 +613,6 @@ class ApiHelper:
         # Construct VRT NU Search API Url and get api data
         querystring = '&'.join('{}={}'.format(key, value) for key, value in list(params.items()))
         search_url = self._VRTNU_SEARCH_URL + '?' + querystring.replace(' ', '%20')  # Only encode spaces to minimize url length
-        print(search_url)
         if cache_file:
             search_json = get_cached_url_json(url=search_url, cache=cache_file, ttl=ttl('indirect'), fail={})
         else:

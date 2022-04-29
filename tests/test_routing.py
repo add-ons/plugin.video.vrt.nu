@@ -277,9 +277,9 @@ class TestRouting(unittest.TestCase):
                          mostrecent.strftime('plugin://plugin.video.vrt.nu/play/airdate/een/%Y-%m-%dT09:00:00/%Y-%m-%dT10:00:00'))
 
     def test_play_upnext_route(self):
-        """Play Up Next episode method: /play/upnext/<video_id>"""
-        addon.run(['plugin://plugin.video.vrt.nu/play/upnext/vid-a39ab219-9598-4a79-b676-98b724cceff1', '0', ''])
-        self.assertEqual(plugin.url_for(addon.play_upnext, video_id='vid-a39ab219-9598-4a79-b676-98b724cceff1'), 'plugin://plugin.video.vrt.nu/play/upnext/vid-a39ab219-9598-4a79-b676-98b724cceff1')
+        """Play Up Next episode method: /play/upnext/<episode_id>"""
+        addon.run(['plugin://plugin.video.vrt.nu/play/upnext/1571140659165', '0', ''])
+        self.assertEqual(plugin.url_for(addon.play_upnext, episode_id='1571140659165'), 'plugin://plugin.video.vrt.nu/play/upnext/1571140659165')
 
     def test_play_whatson_id(self):
         """Play video by whatsonid method: /play/whatson/<whatson_id>"""
