@@ -82,7 +82,6 @@ jobs:
           xmlstarlet ed -L -u '/addon/requires/import[@addon="xbmc.python"]/@version' -v "2.25.0" addon.xml
           version=$(xmlstarlet sel -t -v 'string(/addon/@version)' addon.xml)
           xmlstarlet ed -L -u '/addon/@version' -v "${version%'+matrix.1'}" addon.xml
-        working-directory: ${{ github.repository }}
       - name: Submit legacy version to official kodi repository
         id: kodi-submit-legacy
         uses: xbmc/action-kodi-addon-submitter@v1.3
