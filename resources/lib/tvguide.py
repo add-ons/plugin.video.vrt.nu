@@ -232,8 +232,8 @@ class TVGuide:
                 if epg_id not in epg_data:
                     epg_data[epg_id] = []
                 for episode in episodes:
-                    if episode.get('url') and episode.get('vrt.whatson-id'):
-                        path = url_for('play_whatson_id', whatson_id=episode.get('vrt.whatson-id'))
+                    if episode.get('url') and episode.get('episodeId'):
+                        path = url_for('play_episode_id', episode_id=episode.get('episodeId'))
                     else:
                         path = None
                     epg_data[epg_id].append(dict(
