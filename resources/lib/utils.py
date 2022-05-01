@@ -95,7 +95,9 @@ def reformat_url(url, url_type, domain='www.vrt.be'):
 
 def reformat_image_url(url):
     """Reformat images.vrt.be urls"""
-    return add_https_proto(url.replace('images.vrt.be/orig', 'images.vrt.be/w1920hx'))
+    if url:
+        return add_https_proto(url.replace('images.vrt.be/orig', 'images.vrt.be/w1920hx'))
+    return ''
 
 
 def program_to_url(program, url_type):
