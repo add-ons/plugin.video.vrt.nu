@@ -281,12 +281,6 @@ class TestRouting(unittest.TestCase):
         addon.run(['plugin://plugin.video.vrt.nu/play/upnext/1571140659165', '0', ''])
         self.assertEqual(plugin.url_for(addon.play_upnext, episode_id='1571140659165'), 'plugin://plugin.video.vrt.nu/play/upnext/1571140659165')
 
-    def test_play_whatson_id(self):
-        """Play video by whatsonid method: /play/whatson/<whatson_id>"""
-        # Pano S2018E05 is available until 9999-12-31
-        addon.run(['plugin://plugin.video.vrt.nu/play/whatson/490431755527', '0', ''])
-        self.assertEqual(plugin.url_for(addon.play_whatson_id, whatson_id='490431755527'), 'plugin://plugin.video.vrt.nu/play/whatson/490431755527')
-
     def test_update_repos(self):
         """Update repositories: /update/repos"""
         addon.run(['plugin://plugin.video.vrt.nu/update/repos', '0', ''])

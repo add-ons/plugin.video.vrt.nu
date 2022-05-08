@@ -366,16 +366,6 @@ class VRTPlayer:
             return
         self.play(video)
 
-    def play_episode_by_whatson_id(self, whatson_id):
-        """Play an episode of a program given the whatson_id"""
-        video = self._apihelper.get_single_episode(whatson_id=whatson_id)
-        if not video:
-            log_error('Play episode by whatson_id failed, whatson_id {whatson_id}', whatson_id=whatson_id)
-            ok_dialog(message=localize(30954))
-            end_of_directory()
-            return
-        self.play(video)
-
     def play_episode_by_episode_id(self, episode_id):
         """Play an episode of a program given the episode_id"""
         video = self._apihelper.get_single_episode(episode_id=episode_id)
