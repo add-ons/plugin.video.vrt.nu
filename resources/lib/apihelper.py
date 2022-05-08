@@ -553,9 +553,9 @@ class ApiHelper:
                 params['facets[episodeId]'] = '[%s]' % (','.join(episode_ids))
 
             if variety == 'continue':
-                self._resumepoints.refresh_resumepoints(ttl=ttl('direct'))
-                episode_ids = self._resumepoints.resumepoints_ids()
-                params['facets[videoId]'] = '[%s]' % (','.join(episode_ids))
+                self._resumepoints.refresh_continue(ttl=ttl('direct'))
+                episode_ids = self._resumepoints.continue_ids()
+                params['facets[episodeId]'] = '[%s]' % (','.join(episode_ids))
 
             if use_favorites:
                 params['facets[programName]'] = '[%s]' % (','.join(self._favorites.programs()))
