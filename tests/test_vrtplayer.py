@@ -113,7 +113,7 @@ class TestVRTPlayer(unittest.TestCase):
         for feature in FEATURED:
             print(feature.get('name'))
             self.assertTrue(feature.get('name') in [item.label for item in featured_items], msg='%s doesn\'t exist online' % feature.get('name'))
-        self.assertEqual(len(featured_items), 8)
+        self.assertEqual(len(featured_items), 7)
 
     def test_play_unknown_program(self):
         """Test playing latest episode of an unknown program"""
