@@ -51,7 +51,7 @@ class ApiHelper:
 
         # If no facet-selection is done, we return the 'All programs' listing
         if not category and not channel and not feature:
-            params['facets[transcodingStatus]'] = 'AVAILABLE'  # Required for getting results in Suggests API
+            params['size'] = '1000'  # Required for getting results in Suggests API
             cache_file = 'programs.json'
 
         querystring = '&'.join('{}={}'.format(key, value) for key, value in list(params.items()))
@@ -72,7 +72,10 @@ class ApiHelper:
                     filtered_tvshows.append(tvshow)
             tvshows = filtered_tvshows
 
-        # Get oneoffs
+        # FIXME: Get oneoffs
+        cache_file = None
+        oneoffs = []
+        '''
         if get_setting_bool('showoneoff', default=True):
             cache_file = 'oneoff.json'
             oneoffs = self.get_episodes(variety='oneoff', cache_file=cache_file)
@@ -80,6 +83,7 @@ class ApiHelper:
             cache_file = None
             # Return empty list
             oneoffs = []
+        '''
 
         return self.__map_tvshows(tvshows, oneoffs, use_favorites=use_favorites, cache_file=cache_file)
 
@@ -531,7 +535,9 @@ class ApiHelper:
                 'i': 'video',
                 'size': '300',
             }
-        params['facets[transcodingStatus]'] = '[AVAILABLE]'
+        params['available'] = 'true'
+        params['orderBy'] = 'episodeId'
+        params['order'] = 'desc'
 
         if variety:
             season = 'allseasons'
@@ -567,7 +573,7 @@ class ApiHelper:
                 params['facets[programBrands]'] = '[%s]' % (','.join(channel_filter))
 
         if program:
-            params['facets[programName]'] = program
+            params['q'] = program.replace('-', ' ')
 
         if season and season != 'allseasons':
             params['facets[seasonId]'] = season
@@ -650,6 +656,14 @@ class ApiHelper:
                 api_page_json = get_url_json(api_page_url)
                 if api_page_json is not None:
                     episodes += api_page_json.get('results', [{}])
+
+        # FIXME: Filter episodes because faceted search is broken
+        if program:
+            filtered_episodes = []
+            for episode in episodes:
+                if episode.get('programName') == program:
+                    filtered_episodes.append(episode)
+            episodes = filtered_episodes
 
         # Return episodes
         return episodes
