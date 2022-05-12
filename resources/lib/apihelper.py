@@ -104,7 +104,7 @@ class ApiHelper:
         )
 
     def list_episodes(self, program=None, season=None, category=None, feature=None, programtype=None,
-                      page=None, items_per_page=None, use_favorites=False, variety=None, sort_key=None, whatson_id=None, episode_id=None):
+                      page=None, use_favorites=False, variety=None, whatson_id=None, episode_id=None):
         """Construct a list of episode or season TitleItems from VRT NU Search API data and filtered by favorites"""
         # Caching
         if not variety:
@@ -113,7 +113,7 @@ class ApiHelper:
             cache_file = '{my}{variety}{page}.json'.format(
                 my='my-' if use_favorites else '',
                 variety=variety,
-                page='-{}'.format(page) if sort_key is None and page is not None else '',
+                page='-{}'.format(page) if page is not None else '',
             )
 
         # Titletype
@@ -125,13 +125,8 @@ class ApiHelper:
             titletype = variety
 
         # Get data from api or cache
-        if sort_key:
-            episodes = self.get_episodes(program=program, season=season, category=category, feature=feature, programtype=programtype,
-                                         use_favorites=use_favorites, variety=variety, cache_file=cache_file, whatson_id=whatson_id, episode_id=episode_id)
-            episodes = sorted(episodes, key=lambda k: k[sort_key])[(page * items_per_page) - items_per_page:page * items_per_page]
-        else:
-            episodes = self.get_episodes(program=program, season=season, category=category, feature=feature, programtype=programtype, page=page,
-                                         use_favorites=use_favorites, variety=variety, cache_file=cache_file, whatson_id=whatson_id, episode_id=episode_id)
+        episodes = self.get_episodes(program=program, season=season, category=category, feature=feature, programtype=programtype, page=page,
+                                     use_favorites=use_favorites, variety=variety, cache_file=cache_file, whatson_id=whatson_id, episode_id=episode_id)
 
         if isinstance(episodes, tuple):
             seasons = episodes[0]
@@ -536,18 +531,13 @@ class ApiHelper:
                 'size': '300',
             }
         params['available'] = 'true'
-        params['orderBy'] = 'episodeId'
-        params['order'] = 'desc'
 
         if variety:
             season = 'allseasons'
 
             if variety == 'offline':
-                from datetime import datetime, timedelta
-                import dateutil.tz
-                now = datetime.now(dateutil.tz.gettz('Europe/Brussels'))
-                off_dates = [(now + timedelta(days=day)).strftime('%Y-%m-%d') for day in range(0, 7)]
-                params['facets[offTime]'] = '[%s]' % (','.join(off_dates))
+                params['orderBy'] = 'offTime'
+                params['order'] = 'asc'
 
             if variety == 'oneoff':
                 params['facets[episodeNumber]'] = '[0,1]'  # This to avoid VRT NU metadata errors (see #670)
@@ -566,13 +556,11 @@ class ApiHelper:
             if use_favorites:
                 params['facets[programName]'] = '[%s]' % (','.join(self._favorites.programs()))
             elif variety in ('offline', 'recent'):
-                channel_filter = []
-                for channel in CHANNELS:
-                    if channel.get('vod') is True and get_setting_bool(channel.get('name'), default=True):
-                        channel_filter.append(channel.get('name'))
-                params['facets[programBrands]'] = '[%s]' % (','.join(channel_filter))
+                params['q'] = 'BE'
 
         if program:
+            params['orderBy'] = 'episodeId'
+            params['order'] = 'desc'
             params['q'] = program.replace('-', ' ')
 
         if season and season != 'allseasons':
@@ -662,6 +650,16 @@ class ApiHelper:
             filtered_episodes = []
             for episode in episodes:
                 if episode.get('programName') == program:
+                    filtered_episodes.append(episode)
+            episodes = filtered_episodes
+        elif variety in ('offline', 'recent'):
+            channel_filter = []
+            for channel in CHANNELS:
+                if channel.get('vod') is True and get_setting_bool(channel.get('name'), default=True):
+                    channel_filter.append(channel.get('name'))
+            filtered_episodes = []
+            for episode in episodes:
+                if episode.get('brands')[0] in channel_filter:
                     filtered_episodes.append(episode)
             episodes = filtered_episodes
 
