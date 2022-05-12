@@ -37,26 +37,33 @@ class ApiHelper:
         """Get all TV shows for a given category, channel or feature, optionally filtered by favorites"""
         params = {}
 
+        # Facet-selection
         if category:
             params['facets[categories]'] = category
             cache_file = 'category.{category}.json'.format(category=category)
-
-        if channel:
-            params['facets[programBrands]'] = channel
-            cache_file = 'channel.{channel}.json'.format(channel=channel)
 
         if feature:
             params['facets[programTags.title]'] = feature
             cache_file = 'featured.{feature}.json'.format(feature=feature)
 
         # If no facet-selection is done, we return the 'All programs' listing
-        if not category and not channel and not feature:
+        if not category and not feature:
             params['size'] = '1000'  # Required for getting results in Suggests API
             cache_file = 'programs.json'
 
         querystring = '&'.join('{}={}'.format(key, value) for key, value in list(params.items()))
         suggest_url = self._VRTNU_SUGGEST_URL + '?' + querystring
-        return get_cached_url_json(url=suggest_url, cache=cache_file, ttl=ttl('indirect'), fail=[])
+        tvshows = get_cached_url_json(url=suggest_url, cache=cache_file, ttl=ttl('indirect'), fail=[])
+
+        # Filter tvshows by channel
+        if channel:
+            filtered_tvshows = []
+            for tvshow in tvshows:
+                if tvshow.get('brands') and tvshow.get('brands')[0] == channel:
+                    filtered_tvshows.append(tvshow)
+            tvshows = filtered_tvshows
+
+        return tvshows
 
     def list_tvshows(self, category=None, channel=None, feature=None, programs=None, use_favorites=False):
         """List all TV shows for a given category, channel, feature or list of programNames, optionally filtered by favorites"""
