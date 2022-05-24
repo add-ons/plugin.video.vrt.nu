@@ -568,7 +568,8 @@ class ApiHelper:
         if program:
             params['orderBy'] = 'episodeId'
             params['order'] = 'desc'
-            params['q'] = program.split('---')[0].replace('-', ' ')
+            program_query = program.split('---')[0].replace('-', ' ')  # Convert programName to query
+            params['q'] = ' '.join([word for word in program_query.split() if len(word) > 1])  # Remove single chars
 
         if season and season != 'allseasons':
             params['facets[seasonId]'] = season
