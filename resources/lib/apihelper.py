@@ -571,6 +571,7 @@ class ApiHelper:
             program_query = program.split('---')[0].replace('-', ' ')  # Convert programName to query
             program_query = ' '.join([word for word in program_query.split() if len(word) > 1])  # Remove single chars
             program_query = ''.join([i for i in program_query if not i.isdigit()])  # Remove digits
+            program_query = program_query[:24]  # Trim query to 24 digits
             params['q'] = program_query
 
         if season and season != 'allseasons':
