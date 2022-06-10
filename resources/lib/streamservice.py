@@ -125,8 +125,8 @@ class StreamService:
             return None
 
         # Store required html data attributes
-        client = video_data.get('client') or self._CLIENT
-        media_api_url = video_data.get('mediaapiurl')
+        client = self._CLIENT
+        media_api_url = self._VUALTO_API_URL
         video_id = video_data.get('videoid')
         publication_id = video_data.get('publicationid', '')
         # Live stream or on demand
