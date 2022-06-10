@@ -21,8 +21,8 @@ class StreamService:
     """Collect and prepare stream info for Kodi Player"""
 
     _VUPLAY_API_URL = 'https://api.vuplay.co.uk'
-    _VUALTO_API_URL = 'https://media-services-public.vrt.be/vualto-video-aggregator-web/rest/external/v2'
-    _CLIENT = 'vrtvideo@PROD'
+    _VUALTO_API_URL = 'https://media-services-public.vrt.be/media-aggregator/v2'
+    _CLIENT = 'vrtnu-web@PROD'
     _UPLYNK_LICENSE_URL = 'https://content.uplynk.com/wv'
     _INVALID_LOCATION = 'INVALID_LOCATION'
     _INCOMPLETE_ROAMING_CONFIG = 'INCOMPLETE_ROAMING_CONFIG'
@@ -164,7 +164,7 @@ class StreamService:
         # Construct api_url and get video json
         if not playertoken:
             return None
-        api_url = api_data.media_api_url + '/videos/' + api_data.publication_id + \
+        api_url = api_data.media_api_url + '/media-items/' + api_data.publication_id + \
             api_data.video_id + '?vrtPlayerToken=' + playertoken + '&client=' + api_data.client
 
         stream_json = get_url_json(url=api_url)
