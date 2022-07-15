@@ -515,29 +515,24 @@ class ApiHelper:
                      whatson_id=None, episode_id=None, video_id=None, video_url=None, page=None, use_favorites=False, variety=None, cache_file=None):
         """Get episodes or season data from VRT NU Search API"""
 
-        # Contruct params
+        # Set VRT Search API params
+        all_items = True
+        params = {
+            'i': 'video',
+            'available': 'true',
+            'size': '300',
+        }
+
         if page:
             page = realpage(page)
             all_items = False
             items_per_page = get_setting_int('itemsperpage', default=50)
             params = {
                 'from': ((page - 1) * items_per_page) + 1,
-                'i': 'video',
                 'size': items_per_page,
             }
         elif variety == 'single':
             all_items = False
-            params = {
-                'i': 'video',
-                'size': '1',
-            }
-        else:
-            all_items = True
-            params = {
-                'i': 'video',
-                'size': '300',
-            }
-        params['available'] = 'true'
 
         if variety:
             season = 'allseasons'
@@ -663,6 +658,8 @@ class ApiHelper:
                 if episode.get('programName') == program:
                     filtered_episodes.append(episode)
             episodes = filtered_episodes
+            if variety == 'single':
+                episodes = [episodes[0]]
         elif variety in ('offline', 'recent'):
             channel_filter = []
             for channel in CHANNELS:
