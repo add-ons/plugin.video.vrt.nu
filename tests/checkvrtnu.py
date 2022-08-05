@@ -19,7 +19,7 @@ def google_play_info():
     """Get info for VRT NU app from Google Play"""
     app_id = 'be.vrt.vrtnu'
     url = 'https://play.google.com/store/apps/details?id={}'.format(app_id)
-    headers = {'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:76.0) Gecko/20100101 Firefox/76.0'}
+    headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:103.0) Gecko/20100101 Firefox/103.0'}
     req = requests.get(url, headers=headers)
 
     if req.status_code != 200:
@@ -38,9 +38,9 @@ def google_play_info():
         if key and value:
             key = key.group(1)
             info = json.loads(value.group(1))
-            if key == '5':
-                changelog = info[0][12][6][1]
-                published = info[0][12][8][0]
+            if key == '4':
+                changelog = info[1][2][144][1][1]
+                published = info[1][2][145][0][0]
             elif key == '8':
                 version = info[1]
 
@@ -55,8 +55,9 @@ def google_play_info():
 def run():
     """Check VRT NU app"""
     import dateutil.tz
+    import dateutil.parser
     info = google_play_info()
-    published = datetime.fromtimestamp(info.get('published'), dateutil.tz.UTC)
+    published = dateutil.parser.parse(info.get('published') + ' 22:00:00 UTC', tzinfos={'UTC': dateutil.tz.UTC})
     published_string = published.astimezone(dateutil.tz.gettz('Europe/Brussels')).strftime('%A %e %B %Y at %H:%M')
     if published > datetime.now(dateutil.tz.UTC) - timedelta(minutes=90):
         message = 'VRT NU for Android is updated to version {} released on {}\nChangelog:\n {}'.format(
