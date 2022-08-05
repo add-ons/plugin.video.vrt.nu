@@ -659,7 +659,7 @@ class ApiHelper:
                     filtered_episodes.append(episode)
             episodes = filtered_episodes
             if variety == 'single':
-                episodes = [episodes[0]]
+                episodes = [next(iter(episodes), {})]
         elif variety in ('offline', 'recent'):
             channel_filter = []
             for channel in CHANNELS:

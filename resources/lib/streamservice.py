@@ -99,6 +99,7 @@ class StreamService:
 
     def _get_api_data(self, video):
         """Create api data object from video dictionary"""
+        api_data = None
         video_url = video.get('video_url')
         video_id = video.get('video_id')
         publication_id = video.get('publication_id')

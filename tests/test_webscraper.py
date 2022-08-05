@@ -16,10 +16,7 @@ class TestWebScraper(unittest.TestCase):
         """Test getting video attributes"""
         vrtnu_urls = [
             'https://www.vrt.be/vrtnu/a-z/girls-talk/2/girls-talk-s2-mannen-kunnen-beter-drinken/',
-            'https://www.vrt.be/vrtnu/a-z/de-ideale-wereld/2019-nj/de-ideale-wereld-d20191219/',
-            'https://www.vrt.be/vrtnu/livestream/#epgchannel=O8',  # Eén
-            'https://www.vrt.be/vrtnu/livestream/#epgchannel=1H',  # Canvas
-            'https://www.vrt.be/vrtnu/livestream/#epgchannel=O9'  # Ketnet
+            'https://www.vrt.be/vrtnu/a-z/de-ideale-wereld/2022-vj/de-ideale-wereld-d20220505/',
         ]
         for vrtnu_url in vrtnu_urls:
             video_attrs = get_video_attributes(vrtnu_url)
