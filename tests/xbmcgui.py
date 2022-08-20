@@ -171,7 +171,7 @@ class Dialog:
     def browseSingle(type, heading, shares, mask=None, useThumbs=None, treatAsFolder=None, defaultt=None):  # pylint: disable=redefined-builtin
         """A stub implementation for the xbmcgui Dialog class browseSingle() method"""
         print('\033[37;44;1mBROWSESINGLE:\033[35;49;1m [%s] \033[37;1m%s\033[39;0m' % (type, heading))
-        return 'special://masterprofile/addon_data/plugin.video.vrt.nu/'
+        return 'special://masterprofile/addon_data/plugin.video.vrtmax/'
 
 
 class DialogProgress:

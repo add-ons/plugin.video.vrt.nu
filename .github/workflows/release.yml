@@ -8,7 +8,7 @@ on:
     - 'v*'
 jobs:
   build:
-    name: Release plugin.video.vrt.nu
+    name: Release plugin.video.vrtmax
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -21,11 +21,11 @@ jobs:
       - name: Get Krypton filename
         id: get-krypton-filename
         run: |
-          echo ::set-output name=krypton-filename::$(cd ..;ls plugin.video.vrt.nu*.zip | grep -v '+matrix.' | head -1)
+          echo ::set-output name=krypton-filename::$(cd ..;ls plugin.video.vrtmax*.zip | grep -v '+matrix.' | head -1)
       - name: Get Matrix filename
         id: get-matrix-filename
         run: |
-          echo ::set-output name=matrix-filename::$(cd ..;ls plugin.video.vrt.nu*+matrix.*.zip | head -1)
+          echo ::set-output name=matrix-filename::$(cd ..;ls plugin.video.vrtmax*+matrix.*.zip | head -1)
       - name: Get body
         id: get-body
         run: |
@@ -72,7 +72,7 @@ jobs:
         with:
           kodi-repository: repo-plugins
           kodi-version: matrix
-          addon-id: plugin.video.vrt.nu
+          addon-id: plugin.video.vrtmax
         env:
           GH_USERNAME: ${{secrets.GH_USERNAME}}
           GH_TOKEN: ${{secrets.GH_TOKEN}}
@@ -83,7 +83,7 @@ jobs:
         with:
           kodi-repository: repo-plugins
           kodi-version: krypton
-          addon-id: plugin.video.vrt.nu
+          addon-id: plugin.video.vrtmax
         env:
           GH_USERNAME: ${{secrets.GH_USERNAME}}
           GH_TOKEN: ${{secrets.GH_TOKEN}}

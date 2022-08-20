@@ -26,25 +26,25 @@ class TestLanguage(unittest.TestCase):
     def test_dutch():
         """Test the principal add-on language"""
         xbmc.settings['locale.language'] = 'resource.language.nl_nl'
-        plugin.run(['plugin://plugin.video.vrt.nu/', '0', ''])
-        plugin.run(['plugin://plugin.video.vrt.nu/categories', '0', ''])
-        plugin.run(['plugin://plugin.video.vrt.nu/tvguide', '0', ''])
+        plugin.run(['plugin://plugin.video.vrtmax/', '0', ''])
+        plugin.run(['plugin://plugin.video.vrtmax/categories', '0', ''])
+        plugin.run(['plugin://plugin.video.vrtmax/tvguide', '0', ''])
 
     @staticmethod
     def test_german():
         """Test an unsupported language"""
         xbmc.settings['locale.language'] = 'resource.language.de_de'
-        plugin.run(['plugin://plugin.video.vrt.nu/', '0', ''])
-        plugin.run(['plugin://plugin.video.vrt.nu/categories', '0', ''])
-        plugin.run(['plugin://plugin.video.vrt.nu/tvguide', '0', ''])
+        plugin.run(['plugin://plugin.video.vrtmax/', '0', ''])
+        plugin.run(['plugin://plugin.video.vrtmax/categories', '0', ''])
+        plugin.run(['plugin://plugin.video.vrtmax/tvguide', '0', ''])
 
     @staticmethod
     def test_english():
         """Test the default Kodi language"""
         xbmc.settings['locale.language'] = 'resource.language.en_gb'
-        plugin.run(['plugin://plugin.video.vrt.nu/', '0', ''])
-        plugin.run(['plugin://plugin.video.vrt.nu/categories', '0', ''])
-        plugin.run(['plugin://plugin.video.vrt.nu/tvguide', '0', ''])
+        plugin.run(['plugin://plugin.video.vrtmax/', '0', ''])
+        plugin.run(['plugin://plugin.video.vrtmax/categories', '0', ''])
+        plugin.run(['plugin://plugin.video.vrtmax/tvguide', '0', ''])
 
 
 if __name__ == '__main__':

@@ -64,7 +64,7 @@ class TestFavorites(unittest.TestCase):
         number = 118
         programs = self._apihelper.get_tvshows()
         shuffle(programs)
-        print('VRT NU has %d programs available' % len(programs))
+        print('VRT MAX has %d programs available' % len(programs))
         for program_item in programs[:number]:
             program_title = program_item.get('title')
             program_name = program_item.get('programName')

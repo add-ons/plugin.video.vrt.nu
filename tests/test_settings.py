@@ -44,39 +44,39 @@ class TestSettings(unittest.TestCase):
         """Test without menu caching"""
         addon.settings['usehttpcaching'] = True
         addon.settings['usemenucaching'] = False
-        plugin.run(['plugin://plugin.video.vrt.nu/recent', '0', ''])
-        plugin.run(['plugin://plugin.video.vrt.nu/recent', '0', ''])
+        plugin.run(['plugin://plugin.video.vrtmax/recent', '0', ''])
+        plugin.run(['plugin://plugin.video.vrtmax/recent', '0', ''])
 
     @staticmethod
     def test_httpcaching_disabled():
         """Test without http caching"""
         addon.settings['usehttpcaching'] = False
         addon.settings['usemenucaching'] = True
-        plugin.run(['plugin://plugin.video.vrt.nu/offline', '0', ''])
-        plugin.run(['plugin://plugin.video.vrt.nu/offline', '0', ''])
-        plugin.run(['plugin://plugin.video.vrt.nu/tvguide/date/today/canvas', '0', ''])
+        plugin.run(['plugin://plugin.video.vrtmax/offline', '0', ''])
+        plugin.run(['plugin://plugin.video.vrtmax/offline', '0', ''])
+        plugin.run(['plugin://plugin.video.vrtmax/tvguide/date/today/canvas', '0', ''])
 
     @staticmethod
     def test_favorites_disabled():
         """Test without favorites"""
-        plugin.run(['plugin://plugin.video.vrt.nu/', '0', ''])
+        plugin.run(['plugin://plugin.video.vrtmax/', '0', ''])
         addon.settings['usefavorites'] = False
         addon.settings['useresumepoints'] = True
-        plugin.run(['plugin://plugin.video.vrt.nu/', '0', ''])
-        plugin.run(['plugin://plugin.video.vrt.nu/favorites', '0', ''])
-        plugin.run(['plugin://plugin.video.vrt.nu/favorites/recent', '0', ''])
-        plugin.run(['plugin://plugin.video.vrt.nu/favorites/offline', '0', ''])
-        plugin.run(['plugin://plugin.video.vrt.nu/favorites/manage', '0', ''])
+        plugin.run(['plugin://plugin.video.vrtmax/', '0', ''])
+        plugin.run(['plugin://plugin.video.vrtmax/favorites', '0', ''])
+        plugin.run(['plugin://plugin.video.vrtmax/favorites/recent', '0', ''])
+        plugin.run(['plugin://plugin.video.vrtmax/favorites/offline', '0', ''])
+        plugin.run(['plugin://plugin.video.vrtmax/favorites/manage', '0', ''])
 
     @staticmethod
     def test_resumepoints_disabled():
         """Test without resumepoints"""
-        plugin.run(['plugin://plugin.video.vrt.nu/favorites', '0', ''])
+        plugin.run(['plugin://plugin.video.vrtmax/favorites', '0', ''])
         addon.settings['usefavorites'] = True
         addon.settings['useresumepoints'] = False
-        plugin.run(['plugin://plugin.video.vrt.nu/favorites', '0', ''])
-        plugin.run(['plugin://plugin.video.vrt.nu/resumepoints/watchlater', '0', ''])
-        plugin.run(['plugin://plugin.video.vrt.nu/resumepoints/continue', '0', ''])
+        plugin.run(['plugin://plugin.video.vrtmax/favorites', '0', ''])
+        plugin.run(['plugin://plugin.video.vrtmax/resumepoints/watchlater', '0', ''])
+        plugin.run(['plugin://plugin.video.vrtmax/resumepoints/continue', '0', ''])
 
     @staticmethod
     def test_opensettings():
@@ -87,19 +87,19 @@ class TestSettings(unittest.TestCase):
     def test_youtube_disabled():
         """Test with showyoutube disabled"""
         addon.settings['showyoutube'] = False
-        plugin.run(['plugin://plugin.video.vrt.nu/channels/radio1', '0', ''])
+        plugin.run(['plugin://plugin.video.vrtmax/channels/radio1', '0', ''])
 
     @staticmethod
     def test_showfanart_disabled():
         """Test with showfanart disabled"""
         addon.settings['showfanart'] = False
-        plugin.run(['plugin://plugin.video.vrt.nu/categories', '0', ''])
+        plugin.run(['plugin://plugin.video.vrtmax/categories', '0', ''])
 
     @staticmethod
     def test_showoneoff_disabled():
         """Test with showoneofff disabled"""
         addon.settings['showoneoff'] = False
-        plugin.run(['plugin://plugin.video.vrt.nu/programs', '0', ''])
+        plugin.run(['plugin://plugin.video.vrtmax/programs', '0', ''])
 
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
@@ -107,7 +107,7 @@ class TestSettings(unittest.TestCase):
         """Test ondemand stream"""
         addon.settings['usedrm'] = False
         addon.settings['useinputstreamadaptive'] = False
-        video = dict(video_url='https://www.vrt.be/vrtnu/a-z/winteruur/1/winteruur-s1a1/')
+        video = dict(video_url='https://www.vrt.be/vrtmax/a-z/winteruur/1/winteruur-s1a1/')
         stream = self._streamservice.get_stream(video)
         # NOTE: Testing live streams only works within Europe
         if os.environ.get('GITHUB_ACTIONS') != 'true':
@@ -119,7 +119,7 @@ class TestSettings(unittest.TestCase):
         """Test with usedrm disabled"""
         addon.settings['usedrm'] = False
         addon.settings['useinputstreamadaptive'] = True
-        video = dict(video_url='https://www.vrt.be/vrtnu/a-z/winteruur/1/winteruur-s1a1/')
+        video = dict(video_url='https://www.vrt.be/vrtmax/a-z/winteruur/1/winteruur-s1a1/')
         stream = self._streamservice.get_stream(video)
         # NOTE: Testing live streams only works within Europe
         if os.environ.get('GITHUB_ACTIONS') != 'true':
@@ -131,7 +131,7 @@ class TestSettings(unittest.TestCase):
         """Test with useinputstreamadaptive disabled"""
         addon.settings['usedrm'] = True
         addon.settings['useinputstreamadaptive'] = False
-        video = dict(video_url='https://www.vrt.be/vrtnu/a-z/winteruur/1/winteruur-s1a1/')
+        video = dict(video_url='https://www.vrt.be/vrtmax/a-z/winteruur/1/winteruur-s1a1/')
         stream = self._streamservice.get_stream(video)
         # NOTE: Testing live streams only works within Europe
         if os.environ.get('GITHUB_ACTIONS') != 'true':
@@ -143,7 +143,7 @@ class TestSettings(unittest.TestCase):
         """Test with usedrm and useinputstreamadaptive disabled"""
         addon.settings['usedrm'] = True
         addon.settings['useinputstreamadaptive'] = True
-        video = dict(video_url='https://www.vrt.be/vrtnu/a-z/winteruur/1/winteruur-s1a1/')
+        video = dict(video_url='https://www.vrt.be/vrtmax/a-z/winteruur/1/winteruur-s1a1/')
         stream = self._streamservice.get_stream(video)
         # NOTE: Testing live streams only works within Europe
         if os.environ.get('GITHUB_ACTIONS') != 'true':

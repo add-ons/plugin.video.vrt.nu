@@ -36,35 +36,35 @@ class TestProxy(unittest.TestCase):
     # Delete tokens method: '/tokens/delete'
     def test_clear_cookies_route(self):
         """Test clearing cookies"""
-        plugin.run(['plugin://plugin.video.vrt.nu/tokens/delete', '0', ''])
-        self.assertEqual(plugin.url_for(addon.delete_tokens), 'plugin://plugin.video.vrt.nu/tokens/delete')
+        plugin.run(['plugin://plugin.video.vrtmax/tokens/delete', '0', ''])
+        self.assertEqual(plugin.url_for(addon.delete_tokens), 'plugin://plugin.video.vrtmax/tokens/delete')
 
     # Delete cache method: '/cache/delete'
     def test_invalidate_caches_route(self):
         """Test invalidate caches"""
-        plugin.run(['plugin://plugin.video.vrt.nu/cache/delete', '0', ''])
-        self.assertEqual(plugin.url_for(addon.delete_cache), 'plugin://plugin.video.vrt.nu/cache/delete')
+        plugin.run(['plugin://plugin.video.vrtmax/cache/delete', '0', ''])
+        self.assertEqual(plugin.url_for(addon.delete_cache), 'plugin://plugin.video.vrtmax/cache/delete')
 
     # A-Z menu: '/programs'
     def test_az_menu(self):
         """Test Programs menu"""
-        plugin.run(['plugin://plugin.video.vrt.nu/programs', '0', ''])
-        self.assertEqual(plugin.url_for(addon.programs), 'plugin://plugin.video.vrt.nu/programs')
+        plugin.run(['plugin://plugin.video.vrtmax/programs', '0', ''])
+        self.assertEqual(plugin.url_for(addon.programs), 'plugin://plugin.video.vrtmax/programs')
 
     # Categories menu: '/categories'
     def test_categories_menu(self):
         """Test Categories menu"""
-        plugin.run(['plugin://plugin.video.vrt.nu/categories', '0', ''])
-        self.assertEqual(plugin.url_for(addon.categories), 'plugin://plugin.video.vrt.nu/categories')
+        plugin.run(['plugin://plugin.video.vrtmax/categories', '0', ''])
+        self.assertEqual(plugin.url_for(addon.categories), 'plugin://plugin.video.vrtmax/categories')
 
     # Categories programs menu: '/categories/<category>'
     def test_categories_tvshow_menu(self):
         """Test Categories tvshow"""
-        plugin.run(['plugin://plugin.video.vrt.nu/categories/docu', '0', ''])
-        self.assertEqual(plugin.url_for(addon.categories, category='docu'), 'plugin://plugin.video.vrt.nu/categories/docu')
+        plugin.run(['plugin://plugin.video.vrtmax/categories/docu', '0', ''])
+        self.assertEqual(plugin.url_for(addon.categories, category='docu'), 'plugin://plugin.video.vrtmax/categories/docu')
 
     # Favorites menu: '/favorites'
     def test_favorites(self):
         """Test Favorites menu"""
-        plugin.run(['plugin://plugin.video.vrt.nu/favorites/programs', '0', ''])
-        self.assertEqual(plugin.url_for(addon.favorites_programs), 'plugin://plugin.video.vrt.nu/favorites/programs')
+        plugin.run(['plugin://plugin.video.vrtmax/favorites/programs', '0', ''])
+        self.assertEqual(plugin.url_for(addon.favorites_programs), 'plugin://plugin.video.vrtmax/favorites/programs')

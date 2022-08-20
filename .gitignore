@@ -65,8 +65,8 @@ msbuild.err
 msbuild.wrn
 
 # Visual Studio
-#plugin.video.vrt.nu.pyproj
-#plugin.video.vrt.nu.sln
+#plugin.video.vrtmax.pyproj
+#plugin.video.vrtmax.sln
 .vs/
 .vscode
 

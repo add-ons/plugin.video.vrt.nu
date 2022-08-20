@@ -153,7 +153,7 @@ class TestApiHelper(unittest.TestCase):
             program_title='De Ideale Wereld',
             season_number=11,
             episode_number=28,
-            path='plugin://plugin.video.vrt.nu/play/id/vid-9ddc7c61-2bf4-4387-91d6-a8f07fbd6ea1/pbs-pub-778fddf2-1aa0-4184-832c-a2832dd77762',
+            path='plugin://plugin.video.vrtmax/play/id/vid-9ddc7c61-2bf4-4387-91d6-a8f07fbd6ea1/pbs-pub-778fddf2-1aa0-4184-832c-a2832dd77762',
             playcount='0',
             rating='0',
             runtime='600',

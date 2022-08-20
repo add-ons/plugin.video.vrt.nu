@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-"""This module contains all functionality for VRT NU API authentication."""
+"""This module contains all functionality for VRT MAX API authentication."""
 
 from __future__ import absolute_import, division, unicode_literals
 from kodiutils import (addon_profile, delete, delete_cache, exists, get_cache, get_cache_dir, get_setting, open_url,
@@ -20,14 +20,14 @@ except ImportError:  # Python 2
 
 
 class TokenResolver:
-    """Get, refresh and cache tokens for VRT NU API authentication."""
+    """Get, refresh and cache tokens for VRT MAX API authentication."""
 
     _API_KEY = '3_qhEcPa5JGFROVwu5SWKqJ4mVOIkwlFNMSKwzPDAh8QZOtHqu6L4nD5Q7lk0eXOOG'
     _LOGIN_URL = 'https://accounts.vrt.be/accounts.login'
     _VRT_LOGIN_URL = 'https://login.vrt.be/perform_login'
     _TOKEN_GATEWAY_URL = 'https://token.vrt.be'
-    _USER_TOKEN_GATEWAY_URL = 'https://token.vrt.be/vrtnuinitlogin?provider=site&destination=https://www.vrt.be/vrtnu/'
-    _ROAMING_TOKEN_GATEWAY_URL = 'https://token.vrt.be/vrtnuinitloginEU?destination=https://www.vrt.be/vrtnu/'
+    _USER_TOKEN_GATEWAY_URL = 'https://token.vrt.be/vrtnuinitlogin?provider=site&destination=https://www.vrt.be/vrtmax/'
+    _ROAMING_TOKEN_GATEWAY_URL = 'https://token.vrt.be/vrtnuinitloginEU?destination=https://www.vrt.be/vrtmax/'
     _TOKEN_CACHE_DIR = 'tokens'
 
     def __init__(self):
@@ -162,7 +162,7 @@ class TokenResolver:
 
         destination = response.geturl()
         usertoken = TokenResolver._create_token_dictionary(cookiejar, name)
-        if not usertoken and not destination.startswith('https://www.vrt.be/vrtnu'):
+        if not usertoken and not destination.startswith('https://www.vrt.be/vrtmax'):
             if roaming is False:
                 ok_dialog(heading=localize(30970), message=localize(30972))
             return None
@@ -259,7 +259,7 @@ class TokenResolver:
                 delete_cache(cache_file, self._TOKEN_CACHE_DIR)
                 xvrttoken = self.get_token('X-VRT-Token', 'roaming')
             elif variant == 'ondemand':
-                # We need a user X-VRT-Token because the birthdate in the VRT NU profile is checked when watching age restricted content
+                # We need a user X-VRT-Token because the birthdate in the VRT MAX profile is checked when watching age restricted content
                 xvrttoken = self.get_token('X-VRT-Token', 'user')
             if xvrttoken is None:
                 return None

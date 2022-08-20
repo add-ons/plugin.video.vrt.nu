@@ -2,7 +2,7 @@
     "inputstream.adaptive": {
         "DECRYPTERPATH": "special://home/cdm"
     },
-    "plugin.video.vrt.nu": {
+    "plugin.video.vrtmax": {
         "_comment": "do-not-add-username-and-password-here",
         "addmymovies": "true",
         "addmydocu": "true",
