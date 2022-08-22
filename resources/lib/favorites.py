@@ -109,7 +109,7 @@ class Favorites:
             """
             payload = dict(
                 variables=dict(
-                    id='/vrtmax/a-z/{}.model.json'.format(program_name)
+                    id='/vrtnu/a-z/{}.model.json'.format(program_name)
                 ),
                 query=graphql,
             )
