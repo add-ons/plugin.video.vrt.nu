@@ -26,8 +26,8 @@ class TokenResolver:
     _LOGIN_URL = 'https://accounts.vrt.be/accounts.login'
     _VRT_LOGIN_URL = 'https://login.vrt.be/perform_login'
     _TOKEN_GATEWAY_URL = 'https://token.vrt.be'
-    _USER_TOKEN_GATEWAY_URL = 'https://token.vrt.be/vrtnuinitlogin?provider=site&destination=https://www.vrt.be/vrtmax/'
-    _ROAMING_TOKEN_GATEWAY_URL = 'https://token.vrt.be/vrtnuinitloginEU?destination=https://www.vrt.be/vrtmax/'
+    _USER_TOKEN_GATEWAY_URL = 'https://token.vrt.be/vrtnuinitlogin?provider=site&destination=https://www.vrt.be/vrtnu/'
+    _ROAMING_TOKEN_GATEWAY_URL = 'https://token.vrt.be/vrtnuinitloginEU?destination=https://www.vrt.be/vrtnu/'
     _TOKEN_CACHE_DIR = 'tokens'
 
     def __init__(self):
