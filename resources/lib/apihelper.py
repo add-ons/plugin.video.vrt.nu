@@ -500,7 +500,7 @@ class ApiHelper:
         api_data = self.get_episodes(program=program, variety='single')
         if len(api_data) != 1:
             return None
-        episode = api_data[0]
+        episode = next(iter(api_data), {})
         log(2, str(episode))
         video_item = TitleItem(
             label=self._metadata.get_label(episode),
