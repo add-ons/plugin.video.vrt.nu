@@ -53,6 +53,6 @@ jobs:
     - name: TEST Video attributes webscraper
       run: python -m unittest -v test_webscraper.TestWebScraper.test_get_video_attributes
       if: always()
-    - name: TEST Check VRT NU app release
+    - name: TEST Check VRT MAX app release
       run: python tests/checkvrtnu.py
       if: always()
