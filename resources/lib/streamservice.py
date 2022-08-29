@@ -109,41 +109,7 @@ class StreamService:
         # Prepare api_data for livestreams by video_id, e.g. vualto_strubru, vualto_mnm, ketnet_jr
         elif video_id and not video_url:
             api_data = ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, '', True)
-        # Webscrape api_data with video_id fallback
-        elif video_url:
-            api_data = self._webscrape_api_data(video_url)
-            if video_id:
-                api_data = ApiData(self._CLIENT, self._VUALTO_API_URL, video_id, '', True)
         return api_data
-
-    def _webscrape_api_data(self, video_url):
-        """Scrape api data from VRT MAX html page"""
-        from webscraper import get_video_attributes
-        video_data = get_video_attributes(video_url)
-
-        # Web scraping failed, log error
-        if not video_data:
-            log_error('Web scraping api data failed, empty video_data')
-            return None
-
-        # Store required html data attributes
-        client = self._CLIENT
-        media_api_url = self._VUALTO_API_URL
-        video_id = video_data.get('videoid')
-        publication_id = video_data.get('publicationid', '')
-        # Live stream or on demand
-        if video_id is None:
-            is_live_stream = True
-            video_id = video_data.get('livestream')
-        else:
-            is_live_stream = False
-            publication_id += quote('$')
-
-        if client is None or media_api_url is None or (video_id is None and publication_id is None):
-            log_error('Web scraping api data failed, required attributes missing')
-            return None
-
-        return ApiData(client, media_api_url, video_id, publication_id, is_live_stream)
 
     def _get_stream_json(self, api_data, roaming=False):
         """Get JSON with stream details from VRT API"""
