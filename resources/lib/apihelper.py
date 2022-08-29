@@ -568,7 +568,7 @@ class ApiHelper:
             program_query = program.split('---')[0].replace('-', ' ')  # Convert programName to query
             program_query = program_query.replace('vrt', '').replace('nws', '')  # Remove VRT NWS
             program_query = ' '.join([word for word in program_query.split() if len(word) > 1])  # Remove single chars
-            program_query = ''.join([i for i in program_query if not i.isdigit()])  # Remove digits
+            program_query = program_query[:-1] if program_query[-1].isdigit() else program_query  # Remove digit if last character
             program_query = program_query[:24]  # Trim query to 24 digits
             params['q'] = program_query
 
