@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Check VRT NU app"""
+"""Check VRT MAX app"""
 from __future__ import absolute_import, division, print_function, unicode_literals
 from datetime import datetime, timedelta
 import json
@@ -8,7 +8,7 @@ import requests
 
 
 class NewVersionException(Exception):
-    """Is thrown when a new VRT NU app is released."""
+    """Is thrown when a new VRT MAX app is released."""
 
     def __init__(self, message):
         self.message = message
@@ -16,7 +16,7 @@ class NewVersionException(Exception):
 
 
 def google_play_info():
-    """Get info for VRT NU app from Google Play"""
+    """Get info for VRT MAX app from Google Play"""
     app_id = 'be.vrt.vrtnu'
     url = 'https://play.google.com/store/apps/details?id={}'.format(app_id)
     headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:103.0) Gecko/20100101 Firefox/103.0'}
@@ -53,17 +53,17 @@ def google_play_info():
 
 
 def run():
-    """Check VRT NU app"""
+    """Check VRT MAX app"""
     import dateutil.tz
     import dateutil.parser
     info = google_play_info()
     published = dateutil.parser.parse(info.get('published') + ' 22:00:00 UTC', tzinfos={'UTC': dateutil.tz.UTC})
     published_string = published.astimezone(dateutil.tz.gettz('Europe/Brussels')).strftime('%A %e %B %Y at %H:%M')
     if published > datetime.now(dateutil.tz.UTC) - timedelta(minutes=90):
-        message = 'VRT NU for Android is updated to version {} released on {}\nChangelog:\n {}'.format(
+        message = 'VRT MAX for Android is updated to version {} released on {}\nChangelog:\n {}'.format(
             info.get('version'), published_string, info.get('changelog'))
         raise NewVersionException(message)
-    message = 'Everything quiet here, VRT NU for Android is still at version {} released on {}'.format(info.get('version'), published_string)
+    message = 'Everything quiet here, VRT MAX for Android is still at version {} released on {}'.format(info.get('version'), published_string)
     print(message)
 
 

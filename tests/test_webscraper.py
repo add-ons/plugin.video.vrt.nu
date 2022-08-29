@@ -14,20 +14,20 @@ class TestWebScraper(unittest.TestCase):
 
     def test_get_video_attributes(self):
         """Test getting video attributes"""
-        vrtnu_urls = [
-            'https://www.vrt.be/vrtnu/a-z/girls-talk/2/girls-talk-s2-mannen-kunnen-beter-drinken/',
-            'https://www.vrt.be/vrtnu/a-z/de-ideale-wereld/2022-vj/de-ideale-wereld-d20220505/',
+        vrtmax_urls = [
+            'https://www.vrt.be/vrtmax/a-z/girls-talk/2/girls-talk-s2-mannen-kunnen-beter-drinken/',
+            'https://www.vrt.be/vrtmax/a-z/de-ideale-wereld/2022-vj/de-ideale-wereld-d20220505/',
         ]
-        for vrtnu_url in vrtnu_urls:
-            video_attrs = get_video_attributes(vrtnu_url)
+        for vrtmax_url in vrtmax_urls:
+            video_attrs = get_video_attributes(vrtmax_url)
             self.assertTrue(isinstance(video_attrs, dict))
             self.assertTrue(any(key in video_attrs for key in ['livestream', 'videoid']))
 
     def test_get_video_attributes_bad_urls(self):
         """Test getting video attributes using bad urls"""
         bad_urls = [
-            'https://www.vrt.be/vrtnu/a-z/de-ideale-wereld/2019-nj/de-ideale-wereld-d20191218/',
-            'https://www.vrt.be/vrtnu/kanalen/studio-brussel/',
+            'https://www.vrt.be/vrtmax/a-z/de-ideale-wereld/2019-nj/de-ideale-wereld-d20191218/',
+            'https://www.vrt.be/vrtmax/kanalen/studio-brussel/',
             'https://vtm.be/vtmgo'
         ]
         for bad_url in bad_urls:

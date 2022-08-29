@@ -30,16 +30,16 @@ class TestKodiUtils(unittest.TestCase):
         xbmc.settings['locale.language'] = 'resource.language.nl_nl'
 
         msg = kodiutils.localize(30958)
-        #self.assertEqual(msg, "There is a problem with this VRT NU {protocol} stream. Try again with {component} {state} or try to play this program from the VRT NU website. Please report this problem at https://www.vrt.be/vrtnu/help/")  # noqa
-        self.assertEqual(msg, "Er is een probleem met deze VRT NU {protocol}-stream. Probeer het opnieuw met {component} {state} of probeer dit programma af te spelen vanaf de VRT NU-website. Meld dit probleem op https://www.vrt.be/vrtnu/help/")  # noqa
+        #self.assertEqual(msg, "There is a problem with this VRT MAX {protocol} stream. Try again with {component} {state} or try to play this program from the VRT MAX website. Please report this problem at https://www.vrt.be/vrtmax/help/")  # noqa
+        self.assertEqual(msg, "Er is een probleem met deze VRT MAX {protocol}-stream. Probeer het opnieuw met {component} {state} of probeer dit programma af te spelen vanaf de VRT MAX-website. Meld dit probleem op https://www.vrt.be/vrtmax/help/")  # noqa
 
         msg = kodiutils.localize(30958, component='Widevine DRM', state='enabled')
-        #self.assertEqual(msg, "There is a problem with this VRT NU {protocol} stream. Try again with Widevine DRM enabled or try to play this program from the VRT NU website. Please report this problem at https://www.vrt.be/vrtnu/help/")  # noqa
-        self.assertEqual(msg, "Er is een probleem met deze VRT NU {protocol}-stream. Probeer het opnieuw met Widevine DRM enabled of probeer dit programma af te spelen vanaf de VRT NU-website. Meld dit probleem op https://www.vrt.be/vrtnu/help/")  # noqa
+        #self.assertEqual(msg, "There is a problem with this VRT MAX {protocol} stream. Try again with Widevine DRM enabled or try to play this program from the VRT MAX website. Please report this problem at https://www.vrt.be/vrtmax/help/")  # noqa
+        self.assertEqual(msg, "Er is een probleem met deze VRT MAX {protocol}-stream. Probeer het opnieuw met Widevine DRM enabled of probeer dit programma af te spelen vanaf de VRT MAX-website. Meld dit probleem op https://www.vrt.be/vrtmax/help/")  # noqa
 
         msg = kodiutils.localize(30958, protocol='MPEG-DASH', component='Widevine DRM', state='enabled')
-        #self.assertEqual(msg, "There is a problem with this VRT NU MPEG-DASH stream. Try again with Widevine DRM enabled or try to play this program from the VRT NU website. Please report this problem at https://www.vrt.be/vrtnu/help/")  # noqa
-        self.assertEqual(msg, "Er is een probleem met deze VRT NU MPEG-DASH-stream. Probeer het opnieuw met Widevine DRM enabled of probeer dit programma af te spelen vanaf de VRT NU-website. Meld dit probleem op https://www.vrt.be/vrtnu/help/")  # noqa
+        #self.assertEqual(msg, "There is a problem with this VRT MAX MPEG-DASH stream. Try again with Widevine DRM enabled or try to play this program from the VRT MAX website. Please report this problem at https://www.vrt.be/vrtmax/help/")  # noqa
+        self.assertEqual(msg, "Er is een probleem met deze VRT MAX MPEG-DASH-stream. Probeer het opnieuw met Widevine DRM enabled of probeer dit programma af te spelen vanaf de VRT MAX-website. Meld dit probleem op https://www.vrt.be/vrtmax/help/")  # noqa
 
     @staticmethod
     def test_log_disabled():
