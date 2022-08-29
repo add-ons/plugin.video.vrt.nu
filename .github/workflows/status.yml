@@ -51,5 +51,5 @@ jobs:
       run: python -m unittest -v test_apihelper.TestApiHelper.test_get_categories
       if: always()
     - name: TEST Check VRT MAX app release
-      run: python tests/checkvrtnu.py
+      run: python tests/checkvrtmax.py
       if: always()

@@ -29,7 +29,7 @@ def google_play_info():
     match = re.findall(regex, req.text)
     key_regex = re.compile(r'key: \'ds:(.*?)\',')
     value_regex = re.compile(r'data:([\s\S]*?), sideChannel: {}}\)')
-    version = None
+    version = 'Varies with device'
     changelog = None
     published = None
     for prop in match:
@@ -38,11 +38,9 @@ def google_play_info():
         if key and value:
             key = key.group(1)
             info = json.loads(value.group(1))
-            if key == '4':
+            if key == '5':
                 changelog = info[1][2][144][1][1]
                 published = info[1][2][145][0][0]
-            elif key == '8':
-                version = info[1]
 
     if version is None or published is None:
         print("HTTP request returned: %s" % req.text)
