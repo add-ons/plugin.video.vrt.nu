@@ -527,9 +527,11 @@ class ApiHelper:
             page = realpage(page)
             all_items = False
             items_per_page = get_setting_int('itemsperpage', default=50)
+            # Get 10 items more, because we get false positives that gets filtered afterwards
+            api_items_per_page = items_per_page + 10
             params = {
-                'from': ((page - 1) * items_per_page) + 1,
-                'size': items_per_page,
+                'from': ((page - 1) * api_items_per_page) + 1,
+                'size': api_items_per_page,
             }
         elif variety == 'single':
             all_items = False
@@ -564,6 +566,7 @@ class ApiHelper:
             params['orderBy'] = 'episodeId'
             params['order'] = 'desc'
             program_query = program.split('---')[0].replace('-', ' ')  # Convert programName to query
+            program_query = program_query.replace('vrt', '').replace('nws', '')  # Remove VRT NWS
             program_query = ' '.join([word for word in program_query.split() if len(word) > 1])  # Remove single chars
             program_query = ''.join([i for i in program_query if not i.isdigit()])  # Remove digits
             program_query = program_query[:24]  # Trim query to 24 digits
@@ -636,20 +639,19 @@ class ApiHelper:
         episodes = search_json.get('results', [{}])
         show_seasons = bool(season != 'allseasons')
 
-        # Return seasons
-        if show_seasons and len(seasons) > 1:
-            return (seasons, episodes)
+        # Check if we need to request more items
+        if all_items:
+            api_pages = search_json.get('meta').get('pages').get('total')
+            api_page_size = search_json.get('meta').get('pages').get('size')
+            total_results = search_json.get('meta').get('total_results')
+            print(total_results)
 
-        api_pages = search_json.get('meta').get('pages').get('total')
-        api_page_size = search_json.get('meta').get('pages').get('size')
-        total_results = search_json.get('meta').get('total_results')
-
-        if all_items and total_results > api_page_size:
-            for api_page in range(1, api_pages):
-                api_page_url = search_url + '&from=' + str(api_page * api_page_size + 1)
-                api_page_json = get_url_json(api_page_url)
-                if api_page_json is not None:
-                    episodes += api_page_json.get('results', [{}])
+            if total_results and total_results > api_page_size:
+                for api_page in range(1, api_pages):
+                    api_page_url = search_url + '&from=' + str(api_page * api_page_size + 1)
+                    api_page_json = get_url_json(api_page_url)
+                    if api_page_json is not None:
+                        episodes += api_page_json.get('results', [{}])
 
         # FIXME: Filter episodes because faceted search is broken
         if program:
@@ -670,6 +672,14 @@ class ApiHelper:
                 if episode.get('brands') and episode.get('brands')[0] in channel_filter:
                     filtered_episodes.append(episode)
             episodes = filtered_episodes
+
+        # Trim filtered episodes
+        if page:
+            episodes = episodes[:items_per_page]
+
+        # Return seasons
+        if show_seasons and len(seasons) > 1:
+            return (seasons, episodes)
 
         # Return episodes
         return episodes
