@@ -227,22 +227,6 @@ class TestRouting(unittest.TestCase):
         addon.run(['plugin://plugin.video.vrt.nu/play/id/vualto_canvas_geo', '0', ''])
         self.assertEqual(plugin.url_for(addon.play_id, video_id='vualto_canvas_geo'), 'plugin://plugin.video.vrt.nu/play/id/vualto_canvas_geo')
 
-    def test_play_on_demand_by_url_route(self):
-        """Play on demand by url: /play/url/<vrtmaxwebsite_url>"""
-        # Achterflap episode 8 available until 31/12/2025
-        addon.run(['plugin://plugin.video.vrt.nu/play/url/https://www.vrt.be/vrtmax/a-z/achterflap/1/achterflap-s1a8/', '0', ''])
-        self.assertEqual(plugin.url_for(addon.play_url,
-                                        video_url='https://www.vrt.be/vrtmax/a-z/achterflap/1/achterflap-s1a8/'),
-                         'plugin://plugin.video.vrt.nu/play/url/https://www.vrt.be/vrtmax/a-z/achterflap/1/achterflap-s1a8/')
-
-    def test_play_livestream_by_url_route(self):
-        """Play livestream by url: /play/url/<vrtmaxwebsite_url>"""
-        # Canvas livestream
-        addon.run(['plugin://plugin.video.vrt.nu/play/url/https://www.vrt.be/vrtmax/kanalen/canvas/', '0', ''])
-        self.assertEqual(plugin.url_for(addon.play_url,
-                                        video_url='https://www.vrt.be/vrtmax/kanalen/canvas/'),
-                         'plugin://plugin.video.vrt.nu/play/url/https://www.vrt.be/vrtmax/kanalen/canvas/')
-
     def test_play_latestepisode_route(self):
         """Play last episode method: /play/lastepisode/<program>"""
         addon.run(['plugin://plugin.video.vrt.nu/play/latest/het-journaal', '0', ''])

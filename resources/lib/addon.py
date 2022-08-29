@@ -287,13 +287,6 @@ def play_id(video_id, publication_id=None):
     VRTPlayer().play(dict(video_id=video_id, publication_id=publication_id))
 
 
-@plugin.route('/play/url/<path:video_url>')
-def play_url(video_url):
-    """The API interface to play a video by using a URL"""
-    from vrtplayer import VRTPlayer
-    VRTPlayer().play(dict(video_url=video_url))
-
-
 @plugin.route('/play/latest/<program>')
 def play_latest(program):
     """The API interface to play the latest episode of a program"""

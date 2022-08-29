@@ -13,8 +13,8 @@ except ImportError:  # Python 2
 
 from data import CHANNELS, SECONDS_MARGIN
 from kodiutils import colour, get_setting_bool, localize, localize_datelong, log, url_for
-from utils import (add_https_proto, capitalize, find_entry, from_unicode,
-                   html_to_kodi, reformat_url, reformat_image_url, shorten_link, to_unicode, unescape)
+from utils import (capitalize, find_entry, from_unicode, html_to_kodi, reformat_url,
+                   reformat_image_url, shorten_link, to_unicode, unescape)
 
 
 class Metadata:
@@ -178,11 +178,6 @@ class Metadata:
         # VRT MAX Schedule API (some are missing vrt.whatson-id)
         elif api_data.get('vrt.whatson-id') or api_data.get('startTime'):
             video_id = api_data.get('videoId')
-
-        # Fallback to VRT MAX website scraping
-        if not video_id and api_data.get('url'):
-            from webscraper import get_video_id
-            video_id = get_video_id(add_https_proto(api_data.get('url')))
 
         return video_id
 
