@@ -59,6 +59,9 @@ leave a message at [our Facebook page](https://facebook.com/kodivrtnu/).
 </table>
 
 ## Releases
+### v2.5.14 (2022-08-29)
+- VRT MAX rebranding (@mediaminister)
+
 ### v2.5.13 (2022-08-05)
 - Support 1080p video on demand (@mediaminister)
 
