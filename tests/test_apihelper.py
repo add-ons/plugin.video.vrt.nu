@@ -30,8 +30,8 @@ class TestApiHelper(unittest.TestCase):
     _apihelper = ApiHelper(_favorites, _resumepoints)
 
     def test_get_api_data_single_season(self):
-        """Test listing episodes for a single season (het-journaal)"""
-        title_items, sort, ascending, content = self._apihelper.list_episodes(program='het-journaal', season='allseasons')
+        """Test listing episodes for a single season (vrt-nws-journaal)"""
+        title_items, sort, ascending, content = self._apihelper.list_episodes(program='vrt-nws-journaal', season='allseasons')
         self.assertTrue(70 <= len(title_items) <= 140, 'We got %s items instead.' % len(title_items))
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
@@ -132,8 +132,8 @@ class TestApiHelper(unittest.TestCase):
             )
 
     def test_get_latest_episode(self):
-        """Test getting the latest episode of a program (het-journaal)"""
-        video = self._apihelper.get_latest_episode(program='het-journaal')
+        """Test getting the latest episode of a program (vrt-nws-journaal)"""
+        video = self._apihelper.get_latest_episode(program='vrt-nws-journaal')
         self.assertTrue(video.get('listitem') is not None)
         self.assertTrue(video.get('video_id') is not None)
         self.assertTrue(video.get('publication_id') is not None)
