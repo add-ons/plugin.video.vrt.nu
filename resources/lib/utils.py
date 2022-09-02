@@ -122,21 +122,21 @@ def program_to_url(program, url_type):
 
 def url_to_program(url):
     """Convert
-          - a targetUrl (e.g. //www.vrt.be/vrtmax/a-z/de-campus-cup.relevant/),
-          - a short programUrl (e.g. /vrtmax/a-z/de-campus-cup/) or
-          - a medium programUrl (e.g. //www.vrt.be/vrtmax/a-z/de-campus-cup/)
-          - a long programUrl (e.g. https://www.vrt.be/vrtmax/a-z/de-campus-cup/)
+          - a targetUrl (e.g. //www.vrt.be/vrtnu/a-z/de-campus-cup.relevant/),
+          - a short programUrl (e.g. /vrtnu/a-z/de-campus-cup/) or
+          - a medium programUrl (e.g. //www.vrt.be/vrtnu/a-z/de-campus-cup/)
+          - a long programUrl (e.g. https://www.vrt.be/vrtnu/a-z/de-campus-cup/)
         to a program url component (e.g. de-campus-cup).
         Any season or episode information is removed as well.
     """
     program = ''
-    if url.startswith('https://www.vrt.be/vrtmax/a-z/'):
+    if url.startswith('https://www.vrt.be/vrtnu/a-z/'):
         # long programUrl or targetUrl
         program = url.split('/')[5]
-    elif url.startswith('//www.vrt.be/vrtmax/a-z/'):
+    elif url.startswith('//www.vrt.be/vrtnu/a-z/'):
         # medium programUrl or targetUrl
         program = url.split('/')[5]
-    elif url.startswith('/vrtmax/a-z/'):
+    elif url.startswith('/vrtnu/a-z/'):
         # short programUrl
         program = url.split('/')[3]
         # Workaround: when adding a favourite on https://www.vrt.be/vrtmax/ sometimes '.html' is wrongly added to the short program Url
