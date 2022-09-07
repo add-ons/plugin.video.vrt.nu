@@ -102,21 +102,21 @@ def reformat_image_url(url):
 
 def program_to_url(program, url_type):
     """Convert a program url component (e.g. de-campus-cup) to:
-        - a short programUrl (e.g. /vrtmax/a-z/de-campus-cup/)
-        - a medium programUrl (e.g. //www.vrt.be/vrtmax/a-z/de-campus-cup/)
-        - a long programUrl (e.g. https://www.vrt.be/vrtmax/a-z/de-campus-cup/)
+        - a short programUrl (e.g. /vrtnu/a-z/de-campus-cup/)
+        - a medium programUrl (e.g. //www.vrt.be/vrtnu/a-z/de-campus-cup/)
+        - a long programUrl (e.g. https://www.vrt.be/vrtnu/a-z/de-campus-cup/)
    """
     url = None
     if program:
         # short programUrl
         if url_type == 'short':
-            url = '/vrtmax/a-z/' + program + '/'
+            url = '/vrtnu/a-z/' + program + '/'
         # medium programUrl
         elif url_type == 'medium':
-            url = '//www.vrt.be/vrtmax/a-z/' + program + '/'
+            url = '//www.vrt.be/vrtnu/a-z/' + program + '/'
         # long programUrl
         elif url_type == 'long':
-            url = 'https://www.vrt.be/vrtmax/a-z/' + program + '/'
+            url = 'https://www.vrt.be/vrtnu/a-z/' + program + '/'
     return url
 
 
@@ -149,24 +149,24 @@ def url_to_program(url):
 
 
 def url_to_episode(url):
-    """Convert a targetUrl (e.g. //www.vrt.be/vrtmax/a-z/buck/1/buck-s1a32/) to
-        a short episode url (/vrtmax/a-z/buck/1/buck-s1a32/)
+    """Convert a targetUrl (e.g. //www.vrt.be/vrtnu/a-z/buck/1/buck-s1a32/) to
+        a short episode url (/vrtnu/a-z/buck/1/buck-s1a32/)
    """
-    if url.startswith('https://www.vrt.be/vrtmax/a-z/'):
+    if url.startswith('https://www.vrt.be/vrtnu/a-z/'):
         # long episode url
-        return url.replace('https://www.vrt.be/vrtmax/a-z/', '/vrtmax/a-z/')
-    if url.startswith('//www.vrt.be/vrtmax/a-z/'):
+        return url.replace('https://www.vrt.be/vrtnu/a-z/', '/vrtnu/a-z/')
+    if url.startswith('//www.vrt.be/vrtnu/a-z/'):
         # medium episode url
-        return url.replace('//www.vrt.be/vrtmax/a-z/', '/vrtmax/a-z/')
-    if url.startswith('/vrtmax/a-z/'):
+        return url.replace('//www.vrt.be/vrtnu/a-z/', '/vrtnu/a-z/')
+    if url.startswith('/vrtnu/a-z/'):
         # short episode url
         return url
     return None
 
 
 def video_to_api_url(url):
-    """Convert a full VRT MAX url (e.g. https://www.vrt.be/vrtmax/a-z/de-ideale-wereld/2019-nj/de-ideale-wereld-d20191010/)
-        to a VRT Search API url (e.g. //www.vrt.be/vrtmax/a-z/de-ideale-wereld/2019-nj/de-ideale-wereld-d20191010/)
+    """Convert a full VRT MAX url (e.g. https://www.vrt.be/vrtnu/a-z/de-ideale-wereld/2019-nj/de-ideale-wereld-d20191010/)
+        to a VRT Search API url (e.g. //www.vrt.be/vrtnu/a-z/de-ideale-wereld/2019-nj/de-ideale-wereld-d20191010/)
    """
     if url.startswith('https:'):
         url = url.replace('https:', '')
