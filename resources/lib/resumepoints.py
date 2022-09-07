@@ -40,24 +40,6 @@ class ResumePoints:
         """Is resumepoints activated in the menu and do we have credentials ?"""
         return get_setting_bool('usefavorites', default=True) and get_setting_bool('useresumepoints', default=True) and has_credentials()
 
-    @staticmethod
-    def watchlater_headers(url=None):
-        """Generate http headers for VRT MAX watchLater API"""
-        from tokenresolver import TokenResolver
-        xvrttoken = TokenResolver().get_token('X-VRT-Token', variant='user')
-        headers = {}
-        if xvrttoken:
-            url = 'https://www.vrt.be' + url if url else 'https://www.vrt.be/vrtmax'
-            headers = {
-                'Authorization': 'Bearer ' + xvrttoken,
-                'Content-Type': 'application/json',
-                'Referer': url,
-            }
-        else:
-            log_error('Failed to get usertoken from VRT MAX')
-            notification(message=localize(30975))
-        return headers
-
     def refresh(self, ttl=None):
         """Get a cached copy or a newer resumepoints from VRT, or fall back to a cached file"""
         self.refresh_resumepoints(ttl)
@@ -106,11 +88,11 @@ class ResumePoints:
     def resumepoints_headers():
         """Generate http headers for VRT MAX Resumepoint API"""
         from tokenresolver import TokenResolver
-        vrtlogin_at = TokenResolver().get_token('vrtlogin-at')
+        access_token = TokenResolver().get_token('vrtnu-site_profile_at')
         headers = {}
-        if vrtlogin_at:
+        if access_token:
             headers = {
-                'Authorization': 'Bearer ' + vrtlogin_at,
+                'Authorization': 'Bearer ' + access_token,
                 'Content-Type': 'application/json',
             }
         else:
@@ -240,11 +222,11 @@ class ResumePoints:
     def get_watchlater(self):
         """Get watchlater using VRT MAX REST API"""
         from tokenresolver import TokenResolver
-        vrtlogin_at = TokenResolver().get_token('vrtlogin-at')
+        access_token = TokenResolver().get_token('vrtnu-site_profile_at')
         watchlater_json = {}
-        if vrtlogin_at:
+        if access_token:
             headers = {
-                'Authorization': 'Bearer ' + vrtlogin_at,
+                'Authorization': 'Bearer ' + access_token,
                 'Accept': 'application/json',
             }
             payload = dict(
@@ -259,11 +241,11 @@ class ResumePoints:
     def get_continue(self):
         """Get continue using VRT MAX REST API"""
         from tokenresolver import TokenResolver
-        vrtlogin_at = TokenResolver().get_token('vrtlogin-at')
+        access_token = TokenResolver().get_token('vrtnu-site_profile_at')
         continue_json = {}
-        if vrtlogin_at:
+        if access_token:
             headers = {
-                'Authorization': 'Bearer ' + vrtlogin_at,
+                'Authorization': 'Bearer ' + access_token,
                 'Accept': 'application/json',
             }
             payload = dict(
@@ -279,11 +261,11 @@ class ResumePoints:
     def set_watchlater_graphql(self, episode_id, title, watch_later=True):
         """Set watchLater episode using GraphQL API"""
         from tokenresolver import TokenResolver
-        vrtlogin_at = TokenResolver().get_token('vrtlogin-at')
+        access_token = TokenResolver().get_token('vrtnu-site_profile_at')
         result_json = {}
-        if vrtlogin_at:
+        if access_token:
             headers = {
-                'Authorization': 'Bearer ' + vrtlogin_at,
+                'Authorization': 'Bearer ' + access_token,
                 'Content-Type': 'application/json',
             }
             graphql_query = """
