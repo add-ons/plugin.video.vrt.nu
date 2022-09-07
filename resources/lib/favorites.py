@@ -77,7 +77,7 @@ class Favorites:
     def get_favorites(self):
         """Get favorites using GraphQL API"""
         from tokenresolver import TokenResolver
-        access_token = TokenResolver().get_token('vrtlogin-at')
+        access_token = TokenResolver().get_token('vrtnu-site_profile_at')
         favorites_json = {}
         if access_token:
             headers = {
@@ -139,11 +139,11 @@ class Favorites:
     def get_program_id_graphql(self, program_name):
         """Get programId from programName using GraphQL API"""
         from tokenresolver import TokenResolver
-        vrtlogin_at = TokenResolver().get_token('vrtlogin-at')
+        access_token = TokenResolver().get_token('vrtnu-site_profile_at')
         program_id = None
-        if vrtlogin_at:
+        if access_token:
             headers = {
-                'Authorization': 'Bearer ' + vrtlogin_at,
+                'Authorization': 'Bearer ' + access_token,
                 'Content-Type': 'application/json',
             }
             graphql = """
@@ -170,11 +170,11 @@ class Favorites:
     def set_favorite_graphql(self, program_id, title, is_favorite=True):
         """Set favorite using GraphQL API"""
         from tokenresolver import TokenResolver
-        vrtlogin_at = TokenResolver().get_token('vrtlogin-at')
+        access_token = TokenResolver().get_token('vrtnu-site_profile_at')
         result_json = {}
-        if vrtlogin_at:
+        if access_token:
             headers = {
-                'Authorization': 'Bearer ' + vrtlogin_at,
+                'Authorization': 'Bearer ' + access_token,
                 'Content-Type': 'application/json',
             }
             graphql_query = """
