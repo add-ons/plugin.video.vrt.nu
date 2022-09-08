@@ -198,11 +198,12 @@ class TokenResolver:
             return token.get(name)
 
         # Try to refresh a token
-        refresh_token = self._get_cached_token('vrtnu-site_profile_rt')
-        if refresh_token:
-            token = self._get_fresh_token(refresh_token.get('vrtnu-site_profile_rt'), name)
-            if token:
-                return token.get(name)
+        if name.startswith('vrtnu'):
+            refresh_token = self._get_cached_token('vrtnu-site_profile_rt')
+            if refresh_token:
+                token = self._get_fresh_token(refresh_token.get('vrtnu-site_profile_rt'), name)
+                if token:
+                    return token.get(name)
 
         # Get a new token
         token = self._get_new_token(name, variant)
