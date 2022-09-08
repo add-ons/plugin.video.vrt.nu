@@ -148,9 +148,9 @@ class TestApiHelper(unittest.TestCase):
         print(kodi_to_ansi(plot))
 
     def test_upnext(self):
-        """Test getting next episode (winteruur)"""
+        """Test getting next episode (de-ideale-wereld)"""
         current_episode = dict(
-            program_title='De Ideale Wereld',
+            program_title='De ideale wereld',
             season_number=11,
             episode_number=28,
             path='plugin://plugin.video.vrt.nu/play/id/vid-9ddc7c61-2bf4-4387-91d6-a8f07fbd6ea1/pbs-pub-778fddf2-1aa0-4184-832c-a2832dd77762',
