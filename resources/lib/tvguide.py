@@ -210,7 +210,7 @@ class TVGuide:
     def get_stream_ids(episode_id=None):
         """Get videoId and publicationId using VRT MAX REST API"""
         from tokenresolver import TokenResolver
-        access_token = TokenResolver().get_token('vrtlogin-at')
+        access_token = TokenResolver().get_token('vrtnu-site_profile_at')
         video_id = None
         publication_id = None
         if access_token:
