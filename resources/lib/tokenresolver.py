@@ -26,6 +26,9 @@ class TokenResolver:
 
     def __init__(self):
         """Initialize Token Resolver class"""
+        self.session = None
+        self.oidcxsrf = None
+        self.oidcstate = None
 
     @staticmethod
     def _get_token_filename(name, variant=None):
@@ -60,6 +63,15 @@ class TokenResolver:
         for cookie in cookie_data:
             # Create token dictionary
             token = self._create_token_dictionary(cookie)
+
+            # Store session tokens
+            if token.get('OIDCXSRF'):
+                self.oidcxsrf = token.get('OIDCXSRF')
+            elif token.get('SESSION'):
+                self.session = token.get('SESSION')
+            elif token.get('oidcstate'):
+                self.oidcstate = token.get('oidcstate')
+
             # Cache token
             self._set_cached_token(token)
             # Store token
@@ -102,12 +114,10 @@ class TokenResolver:
         self._extract_tokens(response)
 
         # Perform login
-        xsrf = self.get_token('OIDCXSRF')
-        session = self.get_token('SESSION')
         headers = {
             'Content-Type': 'application/json',
-            'OIDCXSRF': xsrf,
-            'Cookie': 'SESSION={}; OIDCXSRF={}'.format(session, xsrf),
+            'OIDCXSRF': self.oidcxsrf,
+            'Cookie': 'SESSION={}; OIDCXSRF={}'.format(self.session, self.oidcxsrf),
         }
         payload = dict(
             clientId='vrtnu-site',
@@ -163,11 +173,9 @@ class TokenResolver:
             return self._get_playertoken(variant)
 
         if redirect_url:
-            session = self.get_token('SESSION')
-            oidcstate = self.get_token('oidcstate')
             headers = {
                 'Content-Type': 'application/json',
-                'Cookie': 'SESSION=' + session + '; oidcstate=' + oidcstate,
+                'Cookie': 'SESSION=' + self.session + '; oidcstate=' + self.oidcstate,
             }
             response = open_url(redirect_url, headers=headers, follow_redirects=False)
 
