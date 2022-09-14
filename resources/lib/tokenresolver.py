@@ -173,7 +173,7 @@ class TokenResolver:
             return self._get_playertoken(variant)
 
         if not redirect_url:
-            redirect_url = self._get_login_info().get('redirectUrl')
+            return self.login()
 
         headers = {
             'Content-Type': 'application/json',

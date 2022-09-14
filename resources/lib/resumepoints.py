@@ -330,7 +330,7 @@ class ResumePoints:
     def _generate_watchlater_dict(watchlater_json):
         """Generate a simple watchlater dict with episodeIds and episodeTitles"""
         watchlater_dict = {}
-        if watchlater_json is not None:
+        if watchlater_json:
             for item in watchlater_json.get(':items', []):
                 episode_id = watchlater_json.get(':items')[item].get('data').get('episode').get('id')
                 title = watchlater_json.get(':items')[item].get('description')
@@ -342,7 +342,7 @@ class ResumePoints:
     def _generate_continue_dict(continue_json):
         """Generate a simple continue dict with episodeIds, programTitles and episodeTitles"""
         continue_dict = {}
-        if continue_json is not None:
+        if continue_json:
             for item in continue_json.get('data').get('list').get('paginated').get('edges'):
                 episode_id = item.get('node').get('episode').get('id')
                 program_title = item.get('node').get('title')
