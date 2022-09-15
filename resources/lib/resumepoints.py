@@ -284,7 +284,7 @@ class ResumePoints:
                 variables=dict(
                     listId='dynamic:/vrtnu.model.json@resume-list-video',
                     endCursor='',
-                    pageSize=50,
+                    pageSize=1000,
                 ),
                 query=graphql_query,
             )
@@ -343,7 +343,7 @@ class ResumePoints:
         """Generate a simple continue dict with episodeIds, programTitles and episodeTitles"""
         continue_dict = {}
         if continue_json:
-            for item in continue_json.get('data').get('list').get('paginated').get('edges'):
+            for item in continue_json.get('data', {}).get('list', {}).get('paginated', {}).get('edges', {}):
                 episode_id = item.get('node').get('episode').get('id')
                 program_title = item.get('node').get('title')
                 episode_title = item.get('node').get('episode').get('title')

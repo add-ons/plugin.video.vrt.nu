@@ -126,8 +126,8 @@ class Favorites:
                 operationName='Favs',
                 variables=dict(
                     listId='dynamic:/vrtnu.model.json@favorites-list-video',
-                    endCursor='1643276998214',
-                    pageSize=10,
+                    endCursor='',
+                    pageSize=1000,
                 ),
                 query=graphql,
             )
@@ -230,7 +230,7 @@ class Favorites:
         """Generate a simple favorites dict with programIds and programNames"""
         favorites_dict = {}
         if favorites_json:
-            for item in favorites_json.get('data').get('list').get('paginated').get('edges'):
+            for item in favorites_json.get('data', {}).get('list', {}).get('paginated', {}).get('edges', {}):
                 program_name = url_to_program(item.get('node').get('action').get('link'))
                 program_id = item.get('node').get('id')
                 title = item.get('node').get('title')
