@@ -126,8 +126,8 @@ class Favorites:
                 operationName='Favs',
                 variables=dict(
                     listId='dynamic:/vrtnu.model.json@favorites-list-video',
-                    endCursor='1643276998214',
-                    pageSize=10,
+                    endCursor='',
+                    pageSize=1000,
                 ),
                 query=graphql,
             )

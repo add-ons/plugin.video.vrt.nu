@@ -284,7 +284,7 @@ class ResumePoints:
                 variables=dict(
                     listId='dynamic:/vrtnu.model.json@resume-list-video',
                     endCursor='',
-                    pageSize=50,
+                    pageSize=1000,
                 ),
                 query=graphql_query,
             )
