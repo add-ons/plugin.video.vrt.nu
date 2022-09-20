@@ -1012,7 +1012,7 @@ msgid "This program can only be played from an European Union member state. It i
 msgstr ""
 
 msgctxt "#30975"
-msgid "Failed to get user token from VRT MAX"
+msgid "Failed to get access token from VRT MAX"
 msgstr ""
 
 msgctxt "#30976"

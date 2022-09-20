@@ -1012,8 +1012,8 @@ msgid "This program can only be played from an European Union member state. It i
 msgstr "Dit programma kan alleen afgespeeld worden vanuit een lidstaat van de Europese Unie. Het wordt geblokkeerd op jouw geografische locatie op basis van je IP-adres. Meer info op https://www.vrt.be/vrtmax/help/country/"
 
 msgctxt "#30975"
-msgid "Failed to get user token from VRT MAX"
-msgstr "Ophalen van het gebruikerstoken van VRT MAX is mislukt"
+msgid "Failed to get access token from VRT MAX"
+msgstr "Ophalen van het toegangstoken van VRT MAX is mislukt"
 
 msgctxt "#30976"
 msgid "Failed to (un)follow program '{program}' at VRT MAX"
