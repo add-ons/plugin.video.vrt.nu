@@ -26,9 +26,7 @@ class TokenResolver:
 
     def __init__(self):
         """Initialize Token Resolver class"""
-        self.session = None
-        self.oidcxsrf = None
-        self.oidcstate = None
+        self.token_dict = {}
 
     @staticmethod
     def _get_token_filename(name, variant=None):
@@ -39,14 +37,40 @@ class TokenResolver:
 
     def _set_cached_token(self, token, variant=None):
         """Save token to cache"""
-        from json import dumps
+        if not token:
+            return
+
+        # Get token name
         keys = list(token.keys())
         keys.remove('expirationDate')
-        cache_file = self._get_token_filename(keys[0], variant)
+        name = keys[0]
+
+        # Save to memory
+        self.token_dict[name] = token
+
+        # Save to disk
+        cache_file = self._get_token_filename(name, variant)
+        from json import dumps
         update_cache(cache_file, dumps(token), self._TOKEN_CACHE_DIR)
 
     def _get_cached_token(self, name, variant=None):
         """Return a cached token"""
+
+        # Get from memory
+        if self.token_dict.get(name):
+            expiration_date = self.token_dict.get(name).get('expirationDate', None)
+            if expiration_date:
+                from datetime import datetime
+                import dateutil.parser
+                import dateutil.tz
+                now = datetime.now(dateutil.tz.tzlocal())
+                exp = dateutil.parser.parse(expiration_date)
+                if exp <= now:
+                    log(2, "Memory token expired: '{name}'", name=name)
+                    return None
+            return self.token_dict.get(name)
+
+        # Get from disk
         cache_file = self._get_token_filename(name, variant)
         token = get_cache(cache_file, cache_dir=self._TOKEN_CACHE_DIR)
         if token:
@@ -63,14 +87,6 @@ class TokenResolver:
         for cookie in cookie_data:
             # Create token dictionary
             token = self._create_token_dictionary(cookie)
-
-            # Store session tokens
-            if token.get('OIDCXSRF'):
-                self.oidcxsrf = token.get('OIDCXSRF')
-            elif token.get('SESSION'):
-                self.session = token.get('SESSION')
-            elif token.get('oidcstate'):
-                self.oidcstate = token.get('oidcstate')
 
             # Cache token
             self._set_cached_token(token)
@@ -97,6 +113,9 @@ class TokenResolver:
         else:
             expires = 'Mon, 1 Jan 2052 06:00:00 GMT'
 
+        if cookie_info[0] == 'deleted':
+            return None
+
         token_dictionary = {
             cookie_name: cookie_info[0],
             'expirationDate': dateutil.parser.parse(expires).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
@@ -114,10 +133,11 @@ class TokenResolver:
         self._extract_tokens(response)
 
         # Perform login
+        oidcxsrf = self.get_token('OIDCXSRF')
         headers = {
             'Content-Type': 'application/json',
-            'OIDCXSRF': self.oidcxsrf,
-            'Cookie': 'SESSION={}; OIDCXSRF={}'.format(self.session, self.oidcxsrf),
+            'OIDCXSRF': oidcxsrf,
+            'Cookie': 'SESSION={}; OIDCXSRF={}'.format(self.get_token('SESSION'), oidcxsrf),
         }
         payload = dict(
             clientId='vrtnu-site',
@@ -177,7 +197,7 @@ class TokenResolver:
 
         headers = {
             'Content-Type': 'application/json',
-            'Cookie': 'SESSION=' + self.session + '; oidcstate=' + self.oidcstate,
+            'Cookie': 'SESSION=' + self.get_token('SESSION') + '; oidcstate=' + self.get_token('oidcstate'),
         }
         response = open_url(redirect_url, headers=headers, follow_redirects=False)
 
