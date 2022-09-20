@@ -342,14 +342,18 @@ class ResumePoints:
     def _generate_continue_dict(continue_json):
         """Generate a simple continue dict with episodeIds, programTitles and episodeTitles"""
         continue_dict = {}
-        if continue_json:
-            for item in continue_json.get('data', {}).get('list', {}).get('paginated', {}).get('edges', {}):
-                episode_id = item.get('node').get('episode').get('id')
-                program_title = item.get('node').get('title')
-                episode_title = item.get('node').get('episode').get('title')
-                continue_dict[episode_id] = dict(
-                    program_title=program_title,
-                    episode_title=episode_title)
+        try:
+            if continue_json:
+                edges = continue_json.get('data', {}).get('list', {}).get('paginated', {}).get('edges', {})
+                for item in edges:
+                    episode_id = item.get('node').get('episode').get('id')
+                    program_title = item.get('node').get('title')
+                    episode_title = item.get('node').get('episode').get('title')
+                    continue_dict[episode_id] = dict(
+                        program_title=program_title,
+                        episode_title=episode_title)
+        except AttributeError:
+            pass
         return continue_dict
 
     def is_watchlater(self, episode_id):
