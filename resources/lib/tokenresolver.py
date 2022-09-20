@@ -165,7 +165,7 @@ class TokenResolver:
         redirect_url = login_info.get('redirectUrl')
 
         # Get new access token
-        return self._get_new_token(name='vrtnusite_profile_at', redirect_url=redirect_url)
+        return self._get_new_token(name='vrtnu-site_profile_at', redirect_url=redirect_url)
 
     def _get_new_token(self, name, variant=None, redirect_url=None, roaming=False):
         """Return a new token"""
@@ -183,10 +183,11 @@ class TokenResolver:
 
         response = open_url(response.info().get('Location'), headers=headers, follow_redirects=False)
 
-        tokens = self._extract_tokens(response)
-        for token in tokens:
-            if token.get(name):
-                return token
+        if response:
+            tokens = self._extract_tokens(response)
+            for token in tokens:
+                if token.get(name):
+                    return token
         return None
 
     def get_token(self, name, variant=None, roaming=False):
