@@ -43,7 +43,6 @@ class TestRouting(unittest.TestCase):
         addon.run(['plugin://plugin.video.vrt.nu/favorites/recent/2', '0', ''])
         self.assertEqual(plugin.url_for(addon.favorites_recent, page=2), 'plugin://plugin.video.vrt.nu/favorites/recent/2')
         addon.run(['plugin://plugin.video.vrt.nu/favorites/offline', '0', ''])
-        addon.run(['plugin://plugin.video.vrt.nu/resumepoints/watchlater', '0', ''])
         addon.run(['plugin://plugin.video.vrt.nu/resumepoints/continue', '0', ''])
         addon.run(['plugin://plugin.video.vrt.nu/favorites/docu', '0', ''])
         addon.run(['plugin://plugin.video.vrt.nu/favorites/music', '0', ''])
@@ -198,19 +197,6 @@ class TestRouting(unittest.TestCase):
         """Manage favorites method: /favorites/manage"""
         addon.run(['plugin://plugin.video.vrt.nu/favorites/manage', '0', ''])
         self.assertEqual(plugin.url_for(addon.favorites_manage), 'plugin://plugin.video.vrt.nu/favorites/manage')
-
-    def test_watchlater_route(self):
-        """Watch and unwatch later method: plugin://plugin.video.vrt.nu/watchlater/<episode_id>/<title>"""
-
-        # Watchlater Winteruur met Lize Feryn (beschikbaar tot 26 maart 2025)
-        addon.run(['plugin://plugin.video.vrt.nu/watchlater/1571140659165/Lize Feryn', '0', ''])
-        self.assertEqual(plugin.url_for(addon.watchlater, episode_id='1571140659165', title='Lize Feryn'),
-                         'plugin://plugin.video.vrt.nu/watchlater/1571140659165/Lize Feryn')
-
-        # Unwatchlater Winteruur met Lize Feryn (beschikbaar tot 26 maart 2025)
-        addon.run(['plugin://plugin.video.vrt.nu/unwatchlater/1571140659165/Lize Feryn', '0', ''])
-        self.assertEqual(plugin.url_for(addon.unwatchlater, episode_id='1571140659165', title='Lize Feryn'),
-                         'plugin://plugin.video.vrt.nu/unwatchlater/1571140659165/Lize Feryn')
 
     def test_play_on_demand_by_id_route(self):
         """Play on demand by id: /play/id/<publication_id>/<video_id>"""

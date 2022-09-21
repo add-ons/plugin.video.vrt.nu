@@ -75,7 +75,6 @@ class TestSettings(unittest.TestCase):
         addon.settings['usefavorites'] = True
         addon.settings['useresumepoints'] = False
         plugin.run(['plugin://plugin.video.vrt.nu/favorites', '0', ''])
-        plugin.run(['plugin://plugin.video.vrt.nu/resumepoints/watchlater', '0', ''])
         plugin.run(['plugin://plugin.video.vrt.nu/resumepoints/continue', '0', ''])
 
     @staticmethod
