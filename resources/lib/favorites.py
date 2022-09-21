@@ -229,14 +229,18 @@ class Favorites:
     def _generate_favorites_dict(favorites_json):
         """Generate a simple favorites dict with programIds and programNames"""
         favorites_dict = {}
-        if favorites_json:
-            for item in favorites_json.get('data', {}).get('list', {}).get('paginated', {}).get('edges', {}):
-                program_name = url_to_program(item.get('node').get('action').get('link'))
-                program_id = item.get('node').get('id')
-                title = item.get('node').get('title')
-                favorites_dict[program_name] = dict(
-                    program_id=program_id,
-                    title=title)
+        try:
+            if favorites_json:
+                edges = favorites_json.get('data', {}).get('list', {}).get('paginated', {}).get('edges', {})
+                for item in edges:
+                    program_name = url_to_program(item.get('node').get('action').get('link'))
+                    program_id = item.get('node').get('id')
+                    title = item.get('node').get('title')
+                    favorites_dict[program_name] = dict(
+                        program_id=program_id,
+                        title=title)
+        except AttributeError:
+            pass
         return favorites_dict
 
     def manage(self):
