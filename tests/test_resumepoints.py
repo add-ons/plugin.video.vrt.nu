@@ -48,43 +48,9 @@ class TestResumePoints(unittest.TestCase):
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
 
-    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
-    def test_get_watchlater_episodes(self):
-        """Test items, sort and order"""
-        episode_items, sort, ascending, content = self._apihelper.list_episodes(page=1, variety='watchlater')
-        self.assertTrue(episode_items)
-        self.assertEqual(sort, 'dateadded')
-        self.assertFalse(ascending)
-        self.assertEqual(content, 'episodes')
-
     def test_update_none(self):
         """Test updating empty resumepoints"""
         self.assertTrue(self._resumepoints.update_resumepoint(video_id=None, asset_str=None, title=None))
-
-    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
-    def test_update_watchlater(self):
-        """Test updating the watch later list"""
-        self._resumepoints.refresh(ttl=0)
-        episode_id, value = next(iter(self._resumepoints._watchlater.items()))  # pylint: disable=protected-access
-        title = value.get('title')
-        print('%s - %s' % (episode_id, title))
-        self._resumepoints.unwatchlater(episode_id=episode_id, title=title)
-        self._resumepoints.watchlater(episode_id=episode_id, title=title)
-        self._resumepoints.refresh(ttl=0)
-        episode_id, value = next(iter(self._resumepoints._watchlater.items()))  # pylint: disable=protected-access
-        title = value.get('title')
-        print('%s - %s' % (episode_id, title))
-
-        # Remove Winteruur met Lize Feryn (beschikbaar tot 26 maart 2025)
-        self._resumepoints.update_resumepoint(
-            video_id='vid-271d7238-b7f2-4a3c-b3c7-17a5110be71a',
-            asset_str='winteruur - 5 - lize feryn',
-            title='Winteruur',
-            position=635,
-            total=635,
-        )
 
 
 if __name__ == '__main__':
