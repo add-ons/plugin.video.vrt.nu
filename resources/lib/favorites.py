@@ -180,12 +180,14 @@ class Favorites:
             graphql_query = """
                 mutation setFavorite($input: FavoriteActionInput!) {
                   setFavorite(input: $input) {
+                    __typename
                     id
                     favorite
                   }
                 }
             """
             payload = dict(
+                operationName='setFavorite',
                 variables=dict(
                     input=dict(
                         id=program_id,
