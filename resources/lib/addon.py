@@ -10,7 +10,7 @@ try:  # Python 3
 except ImportError:  # Python 2
     from urllib import unquote_plus
 
-from kodiutils import end_of_directory, execute_builtin, get_global_setting, localize, log_access, notification, ok_dialog, refresh_caches
+from kodiutils import end_of_directory, execute_builtin, get_global_setting, jsonrpc, localize, log_access, notification, ok_dialog, refresh_caches
 from utils import from_unicode, to_unicode
 
 plugin = Plugin()  # pylint: disable=invalid-name
@@ -309,6 +309,44 @@ def iptv_epg():
     from iptvmanager import IPTVManager
     port = int(plugin.args.get('port')[0])
     IPTVManager(port).send_epg()
+
+
+@plugin.route('/library/movies')
+def library_movies():
+    """Show movie listitems to be used as a Kodi source"""
+    from vrtplayer import VRTPlayer
+    VRTPlayer().show_library_movies()
+
+
+@plugin.route('/library/tvshows')
+@plugin.route('/library/tvshows/<program>')
+def library_tvshows(program=None):
+    """Show tvshow listitems to be used as a Kodi source"""
+    from vrtplayer import VRTPlayer
+    if program:
+        VRTPlayer().show_episodes_menu(program=program, season='allseasons')
+    else:
+        VRTPlayer().show_library_tvshows()
+
+
+@plugin.route('/library/configure')
+def library_configure():
+    """Configure the library integration"""
+    # There seems to be no way to add sources automatically
+    # → https://forum.kodi.tv/showthread.php?tid=228840
+    execute_builtin('ActivateWindow(Videos,sources://video/)')
+
+
+@plugin.route('/library/update')
+def library_update():
+    """Refresh the library"""
+    jsonrpc(method='VideoLibrary.Scan')
+
+
+@plugin.route('/library/clean')
+def library_clean():
+    """Clean the library"""
+    jsonrpc(method='VideoLibrary.Clean')
 
 
 @plugin.route('/update/repos')

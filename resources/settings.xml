@@ -51,6 +51,16 @@
         <setting label="30834" type="bool" id="vrtnxt" default="true"/> <!-- VRT NXT -->
         <setting label="30835" type="bool" id="de-warmste-week" default="false"/> <!-- De Warmste Week -->
     </category>
+    <category label="30840"> <!-- Kodi Library -->
+        <setting label="30841" type="lsep"/> <!-- Indexing -->
+        <setting label="30843" type="action" action="RunPlugin(plugin://plugin.video.vrt.nu/library/configure)" option="close"/>
+        <setting label="30845" type="bool" id="library_include_docu" default="true"/>
+        <setting label="30847" type="bool" id="library_include_music" default="true"/>
+        <setting label="30849" type="bool" id="library_use_favorites" default="true"/>
+        <setting label="30851" type="lsep"/> <!-- Maintenance -->
+        <setting label="30853" type="action" action="RunPlugin(plugin://plugin.video.vrt.nu/library/update)"/>
+        <setting label="30855" type="action" action="RunPlugin(plugin://plugin.video.vrt.nu/library/clean)"/>
+    </category>
     <category label="30860"> <!--Integration -->
         <setting label="30861" type="lsep"/> <!-- Integration with other add-ons -->
         <!-- YouTube -->

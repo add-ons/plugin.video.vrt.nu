@@ -191,6 +191,13 @@ class Metadata:
             if year:
                 properties['year'] = year
 
+        # Poor man's implementation, use thumbnail and episode_count to detect change
+        from hashlib import md5
+        message = md5()
+        message.update(api_data.get('thumbnail', '').encode('ascii'))
+        message.update(str(api_data.get('episode_count', 0)).encode('ascii'))
+        properties['hash'] = message.hexdigest().upper()
+
         return properties
 
     @staticmethod
@@ -634,6 +641,7 @@ class Metadata:
         # VRT MAX Suggest API
         if api_data.get('type') == 'program':
             info_labels = dict(
+                title=self.get_tvshowtitle(api_data),
                 tvshowtitle=self.get_tvshowtitle(api_data),
                 plot=self.get_plot(api_data),
                 mediatype=self.get_mediatype(api_data, season=season),
