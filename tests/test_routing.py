@@ -55,11 +55,11 @@ class TestRouting(unittest.TestCase):
     def test_episodes_menu(self):
         """Episodes menu: /programs/<program>"""
         addon.run(['plugin://plugin.video.vrt.nu/programs/thuis', '0', ''])
-        self.assertEqual(plugin.url_for(addon.programs, program='thuis'), 'plugin://plugin.video.vrt.nu/programs/thuis')
+        self.assertEqual(plugin.url_for(addon.programs, program_name='thuis'), 'plugin://plugin.video.vrt.nu/programs/thuis')
         addon.run(['plugin://plugin.video.vrt.nu/programs/pano/2019', '0', ''])
-        self.assertEqual(plugin.url_for(addon.programs, program='pano', season='2019'), 'plugin://plugin.video.vrt.nu/programs/pano/2019')
+        self.assertEqual(plugin.url_for(addon.programs, program_name='pano', season='2019'), 'plugin://plugin.video.vrt.nu/programs/pano/2019')
         addon.run(['plugin://plugin.video.vrt.nu/programs/pano/allseasons', '0', ''])
-        self.assertEqual(plugin.url_for(addon.programs, program='pano', season='allseasons'), 'plugin://plugin.video.vrt.nu/programs/pano/allseasons')
+        self.assertEqual(plugin.url_for(addon.programs, program_name='pano', season='allseasons'), 'plugin://plugin.video.vrt.nu/programs/pano/allseasons')
 
     def test_categories_menu(self):
         """Categories menu: /categories"""
@@ -216,11 +216,11 @@ class TestRouting(unittest.TestCase):
     def test_play_latestepisode_route(self):
         """Play last episode method: /play/lastepisode/<program>"""
         addon.run(['plugin://plugin.video.vrt.nu/play/latest/het-journaal', '0', ''])
-        self.assertEqual(plugin.url_for(addon.play_latest, program='het-journaal'), 'plugin://plugin.video.vrt.nu/play/latest/het-journaal')
+        self.assertEqual(plugin.url_for(addon.play_latest, program_name='het-journaal'), 'plugin://plugin.video.vrt.nu/play/latest/het-journaal')
         addon.run(['plugin://plugin.video.vrt.nu/play/latest/terzake', '0', ''])
-        self.assertEqual(plugin.url_for(addon.play_latest, program='terzake'), 'plugin://plugin.video.vrt.nu/play/latest/terzake')
+        self.assertEqual(plugin.url_for(addon.play_latest, program_name='terzake'), 'plugin://plugin.video.vrt.nu/play/latest/terzake')
         addon.run(['plugin://plugin.video.vrt.nu/play/latest/winteruur', '0', ''])
-        self.assertEqual(plugin.url_for(addon.play_latest, program='winteruur'), 'plugin://plugin.video.vrt.nu/play/latest/winteruur')
+        self.assertEqual(plugin.url_for(addon.play_latest, program_name='winteruur'), 'plugin://plugin.video.vrt.nu/play/latest/winteruur')
 
     def test_play_airdateepisode_route(self):
         """Play episode by air date method: /play/airdate/<channel>/<start_date>/<end_date>"""
