@@ -33,48 +33,48 @@ class TestVRTPlayer(unittest.TestCase):
 
     def test_show_videos_single_episode_shows_videos(self):
         """Test listing single episode for a given program (wij--roger-raveel)"""
-        program = 'wij--roger-raveel'
-        episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program)
-        self.assertTrue(episode_items, msg=program)
+        program_name = 'wij--roger-raveel'
+        episode_items, sort, ascending, content = self._apihelper.list_episodes(program_name=program_name)
+        self.assertTrue(episode_items, msg=program_name)
         self.assertEqual(sort, 'label')
         self.assertTrue(ascending)
         self.assertEqual(content, 'episodes')
 
-        self._vrtplayer.show_episodes_menu(program)
+        self._vrtplayer.show_episodes_menu(program_name)
 
     def test_show_videos_single_season_shows_videos(self):
         """Test listing single season for a given program (het-weer)"""
-        program = 'het-weer'
+        program_name = 'het-weer'
         season = '1640081117563'
-        episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program, season=season)
-        self.assertTrue(episode_items, msg=program)
+        episode_items, sort, ascending, content = self._apihelper.list_episodes(program_name=program_name, season=season)
+        self.assertTrue(episode_items, msg=program_name)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
 
-        self._vrtplayer.show_episodes_menu(program)
+        self._vrtplayer.show_episodes_menu(program_name)
 
     def test_show_videos_multiple_seasons_shows_videos(self):
         """Test listing multiple season for a given program (pano)"""
-        program = 'pano'
-        episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program)
+        program_name = 'pano'
+        episode_items, sort, ascending, content = self._apihelper.list_episodes(program_name=program_name)
         self.assertTrue(episode_items)
         self.assertEqual(sort, 'label')
         self.assertFalse(ascending)
         self.assertEqual(content, 'files')
 
-        self._vrtplayer.show_episodes_menu(program)
+        self._vrtplayer.show_episodes_menu(program_name)
 
     def test_show_videos_specific_seasons_shows_videos(self):
         """Test listing specific seasons for a given program (thuis)"""
-        program = 'thuis'
-        episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program)
-        self.assertTrue(episode_items, msg=program)
+        program_name = 'thuis'
+        episode_items, sort, ascending, content = self._apihelper.list_episodes(program_name=program_name)
+        self.assertTrue(episode_items, msg=program_name)
         self.assertEqual(sort, 'label')
         self.assertFalse(ascending)
         self.assertEqual(content, 'files')
 
-        self._vrtplayer.show_episodes_menu(program)
+        self._vrtplayer.show_episodes_menu(program_name)
 
     def test_random_tvshow_episodes(self):
         """Test episode from a random tvshow in a random category"""
@@ -117,7 +117,7 @@ class TestVRTPlayer(unittest.TestCase):
 
     def test_play_unknown_program(self):
         """Test playing latest episode of an unknown program"""
-        self._vrtplayer.play_latest_episode(program='foobar')
+        self._vrtplayer.play_latest_episode(program_name='foobar')
 
     def test_play_unknown_airdate(self):
         """Test playing unknown airdate"""

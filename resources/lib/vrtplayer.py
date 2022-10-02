@@ -263,13 +263,13 @@ class VRTPlayer:
         channel_items = self._apihelper.list_channels()
         show_listing(channel_items, category=30018, cache=False)
 
-    def show_episodes_menu(self, program, season=None):
+    def show_episodes_menu(self, program_name, season=None):
         """The VRT MAX add-on episodes listing menu"""
         self._favorites.refresh(ttl=ttl('indirect'))
         self._resumepoints.refresh(ttl=ttl('indirect'))
-        episode_items, sort, ascending, content = self._apihelper.list_episodes(program=program, season=season)
+        episode_items, sort, ascending, content = self._apihelper.list_episodes(program_name=program_name, season=season)
         # FIXME: Translate program in Program Title
-        show_listing(episode_items, category=program.title(), sort=sort, ascending=ascending, content=content, cache=False)
+        show_listing(episode_items, category=program_name.title(), sort=sort, ascending=ascending, content=content, cache=False)
 
     def show_recent_menu(self, page=0, use_favorites=False):
         """The VRT MAX add-on 'Most recent' and 'My most recent' listing menu"""
@@ -320,11 +320,11 @@ class VRTPlayer:
         episode_items, sort, ascending, content = self._apihelper.list_episodes(page=page, variety='continue')
         show_listing(episode_items, category=30054, sort=sort, ascending=ascending, content=content, cache=False)
 
-    def play_latest_episode(self, program):
+    def play_latest_episode(self, program_name):
         """A hidden feature in the VRT MAX add-on to play the latest episode of a program"""
-        video = self._apihelper.get_latest_episode(program)
+        video = self._apihelper.get_latest_episode(program_name)
         if not video:
-            log_error('Play latest episode failed, program {program}', program=program)
+            log_error('Play latest episode failed, program {program_name}', program_name=program_name)
             ok_dialog(message=localize(30954))
             end_of_directory()
             return

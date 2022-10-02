@@ -136,13 +136,13 @@ def resumepoints_refresh():
 
 
 @plugin.route('/programs')
-@plugin.route('/programs/<program>')
-@plugin.route('/programs/<program>/<season>')
-def programs(program=None, season=None):
+@plugin.route('/programs/<program_name>')
+@plugin.route('/programs/<program_name>/<season>')
+def programs(program_name=None, season=None):
     """The Programs / Seasons / Episodes listing"""
     from vrtplayer import VRTPlayer
-    if program:
-        VRTPlayer().show_episodes_menu(program=program, season=season)
+    if program_name:
+        VRTPlayer().show_episodes_menu(program_name=program_name, season=season)
     else:
         VRTPlayer().show_tvshow_menu()
 
@@ -266,11 +266,11 @@ def play_id(video_id, publication_id=None):
     VRTPlayer().play(dict(video_id=video_id, publication_id=publication_id))
 
 
-@plugin.route('/play/latest/<program>')
-def play_latest(program):
+@plugin.route('/play/latest/<program_name>')
+def play_latest(program_name):
     """The API interface to play the latest episode of a program"""
     from vrtplayer import VRTPlayer
-    VRTPlayer().play_latest_episode(program=program)
+    VRTPlayer().play_latest_episode(program_name=program_name)
 
 
 @plugin.route('/play/upnext/<episode_id>')
