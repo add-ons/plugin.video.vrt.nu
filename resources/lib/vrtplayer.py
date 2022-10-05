@@ -3,10 +3,11 @@
 """Implements a VRTPlayer class"""
 
 from __future__ import absolute_import, division, unicode_literals
+from api import get_continue_episodes, get_recent_episodes
 from apihelper import ApiHelper
 from favorites import Favorites
 from helperobjects import TitleItem
-from kodiutils import (colour, delete_cached_thumbnail, end_of_directory, get_addon_info,
+from kodiutils import (delete_cached_thumbnail, end_of_directory, get_addon_info,
                        get_setting, get_setting_bool, has_credentials,
                        has_inputstream_adaptive, localize, kodi_version_major, log_error,
                        ok_dialog, play, set_setting, show_listing, ttl, url_for,
@@ -271,24 +272,14 @@ class VRTPlayer:
         # FIXME: Translate program in Program Title
         show_listing(episode_items, category=program_name.title(), sort=sort, ascending=ascending, content=content, cache=False)
 
-    def show_recent_menu(self, page=0, use_favorites=False):
+    def show_recent_menu(self, end_cursor='', use_favorites=False):
         """The VRT MAX add-on 'Most recent' and 'My most recent' listing menu"""
 
         # My favorites menus may need more up-to-date favorites
         self._favorites.refresh(ttl=ttl('direct' if use_favorites else 'indirect'))
         self._resumepoints.refresh(ttl=ttl('direct' if use_favorites else 'indirect'))
-        episode_items, sort, ascending, content = self._apihelper.list_episodes(page=page, use_favorites=use_favorites, variety='recent')
-
-        # Add 'More...' entry at the end
-        recent = 'favorites_recent' if use_favorites else 'recent'
-        episode_items.append(TitleItem(
-            label=colour(localize(30300)),
-            path=url_for(recent, page=realpage(page) + 1),
-            art_dict=dict(thumb='DefaultRecentlyAddedEpisodes.png'),
-            info_dict={},
-        ))
-
-        show_listing(episode_items, category=30020, sort=sort, ascending=ascending, content=content, cache=False)
+        episodes = get_recent_episodes(end_cursor=end_cursor)
+        show_listing(episodes, category=30020, content='episodes', cache=False)
 
     def show_offline_menu(self, page=0, use_favorites=False):
         """The VRT MAX add-on 'Soon offline' and 'My soon offline' listing menu"""
@@ -310,15 +301,14 @@ class VRTPlayer:
 
         show_listing(episode_items, category=30022, sort=sort, ascending=ascending, content=content, cache=False)
 
-    def show_continue_menu(self, page=0):
+    def show_continue_menu(self, end_cursor=''):
         """The VRT MAX add-on 'Continue waching' listing menu"""
 
         # Continue watching menu may need more up-to-date favorites
         self._favorites.refresh(ttl=ttl('direct'))
         self._resumepoints.refresh(ttl=ttl('direct'))
-        page = realpage(page)
-        episode_items, sort, ascending, content = self._apihelper.list_episodes(page=page, variety='continue')
-        show_listing(episode_items, category=30054, sort=sort, ascending=ascending, content=content, cache=False)
+        episodes = get_continue_episodes(end_cursor=end_cursor)
+        show_listing(episodes, category=30054, content='episodes', cache=False)
 
     def play_latest_episode(self, program_name):
         """A hidden feature in the VRT MAX add-on to play the latest episode of a program"""

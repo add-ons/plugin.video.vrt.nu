@@ -90,11 +90,11 @@ def favorites_music():
 
 @plugin.route('/favorites/recent')
 @plugin.route('/favorites/recent')
-@plugin.route('/favorites/recent/<page>')
-def favorites_recent(page=1):
+@plugin.route('/favorites/recent/<end_cursor>')
+def favorites_recent(end_cursor=''):
     """The favorites recent listing"""
     from vrtplayer import VRTPlayer
-    VRTPlayer().show_recent_menu(page=page, use_favorites=True)
+    VRTPlayer().show_recent_menu(end_cursor=end_cursor, use_favorites=True)
 
 
 @plugin.route('/favorites/offline')
@@ -121,10 +121,11 @@ def favorites_manage():
 
 
 @plugin.route('/resumepoints/continue')
-def resumepoints_continue():
+@plugin.route('/resumepoints/continue/<end_cursor>')
+def resumepoints_continue(end_cursor=''):
     """The resumepoints continue listing"""
     from vrtplayer import VRTPlayer
-    VRTPlayer().show_continue_menu(page=1)
+    VRTPlayer().show_continue_menu(end_cursor=end_cursor)
 
 
 @plugin.route('/resumepoints/refresh')
@@ -171,11 +172,11 @@ def livetv():
 
 
 @plugin.route('/recent')
-@plugin.route('/recent/<page>')
-def recent(page=1):
+@plugin.route('/recent/<end_cursor>')
+def recent(end_cursor=''):
     """The most recent items listing"""
     from vrtplayer import VRTPlayer
-    VRTPlayer().show_recent_menu(page=page)
+    VRTPlayer().show_recent_menu(end_cursor=end_cursor)
 
 
 @plugin.route('/offline')
