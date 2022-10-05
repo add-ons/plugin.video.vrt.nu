@@ -68,10 +68,11 @@ def favorites_menu():
 
 
 @plugin.route('/favorites/programs')
-def favorites_programs():
+@plugin.route('/favorites/programs/<end_cursor>')
+def favorites_programs(end_cursor=''):
     """The favorites 'My programs' listing"""
     from vrtplayer import VRTPlayer
-    VRTPlayer().show_tvshow_menu(use_favorites=True)
+    VRTPlayer().show_tvshow_menu(end_cursor=end_cursor, use_favorites=True)
 
 
 @plugin.route('/favorites/docu')
@@ -138,12 +139,12 @@ def resumepoints_refresh():
 
 @plugin.route('/programs')
 @plugin.route('/programs/<program_name>')
-@plugin.route('/programs/<program_name>/<season>')
-def programs(program_name=None, season=None):
+@plugin.route('/programs/<program_name>/<season_name>')
+def programs(program_name=None, season_name=None):
     """The Programs / Seasons / Episodes listing"""
     from vrtplayer import VRTPlayer
     if program_name:
-        VRTPlayer().show_episodes_menu(program_name=program_name, season=season)
+        VRTPlayer().show_episodes_menu(program_name=program_name, season_name=season_name)
     else:
         VRTPlayer().show_tvshow_menu()
 

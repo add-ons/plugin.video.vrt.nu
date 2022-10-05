@@ -3,7 +3,7 @@
 """Implements a VRTPlayer class"""
 
 from __future__ import absolute_import, division, unicode_literals
-from api import get_continue_episodes, get_recent_episodes
+from api import get_continue_episodes, get_category_programs, get_episodes, get_favorite_programs, get_recent_episodes
 from apihelper import ApiHelper
 from favorites import Favorites
 from helperobjects import TitleItem
@@ -192,20 +192,21 @@ class VRTPlayer:
         episode_items, sort, ascending, content = self._apihelper.list_episodes(category='muziek', season='allseasons', programtype='oneoff')
         show_listing(episode_items, category=30046, sort=sort, ascending=ascending, content=content, cache=False)
 
-    def show_tvshow_menu(self, use_favorites=False):
+    def show_tvshow_menu(self, end_cursor='', use_favorites=False):
         """The VRT MAX add-on 'All programs' listing menu"""
         # My favorites menus may need more up-to-date favorites
         self._favorites.refresh(ttl=ttl('direct' if use_favorites else 'indirect'))
         self._resumepoints.refresh(ttl=ttl('direct' if use_favorites else 'indirect'))
-        tvshow_items = self._apihelper.list_tvshows(use_favorites=use_favorites)
-        show_listing(tvshow_items, category=30440, sort='label', content='tvshows')  # A-Z
+        if use_favorites:
+            tvshow_items = get_favorite_programs(end_cursor=end_cursor)
+            show_listing(tvshow_items, category=30440, sort='label', content='tvshows')  # A-Z
 
     def show_category_menu(self, category=None):
         """The VRT MAX add-on 'Categories' listing menu"""
         if category:
             self._favorites.refresh(ttl=ttl('indirect'))
             self._resumepoints.refresh(ttl=ttl('indirect'))
-            tvshow_items = self._apihelper.list_tvshows(category=category)
+            tvshow_items = get_category_programs(category=category)
             from data import CATEGORIES
             category_msgctxt = find_entry(CATEGORIES, 'id', category).get('msgctxt')
             show_listing(tvshow_items, category=category_msgctxt, sort='label', content='tvshows')
@@ -264,13 +265,13 @@ class VRTPlayer:
         channel_items = self._apihelper.list_channels()
         show_listing(channel_items, category=30018, cache=False)
 
-    def show_episodes_menu(self, program_name, season=None):
+    def show_episodes_menu(self, program_name, season_name=None):
         """The VRT MAX add-on episodes listing menu"""
         self._favorites.refresh(ttl=ttl('indirect'))
         self._resumepoints.refresh(ttl=ttl('indirect'))
-        episode_items, sort, ascending, content = self._apihelper.list_episodes(program_name=program_name, season=season)
+        items, content = get_episodes(program_name=program_name, season_name=season_name)
         # FIXME: Translate program in Program Title
-        show_listing(episode_items, category=program_name.title(), sort=sort, ascending=ascending, content=content, cache=False)
+        show_listing(items, category=program_name.title(), content=content, cache=False)
 
     def show_recent_menu(self, end_cursor='', use_favorites=False):
         """The VRT MAX add-on 'Most recent' and 'My most recent' listing menu"""
