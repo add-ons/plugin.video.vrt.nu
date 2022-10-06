@@ -159,10 +159,11 @@ def categories(category=None):
 
 @plugin.route('/channels')
 @plugin.route('/channels/<channel>')
-def channels(channel=None):
+@plugin.route('/channels/<channel>/<end_cursor>')
+def channels(channel=None, end_cursor=''):
     """The channels menu and listing"""
     from vrtplayer import VRTPlayer
-    VRTPlayer().show_channels_menu(channel=channel)
+    VRTPlayer().show_channels_menu(channel=channel, end_cursor=end_cursor)
 
 
 @plugin.route('/livetv')
