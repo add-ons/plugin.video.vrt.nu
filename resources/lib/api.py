@@ -16,6 +16,26 @@ from utils import from_unicode, shorten_link, to_unicode, url_to_program
 GRAPHQL_URL = 'https://www.vrt.be/vrtnu-api/graphql/v1'
 
 
+def get_sort(program_type):
+    """Get sorting method"""
+    sort = 'unsorted'
+    ascending = True
+    if program_type == 'mixed_episodes':
+        sort = 'dateadded'
+        ascending = False
+    elif program_type == 'daily':
+        sort = 'dateadded'
+        ascending = False
+    elif program_type == 'oneoff':
+        sort = 'label'
+    elif program_type in 'reeksoplopend':
+        sort = 'episode'
+    elif program_type == 'reeksaflopend':
+        sort = 'episode'
+        ascending = False
+    return sort, ascending
+
+
 def get_context_menu(program_name, program_id, program_title, program_type, plugin_path, is_favorite):
     """Get context menu for listitem"""
     context_menu = []
@@ -278,7 +298,7 @@ def get_paginated_episodes(list_id, page_size, end_cursor=''):
             }
         """
         # FIXME: Find a better way to change GraphQL typename
-        if 'static:/' in list_id:
+        if list_id.startswith('static:/'):
             graphql_query = graphql_query.replace('on PaginatedTileList', 'on StaticTileList')
 
         payload = dict(
@@ -367,6 +387,10 @@ def get_paginated_programs(list_id, page_size, end_cursor=''):
               }
             }
         """
+        # FIXME: Find a better way to change GraphQL typename
+        if list_id.startswith('static:/'):
+            graphql_query = graphql_query.replace('on PaginatedTileList', 'on StaticTileList')
+
         payload = dict(
             operationName='PaginatedPrograms',
             variables=dict(
@@ -396,12 +420,13 @@ def convert_programs(api_data, destination, **kwargs):
 
     for item in api_data.get('data').get('list').get('paginated').get('edges'):
         program = item.get('node')
+
         program_name = url_to_program(program.get('link'))
         program_id = program.get('id')
         program_type = program.get('programType')
         program_title = program.get('title')
         path = url_for('programs', program_name=program_name)
-        plot = program.get('description')
+        plot = program.get('program').get('shortDescription') or program.get('program').get('description')
         plotoutline = program.get('subtitle')
 
         # Art
@@ -483,7 +508,7 @@ def convert_episodes(api_data, destination):
         program_type = episode.get('program').get('programType')
 
         # FIXME: Find a better way to determine mixed episodes
-        if destination in ('recent', 'resumepoints_continue'):
+        if destination in ('recent', 'resumepoints_continue', 'featured'):
             program_type = 'mixed_episodes'
 
         episode_title = episode.get('title')
@@ -518,6 +543,9 @@ def convert_episodes(api_data, destination):
 
         # Label
         label = format_label(program_title, episode_title, program_type, ontime, is_favorite)
+
+        # Sorting
+        sort, ascending = get_sort(program_type)
 
         episodes.append(
             TitleItem(
@@ -563,7 +591,7 @@ def convert_episodes(api_data, destination):
                 info_dict={},
             )
         )
-    return episodes
+    return episodes, sort, ascending
 
 
 def get_favorite_programs(end_cursor=''):
@@ -610,8 +638,8 @@ def get_continue_episodes(end_cursor=''):
     page_size = get_setting_int('itemsperpage', default=50)
     list_id = 'dynamic:/vrtnu.model.json@resume-list-video'
     api_data = get_paginated_episodes(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
-    episodes = convert_episodes(api_data, destination='resumepoints_continue')
-    return episodes
+    episodes, sort, ascending = convert_episodes(api_data, destination='resumepoints_continue')
+    return episodes, sort, ascending, 'episodes'
 
 
 def get_recent_episodes(end_cursor=''):
@@ -619,12 +647,15 @@ def get_recent_episodes(end_cursor=''):
     page_size = get_setting_int('itemsperpage', default=50)
     list_id = 'static:/vrtnu/kijk.model.json@par_list_copy_copy_copy'
     api_data = get_paginated_episodes(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
-    episodes = convert_episodes(api_data, destination='recent')
-    return episodes
+    episodes, sort, ascending = convert_episodes(api_data, destination='recent')
+    return episodes, sort, ascending, 'episodes'
 
 
 def get_episodes(program_name, season_name=None, end_cursor=''):
     """Get episodes"""
+    content = 'files'
+    sort = 'unsorted'
+    ascending = True
     page_size = get_setting_int('itemsperpage', default=50)
     if season_name is None:
         # Check for multiple seasons
@@ -634,15 +665,13 @@ def get_episodes(program_name, season_name=None, end_cursor=''):
             season_name = api_data[0].get('name')
         elif number_of_seasons > 1:
             seasons = convert_seasons(api_data, program_name)
-            content = 'files'
-            return seasons, content
+            return seasons, sort, ascending, content
 
     if program_name and season_name:
         list_id = 'static:/vrtnu/a-z/{}/{}.episodes-list.json'.format(program_name, season_name)
         api_data = get_paginated_episodes(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
-        episodes = convert_episodes(api_data, destination='noop')
-        content = 'episodes'
-        return episodes, content
+        episodes, sort, ascending = convert_episodes(api_data, destination='noop')
+        return episodes, sort, ascending, 'episodes'
     return None
 
 
@@ -673,3 +702,47 @@ def get_seasons(program_name):
     season_json = get_url_json('https://www.vrt.be/vrtmax/a-z/{}.model.json'.format(program_name))
     seasons = season_json.get('details').get('data').get('program').get('seasons')
     return seasons
+
+
+def get_featured(feature=None, end_cursor=''):
+    """Get featured menu items"""
+    content = 'files'
+    sort = 'unsorted'
+    ascending = True
+    if feature:
+        page_size = get_setting_int('itemsperpage', default=50)
+        if feature.startswith('program_'):
+            list_id = 'static:/vrtnu/kijk.model.json@{}'.format(feature.split('program_')[1])
+            api_data = get_paginated_programs(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
+            programs = convert_programs(api_data, destination='featured')
+            return programs, sort, ascending, 'tvshows'
+
+        elif feature.startswith('episode_'):
+            feature_id = feature.split('episode_')[1]
+            list_id = 'static:/vrtnu/kijk.model.json@{}'.format(feature.split('episode_')[1])
+            api_data = get_paginated_episodes(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
+            episodes, sort, ascending = convert_episodes(api_data, destination='featured')
+            return episodes, sort, ascending, 'episodes'
+    else:
+        featured = []
+        featured_json = get_url_json('https://www.vrt.be/vrtmax/kijk.model.json')
+        items = featured_json.get(':items').get('par').get(':items')
+        for item in items:
+            content_type = items.get(item).get('tileContentType')
+            if content_type in ('program', 'episode'):
+                title = items.get(item).get('title')
+                feature_id = items.get(item).get('id')
+                path = url_for('featured', feature='{}_{}'.format(content_type, feature_id))
+                label = title
+                featured.append(
+                    TitleItem(
+                        label=label,
+                        path=path,
+                        info_dict=dict(
+                            title=label,
+                            mediatype='season',
+                        ),
+                        is_playable=False,
+                    )
+                )
+    return featured, sort, ascending, content

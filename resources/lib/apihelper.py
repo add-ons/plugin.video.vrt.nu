@@ -856,8 +856,9 @@ class ApiHelper:
             items = data.get(':items')
             if items:
                 for item in items:
-                    filled = items.get(item).get('items')
-                    if filled:
+                    filled = items.get(item).get(':items')
+                    title = items.get(item).get('title')
+                    if filled and title:
                         featured.append(dict(name=items.get(item).get('title'), id='jcr_%s' % item))
         return featured
 
@@ -867,7 +868,7 @@ class ApiHelper:
         media = []
         data = get_url_json('https://www.vrt.be/vrtmax/jcr:content/par/%s.model.json' % feature)
         if data is not None:
-            for item in data.get('items'):
+            for item in data.get(':items'):
                 mediatype = 'tvshows'
                 for action in item.get('actions'):
                     if 'episode' in action.get('type'):
