@@ -347,7 +347,7 @@ def get_paginated_programs(list_id, page_size, end_cursor=''):
     return data_json
 
 
-def convert_programs(api_data, destination):
+def convert_programs(api_data, destination, **kwargs):
     """Convert paginated list of programs to Kodi list items"""
     programs = []
     for item in api_data.get('data').get('list').get('paginated').get('edges'):
@@ -393,7 +393,7 @@ def convert_programs(api_data, destination):
         programs.append(
             TitleItem(
                 label=colour(localize(30300)),
-                path=url_for(destination, end_cursor=end_cursor),
+                path=url_for(destination, end_cursor=end_cursor, **kwargs),
                 art_dict=dict(thumb='DefaultInProgressShows.png'),
                 info_dict={},
             )
@@ -496,24 +496,33 @@ def get_favorite_programs(end_cursor=''):
     return programs
 
 
-def get_category_programs(category, end_cursor=''):
-    """Get category programs"""
+def get_programs(category=None, channel=None, end_cursor=''):
+    """Get programs"""
     import base64
     from json import dumps
     page_size = get_setting_int('itemsperpage', default=50)
-    search_dict = dict(
-        queryString=None,
-        facets=[dict(
+    if category:
+        destination = 'categories'
+        facets = [dict(
             name='categories',
             values=[category]
-        )],
+        )]
+    elif channel:
+        destination = 'channels'
+        facets = [dict(
+            name='brands',
+            values=[channel]
+        )]
+    search_dict = dict(
+        queryString=None,
+        facets=facets,
         resultType='watch',
     )
     encoded_search = base64.b64encode(dumps(search_dict).encode('utf-8'))
     list_id = 'uisearch:searchdata@{}'.format(encoded_search.decode('utf-8'))
 
     api_data = get_paginated_programs(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
-    programs = convert_programs(api_data, destination='categories')
+    programs = convert_programs(api_data, destination=destination, channel=channel)
     return programs
 
 

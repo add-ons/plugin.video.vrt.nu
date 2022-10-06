@@ -3,7 +3,7 @@
 """Implements a VRTPlayer class"""
 
 from __future__ import absolute_import, division, unicode_literals
-from api import get_continue_episodes, get_category_programs, get_episodes, get_favorite_programs, get_recent_episodes
+from api import get_continue_episodes, get_programs, get_episodes, get_favorite_programs, get_recent_episodes
 from apihelper import ApiHelper
 from favorites import Favorites
 from helperobjects import TitleItem
@@ -206,7 +206,7 @@ class VRTPlayer:
         if category:
             self._favorites.refresh(ttl=ttl('indirect'))
             self._resumepoints.refresh(ttl=ttl('indirect'))
-            tvshow_items = get_category_programs(category=category)
+            tvshow_items = get_programs(category=category)
             from data import CATEGORIES
             category_msgctxt = find_entry(CATEGORIES, 'id', category).get('msgctxt')
             show_listing(tvshow_items, category=category_msgctxt, sort='label', content='tvshows')
@@ -214,16 +214,19 @@ class VRTPlayer:
             category_items = self._apihelper.list_categories()
             show_listing(category_items, category=30014, sort='unsorted', content='files')  # Categories
 
-    def show_channels_menu(self, channel=None):
+    def show_channels_menu(self, channel=None, end_cursor=''):
         """The VRT MAX add-on 'Channels' listing menu"""
         if channel:
-            from tvguide import TVGuide
-            self._favorites.refresh(ttl=ttl('indirect'))
-            self._resumepoints.refresh(ttl=ttl('indirect'))
-            channel_items = self._apihelper.list_channels(channels=[channel])  # Live TV
-            channel_items.extend(TVGuide().get_channel_items(channel=channel))  # TV guide
-            channel_items.extend(self._apihelper.list_youtube(channels=[channel]))  # YouTube
-            channel_items.extend(self._apihelper.list_tvshows(channel=channel))  # TV shows
+            if not end_cursor:
+                from tvguide import TVGuide
+                self._favorites.refresh(ttl=ttl('indirect'))
+                self._resumepoints.refresh(ttl=ttl('indirect'))
+                channel_items = self._apihelper.list_channels(channels=[channel])  # Live TV
+                channel_items.extend(TVGuide().get_channel_items(channel=channel))  # TV guide
+                channel_items.extend(self._apihelper.list_youtube(channels=[channel]))  # YouTube
+                channel_items.extend(get_programs(channel=channel))  # TV shows
+            else:
+                channel_items = get_programs(channel=channel, end_cursor=end_cursor)
             from data import CHANNELS
             channel_name = find_entry(CHANNELS, 'name', channel).get('label')
             show_listing(channel_items, category=channel_name, sort='unsorted', content='tvshows', cache=False)  # Channel
