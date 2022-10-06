@@ -418,69 +418,80 @@ def convert_programs(api_data, destination, **kwargs):
     favorites.refresh(ttl=ttl('indirect'))
     plugin_path = plugin.path
 
-    for item in api_data.get('data').get('list').get('paginated').get('edges'):
-        program = item.get('node')
+    program_list = api_data.get('data').get('list')
+    if program_list:
+        for item in program_list.get('paginated').get('edges'):
+            program = item.get('node')
 
-        program_name = url_to_program(program.get('link'))
-        program_id = program.get('id')
-        program_type = program.get('programType')
-        program_title = program.get('title')
-        path = url_for('programs', program_name=program_name)
-        plot = program.get('program').get('shortDescription') or program.get('program').get('description')
-        plotoutline = program.get('subtitle')
+            program_name = url_to_program(program.get('link'))
+            program_id = program.get('id')
+            program_type = program.get('programType')
+            program_title = program.get('title')
+            path = url_for('programs', program_name=program_name)
+            plot = program.get('program').get('shortDescription') or program.get('program').get('description')
+            plotoutline = program.get('subtitle')
 
-        # Art
-        fanart = program.get('program').get('posterImage').get('templateUrl')
-        poster = program.get('program').get('posterImage').get('templateUrl')
-        thumb = program.get('image').get('templateUrl')
+            # Art
+            fanart = ''
+            poster_img = program.get('program').get('posterImage')
+            if poster_img:
+                fanart = poster_img.get('templateUrl')
+            poster = fanart
+            thumb = ''
+            thumb_img = program.get('image')
+            if thumb_img:
+                thumb = thumb_img.get('templateUrl')
 
-        # Check favorite
-        is_favorite = favorites.is_favorite(program_name)
+            # Check favorite
+            is_favorite = favorites.is_favorite(program_name)
 
-        # Context menu
-        context_menu = get_context_menu(program_name, program_id, program_title, program_type, plugin_path, is_favorite)
+            # Context menu
+            context_menu = get_context_menu(program_name, program_id, program_title, program_type, plugin_path, is_favorite)
 
-        # Label
-        if is_favorite:
-            label = program_title + colour('[COLOR={highlighted}]ᵛ[/COLOR]')
-        else:
-            label = program_title
+            # Label
+            if is_favorite:
+                label = program_title + colour('[COLOR={highlighted}]ᵛ[/COLOR]')
+            else:
+                label = program_title
 
-        programs.append(
-            TitleItem(
-                label=label,
-                path=path,
-                art_dict=dict(
-                    thumb=thumb,
-                    poster=poster,
-                    banner=fanart,
-                    fanart=fanart,
-                ),
-                info_dict=dict(
-                    title=label,
-                    tvshowtitle=program_title,
-                    plot=plot,
-                    plotoutline=plotoutline,
-                    mediatype='tvshow',
-                ),
-                context_menu=context_menu,
-                is_playable=False,
+            programs.append(
+                TitleItem(
+                    label=label,
+                    path=path,
+                    art_dict=dict(
+                        thumb=thumb,
+                        poster=poster,
+                        banner=fanart,
+                        fanart=fanart,
+                    ),
+                    info_dict=dict(
+                        title=label,
+                        tvshowtitle=program_title,
+                        plot=plot,
+                        plotoutline=plotoutline,
+                        mediatype='tvshow',
+                    ),
+                    context_menu=context_menu,
+                    is_playable=False,
+                )
             )
-        )
 
-    # Paging
-    page_info = api_data.get('data').get('list').get('paginated').get('pageInfo')
-    if page_info.get('hasNextPage'):
-        end_cursor = page_info.get('endCursor')
-        # Add 'More...' entry at the end
-        programs.append(
-            TitleItem(
-                label=colour(localize(30300)),
-                path=url_for(destination, end_cursor=end_cursor, **kwargs),
-                art_dict=dict(thumb='DefaultInProgressShows.png'),
-                info_dict={},
+        # Paging
+        # Remove kwargs with None value
+        kwargs = {k: v for k, v in kwargs.items() if v is not None}
+
+        page_info = api_data.get('data').get('list').get('paginated').get('pageInfo')
+        if page_info.get('hasNextPage'):
+            end_cursor = page_info.get('endCursor')
+            # Add 'More...' entry at the end
+            programs.append(
+                TitleItem(
+                    label=colour(localize(30300)),
+                    path=url_for(destination, end_cursor=end_cursor, **kwargs),
+                    art_dict=dict(thumb='DefaultInProgressShows.png'),
+                    info_dict={},
+                )
             )
-        )
     return programs
 
 
@@ -491,106 +502,110 @@ def convert_episodes(api_data, destination):
     from favorites import Favorites
 
     episodes = []
+    sort = 'unsorted'
+    ascending = True
 
     # Favorites for context menu
     favorites = Favorites()
     favorites.refresh(ttl=ttl('indirect'))
     plugin_path = plugin.path
 
-    for item in api_data.get('data').get('list').get('paginated').get('edges'):
-        episode = item.get('node').get('episode')
-        video_id = episode.get('watchAction').get('videoId')
-        publication_id = episode.get('watchAction').get('publicationId')
-        path = url_for('play_id', video_id=video_id, publication_id=publication_id)
-        program_name = url_to_program(episode.get('program').get('link'))
-        program_id = episode.get('program').get('id')
-        program_title = episode.get('program').get('title')
-        program_type = episode.get('program').get('programType')
+    episode_list = api_data.get('data').get('list')
+    if episode_list:
+        for item in episode_list.get('paginated').get('edges'):
+            episode = item.get('node').get('episode')
+            video_id = episode.get('watchAction').get('videoId')
+            publication_id = episode.get('watchAction').get('publicationId')
+            path = url_for('play_id', video_id=video_id, publication_id=publication_id)
+            program_name = url_to_program(episode.get('program').get('link'))
+            program_id = episode.get('program').get('id')
+            program_title = episode.get('program').get('title')
+            program_type = episode.get('program').get('programType')
 
-        # FIXME: Find a better way to determine mixed episodes
-        if destination in ('recent', 'resumepoints_continue', 'featured'):
-            program_type = 'mixed_episodes'
+            # FIXME: Find a better way to determine mixed episodes
+            if destination in ('recent', 'resumepoints_continue', 'featured'):
+                program_type = 'mixed_episodes'
 
-        episode_title = episode.get('title')
-        offtime = dateutil.parser.parse(episode.get('offTimeRaw'))
-        ontime = dateutil.parser.parse(episode.get('onTimeRaw'))
-        mpaa = episode.get('ageRaw') or ''
-        product_placement = True if episode.get('productPlacementShortValue') == 'pp' else False
-        region = episode.get('regionRaw')
-        permalink = episode.get('permalink')
-        plot = episode.get('description')
-        plot = format_plot(plot, region, product_placement, mpaa, offtime, permalink)
-        plotoutline = episode.get('program').get('subtitle')
-        duration = int(episode.get('durationSeconds'))
-        episode_no = int(episode.get('episodeNumberRaw') or 0)
-        season_no = int(''.join(i for i in episode.get('season').get('titleRaw') if i.isdigit()) or 0)
-        studio = episode.get('brand').title() if episode.get('brand') else 'VRT'
-        aired = dateutil.parser.parse(episode.get('analytics').get('airDate')).strftime('%Y-%m-%d')
-        dateadded = ontime.strftime('%Y-%m-%d %H:%M:%S')
-        year = int(dateutil.parser.parse(episode.get('onTimeRaw')).strftime('%Y'))
-        tag = [tag.title() for tag in episode.get('analytics').get('categories').split(',') if tag]
+            episode_title = episode.get('title')
+            offtime = dateutil.parser.parse(episode.get('offTimeRaw'))
+            ontime = dateutil.parser.parse(episode.get('onTimeRaw'))
+            mpaa = episode.get('ageRaw') or ''
+            product_placement = True if episode.get('productPlacementShortValue') == 'pp' else False
+            region = episode.get('regionRaw')
+            permalink = episode.get('permalink')
+            plot = episode.get('description')
+            plot = format_plot(plot, region, product_placement, mpaa, offtime, permalink)
+            plotoutline = episode.get('program').get('subtitle')
+            duration = int(episode.get('durationSeconds'))
+            episode_no = int(episode.get('episodeNumberRaw') or 0)
+            season_no = int(''.join(i for i in episode.get('season').get('titleRaw') if i.isdigit()) or 0)
+            studio = episode.get('brand').title() if episode.get('brand') else 'VRT'
+            aired = dateutil.parser.parse(episode.get('analytics').get('airDate')).strftime('%Y-%m-%d')
+            dateadded = ontime.strftime('%Y-%m-%d %H:%M:%S')
+            year = int(dateutil.parser.parse(episode.get('onTimeRaw')).strftime('%Y'))
+            tag = [tag.title() for tag in episode.get('analytics').get('categories').split(',') if tag]
 
-        # Art
-        fanart = episode.get('program').get('image').get('templateUrl')
-        poster = episode.get('program').get('posterImage').get('templateUrl')
-        thumb = episode.get('image').get('templateUrl')
+            # Art
+            fanart = episode.get('program').get('image').get('templateUrl')
+            poster = episode.get('program').get('posterImage').get('templateUrl')
+            thumb = episode.get('image').get('templateUrl')
 
-        # Check favorite
-        is_favorite = favorites.is_favorite(program_name)
+            # Check favorite
+            is_favorite = favorites.is_favorite(program_name)
 
-        # Context menu
-        context_menu = get_context_menu(program_name, program_id, program_title, program_type, plugin_path, is_favorite)
+            # Context menu
+            context_menu = get_context_menu(program_name, program_id, program_title, program_type, plugin_path, is_favorite)
 
-        # Label
-        label = format_label(program_title, episode_title, program_type, ontime, is_favorite)
+            # Label
+            label = format_label(program_title, episode_title, program_type, ontime, is_favorite)
 
-        # Sorting
-        sort, ascending = get_sort(program_type)
+            # Sorting
+            sort, ascending = get_sort(program_type)
 
-        episodes.append(
-            TitleItem(
-                label=label,
-                path=path,
-                art_dict=dict(
-                    thumb=thumb,
-                    poster=poster,
-                    banner=fanart,
-                    fanart=fanart,
-                ),
-                info_dict=dict(
-                    title=label,
-                    tvshowtitle=program_title,
-                    aired=aired,
-                    dateadded=dateadded,
-                    episode=episode_no,
-                    season=season_no,
-                    plot=plot,
-                    plotoutline=plotoutline,
-                    mpaa=mpaa,
-                    tagline=plotoutline,
-                    duration=duration,
-                    studio=studio,
-                    year=year,
-                    tag=tag,
-                    mediatype='episode',
-                ),
-                context_menu=context_menu,
-                is_playable=True,
+            episodes.append(
+                TitleItem(
+                    label=label,
+                    path=path,
+                    art_dict=dict(
+                        thumb=thumb,
+                        poster=poster,
+                        banner=fanart,
+                        fanart=fanart,
+                    ),
+                    info_dict=dict(
+                        title=label,
+                        tvshowtitle=program_title,
+                        aired=aired,
+                        dateadded=dateadded,
+                        episode=episode_no,
+                        season=season_no,
+                        plot=plot,
+                        plotoutline=plotoutline,
+                        mpaa=mpaa,
+                        tagline=plotoutline,
+                        duration=duration,
+                        studio=studio,
+                        year=year,
+                        tag=tag,
+                        mediatype='episode',
+                    ),
+                    context_menu=context_menu,
+                    is_playable=True,
+                )
             )
-        )
-    # Paging
-    page_info = api_data.get('data').get('list').get('paginated').get('pageInfo')
-    if page_info.get('hasNextPage'):
-        end_cursor = page_info.get('endCursor')
-        # Add 'More...' entry at the end
-        episodes.append(
-            TitleItem(
-                label=colour(localize(30300)),
-                path=url_for(destination, end_cursor=end_cursor),
-                art_dict=dict(thumb='DefaultInProgressShows.png'),
-                info_dict={},
+        # Paging
+        page_info = api_data.get('data').get('list').get('paginated').get('pageInfo')
+        if page_info.get('hasNextPage'):
+            end_cursor = page_info.get('endCursor')
+            # Add 'More...' entry at the end
+            episodes.append(
+                TitleItem(
+                    label=colour(localize(30300)),
+                    path=url_for(destination, end_cursor=end_cursor),
+                    art_dict=dict(thumb='DefaultInProgressShows.png'),
+                    info_dict={},
+                )
             )
-        )
     return episodes, sort, ascending
 
 
@@ -603,11 +618,12 @@ def get_favorite_programs(end_cursor=''):
     return programs
 
 
-def get_programs(category=None, channel=None, end_cursor=''):
+def get_programs(category=None, channel=None, keywords=None, end_cursor=''):
     """Get programs"""
     import base64
     from json import dumps
     page_size = get_setting_int('itemsperpage', default=50)
+    query_string = None
     if category:
         destination = 'categories'
         facets = [dict(
@@ -620,8 +636,13 @@ def get_programs(category=None, channel=None, end_cursor=''):
             name='brands',
             values=[channel]
         )]
+    elif keywords:
+        destination = 'search_query'
+        facets = None
+        query_string = keywords
+
     search_dict = dict(
-        queryString=None,
+        queryString=query_string,
         facets=facets,
         resultType='watch',
     )
@@ -629,7 +650,7 @@ def get_programs(category=None, channel=None, end_cursor=''):
     list_id = 'uisearch:searchdata@{}'.format(encoded_search.decode('utf-8'))
 
     api_data = get_paginated_programs(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
-    programs = convert_programs(api_data, destination=destination, channel=channel)
+    programs = convert_programs(api_data, destination=destination, category=category, channel=channel, keywords=keywords)
     return programs
 
 

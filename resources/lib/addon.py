@@ -151,10 +151,11 @@ def programs(program_name=None, season_name=None):
 
 @plugin.route('/categories')
 @plugin.route('/categories/<category>')
-def categories(category=None):
+@plugin.route('/categories/<category>/<end_cursor>')
+def categories(category=None, end_cursor=''):
     """The categories menu and listing"""
     from vrtplayer import VRTPlayer
-    VRTPlayer().show_category_menu(category=category)
+    VRTPlayer().show_category_menu(category=category, end_cursor=end_cursor)
 
 
 @plugin.route('/channels')
@@ -247,11 +248,11 @@ def edit_search(keywords=None):
 
 @plugin.route('/search/query')
 @plugin.route('/search/query/<keywords>')
-@plugin.route('/search/query/<keywords>/<page>')
-def search_query(keywords=None, page=1):
+@plugin.route('/search/query/<keywords>/<end_cursor>')
+def search_query(keywords=None, end_cursor=''):
     """The Search interface and query listing"""
     from search import Search
-    Search().search(keywords=keywords, page=page)
+    Search().search(keywords=keywords, end_cursor=end_cursor)
 
 
 @plugin.route('/search/remove/<keywords>')

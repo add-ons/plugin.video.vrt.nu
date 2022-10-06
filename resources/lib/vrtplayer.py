@@ -199,13 +199,15 @@ class VRTPlayer:
         if use_favorites:
             tvshow_items = get_favorite_programs(end_cursor=end_cursor)
             show_listing(tvshow_items, category=30440, sort='label', content='tvshows')  # A-Z
+        # FIXME: No API method to get all programs
+        end_of_directory()
 
-    def show_category_menu(self, category=None):
+    def show_category_menu(self, category=None, end_cursor=''):
         """The VRT MAX add-on 'Categories' listing menu"""
         if category:
             self._favorites.refresh(ttl=ttl('indirect'))
             self._resumepoints.refresh(ttl=ttl('indirect'))
-            tvshow_items = get_programs(category=category)
+            tvshow_items = get_programs(category=category, end_cursor=end_cursor)
             from data import CATEGORIES
             category_msgctxt = find_entry(CATEGORIES, 'id', category).get('msgctxt')
             show_listing(tvshow_items, category=category_msgctxt, sort='label', content='tvshows')
