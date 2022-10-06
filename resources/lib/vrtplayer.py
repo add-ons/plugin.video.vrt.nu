@@ -28,7 +28,6 @@ class VRTPlayer:
 
     def show_main_menu(self):
         """The VRT MAX add-on main menu"""
-        # self._favorites.refresh(ttl=ttl('indirect'))
         main_items = []
 
         # Only add 'My favorites' when it has been activated

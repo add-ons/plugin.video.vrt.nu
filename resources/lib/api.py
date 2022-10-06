@@ -4,14 +4,53 @@
 
 from __future__ import absolute_import, division, unicode_literals
 
+try:  # Python 3
+    from urllib.parse import quote_plus
+except ImportError:  # Python 2
+    from urllib import quote_plus
+
 from helperobjects import TitleItem
-from kodiutils import colour, get_setting_bool, get_setting_int, get_url_json, localize, url_for
-from utils import shorten_link, url_to_program
+from kodiutils import colour, get_setting_bool, get_setting_int, get_url_json, localize, ttl, url_for
+from utils import from_unicode, shorten_link, to_unicode, url_to_program
 
 GRAPHQL_URL = 'https://www.vrt.be/vrtnu-api/graphql/v1'
 
 
-def format_label(program_title, episode_title, program_type, ontime):
+def get_context_menu(program_name, program_id, program_title, program_type, plugin_path, is_favorite):
+    """Get context menu for listitem"""
+    context_menu = []
+
+    # Follow/unfollow
+    follow_suffix = localize(30410) if program_type != 'oneoff' else ''  # program
+    encoded_program_title = to_unicode(quote_plus(from_unicode(program_title)))  # We need to ensure forward slashes are quoted
+    if is_favorite:
+        extras = {}
+        # If we are in a favorites menu, move cursor down before removing a favorite
+        if plugin_path.startswith('/favorites'):
+            extras = dict(move_down=True)
+        context_menu.append((
+            localize(30412, title=follow_suffix),  # Unfollow
+            'RunPlugin(%s)' % url_for('unfollow', program_name=program_name, title=encoded_program_title, program_id=program_id, **extras)
+        ))
+    else:
+        context_menu.append((
+            localize(30411, title=follow_suffix),  # Follow
+            'RunPlugin(%s)' % url_for('follow', program_name=program_name, title=encoded_program_title, program_id=program_id)
+        ))
+
+    # Go to program
+    if program_type != 'oneoff':
+        if plugin_path.startswith(('/favorites/offline', '/favorites/recent', '/offline', '/recent',
+                                   '/resumepoints/continue', '/tvguide')):
+            context_menu.append((
+                localize(30417),  # Go to program
+                'Container.Update(%s)' % url_for('programs', program_name=program_name)
+            ))
+
+    return context_menu
+
+
+def format_label(program_title, episode_title, program_type, ontime, is_favorite):
     """Format label"""
     if program_type == 'mixed_episodes':
         label = '[B]{}[/B] - {}'.format(program_title, episode_title)
@@ -21,6 +60,11 @@ def format_label(program_title, episode_title, program_type, ontime):
         label = program_title
     else:
         label = episode_title
+
+    # Favorite marker
+    if is_favorite:
+        label += colour('[COLOR={highlighted}]ᵛ[/COLOR]')
+
     return label
 
 
@@ -170,6 +214,7 @@ def get_paginated_episodes(list_id, page_size, end_cursor=''):
                 program {
                   title
                   id
+                  link
                   programType
                   description
                   shortDescription
@@ -293,6 +338,7 @@ def get_paginated_programs(list_id, page_size, end_cursor=''):
               __typename
               objectId
               id
+              link
               tileType
               image {
                 alt
@@ -302,6 +348,7 @@ def get_paginated_programs(list_id, page_size, end_cursor=''):
               program {
                 title
                 id
+                link
                 programType
                 description
                 shortDescription
@@ -317,18 +364,6 @@ def get_paginated_programs(list_id, page_size, end_cursor=''):
                   alt
                   templateUrl
                 }
-              }
-              action {
-                __typename
-                ...action
-              }
-            }
-            fragment action on Action {
-              __typename
-              ... on LinkAction {
-                link
-                linkType
-                __typename
               }
             }
         """
@@ -349,13 +384,23 @@ def get_paginated_programs(list_id, page_size, end_cursor=''):
 
 def convert_programs(api_data, destination, **kwargs):
     """Convert paginated list of programs to Kodi list items"""
+    from addon import plugin
+    from favorites import Favorites
+
     programs = []
+
+    # Favorites for context menu
+    favorites = Favorites()
+    favorites.refresh(ttl=ttl('indirect'))
+    plugin_path = plugin.path
+
     for item in api_data.get('data').get('list').get('paginated').get('edges'):
         program = item.get('node')
-        program_name = url_to_program(program.get('action').get('link'))
-        path = url_for('programs', program_name=program_name)
+        program_name = url_to_program(program.get('link'))
+        program_id = program.get('id')
+        program_type = program.get('programType')
         program_title = program.get('title')
-        label = program_title
+        path = url_for('programs', program_name=program_name)
         plot = program.get('description')
         plotoutline = program.get('subtitle')
 
@@ -363,6 +408,18 @@ def convert_programs(api_data, destination, **kwargs):
         fanart = program.get('program').get('posterImage').get('templateUrl')
         poster = program.get('program').get('posterImage').get('templateUrl')
         thumb = program.get('image').get('templateUrl')
+
+        # Check favorite
+        is_favorite = favorites.is_favorite(program_name)
+
+        # Context menu
+        context_menu = get_context_menu(program_name, program_id, program_title, program_type, plugin_path, is_favorite)
+
+        # Label
+        if is_favorite:
+            label = program_title + colour('[COLOR={highlighted}]ᵛ[/COLOR]')
+        else:
+            label = program_title
 
         programs.append(
             TitleItem(
@@ -381,6 +438,7 @@ def convert_programs(api_data, destination, **kwargs):
                     plotoutline=plotoutline,
                     mediatype='tvshow',
                 ),
+                context_menu=context_menu,
                 is_playable=False,
             )
         )
@@ -404,22 +462,33 @@ def convert_programs(api_data, destination, **kwargs):
 def convert_episodes(api_data, destination):
     """Convert paginated list of episodes to Kodi list items"""
     import dateutil.parser
+    from addon import plugin
+    from favorites import Favorites
+
     episodes = []
+
+    # Favorites for context menu
+    favorites = Favorites()
+    favorites.refresh(ttl=ttl('indirect'))
+    plugin_path = plugin.path
+
     for item in api_data.get('data').get('list').get('paginated').get('edges'):
         episode = item.get('node').get('episode')
         video_id = episode.get('watchAction').get('videoId')
         publication_id = episode.get('watchAction').get('publicationId')
         path = url_for('play_id', video_id=video_id, publication_id=publication_id)
+        program_name = url_to_program(episode.get('program').get('link'))
+        program_id = episode.get('program').get('id')
         program_title = episode.get('program').get('title')
         program_type = episode.get('program').get('programType')
 
         # FIXME: Find a better way to determine mixed episodes
         if destination in ('recent', 'resumepoints_continue'):
             program_type = 'mixed_episodes'
+
         episode_title = episode.get('title')
         offtime = dateutil.parser.parse(episode.get('offTimeRaw'))
         ontime = dateutil.parser.parse(episode.get('onTimeRaw'))
-        label = format_label(program_title, episode_title, program_type, ontime)
         mpaa = episode.get('ageRaw') or ''
         product_placement = True if episode.get('productPlacementShortValue') == 'pp' else False
         region = episode.get('regionRaw')
@@ -440,6 +509,15 @@ def convert_episodes(api_data, destination):
         fanart = episode.get('program').get('image').get('templateUrl')
         poster = episode.get('program').get('posterImage').get('templateUrl')
         thumb = episode.get('image').get('templateUrl')
+
+        # Check favorite
+        is_favorite = favorites.is_favorite(program_name)
+
+        # Context menu
+        context_menu = get_context_menu(program_name, program_id, program_title, program_type, plugin_path, is_favorite)
+
+        # Label
+        label = format_label(program_title, episode_title, program_type, ontime, is_favorite)
 
         episodes.append(
             TitleItem(
@@ -468,6 +546,7 @@ def convert_episodes(api_data, destination):
                     tag=tag,
                     mediatype='episode',
                 ),
+                context_menu=context_menu,
                 is_playable=True,
             )
         )
