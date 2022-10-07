@@ -99,11 +99,11 @@ def favorites_recent(end_cursor=''):
 
 
 @plugin.route('/favorites/offline')
-@plugin.route('/favorites/offline/<page>')
-def favorites_offline(page=1):
+@plugin.route('/favorites/offline/<end_cursor>')
+def favorites_offline(end_cursor=''):
     """The favorites offline listing"""
     from vrtplayer import VRTPlayer
-    VRTPlayer().show_offline_menu(page=page, use_favorites=True)
+    VRTPlayer().show_offline_menu(end_cursor=end_cursor, use_favorites=True)
 
 
 @plugin.route('/favorites/refresh')
@@ -183,11 +183,11 @@ def recent(end_cursor=''):
 
 
 @plugin.route('/offline')
-@plugin.route('/offline/<page>')
-def offline(page=1):
+@plugin.route('/offline/<end_cursor>')
+def offline(end_cursor=''):
     """The soon offline listing"""
     from vrtplayer import VRTPlayer
-    VRTPlayer().show_offline_menu(page=page)
+    VRTPlayer().show_offline_menu(end_cursor=end_cursor)
 
 
 @plugin.route('/featured')
