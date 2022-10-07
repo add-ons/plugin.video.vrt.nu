@@ -502,7 +502,7 @@ def convert_programs(api_data, destination, use_favorites=False, **kwargs):
     return programs
 
 
-def convert_episodes(api_data, destination, use_favorites=False):
+def convert_episodes(api_data, destination, use_favorites=False, **kwargs):
     """Convert paginated list of episodes to Kodi list items"""
     import dateutil.parser
     from addon import plugin
@@ -604,7 +604,10 @@ def convert_episodes(api_data, destination, use_favorites=False):
                 )
             )
         # Paging
+        # Remove kwargs with None value
+        kwargs = {k: v for k, v in kwargs.items() if v is not None}
         page_info = api_data.get('data').get('list').get('paginated').get('pageInfo')
+
         # FIXME: find a better way to disable more when favorites are filtered
         page_size = get_setting_int('itemsperpage', default=50)
         if len(episodes) == page_size:
@@ -614,7 +617,7 @@ def convert_episodes(api_data, destination, use_favorites=False):
                 episodes.append(
                     TitleItem(
                         label=colour(localize(30300)),
-                        path=url_for(destination, end_cursor=end_cursor),
+                        path=url_for(destination, end_cursor=end_cursor, **kwargs),
                         art_dict=dict(thumb='DefaultInProgressShows.png'),
                         info_dict={},
                     )
@@ -759,14 +762,14 @@ def get_featured(feature=None, end_cursor=''):
         if feature.startswith('program_'):
             list_id = 'static:/vrtnu/kijk.model.json@{}'.format(feature.split('program_')[1])
             api_data = get_paginated_programs(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
-            programs = convert_programs(api_data, destination='featured')
+            programs = convert_programs(api_data, destination='featured', feature=feature)
             return programs, sort, ascending, 'tvshows'
 
         elif feature.startswith('episode_'):
             feature_id = feature.split('episode_')[1]
             list_id = 'static:/vrtnu/kijk.model.json@{}'.format(feature.split('episode_')[1])
             api_data = get_paginated_episodes(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
-            episodes, sort, ascending = convert_episodes(api_data, destination='featured')
+            episodes, sort, ascending = convert_episodes(api_data, destination='featured', feature=feature)
             return episodes, sort, ascending, 'episodes'
     else:
         featured = []
