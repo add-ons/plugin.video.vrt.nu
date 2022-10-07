@@ -192,10 +192,11 @@ def offline(end_cursor=''):
 
 @plugin.route('/featured')
 @plugin.route('/featured/<feature>')
-def featured(feature=None):
+@plugin.route('/featured/<feature>/<end_cursor>')
+def featured(feature=None, end_cursor=''):
     """The featured menu and listing"""
     from vrtplayer import VRTPlayer
-    VRTPlayer().show_featured_menu(feature=feature)
+    VRTPlayer().show_featured_menu(feature=feature, end_cursor=end_cursor)
 
 
 @plugin.route('/tvguide')

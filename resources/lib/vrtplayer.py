@@ -236,9 +236,9 @@ class VRTPlayer:
             show_listing(channel_items, category=30016, cache=False)
 
     @staticmethod
-    def show_featured_menu(feature=None):
+    def show_featured_menu(feature=None, end_cursor=''):
         """The VRT MAX add-on 'Featured content' listing menu"""
-        featured_items, sort, ascending, content = get_featured(feature=feature)
+        featured_items, sort, ascending, content = get_featured(feature=feature, end_cursor=end_cursor)
         show_listing(featured_items, category=30024, sort=sort, ascending=ascending, content=content)
 
     def show_livetv_menu(self):
