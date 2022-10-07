@@ -406,7 +406,7 @@ def get_paginated_programs(list_id, page_size, end_cursor=''):
     return data_json
 
 
-def convert_programs(api_data, destination, **kwargs):
+def convert_programs(api_data, destination, use_favorites=False, **kwargs):
     """Convert paginated list of programs to Kodi list items"""
     from addon import plugin
     from favorites import Favorites
@@ -445,6 +445,10 @@ def convert_programs(api_data, destination, **kwargs):
             # Check favorite
             is_favorite = favorites.is_favorite(program_name)
 
+            # Filter favorites for favorites menu
+            if use_favorites and is_favorite is False:
+                continue
+
             # Context menu
             context_menu = get_context_menu(program_name, program_id, program_title, program_type, plugin_path, is_favorite)
 
@@ -479,23 +483,26 @@ def convert_programs(api_data, destination, **kwargs):
         # Paging
         # Remove kwargs with None value
         kwargs = {k: v for k, v in kwargs.items() if v is not None}
-
         page_info = api_data.get('data').get('list').get('paginated').get('pageInfo')
-        if page_info.get('hasNextPage'):
-            end_cursor = page_info.get('endCursor')
-            # Add 'More...' entry at the end
-            programs.append(
-                TitleItem(
-                    label=colour(localize(30300)),
-                    path=url_for(destination, end_cursor=end_cursor, **kwargs),
-                    art_dict=dict(thumb='DefaultInProgressShows.png'),
-                    info_dict={},
+
+        # FIXME: find a better way to disable more when favorites are filtered
+        page_size = get_setting_int('itemsperpage', default=50)
+        if len(programs) == page_size:
+            if page_info.get('hasNextPage'):
+                end_cursor = page_info.get('endCursor')
+                # Add 'More...' entry at the end
+                programs.append(
+                    TitleItem(
+                        label=colour(localize(30300)),
+                        path=url_for(destination, end_cursor=end_cursor, **kwargs),
+                        art_dict=dict(thumb='DefaultInProgressShows.png'),
+                        info_dict={},
+                    )
                 )
-            )
     return programs
 
 
-def convert_episodes(api_data, destination):
+def convert_episodes(api_data, destination, use_favorites=False):
     """Convert paginated list of episodes to Kodi list items"""
     import dateutil.parser
     from addon import plugin
@@ -523,9 +530,8 @@ def convert_episodes(api_data, destination):
             program_type = episode.get('program').get('programType')
 
             # FIXME: Find a better way to determine mixed episodes
-            if destination in ('recent', 'resumepoints_continue', 'featured'):
+            if destination in ('recent', 'favorites_recent', 'resumepoints_continue', 'featured'):
                 program_type = 'mixed_episodes'
-
             episode_title = episode.get('title')
             offtime = dateutil.parser.parse(episode.get('offTimeRaw'))
             ontime = dateutil.parser.parse(episode.get('onTimeRaw'))
@@ -552,6 +558,10 @@ def convert_episodes(api_data, destination):
 
             # Check favorite
             is_favorite = favorites.is_favorite(program_name)
+
+            # Filter favorites for favorites menu
+            if use_favorites and is_favorite is False:
+                continue
 
             # Context menu
             context_menu = get_context_menu(program_name, program_id, program_title, program_type, plugin_path, is_favorite)
@@ -595,17 +605,20 @@ def convert_episodes(api_data, destination):
             )
         # Paging
         page_info = api_data.get('data').get('list').get('paginated').get('pageInfo')
-        if page_info.get('hasNextPage'):
-            end_cursor = page_info.get('endCursor')
-            # Add 'More...' entry at the end
-            episodes.append(
-                TitleItem(
-                    label=colour(localize(30300)),
-                    path=url_for(destination, end_cursor=end_cursor),
-                    art_dict=dict(thumb='DefaultInProgressShows.png'),
-                    info_dict={},
+        # FIXME: find a better way to disable more when favorites are filtered
+        page_size = get_setting_int('itemsperpage', default=50)
+        if len(episodes) == page_size:
+            if page_info.get('hasNextPage'):
+                end_cursor = page_info.get('endCursor')
+                # Add 'More...' entry at the end
+                episodes.append(
+                    TitleItem(
+                        label=colour(localize(30300)),
+                        path=url_for(destination, end_cursor=end_cursor),
+                        art_dict=dict(thumb='DefaultInProgressShows.png'),
+                        info_dict={},
+                    )
                 )
-            )
     return episodes, sort, ascending
 
 
@@ -663,13 +676,24 @@ def get_continue_episodes(end_cursor=''):
     return episodes, sort, ascending, 'episodes'
 
 
-def get_recent_episodes(end_cursor=''):
-    """Get continue episodes"""
+def get_recent_episodes(end_cursor='', use_favorites=False):
+    """Get recent episodes"""
     page_size = get_setting_int('itemsperpage', default=50)
     list_id = 'static:/vrtnu/kijk.model.json@par_list_copy_copy_copy'
     api_data = get_paginated_episodes(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
-    episodes, sort, ascending = convert_episodes(api_data, destination='recent')
+    destination = 'favorites_recent' if use_favorites else 'recent'
+    episodes, sort, ascending = convert_episodes(api_data, destination=destination, use_favorites=use_favorites)
     return episodes, sort, ascending, 'episodes'
+
+
+def get_offline_programs(end_cursor='', use_favorites=False):
+    """Get laatste kans/soon offline programs"""
+    page_size = get_setting_int('itemsperpage', default=50)
+    list_id = 'dynamic:/vrtnu.model.json@par_list_1624607593_copy_1408213323'
+    api_data = get_paginated_programs(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
+    destination = 'favorites_offline' if use_favorites else 'offline'
+    programs = convert_programs(api_data, destination=destination, use_favorites=use_favorites)
+    return programs
 
 
 def get_episodes(program_name, season_name=None, end_cursor=''):

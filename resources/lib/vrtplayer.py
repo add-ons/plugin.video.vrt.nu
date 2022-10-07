@@ -3,7 +3,7 @@
 """Implements a VRTPlayer class"""
 
 from __future__ import absolute_import, division, unicode_literals
-from api import get_continue_episodes, get_featured, get_programs, get_episodes, get_favorite_programs, get_recent_episodes
+from api import get_continue_episodes, get_featured, get_programs, get_episodes, get_favorite_programs, get_recent_episodes, get_offline_programs
 from apihelper import ApiHelper
 from favorites import Favorites
 from helperobjects import TitleItem
@@ -13,7 +13,7 @@ from kodiutils import (delete_cached_thumbnail, end_of_directory, get_addon_info
                        ok_dialog, play, set_setting, show_listing, ttl, url_for,
                        wait_for_resumepoints)
 from resumepoints import ResumePoints
-from utils import find_entry, realpage
+from utils import find_entry
 
 
 class VRTPlayer:
@@ -260,28 +260,17 @@ class VRTPlayer:
         # My favorites menus may need more up-to-date favorites
         self._favorites.refresh(ttl=ttl('direct' if use_favorites else 'indirect'))
         self._resumepoints.refresh(ttl=ttl('direct' if use_favorites else 'indirect'))
-        episodes, sort, ascending, content = get_recent_episodes(end_cursor=end_cursor)
+        episodes, sort, ascending, content = get_recent_episodes(end_cursor=end_cursor, use_favorites=use_favorites)
         show_listing(episodes, category=30020, sort=sort, ascending=ascending, content=content, cache=False)
 
-    def show_offline_menu(self, page=0, use_favorites=False):
+    def show_offline_menu(self, end_cursor='', use_favorites=False):
         """The VRT MAX add-on 'Soon offline' and 'My soon offline' listing menu"""
 
         # My favorites menus may need more up-to-date favorites
         self._favorites.refresh(ttl=ttl('direct' if use_favorites else 'indirect'))
         self._resumepoints.refresh(ttl=ttl('direct' if use_favorites else 'indirect'))
-        episode_items, sort, ascending, content = self._apihelper.list_episodes(page=page, use_favorites=use_favorites, variety='offline')
-
-        # Add 'More...' entry at the end
-        # if len(episode_items) == items_per_page:
-        offline = 'favorites_offline' if use_favorites else 'offline'
-        episode_items.append(TitleItem(
-            label=localize(30300),
-            path=url_for(offline, page=realpage(page) + 1),
-            art_dict=dict(thumb='DefaultYear.png'),
-            info_dict={},
-        ))
-
-        show_listing(episode_items, category=30022, sort=sort, ascending=ascending, content=content, cache=False)
+        programs = get_offline_programs(end_cursor=end_cursor, use_favorites=use_favorites)
+        show_listing(programs, category=30022, content='tvshows', cache=False)
 
     def show_continue_menu(self, end_cursor=''):
         """The VRT MAX add-on 'Continue waching' listing menu"""
