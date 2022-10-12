@@ -10,7 +10,7 @@ except ImportError:  # Python 2
     from urllib import quote_plus
 
 from helperobjects import TitleItem
-from kodiutils import colour, get_setting_bool, get_setting_int, get_url_json, localize, ttl, url_for
+from kodiutils import colour, get_setting_bool, get_setting_int, get_url_json, localize, url_for
 from utils import from_unicode, shorten_link, to_unicode, url_to_program
 
 GRAPHQL_URL = 'https://www.vrt.be/vrtnu-api/graphql/v1'
@@ -36,8 +36,10 @@ def get_sort(program_type):
     return sort, ascending
 
 
-def get_context_menu(program_name, program_id, program_title, program_type, plugin_path, is_favorite):
+def get_context_menu(program_name, program_id, program_title, program_type, is_favorite, is_continue=False, episode_id=None):
     """Get context menu for listitem"""
+    from addon import plugin
+    plugin_path = plugin.path
     context_menu = []
 
     # Follow/unfollow
@@ -67,17 +69,23 @@ def get_context_menu(program_name, program_id, program_title, program_type, plug
                 'Container.Update(%s)' % url_for('programs', program_name=program_name)
             ))
 
+    # Delete continue
+    if is_continue:
+        context_menu.append((
+            localize(30455),  # Delete from this list
+            'RunPlugin(%s)' % url_for('resumepoints_continue_delete', episode_id=episode_id)
+        ))
     return context_menu
 
 
-def format_label(program_title, episode_title, program_type, ontime, is_favorite):
+def format_label(program_title, episode_title, program_type, ontime=None, is_favorite=False, item_type='episode'):
     """Format label"""
-    if program_type == 'mixed_episodes':
+    if item_type == 'program' or program_type == 'oneoff':
+        label = program_title
+    elif program_type == 'mixed_episodes':
         label = '[B]{}[/B] - {}'.format(program_title, episode_title)
     elif program_type == 'daily':
         label = '{} - {}'.format(ontime.strftime('%d/%m'), episode_title)
-    elif program_type == 'oneoff':
-        label = program_title
     else:
         label = episode_title
 
@@ -287,12 +295,18 @@ def get_paginated_episodes(list_id, page_size, end_cursor=''):
                   avodUrl
                   completed
                   resumePoint
+                  resumePointTotal
                   resumePointProgress
                   resumePointTitle
                   episodeId
                   videoId
                   publicationId
                   streamId
+                }
+                favoriteAction {
+                  favorite
+                  id
+                  title
                 }
               }
             }
@@ -384,6 +398,11 @@ def get_paginated_programs(list_id, page_size, end_cursor=''):
                   alt
                   templateUrl
                 }
+                favoriteAction {
+                  favorite
+                  id
+                  title
+                }
               }
             }
         """
@@ -408,25 +427,20 @@ def get_paginated_programs(list_id, page_size, end_cursor=''):
 
 def convert_programs(api_data, destination, use_favorites=False, **kwargs):
     """Convert paginated list of programs to Kodi list items"""
-    from addon import plugin
-    from favorites import Favorites
 
     programs = []
 
-    # Favorites for context menu
-    favorites = Favorites()
-    favorites.refresh(ttl=ttl('indirect'))
-    plugin_path = plugin.path
-
-    program_list = api_data.get('data').get('list')
-    if program_list:
-        for item in program_list.get('paginated').get('edges'):
+    item_list = api_data.get('data').get('list')
+    if item_list:
+        for item in item_list.get('paginated').get('edges'):
             program = item.get('node')
 
             program_name = url_to_program(program.get('link'))
             program_id = program.get('id')
             program_type = program.get('programType')
             program_title = program.get('title')
+            episode_title = None
+            ontime = None
             path = url_for('programs', program_name=program_name)
             plot = program.get('program').get('shortDescription') or program.get('program').get('description')
             plotoutline = program.get('subtitle')
@@ -443,20 +457,17 @@ def convert_programs(api_data, destination, use_favorites=False, **kwargs):
                 thumb = thumb_img.get('templateUrl')
 
             # Check favorite
-            is_favorite = favorites.is_favorite(program_name)
+            is_favorite = program.get('program').get('favoriteAction').get('favorite')
 
             # Filter favorites for favorites menu
             if use_favorites and is_favorite is False:
                 continue
 
             # Context menu
-            context_menu = get_context_menu(program_name, program_id, program_title, program_type, plugin_path, is_favorite)
+            context_menu = get_context_menu(program_name, program_id, program_title, program_type, is_favorite)
 
             # Label
-            if is_favorite:
-                label = program_title + colour('[COLOR={highlighted}]ᵛ[/COLOR]')
-            else:
-                label = program_title
+            label = format_label(program_title, episode_title, program_type, ontime, is_favorite, item_type='program')
 
             programs.append(
                 TitleItem(
@@ -505,22 +516,16 @@ def convert_programs(api_data, destination, use_favorites=False, **kwargs):
 def convert_episodes(api_data, destination, use_favorites=False, **kwargs):
     """Convert paginated list of episodes to Kodi list items"""
     import dateutil.parser
-    from addon import plugin
-    from favorites import Favorites
 
     episodes = []
     sort = 'unsorted'
     ascending = True
 
-    # Favorites for context menu
-    favorites = Favorites()
-    favorites.refresh(ttl=ttl('indirect'))
-    plugin_path = plugin.path
-
-    episode_list = api_data.get('data').get('list')
-    if episode_list:
-        for item in episode_list.get('paginated').get('edges'):
+    item_list = api_data.get('data').get('list')
+    if item_list:
+        for item in item_list.get('paginated').get('edges'):
             episode = item.get('node').get('episode')
+            episode_id = episode.get('id')
             video_id = episode.get('watchAction').get('videoId')
             publication_id = episode.get('watchAction').get('publicationId')
             path = url_for('play_id', video_id=video_id, publication_id=publication_id)
@@ -532,6 +537,7 @@ def convert_episodes(api_data, destination, use_favorites=False, **kwargs):
             # FIXME: Find a better way to determine mixed episodes
             if destination in ('recent', 'favorites_recent', 'resumepoints_continue', 'featured'):
                 program_type = 'mixed_episodes'
+
             episode_title = episode.get('title')
             offtime = dateutil.parser.parse(episode.get('offTimeRaw'))
             ontime = dateutil.parser.parse(episode.get('onTimeRaw'))
@@ -557,20 +563,36 @@ def convert_episodes(api_data, destination, use_favorites=False, **kwargs):
             thumb = episode.get('image').get('templateUrl')
 
             # Check favorite
-            is_favorite = favorites.is_favorite(program_name)
+            is_favorite = episode.get('favoriteAction').get('favorite')
 
             # Filter favorites for favorites menu
             if use_favorites and is_favorite is False:
                 continue
 
+            # Check continue
+            is_continue = False
+            if destination == 'resumepoints_continue':
+                is_continue = True
+
             # Context menu
-            context_menu = get_context_menu(program_name, program_id, program_title, program_type, plugin_path, is_favorite)
+            context_menu = get_context_menu(program_name, program_id, program_title, program_type,
+                                            is_favorite, is_continue, episode_id)
 
             # Label
             label = format_label(program_title, episode_title, program_type, ontime, is_favorite)
 
             # Sorting
             sort, ascending = get_sort(program_type)
+
+            # Resumepoint
+            position = episode.get('watchAction').get('resumePoint')
+            total = episode.get('watchAction').get('resumePointTotal')
+            # Override Kodi watch status
+            seconds_margin = 30  # The margin at start/end to consider a video as watched
+            prop_dict = {}
+            if position and total and seconds_margin < position < total - seconds_margin:
+                prop_dict['resumetime'] = position
+                prop_dict['totaltime'] = total
 
             episodes.append(
                 TitleItem(
@@ -601,8 +623,10 @@ def convert_episodes(api_data, destination, use_favorites=False, **kwargs):
                     ),
                     context_menu=context_menu,
                     is_playable=True,
+                    prop_dict=prop_dict,
                 )
             )
+
         # Paging
         # Remove kwargs with None value
         kwargs = {k: v for k, v in kwargs.items() if v is not None}

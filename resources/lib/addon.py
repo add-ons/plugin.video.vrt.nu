@@ -129,6 +129,13 @@ def resumepoints_continue(end_cursor=''):
     VRTPlayer().show_continue_menu(end_cursor=end_cursor)
 
 
+@plugin.route('/resumepoints/continue/delete/<episode_id>')
+def resumepoints_continue_delete(episode_id):
+    """The API interface to delete episodes from continue watching listing"""
+    from resumepoints import ResumePoints
+    ResumePoints().delete_continue(episode_id)
+
+
 @plugin.route('/resumepoints/refresh')
 def resumepoints_refresh():
     """The API interface to refresh the resumepoints cache"""
