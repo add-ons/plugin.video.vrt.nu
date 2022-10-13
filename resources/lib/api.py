@@ -643,7 +643,7 @@ def get_programs(category=None, channel=None, keywords=None, end_cursor=''):
     if category:
         destination = 'categories'
         facets = [dict(
-            name='categories',
+            name='programCategories',
             values=[category]
         )]
     elif channel:
