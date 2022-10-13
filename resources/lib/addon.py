@@ -129,6 +129,13 @@ def resumepoints_continue(end_cursor=''):
     VRTPlayer().show_continue_menu(end_cursor=end_cursor)
 
 
+@plugin.route('/resumepoints/continue/delete/<episode_id>')
+def resumepoints_continue_delete(episode_id):
+    """The API interface to delete episodes from continue watching listing"""
+    from resumepoints import ResumePoints
+    ResumePoints().delete_continue(episode_id)
+
+
 @plugin.route('/resumepoints/refresh')
 def resumepoints_refresh():
     """The API interface to refresh the resumepoints cache"""
@@ -265,7 +272,8 @@ def remove_search(keywords):
 
 @plugin.route('/play/id/<video_id>')
 @plugin.route('/play/id/<video_id>/<publication_id>')
-def play_id(video_id, publication_id=None):
+@plugin.route('/play/id/<video_id>/<publication_id>/<episode_id>')
+def play_id(video_id, publication_id=None, episode_id=None):  # pylint: disable=unused-argument
     """The API interface to play a video by video_id and/or publication_id"""
     from vrtplayer import VRTPlayer
     VRTPlayer().play(dict(video_id=video_id, publication_id=publication_id))
