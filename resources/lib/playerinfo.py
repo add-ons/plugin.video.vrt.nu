@@ -7,7 +7,7 @@ from threading import Event, Thread
 from xbmc import getInfoLabel, Player, PlayList
 
 from apihelper import ApiHelper
-from api import get_resumepoint_data, set_resumepoint
+from api import get_next_info, get_resumepoint_data, set_resumepoint
 from data import CHANNELS
 from favorites import Favorites
 from kodiutils import addon_id, get_setting_bool, has_addon, jsonrpc, kodi_version_major, log, log_error, notify, set_property, url_for
@@ -29,15 +29,10 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
         self.positionthread = None
         self.quit = Event()
 
-        self.asset_str = None
         # FIXME On Kodi 17, use ListItem.Filenameandpath because Player.FilenameAndPath returns the stream manifest url and
         # this definitely breaks "Up Next" on Kodi 17, but this is not supported or available through the Kodi add-on repo anyway
         self.path_infolabel = 'ListItem.Filenameandpath' if kodi_version_major() < 18 else 'Player.FilenameAndPath'
         self.path = None
-        self.title = None
-        self.ep_id = None
-        self.episode_id = None
-        self.episode_title = None
         self.video_id = None
         self.resumepoint_title = None
         from random import randint
@@ -60,15 +55,12 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
         set_property('vrtnu_resumepoints', 'busy')
 
         # Update previous episode when using "Up Next"
-        # if self.path.startswith('plugin://plugin.video.vrt.nu/play/upnext'):
-        #    self.push_position(position=self.last_pos, total=self.total)
+        if self.path.startswith('plugin://plugin.video.vrt.nu/play/upnext'):
+            set_resumepoint(self.video_id, self.resumepoint_title, self.last_pos, self.total)
 
-        # Reset episode data
+        # Reset resumepoint data
         self.video_id = None
-        self.episode_id = None
-        self.episode_title = None
-        self.asset_str = None
-        self.title = None
+        self.resumepoint_title = None
 
         ep_id = play_url_to_id(self.path)
 
@@ -82,25 +74,8 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
                 set_property('vrtnu_resumepoints', None)
                 return
 
-        # Get episode data needed to update resumepoints from VRT MAX Search API
-        # FIXME: Getting single episode data is broken, VRT MAX Search API return a http error 400
-        # episode = self.apihelper.get_single_episode_data(video_id=ep_id.get('video_id'), whatson_id=ep_id.get('whatson_id'), video_url=ep_id.get('video_url'))
-        episode = None
-
+        # Get resumepoint data
         self.video_id, self.resumepoint_title = get_resumepoint_data(episode_id=self.path.split('/')[-1])
-
-        # Avoid setting resumepoints without episode data
-        if episode is None:
-            # Reset vrtnu_resumepoints property before return
-            set_property('vrtnu_resumepoints', None)
-            return
-
-        from metadata import Metadata
-        self.video_id = episode.get('videoId') or None
-        self.episode_id = episode.get('episodeId') or None
-        self.episode_title = episode.get('title') or None
-        self.asset_str = Metadata(None, None).get_asset_str(episode)
-        self.title = episode.get('program')
 
         # Kodi 17 doesn't have onAVStarted
         if kodi_version_major() < 18:
@@ -115,8 +90,7 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
         self.quit.clear()
         self.update_position()
         self.update_total()
-        # FIXME: VRT Search API is removed, so up next doesn't work
-        # self.push_upnext()
+        self.push_upnext()
 
         # StreamPosition thread keeps running when watching multiple episode with "Up Next"
         # only start StreamPosition thread when it doesn't exist yet.
@@ -213,16 +187,8 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
     def push_upnext(self):
         """Push episode info to Up Next service add-on"""
         if has_addon('service.upnext') and get_setting_bool('useupnext', default=True) and self.isPlaying():
-            info_tag = self.getVideoInfoTag()
-            next_info = self.apihelper.get_upnext(dict(
-                program_title=to_unicode(info_tag.getTVShowTitle()),
-                season_number=to_unicode(info_tag.getSeason()),
-                episode_number=to_unicode(info_tag.getEpisode()),
-                playcount=info_tag.getPlayCount(),
-                rating=info_tag.getRating(),
-                path=self.path,
-                runtime=self.total,
-            ))
+
+            next_info = get_next_info(episode_id=self.path.split('/')[-1])
             if next_info:
                 from base64 import b64encode
                 from json import dumps
