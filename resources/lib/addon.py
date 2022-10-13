@@ -272,7 +272,8 @@ def remove_search(keywords):
 
 @plugin.route('/play/id/<video_id>')
 @plugin.route('/play/id/<video_id>/<publication_id>')
-def play_id(video_id, publication_id=None):
+@plugin.route('/play/id/<video_id>/<publication_id>/<episode_id>')
+def play_id(video_id, publication_id=None, episode_id=None):  # pylint: disable=unused-argument
     """The API interface to play a video by video_id and/or publication_id"""
     from vrtplayer import VRTPlayer
     VRTPlayer().play(dict(video_id=video_id, publication_id=publication_id))

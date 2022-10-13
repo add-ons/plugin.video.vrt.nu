@@ -7,6 +7,7 @@ from threading import Event, Thread
 from xbmc import getInfoLabel, Player, PlayList
 
 from apihelper import ApiHelper
+from api import get_resumepoint_data, set_resumepoint
 from data import CHANNELS
 from favorites import Favorites
 from kodiutils import addon_id, get_setting_bool, has_addon, jsonrpc, kodi_version_major, log, log_error, notify, set_property, url_for
@@ -38,6 +39,7 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
         self.episode_id = None
         self.episode_title = None
         self.video_id = None
+        self.resumepoint_title = None
         from random import randint
         self.thread_id = randint(1, 10001)
         log(3, '[PlayerInfo {id}] Initialized', id=self.thread_id)
@@ -58,8 +60,8 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
         set_property('vrtnu_resumepoints', 'busy')
 
         # Update previous episode when using "Up Next"
-        if self.path.startswith('plugin://plugin.video.vrt.nu/play/upnext'):
-            self.push_position(position=self.last_pos, total=self.total)
+        # if self.path.startswith('plugin://plugin.video.vrt.nu/play/upnext'):
+        #    self.push_position(position=self.last_pos, total=self.total)
 
         # Reset episode data
         self.video_id = None
@@ -84,6 +86,8 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
         # FIXME: Getting single episode data is broken, VRT MAX Search API return a http error 400
         # episode = self.apihelper.get_single_episode_data(video_id=ep_id.get('video_id'), whatson_id=ep_id.get('whatson_id'), video_url=ep_id.get('video_url'))
         episode = None
+
+        self.video_id, self.resumepoint_title = get_resumepoint_data(episode_id=self.path.split('/')[-1])
 
         # Avoid setting resumepoints without episode data
         if episode is None:
@@ -141,7 +145,7 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
             return
         log(3, '[PlayerInfo {id}] Event onPlayBackPaused', id=self.thread_id)
         self.update_position()
-        self.push_position(position=self.last_pos, total=self.total)
+        set_resumepoint(self.video_id, self.resumepoint_title, self.last_pos, self.total)
         self.paused = True
 
     def onPlayBackResumed(self):  # pylint: disable=invalid-name
@@ -178,7 +182,7 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
         """Called when player exits"""
         log(3, '[PlayerInfo {id}] Event onPlayerExit', id=self.thread_id)
         self.positionthread = None
-        self.push_position(position=self.last_pos, total=self.total)
+        set_resumepoint(self.video_id, self.resumepoint_title, self.last_pos, self.total)
 
         # Set property to let wait_for_resumepoints function know that update resume is done
         set_property('vrtnu_resumepoints', 'ready')
@@ -279,19 +283,3 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
                 self.total = total
         except RuntimeError:
             pass
-
-    def push_position(self, position, total):
-        """Push player position to VRT MAX resumepoints API and reload container"""
-        # Not all content has an video_id
-        if not self.video_id:
-            return
-
-        # Push resumepoint to VRT MAX
-        self.resumepoints.update_resumepoint(
-            video_id=self.video_id,
-            asset_str=self.asset_str,
-            title=self.title,
-            position=position,
-            total=total,
-            path=self.path,
-        )

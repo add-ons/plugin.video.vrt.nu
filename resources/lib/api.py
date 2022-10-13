@@ -10,10 +10,12 @@ except ImportError:  # Python 2
     from urllib import quote_plus
 
 from helperobjects import TitleItem
-from kodiutils import colour, get_setting_bool, get_setting_int, get_url_json, localize, url_for
+from kodiutils import colour, get_setting_bool, get_setting_int, get_url_json, localize, log, url_for
 from utils import from_unicode, shorten_link, to_unicode, url_to_program
 
 GRAPHQL_URL = 'https://www.vrt.be/vrtnu-api/graphql/v1'
+RESUMEPOINTS_URL = 'https://ddt.profiel.vrt.be/resumePoints'
+RESUMEPOINTS_MARGIN = 30  # The margin at start/end to consider a video as watched
 
 
 def get_sort(program_type):
@@ -150,6 +152,83 @@ def format_plot(plot, region, product_placement, mpaa, offtime, permalink):
     if permalink and get_setting_bool('showpermalink', default=False):
         plot = '{}\n\n[COLOR={{highlighted}}]{}[/COLOR]'.format(plot, permalink)
     return colour(plot)
+
+
+def get_resumepoint_data(episode_id):
+    """Get resumepoint data from GraphQL API"""
+    from tokenresolver import TokenResolver
+    access_token = TokenResolver().get_token('vrtnu-site_profile_at')
+    data_json = {}
+    if access_token:
+        headers = {
+            'Authorization': 'Bearer ' + access_token,
+            'Content-Type': 'application/json',
+        }
+        graphql_query = """
+            query PlayerData($id: ID!) {
+              catalogMember(id: $id) {
+                __typename
+              ...ep
+              }
+            }
+            fragment ep on Episode {
+              __typename
+              watchAction {
+                avodUrl
+                completed
+                resumePoint
+                resumePointTotal
+                resumePointProgress
+                resumePointTitle
+                episodeId
+                videoId
+                publicationId
+                streamId
+              }
+            }
+        """
+        payload = dict(
+            operationName='PlayerData',
+            variables=dict(
+                id=episode_id
+            ),
+            query=graphql_query,
+        )
+        from json import dumps
+        data = dumps(payload).encode('utf-8')
+        data_json = get_url_json(url=GRAPHQL_URL, cache=None, headers=headers, data=data, raise_errors='all')
+
+    video_id = data_json.get('data').get('catalogMember').get('watchAction').get('videoId')
+    resumepoint_title = data_json.get('data').get('catalogMember').get('watchAction').get('resumePointTitle')
+    return video_id, resumepoint_title
+
+
+def set_resumepoint(video_id, title, position, total):
+    """Set resumepoint"""
+    # Respect resumepoint margins
+    if position and total:
+        if position < RESUMEPOINTS_MARGIN:
+            position = 0
+        if position > total - RESUMEPOINTS_MARGIN:
+            position = total
+
+    from tokenresolver import TokenResolver
+    access_token = TokenResolver().get_token('vrtnu-site_profile_at')
+    if access_token:
+        gdpr = '{} gekeken tot {} seconden.'.format(title, position)
+        headers = {
+            'Authorization': 'Bearer ' + access_token,
+            'Content-Type': 'application/json',
+        }
+        payload = dict(
+            at=position,
+            total=total,
+            gdpr=gdpr,
+        )
+        from json import dumps
+        data = dumps(payload).encode('utf-8')
+        data_json = get_url_json(url='{}/{}'.format(RESUMEPOINTS_URL, video_id), cache=None, headers=headers, data=data, raise_errors='all')
+        log(3, '[Resumepoints] Updated resumepoint {data}', data=data_json)
 
 
 def get_paginated_episodes(list_id, page_size, end_cursor=''):
@@ -528,7 +607,7 @@ def convert_episodes(api_data, destination, use_favorites=False, **kwargs):
             episode_id = episode.get('id')
             video_id = episode.get('watchAction').get('videoId')
             publication_id = episode.get('watchAction').get('publicationId')
-            path = url_for('play_id', video_id=video_id, publication_id=publication_id)
+            path = url_for('play_id', video_id=video_id, publication_id=publication_id, episode_id=episode_id)
             program_name = url_to_program(episode.get('program').get('link'))
             program_id = episode.get('program').get('id')
             program_title = episode.get('program').get('title')
@@ -588,9 +667,8 @@ def convert_episodes(api_data, destination, use_favorites=False, **kwargs):
             position = episode.get('watchAction').get('resumePoint')
             total = episode.get('watchAction').get('resumePointTotal')
             # Override Kodi watch status
-            seconds_margin = 30  # The margin at start/end to consider a video as watched
             prop_dict = {}
-            if position and total and seconds_margin < position < total - seconds_margin:
+            if position and total and RESUMEPOINTS_MARGIN < position < total - RESUMEPOINTS_MARGIN:
                 prop_dict['resumetime'] = position
                 prop_dict['totaltime'] = total
 
