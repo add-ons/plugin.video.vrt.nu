@@ -763,7 +763,7 @@ def get_programs(category=None, channel=None, keywords=None, end_cursor=''):
     elif channel:
         destination = 'channels'
         facets = [dict(
-            name='brands',
+            name='programBrands',
             values=[channel]
         )]
     elif keywords:
