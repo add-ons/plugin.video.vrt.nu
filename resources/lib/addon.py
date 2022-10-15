@@ -279,6 +279,13 @@ def play_id(video_id, publication_id=None, episode_id=None):  # pylint: disable=
     VRTPlayer().play(dict(video_id=video_id, publication_id=publication_id))
 
 
+@plugin.route('/play/url/<path:video_url>')
+def play_url(video_url):
+    """The API interface to play a video by using a VRT MAX URL"""
+    from vrtplayer import VRTPlayer
+    VRTPlayer().play(dict(video_url=video_url))
+
+
 @plugin.route('/play/latest/<program_name>')
 def play_latest(program_name):
     """The API interface to play the latest episode of a program"""
