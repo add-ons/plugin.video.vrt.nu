@@ -618,7 +618,7 @@ def convert_episode(item, destination=None):
     offtime = dateutil.parser.parse(episode.get('offTimeRaw'))
     ontime = dateutil.parser.parse(episode.get('onTimeRaw'))
     mpaa = episode.get('ageRaw') or ''
-    product_placement = True if episode.get('productPlacementShortValue') == 'pp' else False
+    product_placement = episode.get('productPlacementShortValue') == 'pp'
     region = episode.get('regionRaw')
     permalink = episode.get('permalink')
     plot = episode.get('description')
@@ -891,8 +891,7 @@ def get_featured(feature=None, end_cursor=''):
             programs = convert_programs(api_data, destination='featured', feature=feature)
             return programs, sort, ascending, 'tvshows'
 
-        elif feature.startswith('episode_'):
-            feature_id = feature.split('episode_')[1]
+        if feature.startswith('episode_'):
             list_id = 'static:/vrtnu/kijk.model.json@{}'.format(feature.split('episode_')[1])
             api_data = get_paginated_episodes(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
             episodes, sort, ascending = convert_episodes(api_data, destination='featured', feature=feature)
