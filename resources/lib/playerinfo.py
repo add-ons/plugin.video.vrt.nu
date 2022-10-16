@@ -56,7 +56,10 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
 
         # Update previous episode when using "Up Next"
         if self.path.startswith('plugin://plugin.video.vrt.nu/play/upnext'):
+            # Set last position complete
+            self.last_pos = self.total
             set_resumepoint(self.video_id, self.resumepoint_title, self.last_pos, self.total)
+            log(3, '[PlayerInfo {id}] Update previous episode resumepoint {position}/{total}', id=self.thread_id, position=self.last_pos, total=self.total)
 
         # Reset resumepoint data
         self.video_id = None
@@ -199,7 +202,10 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
     def update_position(self):
         """Update the player position, when possible"""
         try:
-            self.last_pos = self.getTime()
+            last_pos = self.getTime()
+            # Kodi Player sometimes returns a time of 0.0 and this causes unwanted behaviour with VRT MAX Resumepoints API.
+            if last_pos > 0.0:
+                self.last_pos = last_pos
         except RuntimeError:
             pass
 
