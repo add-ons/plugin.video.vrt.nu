@@ -10,7 +10,7 @@ except ImportError:  # Python 2
     from urllib import quote_plus
 
 from helperobjects import TitleItem
-from kodiutils import colour, get_setting_bool, get_setting_int, get_url_json, localize, log, url_for
+from kodiutils import colour, get_setting_bool, get_setting_int, get_url_json, has_credentials, localize, log, url_for
 from utils import from_unicode, reformat_image_url, shorten_link, to_unicode, url_to_program
 from graphql_data import EPISODE_TILE
 
@@ -153,6 +153,11 @@ def format_plot(plot, region, product_placement, mpaa, offtime, permalink):
     if permalink and get_setting_bool('showpermalink', default=False):
         plot = '{}\n\n[COLOR={{highlighted}}]{}[/COLOR]'.format(plot, permalink)
     return colour(plot)
+
+
+def resumepoints_is_activated():
+    """Is resumepoints activated in the menu and do we have credentials ?"""
+    return get_setting_bool('usefavorites', default=True) and get_setting_bool('useresumepoints', default=True) and has_credentials()
 
 
 def get_resumepoint_data(episode_id):
@@ -654,11 +659,17 @@ def convert_episode(item, destination=None):
     # Resumepoint
     position = episode.get('watchAction').get('resumePoint')
     total = episode.get('watchAction').get('resumePointTotal')
-    # Override Kodi watch status
     prop_dict = {}
-    if position and total and RESUMEPOINTS_MARGIN < position < total - RESUMEPOINTS_MARGIN:
-        prop_dict['resumetime'] = position
-        prop_dict['totaltime'] = total
+    playcount = -1
+
+    if resumepoints_is_activated():
+        # Override Kodi watch status
+        if position and total:
+            if RESUMEPOINTS_MARGIN < position < total - RESUMEPOINTS_MARGIN:
+                prop_dict['resumetime'] = position
+                prop_dict['totaltime'] = total
+            if position > total - RESUMEPOINTS_MARGIN:
+                playcount = 1
 
     return sort, ascending, is_favorite, TitleItem(
         label=label,
@@ -676,6 +687,7 @@ def convert_episode(item, destination=None):
             dateadded=dateadded,
             episode=episode_no,
             season=season_no,
+            playcount=playcount,
             plot=plot,
             plotoutline=plotoutline,
             mpaa=mpaa,
