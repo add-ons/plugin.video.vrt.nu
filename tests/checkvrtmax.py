@@ -20,7 +20,7 @@ def google_play_info():
     app_id = 'be.vrt.vrtnu'
     url = 'https://play.google.com/store/apps/details?id={}'.format(app_id)
     headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:103.0) Gecko/20100101 Firefox/103.0'}
-    req = requests.get(url, headers=headers)
+    req = requests.get(url, headers=headers, timeout=30)
 
     if req.status_code != 200:
         raise Exception('HTTP request failed with %s' % req.status_code)
