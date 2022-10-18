@@ -634,9 +634,18 @@ def convert_episode(item, destination=None):
     tag = [tag.title() for tag in episode.get('analytics').get('categories').split(',') if tag]
 
     # Art
-    fanart = reformat_image_url(episode.get('program').get('image').get('templateUrl'))
-    poster = reformat_image_url(episode.get('program').get('posterImage').get('templateUrl'))
-    thumb = reformat_image_url(episode.get('image').get('templateUrl'))
+    fanart = ''
+    fanart_img = episode.get('program').get('image')
+    if fanart_img:
+        fanart = reformat_image_url(fanart_img.get('templateUrl'))
+    poster = ''
+    poster_img = episode.get('program').get('posterImage')
+    if poster_img:
+        poster = reformat_image_url(poster_img.get('templateUrl'))
+    thumb = ''
+    thumb_img = episode.get('image')
+    if thumb_img:
+        thumb = reformat_image_url(thumb_img.get('templateUrl'))
 
     # Check favorite
     is_favorite = episode.get('favoriteAction').get('favorite')
