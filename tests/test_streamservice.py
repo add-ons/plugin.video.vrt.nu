@@ -84,6 +84,8 @@ class TestStreamService(unittest.TestCase):
         stream = self._streamservice.get_stream(video)
         self.assertTrue(stream is None)
 
+    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_get_mpd_live_stream_from_url_does_not_crash_returns_stream_and_licensekey(self):
         """Test getting MPEG-DASH stream from URL"""
         addon.settings['usedrm'] = True
@@ -95,6 +97,8 @@ class TestStreamService(unittest.TestCase):
             self.assertTrue(stream is not None)
             self.assertTrue(stream.license_key is not None)
 
+    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_get_mpd_live_stream_from_url_does_not_crash(self):
         """Test getting MPEG-DASH stream from URL"""
         addon.settings['usedrm'] = True

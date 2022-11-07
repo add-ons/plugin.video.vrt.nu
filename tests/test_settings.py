@@ -47,6 +47,8 @@ class TestSettings(unittest.TestCase):
         plugin.run(['plugin://plugin.video.vrt.nu/recent', '0', ''])
         plugin.run(['plugin://plugin.video.vrt.nu/recent', '0', ''])
 
+    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
     @staticmethod
     def test_httpcaching_disabled():
         """Test without http caching"""
@@ -56,6 +58,8 @@ class TestSettings(unittest.TestCase):
         plugin.run(['plugin://plugin.video.vrt.nu/offline', '0', ''])
         plugin.run(['plugin://plugin.video.vrt.nu/tvguide/date/today/canvas', '0', ''])
 
+    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
     @staticmethod
     def test_favorites_disabled():
         """Test without favorites"""
@@ -68,6 +72,8 @@ class TestSettings(unittest.TestCase):
         plugin.run(['plugin://plugin.video.vrt.nu/favorites/offline', '0', ''])
         plugin.run(['plugin://plugin.video.vrt.nu/favorites/manage', '0', ''])
 
+    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
     @staticmethod
     def test_resumepoints_disabled():
         """Test without resumepoints"""
@@ -82,6 +88,8 @@ class TestSettings(unittest.TestCase):
         """Test open_settings"""
         open_settings()
 
+    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
     @staticmethod
     def test_youtube_disabled():
         """Test with showyoutube disabled"""
