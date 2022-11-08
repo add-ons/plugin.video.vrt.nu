@@ -3,8 +3,8 @@
 """Implements a VRTPlayer class"""
 
 from __future__ import absolute_import, division, unicode_literals
-from api import (get_continue_episodes, get_featured, get_programs, get_episodes, get_favorite_programs, get_recent_episodes,
-                 get_offline_programs, get_single_episode)
+from api import (get_categories, get_continue_episodes, get_featured, get_programs, get_episodes, get_favorite_programs, get_recent_episodes,
+                 get_offline_programs, get_single_episode, get_latest_episode)
 from apihelper import ApiHelper
 from favorites import Favorites
 from helperobjects import TitleItem
@@ -213,7 +213,7 @@ class VRTPlayer:
             category_msgctxt = find_entry(CATEGORIES, 'id', category).get('msgctxt')
             show_listing(tvshow_items, category=category_msgctxt, sort='label', content='tvshows')
         else:
-            category_items = self._apihelper.list_categories()
+            category_items = get_categories()
             show_listing(category_items, category=30014, sort='unsorted', content='files')  # Categories
 
     def show_channels_menu(self, channel=None, end_cursor=''):
@@ -284,7 +284,7 @@ class VRTPlayer:
 
     def play_latest_episode(self, program_name):
         """A hidden feature in the VRT MAX add-on to play the latest episode of a program"""
-        video = self._apihelper.get_latest_episode(program_name)
+        video = get_latest_episode(program_name)
         if not video:
             log_error('Play latest episode failed, program {program_name}', program_name=program_name)
             ok_dialog(message=localize(30954))
@@ -318,9 +318,11 @@ class VRTPlayer:
 
     def play_upnext(self, episode_id):
         """Play the next episode of a program by episode_id"""
+        video = None
         title_item = get_single_episode(episode_id=episode_id)
-        video = dict(listitem=title_item, video_id=title_item.path.split('/')[5], publication_id=title_item.path.split('/')[6])
-        if not video:
+        if title_item:
+            video = dict(listitem=title_item, video_id=title_item.path.split('/')[5], publication_id=title_item.path.split('/')[6])
+        else:
             log_error('Play Up Next with episodeId {episode_id} failed', episode_id=episode_id)
             ok_dialog(message=localize(30954))
             end_of_directory()

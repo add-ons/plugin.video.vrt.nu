@@ -7,10 +7,8 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
-from apihelper import ApiHelper
-from favorites import Favorites
+from api import get_programs
 from search import Search
-from resumepoints import ResumePoints
 
 xbmc = __import__('xbmc')
 xbmcaddon = __import__('xbmcaddon')
@@ -19,55 +17,33 @@ xbmcplugin = __import__('xbmcplugin')
 xbmcvfs = __import__('xbmcvfs')
 
 addon = xbmcaddon.Addon()
-itemsperpage = int(addon.settings.get('itemsperpage'))
 
 
+@unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
+@unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
 class TestSearch(unittest.TestCase):
     """TestClass class"""
 
-    _favorites = Favorites()
-    _resumepoints = ResumePoints()
-    _apihelper = ApiHelper(_favorites, _resumepoints)
-
     def test_search_journaal(self):
         """Test search (journaal)"""
-        search_items, sort, ascending, content = self._apihelper.list_search('journaal', page=1)
-
-        # Test we get a non-empty search result
-        self.assertEqual(len(search_items), itemsperpage)
-        self.assertEqual(sort, 'dateadded')
-        self.assertFalse(ascending)
-        self.assertEqual(content, 'episodes')
-
-    def test_search_journaal_page2(self):
-        """Test search page 2 (journaal)"""
-        search_items, sort, ascending, content = self._apihelper.list_search('journaal', page=2)
-
-        # Test we get a non-empty search result
-        self.assertEqual(len(search_items), itemsperpage)
-        self.assertEqual(sort, 'dateadded')
-        self.assertFalse(ascending)
-        self.assertEqual(content, 'episodes')
-
-    def test_search_weer(self):
-        """Test search (weer)"""
-        search_items, sort, ascending, content = self._apihelper.list_search('weer', page=1)
-
-        # Test we get a non-empty search result
-        self.assertEqual(len(search_items), itemsperpage)
-        self.assertEqual(sort, 'dateadded')
-        self.assertFalse(ascending)
-        self.assertEqual(content, 'episodes')
-
-    def test_search_unicode(self):
-        """Test unicode search (René)"""
-        search_items, sort, ascending, content = self._apihelper.list_search('René', page=1)
+        search_items = get_programs(keywords='journaal')
 
         # Test we get a non-empty search result
         self.assertGreater(len(search_items), 0)
-        self.assertEqual(sort, 'dateadded')
-        self.assertFalse(ascending)
-        self.assertEqual(content, 'episodes')
+
+    def test_search_weer(self):
+        """Test search (weer)"""
+        search_items = get_programs(keywords='weer')
+
+        # Test we get a non-empty search result
+        self.assertGreater(len(search_items), 0)
+
+    def test_search_unicode(self):
+        """Test unicode search (René)"""
+        search_items = get_programs(keywords='René')
+
+        # Test we get a non-empty search result
+        self.assertGreater(len(search_items), 0)
 
     @staticmethod
     def test_search_empty():

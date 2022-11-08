@@ -8,9 +8,8 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
 from random import shuffle
-from apihelper import ApiHelper
+from api import get_recent_episodes, get_programs, get_offline_programs
 from favorites import Favorites
-from resumepoints import ResumePoints
 
 xbmc = __import__('xbmc')
 xbmcaddon = __import__('xbmcaddon')
@@ -27,29 +26,28 @@ class TestFavorites(unittest.TestCase):
     """TestCase class"""
 
     _favorites = Favorites()
-    _resumepoints = ResumePoints()
-    _apihelper = ApiHelper(_favorites, _resumepoints)
 
+    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_get_recent_episodes(self):
         """Test items, sort and order"""
-        episode_items, sort, ascending, content = self._apihelper.list_episodes(page=1, variety='recent')
-        self.assertEqual(len(episode_items), itemsperpage)
-        self.assertEqual(sort, 'dateadded')
-        self.assertFalse(ascending)
-        self.assertEqual(content, 'episodes')
-
-    def test_get_offline_episodes(self):
-        """Test items, sort and order"""
-        episode_items, sort, ascending, content = self._apihelper.list_episodes(page=1, variety='offline')
+        episode_items, sort, ascending, content = get_recent_episodes(use_favorites=True)
         self.assertTrue(episode_items)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
 
+    @staticmethod
+    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    def test_get_offline_programs():
+        """Test items, sort and order"""
+        get_offline_programs(use_favorites=True)
+
     @unittest.SkipTest
     def test_unfollow_all(self):
         """Test unfollowing all programs"""
-        programs = self._apihelper.get_tvshows()
+        programs = get_programs(channel='een')
         for program_item in programs:
             program_title = program_item.get('title')
             program_name = program_item.get('programName')
@@ -62,7 +60,7 @@ class TestFavorites(unittest.TestCase):
     def test_follow_number(self):
         """Test following X programs"""
         number = 118
-        programs = self._apihelper.get_tvshows()
+        programs = get_programs(channel='een')
         shuffle(programs)
         print('VRT MAX has %d programs available' % len(programs))
         for program_item in programs[:number]:

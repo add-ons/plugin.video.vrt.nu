@@ -23,7 +23,7 @@ jobs:
     - name: Check out ${{ github.sha }} from repository ${{ github.repository }}
       uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v4
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -41,14 +41,14 @@ jobs:
       run: python -m unittest -v test_search.TestSearch.test_search_journaal
       if: always()
     - name: TEST Suggest
-      run: python -m unittest -v test_apihelper.TestApiHelper.test_get_tvshows
+      run: python -m unittest -v test_api.TestApi.test_get_programs_category
       if: always()
     # FIXME: Add a better test for testing EPG
     - name: TEST TV guide
       run: python -m unittest -v test_tvguide.TestTVGuide.test_livetv_description
       if: always()
     - name: TEST Categories
-      run: python -m unittest -v test_apihelper.TestApiHelper.test_get_categories
+      run: python -m unittest -v test_api.TestApi.test_get_categories
       if: always()
     - name: TEST Check VRT MAX app release
       run: python tests/checkvrtmax.py

@@ -19,7 +19,7 @@
         "ketnet": "false",
         "ketnet-jr": "false",
         "klara": "true",
-        "itemsperpage": "20",
+        "itemsperpage": "50",
         "max_bandwidth": "10000000",
         "max_log_level": "3",
         "mnm": "true",
