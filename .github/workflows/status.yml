@@ -23,7 +23,7 @@ jobs:
     - name: Check out ${{ github.sha }} from repository ${{ github.repository }}
       uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v4
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip

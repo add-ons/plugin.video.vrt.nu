@@ -36,6 +36,7 @@ class TestRouting(unittest.TestCase):
         addon.run(['plugin://plugin.video.vrt.nu/noop', '0', ''])
         self.assertEqual(plugin.url_for(addon.noop), 'plugin://plugin.video.vrt.nu/noop')
 
+    @staticmethod
     @unittest.skipUnless(xbmc_addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_favorites():
@@ -45,8 +46,8 @@ class TestRouting(unittest.TestCase):
         addon.run(['plugin://plugin.video.vrt.nu/favorites/recent', '0', ''])
         addon.run(['plugin://plugin.video.vrt.nu/favorites/offline', '0', ''])
         addon.run(['plugin://plugin.video.vrt.nu/resumepoints/continue', '0', ''])
-        addon.run(['plugin://plugin.video.vrt.nu/favorites/docu', '0', ''])
-        addon.run(['plugin://plugin.video.vrt.nu/favorites/music', '0', ''])
+        #addon.run(['plugin://plugin.video.vrt.nu/favorites/docu', '0', ''])
+        #addon.run(['plugin://plugin.video.vrt.nu/favorites/music', '0', ''])
 
     def test_az_menu(self):
         """Programs menu: /programs"""

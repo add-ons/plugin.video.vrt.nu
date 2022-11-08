@@ -7,8 +7,7 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
-from apihelper import ApiHelper
-from favorites import Favorites
+from api import get_continue_episodes
 from resumepoints import ResumePoints
 
 xbmc = __import__('xbmc')
@@ -24,9 +23,7 @@ addon.settings['useresumepoints'] = True
 class TestResumePoints(unittest.TestCase):
     """TestCase class"""
 
-    _favorites = Favorites()
     _resumepoints = ResumePoints()
-    _apihelper = ApiHelper(_favorites, _resumepoints)
 
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
@@ -42,7 +39,7 @@ class TestResumePoints(unittest.TestCase):
             total=635,
         )
 
-        episode_items, sort, ascending, content = self._apihelper.list_episodes(page=1, variety='continue')
+        episode_items, sort, ascending, content = get_continue_episodes()
         self.assertTrue(episode_items)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
