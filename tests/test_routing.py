@@ -46,8 +46,8 @@ class TestRouting(unittest.TestCase):
         addon.run(['plugin://plugin.video.vrt.nu/favorites/recent', '0', ''])
         addon.run(['plugin://plugin.video.vrt.nu/favorites/offline', '0', ''])
         addon.run(['plugin://plugin.video.vrt.nu/resumepoints/continue', '0', ''])
-        #addon.run(['plugin://plugin.video.vrt.nu/favorites/docu', '0', ''])
-        #addon.run(['plugin://plugin.video.vrt.nu/favorites/music', '0', ''])
+        # addon.run(['plugin://plugin.video.vrt.nu/favorites/docu', '0', ''])
+        # addon.run(['plugin://plugin.video.vrt.nu/favorites/music', '0', ''])
 
     def test_az_menu(self):
         """Programs menu: /programs"""
