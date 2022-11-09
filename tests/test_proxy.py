@@ -15,6 +15,7 @@ xbmcaddon = __import__('xbmcaddon')
 xbmcgui = __import__('xbmcgui')
 xbmcvfs = __import__('xbmcvfs')
 
+xbmc_addon = xbmcaddon.Addon()
 plugin = addon.plugin
 
 
@@ -58,12 +59,16 @@ class TestProxy(unittest.TestCase):
         self.assertEqual(plugin.url_for(addon.categories), 'plugin://plugin.video.vrt.nu/categories')
 
     # Categories programs menu: '/categories/<category>'
+    @unittest.skipUnless(xbmc_addon.settings.get('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_categories_tvshow_menu(self):
         """Test Categories tvshow"""
         plugin.run(['plugin://plugin.video.vrt.nu/categories/docu', '0', ''])
         self.assertEqual(plugin.url_for(addon.categories, category='docu'), 'plugin://plugin.video.vrt.nu/categories/docu')
 
     # Favorites menu: '/favorites'
+    @unittest.skipUnless(xbmc_addon.settings.get('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_favorites(self):
         """Test Favorites menu"""
         plugin.run(['plugin://plugin.video.vrt.nu/favorites/programs', '0', ''])

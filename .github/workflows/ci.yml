@@ -61,8 +61,7 @@ jobs:
     # Python 2.7 and Python 3.5 are no longer supported by proxy.py
     - name: Start proxy server, when supported
       run: python -m proxy --hostname 127.0.0.1 --log-level DEBUG &
-      if: matrix.python-version == '3.6' || matrix.python-version == '3.7' || matrix.python-version == '3.8' || matrix.python-version == '3.9'
-      #if: contains(['3.6', '3.7', '3.8', '3.9'], matrix.python-version)
+      if: contains(fromJson('["3.6", "3.7", "3.8", "3.9", "3.10"]'), matrix.python-version)
     - name: Run unit tests
       run: coverage run -m unittest discover
       env:
@@ -84,7 +83,7 @@ jobs:
       continue-on-error: true
     - name: Analyze with SonarCloud
       if: matrix.os == 'ubuntu-latest'
-      uses: SonarSource/sonarcloud-github-action@v1.4
+      uses: SonarSource/sonarcloud-github-action@v1.7
       with:
         args: >
           -Dsonar.organization=add-ons
