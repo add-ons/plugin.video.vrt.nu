@@ -59,9 +59,12 @@ jobs:
       run: make check-translations
       if: matrix.os == 'ubuntu-latest'
     # Python 2.7 and Python 3.5 are no longer supported by proxy.py
-    - name: Start proxy server, when supported
+    - name: Start proxy server, when supported (linux)
       run: python -m proxy --hostname 127.0.0.1 --log-level DEBUG &
-      if: contains(fromJson('["3.6", "3.7", "3.8", "3.9", "3.10"]'), matrix.python-version)
+      if: contains(fromJson('["3.6", "3.7", "3.8", "3.9", "3.10"]'), matrix.python-version) && matrix.os == 'ubuntu-latest'
+    - name: Start proxy server, when supported (windows)
+      run: Start-Process python -ArgumentList '-m proxy --hostname 127.0.0.1 --log-level DEBUG'
+      if: contains(fromJson('["3.6", "3.7", "3.8", "3.9", "3.10"]'), matrix.python-version) && matrix.os == 'windows-latest'
     - name: Run unit tests
       run: coverage run -m unittest discover
       env:
