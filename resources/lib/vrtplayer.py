@@ -308,8 +308,11 @@ class VRTPlayer:
 
     def play_episode_by_episode_id(self, episode_id):
         """Play an episode of a program given the episode_id"""
-        video = self._apihelper.get_single_episode(episode_id=episode_id)
-        if not video:
+        video = None
+        title_item = get_single_episode(episode_id=episode_id)
+        if title_item:
+            video = dict(listitem=title_item, video_id=title_item.path.split('/')[5], publication_id=title_item.path.split('/')[6])
+        else:
             log_error('Play episode by episode_id failed, episode_id {episode_id}', episode_id=episode_id)
             ok_dialog(message=localize(30954))
             end_of_directory()

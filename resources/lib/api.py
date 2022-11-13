@@ -24,10 +24,7 @@ def get_sort(program_type):
     """Get sorting method"""
     sort = 'unsorted'
     ascending = True
-    if program_type == 'mixed_episodes':
-        sort = 'dateadded'
-        ascending = False
-    elif program_type == 'daily':
+    if program_type in ('mixed_episodes', 'daily'):
         sort = 'dateadded'
         ascending = False
     elif program_type == 'oneoff':
@@ -103,7 +100,6 @@ def format_label(program_title, episode_title, program_type, ontime=None, is_fav
 def format_plot(plot, region, product_placement, mpaa, offtime, permalink):
     """Format plot"""
     from datetime import datetime
-    import dateutil.parser
     import dateutil.tz
 
     # Add additional metadata to plot
@@ -686,18 +682,17 @@ def convert_programs(api_data, destination, use_favorites=False, **kwargs):
 
         # FIXME: find a better way to disable more when favorites are filtered
         page_size = get_setting_int('itemsperpage', default=50)
-        if len(programs) == page_size:
-            if page_info.get('hasNextPage'):
-                end_cursor = page_info.get('endCursor')
-                # Add 'More...' entry at the end
-                programs.append(
-                    TitleItem(
-                        label=colour(localize(30300)),
-                        path=url_for(destination, end_cursor=end_cursor, **kwargs),
-                        art_dict=dict(thumb='DefaultInProgressShows.png'),
-                        info_dict={},
-                    )
+        if len(programs) == page_size and page_info.get('hasNextPage'):
+            end_cursor = page_info.get('endCursor')
+            # Add 'More...' entry at the end
+            programs.append(
+                TitleItem(
+                    label=colour(localize(30300)),
+                    path=url_for(destination, end_cursor=end_cursor, **kwargs),
+                    art_dict=dict(thumb='DefaultInProgressShows.png'),
+                    info_dict={},
                 )
+            )
     return programs
 
 
@@ -846,18 +841,17 @@ def convert_episodes(api_data, destination, use_favorites=False, **kwargs):
 
         # FIXME: find a better way to disable more when favorites are filtered
         page_size = get_setting_int('itemsperpage', default=50)
-        if len(episodes) == page_size:
-            if page_info.get('hasNextPage'):
-                end_cursor = page_info.get('endCursor')
-                # Add 'More...' entry at the end
-                episodes.append(
-                    TitleItem(
-                        label=colour(localize(30300)),
-                        path=url_for(destination, end_cursor=end_cursor, **kwargs),
-                        art_dict=dict(thumb='DefaultInProgressShows.png'),
-                        info_dict={},
-                    )
+        if len(episodes) == page_size and page_info.get('hasNextPage'):
+            end_cursor = page_info.get('endCursor')
+            # Add 'More...' entry at the end
+            episodes.append(
+                TitleItem(
+                    label=colour(localize(30300)),
+                    path=url_for(destination, end_cursor=end_cursor, **kwargs),
+                    art_dict=dict(thumb='DefaultInProgressShows.png'),
+                    info_dict={},
                 )
+            )
     return episodes, sort, ascending
 
 
@@ -1051,14 +1045,15 @@ def get_featured(feature=None, end_cursor=''):
             if content_type in ('program', 'episode'):
                 title = items.get(item).get('title')
                 feature_id = items.get(item).get('id')
-                path = url_for('featured', feature='{}_{}'.format(content_type, feature_id))
-                label = title
                 featured.append(
                     TitleItem(
-                        label=label,
-                        path=path,
+                        label=title,
+                        path=url_for('featured', feature='{}_{}'.format(content_type, feature_id)),
+                        art_dict=dict(thumb='DefaultCountry.png'),
                         info_dict=dict(
-                            title=label,
+                            title=title,
+                            plot='[B]%s[/B]' % title,
+                            studio='VRT',
                             mediatype='season',
                         ),
                         is_playable=False,
