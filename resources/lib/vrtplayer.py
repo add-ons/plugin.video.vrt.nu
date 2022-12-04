@@ -3,7 +3,7 @@
 """Implements a VRTPlayer class"""
 
 from __future__ import absolute_import, division, unicode_literals
-from api import (get_categories, get_continue_episodes, get_featured, get_programs, get_episodes, get_favorite_programs, get_recent_episodes,
+from api import (get_all_programs, get_categories, get_continue_episodes, get_featured, get_programs, get_episodes, get_favorite_programs, get_recent_episodes,
                  get_offline_programs, get_single_episode, get_latest_episode)
 from apihelper import ApiHelper
 from favorites import Favorites
@@ -200,8 +200,9 @@ class VRTPlayer:
         if use_favorites:
             tvshow_items = get_favorite_programs(end_cursor=end_cursor)
             show_listing(tvshow_items, category=30440, sort='label', content='tvshows')  # A-Z
-        # FIXME: No API method to get all programs
-        end_of_directory()
+        else:
+            tvshow_items = get_all_programs()
+            show_listing(tvshow_items, category=30440, sort='label', content='tvshows')  # A-Z
 
     def show_category_menu(self, category=None, end_cursor=''):
         """The VRT MAX add-on 'Categories' listing menu"""
