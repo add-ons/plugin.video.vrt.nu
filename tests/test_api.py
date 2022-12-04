@@ -61,7 +61,7 @@ class TestApi(unittest.TestCase):
     def test_get_recent_episodes(self):
         """Test items, sort and order"""
         episode_items, sort, ascending, content = get_recent_episodes()
-        self.assertEqual(len(episode_items), itemsperpage + 1)
+        self.assertTrue(episode_items)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
