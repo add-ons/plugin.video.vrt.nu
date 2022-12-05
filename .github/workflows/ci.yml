@@ -17,7 +17,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest, windows-latest ]
-        python-version: ['3.8', '3.9', '3.10' ]
+        python-version: ['3.8', '3.9', '3.10', '3.11' ]
         include:
           # End-of-life Python versions are not available anymore with ubuntu-latest
           - os: ubuntu-20.04
@@ -31,7 +31,7 @@ jobs:
             python-version: '2.7'
     steps:
     - name: Check out ${{ github.sha }} from repository ${{ github.repository }}
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Setup PYTHONPATH (windows)
       if: contains(matrix.os, 'windows')
       run: echo "PYTHONPATH=${env:PYTHONPATH};${env:GITHUB_WORKSPACE};${env:GITHUB_WORKSPACE}\resources\lib;${env:GITHUB_WORKSPACE}\tests" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf-8 -Append
@@ -59,10 +59,10 @@ jobs:
     # Python 2.7 and Python 3.5 are no longer supported by proxy.py
     - name: Start proxy server, when supported (linux)
       run: python -m proxy --hostname 127.0.0.1 --log-level DEBUG &
-      if: contains(fromJson('["3.6", "3.7", "3.8", "3.9", "3.10"]'), matrix.python-version) && contains(matrix.os, 'ubuntu')
+      if: contains(fromJson('["3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]'), matrix.python-version) && contains(matrix.os, 'ubuntu')
     - name: Start proxy server, when supported (windows)
       run: Start-Process python -ArgumentList '-m proxy --hostname 127.0.0.1 --log-level DEBUG'
-      if: contains(fromJson('["3.6", "3.7", "3.8", "3.9", "3.10"]'), matrix.python-version) && contains(matrix.os, 'windows')
+      if: contains(fromJson('["3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]'), matrix.python-version) && contains(matrix.os, 'windows')
     - name: Run unit tests
       run: coverage run -m unittest discover
       env:
@@ -80,11 +80,11 @@ jobs:
       if: always()
     - name: Upload code coverage to CodeCov
       if: contains(matrix.os, 'ubuntu')
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v3
       continue-on-error: true
     - name: Analyze with SonarCloud
       if: contains(matrix.os, 'ubuntu')
-      uses: SonarSource/sonarcloud-github-action@v1.7
+      uses: SonarSource/sonarcloud-github-action@v1.8
       with:
         args: >
           -Dsonar.organization=add-ons
