@@ -677,7 +677,7 @@ def convert_programs(api_data, destination, use_favorites=False, **kwargs):
 
         # Paging
         # Remove kwargs with None value
-        kwargs = {k: v for k, v in kwargs.items() if v is not None}
+        kwargs = {k: v for k, v in list(kwargs.items()) if v is not None}
         page_info = api_data.get('data').get('list').get('paginated').get('pageInfo')
 
         # FIXME: find a better way to disable more when favorites are filtered
@@ -836,7 +836,7 @@ def convert_episodes(api_data, destination, use_favorites=False, **kwargs):
 
         # Paging
         # Remove kwargs with None value
-        kwargs = {k: v for k, v in kwargs.items() if v is not None}
+        kwargs = {k: v for k, v in list(kwargs.items()) if v is not None}
         page_info = api_data.get('data').get('list').get('paginated').get('pageInfo')
 
         # FIXME: find a better way to disable more when favorites are filtered
