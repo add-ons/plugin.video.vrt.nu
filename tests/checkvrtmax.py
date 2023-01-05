@@ -39,8 +39,8 @@ def google_play_info():
             key = key.group(1)
             info = json.loads(value.group(1))
             if key == '5':
-                changelog = info[1][2][144][1][1]
-                published = info[1][2][145][0][0]
+                changelog = info[1][2][144][1][1] if info[1][2][144] else ''
+                published = info[1][2][145][0][0] if info[1][2][145] else ''
 
     if version is None or published is None:
         print("HTTP request returned: %s" % req.text)
