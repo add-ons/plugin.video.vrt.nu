@@ -104,12 +104,6 @@ class TestSettings(unittest.TestCase):
         addon.settings['showfanart'] = False
         plugin.run(['plugin://plugin.video.vrt.nu/categories', '0', ''])
 
-    @staticmethod
-    def test_showoneoff_disabled():
-        """Test with showoneofff disabled"""
-        addon.settings['showoneoff'] = False
-        plugin.run(['plugin://plugin.video.vrt.nu/programs', '0', ''])
-
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_ondemand_stream(self):

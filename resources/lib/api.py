@@ -1062,36 +1062,6 @@ def get_featured(feature=None, end_cursor=''):
     return featured, sort, ascending, content
 
 
-def get_all_programs():
-    """Return an a-z list of all programs"""
-    programs = []
-    az_json = get_url_json('https://www.vrt.be/vrtnu/a-z/jcr:content/par/glossary.model.json')
-    if az_json is not None:
-        for program in az_json.get('items'):
-            if program.get('data').get('program').get('available'):
-                title = program.get('title')
-                thumb = None
-                plot = None
-                if program.get('image'):
-                    thumb = reformat_image_url(program.get('image').get('src'))
-                    plot = program.get('image').get('alt')
-                programs.append(
-                    TitleItem(
-                        label=title,
-                        path=url_for('programs', program_name=program.get('name')),
-                        art_dict=dict(thumb=thumb),
-                        info_dict=dict(
-                            title=title,
-                            plot=plot,
-                            studio='VRT',
-                            mediatype='tvshow',
-                        ),
-                        is_playable=False,
-                    )
-                )
-    return programs
-
-
 def get_categories_data():
     """Return a list of categories"""
     cache_file = 'categories.json'

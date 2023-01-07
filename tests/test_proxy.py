@@ -46,12 +46,6 @@ class TestProxy(unittest.TestCase):
         plugin.run(['plugin://plugin.video.vrt.nu/cache/delete', '0', ''])
         self.assertEqual(plugin.url_for(addon.delete_cache), 'plugin://plugin.video.vrt.nu/cache/delete')
 
-    # A-Z menu: '/programs'
-    def test_az_menu(self):
-        """Test Programs menu"""
-        plugin.run(['plugin://plugin.video.vrt.nu/programs', '0', ''])
-        self.assertEqual(plugin.url_for(addon.programs), 'plugin://plugin.video.vrt.nu/programs')
-
     # Categories menu: '/categories'
     def test_categories_menu(self):
         """Test Categories menu"""

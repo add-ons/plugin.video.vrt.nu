@@ -144,7 +144,6 @@ def resumepoints_refresh():
     notification(message=localize(30983))
 
 
-@plugin.route('/programs')
 @plugin.route('/programs/<program_name>')
 @plugin.route('/programs/<program_name>/<season_name>')
 def programs(program_name=None, season_name=None):
@@ -152,8 +151,6 @@ def programs(program_name=None, season_name=None):
     from vrtplayer import VRTPlayer
     if program_name:
         VRTPlayer().show_episodes_menu(program_name=program_name, season_name=season_name)
-    else:
-        VRTPlayer().show_tvshow_menu()
 
 
 @plugin.route('/categories')
