@@ -23,7 +23,7 @@ def google_play_info():
     req = requests.get(url, headers=headers, timeout=30)
 
     if req.status_code != 200:
-        raise Exception('HTTP request failed with %s' % req.status_code)
+        raise requests.exceptions.HTTPError('HTTP request failed with %s' % req.status_code)
 
     regex = re.compile(r'<script[\s\S]*?AF_initDataCallback\(([\s\S]*?\));<\/script>')
     match = re.findall(regex, req.text)
@@ -45,9 +45,9 @@ def google_play_info():
     if version is None or published is None:
         print("HTTP request returned: %s" % req.text)
         print("ERROR: Could not find 'version' or 'published' from %s" % json.dumps(match, indent=2))
-        raise Exception("Could not find 'version' or 'published'")
+        raise TypeError("Could not find 'version' or 'published'")
 
-    return dict(version=version, changelog=changelog, published=published)
+    return {'version': version, 'changelog': changelog, 'published': published}
 
 
 def run():
