@@ -110,7 +110,7 @@ class TestSettings(unittest.TestCase):
         """Test ondemand stream"""
         addon.settings['usedrm'] = False
         addon.settings['useinputstreamadaptive'] = False
-        video = dict(video_url='https://www.vrt.be/vrtmax/a-z/winteruur/1/winteruur-s1a1/')
+        video = {'video_url': 'https://www.vrt.be/vrtmax/a-z/winteruur/1/winteruur-s1a1/'}
         stream = self._streamservice.get_stream(video)
         # NOTE: Testing live streams only works within Europe
         if os.environ.get('GITHUB_ACTIONS') != 'true':
@@ -122,7 +122,7 @@ class TestSettings(unittest.TestCase):
         """Test with usedrm disabled"""
         addon.settings['usedrm'] = False
         addon.settings['useinputstreamadaptive'] = True
-        video = dict(video_url='https://www.vrt.be/vrtmax/a-z/winteruur/1/winteruur-s1a1/')
+        video = {'video_url': 'https://www.vrt.be/vrtmax/a-z/winteruur/1/winteruur-s1a1/'}
         stream = self._streamservice.get_stream(video)
         # NOTE: Testing live streams only works within Europe
         if os.environ.get('GITHUB_ACTIONS') != 'true':
@@ -134,7 +134,7 @@ class TestSettings(unittest.TestCase):
         """Test with useinputstreamadaptive disabled"""
         addon.settings['usedrm'] = True
         addon.settings['useinputstreamadaptive'] = False
-        video = dict(video_url='https://www.vrt.be/vrtmax/a-z/winteruur/1/winteruur-s1a1/')
+        video = {'video_url': 'https://www.vrt.be/vrtmax/a-z/winteruur/1/winteruur-s1a1/'}
         stream = self._streamservice.get_stream(video)
         # NOTE: Testing live streams only works within Europe
         if os.environ.get('GITHUB_ACTIONS') != 'true':
@@ -146,7 +146,7 @@ class TestSettings(unittest.TestCase):
         """Test with usedrm and useinputstreamadaptive disabled"""
         addon.settings['usedrm'] = True
         addon.settings['useinputstreamadaptive'] = True
-        video = dict(video_url='https://www.vrt.be/vrtmax/a-z/winteruur/1/winteruur-s1a1/')
+        video = {'video_url': 'https://www.vrt.be/vrtmax/a-z/winteruur/1/winteruur-s1a1/'}
         stream = self._streamservice.get_stream(video)
         # NOTE: Testing live streams only works within Europe
         if os.environ.get('GITHUB_ACTIONS') != 'true':

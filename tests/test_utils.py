@@ -102,15 +102,15 @@ class TestUtils(unittest.TestCase):
     def test_play_url_to_id(self):
         """Test converting play_url to play_id"""
         url = 'plugin://plugin.video.vrt.nu/play/id/vid-5b12c0f6-b8fe-426f-a600-557f501f3be9/pbs-pub-7e2764cf-a8c0-4e78-9cbc-46d39381c237'
-        play_id = dict(video_id='vid-5b12c0f6-b8fe-426f-a600-557f501f3be9')
+        play_id = {'video_id': 'vid-5b12c0f6-b8fe-426f-a600-557f501f3be9'}
         self.assertEqual(play_id, utils.play_url_to_id(url))
 
         url = 'plugin://plugin.video.vrt.nu/play/upnext/vid-271d7238-b7f2-4a3c-b3c7-17a5110be71a'
-        play_id = dict(video_id='vid-271d7238-b7f2-4a3c-b3c7-17a5110be71a')
+        play_id = {'video_id': 'vid-271d7238-b7f2-4a3c-b3c7-17a5110be71a'}
         self.assertEqual(play_id, utils.play_url_to_id(url))
 
         url = 'plugin://plugin.video.vrt.nu/play/url/https://www.vrt.be/vrtmax/kanalen/canvas/'
-        play_id = dict(video_url='//www.vrt.be/vrtmax/kanalen/canvas/')
+        play_id = {'video_url': '//www.vrt.be/vrtmax/kanalen/canvas/'}
         self.assertEqual(play_id, utils.play_url_to_id(url))
 
     def test_shorten_link(self):
@@ -141,22 +141,22 @@ class TestUtils(unittest.TestCase):
     def test_find_entry(self):
         """Test find_entry"""
         haystack = [
-            dict(foo='foo', bar='bar', baz='baz'),
-            dict(foo='bar', bar='baz', baz='foo'),
-            dict(foo='baz', bar='foo', baz='bar'),
+            {'foo': 'foo', 'bar': 'bar', 'baz': 'baz'},
+            {'foo': 'bar', 'bar': 'baz', 'baz': 'foo'},
+            {'foo': 'baz', 'bar': 'foo', 'baz': 'bar'},
         ]
 
         needle = utils.find_entry(haystack, 'foo', 'baz')
-        self.assertEqual(needle, dict(foo='baz', bar='foo', baz='bar'))
+        self.assertEqual(needle, {'foo': 'baz', 'bar': 'foo', 'baz': 'bar'})
 
         needle = utils.find_entry(haystack, 'bar', 'baz', None)
-        self.assertEqual(needle, dict(foo='bar', bar='baz', baz='foo'))
+        self.assertEqual(needle, {'foo': 'bar', 'bar': 'baz', 'baz': 'foo'})
 
         needle = utils.find_entry(haystack, 'foo', 'blah', None)
         self.assertEqual(needle, None)
 
-        needle = utils.find_entry(haystack, 'foo', 'blah', dict(foo='f', bar='r', baz='z'))
-        self.assertEqual(needle, dict(foo='f', bar='r', baz='z'))
+        needle = utils.find_entry(haystack, 'foo', 'blah', {'foo': 'f', 'bar': 'r', 'baz': 'z'})
+        self.assertEqual(needle, {'foo': 'f', 'bar': 'r', 'baz': 'z'})
 
     def test_youtube_to_plugin_url(self):
         """youtube_to_plugin_url"""

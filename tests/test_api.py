@@ -125,8 +125,8 @@ class TestApi(unittest.TestCase):
     def test_get_categories(self):
         """Test to ensure our local hardcoded categories conforms to online categories"""
         # Remove thumbnails from scraped categories first
-        online_categories = [dict(id=c['id'], name=c['name']) for c in get_online_categories()]
-        local_categories = [dict(id=c['id'], name=c['name']) for c in CATEGORIES]
+        online_categories = [{'id': c['id'], 'name': c['name']} for c in get_online_categories()]
+        local_categories = [{'id': c['id'], 'name': c['name']} for c in CATEGORIES]
         print('Categories:')
         for category in online_categories:
             print('%s | %s' % (kodi_to_ansi(category.get('name')), kodi_to_ansi(category.get('id'))))

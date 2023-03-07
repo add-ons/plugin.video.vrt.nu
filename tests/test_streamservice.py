@@ -41,7 +41,11 @@ class TestStreamService(unittest.TestCase):
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_get_ondemand_stream_from_invalid_url(self):
         """Test getting stream from invalid URL"""
-        video = dict(video_url='https://www.vrt.be/vrtmax/a-z/vrt-nws-laat/2017/vrt-nws-laat-d20170501/', video_id=None, publication_id=None)
+        video = {
+            'video_url': 'https://www.vrt.be/vrtmax/a-z/vrt-nws-laat/2017/vrt-nws-laat-d20170501/',
+            'video_id': None,
+            'publication_id': None,
+        }
         try:
             stream = self._streamservice.get_stream(video)
         except HTTPError:
@@ -53,7 +57,11 @@ class TestStreamService(unittest.TestCase):
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_get_ondemand_stream_from_invalid_videoid(self):
         """Test getting stream from invalid video_id"""
-        video = dict(video_url=None, video_id='invalid_vid-4662107f-fc26-4f66-9076-984ee4bb80ee', publication_id='pbs-pub-be74b2e3-5054-4e4c-b8aa-42e9cd4877b6')
+        video = {
+            'video_url': None,
+            'video_id': 'invalid_vid-4662107f-fc26-4f66-9076-984ee4bb80ee',
+            'publication_id': 'pbs-pub-be74b2e3-5054-4e4c-b8aa-42e9cd4877b6',
+        }
         try:
             stream = self._streamservice.get_stream(video)
         except HTTPError:
@@ -65,9 +73,11 @@ class TestStreamService(unittest.TestCase):
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_get_ondemand_stream_from_url_gets_stream_does_not_crash(self):
         """Test getting stream from URL does not crash"""
-        video = dict(video_url=yesterday.strftime('https://www.vrt.be/vrtmax/a-z/vrt-nws-journaal/%Y/vrt-nws-journaal-vrt-nws-journaal-19u-%Y%m%d/'),
-                     video_id=None,
-                     publication_id=None)
+        video = {
+            'video_url': yesterday.strftime('https://www.vrt.be/vrtmax/a-z/vrt-nws-journaal/%Y/vrt-nws-journaal-vrt-nws-journaal-19u-%Y%m%d/'),
+            'video_id': None,
+            'publication_id': None,
+        }
         stream = self._streamservice.get_stream(video)
         # NOTE: Testing live streams only works within Europe
         if os.environ.get('GITHUB_ACTIONS') != 'true':
@@ -78,9 +88,11 @@ class TestStreamService(unittest.TestCase):
     def test_get_ondemand_stream_from_from_videoid_geoblocked(self):
         """Test getting stream from geoblocked video_id"""
         # Undercover S01E01
-        video = dict(video_url=None,
-                     video_id='vid-b77b58cb-eebf-4b00-b772-0d6b4caad6a5',
-                     publication_id=None)
+        video = {
+            'video_url': None,
+            'video_id': 'vid-b77b58cb-eebf-4b00-b772-0d6b4caad6a5',
+            'publication_id': None,
+        }
         stream = self._streamservice.get_stream(video)
         self.assertTrue(stream is None)
 
@@ -90,7 +102,11 @@ class TestStreamService(unittest.TestCase):
         """Test getting MPEG-DASH stream from URL"""
         addon.settings['usedrm'] = True
         addon.settings['useinputstreamadaptive'] = True
-        video = dict(video_url=CHANNELS[1]['live_stream'], video_id=None, publication_id=None)
+        video = {
+            'video_url': CHANNELS[1]['live_stream'],
+            'video_id': None,
+            'publication_id': None,
+        }
         stream = self._streamservice.get_stream(video)
         # NOTE: Testing live streams only works within Europe
         if os.environ.get('GITHUB_ACTIONS') != 'true':
@@ -103,7 +119,11 @@ class TestStreamService(unittest.TestCase):
         """Test getting MPEG-DASH stream from URL"""
         addon.settings['usedrm'] = True
         addon.settings['useinputstreamadaptive'] = True
-        video = dict(video_url=CHANNELS[0]['live_stream'], video_id=None, publication_id=None)
+        video = {
+            'video_url': CHANNELS[0]['live_stream'],
+            'video_id': None,
+            'publication_id': None,
+        }
         stream = self._streamservice.get_stream(video)
         # NOTE: Testing live streams only works within Europe
         if os.environ.get('GITHUB_ACTIONS') != 'true':
@@ -113,13 +133,20 @@ class TestStreamService(unittest.TestCase):
         """Test getting MPEG-DASH stream from URL"""
         addon.settings['usedrm'] = True
         addon.settings['useinputstreamadaptive'] = True
-        video = dict(video_url=None, video_id=CHANNELS[1]['live_stream_id'], publication_id=None)
+        video = {
+            'video_url': None,
+            'video_id': CHANNELS[1]['live_stream_id'],
+            'publication_id': None
+        }
         stream = self._streamservice.get_stream(video)
         # NOTE: Testing live streams only works within Europe
         if os.environ.get('GITHUB_ACTIONS') != 'true':
             self.assertTrue(stream is not None)
-
-        video = dict(video_url=None, video_id=CHANNELS[3]['live_stream_id'], publication_id=None)
+        video = {
+            'video_url': None,
+            'video_id': CHANNELS[3]['live_stream_id'],
+            'publication_id': None,
+        }
         stream = self._streamservice.get_stream(video)
         # NOTE: Testing live streams only works within Europe
         if os.environ.get('GITHUB_ACTIONS') != 'true':

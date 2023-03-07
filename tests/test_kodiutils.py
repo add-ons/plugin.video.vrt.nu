@@ -86,11 +86,11 @@ class TestKodiUtils(unittest.TestCase):
         ret = kodiutils.jsonrpc(method='Input.Down')
         self.assertTrue(isinstance(ret, dict))
 
-        ret = kodiutils.jsonrpc(dict(method='Input.Down'))
+        ret = kodiutils.jsonrpc({'method': 'Input.Down'})
         self.assertTrue(isinstance(ret, list))
         self.assertEqual(len(ret), 1)
 
-        ret = kodiutils.jsonrpc(dict(method='Input.Down'), dict(method='Player.Open'))
+        ret = kodiutils.jsonrpc({'method': 'Input.Down'}, {'method': 'Player.Open'})
         self.assertTrue(isinstance(ret, list))
         self.assertEqual(len(ret), 2)
 
