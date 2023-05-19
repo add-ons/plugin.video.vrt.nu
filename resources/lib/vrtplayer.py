@@ -242,11 +242,11 @@ class VRTPlayer:
         channel_items = self._apihelper.list_channels()
         show_listing(channel_items, category=30018, cache=False)
 
-    def show_episodes_menu(self, program_name, season_name=None):
+    def show_episodes_menu(self, program_name, season_name=None, end_cursor=''):
         """The VRT MAX add-on episodes listing menu"""
         self._favorites.refresh(ttl=ttl('indirect'))
         self._resumepoints.refresh(ttl=ttl('indirect'))
-        episodes, sort, ascending, content = get_episodes(program_name=program_name, season_name=season_name)
+        episodes, sort, ascending, content = get_episodes(program_name=program_name, season_name=season_name, end_cursor=end_cursor)
         # FIXME: Translate program in Program Title
         show_listing(episodes, category=program_name.title(), sort=sort, ascending=ascending, content=content, cache=False)
 

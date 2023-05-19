@@ -985,7 +985,7 @@ def get_episodes(program_name, season_name=None, end_cursor=''):
     if program_name and season_name:
         list_id = 'static:/vrtnu/a-z/{}/{}.episodes-list.json'.format(program_name, season_name)
         api_data = get_paginated_episodes(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
-        episodes, sort, ascending = convert_episodes(api_data, destination='noop')
+        episodes, sort, ascending = convert_episodes(api_data, destination='programs', program_name=program_name, season_name=season_name)
         return episodes, sort, ascending, 'episodes'
     return None
 
