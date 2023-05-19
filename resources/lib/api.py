@@ -12,7 +12,7 @@ except ImportError:  # Python 2
 from helperobjects import TitleItem
 from kodiutils import (colour, get_cache, get_setting_bool, get_setting_int, get_url_json, has_credentials,
                        localize, localize_from_data, log, update_cache, url_for)
-from utils import add_https_proto, from_unicode, reformat_image_url, shorten_link, to_unicode, url_to_program
+from utils import from_unicode, reformat_image_url, shorten_link, to_unicode, url_to_program
 from graphql_data import EPISODE_TILE
 
 GRAPHQL_URL = 'https://www.vrt.be/vrtnu-api/graphql/v1'
@@ -1107,14 +1107,196 @@ def get_categories():
 def get_online_categories():
     """Return a list of categories from the VRT MAX website"""
     categories = []
-    categories_json = get_url_json('https://www.vrt.be/vrtmax/categorieen/jcr:content/par/categories.model.json')
-    if categories_json is not None:
-        for category in categories_json.get('items'):
-            categories.append({
-                'id': category.get('name'),
-                'thumbnail': add_https_proto(category.get('image').get('src')),
-                'name': category.get('title'),
-            })
+    from tokenresolver import TokenResolver
+    access_token = TokenResolver().get_token('vrtnu-site_profile_at')
+    categories_json = {}
+    if access_token:
+        headers = {
+            'Authorization': 'Bearer ' + access_token,
+            'Content-Type': 'application/json',
+            'x-vrt-client-name': 'MobileAndroid',
+        }
+        graphql_query = """
+            query Search(
+              $q: String
+              $mediaType: MediaType
+              $facets: [SearchFacetInput]
+            ) {
+              uiSearch(input: { q: $q, mediaType: $mediaType, facets: $facets }) {
+                __typename
+                ... on IIdentifiable {
+                  objectId
+                  __typename
+                }
+                ... on IComponent {
+                  componentType
+                  __typename
+                }
+                ...staticTileListFragment
+              }
+            }
+            fragment staticTileListFragment on StaticTileList {
+              __typename
+              id: objectId
+              objectId
+              listId
+              title
+              componentType
+              tileContentType
+              tileOrientation
+              displayType
+              expires
+              tileVariant
+              sort {
+                icon
+                order
+                title
+                __typename
+              }
+              actionItems {
+                ...actionItem
+                __typename
+              }
+              header {
+                action {
+                  ...action
+                  __typename
+                }
+                brand
+                brandLogos {
+                  height
+                  mono
+                  primary
+                  type
+                  width
+                  __typename
+                }
+                ctaText
+                description
+                image {
+                  ...imageFragment
+                  __typename
+                }
+                type
+                compactLayout
+                backgroundColor
+                textTheme
+                __typename
+              }
+              bannerSize
+              items {
+                ...tileFragment
+                __typename
+              }
+              ... on IComponent {
+                __typename
+              }
+            }
+            fragment tileFragment on Tile {
+              ... on IIdentifiable {
+                __typename
+                objectId
+              }
+              ... on IComponent {
+                title
+                componentType
+                __typename
+              }
+              ... on ITile {
+                title
+                action {
+                  ...action
+                  __typename
+                }
+                image {
+                  ...imageFragment
+                  __typename
+                }
+                __typename
+              }
+              ... on BannerTile {
+                id
+                backgroundColor
+                textTheme
+                active
+                description
+                __typename
+              }
+            }
+            fragment actionItem on ActionItem {
+              __typename
+              id: objectId
+              accessibilityLabel
+              action {
+                ...action
+                __typename
+              }
+              active
+              analytics {
+                __typename
+                eventId
+                interaction
+                interactionDetail
+                pageProgrambrand
+              }
+              icon
+              iconPosition
+              mode
+              objectId
+              title
+            }
+            fragment action on Action {
+              __typename
+              ... on SearchAction {
+                facets {
+                  name
+                  values
+                  __typename
+                }
+                mediaType
+                navigationType
+                q
+                __typename
+              }
+            }
+            fragment imageFragment on Image {
+              id: objectId
+              alt
+              title
+              focalPoint
+              objectId
+              templateUrl
+            }
+        """
+        payload = {
+            'operationName': 'Search',
+            'variables': {
+                'facets': [],
+                'mediaType': 'watch',
+                'q': '',
+            },
+            'query': graphql_query,
+        }
+        from json import dumps
+        data = dumps(payload).encode('utf-8')
+        categories_json = get_url_json(url=GRAPHQL_URL, cache=None, headers=headers, data=data, raise_errors='all')
+        if categories_json is not None:
+            content_types = categories_json.get('data').get('uiSearch')[0].get('items')
+            genres = categories_json.get('data').get('uiSearch')[3].get('items')
+            category_items = content_types + genres
+            for category in category_items:
+                # Don't add podcasts
+                if category.get('title') == 'Podcasts':
+                    continue
+                thumb = category.get('image')
+                if thumb:
+                    thumb = thumb.get('templateUrl')
+                categories.append({
+                    'id': category.get('action').get('facets')[0].get('values')[0],
+                    'thumbnail': thumb,
+                    'name': category.get('title'),
+                })
+            categories.sort(key=lambda x: x.get('name'))
     return categories
 
 
