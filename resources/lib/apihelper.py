@@ -307,7 +307,7 @@ class ApiHelper:
         next_ep = upnext.get('next')
 
         if next_ep is None:
-            if current_ep is not None and current_ep.get('episodeNumber') == current_ep.get('seasonNbOfEpisodes') is not None:
+            if current_ep is not None and current_ep.get('episodeNumber') == current_ep.get('seasonNbOfEpisodes'):
                 log(2, '[Up Next] Already at last episode of last season for {program_title} S{season_num}E{episode_num}',
                     program_title=program_title, season_num=season_num, episode_num=episode_num)
             elif season_num and program_title:

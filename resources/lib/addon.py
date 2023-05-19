@@ -145,12 +145,14 @@ def resumepoints_refresh():
 
 
 @plugin.route('/programs/<program_name>')
+@plugin.route('/programs/<program_name>/<end_cursor>')
 @plugin.route('/programs/<program_name>/<season_name>')
-def programs(program_name=None, season_name=None):
+@plugin.route('/programs/<program_name>/<season_name>/<end_cursor>')
+def programs(program_name=None, season_name=None, end_cursor=''):
     """The Programs / Seasons / Episodes listing"""
     from vrtplayer import VRTPlayer
     if program_name:
-        VRTPlayer().show_episodes_menu(program_name=program_name, season_name=season_name)
+        VRTPlayer().show_episodes_menu(program_name=program_name, season_name=season_name, end_cursor=end_cursor)
 
 
 @plugin.route('/categories')
