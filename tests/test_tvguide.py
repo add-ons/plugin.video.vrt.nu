@@ -69,7 +69,7 @@ class TestTVGuide(unittest.TestCase):
     def test_livetv_description(self):
         """Test Live TV description"""
         description = self._tvguide.live_description('een')
-        print('=== Eén ===\n' + kodi_to_ansi(description))
+        print('=== VRT 1 ===\n' + kodi_to_ansi(description))
         description = self._tvguide.live_description('canvas')
         print('=== Canvas ===\n' + kodi_to_ansi(description))
         description = self._tvguide.live_description('ketnet')

@@ -15,7 +15,7 @@ This Kodi add-on can be used to watch all video content from VRT MAX.
 
 - Track the programs you like
 - List all videos alphabetically by program, category, channel or feature
-- Watch live streams from Eén, Canvas, Ketnet, Ketnet Junior and Sporza
+- Watch live streams from VRT 1, Canvas, Ketnet, Ketnet Junior and Sporza
 - Discover recently added or soon offline content
 - Browse the online TV guides or search VRT MAX
 

@@ -674,8 +674,8 @@ msgid "Select channels to use for 'Most recent' and 'Soon offline' listings"
 msgstr "Selecteer kanalen voor de 'Meest recent' en 'Binnenkort offline' lijsten"
 
 msgctxt "#30823"
-msgid "Eén"
-msgstr "Eén"
+msgid "VRT 1"
+msgstr "VRT 1"
 
 msgctxt "#30824"
 msgid "Canvas"
