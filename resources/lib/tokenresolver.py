@@ -256,7 +256,10 @@ class TokenResolver:
         """Get a vrtPlayerToken"""
         from json import dumps
         headers = {'Content-Type': 'application/json'}
-        data = b''
+        playerinfo = self._generate_playerinfo()
+        payload = {
+            'playerInfo': playerinfo
+        }
         if roaming or variant == 'ondemand':
             if roaming:
                 # Delete cached vrtPlayerToken
@@ -265,12 +268,8 @@ class TokenResolver:
             videotoken = self.get_token('vrtnu-site_profile_vt')
             if videotoken is None:
                 return None
-            playerinfo = self._generate_playerinfo()
-            payload = {
-                'identityToken': videotoken,
-                'playerInfo': playerinfo
-            }
-            data = dumps(payload).encode()
+            payload['identityToken'] = videotoken
+        data = dumps(payload).encode()
         playertoken = get_url_json(url=self._PLAYERTOKEN_URL, headers=headers, data=data)
         if playertoken:
             # Cache token
