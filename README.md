@@ -59,6 +59,11 @@ leave a message at [our Facebook page](https://facebook.com/kodivrtnu/).
 </table>
 
 ## Releases
+### v2.5.21 (2023-05-23)
+- Fix 1080p for livestreams (@mediaminister)
+- Remove All programs menu (@mediaminister)
+- Fix paging in episode listings (@mediaminister)
+
 ### v2.5.20 (2022-12-06)
 - Fix all programs menu (@mediaminister)
 - Fix latest episode API (@mediaminister)
