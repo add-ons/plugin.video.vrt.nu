@@ -21,11 +21,11 @@ jobs:
       - name: Get Krypton filename
         id: get-krypton-filename
         run: |
-          echo ::set-output name=krypton-filename::$(cd ..;ls plugin.video.vrt.nu*.zip | grep -v '+matrix.' | head -1)
+          echo krypton-filename=$(cd ..;ls plugin.video.vrt.nu*.zip | grep -v '+matrix.' | head -1) >> $GITHUB_OUTPUT
       - name: Get Matrix filename
         id: get-matrix-filename
         run: |
-          echo ::set-output name=matrix-filename::$(cd ..;ls plugin.video.vrt.nu*+matrix.*.zip | head -1)
+          echo matrix-filename=$(cd ..;ls plugin.video.vrt.nu*+matrix.*.zip | head -1)  >> $GITHUB_OUTPUT
       - name: Get body
         id: get-body
         run: |
@@ -34,7 +34,7 @@ jobs:
           description="${description//'%'/'%25'}"
           description="${description//$'\n'/'%0A'}"
           description="${description//$'\r'/'%0D'}" 
-          echo ::set-output name=body::$description
+          echo body=$description  >> $GITHUB_OUTPUT
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
