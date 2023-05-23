@@ -683,7 +683,7 @@ class ApiHelper:
         return episodes
 
     def get_live_screenshot(self, channel):
-        """Get a live screenshot for a given channel, only supports Eén, Canvas and Ketnet"""
+        """Get a live screenshot for a given channel, only supports VRT 1, Canvas and Ketnet"""
         url = '%s/%s.jpg' % (self._VRTMAX_SCREENSHOT_URL, channel)
         delete_cached_thumbnail(url)
         return url
