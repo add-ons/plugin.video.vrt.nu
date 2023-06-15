@@ -92,6 +92,7 @@ class TestVRTPlayer(unittest.TestCase):
         self.assertTrue(program_items, msg=category['id'])
 
         program = random.choice(program_items)
+        print('Random tvshow {}'.format(program.path))
         if program.path.startswith('plugin://plugin.video.vrt.nu/programs/'):
             # When random program has episodes
             episode_items, sort, ascending, content = get_episodes(program.path.split('/')[4].replace('.relevant', ''))
