@@ -28,7 +28,7 @@ class TestApi(unittest.TestCase):
 
     def test_get_api_data_single_season(self):
         """Test listing episodes for a single season (zomerhit)"""
-        title_items, sort, ascending, content = get_episodes(program_name='zomerhit')
+        title_items, sort, ascending, content = get_episodes(program_name='zomerhit', season_name='2022')
         self.assertEqual(len(title_items), 7)
         self.assertEqual(sort, 'episode')
         self.assertFalse(ascending)
