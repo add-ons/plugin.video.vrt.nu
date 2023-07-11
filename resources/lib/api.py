@@ -1014,7 +1014,7 @@ def convert_seasons(api_data, program_name):
 
 def get_seasons(program_name):
     """Get seasons"""
-    season_json = get_url_json('https://www.vrt.be/vrtmax/a-z/{}.model.json'.format(program_name))
+    season_json = get_url_json('https://www.vrt.be/vrtnu/a-z/{}.model.json'.format(program_name))
     seasons = season_json.get('details').get('data').get('program').get('seasons')
     return seasons
 
