@@ -1039,7 +1039,7 @@ def get_featured(feature=None, end_cursor=''):
             return episodes, sort, ascending, 'episodes'
     else:
         featured = []
-        featured_json = get_url_json('https://www.vrt.be/vrtmax/kijk.model.json')
+        featured_json = get_url_json('https://www.vrt.be/vrtnu/kijk.model.json')
         items = featured_json.get(':items').get('par').get(':items')
         for item in items:
             content_type = items.get(item).get('tileContentType')
