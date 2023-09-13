@@ -1039,37 +1039,39 @@ def convert_seasons(api_data, program_name):
         )
     return seasons
 
+def create_season_dict(data_json):
+    """Create season dictionary"""
+    season_title = data_json.get('title')
+    list_id = data_json.get('components')[0].get('listId')
+    if '.episodes-list.json' in list_id:
+        season_name = list_id.split('.episodes-list.json')[0].split('/')[-1]
+    else:
+        season_name = list_id.split('_')[-1]
+    return {'title': season_title, 'name': season_name}
 
 def get_seasons(program_name):
     """Get seasons"""
+    # pylint: disable=R1702
     seasons = []
     season_json = get_latest_episode_data(program_name)
     for component in season_json.get('data').get('page').get('components'):
-        if component.get('__typename') == 'PaginatedTileList':
-            if component.get('title'):
-                season_title = component.get('title')
-                season_name = component.get('listId').split('_')[-1]
-                seasons.append({'title': season_title, 'name': season_name})
+        if component.get('__typename') == 'PaginatedTileList' and component.get('title'):
+            season_title = component.get('title')
+            season_name = component.get('listId').split('_')[-1]
+            seasons.append({'title': season_title, 'name': season_name})
         elif component.get('__typename') == 'ContainerNavigation':
             if component.get('navigationType') == 'select':
                 for item in component.get('items'):
-                    list_id = item.get('components')[0].get('listId')
-                    season_title = item.get('title')
-                    if '.episodes-list.json' in list_id:
-                        season_name = list_id.split('.episodes-list.json')[0].split('/')[-1]
-                    else:
-                        season_name = list_id.split('_')[-1]
-                    seasons.append({'title': season_title, 'name': season_name})
+                    seasons.append(create_season_dict(item))
             elif component.get('items')[0].get('components')[0].get('navigationType') == 'select':
                 for item in component.get('items')[0].get('components')[0].get('items'):
-                    list_id = item.get('components')[0].get('listId')
-                    season_title = item.get('title')
-                    if '.episodes-list.json' in list_id:
-                        season_name = list_id.split('.episodes-list.json')[0].split('/')[-1]
-                    else:
-                        season_name = list_id.split('_')[-1]
-                    seasons.append({'title': season_title, 'name': season_name})
-            else:
+                    seasons.append(create_season_dict(item))
+            elif component.get('navigationType') == 'bar':
+                for item in component.get('items'):
+                    if 'seizoen' in item.get('title') and item.get('components')[0].get('navigationType') == 'select':
+                        for item2 in item.get('components')[0].get('items'):
+                            seasons.append(create_season_dict(item2))
+            if not seasons:
                 season_title = component.get('items')[0].get('components')[0].get('title')
                 season_name = component.get('items')[0].get('components')[0].get('listId').split('_')[-1]
                 seasons.append({'title': season_title, 'name': season_name})
