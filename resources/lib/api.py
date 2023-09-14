@@ -358,6 +358,7 @@ def get_latest_episode_data(program_name):
                       objectId
                       listId
                       title
+                      tileContentType
                     }
                     ... on ContainerNavigation {
                       id: objectId
@@ -374,6 +375,7 @@ def get_latest_episode_data(program_name):
                             objectId
                             listId
                             title
+                            tileContentType
                           }
                           ... on StaticTileList {
                             __typename
@@ -381,12 +383,15 @@ def get_latest_episode_data(program_name):
                             objectId
                             listId
                             title
+                            tileContentType
                           }
                           ... on LazyTileList {
-                            id: objectId
-                            title
-                            listId
                             __typename
+                            id: objectId
+                            objectId
+                            listId
+                            title
+                            tileContentType
                           }
                           ... on IComponent {
                             ... on ContainerNavigation {
@@ -404,19 +409,23 @@ def get_latest_episode_data(program_name):
                                       objectId
                                       listId
                                       title
+                                      tileContentType
                                     }
                                     ... on StaticTileList {
+                                      __typename
                                       id: objectId
                                       objectId
                                       listId
                                       title
-                                      __typename
+                                      tileContentType
                                     }
                                     ... on LazyTileList {
-                                      id: objectId
-                                      title
-                                      listId
                                       __typename
+                                      id: objectId
+                                      objectId
+                                      listId
+                                      title
+                                      tileContentType
                                     }
                                     __typename
                                   }
@@ -1042,7 +1051,12 @@ def convert_seasons(api_data, program_name):
 def create_season_dict(data_json):
     """Create season dictionary"""
     season_title = data_json.get('title')
-    list_id = data_json.get('components')[0].get('listId')
+    # list_id
+    if data_json.get('components'):
+        list_id = data_json.get('components')[0].get('listId')
+    else:
+        list_id = data_json.get('listId')
+
     if '.episodes-list.json' in list_id:
         season_name = list_id.split('.episodes-list.json')[0].split('/')[-1]
     else:
@@ -1051,30 +1065,34 @@ def create_season_dict(data_json):
 
 def get_seasons(program_name):
     """Get seasons"""
-    # pylint: disable=R1702
     seasons = []
-    season_json = get_latest_episode_data(program_name)
-    for component in season_json.get('data').get('page').get('components'):
-        if component.get('__typename') == 'PaginatedTileList' and component.get('title'):
-            season_title = component.get('title')
-            season_name = component.get('listId').split('_')[-1]
-            seasons.append({'title': season_title, 'name': season_name})
-        elif component.get('__typename') == 'ContainerNavigation':
-            if component.get('navigationType') == 'select':
-                for item in component.get('items'):
-                    seasons.append(create_season_dict(item))
-            elif component.get('items')[0].get('components')[0].get('navigationType') == 'select':
-                for item in component.get('items')[0].get('components')[0].get('items'):
-                    seasons.append(create_season_dict(item))
-            elif component.get('navigationType') == 'bar':
-                for item in component.get('items'):
-                    if 'seizoen' in item.get('title') and item.get('components')[0].get('navigationType') == 'select':
-                        for item2 in item.get('components')[0].get('items'):
-                            seasons.append(create_season_dict(item2))
-            if not seasons:
-                season_title = component.get('items')[0].get('components')[0].get('title')
-                season_name = component.get('items')[0].get('components')[0].get('listId').split('_')[-1]
-                seasons.append({'title': season_title, 'name': season_name})
+    # FIXME: The current codebase only supports seasons and not the extra content. So we need to select seasons using a whitelist.
+    whitelist = ['Afleveringen', 'Alle seizoenen', 'Journaals', 'Reeksen']
+    components = get_latest_episode_data(program_name).get('data').get('page').get('components')
+    # Extract season data from components
+    for component in components:
+        # Check component type
+        if component.get('navigationType') == 'bar':
+            # Get items
+            for item in component.get('items'):
+                # Select whitelist item
+                if item.get('title') in whitelist:
+                    # Get components
+                    for nested_component in item.get('components'):
+                        # Append component
+                        components.append(nested_component)
+        elif component.get('navigationType') == 'select':
+            # Get items
+            for item in component.get('items'):
+                # Store season
+                seasons.append(create_season_dict(item))
+            # Extraction done, remove component
+            components.remove(component)
+        elif component.get('__typename') == 'PaginatedTileList' and component.get('tileContentType') == 'episode':
+            # Store season
+            seasons.append(create_season_dict(component))
+            # Extraction done, remove component
+            components.remove(component)
     return seasons
 
 def get_featured_data():
