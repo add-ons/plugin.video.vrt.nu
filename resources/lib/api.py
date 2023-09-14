@@ -1067,7 +1067,7 @@ def get_seasons(program_name):
     """Get seasons"""
     seasons = []
     # FIXME: The current codebase only supports seasons and not the extra content. So we need to select seasons using a whitelist.
-    whitelist = ['Afleveringen', 'Alle seizoenen', 'Journaals', 'Reeksen']
+    whitelist = ['Afleveringen', 'Alle seizoenen', 'Journaals', 'Reeksen', 'Docu']
     components = get_latest_episode_data(program_name).get('data').get('page').get('components')
     # Extract season data from components
     for component in components:
