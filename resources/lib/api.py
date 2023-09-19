@@ -1066,8 +1066,7 @@ def create_season_dict(data_json):
 def get_seasons(program_name):
     """Get seasons"""
     seasons = []
-    # FIXME: The current codebase only supports seasons and not the extra content. So we need to select seasons using a whitelist.
-    whitelist = ['Afleveringen', 'Alle seizoenen', 'Journaals', 'Reeksen', 'Docu']
+    # FIXME: The current codebase only supports seasons. Extra content like trailers and behind-the-scenes results in an empty list.
     components = get_latest_episode_data(program_name).get('data').get('page').get('components')
     # Extract season data from components
     for component in components:
@@ -1075,12 +1074,10 @@ def get_seasons(program_name):
         if component.get('navigationType') == 'bar':
             # Get items
             for item in component.get('items'):
-                # Select whitelist item
-                if item.get('title') in whitelist:
-                    # Get components
-                    for nested_component in item.get('components'):
-                        # Append component
-                        components.append(nested_component)
+                # Get components
+                for nested_component in item.get('components'):
+                    # Append component
+                    components.append(nested_component)
         elif component.get('navigationType') == 'select':
             # Get items
             for item in component.get('items'):
