@@ -1173,7 +1173,10 @@ def get_episodes(program_name, season_name=None, end_cursor=''):
             return seasons, sort, ascending, content
 
     if program_name and season_name:
-        list_id = 'static:/vrtnu/a-z/{}/{}.episodes-list.json'.format(program_name, season_name)
+        if season_name.startswith('parsys'):
+            list_id = 'static:/vrtnu/a-z/{}.model.json@{}'.format(program_name, season_name)
+        else:
+            list_id = 'static:/vrtnu/a-z/{}/{}.episodes-list.json'.format(program_name, season_name)
         api_data = get_paginated_episodes(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
         episodes, sort, ascending = convert_episodes(api_data, destination='programs', program_name=program_name, season_name=season_name)
         return episodes, sort, ascending, 'episodes'
@@ -1213,7 +1216,7 @@ def create_season_dict(data_json):
     if '.episodes-list.json' in list_id:
         season_name = list_id.split('.episodes-list.json')[0].split('/')[-1]
     else:
-        season_name = list_id.split('_')[-1]
+        season_name = list_id.split('@')[1]
     return {'title': season_title, 'name': season_name}
 
 
@@ -1237,13 +1240,9 @@ def get_seasons(program_name):
             for item in component.get('items'):
                 # Store season
                 seasons.append(create_season_dict(item))
-            # Extraction done, remove component
-            components.remove(component)
         elif component.get('__typename') == 'PaginatedTileList' and component.get('tileContentType') == 'episode':
             # Store season
             seasons.append(create_season_dict(component))
-            # Extraction done, remove component
-            components.remove(component)
     return seasons
 
 
