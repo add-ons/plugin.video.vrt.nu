@@ -228,6 +228,54 @@ def get_next_info(episode_id):
     return next_info
 
 
+def get_stream_id_data(vrtmax_url):
+    """Get stream_id from from GraphQL API"""
+    from tokenresolver import TokenResolver
+    access_token = TokenResolver().get_token('vrtnu-site_profile_at')
+    data_json = {}
+    if access_token:
+        headers = {
+            'Authorization': 'Bearer ' + access_token,
+            'Content-Type': 'application/json',
+        }
+        page_id = vrtmax_url.split('www.vrt.be')[1].replace('/vrtmax/', '/vrtnu/').rstrip('/') + '.model.json'
+        graphql_query = """
+             query StreamId($pageId: ID!) {
+              page(id: $pageId) {
+                ... on IPage {
+                  ... on LivestreamPage {
+                    player {
+                      watchAction {
+                        ... on LiveWatchAction {
+                          streamId
+                        }
+                      }
+                    }
+                  }
+                }
+                ... on EpisodePage {
+                  episode {
+                    watchAction {
+                      streamId
+                    }
+                  }
+                }
+              }
+            }
+        """
+        payload = {
+            'operationName': 'StreamId',
+            'variables': {
+                'pageId': page_id
+            },
+            'query': graphql_query,
+        }
+        from json import dumps
+        data = dumps(payload).encode('utf-8')
+        data_json = get_url_json(url=GRAPHQL_URL, cache=None, headers=headers, data=data, raise_errors='all')
+    return data_json
+
+
 def get_single_episode_data(episode_id):
     """Get single episode data from GraphQL API"""
     from tokenresolver import TokenResolver
@@ -323,6 +371,110 @@ def get_single_episode_data(episode_id):
 
 def get_latest_episode_data(program_name):
     """Get latest episode data from GraphQL API"""
+    from tokenresolver import TokenResolver
+    access_token = TokenResolver().get_token('vrtnu-site_profile_at')
+    data_json = {}
+    if access_token:
+        headers = {
+            'Authorization': 'Bearer ' + access_token,
+            'Content-Type': 'application/json',
+        }
+        graphql_query = """
+            query VideoProgramPage($pageId: ID!, $lazyItemCount: Int = 500, $after: ID) {
+              page(id: $pageId) {
+                ... on ProgramPage {
+                  components {
+                    __typename
+                    ... on PageHeader {
+                      mostRelevantEpisodeTile {
+                        __typename
+                        title
+                        tile {
+                          ...episodeTile
+                          __typename
+                        }
+                        __typename
+                      }
+                      __typename
+                    }
+                    ... on ContainerNavigation {
+                      items {
+                        title
+                        components {
+                          __typename
+                          ... on PaginatedTileList {
+                            __typename
+                            paginatedItems(first: $lazyItemCount, after: $after) {
+                              __typename
+                              edges {
+                                __typename
+                                cursor
+                                node {
+                                  __typename
+                                  ... on EpisodeTile {
+                                    id
+                                    description
+                                    ...episodeTile
+                                  }
+                                }
+                              }
+                            }
+                          }
+                          ... on ContainerNavigation {
+                            items {
+                              title
+                              components {
+                                __typename
+                                ... on PaginatedTileList {
+                                  __typename
+                                  paginatedItems(first: $lazyItemCount, after: $after) {
+                                    __typename
+                                    edges {
+                                      __typename
+                                      cursor
+                                      node {
+                                        __typename
+                                        ... on EpisodeTile {
+                                          id
+                                          description
+                                          ...episodeTile
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                            __typename
+                          }
+                        }
+                        __typename
+                      }
+                      __typename
+                    }
+                  }
+                  __typename
+                }
+                __typename
+              }
+            }
+            %s
+        """ % EPISODE_TILE
+        payload = {
+            'operationName': 'VideoProgramPage',
+            'variables': {
+                'pageId': '/vrtnu/a-z/{}.model.json'.format(program_name),
+            },
+            'query': graphql_query,
+        }
+        from json import dumps
+        data = dumps(payload).encode('utf-8')
+        data_json = get_url_json(url=GRAPHQL_URL, cache=None, headers=headers, data=data, raise_errors='all')
+    return data_json
+
+
+def get_seasons_data(program_name):
+    """Get seasons data from GraphQL API"""
     from tokenresolver import TokenResolver
     access_token = TokenResolver().get_token('vrtnu-site_profile_at')
     data_json = {}
@@ -1048,6 +1200,7 @@ def convert_seasons(api_data, program_name):
         )
     return seasons
 
+
 def create_season_dict(data_json):
     """Create season dictionary"""
     season_title = data_json.get('title')
@@ -1063,11 +1216,12 @@ def create_season_dict(data_json):
         season_name = list_id.split('_')[-1]
     return {'title': season_title, 'name': season_name}
 
+
 def get_seasons(program_name):
     """Get seasons"""
     seasons = []
     # FIXME: The current codebase only supports seasons. Extra content like trailers and behind-the-scenes results in an empty list.
-    components = get_latest_episode_data(program_name).get('data').get('page').get('components')
+    components = get_seasons_data(program_name).get('data').get('page').get('components')
     # Extract season data from components
     for component in components:
         # Check component type
@@ -1091,6 +1245,7 @@ def get_seasons(program_name):
             # Extraction done, remove component
             components.remove(component)
     return seasons
+
 
 def get_featured_data():
     """Get featured data"""
@@ -1174,6 +1329,7 @@ def get_featured_data():
         data = dumps(payload).encode('utf-8')
         data_json = get_url_json(url=GRAPHQL_URL, cache=None, headers=headers, data=data, raise_errors='all')
     return data_json
+
 
 def get_featured(feature=None, end_cursor=''):
     """Get featured menu items"""
