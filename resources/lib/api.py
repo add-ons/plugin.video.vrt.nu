@@ -1158,7 +1158,7 @@ def get_offline_programs(end_cursor='', use_favorites=False):
 
 def get_episodes(program_name, season_name=None, end_cursor=''):
     """Get episodes"""
-    sort = 'label'
+    sort = 'unsorted'
     ascending = True
     content = 'files'
     page_size = get_setting_int('itemsperpage', default=50)
@@ -1187,43 +1187,55 @@ def convert_seasons(api_data, program_name):
     """Convert seasons"""
     seasons = []
     for season in api_data:
-        season_title = season.get('title')
-        season_name = season.get('name')
-        path = url_for('programs', program_name=program_name, season_name=season_name)
-        seasons.append(
-            TitleItem(
-                label=season_title,
-                path=path,
-                info_dict={
-                    'title': season_title,
-                    'mediatype': 'season',
-                },
-                is_playable=False,
+        if season.get('name') == 'mostRelevantEpisode':
+            _, _, _, title_item = convert_episode(season.get('episode'))
+            title_item.label = '[B]{}:[/B] {}'.format(season.get('title'), title_item.label)
+            title_item.info_dict['title'] = '[B]{}:[/B] {}'.format(season.get('title'), title_item.info_dict.get('title'))
+            seasons.append(title_item)
+        else:
+            season_title = season.get('title')
+            season_name = season.get('name')
+            path = url_for('programs', program_name=program_name, season_name=season_name)
+            seasons.append(
+                TitleItem(
+                    label=season_title,
+                    path=path,
+                    info_dict={
+                        'title': season_title,
+                        'mediatype': 'season',
+                    },
+                    is_playable=False,
+                )
             )
-        )
     return seasons
 
 
 def create_season_dict(data_json):
     """Create season dictionary"""
-    season_title = data_json.get('title')
+    season_dict = {}
+    # title
+    season_dict['title'] = data_json.get('title') or data_json.get('mostRelevantEpisodeTile').get('title')
+
     # list_id
     if data_json.get('components'):
         list_id = data_json.get('components')[0].get('listId')
+    elif data_json.get('mostRelevantEpisodeTile'):
+        list_id = 'mostRelevantEpisode'
+        season_dict['episode'] = data_json.get('mostRelevantEpisodeTile')
     else:
         list_id = data_json.get('listId')
 
+    # season name
     if '.episodes-list.json' in list_id:
-        season_name = list_id.split('.episodes-list.json')[0].split('/')[-1]
+        season_dict['name'] = list_id.split('.episodes-list.json')[0].split('/')[-1]
     else:
-        season_name = list_id.split('@')[1]
-    return {'title': season_title, 'name': season_name}
+        season_dict['name'] = list_id.split('@')[-1]
+    return season_dict
 
 
 def get_seasons(program_name):
     """Get seasons"""
     seasons = []
-    # FIXME: The current codebase only supports seasons. Extra content like trailers and behind-the-scenes results in an empty list.
     components = get_seasons_data(program_name).get('data').get('page').get('components')
     # Extract season data from components
     for component in components:
@@ -1239,9 +1251,13 @@ def get_seasons(program_name):
             # Get items
             for item in component.get('items'):
                 # Store season
-                seasons.append(create_season_dict(item))
+                if item.get('title'):
+                    seasons.append(create_season_dict(item))
         elif component.get('__typename') == 'PaginatedTileList' and component.get('tileContentType') == 'episode':
             # Store season
+            if component.get('title'):
+                seasons.append(create_season_dict(component))
+        elif component.get('__typename') == 'PageHeader' and component.get('mostRelevantEpisodeTile'):
             seasons.append(create_season_dict(component))
     return seasons
 
