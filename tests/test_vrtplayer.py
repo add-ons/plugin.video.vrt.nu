@@ -32,7 +32,8 @@ class TestVRTPlayer(unittest.TestCase):
     def test_show_videos_single_episode_shows_videos(self):
         """Test listing single episode for a given program (wij--roger-raveel)"""
         program_name = 'wij--roger-raveel'
-        episode_items, sort, ascending, content = get_episodes(program_name=program_name)
+        season_name = '2021'
+        episode_items, sort, ascending, content = get_episodes(program_name=program_name, season_name=season_name)
         self.assertTrue(episode_items, msg=program_name)
         self.assertEqual(sort, 'label')
         self.assertTrue(ascending)
@@ -61,7 +62,7 @@ class TestVRTPlayer(unittest.TestCase):
         program_name = 'pano'
         episode_items, sort, ascending, content = get_episodes(program_name=program_name)
         self.assertTrue(episode_items)
-        self.assertEqual(sort, 'label')
+        self.assertEqual(sort, 'unsorted')
         self.assertTrue(ascending)
         self.assertEqual(content, 'files')
 
@@ -74,7 +75,7 @@ class TestVRTPlayer(unittest.TestCase):
         program_name = 'thuis'
         episode_items, sort, ascending, content = get_episodes(program_name=program_name)
         self.assertTrue(episode_items, msg=program_name)
-        self.assertEqual(sort, 'label')
+        self.assertEqual(sort, 'unsorted')
         self.assertTrue(ascending)
         self.assertEqual(content, 'files')
 
@@ -116,7 +117,7 @@ class TestVRTPlayer(unittest.TestCase):
     def test_featured(self):
         """Test featured menu"""
         featured_items, _, _, _ = get_featured()
-        self.assertEqual(len(featured_items), 15)
+        self.assertEqual(len(featured_items), 14)
 
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')

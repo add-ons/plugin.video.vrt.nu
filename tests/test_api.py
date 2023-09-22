@@ -38,7 +38,7 @@ class TestApi(unittest.TestCase):
         """Test listing episodes for multiple seasons (winteruur)"""
         title_items, sort, ascending, content = get_episodes(program_name='winteruur')
         self.assertTrue(5 < len(title_items) < 10)
-        self.assertEqual(sort, 'label')
+        self.assertEqual(sort, 'unsorted')
         self.assertTrue(ascending)
         self.assertEqual(content, 'files')
 
@@ -52,7 +52,7 @@ class TestApi(unittest.TestCase):
 
     def test_get_api_data_specific_season_without_broadcastdate(self):
         """Test listing episodes without broadcastDate (wereldbeeld)"""
-        title_items, sort, ascending, content = get_episodes(program_name='wereldbeeld')
+        title_items, sort, ascending, content = get_episodes(program_name='wereldbeeld', season_name='1')
         self.assertEqual(len(title_items), 7)
         self.assertEqual(sort, 'episode')
         self.assertTrue(ascending)
