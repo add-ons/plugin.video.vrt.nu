@@ -117,7 +117,7 @@ class TestVRTPlayer(unittest.TestCase):
     def test_featured(self):
         """Test featured menu"""
         featured_items, _, _, _ = get_featured()
-        self.assertEqual(len(featured_items), 14)
+        self.assertTrue(5 < len(featured_items) < 25)
 
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')

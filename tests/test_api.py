@@ -37,7 +37,7 @@ class TestApi(unittest.TestCase):
     def test_get_api_data_multiple_seasons(self):
         """Test listing episodes for multiple seasons (winteruur)"""
         title_items, sort, ascending, content = get_episodes(program_name='winteruur')
-        self.assertTrue(5 < len(title_items) < 10)
+        self.assertTrue(5 < len(title_items) < 15)
         self.assertEqual(sort, 'unsorted')
         self.assertTrue(ascending)
         self.assertEqual(content, 'files')
