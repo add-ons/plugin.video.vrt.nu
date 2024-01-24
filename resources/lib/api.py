@@ -1177,27 +1177,28 @@ def get_seasons(program_name):
     return seasons
 
 
-def api_req(graphql_query, operation_name, variables, client='WEB'):
+def api_req(graphql_query, operation_name, variables, client='WEB', authorized=True):
     """GraphQL API Request"""
     from json import dumps
-    from tokenresolver import TokenResolver
-    access_token = TokenResolver().get_token('vrtnu-site_profile_at')
-    data_json = {}
-    if access_token:
-        payload = {
-            'operationName': operation_name,
-            'query': graphql_query,
-            'variables': variables,
-        }
-        data = dumps(payload).encode('utf-8')
-        headers = {
-            'Accept': 'application/json',
-            'Authorization': 'Bearer ' + access_token,
-            'Content-Type': 'application/json',
-            'x-vrt-client-name': client,
-            'x-vrt-client-version': '1.5.0',
-        }
-        data_json = get_url_json(url=GRAPHQL_URL, cache=None, headers=headers, data=data, raise_errors='all')
+    payload = {
+        'operationName': operation_name,
+        'query': graphql_query,
+        'variables': variables,
+    }
+    data = dumps(payload).encode('utf-8')
+    headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'x-vrt-client-name': client,
+        'x-vrt-client-version': '1.5.0',
+    }
+    if authorized:
+        from tokenresolver import TokenResolver
+        access_token = TokenResolver().get_token('vrtnu-site_profile_at')
+        if access_token:
+            headers.update({'Authorization': 'Bearer ' + access_token})
+
+    data_json = get_url_json(url=GRAPHQL_URL, cache=None, headers=headers, data=data, raise_errors='all')
     return data_json
 
 
@@ -1516,7 +1517,7 @@ def get_online_categories():
         'mediaType': 'watch',
         'q': '',
     }
-    categories_json = api_req(graphql_query, operation_name, variables, client='MobileAndroid')
+    categories_json = api_req(graphql_query, operation_name, variables, client='MobileAndroid', authorized=False)
     if categories_json is not None:
         content_types = find_entry(categories_json.get('data').get('uiSearch'), 'listId', 'initialsearchcontenttypes').get('items')
         genres = find_entry(categories_json.get('data').get('uiSearch'), 'listId', 'initialsearchgenres').get('items')
