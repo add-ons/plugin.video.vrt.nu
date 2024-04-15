@@ -814,7 +814,6 @@ def convert_episode(item, destination=None):
     program_name = url_to_program(episode.get('program').get('link'))
     program_id = episode.get('program').get('id')
     program_title = episode.get('program').get('title')
-    print(episode)
     program_type = episode.get('program').get('programType')
 
     # FIXME: Find a better way to determine mixed episodes
