@@ -47,7 +47,7 @@ class TestApi(unittest.TestCase):
         title_items, sort, ascending, content = get_episodes(program_name='pano', season_name='2020')
         self.assertEqual(len(title_items), 15)
         self.assertEqual(sort, 'episode')
-        self.assertFalse(ascending)
+        self.assertTrue(ascending)
         self.assertEqual(content, 'episodes')
 
     def test_get_api_data_specific_season_without_broadcastdate(self):
@@ -110,7 +110,7 @@ class TestApi(unittest.TestCase):
         """Test getting an episode plot (thuis)"""
         title_items, sort, ascending, content = get_episodes(program_name='thuis', season_name='28')
         self.assertEqual(sort, 'episode')
-        self.assertFalse(ascending)
+        self.assertTrue(ascending)
         self.assertEqual(content, 'episodes')
         plot = title_items[0].info_dict['plot']
         print(kodi_to_ansi(plot))
