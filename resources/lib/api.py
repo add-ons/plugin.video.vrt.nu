@@ -29,7 +29,7 @@ def get_sort(program_type):
         ascending = False
     elif program_type == 'oneoff':
         sort = 'label'
-    elif program_type in 'reeksoplopend':
+    elif program_type in ('series', 'reeksoplopend'):
         sort = 'episode'
     elif program_type == 'reeksaflopend':
         sort = 'episode'
@@ -793,6 +793,7 @@ def convert_programs(api_data, destination, use_favorites=False, **kwargs):
                     path=url_for(destination, end_cursor=end_cursor, **kwargs),
                     art_dict={'thumb': 'DefaultInProgressShows.png'},
                     info_dict={},
+                    prop_dict={'SpecialSort': 'bottom'},
                 )
             )
     return programs
@@ -813,6 +814,7 @@ def convert_episode(item, destination=None):
     program_name = url_to_program(episode.get('program').get('link'))
     program_id = episode.get('program').get('id')
     program_title = episode.get('program').get('title')
+    print(episode)
     program_type = episode.get('program').get('programType')
 
     # FIXME: Find a better way to determine mixed episodes
@@ -952,6 +954,7 @@ def convert_episodes(api_data, destination, use_favorites=False, **kwargs):
                     path=url_for(destination, end_cursor=end_cursor, **kwargs),
                     art_dict={'thumb': 'DefaultInProgressShows.png'},
                     info_dict={},
+                    prop_dict={'SpecialSort': 'bottom'},
                 )
             )
     return episodes, sort, ascending
