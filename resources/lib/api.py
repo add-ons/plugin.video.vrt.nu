@@ -1014,25 +1014,29 @@ def get_programs(category=None, channel=None, keywords=None, end_cursor=''):
     from json import dumps
     page_size = get_setting_int('itemsperpage', default=50)
     query_string = None
+    facets = [
+        {
+            'name': 'entitytype',
+            'values': ['video-program'],
+        }]
     if category:
         facet_name = 'genre'
         # VRT MAX uses 'contenttype' facet name instead of 'genre' for some categories
         if category in ('docu', 'films', 'series', 'talkshows'):
             facet_name = 'contenttype'
         destination = 'categories'
-        facets = [{
+        facets.append({
             'name': facet_name,
-            'values': [category]
-        }]
+            'values': [category],
+        })
     elif channel:
         destination = 'channels'
-        facets = [{
+        facets.append({
             'name': 'brand',
             'values': [channel]
-        }]
+        })
     elif keywords:
         destination = 'search_query'
-        facets = None
         query_string = keywords
 
     search_dict = {
