@@ -1046,7 +1046,7 @@ def get_programs(category=None, channel=None, keywords=None, end_cursor=''):
     encoded_search = base64.b64encode(dumps(search_dict).encode('utf-8'))
     list_id = 'uisearch:searchdata@{}'.format(encoded_search.decode('utf-8'))
 
-    api_data = get_paginated_programs(list_id=list_id, page_size=page_size, end_cursor=end_cursor, client='MobileAndroid')
+    api_data = get_paginated_programs(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
     programs = convert_programs(api_data, destination=destination, category=category, channel=channel, keywords=keywords)
     return programs
 
