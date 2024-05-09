@@ -31,12 +31,12 @@ jobs:
             python-version: '2.7'
     steps:
     - name: Check out ${{ github.sha }} from repository ${{ github.repository }}
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: Setup PYTHONPATH (windows)
       if: contains(matrix.os, 'windows')
       run: echo "PYTHONPATH=${env:PYTHONPATH};${env:GITHUB_WORKSPACE};${env:GITHUB_WORKSPACE}\resources\lib;${env:GITHUB_WORKSPACE}\tests" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf-8 -Append
     - name: Set up Python ${{ matrix.python-version }}
-      uses: MatteoH2O1999/setup-python@v1
+      uses: MatteoH2O1999/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies (linux)
