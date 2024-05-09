@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Build zip files
         run: |
           sudo apt-get update
@@ -37,7 +37,7 @@ jobs:
           echo "$EOF" >> $GITHUB_OUTPUT
       - name: Create Release
         id: create_release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -53,17 +53,6 @@ jobs:
         with:
           kodi-repository: repo-plugins
           kodi-version: matrix
-          addon-id: plugin.video.vrt.nu
-        env:
-          GH_USERNAME: ${{secrets.GH_USERNAME}}
-          GH_TOKEN: ${{secrets.GH_TOKEN}}
-          EMAIL: ${{secrets.EMAIL}}
-      - name: Submit legacy version to official kodi repository
-        id: kodi-submit-legacy
-        uses: mediaminister/action-kodi-addon-submitter@master
-        with:
-          kodi-repository: repo-plugins
-          kodi-version: krypton
           addon-id: plugin.video.vrt.nu
         env:
           GH_USERNAME: ${{secrets.GH_USERNAME}}
