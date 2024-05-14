@@ -1039,10 +1039,11 @@ def get_programs(category=None, channel=None, keywords=None, end_cursor=''):
         'values': ['video-program'],
     })
     search_dict = {
-        'q': query_string,
         'facets': facets,
         'resultType': 'watch',
     }
+    if query_string:
+        search_dict['q'] = query_string
     encoded_search = base64.b64encode(dumps(search_dict).encode('utf-8'))
     list_id = 'tl-pag-srch|watch#{}'.format(encoded_search.decode('utf-8'))
     list_id = '#{}'.format(base64.b64encode(list_id.encode('utf-8')).decode('utf-8'))
