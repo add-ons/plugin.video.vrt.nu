@@ -1039,12 +1039,13 @@ def get_programs(category=None, channel=None, keywords=None, end_cursor=''):
         'values': ['video-program'],
     })
     search_dict = {
-        'queryString': query_string,
+        'q': query_string,
         'facets': facets,
         'resultType': 'watch',
     }
     encoded_search = base64.b64encode(dumps(search_dict).encode('utf-8'))
-    list_id = 'uisearch:searchdata@{}'.format(encoded_search.decode('utf-8'))
+    list_id = 'tl-pag-srch|watch#{}'.format(encoded_search.decode('utf-8'))
+    list_id = '#{}'.format(base64.b64encode(list_id.encode('utf-8')).decode('utf-8'))
 
     api_data = get_paginated_programs(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
     programs = convert_programs(api_data, destination=destination, category=category, channel=channel, keywords=keywords)
