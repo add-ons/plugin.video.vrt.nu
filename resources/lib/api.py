@@ -1014,6 +1014,7 @@ def get_programs(category=None, channel=None, keywords=None, end_cursor=''):
     from json import dumps
     page_size = get_setting_int('itemsperpage', default=50)
     query_string = None
+    destination = None
     facets = []
     if category:
         facet_name = 'genre'
