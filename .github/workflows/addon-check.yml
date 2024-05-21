@@ -25,7 +25,7 @@ jobs:
       run: |
         sudo apt-get install xmlstarlet
         python -m pip install --upgrade pip
-        pip install kodi-addon-checker
+        pip install git+https://github.com/xbmc/addon-check.git@refs/pull/271/head
     - name: Remove unwanted files
       run: awk '/export-ignore/ { print $1 }' .gitattributes | xargs rm -rf --
       working-directory: ${{ github.repository }}
