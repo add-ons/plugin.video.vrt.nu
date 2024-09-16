@@ -91,6 +91,7 @@ experiment/
 nohup.out
 
 # Userdata
+tests/userdata/backup/
 tests/cdm/
 tests/userdata/cache/
 tests/userdata/credentials.json

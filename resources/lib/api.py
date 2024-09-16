@@ -817,12 +817,13 @@ def convert_episode(item, destination=None):
     program_type = episode.get('program').get('programType')
 
     # FIXME: Find a better way to determine mixed episodes
-    if destination in ('recent', 'favorites_recent', 'resumepoints_continue', 'featured'):
+    if destination in ('recent', 'favorites_recent', 'resumepoints_continue', 'featured', 'search_query'):
         program_type = 'mixed_episodes'
 
     episode_title = episode.get('title')
-    offtime = dateutil.parser.parse(episode.get('offTimeRaw'))
-    ontime = dateutil.parser.parse(episode.get('onTimeRaw'))
+
+    offtime = dateutil.parser.parse(episode.get('offTimeRaw') or '1970-01-01T00:00:00.000+00:00')
+    ontime = dateutil.parser.parse(episode.get('onTimeRaw') or '1970-01-01T00:00:00.000+00:00')
     mpaa = episode.get('ageRaw') or ''
     product_placement = episode.get('productPlacementShortValue') == 'pp'
     region = episode.get('regionRaw')
@@ -1008,6 +1009,54 @@ def get_favorite_programs(end_cursor=''):
     return programs
 
 
+def get_search(keywords, end_cursor=''):
+    """Get search items"""
+    import base64
+    from json import dumps
+    page_size = get_setting_int('itemsperpage', default=50)
+    query_string = None
+    destination = None
+
+    entity_types = ['video-program', 'video-episode']
+    programs = []
+    episodes = []
+    items = []
+
+    for entity_type in entity_types:
+        facets = []
+        if keywords:
+            destination = 'search_query'
+            query_string = keywords
+        facets.append({
+            'name': 'entitytype',
+            'values': [entity_type],
+        })
+        if entity_type == 'video-program':
+            result_type = 'watch'
+        else:
+            result_type = entity_type
+        search_dict = {
+            'facets': facets,
+            'resultType': result_type,
+        }
+        if query_string:
+            search_dict['q'] = query_string
+        encoded_search = base64.b64encode(dumps(search_dict).encode('utf-8'))
+
+        list_id = 'tl-pag-srch|{}#{}'.format(result_type, encoded_search.decode('utf-8'))
+        list_id = '#{}'.format(base64.b64encode(list_id.encode('utf-8')).decode('utf-8'))
+
+        if entity_type == 'video-program' and not end_cursor:
+            programs_data = get_paginated_programs(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
+            programs = convert_programs(programs_data, destination=destination, keywords=keywords)
+            items.extend(programs)
+        elif entity_type == 'video-episode':
+            episodes_data = get_paginated_episodes(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
+            episodes, _, _ = convert_episodes(episodes_data, destination=destination, keywords=keywords)
+            items.extend(episodes)
+    return items
+
+
 def get_programs(category=None, channel=None, keywords=None, end_cursor=''):
     """Get programs"""
     import base64
@@ -1046,7 +1095,7 @@ def get_programs(category=None, channel=None, keywords=None, end_cursor=''):
     if query_string:
         search_dict['q'] = query_string
     encoded_search = base64.b64encode(dumps(search_dict).encode('utf-8'))
-    list_id = 'tl-pag-srch|watch#{}'.format(encoded_search.decode('utf-8'))
+    list_id = 'tl-pag-srch|{}#{}'.format('watch', encoded_search.decode('utf-8'))
     list_id = '#{}'.format(base64.b64encode(list_id.encode('utf-8')).decode('utf-8'))
 
     api_data = get_paginated_programs(list_id=list_id, page_size=page_size, end_cursor=end_cursor)

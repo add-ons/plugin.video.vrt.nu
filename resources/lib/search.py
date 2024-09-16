@@ -9,7 +9,7 @@ from kodiutils import (addon_profile, container_refresh, container_update, end_o
                        get_search_string, input_down, localize, ok_dialog, open_file,
                        show_listing, url_for)
 from resumepoints import ResumePoints
-from api import get_programs
+from api import get_search
 
 
 class Search:
@@ -85,7 +85,7 @@ class Search:
 
         self.add(keywords)
 
-        search_items = get_programs(keywords=keywords, end_cursor=end_cursor)
+        search_items = get_search(keywords=keywords, end_cursor=end_cursor)
         if not search_items:
             ok_dialog(heading=localize(30135), message=localize(30136, keywords=keywords))
             end_of_directory()

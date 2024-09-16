@@ -98,7 +98,7 @@ class TestStreamService(unittest.TestCase):
 
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
-    def test_get_mpd_live_stream_from_url_does_not_crash_returns_stream_and_licensekey(self):
+    def test_get_mpd_live_stream_from_url_does_not_crash_returns_stream(self):
         """Test getting MPEG-DASH stream from URL"""
         addon.settings['usedrm'] = True
         addon.settings['useinputstreamadaptive'] = True
@@ -111,7 +111,7 @@ class TestStreamService(unittest.TestCase):
         # NOTE: Testing live streams only works within Europe
         if os.environ.get('GITHUB_ACTIONS') != 'true':
             self.assertTrue(stream is not None)
-            self.assertTrue(stream.license_key is not None)
+            self.assertTrue(stream.license_headers is not None)
 
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')

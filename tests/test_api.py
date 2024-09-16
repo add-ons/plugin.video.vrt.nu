@@ -7,7 +7,7 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
 from api import (get_episodes, get_favorite_programs, get_latest_episode, get_next_info, get_online_categories,
-                 get_offline_programs, get_programs, get_recent_episodes, get_single_episode, valid_categories)
+                 get_offline_programs, get_programs, get_recent_episodes, get_search, get_single_episode, valid_categories)
 from data import CATEGORIES
 from xbmcextra import kodi_to_ansi
 
@@ -46,8 +46,8 @@ class TestApi(unittest.TestCase):
         """Test listing episodes for a specific season (pano)"""
         title_items, sort, ascending, content = get_episodes(program_name='pano', season_name='2020')
         self.assertEqual(len(title_items), 15)
-        self.assertEqual(sort, 'episode')
-        self.assertTrue(ascending)
+        self.assertEqual(sort, 'dateadded')  # Pano has 'daily' programType
+        self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
 
     def test_get_api_data_specific_season_without_broadcastdate(self):
@@ -91,7 +91,8 @@ class TestApi(unittest.TestCase):
     def test_get_programs_keywords(self):
         """Test get programs using keywords"""
         keywords = 'kaas'
-        program_items = get_programs(keywords=keywords)
+        program_items = get_search(keywords=keywords)
+        print(len(program_items))
         self.assertTrue(program_items)
 
     def test_get_favorite_programs(self):
@@ -109,8 +110,8 @@ class TestApi(unittest.TestCase):
     def test_episode_plot(self):
         """Test getting an episode plot (thuis)"""
         title_items, sort, ascending, content = get_episodes(program_name='thuis', season_name='28')
-        self.assertEqual(sort, 'episode')
-        self.assertTrue(ascending)
+        self.assertEqual(sort, 'dateadded')  # Thuis has 'daily' programType
+        self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
         plot = title_items[0].info_dict['plot']
         print(kodi_to_ansi(plot))
