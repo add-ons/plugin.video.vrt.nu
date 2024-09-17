@@ -3,16 +3,19 @@
 
 name: Kodi
 on:
-- pull_request
-- push
+  # Run action when pushed to master, or for commits in a pull request.
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 jobs:
   tests:
     name: Addon checker
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        kodi-branch: [krypton, leia, matrix]
     steps:
     - uses: actions/checkout@v4
       with:
@@ -23,18 +26,10 @@ jobs:
         python-version: 3.8
     - name: Install dependencies
       run: |
-        sudo apt-get install xmlstarlet
         python -m pip install --upgrade pip
         pip install git+https://github.com/xbmc/addon-check.git
     - name: Remove unwanted files
       run: awk '/export-ignore/ { print $1 }' .gitattributes | xargs rm -rf --
       working-directory: ${{ github.repository }}
-    - name: Rewrite addon.xml for older versions
-      run: |
-        xmlstarlet ed -L -u '/addon/requires/import[@addon="xbmc.python"]/@version' -v "2.25.0" addon.xml
-        version=$(xmlstarlet sel -t -v 'string(/addon/@version)' addon.xml)
-        xmlstarlet ed -L -u '/addon/@version' -v "${version%'+matrix.1'}" addon.xml
-      working-directory: ${{ github.repository }}
-      if: matrix.kodi-branch == 'krypton' || matrix.kodi-branch == 'leia'
     - name: Run kodi-addon-checker
-      run: kodi-addon-checker --branch=${{ matrix.kodi-branch }} ${{ github.repository }}/
+      run: kodi-addon-checker --branch=matrix ${{ github.repository }}/
