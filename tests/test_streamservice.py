@@ -93,7 +93,9 @@ class TestStreamService(unittest.TestCase):
             'publication_id': 'pbs-pub-8a1068a5-cffc-4b25-96cc-2b15b3c513dc',
         }
         stream = self._streamservice.get_stream(video)
-        self.assertTrue(stream is not None)
+        # NOTE: Testing geoblocked streams only works within Europe
+        if os.environ.get('GITHUB_ACTIONS') != 'true':
+            self.assertTrue(stream is not None)
 
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
