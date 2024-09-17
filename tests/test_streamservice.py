@@ -89,12 +89,11 @@ class TestStreamService(unittest.TestCase):
         """Test getting stream from geoblocked video_id"""
         # Undercover S01E01
         video = {
-            'video_url': None,
             'video_id': 'vid-b77b58cb-eebf-4b00-b772-0d6b4caad6a5',
-            'publication_id': None,
+            'publication_id': 'pbs-pub-8a1068a5-cffc-4b25-96cc-2b15b3c513dc',
         }
         stream = self._streamservice.get_stream(video)
-        self.assertTrue(stream is None)
+        self.assertTrue(stream is not None)
 
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
