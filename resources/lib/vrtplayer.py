@@ -156,7 +156,7 @@ class VRTPlayer:
         if get_setting_bool('addmydocu', default=True):
             favorites_items.append(
                 TitleItem(label=localize(30044),  # My documentaries
-                          path=url_for('favorites_docu'),
+                          path=url_for('categories', category='docu'),
                           art_dict={'thumb': 'DefaultMovies.png'},
                           info_dict={'plot': localize(30045)})
             )
@@ -164,7 +164,7 @@ class VRTPlayer:
         if get_setting_bool('addmymusic', default=True):
             favorites_items.append(
                 TitleItem(label=localize(30046),  # My music
-                          path=url_for('favorites_music'),
+                          path=url_for('categories', category='muziek'),
                           art_dict={'thumb': 'DefaultAddonMusic.png'},
                           info_dict={'plot': localize(30047)})
             )
@@ -270,10 +270,6 @@ class VRTPlayer:
 
     def show_continue_menu(self, end_cursor=''):
         """The VRT MAX add-on 'Continue waching' listing menu"""
-
-        # Continue watching menu may need more up-to-date favorites
-        self._favorites.refresh(ttl=ttl('direct'))
-        self._resumepoints.refresh(ttl=ttl('direct'))
         episodes, sort, ascending, content = get_continue_episodes(end_cursor=end_cursor)
         show_listing(episodes, category=30054, sort=sort, ascending=ascending, content=content, cache=False)
 

@@ -174,6 +174,11 @@ class ResumePoints:
         self._delete_continue_graphql(episode_id)
         container_refresh()
 
+    def finish_continue(self, episode_id):
+        """Finish a continue item from continue menu"""
+        self._finish_continue_graphql(episode_id)
+        container_refresh()
+
     def _delete_continue_graphql(self, episode_id):
         """Delete continue episode using GraphQL API"""
         from tokenresolver import TokenResolver
@@ -221,6 +226,49 @@ class ResumePoints:
                     'input': {
                         'id': episode_id,
                         'listName': encoded_list_name.decode('utf-8'),
+                    },
+                },
+                'query': graphql_query,
+            }
+            data = dumps(payload).encode('utf-8')
+            result_json = get_url_json(url=self.GRAPHQL_URL, cache=None, headers=headers, data=data, raise_errors='all')
+        return result_json
+
+    def _finish_continue_graphql(self, episode_id):
+        """Finish continue episode using GraphQL API"""
+        from tokenresolver import TokenResolver
+        from json import dumps
+        access_token = TokenResolver().get_token('vrtnu-site_profile_at')
+        result_json = {}
+        if access_token:
+            headers = {
+                'Authorization': 'Bearer ' + access_token,
+                'Content-Type': 'application/json',
+                'x-vrt-client-name': 'WEB',
+                'x-vrt-client-version': '1.5.0',
+            }
+            graphql_query = """
+                mutation finishItem($input: FinishActionInput!) {
+                  setFinishActionItem(input: $input) {
+                    __typename
+                    objectId
+                    title
+                    accessibilityLabel
+                    action {
+                      ... on FinishAction {
+                        id
+                        __typename
+                      }
+                      __typename
+                    }
+                  }
+                }
+            """
+            payload = {
+                'operationName': 'finishItem',
+                'variables': {
+                    'input': {
+                        'id': episode_id,
                     },
                 },
                 'query': graphql_query,

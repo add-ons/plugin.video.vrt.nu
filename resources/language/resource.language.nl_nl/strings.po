@@ -127,16 +127,16 @@ msgid "Documentaries"
 msgstr "Documentaires"
 
 msgctxt "#30045"
-msgid "All [I]one-off[/I] documentaries on VRT MAX"
-msgstr "Alle [I]one-off[/I] documentaires op VRT MAX"
+msgid "All documentaries on VRT MAX"
+msgstr "Alle documentaires op VRT MAX"
 
 msgctxt "#30046"
 msgid "Music"
 msgstr "Muziek"
 
 msgctxt "#30047"
-msgid "All [I]one-off[/I] music on VRT MAX"
-msgstr "Alle [I]one-off[/I] muziek op VRT MAX"
+msgid "All music on VRT MAX"
+msgstr "Alle muziek op VRT MAX"
 
 msgctxt "#30048"
 msgid "Most recent"
@@ -512,8 +512,12 @@ msgid "from livestream cache"
 msgstr "uit de livestream-cache"
 
 msgctxt "#30455"
-msgid "Delete from this list"
-msgstr "Verwijder uit deze lijst"
+msgid "Delete from this list (VRT MAX)"
+msgstr "Verwijder uit deze lijst (VRT MAX)"
+
+msgctxt "#30456"
+msgid "Mark as watched (VRT MAX)"
+msgstr "Markeren als afgespeeld (VRT MAX)"
 
 
 ### SETTINGS

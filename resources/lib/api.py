@@ -76,6 +76,10 @@ def get_context_menu(program_name, program_id, program_title, program_type, is_f
             localize(30455),  # Delete from this list
             'RunPlugin(%s)' % url_for('resumepoints_continue_delete', episode_id=episode_id)
         ))
+        context_menu.append((
+            localize(30456),  # Mark as watched (VRT MAX)
+            'RunPlugin(%s)' % url_for('resumepoints_continue_finish', episode_id=episode_id)
+        ))
     return context_menu
 
 
@@ -561,6 +565,7 @@ def get_seasons_data(program_name):
 
 def set_resumepoint(video_id, title, position, total):
     """Set resumepoint"""
+    data_json = {}
     # Respect resumepoint margins
     if position and total:
         if position < RESUMEPOINTS_MARGIN:
@@ -585,6 +590,76 @@ def set_resumepoint(video_id, title, position, total):
         data = dumps(payload).encode('utf-8')
         data_json = get_url_json(url='{}/{}'.format(RESUMEPOINTS_URL, video_id), cache=None, headers=headers, data=data, raise_errors='all')
         log(3, '[Resumepoints] Updated resumepoint {data}', data=data_json)
+    return data_json
+
+
+def delete_continue(episode_id):
+    """Delete continue episode using GraphQL API"""
+    import base64
+    from json import dumps
+    graphql_query = """
+        mutation listDelete($input: ListDeleteActionInput!) {
+          setListDeleteActionItem(input: $input) {
+            title
+            active
+            action {
+              __typename
+              ... on NoAction {
+                __typename
+                reason
+              }
+              ... on ListTileDeletedAction {
+                __typename
+                listId
+                listName
+                id
+              }
+            }
+            __typename
+          }
+        }
+    """
+    list_name = {
+        'listId': 'dynamic:/vrtnu.model.json@resume-list-video',
+        'listType': 'verderkijken',
+    }
+    encoded_list_name = base64.b64encode(dumps(list_name).encode('utf-8'))
+    operation_name = 'listDelete'
+    variables = {
+        'input': {
+            'id': episode_id,
+            'listName': encoded_list_name.decode('utf-8'),
+        },
+    }
+    return api_req(graphql_query, operation_name, variables)
+
+
+def finish_continue(episode_id):
+    """Finish continue episode using GraphQL API"""
+    graphql_query = """
+        mutation finishItem($input: FinishActionInput!) {
+          setFinishActionItem(input: $input) {
+            __typename
+            objectId
+            title
+            accessibilityLabel
+            action {
+              ... on FinishAction {
+                id
+                __typename
+              }
+              __typename
+            }
+          }
+        }
+    """
+    operation_name = 'finishItem'
+    variables = {
+        'input': {
+            'id': episode_id,
+        },
+    }
+    return api_req(graphql_query, operation_name, variables)
 
 
 def get_paginated_episodes(list_id, page_size, end_cursor=''):
@@ -1256,7 +1331,7 @@ def api_req(graphql_query, operation_name, variables, client='WEB'):
             'Authorization': 'Bearer ' + access_token,
             'Content-Type': 'application/json',
             'x-vrt-client-name': client,
-            'x-vrt-client-version': '1.5.0',
+            'x-vrt-client-version': '1.5.7',
         }
         data_json = get_url_json(url=GRAPHQL_URL, cache=None, headers=headers, data=data, raise_errors='all')
     return data_json

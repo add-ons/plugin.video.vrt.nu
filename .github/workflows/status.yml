@@ -37,7 +37,7 @@ jobs:
     #- name: TEST Favorites
     #  run: python -m unittest -v test_favorites.TestFavorites.test_programs
     - name: TEST ResumePoints
-      run: python -m unittest -v test_resumepoints.TestResumePoints.test_get_continue_episodes
+      run: python -m unittest -v test_api.TestApi.test_get_continue_episodes
       if: always()
     - name: TEST Search
       run: python -m unittest -v test_search.TestSearch.test_search_journaal
