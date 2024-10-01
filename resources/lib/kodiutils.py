@@ -431,6 +431,11 @@ def localize_time(time):
 def localize_date(date, strftime):
     """Return a localized date, even if the system does not support your locale"""
     has_locale = set_locale()
+
+    # Workaround for Kodi xbmc.getRegion('datelong') bug on Android 21 and higher: https://github.com/xbmc/xbmc/issues/25066
+    if xbmc.getCondVisibility('System.Platform.Android') and kodi_version_major() > 20:
+        strftime = strftime.replace('%-d', date.strftime('%d').lstrip('0'))
+
     # When locale is supported, return original format
     if has_locale:
         return date.strftime(strftime)
@@ -446,7 +451,7 @@ def localize_date(date, strftime):
 
     # %e isn't supported on Python 2.7 on Windows
     if '%e' in strftime:
-        strftime = strftime.replace('%e', str(int(date.strftime('%d'))))
+        strftime = strftime.replace('%e', date.strftime('%d').lstrip('0'))
 
     return date.strftime(strftime)
 
