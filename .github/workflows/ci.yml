@@ -46,7 +46,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
       env:
-        PIP_TRUSTED_HOST: ${{ contains(fromJson('["3.5"]'), matrix.python-version) && env.PYPI-HOSTS || '' }}
+        PIP_TRUSTED_HOST: ${{ contains(fromJSON('["3.5"]'), matrix.python-version) && env.PYPI-HOSTS || '' }}
     - name: Install dependencies (linux)
       if: contains(matrix.os, 'ubuntu')
       run: |
@@ -67,10 +67,10 @@ jobs:
     # Python 2.7 and Python 3.5 are no longer supported by proxy.py
     - name: Start proxy server, when supported (linux)
       run: python -m proxy --hostname 127.0.0.1 --log-level DEBUG &
-      if: contains(fromJson('["3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]'), matrix.python-version) && contains(matrix.os, 'ubuntu')
+      if: contains(fromJSON('["3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]'), matrix.python-version) && contains(matrix.os, 'ubuntu')
     - name: Start proxy server, when supported (windows)
       run: Start-Process python -ArgumentList '-m proxy --hostname 127.0.0.1 --log-level DEBUG'
-      if: contains(fromJson('["3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]'), matrix.python-version) && contains(matrix.os, 'windows')
+      if: contains(fromJSON('["3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]'), matrix.python-version) && contains(matrix.os, 'windows')
     - name: Run unit tests
       run: coverage run -m unittest discover
       env:
