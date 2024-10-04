@@ -94,13 +94,13 @@ class Metadata:
                         extras = {'move_down': True}
                     context_menu.append((
                         localize(30412, title=follow_suffix),  # Unfollow
-                        'RunPlugin(%s)' % url_for('unfollow', program_name=program_name, title=program_title, program_id=program_id, **extras)
+                        'RunPlugin(%s)' % url_for('unfollow', program_id=program_id, program_title=program_title)
                     ))
                     favorite_marker = '[COLOR={highlighted}]ᵛ[/COLOR]'
                 else:
                     context_menu.append((
                         localize(30411, title=follow_suffix),  # Follow
-                        'RunPlugin(%s)' % url_for('follow', program_name=program_name, title=program_title, program_id=program_id)
+                        'RunPlugin(%s)' % url_for('follow', program_id=program_id, program_title=program_title)
                     ))
 
         # GO TO PROGRAM
