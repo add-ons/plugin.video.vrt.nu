@@ -432,7 +432,7 @@ def get_latest_episode_data(program_name):
     variables = {
         'pageId': '/vrtnu/a-z/{}.model.json'.format(program_name),
     }
-    return api_req(graphql_query, operation_name, variables)
+    return api_req(graphql_query, operation_name, variables, client='MobileAndroid')
 
 
 def get_seasons_data(program_name):
@@ -1050,7 +1050,7 @@ def get_latest_episode(program_name):
     page = api_data.get('data').get('page')
     if page:
         most_relevant_ep = page.get('components')[0].get('mostRelevantEpisodeTile')
-        if most_relevant_ep.get('title') == 'Meest recente aflevering':
+        if most_relevant_ep and most_relevant_ep.get('title') == 'Meest recente aflevering':
             latest_episode = most_relevant_ep
         else:
             items = page.get('components')[1].get('items')[0].get('components')[0]
