@@ -184,15 +184,15 @@ class TestRouting(unittest.TestCase):
     @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_follow_route(self):
         """Follow method: /follow/<program>/<title>"""
-        addon.run(['plugin://plugin.video.vrt.nu/follow/thuis/Thuis', '0', ''])
-        self.assertEqual(plugin.url_for(addon.follow, program_name='thuis', title='Thuis'), 'plugin://plugin.video.vrt.nu/follow/thuis/Thuis')
+        addon.run(['plugin://plugin.video.vrt.nu/follow/1459955889901/Thuis', '0', ''])
+        self.assertEqual(plugin.url_for(addon.follow, program_id='1459955889901', program_title='Thuis'), 'plugin://plugin.video.vrt.nu/follow/1459955889901/Thuis')
 
     @unittest.skipUnless(xbmc_addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_unfollow_route(self):
         """Unfollow method: /unfollow/<program>/<title>"""
         addon.run(['plugin://plugin.video.vrt.nu/unfollow/thuis/Thuis', '0', ''])
-        self.assertEqual(plugin.url_for(addon.unfollow, program_name='thuis', title='Thuis'), 'plugin://plugin.video.vrt.nu/unfollow/thuis/Thuis')
+        self.assertEqual(plugin.url_for(addon.unfollow, program_id='1459955889901', program_title='Thuis'), 'plugin://plugin.video.vrt.nu/unfollow/thuis/Thuis')
 
     def test_clear_cookies_route(self):
         """Delete tokens method: /tokens/delete"""
