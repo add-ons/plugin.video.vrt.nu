@@ -209,11 +209,6 @@ class TestRouting(unittest.TestCase):
         addon.run(['plugin://plugin.video.vrt.nu/favorites/refresh', '0', ''])
         self.assertEqual(plugin.url_for(addon.favorites_refresh), 'plugin://plugin.video.vrt.nu/favorites/refresh')
 
-    def test_refresh_resumepoints_route(self):
-        """Refresh resumepoints method: /resumepoints/refresh"""
-        addon.run(['plugin://plugin.video.vrt.nu/resumepoints/refresh', '0', ''])
-        self.assertEqual(plugin.url_for(addon.resumepoints_refresh), 'plugin://plugin.video.vrt.nu/resumepoints/refresh')
-
     def test_manage_favorites_route(self):
         """Manage favorites method: /favorites/manage"""
         addon.run(['plugin://plugin.video.vrt.nu/favorites/manage', '0', ''])

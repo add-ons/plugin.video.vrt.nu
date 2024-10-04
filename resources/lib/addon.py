@@ -75,20 +75,6 @@ def favorites_programs(end_cursor=''):
     VRTPlayer().show_tvshow_menu(end_cursor=end_cursor, use_favorites=True)
 
 
-@plugin.route('/favorites/docu')
-def favorites_docu():
-    """The favorites docu listing"""
-    from vrtplayer import VRTPlayer
-    VRTPlayer().show_favorites_docu_menu()
-
-
-@plugin.route('/favorites/music')
-def favorites_music():
-    """The favorites music listing"""
-    from vrtplayer import VRTPlayer
-    VRTPlayer().show_favorites_music_menu()
-
-
 @plugin.route('/favorites/recent')
 @plugin.route('/favorites/recent')
 @plugin.route('/favorites/recent/<end_cursor>')
@@ -132,16 +118,15 @@ def resumepoints_continue(end_cursor=''):
 @plugin.route('/resumepoints/continue/delete/<episode_id>')
 def resumepoints_continue_delete(episode_id):
     """The API interface to delete episodes from continue watching listing"""
-    from resumepoints import ResumePoints
-    ResumePoints().delete_continue(episode_id)
+    from api import delete_continue
+    delete_continue(episode_id)
 
 
-@plugin.route('/resumepoints/refresh')
-def resumepoints_refresh():
-    """The API interface to refresh the resumepoints cache"""
-    from resumepoints import ResumePoints
-    ResumePoints().refresh(ttl=0)
-    notification(message=localize(30983))
+@plugin.route('/resumepoints/continue/finish/<episode_id>')
+def resumepoints_continue_finish(episode_id):
+    """The API interface to finish episodes from continue watching listing"""
+    from api import finish_continue
+    finish_continue(episode_id)
 
 
 @plugin.route('/programs/<program_name>')

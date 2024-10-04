@@ -6,8 +6,9 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
-from api import (get_episodes, get_favorite_programs, get_latest_episode, get_next_info, get_online_categories,
-                 get_offline_programs, get_programs, get_recent_episodes, get_search, get_single_episode, valid_categories)
+from api import (delete_continue, finish_continue, get_continue_episodes, get_episodes, get_favorite_programs, get_latest_episode,
+                 get_next_info, get_online_categories, get_offline_programs, get_programs, get_recent_episodes,
+                 get_resumepoint_data, get_search, get_single_episode, set_resumepoint, valid_categories)
 from data import CATEGORIES
 from xbmcextra import kodi_to_ansi
 
@@ -122,6 +123,50 @@ class TestApi(unittest.TestCase):
         next_episode = get_next_info(episode_id).get('next_episode')
         self.assertTrue(next_episode)
         print(next_episode)
+
+    def test_set_resumepoint(self):
+        """Test setting resumepoint for episode wij--roger-raveel"""
+        video_id = 'vid-b643dbd8-03d1-4ceb-a738-262d6fa7c271'
+        position = 1337.242753
+        total = 3334.04
+        title = 'Wij, Roger Raveel'
+        response = set_resumepoint(video_id, title, position, total)
+        self.assertEqual(response.get('at'), int(position))
+
+    def test_get_resumepoint(self):
+        """Test getting resumepoint for episode wij--roger-raveel"""
+        video_id = 'vid-b643dbd8-03d1-4ceb-a738-262d6fa7c271'
+        episode_id = '1615881736655'
+        media_id, _ = get_resumepoint_data(episode_id)
+        self.assertEqual(media_id, video_id)
+
+    def test_get_continue_episodes(self):
+        """Test getting continue watching list"""
+
+        # Ensure a continue episode exists (Wij, Roger Raveel)
+        video_id = 'vid-b643dbd8-03d1-4ceb-a738-262d6fa7c271'
+        position = 1337.242753
+        total = 3334.04
+        title = 'Wij, Roger Raveel'
+        set_resumepoint(video_id, title, position, total)
+
+        episode_items, sort, ascending, content = get_continue_episodes()
+        self.assertTrue(episode_items)
+        self.assertEqual(sort, 'dateadded')
+        self.assertFalse(ascending)
+        self.assertEqual(content, 'episodes')
+
+    def test_finish_continue(self):
+        """Test finish continue watching for episode wij--roger-raveel"""
+        episode_id = '1615881736655'
+        data = finish_continue(episode_id)
+        self.assertEqual(data.get('data').get('setFinishActionItem').get('title'), 'Afgespeeld')
+
+    def test_delete_continue(self):
+        """Test delete continue watching for episode wij--roger-raveel"""
+        episode_id = '1615881736655'
+        data = delete_continue(episode_id)
+        self.assertEqual(data.get('data').get('setListDeleteActionItem').get('title'), 'Verwijderd')
 
     def test_get_categories(self):
         """Test to ensure our local hardcoded categories conforms to online categories"""
