@@ -233,8 +233,8 @@ class TestRouting(unittest.TestCase):
     @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_play_latestepisode_route(self):
         """Play last episode method: /play/lastepisode/<program>"""
-        addon.run(['plugin://plugin.video.vrt.nu/play/latest/het-journaal', '0', ''])
-        self.assertEqual(plugin.url_for(addon.play_latest, program_name='het-journaal'), 'plugin://plugin.video.vrt.nu/play/latest/het-journaal')
+        addon.run(['plugin://plugin.video.vrt.nu/play/latest/vrt-nws-journaal', '0', ''])
+        self.assertEqual(plugin.url_for(addon.play_latest, program_name='vrt-nws-journaal'), 'plugin://plugin.video.vrt.nu/play/latest/vrt-nws-journaal')
         addon.run(['plugin://plugin.video.vrt.nu/play/latest/terzake', '0', ''])
         self.assertEqual(plugin.url_for(addon.play_latest, program_name='terzake'), 'plugin://plugin.video.vrt.nu/play/latest/terzake')
         addon.run(['plugin://plugin.video.vrt.nu/play/latest/winteruur', '0', ''])
