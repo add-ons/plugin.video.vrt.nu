@@ -415,14 +415,6 @@ msgctxt "#30413"
 msgid "Refresh menu"
 msgstr ""
 
-msgctxt "#30415"
-msgid "No followed programs found"
-msgstr ""
-
-msgctxt "#30416"
-msgid "We could not find any programs that are followed.\n\nEither right-click on a program or episode to follow a program, or follow a program on the VRT MAX website."
-msgstr ""
-
 msgctxt "#30417"
 msgid "Go to program"
 msgstr ""
@@ -559,10 +551,6 @@ msgstr ""
 
 msgctxt "#30744"
 msgid "When enabled, the user can follow their favorite programs and list these separately. In this case the VRT MAX add-on will download and update a list of your followed programs on the VRT MAX website."
-msgstr ""
-
-msgctxt "#30745"
-msgid "Manage My favorites…"
 msgstr ""
 
 msgctxt "#30747"
@@ -845,14 +833,6 @@ msgctxt "#30915"
 msgid "Clear VRT tokens"
 msgstr ""
 
-msgctxt "#30917"
-msgid "Refresh favorites"
-msgstr ""
-
-msgctxt "#30919"
-msgid "Refresh watching activity"
-msgstr ""
-
 msgctxt "#30921"
 msgid "Use menu caching"
 msgstr ""
@@ -1009,14 +989,6 @@ msgstr ""
 
 msgctxt "#30981"
 msgid "Successfully invalidated caches."
-msgstr ""
-
-msgctxt "#30982"
-msgid "Successfully refreshed favorites."
-msgstr ""
-
-msgctxt "#30983"
-msgid "Successfully refreshed watching activity."
 msgstr ""
 
 msgctxt "#30985"

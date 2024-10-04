@@ -25,7 +25,7 @@ class ApiHelper:
 
     _VRTMAX_SEARCH_URL = 'https://search7.vrt.be/search'
     _VRTMAX_SUGGEST_URL = 'https://search7.vrt.be/suggest'
-    _VRTMAX_SCREENSHOT_URL = 'https://www.vrt.be/vrtmax-static/screenshots'
+    _VRTMAX_SCREENSHOT_URL = 'https://www.vrt.be/vrtnu-static/screenshots'
 
     def __init__(self, _favorites, _resumepoints):
         """Constructor for the ApiHelper class"""

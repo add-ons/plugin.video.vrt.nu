@@ -10,7 +10,7 @@ try:  # Python 3
 except ImportError:  # Python 2
     from urllib import unquote_plus
 
-from kodiutils import end_of_directory, execute_builtin, get_global_setting, localize, log_access, notification, ok_dialog, refresh_caches
+from kodiutils import container_refresh, end_of_directory, execute_builtin, get_global_setting, localize, log_access, notification, ok_dialog, refresh_caches
 from utils import from_unicode, to_unicode
 
 plugin = Plugin()  # pylint: disable=invalid-name
@@ -43,21 +43,22 @@ def delete_tokens():
     TokenResolver().delete_tokens()
 
 
-@plugin.route('/follow/<program_name>/<title>')
-@plugin.route('/follow/<program_name>/<program_id>/<title>')
-def follow(program_name, title, program_id=None):
+@plugin.route('/follow/<program_id>/<program_title>')
+def follow(program_id, program_title):
     """The API interface to follow a program used by the context menu"""
-    from favorites import Favorites
-    Favorites().follow(program_name=program_name, title=to_unicode(unquote_plus(from_unicode(title))), program_id=program_id)
+    from api import set_favorite
+    set_favorite(program_id=program_id, program_title=to_unicode(unquote_plus(from_unicode(program_title))))
+    notification(message=localize(30411, title=program_title))
+    container_refresh()
 
 
-@plugin.route('/unfollow/<program_name>/<title>')
-@plugin.route('/unfollow/<program_name>/<program_id>/<title>')
-def unfollow(program_name, title, program_id=None):
+@plugin.route('/unfollow/<program_id>/<program_title>')
+def unfollow(program_id, program_title):
     """The API interface to unfollow a program used by the context menu"""
-    move_down = bool(plugin.args.get('move_down'))
-    from favorites import Favorites
-    Favorites().unfollow(program_name=program_name, title=to_unicode(unquote_plus(from_unicode(title))), program_id=program_id, move_down=move_down)
+    from api import set_favorite
+    set_favorite(program_id=program_id, program_title=to_unicode(unquote_plus(from_unicode(program_title))), is_favorite=False)
+    notification(message=localize(30412, title=program_title))
+    container_refresh()
 
 
 @plugin.route('/favorites')
@@ -72,7 +73,7 @@ def favorites_menu():
 def favorites_programs(end_cursor=''):
     """The favorites 'My programs' listing"""
     from vrtplayer import VRTPlayer
-    VRTPlayer().show_tvshow_menu(end_cursor=end_cursor, use_favorites=True)
+    VRTPlayer().show_favorites_tvshow_menu(end_cursor=end_cursor)
 
 
 @plugin.route('/favorites/recent')
@@ -92,21 +93,6 @@ def favorites_offline(end_cursor=''):
     VRTPlayer().show_offline_menu(end_cursor=end_cursor, use_favorites=True)
 
 
-@plugin.route('/favorites/refresh')
-def favorites_refresh():
-    """The API interface to refresh the favorites cache"""
-    from favorites import Favorites
-    Favorites().refresh(ttl=0)
-    notification(message=localize(30982))
-
-
-@plugin.route('/favorites/manage')
-def favorites_manage():
-    """The API interface to manage your favorites"""
-    from favorites import Favorites
-    Favorites().manage()
-
-
 @plugin.route('/resumepoints/continue')
 @plugin.route('/resumepoints/continue/<end_cursor>')
 def resumepoints_continue(end_cursor=''):
@@ -120,6 +106,7 @@ def resumepoints_continue_delete(episode_id):
     """The API interface to delete episodes from continue watching listing"""
     from api import delete_continue
     delete_continue(episode_id)
+    container_refresh()
 
 
 @plugin.route('/resumepoints/continue/finish/<episode_id>')
@@ -127,6 +114,7 @@ def resumepoints_continue_finish(episode_id):
     """The API interface to finish episodes from continue watching listing"""
     from api import finish_continue
     finish_continue(episode_id)
+    container_refresh()
 
 
 @plugin.route('/programs/<program_name>')
