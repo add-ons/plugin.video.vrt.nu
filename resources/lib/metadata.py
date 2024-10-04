@@ -88,10 +88,6 @@ class Metadata:
             if follow_enabled and program_name:
                 program_title = to_unicode(quote_plus(from_unicode(program_title)))  # We need to ensure forward slashes are quoted
                 if self._favorites.is_favorite(program_name):
-                    extras = {}
-                    # If we are in a favorites menu, move cursor down before removing a favorite
-                    if plugin.path.startswith('/favorites'):
-                        extras = {'move_down': True}
                     context_menu.append((
                         localize(30412, title=follow_suffix),  # Unfollow
                         'RunPlugin(%s)' % url_for('unfollow', program_id=program_id, program_title=program_title)
