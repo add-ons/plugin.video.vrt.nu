@@ -415,14 +415,6 @@ msgctxt "#30413"
 msgid "Refresh menu"
 msgstr "Vernieuw menu"
 
-msgctxt "#30415"
-msgid "No followed programs found"
-msgstr "Geen programma's worden gevolgd"
-
-msgctxt "#30416"
-msgid "We could not find any programs that are followed.\n\nEither right-click on a program or episode to follow a program, or follow a program on the VRT MAX website."
-msgstr "We konden geen programma's vinden die je volgt.\n\nKlik met de rechtermuisknop op een programma of aflevering om een programma te volgen of volg een programma op de VRT MAX-website."
-
 msgctxt "#30417"
 msgid "Go to program"
 msgstr "Ga naar programma"
@@ -560,10 +552,6 @@ msgstr "Toon Mijn favorieten"
 msgctxt "#30744"
 msgid "When enabled, the user can follow their favorite programs and list these separately. In this case the VRT MAX add-on will download and update a list of your followed programs on the VRT MAX website."
 msgstr "Indien actief kan de gebruiker zijn favoriete programma's volgen en apart aanroepen. Dit zorgt er wel voor dat de VRT MAX add-on een lijst van favoriete programma's download en aanpast op de VRT MAX website."
-
-msgctxt "#30745"
-msgid "Manage My favorites…"
-msgstr "Beheer Mijn favorieten…"
 
 msgctxt "#30747"
 msgid "Enable watching activity"
@@ -844,14 +832,6 @@ msgstr "Cache"
 msgctxt "#30915"
 msgid "Clear VRT tokens"
 msgstr "Verwijder VRT-tokens"
-
-msgctxt "#30917"
-msgid "Refresh favorites"
-msgstr "Ververs favoriete programma's"
-
-msgctxt "#30919"
-msgid "Refresh watching activity"
-msgstr "Ververs kijkactiviteit"
 
 msgctxt "#30921"
 msgid "Use menu caching"

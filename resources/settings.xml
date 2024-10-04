@@ -10,7 +10,6 @@
     <category label="30740"> <!-- Interface -->
         <setting label="30741" type="lsep"/> <!-- My favorites -->
         <setting label="30743" help="30744" type="bool" id="usefavorites" default="true"/>
-        <setting label="30745" help="30746" type="action" action="RunPlugin(plugin://plugin.video.vrt.nu/favorites/manage)" enable="eq(-1,true)" subsetting="true"/>  <!-- Manage favorites -->
         <setting label="30747" help="30748" type="bool" id="useresumepoints" default="true" enable="eq(-2,true)" subsetting="true"/>
         <setting label="30749" help="30750" type="bool" id="addmymovies" default="true" enable="eq(-3,true)" subsetting="true"/>
         <setting label="30751" help="30752" type="bool" id="addmydocu" default="true" enable="eq(-4,true)" subsetting="true"/>
@@ -84,8 +83,6 @@
         <setting label="30911" help="30912" type="action" option="close" action="Addon.OpenSettings(script.module.inputstreamhelper)" enable="eq(-3,true)" subsetting="true"/> <!-- InputStream Helper settings -->
         <setting label="30913" type="lsep"/> <!-- Cache -->
         <setting label="30915" help="30916" type="action" action="RunPlugin(plugin://plugin.video.vrt.nu/tokens/delete)"/> <!-- Delete tokens -->
-        <setting label="30917" help="30918" type="action" action="RunPlugin(plugin://plugin.video.vrt.nu/favorites/refresh)"/> <!-- Refresh favorites -->
-        <setting label="30919" help="30920" type="action" action="RunPlugin(plugin://plugin.video.vrt.nu/resumepoints/refresh)"/> <!-- Refresh resumepoints -->
         <setting label="30921" help="30922" type="bool" id="usemenucaching" default="true"/>
         <setting label="30923" help="30924" type="bool" id="usehttpcaching" default="true"/>
         <setting label="30925" help="30926" type="action" action="RunPlugin(plugin://plugin.video.vrt.nu/cache/delete)" enable="eq(-1,true)" subsetting="true"/>
