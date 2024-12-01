@@ -1147,9 +1147,8 @@ def get_search(keywords, end_cursor=''):
         }
         if query_string:
             search_dict['q'] = query_string
-        encoded_search = base64.b64encode(dumps(search_dict).encode('utf-8'))
 
-        list_id = 'tl-pag-srch|{}#{}'.format(result_type, encoded_search.decode('utf-8'))
+        list_id = 'tl-pag-srch|o%14|{}|{}%'.format(dumps(search_dict), result_type)
         list_id = '#{}'.format(base64.b64encode(list_id.encode('utf-8')).decode('utf-8'))
 
         if entity_type == 'video-program' and not end_cursor:
@@ -1200,8 +1199,8 @@ def get_programs(category=None, channel=None, keywords=None, end_cursor=''):
     }
     if query_string:
         search_dict['q'] = query_string
-    encoded_search = base64.b64encode(dumps(search_dict).encode('utf-8'))
-    list_id = 'tl-pag-srch|{}#{}'.format('watch', encoded_search.decode('utf-8'))
+
+    list_id = 'tl-pag-srch|o%14|{}|{}%'.format(dumps(search_dict), 'watch')
     list_id = '#{}'.format(base64.b64encode(list_id.encode('utf-8')).decode('utf-8'))
 
     api_data = get_paginated_programs(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
