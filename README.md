@@ -59,6 +59,10 @@ leave a message at [our Facebook page](https://facebook.com/kodivrtnu/).
 </table>
 
 ## Releases
+### v2.5.33 (2024-12-01)
+- Fix search (@mediaminister)
+- Fix category menu listings (@mediaminister)
+
 ### v2.5.32 (2024-05-21)
 - Fix search (@mediaminister)
 - Fix program menu listings (@mediaminister)
