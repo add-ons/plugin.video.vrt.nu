@@ -25,8 +25,8 @@ class StreamService:
     _UPLYNK_LICENSE_URL = 'https://content.uplynk.com/wv'
     _INVALID_LOCATION = 'INVALID_LOCATION'
     _INCOMPLETE_ROAMING_CONFIG = 'INCOMPLETE_ROAMING_CONFIG'
-    _BELGIUM_ONLY = 'CONTENT_AVAILABLE_ONLY_IN_BE'
-    _GEOBLOCK_ERROR_CODES = (_INCOMPLETE_ROAMING_CONFIG, _INVALID_LOCATION, _BELGIUM_ONLY)
+    _BELGIUM_ONLY = ('CONTENT_AVAILABLE_ONLY_IN_BE', 'CONTENT_AVAILABLE_ONLY_FOR_BE_RESIDENTS')
+    _GEOBLOCK_ERROR_CODES = (_INCOMPLETE_ROAMING_CONFIG, _INVALID_LOCATION) + _BELGIUM_ONLY
 
     def __init__(self, _tokenresolver):
         """Initialize Stream Service class"""
@@ -257,7 +257,7 @@ class StreamService:
                 message = localize(30965)  # Geoblock error: Blocked on your geographical location based on your IP address
                 return self._handle_stream_api_error(message, stream_json)
 
-            if stream_json.get('code') == self._BELGIUM_ONLY:
+            if stream_json.get('code') in self._BELGIUM_ONLY:
                 message = localize(30973)  # Geoblock error: This program can only be played from EU
                 return self._handle_stream_api_error(message, stream_json)
 
@@ -281,7 +281,7 @@ class StreamService:
     def _handle_stream_api_error(message, video_json=None):
         """Show localized stream api error messages in Kodi GUI"""
         if video_json:
-            log_error(video_json.get('message'))
+            log_error(video_json)
         ok_dialog(message=message)
         end_of_directory()
 
