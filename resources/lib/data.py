@@ -121,7 +121,7 @@ CHANNELS = [
         'vod': True,
     },
     {
-        'id': '12',
+        'id': 'OE',
         'name': 'sporza',
         'label': 'Sporza',
         'studio': 'Sporza',
