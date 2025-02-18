@@ -934,7 +934,7 @@ def convert_episode(item, destination=None):
     product_placement = episode.get('productPlacementShortValue') == 'pp'
     region = episode.get('regionRaw')
     permalink = episode.get('permalink')
-    plot = episode.get('description')
+    plot = episode.get('description') or ''
     plot = format_plot(plot, region, product_placement, mpaa, offtime, permalink)
     plotoutline = episode.get('program').get('subtitle')
     duration = int(episode.get('durationSeconds'))
