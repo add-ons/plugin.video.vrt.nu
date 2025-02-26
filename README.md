@@ -59,6 +59,9 @@ leave a message at [our Facebook page](https://facebook.com/kodivrtnu/).
 </table>
 
 ## Releases
+### v2.5.35 (2025-02-26)
+- Fix episode listings (@mediaminister)
+
 ### v2.5.34 (2025-02-04)
 - Fix watching VRT MAX abroad (@mediaminister)
 - Fix Sporza IPTV Manager EPG (@mediaminister)
