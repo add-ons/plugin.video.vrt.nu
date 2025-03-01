@@ -136,7 +136,7 @@ def url_to_program(url):
     elif url.startswith('//www.vrt.be/vrtnu/a-z/'):
         # medium programUrl or targetUrl
         program = url.split('/')[5]
-    elif url.startswith('/vrtnu/a-z/'):
+    elif url.startswith('/vrtnu/a-z/') or url.startswith('/vrtmax/a-z/'):
         # short programUrl
         program = url.split('/')[3]
         # Workaround: when adding a favourite on https://www.vrt.be/vrtmax/ sometimes '.html' is wrongly added to the short program Url
@@ -158,7 +158,7 @@ def url_to_episode(url):
     if url.startswith('//www.vrt.be/vrtnu/a-z/'):
         # medium episode url
         return url.replace('//www.vrt.be/vrtnu/a-z/', '/vrtnu/a-z/')
-    if url.startswith('/vrtnu/a-z/'):
+    if url.startswith('/vrtnu/a-z/') or url.startswith('/vrtmax/a-z/'):
         # short episode url
         return url
     return None
