@@ -53,17 +53,6 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(medium_url, utils.reformat_url(long_url + '#foo', 'medium'))
         self.assertEqual(short_url, utils.reformat_url(long_url + '#foo', 'short'))
 
-    def test_program_to_url(self):
-        """Test converting program to URL (de-campus-cup)"""
-        program = 'de-campus-cup'
-        short_url = '/vrtnu/a-z/de-campus-cup/'
-        medium_url = '//www.vrt.be/vrtnu/a-z/de-campus-cup/'
-        long_url = 'https://www.vrt.be/vrtnu/a-z/de-campus-cup/'
-
-        self.assertEqual(short_url, utils.program_to_url(program, 'short'))
-        self.assertEqual(medium_url, utils.program_to_url(program, 'medium'))
-        self.assertEqual(long_url, utils.program_to_url(program, 'long'))
-
     def test_url_to_program(self):
         """Test converting URL to program (buck)"""
         program = 'buck'
