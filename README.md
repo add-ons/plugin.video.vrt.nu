@@ -59,6 +59,9 @@ leave a message at [our Facebook page](https://facebook.com/kodivrtnu/).
 </table>
 
 ## Releases
+### v2.5.36 (2025-03-03)
+- Fix program listings (@malc0mn)
+
 ### v2.5.35 (2025-02-26)
 - Fix episode listings (@mediaminister)
 
