@@ -119,7 +119,7 @@ class TestApi(unittest.TestCase):
 
     def test_upnext(self):
         """Test getting next episode (de-ideale-wereld)"""
-        episode_id = '1700435154519'
+        episode_id = '1728252310175'
         next_episode = get_next_info(episode_id).get('next_episode')
         self.assertTrue(next_episode)
         print(next_episode)
