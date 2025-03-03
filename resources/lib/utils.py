@@ -100,26 +100,6 @@ def reformat_image_url(url):
     return ''
 
 
-def program_to_url(program, url_type):
-    """Convert a program url component (e.g. de-campus-cup) to:
-        - a short programUrl (e.g. /vrtnu/a-z/de-campus-cup/)
-        - a medium programUrl (e.g. //www.vrt.be/vrtnu/a-z/de-campus-cup/)
-        - a long programUrl (e.g. https://www.vrt.be/vrtnu/a-z/de-campus-cup/)
-   """
-    url = None
-    if program:
-        # short programUrl
-        if url_type == 'short':
-            url = '/vrtnu/a-z/' + program + '/'
-        # medium programUrl
-        elif url_type == 'medium':
-            url = '//www.vrt.be/vrtnu/a-z/' + program + '/'
-        # long programUrl
-        elif url_type == 'long':
-            url = 'https://www.vrt.be/vrtnu/a-z/' + program + '/'
-    return url
-
-
 def url_to_program(url):
     """Convert
           - a targetUrl (e.g. //www.vrt.be/vrtnu/a-z/de-campus-cup.relevant/),
@@ -136,7 +116,7 @@ def url_to_program(url):
     elif url.startswith('//www.vrt.be/vrtnu/a-z/'):
         # medium programUrl or targetUrl
         program = url.split('/')[5]
-    elif url.startswith('/vrtnu/a-z/'):
+    elif url.startswith('/vrtnu/a-z/') or url.startswith('/vrtmax/a-z/'):
         # short programUrl
         program = url.split('/')[3]
         # Workaround: when adding a favourite on https://www.vrt.be/vrtmax/ sometimes '.html' is wrongly added to the short program Url
@@ -158,7 +138,7 @@ def url_to_episode(url):
     if url.startswith('//www.vrt.be/vrtnu/a-z/'):
         # medium episode url
         return url.replace('//www.vrt.be/vrtnu/a-z/', '/vrtnu/a-z/')
-    if url.startswith('/vrtnu/a-z/'):
+    if url.startswith('/vrtnu/a-z/') or url.startswith('/vrtmax/a-z/'):
         # short episode url
         return url
     return None

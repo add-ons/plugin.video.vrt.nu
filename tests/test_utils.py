@@ -53,29 +53,22 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(medium_url, utils.reformat_url(long_url + '#foo', 'medium'))
         self.assertEqual(short_url, utils.reformat_url(long_url + '#foo', 'short'))
 
-    def test_program_to_url(self):
-        """Test converting program to URL (de-campus-cup)"""
-        program = 'de-campus-cup'
-        short_url = '/vrtnu/a-z/de-campus-cup/'
-        medium_url = '//www.vrt.be/vrtnu/a-z/de-campus-cup/'
-        long_url = 'https://www.vrt.be/vrtnu/a-z/de-campus-cup/'
-
-        self.assertEqual(short_url, utils.program_to_url(program, 'short'))
-        self.assertEqual(medium_url, utils.program_to_url(program, 'medium'))
-        self.assertEqual(long_url, utils.program_to_url(program, 'long'))
-
     def test_url_to_program(self):
         """Test converting URL to program (buck)"""
         program = 'buck'
         short_url = '/vrtnu/a-z/buck/1/buck-s1a32/'
+        short_max_url = '/vrtmax/a-z/buck/1/buck-s1a32/'
         medium_url = '//www.vrt.be/vrtnu/a-z/buck/1/buck-s1a32/'
         long_url = 'https://www.vrt.be/vrtnu/a-z/buck/1/buck-s1a32/'
         short_relevant_url = '/vrtnu/a-z/buck.relevant/'
+        short_max_relevant_url = '/vrtmax/a-z/buck.relevant/'
 
         self.assertEqual(program, utils.url_to_program(long_url))
         self.assertEqual(program, utils.url_to_program(medium_url))
         self.assertEqual(program, utils.url_to_program(short_url))
+        self.assertEqual(program, utils.url_to_program(short_max_url))
         self.assertEqual(program, utils.url_to_program(short_relevant_url))
+        self.assertEqual(program, utils.url_to_program(short_max_relevant_url))
 
     def test_url_to_episode(self):
         """Test converting URL to episode (buck)"""
@@ -86,6 +79,12 @@ class TestUtils(unittest.TestCase):
         medium_url = '//www.vrt.be/vrtnu/a-z/buck/1/buck-s1a32/'
         episode = '/vrtnu/a-z/buck/1/buck-s1a32/'
         self.assertEqual(episode, utils.url_to_episode(medium_url))
+
+        short_url = '/vrtnu/a-z/buck/1/buck-s1a32/'
+        self.assertEqual(short_url, utils.url_to_episode(short_url))
+
+        short_url = '/vrtmax/a-z/buck/1/buck-s1a32/'
+        self.assertEqual(short_url, utils.url_to_episode(short_url))
 
         self.assertEqual(None, utils.url_to_episode('foobar'))
 
