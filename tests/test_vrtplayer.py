@@ -46,7 +46,7 @@ class TestVRTPlayer(unittest.TestCase):
     def test_show_videos_single_season_shows_videos(self):
         """Test listing single season for a given program (het-weer)"""
         program_name = 'het-weer'
-        season_name = '2024'
+        season_name = now.strftime('%Y')
         episode_items, sort, ascending, content = get_episodes(program_name=program_name, season_name=season_name)
         self.assertTrue(episode_items, msg=program_name)
         self.assertEqual(sort, 'dateadded')
