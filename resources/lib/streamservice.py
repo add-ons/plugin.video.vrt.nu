@@ -19,9 +19,9 @@ from kodiutils import (addon_profile, can_play_drm, container_reload, exists, en
 class StreamService:
     """Collect and prepare stream info for Kodi Player"""
 
-    _VUPLAY_API_URL = 'https://api.vuplay.co.uk'
     _VUALTO_API_URL = 'https://media-services-public.vrt.be/media-aggregator/v2'
     _CLIENT = 'vrtnu-web@PROD'
+    _VUALTO_LICENSE_URL = 'https://widevine-proxy.drm.technology/proxy'
     _UPLYNK_LICENSE_URL = 'https://content.uplynk.com/wv'
     _INVALID_LOCATION = 'INVALID_LOCATION'
     _INCOMPLETE_ROAMING_CONFIG = 'INCOMPLETE_ROAMING_CONFIG'
@@ -33,20 +33,6 @@ class StreamService:
         self._tokenresolver = _tokenresolver
         self._create_settings_dir()
         self._can_play_drm = can_play_drm()
-
-    def _get_vualto_license_url(self):
-        """Get Widevine license URL from Vualto API"""
-        # Try cache
-        data = get_cache('vualto_license_url.json')
-        if data:
-            return data.get('la_url')
-
-        vualto_license_url = get_url_json(url=self._VUPLAY_API_URL, fail={}).get('drm_providers', {}).get('widevine', {})
-        if vualto_license_url:
-            from json import dumps
-            vualto_license_url.update(expirationDate=generate_expiration_date(hours=168))
-            update_cache('vualto_license_url.json', dumps(vualto_license_url))
-        return vualto_license_url.get('la_url')
 
     @staticmethod
     def _create_settings_dir():
@@ -111,7 +97,7 @@ class StreamService:
             from json import dumps
             # Warning: Currently, the drmExpired key in the stream_json cannot be used because it provides a wrong 6 hour ttl for the VUDRM tokens.
             # After investigation these tokens seem to have an expiration time of only two hours, so we set the expirationDate value accordingly.
-            stream_json.update(expirationDate=generate_expiration_date(hours=2), vualto_license_url=self._get_vualto_license_url())
+            stream_json.update(expirationDate=generate_expiration_date(hours=2))
             cache_file = api_data.video_id + '.json'
             update_cache(cache_file, dumps(stream_json))
         return stream_json
@@ -172,7 +158,6 @@ class StreamService:
             uplynk = 'uplynk.com' in stream_json.get('targetUrls')[0].get('url')
 
             vudrm_token = stream_json.get('drm')
-            vualto_license_url = stream_json.get('vualto_license_url') or self._get_vualto_license_url()
             drm_stream = (vudrm_token or uplynk)
 
             # Select streaming protocol
@@ -222,7 +207,7 @@ class StreamService:
                     if vudrm_token:
                         stream = StreamURLS(
                             manifest_url,
-                            license_url=vualto_license_url,
+                            license_url=self._VUALTO_LICENSE_URL,
                             license_headers={'X-VUDRM-TOKEN': vudrm_token},
                             use_inputstream_adaptive=True
                         )
