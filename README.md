@@ -59,6 +59,9 @@ leave a message at [our Facebook page](https://facebook.com/kodivrtnu/).
 </table>
 
 ## Releases
+### v2.5.37 (2025-04-04)
+- Fix DRM streams (@mediaminister)
+
 ### v2.5.36 (2025-03-03)
 - Fix program listings (@malc0mn)
 
