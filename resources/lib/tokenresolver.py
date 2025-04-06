@@ -279,6 +279,7 @@ class TokenResolver:
 
     @staticmethod
     def _generate_playerinfo():
+        """Generate playerinfo json for playertoken request"""
         import time
         from json import dumps
         import base64
@@ -287,73 +288,96 @@ class TokenResolver:
         import re
 
         playerinfo = None
-        data = None
+        seen_urls = set()
+        result_urls = []
+        base_url = 'https://player.vrt.be/vrtmax/js/player-lib.js'
+        folder = '/'.join(base_url.split('/')[:-1])
+        player_version = '5.2.2'
+        atobs = None
+        kid = None
+        secret = None
 
-        # Get data from player javascript
-        player_url = 'https://player.vrt.be/vrtnu/js/main.js'
-        crypt_data = None
-        while not crypt_data:
-            response = open_url(player_url)
-            if response:
-                data = response.read().decode('utf-8')
+        main_script = open_url(base_url).read().decode('utf-8')
+        first_level_pattern = r'"\.(/[a-z0-9-/]+[a-z0-9]{8}\.js)";'
+        first_level_paths = re.findall(first_level_pattern, main_script)
 
-                if data:
-                    # Extract JWT key id and secret
-                    crypt_rx = re.compile(r'atob\(\"(==[A-Za-z0-9+/]*)\"')
-                    crypt_data = re.findall(crypt_rx, data)
-                    if not crypt_data:
-                        # Try redirect
-                        redirect_rx = re.compile(r"'([a-z]+\.[a-z0-9]{20}\.js)';")
-                        redirect_path = re.search(redirect_rx, data)
-                        if redirect_path:
-                            player_url = '{}/{}'.format(player_url[:player_url.rfind('/')], redirect_path.group(1))
-                        else:
-                            return playerinfo
+        for path in first_level_paths:
+            script_url = folder + path
+            if script_url in seen_urls:
+                continue
+            seen_urls.add(script_url)
 
-        kid_source = crypt_data[0]
-        secret_source = crypt_data[-1]
-        kid = base64.b64decode(kid_source[::-1]).decode('utf-8')
-        secret = base64.b64decode(secret_source[::-1]).decode('utf-8')
+            if 'drm' in script_url or 'bootstrapper' in script_url:
+                result_urls.append(script_url)
 
-        # Extract player version
-        player_version = '3.1.1'
-        pv_rx = re.compile(r'playerVersion:\"(\S*)\"')
-        match = re.search(pv_rx, data)
-        if match:
-            player_version = match.group(1)
+            script_content = open_url(script_url).read().decode('utf-8')
+            second_level_pattern = r'import\(\"\.(/[a-z0-9-]+\.js)\"\)'
+            second_level_paths = re.findall(second_level_pattern, script_content)
 
-        # Generate JWT
-        segments = []
-        header = {
-            'alg': 'HS256',
-            'kid': kid
-        }
-        payload = {
-            'exp': time.time() + 1000,
-            'platform': 'desktop',
-            'app': {
-                'type': 'browser',
-                'name': 'Firefox',
-                'version': '114.0'
-            },
-            'device': 'undefined (undefined)',
-            'os': {
-                'name': 'Linux',
-                'version': 'x86_64'
-            },
-            'player': {
-                'name': 'VRT web player',
-                'version': player_version
+            for sub_path in second_level_paths:
+                sub_script_url = folder + sub_path
+                if sub_script_url in seen_urls:
+                    continue
+                seen_urls.add(sub_script_url)
+
+                if 'drm' in sub_script_url or 'bootstrapper' in sub_script_url:
+                    result_urls.append(sub_script_url)
+
+        pattern_version = re.compile(r'\s"(\d{1}\.\d{1}\.\d{1}-[a-zA-Z0-9\-:]*)"')
+        pattern_atob = re.compile(r'atob\(\"(==[A-Za-z0-9+/]*)\"')
+
+        for url in result_urls:
+            content = open_url(url).read().decode('utf-8')
+            version_match = pattern_version.search(content)
+            if version_match:
+                player_version = version_match.group(1)
+            atobs = pattern_atob.findall(content)
+
+        if atobs:
+            # first atob reversed
+            kid = base64.b64decode(atobs[0][::-1]).decode('utf-8')
+            # last atob reversed
+            secret = base64.b64decode(atobs[-1][::-1]).decode('utf-8')
+
+            log(2, kid)
+            log(2, secret)
+
+            # Generate JWT
+            segments = []
+            header = {
+                'alg': 'HS256',
+                'kid': kid
             }
-        }
-        json_header = dumps(header).encode()
-        json_payload = dumps(payload).encode()
-        segments.append(base64.urlsafe_b64encode(json_header).decode('utf-8').replace('=', ''))
-        segments.append(base64.urlsafe_b64encode(json_payload).decode('utf-8').replace('=', ''))
-        signing_input = '.'.join(segments).encode()
-        signature = hmac.new(secret.encode(), signing_input, hashlib.sha256).digest()
-        segments.append(base64.urlsafe_b64encode(signature).decode('utf-8').replace('=', ''))
-        playerinfo = '.'.join(segments)
+            payload = {
+                'drm': {
+                    'widevine': 'L3'
+                },
+                'exp': round(time.time() + 3600, 3),
+                'platform': 'desktop',
+                'app': {
+                    'type': 'browser',
+                    'name': 'Firefox',
+                    'version': '137.0',
+                },
+                'device': 'undefined (undefined)',
+                'os': {
+                    'name': 'Linux',
+                    'version': 'x86_64',
+                },
+                'player': {
+                    'name': 'VRT web player',
+                    'version': player_version,
+                }
+            }
+            json_header = dumps(header).encode()
+            json_payload = dumps(payload).encode()
+            segments.append(base64.urlsafe_b64encode(json_header).rstrip(b'=').decode('utf-8'))
+            segments.append(base64.urlsafe_b64encode(json_payload).rstrip(b'=').decode('utf-8'))
+            signing_input = '.'.join(segments).encode()
+            signature = hmac.new(secret.encode(), signing_input, hashlib.sha256).digest()
+            segments.append(base64.urlsafe_b64encode(signature).rstrip(b'=').decode('utf-8'))
+            playerinfo = '.'.join(segments)
+            log(2, playerinfo)
         return playerinfo
 
     def delete_tokens(self):
