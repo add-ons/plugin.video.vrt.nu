@@ -14,7 +14,7 @@ CATEGORIES = [
     {'name': 'Cultuur', 'id': 'cultuur', 'msgctxt': 30071},
     {'name': 'Docu', 'id': 'docu', 'msgctxt': 30072},
     {'name': 'Entertainment', 'id': 'entertainment', 'msgctxt': 30073},
-    {'name': 'Film', 'id': 'films', 'msgctxt': 30074},
+    {'name': 'Films', 'id': 'films', 'msgctxt': 30074},
     {'name': 'Human interest', 'id': 'human-interest', 'msgctxt': 30075},
     {'name': 'Humor', 'id': 'humor', 'msgctxt': 30076},
     {'name': 'Kinderen en jongeren', 'id': 'voor-kinderen', 'msgctxt': 30077},
@@ -28,7 +28,7 @@ CATEGORIES = [
     {'name': 'Sport', 'id': 'sport', 'msgctxt': 30083},
     {'name': 'Talkshows', 'id': 'talkshows', 'msgctxt': 30084},
     {'name': 'Vlaamse Gebarentaal', 'id': 'met-gebarentaal', 'msgctxt': 30085},
-    {'name': 'Wetenschap & natuur', 'id': 'wetenschap-en-natuur', 'msgctxt': 30086},
+    {'name': 'Wetenschap en natuur', 'id': 'wetenschap-en-natuur', 'msgctxt': 30086},
 ]
 
 # TODO: Find a solution for the below VRT YouTube channels
