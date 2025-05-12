@@ -59,6 +59,9 @@ leave a message at [our Facebook page](https://facebook.com/kodivrtnu/).
 </table>
 
 ## Releases
+### v2.5.38 (2025-05-12)
+- Fix Ketnet Jr livestream (@mediaminister)
+
 ### v2.5.37 (2025-04-04)
 - Fix DRM streams (@mediaminister)
 
