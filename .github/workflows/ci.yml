@@ -23,18 +23,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest, windows-latest ]
-        python-version: ['3.8', '3.9', '3.10', '3.11' ]
-        include:
-          # End-of-life Python versions are not available anymore with ubuntu-latest
-          - os: ubuntu-20.04
-            python-version: '2.7'
-          - os: ubuntu-20.04
-            python-version: '3.5'
-          - os: ubuntu-20.04
-            python-version: '3.6'
-          # Kodi Leia on Windows uses a bundled Python 2.7.
-          - os: windows-latest
-            python-version: '2.7'
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
     steps:
     - name: Check out ${{ github.sha }} from repository ${{ github.repository }}
       uses: actions/checkout@v4
@@ -42,11 +31,9 @@ jobs:
       if: contains(matrix.os, 'windows')
       run: echo "PYTHONPATH=${env:PYTHONPATH};${env:GITHUB_WORKSPACE};${env:GITHUB_WORKSPACE}\resources\lib;${env:GITHUB_WORKSPACE}\tests" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf-8 -Append
     - name: 'Set up Python ${{ matrix.python-version }}'
-      uses: MatteoH2O1999/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
-      env:
-        PIP_TRUSTED_HOST: ${{ contains(fromJSON('["3.5"]'), matrix.python-version) && env.PYPI-HOSTS || '' }}
     - name: Install dependencies (linux)
       if: contains(matrix.os, 'ubuntu')
       run: |
@@ -64,13 +51,12 @@ jobs:
     - name: Compare translations
       run: make check-translations
       if: contains(matrix.os, 'ubuntu')
-    # Python 2.7 and Python 3.5 are no longer supported by proxy.py
     - name: Start proxy server, when supported (linux)
       run: python -m proxy --hostname 127.0.0.1 --log-level DEBUG &
-      if: contains(fromJSON('["3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]'), matrix.python-version) && contains(matrix.os, 'ubuntu')
+      if: contains(matrix.os, 'ubuntu')
     - name: Start proxy server, when supported (windows)
       run: Start-Process python -ArgumentList '-m proxy --hostname 127.0.0.1 --log-level DEBUG'
-      if: contains(fromJSON('["3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]'), matrix.python-version) && contains(matrix.os, 'windows')
+      if: contains(matrix.os, 'windows')
     - name: Run unit tests
       run: coverage run -m unittest discover
       env:
