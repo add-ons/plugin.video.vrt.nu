@@ -1084,7 +1084,7 @@ def get_latest_episode(program_name):
         if most_relevant_ep and most_relevant_ep.get('title') == 'Meest recente aflevering':
             latest_episode = most_relevant_ep
         else:
-            items = page.get('components')[1].get('items')[0].get('components')[0]
+            items = page.get('components')[0].get('items')[0].get('components')[0]
             if not items.get('paginatedItems'):
                 items = items.get('items')[0].get('components')[0]
             edges = items.get('paginatedItems').get('edges')
