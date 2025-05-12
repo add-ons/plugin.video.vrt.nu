@@ -1256,6 +1256,8 @@ def get_episodes(program_name, season_name=None, end_cursor=''):
     if program_name and season_name:
         if season_name.startswith('parsys'):
             list_id = 'static:/vrtnu/a-z/{}.model.json@{}'.format(program_name, season_name)
+        elif season_name.startswith('dynamic_'):
+            list_id = 'dynamic:/vrtnu/a-z/{}.model.json@{}'.format(program_name, season_name.split('dynamic_')[1])
         else:
             list_id = 'static:/vrtnu/a-z/{}/{}.episodes-list.json'.format(program_name, season_name)
         api_data = get_paginated_episodes(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
@@ -1309,6 +1311,8 @@ def create_season_dict(data_json):
     # season name
     if '.episodes-list.json' in list_id:
         season_dict['name'] = list_id.split('.episodes-list.json')[0].split('/')[-1]
+    elif list_id.startswith('dynamic:/'):
+        season_dict['name'] = 'dynamic_' + list_id.split('@')[-1]
     else:
         season_dict['name'] = list_id.split('@')[-1]
     return season_dict
