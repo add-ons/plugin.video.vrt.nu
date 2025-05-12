@@ -193,9 +193,6 @@ class StreamService:
                         querystring = ''
                     manifest_url = '{}?t={}-{}{}'.format(uri, video.get('start_date'), video.get('end_date'), querystring)
 
-                # FIXME: Remove '#' URI fragment identifier from manifest url because InputStream Adaptive refuses to play these urls
-                manifest_url = manifest_url.replace('#', '')
-
                 # Fix virtual subclip
                 from datetime import timedelta
                 duration = timedelta(milliseconds=stream_json.get('duration', 0))
