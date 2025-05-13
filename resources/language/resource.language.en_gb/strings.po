@@ -670,7 +670,7 @@ msgid "VRT 1"
 msgstr ""
 
 msgctxt "#30824"
-msgid "Canvas"
+msgid "VRT Canvas"
 msgstr ""
 
 msgctxt "#30825"

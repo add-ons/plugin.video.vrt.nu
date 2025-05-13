@@ -325,9 +325,10 @@ class StreamService:
                 break
 
         if stream_bandwidth > max_bandwidth and not hls_variant_url:
-            message = localize(30057, max=max_bandwidth, min=stream_bandwidth)
+            message = localize(30957, max=max_bandwidth, min=stream_bandwidth)
             ok_dialog(message=message)
             open_settings()
+            return self._select_hls_substreams(master_hls_url, protocol)
 
         # Get audio url
         if hls_audio_id:
