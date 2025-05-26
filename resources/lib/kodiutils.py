@@ -292,7 +292,10 @@ def play(stream, video=None):
             type='video',
             infoLabels=video.info_dict
         )
-    play_item.setProperty('inputstream.adaptive.max_bandwidth', str(get_max_bandwidth() * 1000))
+    if kodi_version_major() < 20:
+        play_item.setProperty('inputstream.adaptive.max_bandwidth', str(get_max_bandwidth() * 1000))
+    else:
+        play_item.setProperty('inputstream.adaptive.chooser_bandwidth_max', str(get_max_bandwidth() * 1000))
     play_item.setProperty('network.bandwidth', str(get_max_bandwidth() * 1000))
 
     if stream.stream_url is not None and stream.use_inputstream_adaptive:
