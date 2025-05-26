@@ -318,9 +318,21 @@ def play(stream, video=None):
             import inputstreamhelper
             is_helper = inputstreamhelper.Helper('mpd', drm='com.widevine.alpha')
             if is_helper.check_inputstream():
-                play_item.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')
-                license_key = generate_ia_license_key(stream.license_url, license_headers=stream.license_headers)
-                play_item.setProperty('inputstream.adaptive.license_key', license_key)
+                if kodi_version_major() > 21:
+                    from json import dumps
+                    drm_cfg = {
+                        'com.widevine.alpha': {
+                            'license': {
+                                'server_url': stream.license_url,
+                                'req_headers': urlencode(stream.license_headers)
+                            }
+                        }
+                    }
+                    play_item.setProperty('inputstream.adaptive.drm', dumps(drm_cfg))
+                else:
+                    play_item.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')
+                    license_key = generate_ia_license_key(stream.license_url, license_headers=stream.license_headers)
+                    play_item.setProperty('inputstream.adaptive.license_key', license_key)
 
     subtitles_visible = get_setting_bool('showsubtitles', default=True)
     # Separate subtitle url for hls-streams
