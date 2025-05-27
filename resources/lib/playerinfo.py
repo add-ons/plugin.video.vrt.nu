@@ -2,7 +2,6 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Implementation of PlayerInfo class"""
 
-from __future__ import absolute_import, division, unicode_literals
 from threading import Event, Thread
 from xbmc import getInfoLabel, Player, PlayList
 

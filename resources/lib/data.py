@@ -2,8 +2,6 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """A list of static data"""
 
-from __future__ import absolute_import, division, unicode_literals
-
 # The margin at start/end to consider a video as watched
 # This value is used by resumepoints and upnext
 SECONDS_MARGIN = 30

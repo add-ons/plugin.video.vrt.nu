@@ -2,8 +2,6 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Various helper classes used throughout the VRT MAX add-on"""
 
-from __future__ import absolute_import, division, unicode_literals
-
 
 class ApiData:
     """This helper object holds all media information"""
