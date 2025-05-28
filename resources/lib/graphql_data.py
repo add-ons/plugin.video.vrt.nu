@@ -2,9 +2,6 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Implements VRT MAX GraphQL API functionality"""
 
-from __future__ import absolute_import, division, unicode_literals
-
-
 EPISODE_TILE = """
     fragment episodeTile on EpisodeTile {
       __typename

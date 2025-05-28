@@ -3,9 +3,7 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """This file implements the Kodi xbmc module, either using stubs or alternative functionality"""
 
-# pylint: disable=invalid-name,no-self-use,too-many-branches,unused-argument
-
-from __future__ import absolute_import, division, print_function, unicode_literals
+# pylint: disable=invalid-name, unused-argument
 
 import os
 import json
@@ -13,11 +11,6 @@ import time
 import weakref
 from xbmcextra import ADDON_ID, global_settings, import_language
 from utils import to_unicode
-
-try:  # Python 2
-    basestring  # pylint: disable=used-before-assignment
-except NameError:  # Python 3
-    basestring = str  # pylint: disable=redefined-builtin
 
 LOGLEVELS = ['Debug', 'Info', 'Notice', 'Warning', 'Error', 'Severe', 'Fatal', 'None']
 LOGDEBUG = 0
@@ -190,13 +183,13 @@ class VideoInfoTag(object):  # pylint: disable=useless-object-inheritance
 
 def executebuiltin(string, wait=False):  # pylint: disable=unused-argument
     """A stub implementation of the xbmc executebuiltin() function"""
-    assert isinstance(string, basestring)
+    assert isinstance(string, str)
     assert isinstance(wait, bool)
 
 
 def executeJSONRPC(jsonrpccommand):
     """A reimplementation of the xbmc executeJSONRPC() function"""
-    assert isinstance(jsonrpccommand, basestring)
+    assert isinstance(jsonrpccommand, str)
     command = json.loads(jsonrpccommand)
 
     # Handle a list of commands sequentially
@@ -240,7 +233,7 @@ def executeJSONRPC(jsonrpccommand):
 
 def getCondVisibility(string):
     """A reimplementation of the xbmc getCondVisibility() function"""
-    assert isinstance(string, basestring)
+    assert isinstance(string, str)
     if string == 'system.platform.android':
         return False
     if string.startswith('System.HasAddon'):
@@ -250,7 +243,7 @@ def getCondVisibility(string):
 
 def getInfoLabel(key):
     """A reimplementation of the xbmc getInfoLabel() function"""
-    assert isinstance(key, basestring)
+    assert isinstance(key, str)
     return INFO_LABELS.get(key)
 
 
@@ -267,13 +260,13 @@ def getLocalizedString(msgctxt):
 
 def getRegion(key):
     """A reimplementation of the xbmc getRegion() function"""
-    assert isinstance(key, basestring)
+    assert isinstance(key, str)
     return REGIONS.get(key)
 
 
 def log(msg, level=0):
     """A reimplementation of the xbmc log() function"""
-    assert isinstance(msg, basestring)
+    assert isinstance(msg, str)
     assert isinstance(level, int)
     color1 = '\033[32;1m'
     color2 = '\033[32;0m'
@@ -297,7 +290,7 @@ def sleep(timemillis):
 
 def translatePath(path):
     """A stub implementation of the xbmc translatePath() function"""
-    assert isinstance(path, basestring)
+    assert isinstance(path, str)
     if path.startswith('special://home'):
         return path.replace('special://home', os.path.join(os.getcwd(), 'tests/'))
     if path.startswith('special://masterprofile'):

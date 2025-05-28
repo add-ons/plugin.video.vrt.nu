@@ -10,17 +10,13 @@ import unittest
 from api import get_programs
 from search import Search
 
-xbmc = __import__('xbmc')
-xbmcaddon = __import__('xbmcaddon')
-xbmcgui = __import__('xbmcgui')
-xbmcplugin = __import__('xbmcplugin')
-xbmcvfs = __import__('xbmcvfs')
+import xbmcaddon
 
-addon = xbmcaddon.Addon()
+ADDON = xbmcaddon.Addon()
 
 
-@unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
-@unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
+@unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+@unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
 class TestSearch(unittest.TestCase):
     """TestClass class"""
 

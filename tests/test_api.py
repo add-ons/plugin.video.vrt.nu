@@ -2,9 +2,6 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Unit tests for Api functionality"""
 
-# pylint: disable=invalid-name
-
-from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
 from api import (delete_continue, finish_continue, get_continue_episodes, get_episodes, get_favorite_programs, get_latest_episode,
                  get_next_info, get_online_categories, get_offline_programs, get_programs, get_recent_episodes,
@@ -12,18 +9,14 @@ from api import (delete_continue, finish_continue, get_continue_episodes, get_ep
 from data import CATEGORIES
 from xbmcextra import kodi_to_ansi
 
-xbmc = __import__('xbmc')
-xbmcaddon = __import__('xbmcaddon')
-xbmcgui = __import__('xbmcgui')
-xbmcplugin = __import__('xbmcplugin')
-xbmcvfs = __import__('xbmcvfs')
+import xbmcaddon
 
-addon = xbmcaddon.Addon()
-itemsperpage = int(addon.settings.get('itemsperpage'))
+ADDON = xbmcaddon.Addon()
+itemsperpage = ADDON.getSettingInt('itemsperpage')
 
 
-@unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
-@unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
+@unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+@unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
 class TestApi(unittest.TestCase):
     """TestCase class"""
 

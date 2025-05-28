@@ -3,23 +3,16 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Unit tests for Favorites functionality"""
 
-# pylint: disable=invalid-name
-
-from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
 from random import shuffle
 from api import get_recent_episodes, get_programs, get_offline_programs
 from favorites import Favorites
 
-xbmc = __import__('xbmc')
-xbmcaddon = __import__('xbmcaddon')
-xbmcgui = __import__('xbmcgui')
-xbmcplugin = __import__('xbmcplugin')
-xbmcvfs = __import__('xbmcvfs')
+import xbmcaddon
 
-addon = xbmcaddon.Addon()
-addon.settings['usefavorites'] = True
-itemsperpage = int(addon.settings.get('itemsperpage'))
+ADDON = xbmcaddon.Addon()
+ADDON.setSetting('usefavorites', 'true')
+itemsperpage = ADDON.getSettingInt('itemsperpage')
 
 
 class TestFavorites(unittest.TestCase):
@@ -27,8 +20,8 @@ class TestFavorites(unittest.TestCase):
 
     _favorites = Favorites()
 
-    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_get_recent_episodes(self):
         """Test items, sort and order"""
         episode_items, sort, ascending, content = get_recent_episodes(use_favorites=True)
@@ -38,8 +31,8 @@ class TestFavorites(unittest.TestCase):
         self.assertEqual(content, 'episodes')
 
     @staticmethod
-    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_get_offline_programs():
         """Test items, sort and order"""
         get_offline_programs(use_favorites=True)
@@ -75,8 +68,8 @@ class TestFavorites(unittest.TestCase):
             # self._favorites.unfollow(program_name=program_name, title=program_title)
             # self.assertFalse(self._favorites.is_favorite(program_name))
 
-    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_follow_unfollow(self):
         """Test following and unfollowing programs"""
         programs = [
@@ -96,12 +89,12 @@ class TestFavorites(unittest.TestCase):
             self._favorites.follow(program_name=program_name, title=program_title)
             self.assertTrue(self._favorites.is_favorite(program_name))
 
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_programs(self):
         """Test favorite programs list"""
         programs = self._favorites.programs()
-        # NOTE: Getting favorites requires credentials
-        if addon.settings.get('username') and addon.settings.get('password'):
-            self.assertTrue(programs)
+        self.assertTrue(programs)
         print(programs)
 
 

@@ -3,22 +3,16 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """This file implements the Kodi xbmcvfs module, either using stubs or alternative functionality"""
 
-# pylint: disable=invalid-name,too-few-public-methods
+# pylint: disable=invalid-name
 
-from __future__ import absolute_import, division, print_function, unicode_literals
 import os
 from shutil import copyfile
-
-try:  # Python 2
-    basestring  # pylint: disable=used-before-assignment
-except NameError:  # Python 3
-    basestring = str  # pylint: disable=redefined-builtin
 
 
 def File(path, flags='r'):
     """A reimplementation of the xbmcvfs File() function"""
-    assert isinstance(path, basestring)
-    assert isinstance(flags, basestring)
+    assert isinstance(path, str)
+    assert isinstance(flags, str)
     return open(path, flags)  # pylint: disable=consider-using-with
 
 
@@ -30,7 +24,7 @@ def Stat(path):
 
         def __init__(self, path):
             """The constructor xbmcvfs stat class"""
-            assert isinstance(path, basestring)
+            assert isinstance(path, str)
             self._stat = os.stat(path)
 
         def st_mtime(self):
@@ -42,14 +36,14 @@ def Stat(path):
 
 def copy(src, dst):
     """A reimplementation of the xbmcvfs mkdir() function"""
-    assert isinstance(src, basestring)
-    assert isinstance(dst, basestring)
+    assert isinstance(src, str)
+    assert isinstance(dst, str)
     return copyfile(src, dst) == dst
 
 
 def delete(path):
     """A reimplementation of the xbmcvfs delete() function"""
-    assert isinstance(path, basestring)
+    assert isinstance(path, str)
     try:
         os.remove(path)
     except OSError:
@@ -58,13 +52,13 @@ def delete(path):
 
 def exists(path):
     """A reimplementation of the xbmcvfs exists() function"""
-    assert isinstance(path, basestring)
+    assert isinstance(path, str)
     return os.path.exists(path)
 
 
 def listdir(path):
     """A reimplementation of the xbmcvfs listdir() function"""
-    assert isinstance(path, basestring)
+    assert isinstance(path, str)
     files = []
     dirs = []
     if not exists(path):
@@ -80,25 +74,25 @@ def listdir(path):
 
 def mkdir(path):
     """A reimplementation of the xbmcvfs mkdir() function"""
-    assert isinstance(path, basestring)
+    assert isinstance(path, str)
     return os.mkdir(path)
 
 
 def mkdirs(path):
     """A reimplementation of the xbmcvfs mkdirs() function"""
-    assert isinstance(path, basestring)
+    assert isinstance(path, str)
     return os.makedirs(path)
 
 
 def rmdir(path):
     """A reimplementation of the xbmcvfs rmdir() function"""
-    assert isinstance(path, basestring)
+    assert isinstance(path, str)
     return os.rmdir(path)
 
 
 def translatePath(path):
     """A stub implementation of the xbmc translatePath() function"""
-    assert isinstance(path, basestring)
+    assert isinstance(path, str)
     if path.startswith('special://home'):
         return path.replace('special://home', os.path.join(os.getcwd(), 'tests/'))
     if path.startswith('special://masterprofile'):

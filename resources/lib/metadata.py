@@ -4,13 +4,7 @@
 
 """Implements a class for video metadata"""
 
-from __future__ import absolute_import, division, unicode_literals
-
-try:  # Python 3
-    from urllib.parse import quote_plus
-except ImportError:  # Python 2
-    from urllib import quote_plus
-
+from urllib.parse import quote_plus
 from data import CHANNELS, SECONDS_MARGIN
 from kodiutils import colour, get_setting_bool, localize, localize_datelong, log, url_for
 from utils import (find_entry, from_unicode, html_to_kodi, reformat_url,

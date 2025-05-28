@@ -2,17 +2,12 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """This module contains all functionality for VRT MAX API authentication."""
 
-from __future__ import absolute_import, division, unicode_literals
+from urllib.error import HTTPError
 from kodiutils import (addon_profile, delete, delete_cache, exists, get_cache, get_cache_dir, get_setting, open_url,
                        get_url_json, has_credentials, invalidate_caches, listdir,
                        localize, log, log_error, notification, ok_dialog,
                        open_settings, set_setting, update_cache)
 from utils import from_unicode
-
-try:  # Python 3
-    from urllib.error import HTTPError
-except ImportError:  # Python 2
-    from urllib2 import HTTPError
 
 
 class TokenResolver:

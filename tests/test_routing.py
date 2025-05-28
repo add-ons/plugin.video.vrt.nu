@@ -2,22 +2,14 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Integration tests for Routing functionality"""
 
-# pylint: disable=invalid-name,line-too-long
-
-from __future__ import absolute_import, division, print_function, unicode_literals
 from datetime import datetime, timedelta
 import unittest
 import dateutil.tz
 import addon
 
+import xbmcaddon
 
-xbmc = __import__('xbmc')
-xbmcaddon = __import__('xbmcaddon')
-xbmcgui = __import__('xbmcgui')
-xbmcplugin = __import__('xbmcplugin')
-xbmcvfs = __import__('xbmcvfs')
-
-xbmc_addon = xbmcaddon.Addon()
+ADDON = xbmcaddon.Addon()
 plugin = addon.plugin
 now = datetime.now(dateutil.tz.tzlocal())
 lastweek = now + timedelta(days=-7)
@@ -37,8 +29,8 @@ class TestRouting(unittest.TestCase):
         self.assertEqual(plugin.url_for(addon.noop), 'plugin://plugin.video.vrt.nu/noop')
 
     @staticmethod
-    @unittest.skipUnless(xbmc_addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_favorites():
         """Favorites menu: /favorites"""
         addon.run(['plugin://plugin.video.vrt.nu/favorites', '0', ''])
@@ -49,8 +41,8 @@ class TestRouting(unittest.TestCase):
         # addon.run(['plugin://plugin.video.vrt.nu/favorites/docu', '0', ''])
         # addon.run(['plugin://plugin.video.vrt.nu/favorites/music', '0', ''])
 
-    @unittest.skipUnless(xbmc_addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_episodes_menu(self):
         """Episodes menu: /programs/<program>"""
         addon.run(['plugin://plugin.video.vrt.nu/programs/thuis', '0', ''])
@@ -58,15 +50,23 @@ class TestRouting(unittest.TestCase):
         addon.run(['plugin://plugin.video.vrt.nu/programs/pano/2019', '0', ''])
         self.assertEqual(plugin.url_for(addon.programs, program_name='pano', season_name='2019'), 'plugin://plugin.video.vrt.nu/programs/pano/2019')
         addon.run(['plugin://plugin.video.vrt.nu/programs/de-smurfen0/2021/1655824964821', '0', ''])
-        self.assertEqual(plugin.url_for(addon.programs, program_name='de-smurfen0', season_name='2021', end_cursor='1655824964821'), 'plugin://plugin.video.vrt.nu/programs/de-smurfen0/2021/1655824964821')
+        self.assertEqual(
+            plugin.url_for(
+                addon.programs,
+                program_name='de-smurfen0',
+                season_name='2021',
+                end_cursor='1655824964821'
+            ),
+            'plugin://plugin.video.vrt.nu/programs/de-smurfen0/2021/1655824964821'
+        )
 
     def test_categories_menu(self):
         """Categories menu: /categories"""
         addon.run(['plugin://plugin.video.vrt.nu/categories', '0', ''])
         self.assertEqual(plugin.url_for(addon.categories), 'plugin://plugin.video.vrt.nu/categories')
 
-    @unittest.skipUnless(xbmc_addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_categories_tvshow_menu(self):
         """Categories programs menu: /categories/<category>"""
         addon.run(['plugin://plugin.video.vrt.nu/categories/docu', '0', ''])
@@ -74,15 +74,15 @@ class TestRouting(unittest.TestCase):
         addon.run(['plugin://plugin.video.vrt.nu/categories/voor-kinderen', '0', ''])
         self.assertEqual(plugin.url_for(addon.categories, category='voor-kinderen'), 'plugin://plugin.video.vrt.nu/categories/voor-kinderen')
 
-    @unittest.skipUnless(xbmc_addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_featured_menu(self):
         """Featured menu: /featured"""
         addon.run(['plugin://plugin.video.vrt.nu/featured', '0', ''])
         self.assertEqual(plugin.url_for(addon.featured), 'plugin://plugin.video.vrt.nu/featured')
 
-    @unittest.skipUnless(xbmc_addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_featured_tvshow_menu(self):
         """Featured programs menu: /featured/<cfeatured>"""
         addon.run(['plugin://plugin.video.vrt.nu/featured/program_par_list_789470835_copy', '0', ''])
@@ -90,8 +90,8 @@ class TestRouting(unittest.TestCase):
                                         feature='program_par_list_789470835_copy'),
                          'plugin://plugin.video.vrt.nu/featured/program_par_list_789470835_copy')
 
-    @unittest.skipUnless(xbmc_addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_featured_episode_menu(self):
         """Featured episodes menu: /featured/<cfeatured>"""
         addon.run(['plugin://plugin.video.vrt.nu/featured/episode_par_list_copy_copy_copy', '0', ''])
@@ -99,8 +99,8 @@ class TestRouting(unittest.TestCase):
                                         feature='episode_par_list_copy_copy_copy'),
                          'plugin://plugin.video.vrt.nu/featured/episode_par_list_copy_copy_copy')
 
-    @unittest.skipUnless(xbmc_addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_channels_menu(self):
         """Channels menu = /channels/<channel>"""
         addon.run(['plugin://plugin.video.vrt.nu/channels', '0', ''])
@@ -113,15 +113,15 @@ class TestRouting(unittest.TestCase):
         addon.run(['plugin://plugin.video.vrt.nu/livetv', '0', ''])
         self.assertEqual(plugin.url_for(addon.livetv), 'plugin://plugin.video.vrt.nu/livetv')
 
-    @unittest.skipUnless(xbmc_addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_recent_menu(self):
         """Most recent menu: /recent"""
         addon.run(['plugin://plugin.video.vrt.nu/recent', '0', ''])
         self.assertEqual(plugin.url_for(addon.recent), 'plugin://plugin.video.vrt.nu/recent')
 
-    @unittest.skipUnless(xbmc_addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_offline_menu(self):
         """Soon offline menu: /offline"""
         addon.run(['plugin://plugin.video.vrt.nu/offline', '0', ''])
@@ -140,8 +140,8 @@ class TestRouting(unittest.TestCase):
         addon.run(['plugin://plugin.video.vrt.nu/tvguide/channel/canvas/today', '0', ''])
         self.assertEqual(plugin.url_for(addon.tvguide_channel, channel='canvas', date='today'), 'plugin://plugin.video.vrt.nu/tvguide/channel/canvas/today')
 
-    @unittest.skipUnless(xbmc_addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_search_history(self):
         """Add search keyword: /search/add/<keywords>
             Clear search history: /search/clear
@@ -167,8 +167,8 @@ class TestRouting(unittest.TestCase):
         addon.run(['plugin://plugin.video.vrt.nu/search/add/foobar', '0', ''])
         self.assertEqual(plugin.url_for(addon.add_search, keywords='foobar'), 'plugin://plugin.video.vrt.nu/search/add/foobar')
 
-    @unittest.skipUnless(xbmc_addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_search_menu(self):
         """Search VRT MAX menu: /search/query/<keywords>"""
         addon.run(['plugin://plugin.video.vrt.nu/search', '0', ''])
@@ -180,19 +180,33 @@ class TestRouting(unittest.TestCase):
         addon.run(['plugin://plugin.video.vrt.nu/search/query/winter', '0', ''])
         self.assertEqual(plugin.url_for(addon.search_query, keywords='winter'), 'plugin://plugin.video.vrt.nu/search/query/winter')
 
-    @unittest.skipUnless(xbmc_addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_follow_route(self):
         """Follow method: /follow/<program_id>/<program_title>"""
         addon.run(['plugin://plugin.video.vrt.nu/follow/1459955889901/Thuis', '0', ''])
-        self.assertEqual(plugin.url_for(addon.follow, program_id='1459955889901', program_title='Thuis'), 'plugin://plugin.video.vrt.nu/follow/1459955889901/Thuis')
+        self.assertEqual(
+            plugin.url_for(
+                addon.follow,
+                program_id='1459955889901',
+                program_title='Thuis'
+            ),
+            'plugin://plugin.video.vrt.nu/follow/1459955889901/Thuis'
+        )
 
-    @unittest.skipUnless(xbmc_addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_unfollow_route(self):
         """Unfollow method: /unfollow/<program_id>/<program_title>"""
         addon.run(['plugin://plugin.video.vrt.nu/unfollow/1459955889901/Thuis', '0', ''])
-        self.assertEqual(plugin.url_for(addon.unfollow, program_id='1459955889901', program_title='Thuis'), 'plugin://plugin.video.vrt.nu/unfollow/1459955889901/Thuis')
+        self.assertEqual(
+            plugin.url_for(
+                addon.unfollow,
+                program_id='1459955889901',
+                program_title='Thuis'
+            ),
+            'plugin://plugin.video.vrt.nu/unfollow/1459955889901/Thuis'
+        )
 
     def test_clear_cookies_route(self):
         """Delete tokens method: /tokens/delete"""
@@ -219,8 +233,8 @@ class TestRouting(unittest.TestCase):
         addon.run(['plugin://plugin.video.vrt.nu/play/id/vualto_canvas_geo', '0', ''])
         self.assertEqual(plugin.url_for(addon.play_id, video_id='vualto_canvas_geo'), 'plugin://plugin.video.vrt.nu/play/id/vualto_canvas_geo')
 
-    @unittest.skipUnless(xbmc_addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_play_latestepisode_route(self):
         """Play last episode method: /play/lastepisode/<program>"""
         addon.run(['plugin://plugin.video.vrt.nu/play/latest/vrt-nws-journaal', '0', ''])
@@ -256,8 +270,8 @@ class TestRouting(unittest.TestCase):
                                         end_date=mostrecent.strftime('%Y-%m-%dT10:00:00')),
                          mostrecent.strftime('plugin://plugin.video.vrt.nu/play/airdate/een/%Y-%m-%dT09:00:00/%Y-%m-%dT10:00:00'))
 
-    @unittest.skipUnless(xbmc_addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_play_upnext_route(self):
         """Play Up Next episode method: /play/upnext/<episode_id>"""
         addon.run(['plugin://plugin.video.vrt.nu/play/upnext/1571140659165', '0', ''])

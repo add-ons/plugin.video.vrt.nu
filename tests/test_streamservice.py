@@ -2,30 +2,19 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Unit tests for StreamService functionality"""
 
-# pylint: disable=invalid-name
-
-from __future__ import absolute_import, division, print_function, unicode_literals
 from datetime import datetime, timedelta
+from urllib.error import HTTPError
 import os
 import unittest
 import dateutil.tz
-
-try:
-    from urllib.error import HTTPError
-except ImportError:
-    from urllib2 import HTTPError
 
 from data import CHANNELS
 from streamservice import StreamService
 from tokenresolver import TokenResolver
 
-xbmc = __import__('xbmc')
-xbmcaddon = __import__('xbmcaddon')
-xbmcgui = __import__('xbmcgui')
-xbmcplugin = __import__('xbmcplugin')
-xbmcvfs = __import__('xbmcvfs')
+import xbmcaddon
 
-addon = xbmcaddon.Addon()
+ADDON = xbmcaddon.Addon()
 
 now = datetime.now(dateutil.tz.tzlocal())
 yesterday = now + timedelta(days=-1)
@@ -37,8 +26,8 @@ class TestStreamService(unittest.TestCase):
     _tokenresolver = TokenResolver()
     _streamservice = StreamService(_tokenresolver)
 
-    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_get_ondemand_stream_from_invalid_url(self):
         """Test getting stream from invalid URL"""
         video = {
@@ -53,8 +42,8 @@ class TestStreamService(unittest.TestCase):
         else:
             self.assertEqual(None, stream)
 
-    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_get_ondemand_stream_from_invalid_videoid(self):
         """Test getting stream from invalid video_id"""
         video = {
@@ -69,8 +58,8 @@ class TestStreamService(unittest.TestCase):
         else:
             self.assertEqual(None, stream)
 
-    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_get_ondemand_stream_from_url_gets_stream_does_not_crash(self):
         """Test getting stream from URL does not crash"""
         video = {
@@ -83,26 +72,26 @@ class TestStreamService(unittest.TestCase):
         if os.environ.get('GITHUB_ACTIONS') != 'true':
             self.assertTrue(stream is not None)
 
-    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_get_ondemand_stream_from_from_videoid_geoblocked(self):
         """Test getting stream from geoblocked video_id"""
-        # Undercover S01E01
+        # The handmaid's tale S05E01
         video = {
-            'video_id': 'vid-b77b58cb-eebf-4b00-b772-0d6b4caad6a5',
-            'publication_id': 'pbs-pub-8a1068a5-cffc-4b25-96cc-2b15b3c513dc',
+            'video_id': 'vid-f0725524-3a9e-46e1-94b4-12d9380ca490',
+            'publication_id': 'pbs-pub-c3f925d6-e80a-4e61-a8ce-f480087dbf42',
         }
         stream = self._streamservice.get_stream(video)
         # NOTE: Testing geoblocked streams only works within Europe
         if os.environ.get('GITHUB_ACTIONS') != 'true':
             self.assertTrue(stream is not None)
 
-    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_get_mpd_live_stream_from_url_does_not_crash_returns_stream(self):
         """Test getting MPEG-DASH stream from URL"""
-        addon.settings['usedrm'] = True
-        addon.settings['useinputstreamadaptive'] = True
+        ADDON.setSetting('usedrm', 'true')
+        ADDON.setSetting('useinputstreamadaptive', 'true')
         video = {
             'video_url': CHANNELS[1]['live_stream'],
             'video_id': None,
@@ -114,12 +103,12 @@ class TestStreamService(unittest.TestCase):
             self.assertTrue(stream is not None)
             self.assertTrue(stream.license_headers is not None)
 
-    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_get_mpd_live_stream_from_url_does_not_crash(self):
         """Test getting MPEG-DASH stream from URL"""
-        addon.settings['usedrm'] = True
-        addon.settings['useinputstreamadaptive'] = True
+        ADDON.setSetting('usedrm', 'true')
+        ADDON.setSetting('useinputstreamadaptive', 'true')
         video = {
             'video_url': CHANNELS[0]['live_stream'],
             'video_id': None,
@@ -132,8 +121,8 @@ class TestStreamService(unittest.TestCase):
 
     def test_get_mpd_live_stream_from_id_does_not_crash(self):
         """Test getting MPEG-DASH stream from URL"""
-        addon.settings['usedrm'] = True
-        addon.settings['useinputstreamadaptive'] = True
+        ADDON.setSetting('usedrm', 'true')
+        ADDON.setSetting('useinputstreamadaptive', 'true')
         video = {
             'video_url': None,
             'video_id': CHANNELS[1]['live_stream_id'],

@@ -9,5 +9,6 @@ python-dateutil
 git+https://github.com/tamland/kodi-plugin-routing.git@master#egg=routing
 setuptools >= 41
 tox
+kodistubs
 #typing-extensions == 3.7.4.1; python_version != '2.7'
 xmlschema == 1.0.18; python_version == '2.7'

@@ -2,9 +2,6 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Unit tests for VRTPlayer functionality"""
 
-# pylint: disable=invalid-name
-
-from __future__ import absolute_import, division, print_function, unicode_literals
 from datetime import datetime
 import random
 import unittest
@@ -12,13 +9,9 @@ import dateutil.tz
 from api import get_categories, get_categories_data, get_episodes, get_featured, get_programs
 from vrtplayer import VRTPlayer
 
-xbmc = __import__('xbmc')
-xbmcaddon = __import__('xbmcaddon')
-xbmcgui = __import__('xbmcgui')
-xbmcplugin = __import__('xbmcplugin')
-xbmcvfs = __import__('xbmcvfs')
+import xbmcaddon
 
-addon = xbmcaddon.Addon()
+ADDON = xbmcaddon.Addon()
 now = datetime.now(dateutil.tz.tzlocal())
 
 
@@ -27,8 +20,8 @@ class TestVRTPlayer(unittest.TestCase):
 
     _vrtplayer = VRTPlayer()
 
-    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_show_videos_single_episode_shows_videos(self):
         """Test listing single episode for a given program (wij--roger-raveel)"""
         program_name = 'wij--roger-raveel'
@@ -41,8 +34,8 @@ class TestVRTPlayer(unittest.TestCase):
 
         self._vrtplayer.show_episodes_menu(program_name)
 
-    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_show_videos_single_season_shows_videos(self):
         """Test listing single season for a given program (het-weer)"""
         program_name = 'het-weer'
@@ -55,8 +48,8 @@ class TestVRTPlayer(unittest.TestCase):
 
         self._vrtplayer.show_episodes_menu(program_name)
 
-    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_show_videos_multiple_seasons_shows_videos(self):
         """Test listing multiple season for a given program (pano)"""
         program_name = 'pano'
@@ -68,8 +61,8 @@ class TestVRTPlayer(unittest.TestCase):
 
         self._vrtplayer.show_episodes_menu(program_name)
 
-    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_show_videos_specific_seasons_shows_videos(self):
         """Test listing specific seasons for a given program (thuis)"""
         program_name = 'thuis'
@@ -81,8 +74,8 @@ class TestVRTPlayer(unittest.TestCase):
 
         self._vrtplayer.show_episodes_menu(program_name)
 
-    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_random_tvshow_episodes(self):
         """Test episode from a random tvshow in a random category"""
         categories = get_categories_data()
@@ -112,15 +105,15 @@ class TestVRTPlayer(unittest.TestCase):
         category_items = get_categories()
         self.assertEqual(len(category_items), 19)
 
-    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_featured(self):
         """Test featured menu"""
         featured_items, _, _, _ = get_featured()
         self.assertTrue(5 < len(featured_items) < 25)
 
-    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_play_unknown_program(self):
         """Test playing latest episode of an unknown program"""
         self._vrtplayer.play_latest_episode(program_name='foobar')
@@ -130,8 +123,8 @@ class TestVRTPlayer(unittest.TestCase):
         self._vrtplayer.play_episode_by_air_date(channel='een', start_date='2100-01-01T23:59:58', end_date='2100-01-01T23:59:59')
         self._vrtplayer.play_episode_by_air_date(channel='foo', start_date='2100-01-01T23:59:58', end_date='2100-01-01T23:59:59')
 
-    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
-    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    @unittest.skipUnless(ADDON.getSetting('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(ADDON.getSetting('password'), 'Skipping as VRT password is missing.')
     def test_play_unknown_episode_id(self):
         """Test playing unknown Up Next episode_id"""
         self._vrtplayer.play_upnext(episode_id='1234567890')
