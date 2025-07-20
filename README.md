@@ -59,6 +59,9 @@ leave a message at [our Facebook page](https://facebook.com/kodivrtnu/).
 </table>
 
 ## Releases
+### v2.5.39 (2025-07-20)
+- Fix category menu listings (@mediaminister)
+
 ### v2.5.38 (2025-05-12)
 - Fix Ketnet Jr livestream (@mediaminister)
 
