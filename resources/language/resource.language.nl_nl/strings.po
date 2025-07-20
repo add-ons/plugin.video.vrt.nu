@@ -991,14 +991,6 @@ msgctxt "#30981"
 msgid "Successfully invalidated caches."
 msgstr "Caches werden ongeldig gemaakt."
 
-msgctxt "#30982"
-msgid "Successfully refreshed favorites."
-msgstr "Favoriete programmma's werden ververst."
-
-msgctxt "#30983"
-msgid "Successfully refreshed watching activity."
-msgstr "Kijkactiviteit werd ververst."
-
 msgctxt "#30985"
 msgid "Successfully cleared VRT tokens."
 msgstr "VRT tokens werden verwijderd."
