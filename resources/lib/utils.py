@@ -2,17 +2,8 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Implements static functions used elsewhere in the add-on"""
 
-from __future__ import absolute_import, division, unicode_literals
 import re
-
-try:  # Python 3
-    from html import unescape
-except ImportError:  # Python 2
-    from HTMLParser import HTMLParser
-
-    def unescape(string):
-        """Expose HTMLParser's unescape"""
-        return HTMLParser().unescape(string)
+from html import unescape
 
 HTML_MAPPING = [
     (re.compile(r'<(/?)i(|\s[^>]+)>', re.I), '[\\1I]'),

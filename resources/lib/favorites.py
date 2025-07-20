@@ -3,13 +3,7 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Implementation of Favorites class"""
 
-from __future__ import absolute_import, division, unicode_literals
-
-try:  # Python 3
-    from urllib.parse import unquote
-except ImportError:  # Python 2
-    from urllib2 import unquote
-
+from urllib.parse import unquote
 from kodiutils import (container_refresh, get_cache, get_setting_bool, get_url_json,
                        has_credentials, input_down, invalidate_caches, localize,
                        multiselect, notification, ok_dialog, update_cache)

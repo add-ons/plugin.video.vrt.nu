@@ -2,14 +2,7 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Implements an ApiHelper class with common VRT MAX API functionality"""
 
-from __future__ import absolute_import, division, unicode_literals
-
-try:  # Python 3
-    from urllib.parse import quote_plus, unquote
-except ImportError:  # Python 2
-    from urllib import quote_plus
-    from urllib2 import unquote
-
+from urllib.parse import quote_plus, unquote
 from data import CHANNELS
 from helperobjects import TitleItem
 from kodiutils import (delete_cached_thumbnail, get_cache, get_cached_url_json, get_global_setting,

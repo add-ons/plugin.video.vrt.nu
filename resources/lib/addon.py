@@ -2,14 +2,8 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """This is the actual VRT MAX video plugin entry point"""
 
-from __future__ import absolute_import, division, unicode_literals
+from urllib.parse import unquote_plus
 from routing import Plugin
-
-try:  # Python 3
-    from urllib.parse import unquote_plus
-except ImportError:  # Python 2
-    from urllib import unquote_plus
-
 from kodiutils import container_refresh, end_of_directory, execute_builtin, get_global_setting, localize, log_access, notification, ok_dialog, refresh_caches
 
 plugin = Plugin()  # pylint: disable=invalid-name

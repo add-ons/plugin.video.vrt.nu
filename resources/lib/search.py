@@ -3,7 +3,6 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Implementation of Search class"""
 
-from __future__ import absolute_import, division, unicode_literals
 from favorites import Favorites
 from kodiutils import (addon_profile, container_refresh, container_update, end_of_directory, get_json_data,
                        get_search_string, input_down, localize, ok_dialog, open_file,
