@@ -5,9 +5,9 @@
 from __future__ import absolute_import, division, unicode_literals
 
 try:  # Python 3
-    from urllib.parse import quote_plus
+    from urllib.parse import quote_plus, unquote
 except ImportError:  # Python 2
-    from urllib import quote_plus
+    from urllib import quote_plus, unquote
 
 from data import CHANNELS
 from helperobjects import TitleItem
@@ -1524,183 +1524,132 @@ def get_categories():
         ))
     return categories
 
-
 def get_online_categories():
     """Return a list of categories from the VRT MAX website"""
     categories = []
     graphql_query = """
-        query Search(
-          $q: String
-          $mediaType: MediaType
-          $facets: [SearchFacetInput]
+        query Page(
+          $pageId: ID!
+          $lazyItemCount: Int = 10
+          $after: ID
+          $before: ID
+          $componentCount: Int = 5
+          $componentAfter: ID
         ) {
-          uiSearch(input: { q: $q, mediaType: $mediaType, facets: $facets }) {
-            __typename
+          page(id: $pageId) {
             ... on IIdentifiable {
+              __typename
               objectId
-              __typename
             }
-            ... on IComponent {
-              componentType
-              __typename
-            }
-            ...staticTileListFragment
-          }
-        }
-        fragment staticTileListFragment on StaticTileList {
-          __typename
-          id: objectId
-          objectId
-          listId
-          title
-          componentType
-          tileContentType
-          tileOrientation
-          displayType
-          expires
-          tileVariant
-          sort {
-            icon
-            order
-            title
-            __typename
-          }
-          actionItems {
-            ...actionItem
-            __typename
-          }
-          header {
-            action {
-              ...action
-              __typename
-            }
-            brand
-            brandLogos {
-              height
-              mono
-              primary
-              type
-              width
-              __typename
-            }
-            ctaText
-            description
-            image {
-              ...imageFragment
-              __typename
-            }
-            type
-            compactLayout
-            backgroundColor
-            textTheme
-            __typename
-          }
-          bannerSize
-          items {
-            ...tileFragment
-            __typename
-          }
-          ... on IComponent {
-            __typename
-          }
-        }
-        fragment tileFragment on Tile {
-          ... on IIdentifiable {
-            __typename
-            objectId
-          }
-          ... on IComponent {
-            title
-            componentType
-            __typename
-          }
-          ... on ITile {
-            title
-            action {
-              ...action
-              __typename
-            }
-            image {
-              ...imageFragment
+            ... on IPage {
+              paginatedComponents(first: $componentCount, after: $componentAfter) {
+                __typename
+                edges {
+                  __typename
+                  node {
+                    ... on PaginatedTileList {
+                      __typename
+                      objectId
+                      listId
+                      displayType
+                      paginatedItems(first: $lazyItemCount, after: $after, before: $before) {
+                        __typename
+                        edges {
+                          __typename
+                          cursor
+                          node {
+                            __typename
+                          }
+                        }
+                        pageInfo {
+                          __typename
+                          endCursor
+                          hasNextPage
+                          hasPreviousPage
+                          startCursor
+                        }
+                      }
+                      tileContentType
+                      title
+                      description
+                      __typename
+                    }
+                    ... on StaticTileList {
+                      __typename
+                      objectId
+                      listId
+                      title
+                      tileContentType
+                      displayType
+                      items {
+                        ... on ButtonTile {
+                          mode
+                          title
+                          id
+                          objectId
+                          action {
+                            ... on LinkAction {
+                              linkId
+                              link
+                              internalTarget
+                              externalTarget
+                              __typename
+                            }
+                          }
+                          tileType
+                          image {
+                            templateUrl
+                          }
+                          __typename
+                        }
+                        __typename
+                      }
+                      __typename
+                    }
+                    __typename
+                  }
+                  __typename
+                }
+                __typename
+              }
               __typename
             }
             __typename
           }
-          ... on BannerTile {
-            id
-            backgroundColor
-            textTheme
-            active
-            description
-            __typename
-          }
-        }
-        fragment actionItem on ActionItem {
-          __typename
-          id: objectId
-          accessibilityLabel
-          action {
-            ...action
-            __typename
-          }
-          active
-          analytics {
-            __typename
-            eventId
-            interaction
-            interactionDetail
-            pageProgrambrand
-          }
-          icon
-          iconPosition
-          mode
-          objectId
-          title
-        }
-        fragment action on Action {
-          __typename
-          ... on SearchAction {
-            facets {
-              name
-              values
-              __typename
-            }
-            mediaType
-            navigationType
-            q
-            __typename
-          }
-        }
-        fragment imageFragment on Image {
-          id: objectId
-          alt
-          title
-          focalPoint
-          objectId
-          templateUrl
         }
     """
-    operation_name = 'Search'
+    operation_name = 'Page'
     variables = {
-        'facets': [],
-        'mediaType': 'watch',
-        'q': '',
+        'pageId': '/vrtmax/zoeken/',
     }
-    categories_json = api_req(graphql_query, operation_name, variables, client='MobileAndroid')
+    categories_json = api_req(graphql_query, operation_name, variables)
     if categories_json is not None:
-        content_types = find_entry(categories_json.get('data').get('uiSearch'), 'listId', 'initialsearchcontenttypes').get('items')
-        genres = find_entry(categories_json.get('data').get('uiSearch'), 'listId', 'initialsearchgenres').get('items')
+        from json import loads
+        edges = categories_json.get('data', {}).get('page', {}).get('paginatedComponents', {}).get('edges', [])
+        content_types = next(
+            (
+                item.get('node')
+                for item in edges
+                if item.get('node', {}).get('listId') == 'initialsearchcontenttypes'
+            ),
+            {}
+        ).get('items', [])
+        genres = next(
+            (
+                item.get('node')
+                for item in edges
+                if item.get('node', {}).get('listId') == 'initialsearchgenres'
+            ),
+            {}
+        ).get('items', [])
         category_items = content_types + genres
         for category in category_items:
             # Don't add audio-only categories
             if category.get('title') in ('Podcasts', 'Radio'):
                 continue
-            thumb = category.get('image')
-            if thumb:
-                thumb = thumb.get('templateUrl')
+            category_id = loads(unquote(category.get('action').get('link')).split('?facets=')[1])[0].get('values')[0]
             categories.append({
-                'id': category.get('action').get('facets')[0].get('values')[0],
-                'thumbnail': thumb,
+                'id': category_id,
                 'name': category.get('title'),
             })
         categories.sort(key=lambda x: x.get('name'))
