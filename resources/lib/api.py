@@ -617,7 +617,6 @@ def set_favorite(program_id, program_title, favorited=True):
 def is_favorite(program_name):
     """Wether a program a favorited"""
     favorite = get_latest_episode_data(program_name).get('node').get('episode').get('favoriteAction').get('favorite')
-    print(favorite)
     return favorite
 
 
