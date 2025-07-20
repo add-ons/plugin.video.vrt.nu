@@ -1111,12 +1111,13 @@ def get_latest_episode(program_name):
     latest_episode = {}
     video = None
     latest_episode = get_latest_episode_data(program_name=program_name)
-    _, _, _, title_item = convert_episode(latest_episode)
-    video = {
-        'listitem': title_item,
-        'video_id': title_item.path.split('/')[5],
-        'publication_id': title_item.path.split('/')[6],
-    }
+    if latest_episode:
+        _, _, _, title_item = convert_episode(latest_episode)
+        video = {
+            'listitem': title_item,
+            'video_id': title_item.path.split('/')[5],
+            'publication_id': title_item.path.split('/')[6],
+        }
     return video
 
 
