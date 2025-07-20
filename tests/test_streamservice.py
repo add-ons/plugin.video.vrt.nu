@@ -87,10 +87,10 @@ class TestStreamService(unittest.TestCase):
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_get_ondemand_stream_from_from_videoid_geoblocked(self):
         """Test getting stream from geoblocked video_id"""
-        # Undercover S01E01
+        # Dertigers S07E01
         video = {
-            'video_id': 'vid-b77b58cb-eebf-4b00-b772-0d6b4caad6a5',
-            'publication_id': 'pbs-pub-8a1068a5-cffc-4b25-96cc-2b15b3c513dc',
+            'video_id': 'vid-e8ec64be-470b-406f-a94d-6291dd47e24c',
+            'publication_id': 'pbs-pub-2dcff4fa-0e91-45bc-829e-b054e41b77b2',
         }
         stream = self._streamservice.get_stream(video)
         # NOTE: Testing geoblocked streams only works within Europe

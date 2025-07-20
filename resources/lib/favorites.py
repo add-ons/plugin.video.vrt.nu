@@ -148,7 +148,7 @@ class Favorites:
                 'Authorization': 'Bearer ' + access_token,
                 'Content-Type': 'application/json',
                 'x-vrt-client-name': 'WEB',
-                'x-vrt-client-version': '1.5.0',
+                'x-vrt-client-version': '1.5.12',
             }
             graphql = """
                 query Page($id: ID!) {
@@ -181,24 +181,35 @@ class Favorites:
                 'Authorization': 'Bearer ' + access_token,
                 'Content-Type': 'application/json',
                 'x-vrt-client-name': 'WEB',
-                'x-vrt-client-version': '1.5.0',
+                'x-vrt-client-version': '1.5.12',
             }
             graphql_query = """
-                mutation setFavorite($input: FavoriteActionInput!) {
-                  setFavorite(input: $input) {
+                mutation setFavoriteActionItem($input: FavoriteActionInput!) {
+                  setFavoriteActionItem(input: $input) {
                     __typename
-                    id
-                    favorite
+                    objectId
+                    accessibilityLabel
+                    action {
+                      ... on FavoriteAction {
+                        __typename
+                        id
+                        favorite
+                      }
+                      __typename
+                    }
+                    active
+                    mode
+                    title
                   }
                 }
             """
             payload = {
-                'operationName': 'setFavorite',
+                'operationName': 'setFavoriteActionItem',
                 'variables': {
                     'input': {
+                        'favorite': is_favorite,
                         'id': program_id,
                         'title': title,
-                        'favorite': is_favorite,
                     },
                 },
                 'query': graphql_query,

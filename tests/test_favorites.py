@@ -7,9 +7,7 @@
 
 from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
-from random import shuffle
-from api import get_recent_episodes, get_programs, get_offline_programs
-from favorites import Favorites
+from api import get_recent_episodes, get_program_id, get_favorite_programs, is_favorite, get_offline_programs, set_favorite
 
 xbmc = __import__('xbmc')
 xbmcaddon = __import__('xbmcaddon')
@@ -25,8 +23,6 @@ itemsperpage = int(addon.settings.get('itemsperpage'))
 class TestFavorites(unittest.TestCase):
     """TestCase class"""
 
-    _favorites = Favorites()
-
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_get_recent_episodes(self):
@@ -37,43 +33,12 @@ class TestFavorites(unittest.TestCase):
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
 
-    @staticmethod
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
-    def test_get_offline_programs():
+    def test_get_offline_programs(self):
         """Test items, sort and order"""
-        get_offline_programs(use_favorites=True)
-
-    @unittest.SkipTest
-    def test_unfollow_all(self):
-        """Test unfollowing all programs"""
-        programs = get_programs(channel='een')
-        for program_item in programs:
-            program_title = program_item.get('title')
-            program_name = program_item.get('programName')
-            if self._favorites.is_favorite(program_name):
-                # Unfollow
-                self._favorites.unfollow(program_name=program_name, title=program_title)
-                self.assertFalse(self._favorites.is_favorite(program_name))
-
-    @unittest.SkipTest
-    def test_follow_number(self):
-        """Test following X programs"""
-        number = 118
-        programs = get_programs(channel='een')
-        shuffle(programs)
-        print('VRT MAX has %d programs available' % len(programs))
-        for program_item in programs[:number]:
-            program_title = program_item.get('title')
-            program_name = program_item.get('programName')
-
-            # Follow
-            self._favorites.follow(program_name=program_name, title=program_title)
-            self.assertTrue(self._favorites.is_favorite(program_name))
-
-            # Unfollow
-            # self._favorites.unfollow(program_name=program_name, title=program_title)
-            # self.assertFalse(self._favorites.is_favorite(program_name))
+        programs = get_offline_programs(use_favorites=True)
+        self.assertTrue(programs)
 
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
@@ -86,23 +51,23 @@ class TestFavorites(unittest.TestCase):
         ]
         for program_item in programs:
             program_title = program_item.get('program_title')
-            program_name = program_item.get('program_name')
-            self._favorites.follow(program_name=program_name, title=program_title)
-            self.assertTrue(self._favorites.is_favorite(program_name))
+            program_id = get_program_id(program_item.get('program_name'))
 
-            self._favorites.unfollow(program_name=program_name, title=program_title)
-            self.assertFalse(self._favorites.is_favorite(program_name))
+            set_favorite(program_id=program_id, program_title=program_title)
+            self.assertTrue(is_favorite(program_item.get('program_name')))
 
-            self._favorites.follow(program_name=program_name, title=program_title)
-            self.assertTrue(self._favorites.is_favorite(program_name))
+            set_favorite(program_id=program_id, program_title=program_title, favorited=False)
+            self.assertFalse(is_favorite(program_item.get('program_name')))
 
+            set_favorite(program_id=program_id, program_title=program_title)
+            self.assertTrue(is_favorite(program_item.get('program_name')))
+
+    @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_programs(self):
         """Test favorite programs list"""
-        programs = self._favorites.programs()
-        # NOTE: Getting favorites requires credentials
-        if addon.settings.get('username') and addon.settings.get('password'):
-            self.assertTrue(programs)
-        print(programs)
+        programs = get_favorite_programs()
+        print([program.info_dict.get('tvshowtitle') for program in programs])
 
 
 if __name__ == '__main__':
