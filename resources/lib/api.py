@@ -849,99 +849,92 @@ def get_paginated_programs(list_id, page_size, end_cursor='', client='WEB'):
     return api_req(graphql_query, operation_name, variables, client)
 
 
-def convert_programs(api_data, destination, use_favorites=False, **kwargs):
+def convert_programs(item_list, destination, end_cursor='', use_favorites=False, **kwargs):
     """Convert paginated list of programs to Kodi list items"""
 
     programs = []
 
-    item_list = api_data.get('data').get('list')
-    if item_list:
-        for item in item_list.get('paginated').get('edges'):
-            program = item.get('node')
+    for item in item_list:
+        program = item.get('node')
 
-            program_name = url_to_program(program.get('link'))
-            program_id = program.get('id')
-            program_type = program.get('programType')
-            program_title = program.get('title')
-            episode_title = None
-            ontime = None
-            path = url_for('programs', program_name=program_name)
-            plot = program.get('program').get('shortDescription') or program.get('program').get('description')
-            plotoutline = program.get('subtitle')
+        program_name = url_to_program(program.get('link'))
+        program_id = program.get('id')
+        program_type = program.get('programType')
+        program_title = program.get('title')
+        episode_title = None
+        ontime = None
+        path = url_for('programs', program_name=program_name)
+        plot = program.get('program').get('shortDescription') or program.get('program').get('description')
+        plotoutline = program.get('subtitle')
 
-            # Art
-            fanart = ''
-            poster_img = program.get('program').get('posterImage')
-            if poster_img:
-                fanart = reformat_image_url(poster_img.get('templateUrl'))
-            poster = fanart
-            thumb = ''
-            thumb_img = program.get('image')
-            if thumb_img:
-                thumb = reformat_image_url(thumb_img.get('templateUrl'))
+        # Art
+        fanart = ''
+        poster_img = program.get('program').get('posterImage')
+        if poster_img:
+            fanart = reformat_image_url(poster_img.get('templateUrl'))
+        poster = fanart
+        thumb = ''
+        thumb_img = program.get('image')
+        if thumb_img:
+            thumb = reformat_image_url(thumb_img.get('templateUrl'))
 
-            # Check favorite
-            favorited = program.get('program').get('favoriteAction').get('favorite')
+        # Check favorite
+        favorited = program.get('program').get('favoriteAction').get('favorite')
 
-            # Filter favorites for favorites menu
-            if use_favorites and favorited is False:
-                continue
+        # Filter favorites for favorites menu
+        if use_favorites and favorited is False:
+            continue
 
-            # Context menu
-            context_menu = get_context_menu(program_name, program_id, program_title, program_type, favorited)
+        # Context menu
+        context_menu = get_context_menu(program_name, program_id, program_title, program_type, favorited)
 
-            # Label
-            label = format_label(program_title, episode_title, program_type, ontime, favorited, item_type='program')
+        # Label
+        label = format_label(program_title, episode_title, program_type, ontime, favorited, item_type='program')
 
-            programs.append(
-                TitleItem(
-                    label=label,
-                    path=path,
-                    art_dict={
-                        'thumb': thumb,
-                        'poster': poster,
-                        'banner': fanart,
-                        'fanart': fanart,
-                    },
-                    info_dict={
-                        'title': label,
-                        'tvshowtitle': program_title,
-                        'plot': plot,
-                        'plotoutline': plotoutline,
-                        'mediatype': 'tvshow',
-                    },
-                    context_menu=context_menu,
-                    is_playable=False,
-                )
+        programs.append(
+            TitleItem(
+                label=label,
+                path=path,
+                art_dict={
+                    'thumb': thumb,
+                    'poster': poster,
+                    'banner': fanart,
+                    'fanart': fanart,
+                },
+                info_dict={
+                    'title': label,
+                    'tvshowtitle': program_title,
+                    'plot': plot,
+                    'plotoutline': plotoutline,
+                    'mediatype': 'tvshow',
+                },
+                context_menu=context_menu,
+                is_playable=False,
             )
+        )
 
-        # Paging
-        # Remove kwargs with None value
-        kwargs = {k: v for k, v in list(kwargs.items()) if v is not None}
-        page_info = api_data.get('data').get('list').get('paginated').get('pageInfo')
+    # Paging
+    # Remove kwargs with None value
+    kwargs = {k: v for k, v in list(kwargs.items()) if v is not None}
 
-        # FIXME: find a better way to disable more when favorites are filtered
-        page_size = get_setting_int('itemsperpage', default=50)
-        if len(programs) == page_size and page_info.get('hasNextPage'):
-            end_cursor = page_info.get('endCursor')
-            # Add 'More...' entry at the end
-            programs.append(
-                TitleItem(
-                    label=colour(localize(30300)),
-                    path=url_for(destination, end_cursor=end_cursor, **kwargs),
-                    art_dict={'thumb': 'DefaultInProgressShows.png'},
-                    info_dict={},
-                    prop_dict={'SpecialSort': 'bottom'},
-                )
+    if end_cursor:
+        # Add 'More...' entry at the end
+        programs.append(
+            TitleItem(
+                label=colour(localize(30300)),
+                path=url_for(destination, end_cursor=end_cursor, **kwargs),
+                art_dict={'thumb': 'DefaultInProgressShows.png'},
+                info_dict={},
+                prop_dict={'SpecialSort': 'bottom'},
             )
+        )
     return programs
 
 
-def convert_episode(item, destination=None):
+def convert_episode(episode, destination=None):
     """Convert paginated episode item to TitleItem"""
     import dateutil.parser
-    data = item.get('node') or item.get('data') or item.get('tile')
-    episode = data.get('episode') or data.get('catalogMember')
+
     # FIXME: find a better way to abort when we have no valid api data
     if not episode:
         return None, None, None, None
@@ -1058,17 +1051,18 @@ def convert_episode(item, destination=None):
     )
 
 
-def convert_episodes(api_data, destination, use_favorites=False, **kwargs):
+def convert_episodes(item_list, destination, end_cursor='', use_favorites=False, **kwargs):
     """Convert paginated episode list to TitleItems"""
     episodes = []
     sort = 'unsorted'
     ascending = True
 
-    item_list = api_data.get('data').get('list')
     if item_list:
-        for item in item_list.get('paginated').get('edges'):
 
-            sort, ascending, favorited, title_item = convert_episode(item, destination)
+        for item in item_list:
+            episode = item.get('node').get('episode')
+
+            sort, ascending, favorited, title_item = convert_episode(episode, destination)
 
             # Filter favorites for favorites menu
             if use_favorites and favorited is False:
@@ -1079,12 +1073,8 @@ def convert_episodes(api_data, destination, use_favorites=False, **kwargs):
         # Paging
         # Remove kwargs with None value
         kwargs = {k: v for k, v in list(kwargs.items()) if v is not None}
-        page_info = api_data.get('data').get('list').get('paginated').get('pageInfo')
 
-        # FIXME: find a better way to disable more when favorites are filtered
-        page_size = get_setting_int('itemsperpage', default=50)
-        if len(episodes) == page_size and page_info.get('hasNextPage'):
-            end_cursor = page_info.get('endCursor')
+        if end_cursor:
             # Add 'More...' entry at the end
             episodes.append(
                 TitleItem(
@@ -1095,6 +1085,7 @@ def convert_episodes(api_data, destination, use_favorites=False, **kwargs):
                     prop_dict={'SpecialSort': 'bottom'},
                 )
             )
+
     return episodes, sort, ascending
 
 
@@ -1120,20 +1111,68 @@ def get_latest_episode(program_name):
     return video
 
 
+def get_offline_programs(end_cursor='', use_favorites=False):
+    """Get laatste kans/soon offline programs"""
+    list_id = 'dynamic:/vrtnu.model.json@par_list_1624607593_copy_1408213323'
+    destination = 'favorites_offline' if use_favorites else 'offline'
+    programs = get_programs(list_id=list_id, destination=destination, end_cursor=end_cursor, use_favorites=use_favorites)
+    return programs
+
+
 def get_favorite_programs(end_cursor=''):
     """Get favorite programs"""
-    page_size = get_setting_int('itemsperpage', default=50)
-    list_id = 'dynamic:/vrtnu.model.json@favorites-list-video'
-    api_data = get_paginated_programs(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
-    programs = convert_programs(api_data, destination='favorites_programs')
+    import base64
+    list_id = 'tl-fp|o%25|o%9|video-program%|video-program|b%0%'
+    list_id = '#{}'.format(base64.b64encode(list_id.encode('utf-8')).decode('utf-8'))
+    programs = get_programs(list_id=list_id, destination='favorites_programs', end_cursor=end_cursor)
     return programs
+
+
+def get_featured(feature=None, end_cursor=''):
+    """Get featured menu items"""
+    content = 'files'
+    sort = 'unsorted'
+    ascending = True
+    if feature:
+        if feature.startswith('program_'):
+            list_id = feature.replace('_proto_', ':/').split('program_')[1]
+            programs = get_programs(list_id=list_id, destination='featured', end_cursor=end_cursor, feature=feature)
+            return programs, sort, ascending, 'tvshows'
+
+        if feature.startswith('episode_'):
+            list_id = feature.replace('_proto_', ':/').split('episode_')[1]
+            episodes, sort, ascending, content = get_episodes(list_id=list_id, destination='featured', end_cursor=end_cursor, feature=feature)
+            return episodes, sort, ascending, content
+    else:
+        featured = []
+        featured_json = get_featured_data()
+        for edge in featured_json.get('data').get('page').get('paginatedComponents').get('edges'):
+            node = edge.get('node')
+            content_type = node.get('tileContentType')
+            if content_type in ('program', 'episode'):
+                title = node.get('title').strip() or node.get('header').get('description')
+                feature_id = node.get('listId').replace(':/', '_proto_')
+                featured.append(
+                    TitleItem(
+                        label=title,
+                        path=url_for('featured', feature='{}_{}'.format(content_type, feature_id)),
+                        art_dict={'thumb': 'DefaultCountry.png'},
+                        info_dict={
+                            'title': title,
+                            'plot': '[B]%s[/B]' % title,
+                            'studio': 'VRT',
+                            'mediatype': 'season',
+                        },
+                        is_playable=False,
+                    )
+                )
+    return featured, sort, ascending, content
 
 
 def get_search(keywords, end_cursor=''):
     """Get search items"""
     import base64
     from json import dumps
-    page_size = get_setting_int('itemsperpage', default=50)
     query_string = None
     destination = None
 
@@ -1166,118 +1205,139 @@ def get_search(keywords, end_cursor=''):
         list_id = '#{}'.format(base64.b64encode(list_id.encode('utf-8')).decode('utf-8'))
 
         if entity_type == 'video-program' and not end_cursor:
-            programs_data = get_paginated_programs(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
-            programs = convert_programs(programs_data, destination=destination, keywords=keywords)
+            programs = get_programs(keywords=keywords, end_cursor=end_cursor)
             items.extend(programs)
         elif entity_type == 'video-episode':
-            episodes_data = get_paginated_episodes(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
-            episodes, _, _ = convert_episodes(episodes_data, destination=destination, keywords=keywords)
+            episodes, _, _, _, = get_episodes(list_id=list_id, destination=destination, end_cursor=end_cursor, keywords=keywords)
             items.extend(episodes)
     return items
 
 
-def get_programs(category=None, channel=None, keywords=None, end_cursor=''):
+def get_programs(list_id=None, destination=None, end_cursor='', category=None, channel=None, keywords=None, feature=None, use_favorites=False):
     """Get programs"""
-    import base64
-    from json import dumps
-    page_size = get_setting_int('itemsperpage', default=50)
-    query_string = None
-    destination = None
-    facets = []
-    if category:
-        facet_name = 'genre'
-        # VRT MAX uses 'contenttype' facet name instead of 'genre' for some categories
-        if category in ('docu', 'films', 'series', 'talkshows'):
-            facet_name = 'contenttype'
-        destination = 'categories'
-        facets.append({
-            'name': facet_name,
-            'values': [category],
-        })
-    elif channel:
-        destination = 'channels'
-        facets.append({
-            'name': 'brand',
-            'values': [channel]
-        })
-    elif keywords:
-        destination = 'search_query'
-        query_string = keywords
-    facets.append({
-        'name': 'entitytype',
-        'values': ['video-program'],
-    })
-    search_dict = {
-        'facets': facets,
-        'resultType': 'watch',
-    }
-    if query_string:
-        search_dict['q'] = query_string
 
-    list_id = 'tl-pag-srch|o%14|{}|{}%'.format(dumps(search_dict), 'watch')
-    list_id = '#{}'.format(base64.b64encode(list_id.encode('utf-8')).decode('utf-8'))
+    if not list_id:
+        import base64
+        from json import dumps
+        query_string = None
+        facets = []
+        if category:
+            facet_name = 'genre'
+            # VRT MAX uses 'contenttype' facet name instead of 'genre' for some categories
+            if category in ('docu', 'films', 'series', 'talkshows'):
+                facet_name = 'contenttype'
+            destination = 'categories'
+            facets.append({
+                'name': facet_name,
+                'values': [category],
+            })
+        elif channel:
+            destination = 'channels'
+            facets.append({
+                'name': 'brand',
+                'values': [channel]
+            })
+        elif keywords:
+            destination = 'search_query'
+            query_string = keywords
+        facets.append({
+            'name': 'entitytype',
+            'values': ['video-program'],
+        })
+        search_dict = {
+            'facets': facets,
+            'resultType': 'watch',
+        }
+        if query_string:
+            search_dict['q'] = query_string
 
-    api_data = get_paginated_programs(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
-    programs = convert_programs(api_data, destination=destination, category=category, channel=channel, keywords=keywords)
+        list_id = 'tl-pag-srch|o%14|{}|{}%'.format(dumps(search_dict), 'watch')
+        list_id = '#{}'.format(base64.b64encode(list_id.encode('utf-8')).decode('utf-8'))
+
+    # kodi paging
+    kodi_page_size = get_setting_int('itemsperpage', default=50)
+    fetched = 0
+    item_list = []
+    while fetched < kodi_page_size:
+        page_size = kodi_page_size - fetched
+        api_data = get_paginated_programs(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
+        paginated = api_data.get('data', {}).get('list', {}).get('paginated', {})
+        edges = paginated.get('edges', [])
+        page_info = paginated.get('pageInfo', {})
+        item_list.extend(edges)
+        fetched += len(edges)
+        if not page_info.get('hasNextPage'):
+            end_cursor = ''
+            break
+        end_cursor = page_info.get('endCursor')
+
+    programs = convert_programs(item_list, destination=destination, end_cursor=end_cursor, category=category,
+                                channel=channel, feature=feature, keywords=keywords, use_favorites=use_favorites)
     return programs
 
 
 def get_continue_episodes(end_cursor=''):
     """Get continue episodes"""
-    page_size = get_setting_int('itemsperpage', default=50)
     list_id = 'dynamic:/vrtnu.model.json@resume-list-video'
-    api_data = get_paginated_episodes(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
-    episodes, sort, ascending = convert_episodes(api_data, destination='resumepoints_continue')
-    return episodes, sort, ascending, 'episodes'
+    destination = 'resumepoints_continue'
+    episodes, sort, ascending, content = get_episodes(list_id=list_id, destination=destination, end_cursor=end_cursor)
+    return episodes, sort, ascending, content
 
 
 def get_recent_episodes(end_cursor='', use_favorites=False):
     """Get recent episodes"""
-    page_size = get_setting_int('itemsperpage', default=50)
     list_id = 'static:/vrtnu/kijk.model.json@par_list_copy_copy_copy'
-    api_data = get_paginated_episodes(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
     destination = 'favorites_recent' if use_favorites else 'recent'
-    episodes, sort, ascending = convert_episodes(api_data, destination=destination, use_favorites=use_favorites)
-    return episodes, sort, ascending, 'episodes'
+    episodes, sort, ascending, content = get_episodes(list_id=list_id, destination=destination, end_cursor=end_cursor)
+    return episodes, sort, ascending, content
 
 
-def get_offline_programs(end_cursor='', use_favorites=False):
-    """Get laatste kans/soon offline programs"""
-    page_size = get_setting_int('itemsperpage', default=50)
-    list_id = 'dynamic:/vrtnu.model.json@par_list_1624607593_copy_1408213323'
-    api_data = get_paginated_programs(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
-    destination = 'favorites_offline' if use_favorites else 'offline'
-    programs = convert_programs(api_data, destination=destination, use_favorites=use_favorites)
-    return programs
-
-
-def get_episodes(program_name, season_name=None, end_cursor=''):
+def get_episodes(list_id=None, destination=None, end_cursor='', program_name=None, season_name=None, use_favorites=False, feature=None, keywords=None):
     """Get episodes"""
     sort = 'unsorted'
     ascending = True
     content = 'files'
-    page_size = get_setting_int('itemsperpage', default=50)
-    if season_name is None:
-        # Check for multiple seasons
-        api_data = get_seasons(program_name)
-        number_of_seasons = len(api_data)
-        if number_of_seasons == 1:
-            season_name = api_data[0].get('name')
-        elif number_of_seasons > 1:
-            seasons = convert_seasons(api_data, program_name)
-            return seasons, sort, ascending, content
 
-    if program_name and season_name:
-        if season_name.startswith('parsys'):
-            list_id = 'static:/vrtnu/a-z/{}.model.json@{}'.format(program_name, season_name)
-        elif season_name.startswith('dynamic_'):
-            list_id = 'dynamic:/vrtnu/a-z/{}.model.json@{}'.format(program_name, season_name.split('dynamic_')[1])
-        else:
-            list_id = 'static:/vrtnu/a-z/{}/{}.episodes-list.json'.format(program_name, season_name)
+    if not list_id:
+        if season_name is None:
+            # Check for multiple seasons
+            api_data = get_seasons(program_name)
+            number_of_seasons = len(api_data)
+            if number_of_seasons == 1:
+                season_name = api_data[0].get('name')
+            elif number_of_seasons > 1:
+                seasons = convert_seasons(api_data, program_name)
+                return seasons, sort, ascending, content
+
+        if program_name and season_name:
+            destination = 'programs'
+            if season_name.startswith('parsys'):
+                list_id = 'static:/vrtnu/a-z/{}.model.json@{}'.format(program_name, season_name)
+            elif season_name.startswith('dynamic_'):
+                list_id = 'dynamic:/vrtnu/a-z/{}.model.json@{}'.format(program_name, season_name.split('dynamic_')[1])
+            else:
+                list_id = 'static:/vrtnu/a-z/{}/{}.episodes-list.json'.format(program_name, season_name)
+
+    # kodi paging
+    kodi_page_size = get_setting_int('itemsperpage', default=50)
+    fetched = 0
+    item_list = []
+    while fetched < kodi_page_size:
+        page_size = kodi_page_size - fetched
         api_data = get_paginated_episodes(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
-        episodes, sort, ascending = convert_episodes(api_data, destination='programs', program_name=program_name, season_name=season_name)
-        return episodes, sort, ascending, 'episodes'
-    return None
+        paginated = api_data.get('data', {}).get('list', {}).get('paginated', {})
+        edges = paginated.get('edges', [])
+        page_info = paginated.get('pageInfo', {})
+        item_list.extend(edges)
+        fetched += len(edges)
+        if not page_info.get('hasNextPage'):
+            end_cursor = ''
+            break
+        end_cursor = page_info.get('endCursor')
+
+    episodes, sort, ascending = convert_episodes(item_list, destination=destination, end_cursor=end_cursor, use_favorites=use_favorites,
+                                                 program_name=program_name, season_name=season_name, feature=feature, keywords=keywords)
+    return episodes, sort, ascending, 'episodes'
 
 
 def convert_seasons(api_data, program_name):
@@ -1452,50 +1512,6 @@ def get_featured_data():
         'componentCount': 50,
     }
     return api_req(graphql_query, operation_name, variables)
-
-
-def get_featured(feature=None, end_cursor=''):
-    """Get featured menu items"""
-    content = 'files'
-    sort = 'unsorted'
-    ascending = True
-    if feature:
-        page_size = get_setting_int('itemsperpage', default=50)
-        if feature.startswith('program_'):
-            list_id = feature.replace('_proto_', ':/').split('program_')[1]
-            api_data = get_paginated_programs(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
-            programs = convert_programs(api_data, destination='featured', feature=feature)
-            return programs, sort, ascending, 'tvshows'
-
-        if feature.startswith('episode_'):
-            list_id = feature.replace('_proto_', ':/').split('episode_')[1]
-            api_data = get_paginated_episodes(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
-            episodes, sort, ascending = convert_episodes(api_data, destination='featured', feature=feature)
-            return episodes, sort, ascending, 'episodes'
-    else:
-        featured = []
-        featured_json = get_featured_data()
-        for edge in featured_json.get('data').get('page').get('paginatedComponents').get('edges'):
-            node = edge.get('node')
-            content_type = node.get('tileContentType')
-            if content_type in ('program', 'episode'):
-                title = node.get('title').strip() or node.get('header').get('description')
-                feature_id = node.get('listId').replace(':/', '_proto_')
-                featured.append(
-                    TitleItem(
-                        label=title,
-                        path=url_for('featured', feature='{}_{}'.format(content_type, feature_id)),
-                        art_dict={'thumb': 'DefaultCountry.png'},
-                        info_dict={
-                            'title': title,
-                            'plot': '[B]%s[/B]' % title,
-                            'studio': 'VRT',
-                            'mediatype': 'season',
-                        },
-                        is_playable=False,
-                    )
-                )
-    return featured, sort, ascending, content
 
 
 def get_categories_data():
