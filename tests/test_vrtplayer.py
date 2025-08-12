@@ -96,7 +96,7 @@ class TestVRTPlayer(unittest.TestCase):
         print('Random tvshow {}'.format(program.path))
         if program.path.startswith('plugin://plugin.video.vrt.nu/programs/'):
             # When random program has episodes
-            episode_items, sort, ascending, content = get_episodes(program.path.split('/')[4].replace('.relevant', ''))
+            episode_items, sort, ascending, content = get_episodes(program_name=program.path.split('/')[4].replace('.relevant', ''))
             self.assertTrue(episode_items, msg=program.path.split('/')[4])
             self.assertTrue(sort in ['dateadded', 'episode', 'label', 'unsorted'])
             self.assertTrue(ascending is True or ascending is False)
