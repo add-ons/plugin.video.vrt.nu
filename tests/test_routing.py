@@ -85,19 +85,19 @@ class TestRouting(unittest.TestCase):
     @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_featured_tvshow_menu(self):
         """Featured programs menu: /featured/<cfeatured>"""
-        addon.run(['plugin://plugin.video.vrt.nu/featured/program_par_list_789470835_copy', '0', ''])
+        addon.run(['plugin://plugin.video.vrt.nu/featured/program_static_proto_vrtnu.model.json@par_list_789470835_copy_', '0', ''])
         self.assertEqual(plugin.url_for(addon.featured,
-                                        feature='program_par_list_789470835_copy'),
-                         'plugin://plugin.video.vrt.nu/featured/program_par_list_789470835_copy')
+                                        feature='program_static_proto_vrtnu.model.json@par_list_789470835_copy_'),
+                         'plugin://plugin.video.vrt.nu/featured/program_static_proto_vrtnu.model.json@par_list_789470835_copy_')
 
     @unittest.skipUnless(xbmc_addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_featured_episode_menu(self):
         """Featured episodes menu: /featured/<cfeatured>"""
-        addon.run(['plugin://plugin.video.vrt.nu/featured/episode_par_list_copy_copy_copy', '0', ''])
+        addon.run(['plugin://plugin.video.vrt.nu/featured/episode_static_proto_vrtnu.model.json@par_list_909924161_copy__1445708769', '0', ''])
         self.assertEqual(plugin.url_for(addon.featured,
-                                        feature='episode_par_list_copy_copy_copy'),
-                         'plugin://plugin.video.vrt.nu/featured/episode_par_list_copy_copy_copy')
+                                        feature='episode_static_proto_vrtnu.model.json@par_list_909924161_copy__1445708769'),
+                         'plugin://plugin.video.vrt.nu/featured/episode_static_proto_vrtnu.model.json@par_list_909924161_copy__1445708769')
 
     @unittest.skipUnless(xbmc_addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')

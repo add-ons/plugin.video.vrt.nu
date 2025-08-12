@@ -448,7 +448,7 @@ def get_latest_episode_data(program_name):
                 ep_no = int(edge.get('node').get('episode').get('episodeNumberRaw'))
                 if ep_no > highest_ep_no:
                     highest_ep_no = ep_no
-                    highest_ep = edge
+                    highest_ep = edge.get('node').get('episode')
             latest_episode = highest_ep
     return latest_episode
 
@@ -616,13 +616,13 @@ def set_favorite(program_id, program_title, favorited=True):
 
 def is_favorite(program_name):
     """Wether a program a favorited"""
-    favorite = get_latest_episode_data(program_name).get('node').get('episode').get('favoriteAction').get('favorite')
+    favorite = get_latest_episode_data(program_name).get('favoriteAction').get('favorite')
     return favorite
 
 
 def get_program_id(program_name):
     """Get the id of a program"""
-    program_id = get_latest_episode_data(program_name).get('node').get('episode').get('program').get('id')
+    program_id = get_latest_episode_data(program_name).get('program').get('id')
     return program_id
 
 
@@ -1091,8 +1091,8 @@ def convert_episodes(item_list, destination, end_cursor='', use_favorites=False,
 
 def get_single_episode(episode_id):
     """Get single episode"""
-    api_data = get_single_episode_data(episode_id)
-    _, _, _, title_item = convert_episode(api_data)
+    episode = get_single_episode_data(episode_id).get('data').get('catalogMember')
+    _, _, _, title_item = convert_episode(episode)
     return title_item
 
 
@@ -1753,12 +1753,12 @@ def get_episode_by_air_date(channel_name, start_date, end_date=None):
                                                              - dateutil.parser.parse(episode.get('startTime'))).total_seconds() / 2))) == mindate), None)
     if episode_guess:
         if episode_guess.get('episodeId'):
-            episode = get_single_episode_data(episode_guess.get('episodeId'))
+            episode = get_single_episode_data(episode_guess.get('episodeId')).get('data').get('catalogMember')
             _, _, _, video_item = convert_episode(episode)
             video = {
                 'listitem': video_item,
-                'video_id': episode.get('data').get('catalogMember').get('watchAction').get('videoId'),
-                'publication_id': episode.get('data').get('catalogMember').get('watchAction').get('publicationId')
+                'video_id': episode.get('watchAction').get('videoId'),
+                'publication_id': episode.get('watchAction').get('publicationId')
             }
             if video:
                 return video
