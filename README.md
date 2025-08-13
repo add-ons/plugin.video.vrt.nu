@@ -59,6 +59,9 @@ leave a message at [our Facebook page](https://facebook.com/kodivrtnu/).
 </table>
 
 ## Releases
+### v2.5.40 (2025-08-13)
+- Fixed incorrect item count in menu listings (@mediaminister)
+
 ### v2.5.39 (2025-07-20)
 - Fix category menu listings (@mediaminister)
 
