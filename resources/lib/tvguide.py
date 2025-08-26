@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 import dateutil.parser
 import dateutil.tz
 
+from api import get_single_episode_data
 from data import CHANNELS, RELATIVE_DATES
 from favorites import Favorites
 from helperobjects import TitleItem
@@ -209,27 +210,9 @@ class TVGuide:
     @staticmethod
     def get_stream_ids(episode_id=None):
         """Get videoId and publicationId using VRT MAX REST API"""
-        from api import api_req
         video_id = None
         publication_id = None
-        graphql_query = """
-            query Stream($id: ID!) {
-              catalogMember(id: $id) {
-                ...stream
-              }
-            }
-            fragment stream on Episode {
-              watchAction {
-                videoId
-                publicationId
-              }
-            }
-        """
-        operation_name = 'Stream'
-        variables = {
-            'id': episode_id
-        }
-        episode = api_req(graphql_query, operation_name, variables).get('data').get('catalogMember')
+        episode = get_single_episode_data(episode_id).get('data').get('catalogMember')
         if episode:
             video_id = episode.get('watchAction').get('videoId')
             publication_id = episode.get('watchAction').get('publicationId')
