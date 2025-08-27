@@ -162,8 +162,8 @@ def resumepoints_is_activated():
 def get_resumepoint_data(episode_id):
     """Get resumepoint data from GraphQL API"""
     data_json = get_single_episode_data(episode_id)
-    video_id = data_json.get('data').get('catalogMember').get('watchAction').get('videoId')
-    resumepoint_title = data_json.get('data').get('catalogMember').get('watchAction').get('resumePointTitle')
+    video_id = data_json.get('data').get('page').get('episode').get('watchAction').get('videoId')
+    resumepoint_title = data_json.get('data').get('page').get('episode').get('watchAction').get('resumePointTitle')
     return video_id, resumepoint_title
 
 
@@ -172,7 +172,7 @@ def get_next_info(episode_id):
     import dateutil.parser
     next_info = {}
     data_json = get_single_episode_data(episode_id)
-    current_ep = data_json.get('data').get('catalogMember')
+    current_ep = data_json.get('data').get('page').get('episode')
     # Only get add data when there is a next episode
     if current_ep.get('nextUp').get('title') == 'Volgende aflevering':
         next_ep = current_ep.get('nextUp').get('tile').get('episode')
@@ -267,13 +267,17 @@ def get_stream_id_data(vrtmax_url):
 def get_single_episode_data(episode_id):
     """Get single episode data from GraphQL API"""
     graphql_query = """
-        query PlayerData($id: ID!) {
-          catalogMember(id: $id) {
+        query OnePlayerData($id: ID!) {
+          page(id: $id) {
             __typename
-          ...episode
+            ... on EpisodePage {
+              episode {
+                ...ep
+              }
+            }
           }
         }
-        fragment episode on Episode {
+        fragment ep on Episode {
           __typename
           id
           title
@@ -289,6 +293,14 @@ def get_single_episode_data(episode_id):
           analytics {
             airDate
             categories
+            contentBrand
+            episode
+            mediaSubtype
+            mediaType
+            name
+            pageName
+            season
+            show
           }
           program {
             id
@@ -336,7 +348,7 @@ def get_single_episode_data(episode_id):
         }
         %s
     """ % EPISODE_TILE
-    operation_name = 'PlayerData'
+    operation_name = 'OnePlayerData'
     variables = {
         'id': episode_id,
     }
@@ -934,14 +946,15 @@ def convert_programs(item_list, destination, end_cursor='', use_favorites=False,
 def convert_episode(episode, destination=None):
     """Convert paginated episode item to TitleItem"""
     import dateutil.parser
-
+    import base64
     # FIXME: find a better way to abort when we have no valid api data
     if not episode:
         return None, None, None, None
     episode_id = episode.get('id')
+    episode_page = episode.get('analytics').get('pageName')
     video_id = episode.get('watchAction').get('videoId')
     publication_id = episode.get('watchAction').get('publicationId')
-    path = url_for('play_id', video_id=video_id, publication_id=publication_id, episode_id=episode_id)
+    path = url_for('play_id', video_id=video_id, publication_id=publication_id, episode_id=base64.b64encode(episode_page.encode('utf-8')).decode('utf-8'))
     program_name = url_to_program(episode.get('program').get('link'))
     program_id = episode.get('program').get('id')
     program_title = episode.get('program').get('title')
@@ -1091,8 +1104,11 @@ def convert_episodes(item_list, destination, end_cursor='', use_favorites=False,
 
 def get_single_episode(episode_id):
     """Get single episode"""
-    episode = get_single_episode_data(episode_id).get('data').get('catalogMember')
-    _, _, _, title_item = convert_episode(episode)
+    title_item = None
+    episode_page = get_single_episode_data(episode_id).get('data').get('page')
+    if episode_page is not None:
+        episode = episode_page.get('episode')
+        _, _, _, title_item = convert_episode(episode)
     return title_item
 
 
@@ -1753,7 +1769,7 @@ def get_episode_by_air_date(channel_name, start_date, end_date=None):
                                                              - dateutil.parser.parse(episode.get('startTime'))).total_seconds() / 2))) == mindate), None)
     if episode_guess:
         if episode_guess.get('episodeId'):
-            episode = get_single_episode_data(episode_guess.get('episodeId')).get('data').get('catalogMember')
+            episode = get_single_episode_data(episode_guess.get('url')).get('data').get('page').get('episode')
             _, _, _, video_item = convert_episode(episode)
             video = {
                 'listitem': video_item,
