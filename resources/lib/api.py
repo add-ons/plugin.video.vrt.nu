@@ -737,128 +737,666 @@ def finish_continue(episode_id):
     return api_req(graphql_query, operation_name, variables)
 
 
-def get_paginated_episodes(list_id, page_size, end_cursor=''):
-    """Get paginated list of episodes from GraphQL API"""
+def get_entities(list_id, page_size='', end_cursor=''):
+    """Get a list of episodes or programs using GraphQL API"""
     graphql_query = """
-        query ListedEpisodes(
+        query TileList(
           $listId: ID!
-          $endCursor: ID!
-          $pageSize: Int!
+          $sort: SortInput
+          $lazyItemCount: Int = 20
+          $after: ID
+          $before: ID
         ) {
-          list(listId: $listId) {
+          list(listId: $listId, sort: $sort) {
             __typename
             ... on PaginatedTileList {
-              paginated: paginatedItems(first: $pageSize, after: $endCursor) {
-                edges {
-                  node {
-                    __typename
-                    ...episodeTile
-                  }
-                }
-                pageInfo {
-                  startCursor
-                  endCursor
-                  hasNextPage
-                  hasPreviousPage
-                  __typename
-                }
-              }
+              ...paginatedTileListFragment
+              __typename
+            }
+            ... on StaticTileList {
+              ...staticTileListFragment
+              __typename
             }
           }
         }
-        %s
-    """ % EPISODE_TILE
-    # FIXME: Find a better way to change GraphQL typename
-    if list_id.startswith('static:/'):
-        graphql_query = graphql_query.replace('on PaginatedTileList', 'on StaticTileList')
-
-    operation_name = 'ListedEpisodes'
-    variables = {
-        'listId': list_id,
-        'endCursor': end_cursor,
-        'pageSize': page_size,
-    }
-    return api_req(graphql_query, operation_name, variables)
-
-
-def get_paginated_programs(list_id, page_size, end_cursor='', client='WEB'):
-    """Get paginated list of episodes from GraphQL API"""
-    graphql_query = """
-        query PaginatedPrograms(
-          $listId: ID!
-          $endCursor: ID!
-          $pageSize: Int!
-        ) {
-          list(listId: $listId) {
-            __typename
-            ... on PaginatedTileList {
-              paginated: paginatedItems(first: $pageSize, after: $endCursor) {
-                edges {
-                  node {
-                    __typename
-                    ...ep
-                  }
-                }
-                pageInfo {
-                  startCursor
-                  endCursor
-                  hasNextPage
-                  hasPreviousPage
-                  __typename
-                }
-              }
-            }
-          }
-        }
-        fragment ep on ProgramTile {
+        fragment staticTileListFragment on StaticTileList {
           __typename
           objectId
-          id
-          link
-          tileType
-          image {
-            alt
-            templateUrl
-          }
+          listId
           title
-          program {
+          description
+          tileContentType
+          displayType
+          maxAge
+          tileVariant
+          sort {
+            icon
+            order
             title
+            __typename
+          }
+          action {
+            ... on LinkAction {
+              __typename
+              externalTarget
+              link
+            }
+            ... on SwitchTabAction {
+              __typename
+              link
+              referencedTabId
+            }
+            __typename
+          }
+          banner {
+            actionItems {
+              ...actionItemFragment
+              __typename
+            }
+            description
+            image {
+              ...imageFragment
+              __typename
+            }
+            compactLayout
+            backgroundColor
+            textTheme
+            title
+            titleArt {
+              objectId
+              templateUrl
+              __typename
+            }
+            __typename
+          }
+          bannerSize
+          items {
+            ...tileFragment
+            __typename
+          }
+          paginatedItems(first: $lazyItemCount, after: $after, before: $before) {
+            __typename
+            edges {
+              __typename
+              cursor
+              node {
+                __typename
+                ...tileFragment
+              }
+            }
+            pageInfo {
+              __typename
+              endCursor
+              hasNextPage
+              hasPreviousPage
+              startCursor
+            }
+          }
+          ... on IComponent {
+            ...componentTrackingDataFragment
+            __typename
+          }
+        }
+        fragment actionItemFragment on ActionItem {
+          __typename
+          objectId
+          accessibilityLabel
+          active
+          mode
+          title
+          themeOverride
+          action {
+            ...actionFragment
+            __typename
+          }
+          icons {
+            ...iconFragment
+            __typename
+          }
+        }
+        fragment actionFragment on Action {
+          __typename
+          ... on FavoriteAction {
+            id
+            favorite
+            title
+            __typename
+          }
+          ... on ListDeleteAction {
+            listName
+            id
+            listId
+            title
+            __typename
+          }
+          ... on ListTileDeletedAction {
+            listName
+            id
+            listId
+            __typename
+          }
+          ... on LinkAction {
+            internalTarget
+            linkId
+            link
+            internalTarget
+            externalTarget
+            passUserIdentity
+            zone {
+              preferredZone
+              isExclusive
+              __typename
+            }
+            linkTokens {
+              __typename
+              placeholder
+              value
+            }
+            __typename
+          }
+          ... on ClientDrivenAction {
+            __typename
+            clientDrivenActionType
+          }
+          ... on ShareAction {
+            title
+            url
+            __typename
+          }
+          ... on SwitchTabAction {
+            referencedTabId
+            link
+            __typename
+          }
+          ... on FinishAction {
+            id
+            __typename
+          }
+        }
+        fragment iconFragment on Icon {
+          __typename
+          accessibilityLabel
+          position
+          ... on DesignSystemIcon {
+            value {
+              name
+              __typename
+            }
+            activeValue {
+              name
+              __typename
+            }
+            __typename
+          }
+          ... on ImageIcon {
+            value {
+              srcSet {
+                src
+                format
+                __typename
+              }
+              __typename
+            }
+            activeValue {
+              srcSet {
+                src
+                format
+                __typename
+              }
+              __typename
+            }
+            __typename
+          }
+        }
+        fragment componentTrackingDataFragment on IComponent {
+          trackingData {
+            data
+            perTrigger {
+              trigger
+              data
+              template {
+                id
+                __typename
+              }
+              __typename
+            }
+            __typename
+          }
+          __typename
+        }
+        fragment imageFragment on Image {
+          __typename
+          objectId
+          alt
+          focusPoint {
+            x
+            y
+            __typename
+          }
+          templateUrl
+        }
+        fragment tileFragment on Tile {
+          ... on IIdentifiable {
+            __typename
+            objectId
+          }
+          ... on IComponent {
+            ...componentTrackingDataFragment
+            __typename
+          }
+          ... on ITile {
+            title
+            active
+            accessibilityTitle
+            action {
+              __typename
+              ... on LinkAction {
+                internalTarget
+                link
+                internalTarget
+                externalTarget
+                __typename
+              }
+            }
+            actionItems {
+              ...actionItemFragment
+              __typename
+            }
+            image {
+              ...imageFragment
+              __typename
+            }
+            primaryMeta {
+              ...metaFragment
+              __typename
+            }
+            secondaryMeta {
+              ...metaFragment
+              __typename
+            }
+            tertiaryMeta {
+              ...metaFragment
+              __typename
+            }
+            indexMeta {
+              __typename
+              type
+              value
+            }
+            statusMeta {
+              __typename
+              type
+              value
+            }
+            labelMeta {
+              __typename
+              type
+              value
+            }
+            __typename
+          }
+          ... on ContentTile {
+            brand
+            brandLogos {
+              ...brandLogosFragment
+              __typename
+            }
+            __typename
+          }
+          ... on BannerTile {
+            backgroundColor
+            brand
+            brandLogos {
+              ...brandLogosFragment
+              __typename
+            }
+            compactLayout
+            description
+            textTheme
+            titleArt {
+              objectId
+              templateUrl
+              __typename
+            }
+            __typename
+          }
+          ... on EpisodeTile {
+            description
+            available
+            chapterStart
+            progress {
+              completed
+              progressInSeconds
+              durationInSeconds
+              __typename
+            }
+            episode {
+              __typename
+              id
+              name
+              available
+              whatsonId
+              title
+              description
+              subtitle
+              permalink
+              logo
+              brand
+              brandLogos {
+                type
+                mono
+                primary
+              }
+              image {
+                alt
+                templateUrl
+              }
+
+              ageRaw
+              ageValue
+
+              durationRaw
+              durationValue
+              durationSeconds
+
+              episodeNumberRaw
+              episodeNumberValue
+              episodeNumberShortValue
+
+              onTimeRaw
+              onTimeValue
+              onTimeShortValue
+
+              offTimeRaw
+              offTimeValue
+              offTimeShortValue
+
+              productPlacementValue
+              productPlacementShortValue
+
+              regionRaw
+              regionValue
+              program {
+                title
+                id
+                link
+                programType
+                description
+                shortDescription
+                subtitle
+                announcementType
+                announcementValue
+                whatsonId
+                image {
+                  alt
+                  templateUrl
+                }
+                posterImage {
+                  alt
+                  templateUrl
+                }
+              }
+              season {
+                id
+                titleRaw
+                titleValue
+                titleShortValue
+              }
+              analytics {
+                airDate
+                categories
+                contentBrand
+                episode
+                mediaSubtype
+                mediaType
+                name
+                pageName
+                season
+                show
+              }
+              primaryMeta {
+                longValue
+                shortValue
+                type
+                value
+                __typename
+              }
+              secondaryMeta {
+                longValue
+                shortValue
+                type
+                value
+                __typename
+              }
+              watchAction {
+                avodUrl
+                completed
+                resumePoint
+                resumePointTotal
+                resumePointProgress
+                resumePointTitle
+                episodeId
+                videoId
+                publicationId
+                streamId
+              }
+              favoriteAction {
+                favorite
+                id
+                title
+              }
+            }
+            __typename
+          }
+          ... on ProgramTile {
+            __typename
+            objectId
             id
             link
-            programType
-            description
-            shortDescription
-            subtitle
-            announcementType
-            announcementValue
-            whatsonId
+            tileType
             image {
               alt
               templateUrl
             }
-            posterImage {
-              alt
-              templateUrl
-            }
-            favoriteAction {
-              favorite
-              id
+            title
+            program {
               title
+              id
+              link
+              programType
+              description
+              shortDescription
+              subtitle
+              announcementType
+              announcementValue
+              whatsonId
+              image {
+                alt
+                templateUrl
+              }
+              posterImage {
+                alt
+                templateUrl
+              }
+              favoriteAction {
+                favorite
+                id
+                title
+              }
             }
+          }
+          ... on PodcastEpisodeTile {
+            available
+            description
+            progress {
+              completed
+              progressInSeconds
+              durationInSeconds
+              __typename
+            }
+            __typename
+          }
+          ... on AudioLivestreamTile {
+            brand
+            brandsLogos {
+              brand
+              brandTitle
+              logos {
+                ...brandLogosFragment
+                __typename
+              }
+              __typename
+            }
+            progress {
+              durationInSeconds
+              progressInSeconds
+              __typename
+            }
+            __typename
+          }
+          ... on LivestreamTile {
+            description
+            progress {
+              durationInSeconds
+              progressInSeconds
+              __typename
+            }
+            __typename
+          }
+          ... on ButtonTile {
+            mode
+            icons {
+              ...iconFragment
+              __typename
+            }
+            __typename
+          }
+          ... on RadioEpisodeTile {
+            available
+            description
+            progress {
+              completed
+              progressInSeconds
+              durationInSeconds
+              __typename
+            }
+            __typename
+          }
+          ... on RadioFragmentTile {
+            progress {
+              completed
+              progressInSeconds
+              durationInSeconds
+              __typename
+            }
+            __typename
+          }
+          ... on SongTile {
+            startDate
+            formattedStartDate
+            endDate
+            description
+            __typename
+          }
+          __typename
+        }
+        fragment brandLogosFragment on Logo {
+          colorOnColor
+          height
+          mono
+          primary
+          type
+          width
+          __typename
+        }
+        fragment metaFragment on MetaDataItem {
+          __typename
+          type
+          value
+          shortValue
+          longValue
+        }
+        fragment paginatedTileListFragment on PaginatedTileList {
+          __typename
+          objectId
+          listId
+          action {
+            ... on LinkAction {
+              __typename
+              externalTarget
+              link
+            }
+            ... on SwitchTabAction {
+              __typename
+              link
+              referencedTabId
+            }
+            __typename
+          }
+          banner {
+            actionItems {
+              ...actionItemFragment
+              __typename
+            }
+            backgroundColor
+            compactLayout
+            description
+            image {
+              ...imageFragment
+              __typename
+            }
+            titleArt {
+              ...imageFragment
+              __typename
+            }
+            textTheme
+            title
+            __typename
+          }
+          bannerSize
+          displayType
+          maxAge
+          tileVariant
+          paginatedItems(first: $lazyItemCount, after: $after, before: $before) {
+            __typename
+            edges {
+              __typename
+              cursor
+              node {
+                __typename
+                ...tileFragment
+              }
+            }
+            pageInfo {
+              __typename
+              endCursor
+              hasNextPage
+              hasPreviousPage
+              startCursor
+            }
+          }
+          sort {
+            icon
+            order
+            title
+            __typename
+          }
+          tileContentType
+          title
+          description
+          ... on IComponent {
+            ...componentTrackingDataFragment
+            __typename
           }
         }
     """
-    # FIXME: Find a better way to change GraphQL typename
-    if list_id.startswith('static:/'):
-        graphql_query = graphql_query.replace('on PaginatedTileList', 'on StaticTileList')
-
-    operation_name = 'PaginatedPrograms'
+    operation_name = 'TileList'
     variables = {
         'listId': list_id,
-        'endCursor': end_cursor,
-        'pageSize': page_size,
+        'after': end_cursor,
+        'lazyItemCount': page_size,
     }
-    return api_req(graphql_query, operation_name, variables, client)
+    return api_req(graphql_query, operation_name, variables)
 
 
 def convert_programs(item_list, destination, end_cursor='', use_favorites=False, **kwargs):
@@ -1276,8 +1814,8 @@ def get_programs(list_id=None, destination=None, end_cursor='', category=None, c
     item_list = []
     while fetched < kodi_page_size:
         page_size = kodi_page_size - fetched
-        api_data = get_paginated_programs(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
-        paginated = api_data.get('data', {}).get('list', {}).get('paginated', {})
+        api_data = get_entities(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
+        paginated = api_data.get('data', {}).get('list', {}).get('paginatedItems', {})
         edges = paginated.get('edges', [])
         page_info = paginated.get('pageInfo', {})
         item_list.extend(edges)
@@ -1340,8 +1878,8 @@ def get_episodes(list_id=None, destination=None, end_cursor='', program_name=Non
     item_list = []
     while fetched < kodi_page_size:
         page_size = kodi_page_size - fetched
-        api_data = get_paginated_episodes(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
-        paginated = api_data.get('data', {}).get('list', {}).get('paginated', {})
+        api_data = get_entities(list_id=list_id, page_size=page_size, end_cursor=end_cursor)
+        paginated = api_data.get('data', {}).get('list', {}).get('paginatedItems', {})
         edges = paginated.get('edges', [])
         page_info = paginated.get('pageInfo', {})
         item_list.extend(edges)
