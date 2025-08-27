@@ -74,7 +74,7 @@ class TestApi(unittest.TestCase):
 
     def test_get_single_episode(self):
         """Test getting a single episode by episodeId"""
-        episode_items = get_single_episode(episode_id='1649155986476')
+        episode_items = get_single_episode(episode_id='/vrtmax/a-z/postbus-x/1989/postbus-x-s1989a10/')
         self.assertTrue(episode_items)
 
     def test_get_programs_category(self):
@@ -119,7 +119,7 @@ class TestApi(unittest.TestCase):
 
     def test_upnext(self):
         """Test getting next episode (de-ideale-wereld)"""
-        episode_id = '1728252310175'
+        episode_id = '/vrtmax/a-z/de-ideale-wereld/2025-vj/de-ideale-wereld-d20250430-a31/'
         next_episode = get_next_info(episode_id).get('next_episode')
         self.assertTrue(next_episode)
         print(next_episode)

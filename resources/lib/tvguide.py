@@ -212,7 +212,7 @@ class TVGuide:
         """Get videoId and publicationId using VRT MAX REST API"""
         video_id = None
         publication_id = None
-        episode = get_single_episode_data(episode_id).get('data').get('catalogMember')
+        episode = get_single_episode_data(episode_id).get('data').get('page').get('episode')
         if episode:
             video_id = episode.get('watchAction').get('videoId')
             publication_id = episode.get('watchAction').get('publicationId')
@@ -223,7 +223,7 @@ class TVGuide:
         now = datetime.now(dateutil.tz.tzlocal())
         end_date = dateutil.parser.parse(episode.get('endTime'))
         if episode.get('url') and episode.get('episodeId'):
-            video_id, publication_id = self.get_stream_ids(episode_id=episode.get('episodeId'))
+            video_id, publication_id = self.get_stream_ids(episode_id=episode.get('url'))
             return url_for('play_id', video_id=video_id, publication_id=publication_id)
         if now - timedelta(hours=24) <= end_date <= now:
             return url_for('play_air_date', channel, episode.get('startTime')[:19], episode.get('endTime')[:19])
@@ -245,7 +245,7 @@ class TVGuide:
                     epg_data[epg_id] = []
                 for episode in episodes:
                     if episode.get('url') and episode.get('episodeId'):
-                        video_id, publication_id = self.get_stream_ids(episode_id=episode.get('episodeId'))
+                        video_id, publication_id = self.get_stream_ids(episode_id=episode.get('url'))
                         path = url_for('play_id', video_id=video_id, publication_id=publication_id)
                     else:
                         path = None
