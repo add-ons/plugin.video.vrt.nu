@@ -365,25 +365,31 @@ def get_single_episode_data(episode_id):
 
 def get_latest_episode_data(program_name):
     """Get latest episode data from GraphQL API"""
-    latest_episode = {}
+    latest_episode = None
     graphql_query = """
-        query VideoProgramPage($pageId: ID!, $lazyItemCount: Int = 500, $after: ID) {
+        query VideoProgramPage(
+          $pageId: ID!,
+          $lazyItemCount: Int = 500,
+          $after: ID
+          ) {
           page(id: $pageId) {
             ... on ProgramPage {
-              components {
-                __typename
-                ... on PageHeader {
-                  mostRelevantEpisodeTile {
-                    __typename
-                    title
-                    tile {
-                      ...episodeTile
-                      __typename
+              header {
+                title
+                actionItems {
+                  accessibilityLabel
+                  active
+                  mode
+                  title
+                  action {
+                    ... on LinkAction {
+                      internalTarget
+                      link
                     }
-                    __typename
                   }
-                  __typename
                 }
+              }
+              components {
                 ... on ContainerNavigation {
                   items {
                     title
@@ -432,44 +438,38 @@ def get_latest_episode_data(program_name):
                             }
                           }
                         }
-                        __typename
                       }
                     }
-                    __typename
                   }
-                  __typename
                 }
               }
-              __typename
             }
-            __typename
           }
         }
         %s
     """ % EPISODE_TILE
     operation_name = 'VideoProgramPage'
     variables = {
-        'pageId': '/vrtnu/a-z/{}.model.json'.format(program_name),
+        'pageId': '/vrtmax/a-z/{}/'.format(program_name),
     }
-    api_data = api_req(graphql_query, operation_name, variables, client='MobileAndroid')
-    page = api_data.get('data').get('page')
-    if page:
-        most_relevant_ep = page.get('components')[0].get('mostRelevantEpisodeTile')
-        if most_relevant_ep and most_relevant_ep.get('title') == 'Meest recente aflevering':
-            latest_episode = most_relevant_ep
-        else:
-            items = page.get('components')[0].get('items')[0].get('components')[0]
-            if not items.get('paginatedItems'):
-                items = items.get('items')[0].get('components')[0]
-            edges = items.get('paginatedItems').get('edges')
-            highest_ep_no = 0
-            highest_ep = {}
-            for edge in edges:
-                ep_no = int(edge.get('node').get('episode').get('episodeNumberRaw'))
-                if ep_no > highest_ep_no:
-                    highest_ep_no = ep_no
-                    highest_ep = edge.get('node').get('episode')
-            latest_episode = highest_ep
+    data = api_req(graphql_query, operation_name, variables)
+    if data.get('data').get('page'):
+        for action in data.get('data').get('page').get('header').get('actionItems'):
+            if action.get('title') == 'Bekijk de recentste aflevering':
+                latest_episode = get_single_episode_data(action.get('action').get('link')).get('data').get('page').get('episode')
+            else:
+                items = data.get('data').get('page').get('components')[0].get('items')[0].get('components')[0]
+                if not items.get('paginatedItems'):
+                    items = items.get('items')[0].get('components')[0]
+                edges = items.get('paginatedItems').get('edges')
+                highest_ep_no = 0
+                highest_ep = {}
+                for edge in edges:
+                    ep_no = int(edge.get('node').get('episode').get('episodeNumberRaw'))
+                    if ep_no > highest_ep_no:
+                        highest_ep_no = ep_no
+                        highest_ep = edge.get('node').get('episode')
+                latest_episode = highest_ep
     return latest_episode
 
 
