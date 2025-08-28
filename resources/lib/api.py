@@ -2048,11 +2048,6 @@ def get_featured_data():
                       __typename
                       listId
                       title
-                      header {
-                        brand
-                        ctaText
-                        description
-                      }
                       componentType
                       tileContentType
                     }
