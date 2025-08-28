@@ -2001,7 +2001,7 @@ def api_req(graphql_query, operation_name, variables, client='WEB'):
             'Authorization': 'Bearer ' + access_token,
             'Content-Type': 'application/json',
             'x-vrt-client-name': client,
-            'x-vrt-client-version': '1.5.7',
+            'x-vrt-client-version': '1.5.12',
         }
         data_json = get_url_json(url=GRAPHQL_URL, cache=None, headers=headers, data=data, raise_errors='all')
     return data_json
