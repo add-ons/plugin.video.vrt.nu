@@ -111,22 +111,30 @@ def format_plot(plot, region, product_placement, mpaa, offtime, permalink):
     if offtime:
         now = datetime.now(dateutil.tz.tzlocal())
         remaining = offtime - now
-        if remaining.days / 365 > 5:
-            pass  # If it is available for more than 5 years, do not show
-        elif remaining.days / 365 > 2:
-            plot_meta += localize(30202, years=int(remaining.days / 365))  # X years remaining
-        elif remaining.days / 30.5 > 3:
-            plot_meta += localize(30203, months=int(remaining.days / 30.5))  # X months remaining
-        elif remaining.days > 1:
-            plot_meta += localize(30204, days=remaining.days)  # X days to go
-        elif remaining.days == 1:
-            plot_meta += localize(30205)  # 1 day to go
-        elif remaining.seconds // 3600 > 1:
-            plot_meta += localize(30206, hours=remaining.seconds // 3600)  # X hours to go
-        elif remaining.seconds // 3600 == 1:
-            plot_meta += localize(30207)  # 1 hour to go
+        total_seconds = remaining.total_seconds()
+
+        if total_seconds <= 0:
+            plot_meta += localize(30209)  # Already expired or 0 time left
         else:
-            plot_meta += localize(30208, minutes=remaining.seconds // 60)  # X minutes to go
+            total_days = total_seconds / 86400
+            if total_days > 5 * 365:
+                pass  # more than 5 years, do not show
+            elif total_days > 2 * 365:
+                plot_meta += localize(30202, years=int(total_days // 365))
+            elif total_days > 3 * 30.5:
+                plot_meta += localize(30203, months=int(total_days // 30.5))
+            elif total_days > 1:
+                plot_meta += localize(30204, days=int(total_days))
+            elif int(total_days) == 1:
+                plot_meta += localize(30205)  # 1 day to go
+            else:
+                total_hours = total_seconds / 3600
+                if total_hours > 1:
+                    plot_meta += localize(30206, hours=int(total_hours))
+                elif int(total_hours) == 1:
+                    plot_meta += localize(30207)  # 1 hour to go
+                else:
+                    plot_meta += localize(30208, minutes=int(total_seconds // 60))
 
     if region == 'BE':
         if plot_meta:
@@ -2307,15 +2315,17 @@ def get_episode_by_air_date(channel_name, start_date, end_date=None):
                                                              - dateutil.parser.parse(episode.get('startTime'))).total_seconds() / 2))) == mindate), None)
     if episode_guess:
         if episode_guess.get('episodeId'):
-            episode = get_single_episode_data(episode_guess.get('url')).get('data').get('page').get('episode')
-            _, _, _, video_item = convert_episode(episode)
-            video = {
-                'listitem': video_item,
-                'video_id': episode.get('watchAction').get('videoId'),
-                'publication_id': episode.get('watchAction').get('publicationId')
-            }
-            if video:
-                return video
+            episode = get_single_episode_data(episode_guess.get('url')).get('data').get('page')
+            if episode.get('available'):
+                log(2, 'Guessed available episode {item}', item=episode_guess.get('url'))
+                _, _, _, video_item = convert_episode(episode)
+                video = {
+                    'listitem': video_item,
+                    'video_id': episode.get('episode').get('watchAction').get('videoId'),
+                    'publication_id': episode.get('episode').get('watchAction').get('publicationId')
+                }
+                if video:
+                    return video
 
         # Airdate live2vod feature: use livestream cache of last 24 hours if no video was found
         offairdate_guess = dateutil.parser.parse(episode_guess.get('endTime'))
