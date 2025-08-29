@@ -885,7 +885,6 @@ def get_entities(list_id, page_size='', end_cursor=''):
           }
           ... on LinkAction {
             internalTarget
-            linkId
             link
             internalTarget
             externalTarget
@@ -2177,7 +2176,6 @@ def get_online_categories():
                           objectId
                           action {
                             ... on LinkAction {
-                              linkId
                               link
                               internalTarget
                               externalTarget
