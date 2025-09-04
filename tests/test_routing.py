@@ -2,9 +2,6 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Integration tests for Routing functionality"""
 
-# pylint: disable=invalid-name,line-too-long
-
-from __future__ import absolute_import, division, print_function, unicode_literals
 from datetime import datetime, timedelta
 import unittest
 import dateutil.tz
@@ -58,7 +55,8 @@ class TestRouting(unittest.TestCase):
         addon.run(['plugin://plugin.video.vrt.nu/programs/pano/2019', '0', ''])
         self.assertEqual(plugin.url_for(addon.programs, program_name='pano', season_name='2019'), 'plugin://plugin.video.vrt.nu/programs/pano/2019')
         addon.run(['plugin://plugin.video.vrt.nu/programs/de-smurfen0/2021/1655824964821', '0', ''])
-        self.assertEqual(plugin.url_for(addon.programs, program_name='de-smurfen0', season_name='2021', end_cursor='1655824964821'), 'plugin://plugin.video.vrt.nu/programs/de-smurfen0/2021/1655824964821')
+        self.assertEqual(plugin.url_for(addon.programs, program_name='de-smurfen0', season_name='2021', end_cursor='1655824964821'),
+                         'plugin://plugin.video.vrt.nu/programs/de-smurfen0/2021/1655824964821')
 
     def test_categories_menu(self):
         """Categories menu: /categories"""
@@ -187,14 +185,16 @@ class TestRouting(unittest.TestCase):
     def test_follow_route(self):
         """Follow method: /follow/<program_id>/<program_title>"""
         addon.run(['plugin://plugin.video.vrt.nu/follow/1459955889901/Thuis', '0', ''])
-        self.assertEqual(plugin.url_for(addon.follow, program_id='1459955889901', program_title='Thuis'), 'plugin://plugin.video.vrt.nu/follow/1459955889901/Thuis')
+        self.assertEqual(plugin.url_for(addon.follow, program_id='1459955889901', program_title='Thuis'),
+                         'plugin://plugin.video.vrt.nu/follow/1459955889901/Thuis')
 
     @unittest.skipUnless(xbmc_addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_unfollow_route(self):
         """Unfollow method: /unfollow/<program_id>/<program_title>"""
         addon.run(['plugin://plugin.video.vrt.nu/unfollow/1459955889901/Thuis', '0', ''])
-        self.assertEqual(plugin.url_for(addon.unfollow, program_id='1459955889901', program_title='Thuis'), 'plugin://plugin.video.vrt.nu/unfollow/1459955889901/Thuis')
+        self.assertEqual(plugin.url_for(addon.unfollow, program_id='1459955889901', program_title='Thuis'),
+                         'plugin://plugin.video.vrt.nu/unfollow/1459955889901/Thuis')
 
     def test_clear_cookies_route(self):
         """Delete tokens method: /tokens/delete"""

@@ -3,10 +3,9 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """This file implements the Kodi xbmcgui module, either using stubs or alternative functionality"""
 
-# pylint: disable=invalid-name,super-on-old-class,too-few-public-methods,too-many-arguments,too-many-instance-attributes,unused-argument,useless-super-delegation
+# pylint: disable=invalid-name,super-on-old-class,too-few-public-methods,too-many-arguments
+# pylint: disable=too-many-instance-attributes,unused-argument,useless-super-delegation
 
-
-from __future__ import absolute_import, division, print_function, unicode_literals
 import sys
 from xbmcextra import kodi_to_ansi
 
@@ -62,8 +61,8 @@ class Control:
 class ControlButton(Control):
     """A reimplementation of the xbmcgui ControlButton class"""
 
-    def __init__(self, x, y, width, height, label, focusTexture=None, noFocusTexture=None, textOffsetX=10, textOffsetY=2, alignment=4, font=None,
-                 textColor=None, disabledColor=None, angle=0, shadowColor=None, focusedColor=None):
+    def __init__(self, x, y, width, height, label, focusTexture=None, noFocusTexture=None, textOffsetX=10, textOffsetY=2,
+                 alignment=4, font=None, textColor=None, disabledColor=None, angle=0, shadowColor=None, focusedColor=None):
         """A stub constructor for the xbmcgui Control class"""
         super(ControlButton, self).__init__()
 
@@ -79,7 +78,8 @@ class ControlImage(Control):
 class ControlLabel(Control):
     """A reimplementation of the xbmcgui ControlLabel class"""
 
-    def __init__(self, x, y, width, height, label, font=None, textColor=None, disabledColor=None, alignment=0, hasPath=False, angle=0):  # pylint: disable=super-init-not-called
+    def __init__(self, x, y, width, height, label, font=None, textColor=None, disabledColor=None, alignment=0,
+                 hasPath=False, angle=0):  # pylint: disable=super-init-not-called
         """A stub constructor for the xbmcgui ControlLabel class"""
 
     @staticmethod

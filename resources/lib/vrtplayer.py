@@ -2,7 +2,6 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Implements a VRTPlayer class"""
 
-from __future__ import absolute_import, division, unicode_literals
 from api import (get_categories, get_channels, get_continue_episodes, get_episode_by_air_date, get_featured, get_programs, get_episodes, get_favorite_programs,
                  get_recent_episodes, get_offline_programs, get_single_episode, get_latest_episode, get_youtube)
 from helperobjects import TitleItem

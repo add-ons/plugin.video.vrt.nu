@@ -2,17 +2,12 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """This module contains all functionality for VRT MAX API authentication."""
 
-from __future__ import absolute_import, division, unicode_literals
+from urllib.error import HTTPError
+
 from kodiutils import (addon_profile, delete, delete_cache, exists, get_cache, get_cache_dir, get_setting, open_url,
                        get_url_json, has_credentials, invalidate_caches, listdir,
                        localize, log, log_error, notification, ok_dialog,
                        open_settings, set_setting, update_cache)
-from utils import from_unicode
-
-try:  # Python 3
-    from urllib.error import HTTPError
-except ImportError:  # Python 2
-    from urllib2 import HTTPError
 
 
 class TokenResolver:
@@ -80,10 +75,7 @@ class TokenResolver:
     def _extract_tokens(self, response):
         """Extract tokens from http response"""
         tokens = []
-        try:  # Python 3
-            cookie_data = response.info().get_all('Set-Cookie')
-        except AttributeError:  # Python 2
-            cookie_data = response.info().getheaders('Set-Cookie')
+        cookie_data = response.info().get_all('Set-Cookie')
         for cookie in cookie_data:
             # Create token dictionary
             token = self._create_token_dictionary(cookie)
@@ -141,8 +133,8 @@ class TokenResolver:
         }
         payload = {
             'clientId': 'vrtnu-site',
-            'loginID': from_unicode(get_setting('username')),
-            'password': from_unicode(get_setting('password')),
+            'loginID': get_setting('username'),
+            'password': get_setting('password'),
         }
         from json import dumps
         data = dumps(payload).encode()
