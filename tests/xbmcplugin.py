@@ -4,21 +4,12 @@
 """This file implements the Kodi xbmcplugin module, either using stubs or alternative functionality"""
 
 # pylint: disable=invalid-name,unused-argument
-from __future__ import absolute_import, division, print_function, unicode_literals
+
+from urllib.error import HTTPError
+from urllib.request import Request, urlopen
 
 from xbmcaddon import Addon
 from xbmcextra import kodi_to_ansi, uri_to_path
-
-try:  # Python 3
-    from urllib.error import HTTPError
-    from urllib.request import Request, urlopen
-except ImportError:  # Python 2
-    from urllib2 import HTTPError, Request, urlopen
-
-try:  # Python 2
-    basestring  # pylint: disable=used-before-assignment
-except NameError:  # Python 3
-    basestring = str  # pylint: disable=redefined-builtin
 
 SORT_METHOD_NONE = 0
 SORT_METHOD_LABEL = 1
@@ -95,7 +86,7 @@ def endOfDirectory(handle, succeeded=True, updateListing=True, cacheToDisc=True)
 
 def getSetting(handle, key):
     """A stub implementation of the xbmcplugin getSetting() function"""
-    assert isinstance(key, basestring)
+    assert isinstance(key, str)
     return Addon().getSetting(key)
 
 
@@ -125,7 +116,7 @@ def setResolvedUrl(handle, succeeded, listitem):
     request = Request(listitem.path)
     request.get_method = lambda: 'HEAD'
     try:
-        response = urlopen(request)
+        response = urlopen(request)  # pylint: disable=consider-using-with
         log('Stream playing successfully: %s' % response.code, LOGINFO)
     except HTTPError as exc:
         log('Playing stream returned: %s' % exc, LOGFATAL)

@@ -2,18 +2,13 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """This module collects and prepares stream info for Kodi Player."""
 
-from __future__ import absolute_import, division, unicode_literals
-
-try:  # Python 3
-    from urllib.error import HTTPError
-    from urllib.parse import quote
-except ImportError:  # Python 2
-    from urllib2 import quote, HTTPError
+from urllib.error import HTTPError
+from urllib.parse import quote
 
 from helperobjects import ApiData, StreamURLS
 from kodiutils import (addon_profile, can_play_drm, container_reload, exists, end_of_directory, generate_expiration_date, get_cache,
                        get_max_bandwidth, get_setting_bool, get_url_json, has_inputstream_adaptive, invalidate_caches, kodi_version_major,
-                       localize, log, log_error, mkdir, ok_dialog, open_settings, open_url, supports_drm, to_unicode, update_cache)
+                       localize, log, log_error, mkdir, ok_dialog, open_settings, open_url, supports_drm, update_cache)
 
 
 class StreamService:
@@ -113,10 +108,7 @@ class StreamService:
            Right after a program is completely broadcasted, the stop timestamp is usually missing and should be added to the manifest_url.
         """
         if any(param in manifest_url for param in ('?t=', '&t=')):
-            try:  # Python 3
-                from urllib.parse import parse_qs, urlsplit
-            except ImportError:  # Python 2
-                from urlparse import parse_qs, urlsplit
+            from urllib.parse import parse_qs, urlsplit
             import re
 
             # Detect single start timestamp
@@ -303,7 +295,7 @@ class StreamService:
             return None
         if response is None:
             return None
-        hls_playlist = to_unicode(response.read())
+        hls_playlist = response.read().decode('utf-8')
         max_bandwidth = get_max_bandwidth()
         stream_bandwidth = None
 

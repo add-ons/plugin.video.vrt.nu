@@ -2,13 +2,7 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Implements an ApiHelper class with common VRT MAX API functionality"""
 
-from __future__ import absolute_import, division, unicode_literals
-
-try:  # Python 3
-    from urllib.parse import quote_plus, unquote
-except ImportError:  # Python 2
-    from urllib import quote_plus
-    from urllib2 import unquote
+from urllib.parse import quote_plus, unquote
 
 from data import CHANNELS
 from helperobjects import TitleItem
@@ -16,7 +10,7 @@ from kodiutils import (delete_cached_thumbnail, get_cache, get_cached_url_json, 
                        get_setting_bool, get_setting_int, get_url_json, has_addon, localize,
                        localize_from_data, log, ttl, update_cache, url_for)
 from metadata import Metadata
-from utils import (add_https_proto, html_to_kodi, find_entry, from_unicode, play_url_to_id,
+from utils import (add_https_proto, html_to_kodi, find_entry, play_url_to_id,
                    realpage, youtube_to_plugin_url)
 
 
@@ -594,7 +588,7 @@ class ApiHelper:
         if keywords:
             if not season:
                 season = 'allseasons'
-            params['q'] = quote_plus(from_unicode(keywords))
+            params['q'] = quote_plus(keywords)
             params['highlight'] = 'true'
 
         if whatson_id:

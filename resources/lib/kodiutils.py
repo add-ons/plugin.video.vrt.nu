@@ -2,11 +2,13 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """All functionality that requires Kodi imports"""
 
-from __future__ import absolute_import, division, unicode_literals
 from contextlib import contextmanager
 from sys import version_info
 from socket import timeout
 from ssl import SSLError
+
+from urllib.parse import quote, urlencode
+from urllib.request import HTTPErrorProcessor
 
 import xbmc
 import xbmcplugin
@@ -17,14 +19,6 @@ except ImportError:  # Kodi 19 alpha 1 and lower
     from xbmc import translatePath  # pylint: disable=ungrouped-imports
 
 from xbmcaddon import Addon
-from utils import from_unicode, to_unicode
-
-try:  # Python 3
-    from urllib.parse import quote, urlencode
-    from urllib.request import HTTPErrorProcessor
-except ImportError:  # Python 2
-    from urllib import urlencode
-    from urllib2 import quote, HTTPErrorProcessor
 
 ADDON = Addon()
 DEFAULT_CACHE_DIR = 'cache'
@@ -138,7 +132,7 @@ def addon_path():
 
 def translate_path(path):
     """Converts a Kodi special:// path to the corresponding OS-specific path"""
-    return to_unicode(translatePath(from_unicode(path)))
+    return translatePath(path)
 
 
 def addon_profile():
@@ -158,7 +152,7 @@ def show_listing(list_items, category=None, sort='unsorted', ascending=True, con
     from addon import plugin
 
     set_property('container.url', 'plugin://' + addon_id() + plugin.path)
-    xbmcplugin.setPluginFanart(handle=plugin.handle, image=from_unicode(addon_fanart()))
+    xbmcplugin.setPluginFanart(handle=plugin.handle, image=addon_fanart())
 
     usemenucaching = get_setting_bool('usemenucaching', default=True)
     if cache is None:
@@ -276,10 +270,7 @@ def show_listing(list_items, category=None, sort='unsorted', ascending=True, con
 
 def play(stream, video=None):
     """Create a virtual directory listing to play its only item"""
-    try:  # Python 3
-        from urllib.parse import unquote
-    except ImportError:  # Python 2
-        from urllib2 import unquote
+    from urllib.parse import unquote
 
     from xbmcgui import ListItem
     from addon import plugin
@@ -353,7 +344,7 @@ def get_search_string(search_string=None):
     keyboard = xbmc.Keyboard(search_string, localize(30134))
     keyboard.doModal()
     if keyboard.isConfirmed():
-        search_string = to_unicode(keyboard.getText())
+        search_string = keyboard.getText()
     return search_string
 
 
@@ -464,10 +455,6 @@ def localize_date(date, strftime):
     elif '%b' in strftime:
         strftime = strftime.replace('%b', MONTH_SHORT[date.strftime('%m')])
 
-    # %e isn't supported on Python 2.7 on Windows
-    if '%e' in strftime:
-        strftime = strftime.replace('%e', date.strftime('%d').lstrip('0'))
-
     return date.strftime(strftime)
 
 
@@ -487,7 +474,7 @@ def localize_from_data(name, data):
 def get_setting(key, default=None):
     """Get an add-on setting as string"""
     try:
-        value = to_unicode(ADDON.getSetting(key))
+        value = ADDON.getSetting(key)
     except RuntimeError:  # Occurs when the add-on is disabled
         return default
     if value == '' and default is not None:
@@ -535,7 +522,7 @@ def get_setting_float(key, default=None):
 
 def set_setting(key, value):
     """Set an add-on setting"""
-    return ADDON.setSetting(key, from_unicode(str(value)))
+    return ADDON.setSetting(key, str(value))
 
 
 def set_setting_bool(key, value):
@@ -608,7 +595,7 @@ def get_advanced_setting_int(key, default=0):
 def get_property(key, default=None, window_id=10000):
     """Get a Window property"""
     from xbmcgui import Window
-    value = to_unicode(Window(window_id).getProperty(key))
+    value = Window(window_id).getProperty(key)
     if value == '' and default is not None:
         return default
     return value
@@ -617,7 +604,7 @@ def get_property(key, default=None, window_id=10000):
 def set_property(key, value, window_id=10000):
     """Set a Window property"""
     from xbmcgui import Window
-    return Window(window_id).setProperty(key, from_unicode(value))
+    return Window(window_id).setProperty(key, value)
 
 
 def clear_property(key, window_id=10000):
@@ -813,7 +800,7 @@ def get_cache_dir(cache_dir=DEFAULT_CACHE_DIR):
 
 def get_addon_info(key):
     """Return addon information"""
-    return to_unicode(ADDON.getAddonInfo(key))
+    return ADDON.getAddonInfo(key)
 
 
 def listdir(path):
@@ -975,7 +962,7 @@ def log(level=1, message='', **kwargs):
         from string import Formatter
         message = Formatter().vformat(message, (), SafeDict(**kwargs))
     message = '[{addon}] {message}'.format(addon=addon_id(), message=message)
-    xbmc.log(from_unicode(message), level % 3 if debug_logging else 2)
+    xbmc.log(message, level % 3 if debug_logging else 2)
 
 
 def log_access(argv):
@@ -989,7 +976,7 @@ def log_error(message, **kwargs):
         from string import Formatter
         message = Formatter().vformat(message, (), SafeDict(**kwargs))
     message = '[{addon}] {message}'.format(addon=addon_id(), message=message)
-    xbmc.log(from_unicode(message), 4)
+    xbmc.log(message, 4)
 
 
 def jsonrpc(*args, **kwargs):
@@ -1127,12 +1114,9 @@ def ttl(kind='direct'):
 
 def open_url(url, data=None, headers=None, method=None, cookiejar=None, follow_redirects=True, raise_errors=None):
     """Return a urllib http response"""
-    try:  # Python 3
-        from urllib.error import HTTPError, URLError
-        from urllib.parse import unquote
-        from urllib.request import build_opener, HTTPCookieProcessor, ProxyHandler, Request
-    except ImportError:  # Python 2
-        from urllib2 import build_opener, HTTPError, HTTPCookieProcessor, ProxyHandler, Request, URLError, unquote
+    from urllib.error import HTTPError, URLError
+    from urllib.parse import unquote
+    from urllib.request import build_opener, HTTPCookieProcessor, ProxyHandler, Request
 
     opener_args = []
     if not follow_redirects:
@@ -1152,7 +1136,7 @@ def open_url(url, data=None, headers=None, method=None, cookiejar=None, follow_r
         log(2, 'URL post: {url}', url=unquote(url))
         # Make sure we don't log the password
         debug_data = data
-        if 'password' in to_unicode(debug_data):
+        if 'password' in debug_data.decode('utf-8'):
             debug_data = '**redacted**'
         log(2, 'URL post data: {data}', data=debug_data)
     else:
@@ -1168,10 +1152,7 @@ def open_url(url, data=None, headers=None, method=None, cookiejar=None, follow_r
     except HTTPError as exc:
         if isinstance(raise_errors, list) and 401 in raise_errors or raise_errors == 'all':
             raise
-        if hasattr(req, 'selector'):  # Python 3.4+
-            url_length = len(req.selector)
-        else:  # Python 2.7
-            url_length = len(req.get_selector())
+        url_length = len(req.selector)
         if exc.code == 400 and 7600 <= url_length <= 8192:
             ok_dialog(heading='HTTP Error 400', message=localize(30967))
             log_error('HTTP Error 400: Probably exceeded maximum url length: '
@@ -1221,7 +1202,7 @@ def get_json_data(response, fail=None):
     from json import load, loads
     try:
         if (3, 0, 0) <= version_info < (3, 6, 0):  # the JSON object must be str, not 'bytes'
-            return loads(to_unicode(response.read()))
+            return loads(response.read().decode('utf-8'))
         return load(response)
     except TypeError as exc:  # 'NoneType' object is not callable
         log_error('JSON TypeError: {exc}', exc=exc)

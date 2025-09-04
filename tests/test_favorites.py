@@ -3,9 +3,6 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Unit tests for Favorites functionality"""
 
-# pylint: disable=invalid-name
-
-from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
 from api import get_recent_episodes, get_program_id, get_favorite_programs, is_favorite, get_offline_programs, set_favorite
 

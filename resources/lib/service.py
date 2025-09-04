@@ -2,14 +2,12 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """This is the actual VRT MAX service entry point"""
 
-from __future__ import absolute_import, division, unicode_literals
 from xbmc import Monitor
 from favorites import Favorites
 from kodiutils import container_refresh, log
 from playerinfo import PlayerInfo
 from resumepoints import ResumePoints
 from tokenresolver import TokenResolver
-from utils import to_unicode
 
 
 class VrtMonitor(Monitor, object):  # pylint: disable=useless-object-inheritance
@@ -42,7 +40,7 @@ class VrtMonitor(Monitor, object):  # pylint: disable=useless-object-inheritance
 
     def onNotification(self, sender, method, data):  # pylint: disable=invalid-name
         """Handler for notifications"""
-        # log(2, '[Notification] sender={sender}, method={method}, data={data}', sender=sender, method=method, data=to_unicode(data))
+        # log(2, '[Notification] sender={sender}, method={method}, data={data}', sender=sender, method=method, data=data.decode('utf-8'))
 
         # Handle play_action events from upnextprovider
         if sender.startswith('upnextprovider') and method.endswith('plugin.video.vrt.nu_play_action'):
@@ -54,8 +52,8 @@ class VrtMonitor(Monitor, object):  # pylint: disable=useless-object-inheritance
 
             # NOTE: With Python 3.5 and older json.loads() does not support bytes or bytearray, so we convert to unicode
             from base64 import b64decode
-            data = loads(to_unicode(b64decode(hexdata[0])))
-            log(2, '[Up Next notification] sender={sender}, method={method}, data={data}', sender=sender, method=method, data=to_unicode(data))
+            data = loads(b64decode(hexdata[0]).decode('utf-8'))
+            log(2, '[Up Next notification] sender={sender}, method={method}, data={data}', sender=sender, method=method, data=data.decode('utf-8'))
             self._playerinfo.add_upnext(data.get('episode_id'))
 
     def onSettingsChanged(self):  # pylint: disable=invalid-name

@@ -2,18 +2,13 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Implements VRT MAX GraphQL API functionality"""
 
-from __future__ import absolute_import, division, unicode_literals
-
-try:  # Python 3
-    from urllib.parse import quote_plus, unquote
-except ImportError:  # Python 2
-    from urllib import quote_plus, unquote
+from urllib.parse import quote_plus, unquote
 
 from data import CHANNELS
 from helperobjects import TitleItem
 from kodiutils import (colour, delete_cached_thumbnail, get_cache, get_setting_bool, get_setting_int, get_url_json, has_addon, has_credentials,
                        localize, localize_from_data, log, update_cache, url_for)
-from utils import find_entry, from_unicode, reformat_image_url, shorten_link, to_unicode, url_to_program, youtube_to_plugin_url
+from utils import find_entry, reformat_image_url, shorten_link, url_to_program, youtube_to_plugin_url
 from graphql_data import EPISODE_TILE
 
 SCREENSHOT_URL = 'https://www.vrt.be/vrtnu-static/screenshots'
@@ -47,7 +42,7 @@ def get_context_menu(program_name, program_id, program_title, program_type, favo
 
     # Follow/unfollow
     follow_suffix = localize(30410) if program_type != 'oneoff' else ''  # program
-    encoded_program_title = to_unicode(quote_plus(from_unicode(program_title)))  # We need to ensure forward slashes are quoted
+    encoded_program_title = quote_plus(program_title)  # We need to ensure forward slashes are quoted
     if favorited:
         context_menu.append((
             localize(30412, title=follow_suffix),  # Unfollow

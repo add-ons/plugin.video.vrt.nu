@@ -2,9 +2,6 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Unit tests for Api functionality"""
 
-# pylint: disable=invalid-name
-
-from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
 from api import (delete_continue, finish_continue, get_continue_episodes, get_episodes, get_favorite_programs, get_latest_episode,
                  get_next_info, get_online_categories, get_offline_programs, get_programs, get_recent_episodes,

@@ -4,17 +4,12 @@
 
 """Implements a class for video metadata"""
 
-from __future__ import absolute_import, division, unicode_literals
-
-try:  # Python 3
-    from urllib.parse import quote_plus
-except ImportError:  # Python 2
-    from urllib import quote_plus
+from urllib.parse import quote_plus
 
 from data import CHANNELS, SECONDS_MARGIN
 from kodiutils import colour, get_setting_bool, localize, localize_datelong, log, url_for
-from utils import (find_entry, from_unicode, html_to_kodi, reformat_url,
-                   reformat_image_url, shorten_link, to_unicode, unescape)
+from utils import (find_entry, html_to_kodi, reformat_url,
+                   reformat_image_url, shorten_link, unescape)
 
 
 class Metadata:
@@ -86,7 +81,7 @@ class Metadata:
                 follow_enabled = bool(api_data.get('url'))
 
             if follow_enabled and program_name:
-                program_title = to_unicode(quote_plus(from_unicode(program_title)))  # We need to ensure forward slashes are quoted
+                program_title = quote_plus(program_title)  # We need to ensure forward slashes are quoted
                 if self._favorites.is_favorite(program_name):
                     context_menu.append((
                         localize(30412, title=follow_suffix),  # Unfollow
@@ -167,7 +162,7 @@ class Metadata:
             video_id = self.get_video_id(api_data)
             if video_id:
                 # We need to ensure forward slashes are quoted
-                program_title = to_unicode(quote_plus(from_unicode(api_data.get('programTitle'))))
+                program_title = quote_plus(api_data.get('programTitle'))
 
                 url = reformat_url(api_data.get('url', ''), 'medium')
                 properties.update(video_id=video_id, url=url, title=program_title)

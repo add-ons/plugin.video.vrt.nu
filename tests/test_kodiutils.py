@@ -2,9 +2,6 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Unit tests for Kodi utilities"""
 
-# pylint: disable=invalid-name,line-too-long
-
-from __future__ import absolute_import, division, print_function, unicode_literals
 import unittest
 import kodiutils
 
@@ -30,16 +27,23 @@ class TestKodiUtils(unittest.TestCase):
         xbmc.settings['locale.language'] = 'resource.language.nl_nl'
 
         msg = kodiutils.localize(30958)
-        #self.assertEqual(msg, "There is a problem with this VRT MAX {protocol} stream. Try again with {component} {state} or try to play this program from the VRT MAX website. Please report this problem at https://www.vrt.be/vrtmax/help/")  # noqa
-        self.assertEqual(msg, "Er is een probleem met deze VRT MAX {protocol}-stream. Probeer het opnieuw met {component} {state} of probeer dit programma af te spelen vanaf de VRT MAX-website. Meld dit probleem op https://www.vrt.be/vrtmax/help/")  # noqa
+        # self.assertEqual(msg, (("There is a problem with this VRT MAX {protocol} stream. Try again with {component} {state} "
+        #                        "or try to play this program from the VRT MAX website. Please report this problem at https://www.vrt.be/vrtmax/help/"))
+        self.assertEqual(msg, ("Er is een probleem met deze VRT MAX {protocol}-stream. "
+                               "Probeer het opnieuw met {component} {state} of probeer dit programma af te spelen vanaf de VRT MAX-website. "
+                               "Meld dit probleem op https://www.vrt.be/vrtmax/help/"))
 
         msg = kodiutils.localize(30958, component='Widevine DRM', state='enabled')
-        #self.assertEqual(msg, "There is a problem with this VRT MAX {protocol} stream. Try again with Widevine DRM enabled or try to play this program from the VRT MAX website. Please report this problem at https://www.vrt.be/vrtmax/help/")  # noqa
-        self.assertEqual(msg, "Er is een probleem met deze VRT MAX {protocol}-stream. Probeer het opnieuw met Widevine DRM enabled of probeer dit programma af te spelen vanaf de VRT MAX-website. Meld dit probleem op https://www.vrt.be/vrtmax/help/")  # noqa
+        # self.assertEqual(msg, ("There is a problem with this VRT MAX {protocol} stream. Try again with Widevine DRM enabled "
+        #                       "or try to play this program from the VRT MAX website. Please report this problem at https://www.vrt.be/vrtmax/help/"))
+        self.assertEqual(msg, ("Er is een probleem met deze VRT MAX {protocol}-stream. Probeer het opnieuw met Widevine DRM enabled "
+                               "of probeer dit programma af te spelen vanaf de VRT MAX-website. Meld dit probleem op https://www.vrt.be/vrtmax/help/"))
 
         msg = kodiutils.localize(30958, protocol='MPEG-DASH', component='Widevine DRM', state='enabled')
-        #self.assertEqual(msg, "There is a problem with this VRT MAX MPEG-DASH stream. Try again with Widevine DRM enabled or try to play this program from the VRT MAX website. Please report this problem at https://www.vrt.be/vrtmax/help/")  # noqa
-        self.assertEqual(msg, "Er is een probleem met deze VRT MAX MPEG-DASH-stream. Probeer het opnieuw met Widevine DRM enabled of probeer dit programma af te spelen vanaf de VRT MAX-website. Meld dit probleem op https://www.vrt.be/vrtmax/help/")  # noqa
+        # self.assertEqual(msg, ("There is a problem with this VRT MAX MPEG-DASH stream. Try again with Widevine DRM enabled "
+        #                        "or try to play this program from the VRT MAX website. Please report this problem at https://www.vrt.be/vrtmax/help/"))
+        self.assertEqual(msg, ("Er is een probleem met deze VRT MAX MPEG-DASH-stream. Probeer het opnieuw met Widevine DRM enabled "
+                               "of probeer dit programma af te spelen vanaf de VRT MAX-website. Meld dit probleem op https://www.vrt.be/vrtmax/help/"))
 
     @staticmethod
     def test_log_disabled():

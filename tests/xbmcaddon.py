@@ -5,13 +5,7 @@
 
 # pylint: disable=invalid-name
 
-from __future__ import absolute_import, division, print_function, unicode_literals
 from xbmcextra import ADDON_ID, ADDON_INFO, addon_settings
-
-try:  # Python 2
-    basestring  # pylint: disable=used-before-assignment
-except NameError:  # Python 3
-    basestring = str  # pylint: disable=redefined-builtin
 
 # Ensure the addon settings are retained (as we don't write to disk)
 ADDON_SETTINGS = addon_settings(ADDON_ID)
@@ -30,7 +24,7 @@ class Addon:
 
     def getAddonInfo(self, key):
         """A working implementation for the xbmcaddon Addon class getAddonInfo() method"""
-        assert isinstance(key, basestring)
+        assert isinstance(key, str)
         stub_info = {
             'id': self.id,
             'name': self.id,
@@ -52,22 +46,22 @@ class Addon:
 
     def getSetting(self, key):
         """A working implementation for the xbmcaddon Addon class getSetting() method"""
-        assert isinstance(key, basestring)
+        assert isinstance(key, str)
         return self.settings.get(key, '')
 
     def getSettingBool(self, key):
         """A working implementation for the xbmcaddon Addon class getSettingBool() method"""
-        assert isinstance(key, basestring)
+        assert isinstance(key, str)
         return bool(self.settings.get(key, False))
 
     def getSettingInt(self, key):
         """A working implementation for the xbmcaddon Addon class getSettingInt() method"""
-        assert isinstance(key, basestring)
+        assert isinstance(key, str)
         return int(self.settings.get(key, 0))
 
     def getSettingNumber(self, key):
         """A working implementation for the xbmcaddon Addon class getSettingNumber() method"""
-        assert isinstance(key, basestring)
+        assert isinstance(key, str)
         return float(self.settings.get(key, 0.0))
 
     @staticmethod
@@ -76,8 +70,8 @@ class Addon:
 
     def setSetting(self, key, value):
         """A stub implementation for the xbmcaddon Addon class setSetting() method"""
-        assert isinstance(key, basestring)
-        assert isinstance(value, basestring)
+        assert isinstance(key, str)
+        assert isinstance(value, str)
         self.settings[key] = value
         # NOTE: Disable actual writing as it is no longer needed for testing
         # with open('test/userdata/addon_settings.json', 'w') as fd:
@@ -85,18 +79,18 @@ class Addon:
 
     def setSettingBool(self, key, value):
         """A stub implementation for the xbmcaddon Addon class setSettingBool() method"""
-        assert isinstance(key, basestring)
+        assert isinstance(key, str)
         assert isinstance(value, bool)
         self.settings[key] = value
 
     def setSettingInt(self, key, value):
         """A stub implementation for the xbmcaddon Addon class setSettingInt() method"""
-        assert isinstance(key, basestring)
+        assert isinstance(key, str)
         assert isinstance(value, int)
         self.settings[key] = value
 
     def setSettingNumber(self, key, value):
         """A stub implementation for the xbmcaddon Addon class setSettingNumber() method"""
-        assert isinstance(key, basestring)
+        assert isinstance(key, str)
         assert isinstance(value, float)
         self.settings[key] = value
