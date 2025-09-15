@@ -59,6 +59,9 @@ leave a message at [our Facebook page](https://facebook.com/kodivrtnu/).
 </table>
 
 ## Releases
+### v2.5.43 (2025-09-15)
+- Fix TV guide menu listings (@mediaminister)
+
 ### v2.5.42 (2025-08-29)
 - Fix api calls (@mediaminister)
 
