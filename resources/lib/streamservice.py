@@ -107,24 +107,41 @@ class StreamService:
 
            Right after a program is completely broadcasted, the stop timestamp is usually missing and should be added to the manifest_url.
         """
-        if any(param in manifest_url for param in ('?t=', '&t=')):
-            from urllib.parse import parse_qs, urlsplit
-            import re
+        from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
+        import re
 
+        parsed = urlparse(manifest_url)
+        query = parse_qs(parsed.query)
+
+        if 't' in query:
             # Detect single start timestamp
-            begin = parse_qs(urlsplit(manifest_url).query).get('t')[0]
+            start = query['t'][0]
             rgx = re.compile(r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$')
-            is_single_start_timestamp = bool(re.match(rgx, begin))
-            if begin and is_single_start_timestamp:
+            is_single_start_timestamp = bool(re.match(rgx, start))
+            if start and is_single_start_timestamp:
                 from datetime import datetime, timedelta
                 import dateutil.parser
-                begin_time = dateutil.parser.parse(begin)
+                start_time = dateutil.parser.parse(start)
                 # Calculate end_time with a safety margin
-                end_time = begin_time + duration + timedelta(seconds=10)
+                stop_time = start_time + duration + timedelta(seconds=10)
+
                 # Add stop timestamp if a program is broadcasted completely
                 now = datetime.utcnow()
-                if end_time < now:
-                    manifest_url += '-' + end_time.strftime('%Y-%m-%dT%H:%M:%S')
+                if stop_time < now:
+
+                    # Append end time with a hyphen
+                    stop = stop_time.strftime('%Y-%m-%dT%H:%M:%S')
+                    new_t = f'{start}-{stop}'
+
+                    # Replace t in query
+                    query['t'] = [new_t]
+                    new_query = urlencode(query, doseq=True)
+
+                    # Build new URL
+                    manifest_url = urlunparse(
+                        (parsed.scheme, parsed.netloc, parsed.path, parsed.params, new_query, parsed.fragment)
+                    )
+
         return manifest_url
 
     def get_stream(self, video, roaming=False, api_data=None):
