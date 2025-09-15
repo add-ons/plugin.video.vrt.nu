@@ -79,7 +79,7 @@ class Favorites:
                 'Authorization': 'Bearer ' + access_token,
                 'Content-Type': 'application/json',
                 'x-vrt-client-name': 'WEB',
-                'x-vrt-client-version': '1.5.0',
+                'x-vrt-client-version': '1.5.12',
             }
             graphql = """
                 query Favs(
@@ -114,7 +114,6 @@ class Favorites:
                   __typename
                   ... on LinkAction {
                     link
-                    linkType
                     __typename
                   }
                 }
