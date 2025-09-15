@@ -460,7 +460,7 @@ def get_latest_episode_data(program_name):
                 highest_ep_no = 0
                 highest_ep = {}
                 for edge in edges:
-                    ep_no = int(edge.get('node').get('episode').get('episodeNumberRaw'))
+                    ep_no = int(edge.get('node').get('episode').get('episodeNumberRaw') or 0)
                     if ep_no > highest_ep_no:
                         highest_ep_no = ep_no
                         highest_ep = edge.get('node').get('episode')
