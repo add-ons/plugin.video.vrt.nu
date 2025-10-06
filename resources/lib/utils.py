@@ -5,6 +5,7 @@
 import re
 
 from html import unescape
+from datetime import timedelta
 
 HTML_MAPPING = [
     (re.compile(r'<(/?)i(|\s[^>]+)>', re.I), '[\\1I]'),
@@ -19,6 +20,32 @@ HTML_MAPPING = [
     (re.compile('<br>\n{0,1}', re.I), ' '),  # This appears to be specific formatting for VRT MAX, but unwanted by us
     (re.compile('(&nbsp;\n){2,}', re.I), '\n'),  # Remove repeating non-blocking spaced newlines
 ]
+
+ISO_DURATION = re.compile(
+    r'^P'                                     # starts with P
+    r'(?:(?P<days>\d+(?:\.\d+)?)D)?'          # days (with optional decimals)
+    r'(?:T'                                   # time part
+    r'(?:(?P<hours>\d+(?:\.\d+)?)H)?'         # hours
+    r'(?:(?P<minutes>\d+(?:\.\d+)?)M)?'       # minutes
+    r'(?:(?P<seconds>\d+(?:\.\d+)?)S)?'       # seconds
+    r')?$'
+)
+
+
+def parse_duration(s: str) -> timedelta:
+    """
+    Parse an ISO 8601 duration string (days, hours, minutes, seconds)
+    into a datetime.timedelta. Supports fractional values.
+    Does not support months or years.
+    """
+    match = ISO_DURATION.match(s)
+    if not match:
+        raise ValueError(f"Invalid ISO 8601 duration: {s}")
+    parts = {k: float(v) if v else 0.0 for k, v in match.groupdict().items()}
+    return timedelta(days=parts['days'],
+                     hours=parts['hours'],
+                     minutes=parts['minutes'],
+                     seconds=parts['seconds'])
 
 
 def capitalize(string):

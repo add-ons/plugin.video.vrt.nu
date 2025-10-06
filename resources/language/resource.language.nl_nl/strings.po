@@ -359,6 +359,10 @@ msgctxt "#30208"
 msgid "[COLOR={availability}][B]{minutes} more minutes[/B] available[/COLOR]"
 msgstr "[COLOR={availability}]Nog [B]{minutes} minuten[/B] beschikbaar[/COLOR]"
 
+msgctxt "#30209"
+msgid "[COLOR={availability}]Already expired[/COLOR]"
+msgstr "[COLOR={availability}]Al verlopen[/COLOR]"
+
 msgctxt "#30300"
 msgid "[B][COLOR={highlighted}]More…[/COLOR][/B]"
 msgstr "[B][COLOR={highlighted}]Meer…[/COLOR][/B]"
