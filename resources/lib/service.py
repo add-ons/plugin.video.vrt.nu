@@ -40,7 +40,7 @@ class VrtMonitor(Monitor, object):  # pylint: disable=useless-object-inheritance
 
     def onNotification(self, sender, method, data):  # pylint: disable=invalid-name
         """Handler for notifications"""
-        # log(2, '[Notification] sender={sender}, method={method}, data={data}', sender=sender, method=method, data=data.decode('utf-8'))
+        # log(2, '[Notification] sender={sender}, method={method}, data={data}', sender=sender, method=method, data=data)
 
         # Handle play_action events from upnextprovider
         if sender.startswith('upnextprovider') and method.endswith('plugin.video.vrt.nu_play_action'):
@@ -53,7 +53,7 @@ class VrtMonitor(Monitor, object):  # pylint: disable=useless-object-inheritance
             # NOTE: With Python 3.5 and older json.loads() does not support bytes or bytearray, so we convert to unicode
             from base64 import b64decode
             data = loads(b64decode(hexdata[0]).decode('utf-8'))
-            log(2, '[Up Next notification] sender={sender}, method={method}, data={data}', sender=sender, method=method, data=data.decode('utf-8'))
+            log(2, '[Up Next notification] sender={sender}, method={method}, data={data}', sender=sender, method=method, data=data)
             self._playerinfo.add_upnext(data.get('episode_id'))
 
     def onSettingsChanged(self):  # pylint: disable=invalid-name

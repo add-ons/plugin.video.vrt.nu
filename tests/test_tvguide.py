@@ -81,6 +81,12 @@ class TestTVGuide(unittest.TestCase):
         episode_items = self._tvguide.get_episode_items('tomorrow', 'ketnet')
         self.assertTrue(episode_items)
 
+    def test_epg_data(self):
+        """ Test epg data"""
+        epg_data = self._tvguide.get_epg_data()
+        print(epg_data)
+        self.assertIsInstance(epg_data, dict)
+
     def test_parse(self):
         """Test parsing date"""
         now = datetime.now(dateutil.tz.tzlocal())
