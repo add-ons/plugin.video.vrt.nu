@@ -23,7 +23,7 @@ class TVGuide:
     def __init__(self):
         """Initializes TV-guide object"""
 
-    def show_tvguide(self, date=None, channel=None, end_cursor=None):
+    def show_tvguide(self, date=None, channel=None, end_cursor=''):
         """Offer a menu depending on the information provided"""
 
         if not date and not channel:
@@ -142,7 +142,7 @@ class TVGuide:
             ))
         return channel_items
 
-    def get_episode_items(self, date, channel, end_cursor=None):
+    def get_episode_items(self, date, channel, end_cursor=''):
         """Show episodes for a given date and channel"""
         now = datetime.now(dateutil.tz.tzlocal())
         epg_date = self.parse(date, now)

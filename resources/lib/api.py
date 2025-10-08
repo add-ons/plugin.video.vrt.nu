@@ -2,7 +2,7 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Implements VRT MAX GraphQL API functionality"""
 
-from urllib.parse import quote_plus, unquote
+from urllib.parse import quote, quote_plus, unquote
 
 from data import CHANNELS
 from helperobjects import TitleItem
@@ -775,14 +775,13 @@ def finish_continue(episode_id):
 def get_entities(list_id, page_size='', end_cursor=''):
     """Get a list of episodes or programs using GraphQL API"""
     graphql_query = """
-        query TileList(
+         query TileList(
           $listId: ID!
-          $sort: SortInput
           $lazyItemCount: Int = 20
           $after: ID
           $before: ID
         ) {
-          list(listId: $listId, sort: $sort) {
+          list(listId: $listId) {
             __typename
             ... on PaginatedTileList {
               ...paginatedTileListFragment
@@ -794,61 +793,14 @@ def get_entities(list_id, page_size='', end_cursor=''):
             }
           }
         }
-        fragment staticTileListFragment on StaticTileList {
+        fragment paginatedTileListFragment on PaginatedTileList {
           __typename
           objectId
           listId
+          tileVariant
+          tileContentType
           title
           description
-          tileContentType
-          displayType
-          maxAge
-          tileVariant
-          sort {
-            icon
-            order
-            title
-            __typename
-          }
-          action {
-            ... on LinkAction {
-              __typename
-              externalTarget
-              link
-            }
-            ... on SwitchTabAction {
-              __typename
-              link
-              referencedTabId
-            }
-            __typename
-          }
-          banner {
-            actionItems {
-              ...actionItemFragment
-              __typename
-            }
-            description
-            image {
-              ...imageFragment
-              __typename
-            }
-            compactLayout
-            backgroundColor
-            textTheme
-            title
-            titleArt {
-              objectId
-              templateUrl
-              __typename
-            }
-            __typename
-          }
-          bannerSize
-          items {
-            ...tileFragment
-            __typename
-          }
           paginatedItems(first: $lazyItemCount, after: $after, before: $before) {
             __typename
             edges {
@@ -867,156 +819,38 @@ def get_entities(list_id, page_size='', end_cursor=''):
               startCursor
             }
           }
-          ... on IComponent {
-            ...componentTrackingDataFragment
-            __typename
-          }
         }
-        fragment actionItemFragment on ActionItem {
+        fragment staticTileListFragment on StaticTileList {
           __typename
           objectId
-          accessibilityLabel
-          active
-          mode
+          listId
+          tileVariant
+          tileContentType
           title
-          themeOverride
-          action {
-            ...actionFragment
+          description
+          paginatedItems(first: $lazyItemCount, after: $after, before: $before) {
             __typename
-          }
-          icons {
-            ...iconFragment
-            __typename
-          }
-        }
-        fragment actionFragment on Action {
-          __typename
-          ... on FavoriteAction {
-            id
-            favorite
-            title
-            __typename
-          }
-          ... on ListDeleteAction {
-            listName
-            id
-            listId
-            title
-            __typename
-          }
-          ... on ListTileDeletedAction {
-            listName
-            id
-            listId
-            __typename
-          }
-          ... on LinkAction {
-            internalTarget
-            link
-            internalTarget
-            externalTarget
-            passUserIdentity
-            zone {
-              preferredZone
-              isExclusive
+            edges {
               __typename
-            }
-            linkTokens {
-              __typename
-              placeholder
-              value
-            }
-            __typename
-          }
-          ... on ClientDrivenAction {
-            __typename
-            clientDrivenActionType
-          }
-          ... on ShareAction {
-            title
-            url
-            __typename
-          }
-          ... on SwitchTabAction {
-            referencedTabId
-            link
-            __typename
-          }
-          ... on FinishAction {
-            id
-            __typename
-          }
-        }
-        fragment iconFragment on Icon {
-          __typename
-          accessibilityLabel
-          position
-          ... on DesignSystemIcon {
-            value {
-              name
-              __typename
-            }
-            activeValue {
-              name
-              __typename
-            }
-            __typename
-          }
-          ... on ImageIcon {
-            value {
-              srcSet {
-                src
-                format
+              cursor
+              node {
                 __typename
+                ...tileFragment
               }
-              __typename
             }
-            activeValue {
-              srcSet {
-                src
-                format
-                __typename
-              }
+            pageInfo {
               __typename
+              endCursor
+              hasNextPage
+              hasPreviousPage
+              startCursor
             }
-            __typename
           }
-        }
-        fragment componentTrackingDataFragment on IComponent {
-          trackingData {
-            data
-            perTrigger {
-              trigger
-              data
-              template {
-                id
-                __typename
-              }
-              __typename
-            }
-            __typename
-          }
-          __typename
-        }
-        fragment imageFragment on Image {
-          __typename
-          objectId
-          alt
-          focusPoint {
-            x
-            y
-            __typename
-          }
-          templateUrl
         }
         fragment tileFragment on Tile {
           ... on IIdentifiable {
             __typename
             objectId
-          }
-          ... on IComponent {
-            ...componentTrackingDataFragment
-            __typename
           }
           ... on ITile {
             title
@@ -1067,31 +901,6 @@ def get_entities(list_id, page_size='', end_cursor=''):
             componentId
             __typename
           }
-          ... on ContentTile {
-            brand
-            brandLogos {
-              ...brandLogosFragment
-              __typename
-            }
-            __typename
-          }
-          ... on BannerTile {
-            backgroundColor
-            brand
-            brandLogos {
-              ...brandLogosFragment
-              __typename
-            }
-            compactLayout
-            description
-            textTheme
-            titleArt {
-              objectId
-              templateUrl
-              __typename
-            }
-            __typename
-          }
           ... on EpisodeTile {
             tileType
             title
@@ -1128,29 +937,22 @@ def get_entities(list_id, page_size='', end_cursor=''):
                 alt
                 templateUrl
               }
-
               ageRaw
               ageValue
-
               durationRaw
               durationValue
               durationSeconds
-
               episodeNumberRaw
               episodeNumberValue
               episodeNumberShortValue
-
               onTimeRaw
               onTimeValue
               onTimeShortValue
-
               offTimeRaw
               offTimeValue
               offTimeShortValue
-
               productPlacementValue
               productPlacementShortValue
-
               regionRaw
               regionValue
               program {
@@ -1262,89 +1064,131 @@ def get_entities(list_id, page_size='', end_cursor=''):
               }
             }
           }
-          ... on PodcastEpisodeTile {
-            available
-            description
-            progress {
-              completed
-              progressInSeconds
-              durationInSeconds
-              __typename
-            }
-            __typename
-          }
-          ... on AudioLivestreamTile {
-            brand
-            brandsLogos {
-              brand
-              brandTitle
-              logos {
-                ...brandLogosFragment
-                __typename
-              }
-              __typename
-            }
-            progress {
-              durationInSeconds
-              progressInSeconds
-              __typename
-            }
-            __typename
-          }
-          ... on LivestreamTile {
-            description
-            progress {
-              durationInSeconds
-              progressInSeconds
-              __typename
-            }
-            __typename
-          }
-          ... on ButtonTile {
-            mode
-            icons {
-              ...iconFragment
-              __typename
-            }
-            __typename
-          }
-          ... on RadioEpisodeTile {
-            available
-            description
-            progress {
-              completed
-              progressInSeconds
-              durationInSeconds
-              __typename
-            }
-            __typename
-          }
-          ... on RadioFragmentTile {
-            progress {
-              completed
-              progressInSeconds
-              durationInSeconds
-              __typename
-            }
-            __typename
-          }
-          ... on SongTile {
-            startDate
-            formattedStartDate
-            endDate
-            description
-            __typename
-          }
           __typename
         }
-        fragment brandLogosFragment on Logo {
-          colorOnColor
-          height
-          mono
-          primary
-          type
-          width
+        fragment actionItemFragment on ActionItem {
           __typename
+          objectId
+          accessibilityLabel
+          active
+          mode
+          title
+          themeOverride
+          action {
+            ...actionFragment
+            __typename
+          }
+          icons {
+            ...iconFragment
+            __typename
+          }
+        }
+        fragment actionFragment on Action {
+          __typename
+          ... on FavoriteAction {
+            id
+            favorite
+            title
+            __typename
+          }
+          ... on ListDeleteAction {
+            listName
+            id
+            listId
+            title
+            __typename
+          }
+          ... on ListTileDeletedAction {
+            listName
+            id
+            listId
+            __typename
+          }
+          ... on LinkAction {
+            internalTarget
+            link
+            internalTarget
+            externalTarget
+            passUserIdentity
+            zone {
+              preferredZone
+              isExclusive
+              __typename
+            }
+            linkTokens {
+              __typename
+              placeholder
+              value
+            }
+            __typename
+          }
+          ... on ClientDrivenAction {
+            __typename
+            clientDrivenActionType
+          }
+          ... on ShareAction {
+            title
+            url
+            __typename
+          }
+          ... on SwitchTabAction {
+            referencedTabId
+            link
+            __typename
+          }
+          ... on FinishAction {
+            id
+            __typename
+          }
+        }
+        fragment iconFragment on Icon {
+          __typename
+          accessibilityLabel
+          position
+          type
+          ... on DesignSystemIcon {
+            value {
+              __typename
+              color
+              name
+            }
+            activeValue {
+              __typename
+              color
+              name
+            }
+            __typename
+          }
+          ... on ImageIcon {
+            value {
+              __typename
+              srcSet {
+                src
+                format
+                __typename
+              }
+            }
+            activeValue {
+              __typename
+              srcSet {
+                src
+                format
+                __typename
+              }
+            }
+            __typename
+          }
+        }
+        fragment imageFragment on Image {
+          __typename
+          objectId
+          alt
+          focusPoint {
+            x
+            y
+            __typename
+          }
+          templateUrl
         }
         fragment metaFragment on MetaDataItem {
           __typename
@@ -1352,79 +1196,6 @@ def get_entities(list_id, page_size='', end_cursor=''):
           value
           shortValue
           longValue
-        }
-        fragment paginatedTileListFragment on PaginatedTileList {
-          __typename
-          objectId
-          listId
-          action {
-            ... on LinkAction {
-              __typename
-              externalTarget
-              link
-            }
-            ... on SwitchTabAction {
-              __typename
-              link
-              referencedTabId
-            }
-            __typename
-          }
-          banner {
-            actionItems {
-              ...actionItemFragment
-              __typename
-            }
-            backgroundColor
-            compactLayout
-            description
-            image {
-              ...imageFragment
-              __typename
-            }
-            titleArt {
-              ...imageFragment
-              __typename
-            }
-            textTheme
-            title
-            __typename
-          }
-          bannerSize
-          displayType
-          maxAge
-          tileVariant
-          paginatedItems(first: $lazyItemCount, after: $after, before: $before) {
-            __typename
-            edges {
-              __typename
-              cursor
-              node {
-                __typename
-                ...tileFragment
-              }
-            }
-            pageInfo {
-              __typename
-              endCursor
-              hasNextPage
-              hasPreviousPage
-              startCursor
-            }
-          }
-          sort {
-            icon
-            order
-            title
-            __typename
-          }
-          tileContentType
-          title
-          description
-          ... on IComponent {
-            ...componentTrackingDataFragment
-            __typename
-          }
         }
     """
     operation_name = 'TileList'
@@ -1723,7 +1494,7 @@ def convert_episodes(item_list, destination, end_cursor='', use_favorites=False,
     if item_list:
 
         for item in item_list:
-            episode = item.get('node')
+            episode = item.get('node') or item
 
             sort, ascending, favorited, title_item = convert_episode(episode, destination)
 
@@ -1742,7 +1513,7 @@ def convert_episodes(item_list, destination, end_cursor='', use_favorites=False,
             episodes.append(
                 TitleItem(
                     label=colour(localize(30300)),
-                    path=url_for(destination, end_cursor=end_cursor, **kwargs),
+                    path=url_for(destination, end_cursor=quote(end_cursor, safe=''), **kwargs),
                     art_dict={'thumb': 'DefaultInProgressShows.png'},
                     info_dict={},
                     prop_dict={'SpecialSort': 'bottom'},
