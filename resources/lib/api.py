@@ -2108,7 +2108,7 @@ def api_req(graphql_query, operation_name, variables, client='WEB'):
             'x-vrt-client-name': client,
             'x-vrt-client-version': '1.5.12',
         }
-        data_json = get_url_json(url=GRAPHQL_URL, cache=None, headers=headers, data=data, raise_errors='all')
+        data_json = get_url_json(url=GRAPHQL_URL, cache=None, headers=headers, data=data)
     return data_json
 
 
