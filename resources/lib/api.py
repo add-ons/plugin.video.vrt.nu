@@ -1453,18 +1453,20 @@ def convert_episode(episode_tile, destination=None):
             duration = timedelta(minutes=minutes)
         stop_dt = start_dt + duration
 
-        if now - timedelta(hours=LIVESTREAM_CACHE_HOURS) <= stop_dt <= now:
-            if not path or not is_playable:
+        # Fix unplayable episodes
+        if not is_playable:
+            # Play episode from past 24h livestream cache
+            if now - timedelta(hours=LIVESTREAM_CACHE_HOURS) <= stop_dt <= now:
                 is_playable = True
                 channel = find_entry(CHANNELS, 'id', channel_id)
                 start_iso = start_dt.astimezone(dateutil.tz.gettz('Europe/Brussels')).isoformat()[:19]
                 stop_iso = stop_dt.astimezone(dateutil.tz.gettz('Europe/Brussels')).isoformat()[:19]
                 path = url_for('play_air_date', channel['name'], start_iso, stop_iso)
+            elif not path:
+                path = url_for('noop')
+        # Play livestream
         elif is_live:
-            is_playable = True
             path = url_for('play_url', 'https://www.vrt.be' + episode_tile['action']['link'])
-        elif not path:
-            path = url_for('noop')
 
     # Final formatting
     plot = format_plot(plot, region, product_placement, mpaa, program_type, start_dt, stop_dt, offtime, permalink)

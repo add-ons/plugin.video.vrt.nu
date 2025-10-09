@@ -161,8 +161,8 @@ class TVGuide:
         epg_data = {}
         tz_brussels = dateutil.tz.gettz('Europe/Brussels')
 
-        for date_label in ['yesterday', 'today', 'tomorrow']:
-            epg_date = self.parse(date_label, now)
+        epg_dates = [now + timedelta(days=i) for i in range(-7, 8)]
+        for epg_date in epg_dates:
 
             for channel in CHANNELS:
                 if not channel.get('has_tvguide'):
@@ -183,6 +183,7 @@ class TVGuide:
                 previous_stop_dt = None
                 for item in edges:
                     node = item.get('node', {})
+                    stream = None
                     ep_code = None
 
                     # Decode start datetime
@@ -216,23 +217,26 @@ class TVGuide:
                         title = program.get('title')
                         description = episode.get('description')
                         subtitle = episode.get('subtitle')
-                        image = (episode.get('image') or {}).get('templateUrl')
+                        image = ((episode.get('image') or {}).get('templateUrl') or '').split('?')[0]
                         genre = (episode.get('analytics') or {}).get('categories')
                         date = (episode.get('analytics') or {}).get('airDate')
 
                         watch_action = episode.get('watchAction', {})
                         video_id = watch_action.get('videoId')
                         publication_id = watch_action.get('publicationId')
-                        stream = url_for('play_id', video_id=video_id, publication_id=publication_id)
+                        if node.get('available'):
+                            stream = url_for('play_id', video_id=video_id, publication_id=publication_id)
 
                         program_type = program.get('programType')
                         season = episode.get('season', {})
-                        if program_type == 'series' and (title_raw := season.get('titleRaw', '')).isnumeric():
+                        if (
+                            program_type == 'series'
+                            and (title_raw := season.get('titleRaw', '')).isnumeric()
+                            and isinstance(ep_no := episode.get('episodeNumberRaw'), int)
+                        ):
                             se_no = int(title_raw)
-                            ep_no = int(episode.get('episodeNumberRaw', 0))
                             ep_code = f'S{se_no:02d}E{ep_no:02d}'
                     else:
-                        stream = None
                         title = node.get('title')
                         description = subtitle = genre = date = None
                         image = (node.get('image') or {}).get('templateUrl') if node.get('image') else None
