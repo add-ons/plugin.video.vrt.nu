@@ -1462,7 +1462,7 @@ def convert_episode(episode_tile, destination=None):
                 start_iso = start_dt.astimezone(dateutil.tz.gettz('Europe/Brussels')).isoformat()[:19]
                 stop_iso = stop_dt.astimezone(dateutil.tz.gettz('Europe/Brussels')).isoformat()[:19]
                 path = url_for('play_air_date', channel['name'], start_iso, stop_iso)
-            elif not path:
+            else:
                 path = url_for('noop')
         # Play livestream
         elif is_live:
