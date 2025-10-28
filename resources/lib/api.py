@@ -1444,8 +1444,8 @@ def convert_episode(episode_tile, destination=None):
         program_type = 'epg'
         comp_id = episode_tile.get('componentId', '').lstrip('#')
         decoded = b64decode(comp_id.encode('utf-8')).decode('utf-8')
-        epg_parts = decoded.split('|')[3].split('#1')
-        channel_id, start_str = epg_parts[0], epg_parts[-1]
+        epg_parts = decoded.split('#1')
+        channel_id, start_str = epg_parts[1], epg_parts[2].split('|')[0]
 
         start_dt = datetime.fromisoformat(start_str.replace('Z', '+00:00'))
         if not duration:
