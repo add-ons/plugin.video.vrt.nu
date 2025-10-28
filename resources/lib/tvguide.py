@@ -189,7 +189,7 @@ class TVGuide:
                     # Decode start datetime
                     comp_id = node.get('componentId', '').lstrip('#')
                     decoded = b64decode(comp_id.encode('utf-8')).decode('utf-8')
-                    start_str = decoded.split('|')[3].split('#1')[-1]
+                    start_str = decoded.split('#1')[2].split('|')[0]
                     start_dt = datetime.fromisoformat(start_str.replace('Z', '+00:00'))
 
                     episode = node.get('episode')
@@ -197,7 +197,8 @@ class TVGuide:
 
                     if episode and (dur_raw := episode.get('durationRaw')):
                         duration = parse_duration(dur_raw)
-                    elif node.get('statusMeta'):
+
+                    if duration == timedelta(0) and node.get('statusMeta'):
                         minutes_str = node['statusMeta'][0].get('value', '').split()[0]
                         if minutes_str.isdigit():
                             duration = timedelta(minutes=int(minutes_str))
