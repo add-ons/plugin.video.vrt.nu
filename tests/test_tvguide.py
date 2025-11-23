@@ -43,7 +43,7 @@ class TestTVGuide(unittest.TestCase):
         channel_item = random.choice(channel_items)
         print('- %s%s' % (kodi_to_ansi(channel_item.label), uri_to_path(channel_item.path)))
 
-        date = (datetime.now(dateutil.tz.tzlocal()) + timedelta(days=-10)).strftime('%Y-%m-%d')
+        date = (datetime.now(dateutil.tz.tzlocal()) + timedelta(days=-7)).strftime('%Y-%m-%d')
         channel_items = self._tvguide.get_channel_items(date=date)
         self.assertTrue(channel_items)
         channel_item = random.choice(channel_items)
@@ -51,7 +51,7 @@ class TestTVGuide(unittest.TestCase):
 
     def test_tvguide_episode_menu(self):
         """Test episode menu"""
-        date = (datetime.now(dateutil.tz.tzlocal()) + timedelta(days=-10)).strftime('%Y-%m-%d')
+        date = (datetime.now(dateutil.tz.tzlocal()) + timedelta(days=-7)).strftime('%Y-%m-%d')
         channel = random.choice(channels)
         episode_items = self._tvguide.get_episode_items(date, channel)
         self.assertTrue(episode_items)

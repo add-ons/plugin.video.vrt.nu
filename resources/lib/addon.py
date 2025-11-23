@@ -2,7 +2,7 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """This is the actual VRT MAX video plugin entry point"""
 
-from urllib.parse import unquote, unquote_plus
+from urllib.parse import unquote_plus
 
 from routing import Plugin
 from kodiutils import container_refresh, end_of_directory, execute_builtin, get_global_setting, localize, log_access, notification, ok_dialog, refresh_caches
@@ -176,11 +176,10 @@ def featured(feature=None, end_cursor=''):
 @plugin.route('/tvguide/date')
 @plugin.route('/tvguide/date/<date>')
 @plugin.route('/tvguide/date/<date>/<channel>')
-@plugin.route('/tvguide/date/<date>/<channel>/<end_cursor>')
-def tvguide(date=None, channel=None, end_cursor=''):
+def tvguide(date=None, channel=None):
     """The TV guide menu and listings by date"""
     from tvguide import TVGuide
-    TVGuide().show_tvguide(date=date, channel=channel, end_cursor=unquote(end_cursor))
+    TVGuide().show_tvguide(date=date, channel=channel)
 
 
 @plugin.route('/tvguide/channel')
