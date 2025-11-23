@@ -1207,6 +1207,611 @@ def get_entities(list_id, page_size='', end_cursor=''):
     return api_req(graphql_query, operation_name, variables)
 
 
+def get_epg_page(page_id):
+    """Get a program guide page using GraphQL API"""
+    graphql_query = """
+        query Page(
+          $pageId: ID!
+          $lazyItemCount: Int = 100
+          $after: ID
+          $before: ID
+        ) {
+          page(id: $pageId) {
+            ... on IIdentifiable {
+              __typename
+              objectId
+            }
+            ... on ElectronicProgramGuidePage {
+              brand
+              brandLogos {
+                ...brandLogosFragment
+                __typename
+              }
+              current {
+                __typename
+                objectId
+                title
+                ... on StandaloneTile {
+                  __typename
+                  objectId
+                  tile {
+                    ...tileFragment
+                    __typename
+                  }
+                }
+              }
+              linkTemplate
+              previous {
+                __typename
+                ...paginatedTileListFragment
+              }
+              next {
+                __typename
+                ...paginatedTileListFragment
+              }
+              __typename
+            }
+            ... on IPage {
+              title
+              permalink
+              __typename
+            }
+            __typename
+          }
+        }
+        fragment tileFragment on Tile {
+          ... on IIdentifiable {
+            __typename
+            objectId
+          }
+          ... on IComponent {
+            ...componentTrackingDataFragment
+            __typename
+          }
+          ... on ITile {
+            title
+            active
+            accessibilityTitle
+            tileType
+            action {
+              __typename
+              ... on LinkAction {
+                internalTarget
+                link
+                internalTarget
+                externalTarget
+                __typename
+              }
+            }
+            actionItems {
+              ...actionItemFragment
+              __typename
+            }
+            image {
+              ...imageFragment
+              __typename
+            }
+            primaryMeta {
+              ...metaFragment
+              __typename
+            }
+            secondaryMeta {
+              ...metaFragment
+              __typename
+            }
+            indexMeta {
+              __typename
+              type
+              value
+            }
+            statusMeta {
+              ...metaFragment
+              __typename
+            }
+            status {
+              accessibilityLabel
+              icon {
+                ...iconFragment
+                __typename
+              }
+              text {
+                small
+                default
+                __typename
+              }
+              __typename
+            }
+            labelMeta {
+              __typename
+              type
+              value
+            }
+            componentId
+            __typename
+          }
+          ... on EpisodeTile {
+            tileType
+            title
+            componentType
+            description
+            available
+            chapterStart
+            formattedDuration
+            progress {
+              completed
+              progressInSeconds
+              durationInSeconds
+              __typename
+            }
+            whatsonId
+            episode {
+              __typename
+              id
+              name
+              available
+              whatsonId
+              title
+              description
+              subtitle
+              permalink
+              logo
+              brand
+              brandLogos {
+                type
+                mono
+                primary
+              }
+              image {
+                alt
+                templateUrl
+              }
+              ageRaw
+              ageValue
+              durationRaw
+              durationValue
+              durationSeconds
+              episodeNumberRaw
+              episodeNumberValue
+              episodeNumberShortValue
+              onTimeRaw
+              onTimeValue
+              onTimeShortValue
+              offTimeRaw
+              offTimeValue
+              offTimeShortValue
+              productPlacementValue
+              productPlacementShortValue
+              regionRaw
+              regionValue
+              program {
+                title
+                id
+                link
+                programType
+                description
+                shortDescription
+                subtitle
+                announcementType
+                announcementValue
+                whatsonId
+                image {
+                  alt
+                  templateUrl
+                }
+                posterImage {
+                  alt
+                  templateUrl
+                }
+              }
+              season {
+                id
+                titleRaw
+                titleValue
+                titleShortValue
+              }
+              analytics {
+                airDate
+                categories
+                contentBrand
+                episode
+                mediaSubtype
+                mediaType
+                name
+                pageName
+                season
+                show
+              }
+              primaryMeta {
+                longValue
+                shortValue
+                type
+                value
+                __typename
+              }
+              secondaryMeta {
+                longValue
+                shortValue
+                type
+                value
+                __typename
+              }
+              watchAction {
+                avodUrl
+                completed
+                resumePoint
+                resumePointTotal
+                resumePointProgress
+                resumePointTitle
+                episodeId
+                videoId
+                publicationId
+                streamId
+              }
+              favoriteAction {
+                favorite
+                id
+                title
+              }
+            }
+            __typename
+          }
+          ... on LivestreamTile {
+            description
+            brand
+            livestream {
+              startDateTime
+              episode {
+                __typename
+                id
+                name
+                available
+                whatsonId
+                title
+                description
+                subtitle
+                permalink
+                logo
+                brand
+                brandLogos {
+                  type
+                  mono
+                  primary
+                }
+                image {
+                  alt
+                  templateUrl
+                }
+                ageRaw
+                ageValue
+                durationRaw
+                durationValue
+                durationSeconds
+                episodeNumberRaw
+                episodeNumberValue
+                episodeNumberShortValue
+                onTimeRaw
+                onTimeValue
+                onTimeShortValue
+                offTimeRaw
+                offTimeValue
+                offTimeShortValue
+                productPlacementValue
+                productPlacementShortValue
+                regionRaw
+                regionValue
+                program {
+                  title
+                  id
+                  link
+                  programType
+                  description
+                  shortDescription
+                  subtitle
+                  announcementType
+                  announcementValue
+                  whatsonId
+                  image {
+                    alt
+                    templateUrl
+                  }
+                  posterImage {
+                    alt
+                    templateUrl
+                  }
+                }
+                season {
+                  id
+                  titleRaw
+                  titleValue
+                  titleShortValue
+                }
+                analytics {
+                  airDate
+                  categories
+                  contentBrand
+                  episode
+                  mediaSubtype
+                  mediaType
+                  name
+                  pageName
+                  season
+                  show
+                }
+                primaryMeta {
+                  longValue
+                  shortValue
+                  type
+                  value
+                  __typename
+                }
+                secondaryMeta {
+                  longValue
+                  shortValue
+                  type
+                  value
+                  __typename
+                }
+                watchAction {
+                  avodUrl
+                  completed
+                  resumePoint
+                  resumePointTotal
+                  resumePointProgress
+                  resumePointTitle
+                  episodeId
+                  videoId
+                  publicationId
+                  streamId
+                }
+                favoriteAction {
+                  favorite
+                  id
+                  title
+                }
+              }
+              __typename
+            }
+            progress {
+              durationInSeconds
+              progressInSeconds
+              __typename
+            }
+            componentId
+            __typename
+          }
+          __typename
+        }
+        fragment actionItemFragment on ActionItem {
+          __typename
+          objectId
+          accessibilityLabel
+          active
+          mode
+          title
+          themeOverride
+          action {
+            ...actionFragment
+            __typename
+          }
+          icons {
+            ...iconFragment
+            __typename
+          }
+        }
+        fragment actionFragment on Action {
+          __typename
+          ... on FavoriteAction {
+            id
+            favorite
+            title
+            __typename
+          }
+          ... on LinkAction {
+            internalTarget
+            link
+            internalTarget
+            externalTarget
+            passUserIdentity
+            zone {
+              preferredZone
+              isExclusive
+              __typename
+            }
+            linkTokens {
+              __typename
+              placeholder
+              value
+            }
+            __typename
+          }
+          ... on ClientDrivenAction {
+            __typename
+            clientDrivenActionType
+          }
+          ... on ShareAction {
+            title
+            url
+            __typename
+          }
+          ... on FinishAction {
+            id
+            __typename
+          }
+        }
+        fragment iconFragment on Icon {
+          __typename
+          accessibilityLabel
+          position
+          type
+          ... on DesignSystemIcon {
+            value {
+              __typename
+              color
+              name
+            }
+            activeValue {
+              __typename
+              color
+              name
+            }
+            __typename
+          }
+          ... on ImageIcon {
+            value {
+              __typename
+              srcSet {
+                src
+                format
+                __typename
+              }
+            }
+            activeValue {
+              __typename
+              srcSet {
+                src
+                format
+                __typename
+              }
+            }
+            __typename
+          }
+        }
+        fragment brandLogosFragment on Logo {
+          colorOnColor
+          height
+          mono
+          primary
+          type
+          width
+          __typename
+        }
+        fragment componentTrackingDataFragment on IComponent {
+          trackingData {
+            data
+            perTrigger {
+              trigger
+              data
+              template {
+                id
+                __typename
+              }
+              __typename
+            }
+            __typename
+          }
+          __typename
+        }
+        fragment imageFragment on Image {
+          __typename
+          objectId
+          alt
+          focusPoint {
+            x
+            y
+            __typename
+          }
+          templateUrl
+        }
+        fragment metaFragment on MetaDataItem {
+          __typename
+          type
+          value
+          shortValue
+          longValue
+        }
+        fragment paginatedTileListFragment on PaginatedTileList {
+          __typename
+          objectId
+          listId
+          action {
+            ... on LinkAction {
+              __typename
+              externalTarget
+              link
+            }
+            __typename
+          }
+          banner {
+            actionItems {
+              ...actionItemFragment
+              __typename
+            }
+            backgroundColor
+            compactLayout
+            description
+            image {
+              ...imageFragment
+              __typename
+            }
+            titleArt {
+              ...imageFragment
+              __typename
+            }
+            textTheme
+            title
+            __typename
+          }
+          bannerSize
+          displayType
+          maxAge
+          tileVariant
+          paginatedItems(first: $lazyItemCount, after: $after, before: $before) {
+            __typename
+            edges {
+              __typename
+              cursor
+              node {
+                __typename
+                ...tileFragment
+              }
+            }
+            pageInfo {
+              __typename
+              endCursor
+              hasNextPage
+              hasPreviousPage
+              startCursor
+            }
+          }
+          tileContentType
+          title
+          description
+          ... on IComponent {
+            ...componentTrackingDataFragment
+            __typename
+          }
+        }
+    """
+    operation_name = 'Page'
+    variables = {
+        'pageId': page_id,
+    }
+    return api_req(graphql_query, operation_name, variables)
+
+
+def get_epg_list(channel, date):
+    """Extract epg data from epg page"""
+    page_id = f'/vrtmax/tv-gids/{channel}/{date}/'
+    data = get_epg_page(page_id)
+    tile_list = []
+    page = data.get('data').get('page')
+    if page:
+        if page.get('previous'):
+            tile_list.extend(page.get('previous').get('paginatedItems').get('edges'))
+        if page.get('current'):
+            tile_list.extend([page.get('current').get('tile')])
+        if page.get('next'):
+            tile_list.extend(page.get('next').get('paginatedItems').get('edges'))
+    return tile_list
+
+
+def get_epg_episodes(channel, date):
+    """Return Title items from epg data"""
+    tile_list = get_epg_list(channel, date)
+    episodes, _, _ = convert_episodes(tile_list, destination='tvguide', date=date, channel=channel)
+    return episodes
+
+
 def convert_programs(item_list, destination, end_cursor='', use_favorites=False, **kwargs):
     """Convert paginated list of programs to Kodi list items"""
 
@@ -1318,7 +1923,10 @@ def convert_episode(episode_tile, destination=None):
     program_title = episode_tile.get('title')
     episode_title = None
 
-    episode = episode_tile.get('episode')
+    if episode_tile.get('livestream'):
+        episode = episode_tile.get('livestream').get('episode')
+    else:
+        episode = episode_tile.get('episode')
     if episode:
         analytics = episode.get('analytics', {})
         program = episode.get('program', {})
@@ -1442,15 +2050,25 @@ def convert_episode(episode_tile, destination=None):
     # EPG entries
     if episode_tile.get('indexMeta'):
         program_type = 'epg'
-        comp_id = episode_tile.get('componentId', '').lstrip('#')
-        decoded = b64decode(comp_id.encode('utf-8')).decode('utf-8')
-        epg_parts = decoded.split('#1')
-        channel_id, start_str = epg_parts[1], epg_parts[2].split('|')[0]
+        if episode_tile.get('tileType') == 'livestream':
+            is_live = True
+            is_playable = True
+            channel = episode_tile.get('brand')
+            start_str = episode_tile.get('livestream').get('startDateTime')
+        else:
+            comp_id = episode_tile.get('componentId', '').lstrip('#')
+            decoded = b64decode(comp_id.encode('utf-8')).decode('utf-8')
+            epg_parts = decoded.split('#1')
+            channel_id, start_str = epg_parts[1], epg_parts[2].split('|')[0]
+            channel = find_entry(CHANNELS, 'id', channel_id).get('name')
 
         start_dt = datetime.fromisoformat(start_str.replace('Z', '+00:00'))
+
         if not duration:
-            minutes = int(episode_tile['statusMeta'][0]['value'].split()[0])
-            duration = timedelta(minutes=minutes)
+            if episode_tile.get('progress'):
+                duration = timedelta(seconds=episode_tile.get('progress').get('durationInSeconds'))
+            else:
+                duration = timedelta(minutes=int(episode_tile['statusMeta'][0]['value'].split()[0]))
         stop_dt = start_dt + duration
 
         # Fix unplayable episodes
@@ -1458,10 +2076,9 @@ def convert_episode(episode_tile, destination=None):
             # Play episode from past 24h livestream cache
             if now - timedelta(hours=LIVESTREAM_CACHE_HOURS) <= stop_dt <= now:
                 is_playable = True
-                channel = find_entry(CHANNELS, 'id', channel_id)
                 start_iso = start_dt.astimezone(dateutil.tz.gettz('Europe/Brussels')).isoformat()[:19]
                 stop_iso = stop_dt.astimezone(dateutil.tz.gettz('Europe/Brussels')).isoformat()[:19]
-                path = url_for('play_air_date', channel['name'], start_iso, stop_iso)
+                path = url_for('play_air_date', channel, start_iso, stop_iso)
             else:
                 path = url_for('noop')
         # Play livestream
