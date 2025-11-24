@@ -63,7 +63,7 @@ class TVGuide:
         if epg.hour < 6:
             epg += timedelta(days=-1)
         date_items = []
-        for offset in range(14, -19, -1):
+        for offset in range(7, -8, -1):
             day = epg + timedelta(days=offset)
             label = localize_datelong(day)
             date = day.strftime('%Y-%m-%d')
