@@ -71,7 +71,6 @@ def favorites_programs(end_cursor=''):
 
 
 @plugin.route('/favorites/recent')
-@plugin.route('/favorites/recent')
 @plugin.route('/favorites/recent/<end_cursor>')
 def favorites_recent(end_cursor=''):
     """The favorites recent listing"""
@@ -112,7 +111,6 @@ def resumepoints_continue_finish(episode_id):
 
 
 @plugin.route('/programs/<program_name>')
-@plugin.route('/programs/<program_name>/<end_cursor>')
 @plugin.route('/programs/<program_name>/<season_name>')
 @plugin.route('/programs/<program_name>/<season_name>/<end_cursor>')
 def programs(program_name=None, season_name=None, end_cursor=''):

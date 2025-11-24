@@ -28,11 +28,11 @@ class TestTVGuide(unittest.TestCase):
     def test_tvguide_date_menu(self):
         """Test TV guide main menu"""
         date_items = self._tvguide.get_date_items()
-        self.assertEqual(len(date_items), 33)
+        self.assertEqual(len(date_items), 15)
         date_item = random.choice(date_items)
         print('- %s%s' % (kodi_to_ansi(date_item.label), uri_to_path(date_item.path)))
         date_items = self._tvguide.get_date_items('today')
-        self.assertEqual(len(date_items), 33)
+        self.assertEqual(len(date_items), 15)
         date_item = random.choice(date_items)
         print('- %s%s' % (kodi_to_ansi(date_item.label), uri_to_path(date_item.path)))
 

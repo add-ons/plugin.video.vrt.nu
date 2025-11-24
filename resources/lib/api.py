@@ -2,6 +2,8 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Implements VRT MAX GraphQL API functionality"""
 
+import random
+
 from urllib.parse import quote, quote_plus, unquote
 
 from data import CHANNELS
@@ -9,7 +11,7 @@ from helperobjects import TitleItem
 from kodiutils import (colour, delete_cached_thumbnail, get_cache, get_setting_bool, get_setting_int, get_url_json, has_addon, has_credentials,
                        localize, localize_datelong, localize_from_data, log, update_cache, url_for)
 from utils import find_entry, parse_duration, reformat_image_url, shorten_link, url_to_program, youtube_to_plugin_url
-from graphql_data import EPISODE_TILE
+from graphql_data import EPISODE, EPISODE_TILE, PROGRAM_TILE
 
 
 SCREENSHOT_URL = 'https://www.vrt.be/vrtnu-static/screenshots'
@@ -95,7 +97,7 @@ def format_label(program_title, episode_title, program_type, start_dt=None, favo
         ]
         label = ' - '.join(p for p in parts if p)
     else:
-        label = episode_title
+        label = episode_title or ''
 
     # Favorite marker
     if favorited:
@@ -377,7 +379,7 @@ def get_single_episode_data(episode_id):
             countdown
             tile {
               __typename
-              ...episodeTile
+              ...episodeTileFragment
             }
           }
         }
@@ -432,9 +434,8 @@ def get_latest_episode_data(program_name):
                             node {
                               __typename
                               ... on EpisodeTile {
-                                id
-                                description
-                                ...episodeTile
+                                ...episodeTileFragment
+                                __typename
                               }
                             }
                           }
@@ -455,9 +456,8 @@ def get_latest_episode_data(program_name):
                                   node {
                                     __typename
                                     ... on EpisodeTile {
-                                      id
-                                      description
-                                      ...episodeTile
+                                      ...episodeTileFragment
+                                      __typename
                                     }
                                   }
                                 }
@@ -503,127 +503,243 @@ def get_latest_episode_data(program_name):
 def get_seasons_data(program_name):
     """Get seasons data from GraphQL API"""
     graphql_query = """
-        query VideoProgramPage(
-          $pageId: ID!) {
+        query program(
+          $pageId: ID!,
+          $lazyItemCount: Int = 500,
+          $before: ID
+          $after: ID
+          ) {
           page(id: $pageId) {
+            ... on EpisodePage {
+              episode {
+                ...episode
+              }
+            }
             ... on ProgramPage {
-              id
-              permalink
-              components {
-                __typename
-                ... on PageHeader {
-                  mostRelevantEpisodeTile {
-                    __typename
-                    title
-                    tile {
-                      ...episodeTile
-                      __typename
-                    }
-                    __typename
-                  }
-                  __typename
+              brand
+              program {
+                brand
+                brandLogos {
+                  type
+                  mono
+                  primary
                 }
-                ... on PaginatedTileList {
-                  __typename
-                  id: objectId
-                  objectId
-                  listId
+                catalogMemberType
+                title
+                description
+                shortDescription
+                subtitle
+                id
+                link
+                permalink
+                objectId
+                programType
+                image {
+                  alt
+                  templateUrl
+                }
+                posterImage {
+                  alt
+                  templateUrl
+                }
+                favoriteAction {
+                  favorite
+                  id
                   title
-                  tileContentType
                 }
-                ... on ContainerNavigation {
-                  id: objectId
-                  navigationType
+                richDescription {
+                  html
+                  text
+                }
+                richShortDescription {
+                  html
+                  text
+                }
+                mostRelevantEpisodeTile {
+                  __typename
+                  title
+                  id
+                  tile {
+                    __typename
+                    ...on EpisodeTile {
+                      ...episodeTileFragment
+                    }
+                  }
+                }
+                navigation {
+                  __typename
                   items {
-                    id: objectId
+                    __typename
                     title
-                    active
-                    components {
+                    icon
+                    action {
                       __typename
-                      ... on PaginatedTileList {
+                      ... on EpisodeWatchAction {
+                        avodUrl
+                        completed
+                        episodeId
+                        playlistUrl
+                        publicationId
+                        resumePoint
+                        resumePointProgress
+                        resumePointTitle
+                        resumePointTotal
+                        resumePointUpdated
+                        streamId
+                        videoId
+                        videoType
+                        videoUrl
                         __typename
-                        id: objectId
-                        objectId
-                        listId
-                        title
-                        tileContentType
                       }
-                      ... on StaticTileList {
-                        __typename
-                        id: objectId
-                        objectId
-                        listId
-                        title
-                        tileContentType
+                      ... on ShowComponentAction {
+                        component {
+                          __typename
+                          ...on StaticTileList {
+                            ...staticTileListFragment
+                          }
+                          ...on LazyTileList {
+                            ...lazyTileListFragment
+                          }
+                        }
                       }
-                      ... on LazyTileList {
-                        __typename
-                        id: objectId
-                        objectId
-                        listId
-                        title
-                        tileContentType
-                      }
-                      ... on IComponent {
-                        ... on ContainerNavigation {
-                          id: objectId
-                          navigationType
-                          items {
-                            id: objectId
-                            title
-                            components {
-                              __typename
-                              ... on Component {
-                                ... on PaginatedTileList {
-                                  __typename
-                                  id: objectId
-                                  objectId
-                                  listId
-                                  title
-                                  tileContentType
-                                }
-                                ... on StaticTileList {
-                                  __typename
-                                  id: objectId
-                                  objectId
-                                  listId
-                                  title
-                                  tileContentType
-                                }
-                                ... on LazyTileList {
-                                  __typename
-                                  id: objectId
-                                  objectId
-                                  listId
-                                  title
-                                  tileContentType
-                                }
+                      ... on SubNavigationAction {
+                        items {
+                          __typename
+                          title
+                          action {
+                            __typename
+                            ... on ShowComponentAction {
+                              component {
                                 __typename
+                                ...on StaticTileList {
+                                  ...staticTileListFragment
+                                }
+                                ...on LazyTileList {
+                                  ...lazyTileListFragment
+                                }
                               }
                             }
-                            __typename
                           }
+                        }
+                      }
+                      ... on LinkAction {
+                        displayLink
+                        externalTarget
+                        internalTarget
+                        link
+                        linkTokens {
+                          __typename
+                          placeholder
+                          value
+                        }
+                        page {
+                          ...on EpisodePage {
+                            episode {
+                              ...episode
+                            }
+                          }
+                          __typename
+                        }
+                        passUserIdentity
+                        zone {
+                          preferredZone
+                          isExclusive
                           __typename
                         }
                         __typename
                       }
                     }
-                    __typename
                   }
-                  __typename
                 }
-                __typename
+                seasons {
+                  catalogMemberType
+                  id
+                  navigationTitle
+                  numEpisodesRaw
+                  numEpisodesShortValue
+                  numEpisodesValue
+                  objectId
+                  programId
+                  programName
+                  programTitle
+                  programType
+                  titleRaw
+                  titleShortValue
+                  titleValue
+
+
+                }
               }
-              __typename
             }
+          }
+        }
+        fragment staticTileListFragment on StaticTileList {
+          __typename
+          componentType
+          objectId
+          listId
+          tileContentType
+          tileVariant
+          items {
+            ...on EpisodeTile {
+              ...episodeTileFragment
+            }
+          }
+        }
+        fragment lazyTileListFragment on LazyTileList {
+          __typename
+          componentType
+          title
+          listId
+          tileContentType
+          tileVariant
+          action {
+            __typename
+          }
+          actionItems {
+            ...actionItemFragment
+            __typename
+          }
+          items {
+            __typename
+            ...on EpisodeTile {
+              ...episodeTileFragment
+            }
+          }
+          paginatedItems(first: $lazyItemCount, after: $after, before: $before) {
+            __typename
+            edges {
+              __typename
+              cursor
+              node {
+                __typename
+                ...on EpisodeTile {
+                  ...episodeTileFragment
+                }
+              }
+            }
+          }
+        }
+        fragment actionItemFragment on ActionItem {
+          __typename
+          objectId
+          accessibilityLabel
+          active
+          mode
+          title
+          themeOverride
+          action {
+            __typename
+          }
+          icons {
             __typename
           }
         }
         %s
     """ % EPISODE_TILE
-    operation_name = 'VideoProgramPage'
+    operation_name = 'program'
     variables = {
-        'pageId': '/vrtnu/a-z/{}.model.json'.format(program_name),
+        'pageId': '/vrtmax/a-z/{}/'.format(program_name),
     }
     return api_req(graphql_query, operation_name, variables)
 
@@ -902,167 +1018,11 @@ def get_entities(list_id, page_size='', end_cursor=''):
             __typename
           }
           ... on EpisodeTile {
-            tileType
-            title
-            componentType
-            description
-            available
-            chapterStart
-            formattedDuration
-            progress {
-              completed
-              progressInSeconds
-              durationInSeconds
-              __typename
-            }
-            whatsonId
-            episode {
-              __typename
-              id
-              name
-              available
-              whatsonId
-              title
-              description
-              subtitle
-              permalink
-              logo
-              brand
-              brandLogos {
-                type
-                mono
-                primary
-              }
-              image {
-                alt
-                templateUrl
-              }
-              ageRaw
-              ageValue
-              durationRaw
-              durationValue
-              durationSeconds
-              episodeNumberRaw
-              episodeNumberValue
-              episodeNumberShortValue
-              onTimeRaw
-              onTimeValue
-              onTimeShortValue
-              offTimeRaw
-              offTimeValue
-              offTimeShortValue
-              productPlacementValue
-              productPlacementShortValue
-              regionRaw
-              regionValue
-              program {
-                title
-                id
-                link
-                programType
-                description
-                shortDescription
-                subtitle
-                announcementType
-                announcementValue
-                whatsonId
-                image {
-                  alt
-                  templateUrl
-                }
-                posterImage {
-                  alt
-                  templateUrl
-                }
-              }
-              season {
-                id
-                titleRaw
-                titleValue
-                titleShortValue
-              }
-              analytics {
-                airDate
-                categories
-                contentBrand
-                episode
-                mediaSubtype
-                mediaType
-                name
-                pageName
-                season
-                show
-              }
-              primaryMeta {
-                longValue
-                shortValue
-                type
-                value
-                __typename
-              }
-              secondaryMeta {
-                longValue
-                shortValue
-                type
-                value
-                __typename
-              }
-              watchAction {
-                avodUrl
-                completed
-                resumePoint
-                resumePointTotal
-                resumePointProgress
-                resumePointTitle
-                episodeId
-                videoId
-                publicationId
-                streamId
-              }
-              favoriteAction {
-                favorite
-                id
-                title
-              }
-            }
+            ...episodeTileFragment
             __typename
           }
           ... on ProgramTile {
-            __typename
-            objectId
-            id
-            link
-            tileType
-            image {
-              alt
-              templateUrl
-            }
-            title
-            program {
-              title
-              id
-              link
-              programType
-              description
-              shortDescription
-              subtitle
-              announcementType
-              announcementValue
-              whatsonId
-              image {
-                alt
-                templateUrl
-              }
-              posterImage {
-                alt
-                templateUrl
-              }
-              favoriteAction {
-                favorite
-                id
-                title
-              }
-            }
+            ...programTileFragment
           }
           __typename
         }
@@ -1197,7 +1157,9 @@ def get_entities(list_id, page_size='', end_cursor=''):
           shortValue
           longValue
         }
-    """
+        %s
+        %s
+    """ % (PROGRAM_TILE, EPISODE_TILE)
     operation_name = 'TileList'
     variables = {
         'listId': list_id,
@@ -1345,113 +1307,7 @@ def get_epg_page(page_id):
             }
             whatsonId
             episode {
-              __typename
-              id
-              name
-              available
-              whatsonId
-              title
-              description
-              subtitle
-              permalink
-              logo
-              brand
-              brandLogos {
-                type
-                mono
-                primary
-              }
-              image {
-                alt
-                templateUrl
-              }
-              ageRaw
-              ageValue
-              durationRaw
-              durationValue
-              durationSeconds
-              episodeNumberRaw
-              episodeNumberValue
-              episodeNumberShortValue
-              onTimeRaw
-              onTimeValue
-              onTimeShortValue
-              offTimeRaw
-              offTimeValue
-              offTimeShortValue
-              productPlacementValue
-              productPlacementShortValue
-              regionRaw
-              regionValue
-              program {
-                title
-                id
-                link
-                programType
-                description
-                shortDescription
-                subtitle
-                announcementType
-                announcementValue
-                whatsonId
-                image {
-                  alt
-                  templateUrl
-                }
-                posterImage {
-                  alt
-                  templateUrl
-                }
-              }
-              season {
-                id
-                titleRaw
-                titleValue
-                titleShortValue
-              }
-              analytics {
-                airDate
-                categories
-                contentBrand
-                episode
-                mediaSubtype
-                mediaType
-                name
-                pageName
-                season
-                show
-              }
-              primaryMeta {
-                longValue
-                shortValue
-                type
-                value
-                __typename
-              }
-              secondaryMeta {
-                longValue
-                shortValue
-                type
-                value
-                __typename
-              }
-              watchAction {
-                avodUrl
-                completed
-                resumePoint
-                resumePointTotal
-                resumePointProgress
-                resumePointTitle
-                episodeId
-                videoId
-                publicationId
-                streamId
-              }
-              favoriteAction {
-                favorite
-                id
-                title
-              }
+              ...episode
             }
             __typename
           }
@@ -1461,113 +1317,7 @@ def get_epg_page(page_id):
             livestream {
               startDateTime
               episode {
-                __typename
-                id
-                name
-                available
-                whatsonId
-                title
-                description
-                subtitle
-                permalink
-                logo
-                brand
-                brandLogos {
-                  type
-                  mono
-                  primary
-                }
-                image {
-                  alt
-                  templateUrl
-                }
-                ageRaw
-                ageValue
-                durationRaw
-                durationValue
-                durationSeconds
-                episodeNumberRaw
-                episodeNumberValue
-                episodeNumberShortValue
-                onTimeRaw
-                onTimeValue
-                onTimeShortValue
-                offTimeRaw
-                offTimeValue
-                offTimeShortValue
-                productPlacementValue
-                productPlacementShortValue
-                regionRaw
-                regionValue
-                program {
-                  title
-                  id
-                  link
-                  programType
-                  description
-                  shortDescription
-                  subtitle
-                  announcementType
-                  announcementValue
-                  whatsonId
-                  image {
-                    alt
-                    templateUrl
-                  }
-                  posterImage {
-                    alt
-                    templateUrl
-                  }
-                }
-                season {
-                  id
-                  titleRaw
-                  titleValue
-                  titleShortValue
-                }
-                analytics {
-                  airDate
-                  categories
-                  contentBrand
-                  episode
-                  mediaSubtype
-                  mediaType
-                  name
-                  pageName
-                  season
-                  show
-                }
-                primaryMeta {
-                  longValue
-                  shortValue
-                  type
-                  value
-                  __typename
-                }
-                secondaryMeta {
-                  longValue
-                  shortValue
-                  type
-                  value
-                  __typename
-                }
-                watchAction {
-                  avodUrl
-                  completed
-                  resumePoint
-                  resumePointTotal
-                  resumePointProgress
-                  resumePointTitle
-                  episodeId
-                  videoId
-                  publicationId
-                  streamId
-                }
-                favoriteAction {
-                  favorite
-                  id
-                  title
-                }
+                ...episode
               }
               __typename
             }
@@ -1781,7 +1531,8 @@ def get_epg_page(page_id):
             __typename
           }
         }
-    """
+        %s
+    """ % EPISODE
     operation_name = 'Page'
     variables = {
         'pageId': page_id,
@@ -1918,8 +1669,8 @@ def convert_episode(episode_tile, destination=None):
     permalink = None
 
     # Basic tile properties
-    is_playable = episode_tile.get('available')
-    is_live = episode_tile.get('active')
+    is_playable = episode_tile.get('available', True)
+    is_live = episode_tile.get('active', False)
     program_title = episode_tile.get('title')
     episode_title = None
 
@@ -2359,12 +2110,15 @@ def get_episodes(list_id=None, destination=None, end_cursor='', program_name=Non
             # Check for multiple seasons
             api_data = get_seasons(program_name)
             number_of_seasons = len(api_data)
-            if number_of_seasons == 1:
-                season_name = api_data[0].get('name')
-            elif number_of_seasons > 1:
+            if number_of_seasons == 1 and api_data[0].get('list_id'):
+                destination = 'programs'
+                list_id = api_data[0].get('list_id')
+                season_name = list_id.split('@')[-1]
+            else:
                 seasons = convert_seasons(api_data, program_name)
                 return seasons, sort, ascending, content
 
+        # reconstruct list_id from program_name and season_name
         if program_name and season_name:
             destination = 'programs'
             if season_name.startswith('parsys'):
@@ -2401,14 +2155,28 @@ def convert_seasons(api_data, program_name):
     """Convert seasons"""
     seasons = []
     for season in api_data:
-        if season.get('name') == 'mostRelevantEpisode':
-            _, _, _, title_item = convert_episode(season.get('episode'))
+        if season.get('path'):
+            episode_tile = season.get('episode_tile')
+            if not episode_tile:
+                episode_tile = get_single_episode_data(season.get('path')).get('data').get('page')
+
+            _, _, _, title_item = convert_episode(episode_tile)
             title_item.label = '[B]{}:[/B] {}'.format(season.get('title'), title_item.label)
             title_item.info_dict['title'] = '[B]{}:[/B] {}'.format(season.get('title'), title_item.info_dict.get('title'))
             seasons.append(title_item)
-        else:
+
+        elif season.get('list_id'):
             season_title = season.get('title')
-            season_name = season.get('name')
+
+            # season name
+            list_id = season.get('list_id')
+            if '.episodes-list.json' in list_id:
+                season_name = list_id.split('.episodes-list.json')[0].split('/')[-1]
+            elif list_id.startswith('dynamic:/'):
+                season_name = 'dynamic_' + list_id.split('@')[-1]
+            else:
+                season_name = list_id.split('@')[-1]
+
             path = url_for('programs', program_name=program_name, season_name=season_name)
             seasons.append(
                 TitleItem(
@@ -2424,57 +2192,81 @@ def convert_seasons(api_data, program_name):
     return seasons
 
 
-def create_season_dict(data_json):
-    """Create season dictionary"""
-    season_dict = {}
-    # title
-    season_dict['title'] = data_json.get('title') or data_json.get('mostRelevantEpisodeTile').get('title')
-
-    # list_id
-    if data_json.get('components'):
-        list_id = data_json.get('components')[0].get('listId')
-    elif data_json.get('mostRelevantEpisodeTile'):
-        list_id = 'mostRelevantEpisode'
-        season_dict['episode'] = data_json.get('mostRelevantEpisodeTile')
-    else:
-        list_id = data_json.get('listId')
-
-    # season name
-    if '.episodes-list.json' in list_id:
-        season_dict['name'] = list_id.split('.episodes-list.json')[0].split('/')[-1]
-    elif list_id.startswith('dynamic:/'):
-        season_dict['name'] = 'dynamic_' + list_id.split('@')[-1]
-    else:
-        season_dict['name'] = list_id.split('@')[-1]
-    return season_dict
-
-
 def get_seasons(program_name):
-    """Get seasons"""
+    """Fetch seasons for a program, return list of dicts with title, episode, and either path or list_id."""
+    data = get_seasons_data(program_name)
+    program = (data.get('data') or {}).get('page', {}).get('program', {})
     seasons = []
-    components = get_seasons_data(program_name).get('data').get('page').get('components')
-    # Extract season data from components
-    for component in components:
-        # Check component type
-        if component.get('navigationType') == 'bar':
-            # Get items
-            for item in component.get('items'):
-                # Get components
-                for nested_component in item.get('components'):
-                    # Append component
-                    components.append(nested_component)
-        elif component.get('navigationType') == 'select':
-            # Get items
-            for item in component.get('items'):
-                # Store season
-                if item.get('title'):
-                    seasons.append(create_season_dict(item))
-        elif component.get('__typename') == 'PaginatedTileList' and component.get('tileContentType') == 'episode':
-            # Store season
-            if component.get('title'):
-                seasons.append(create_season_dict(component))
-        elif component.get('__typename') == 'PageHeader' and component.get('mostRelevantEpisodeTile'):
-            seasons.append(create_season_dict(component))
+
+    def get_episode_from_component(component):
+        if not component or component.get('tileContentType') != 'episode':
+            return {}
+        items = component.get('items')
+        if items:
+            return random.choice(items).get('episode', {})
+        list_id = component.get('listId')
+        if not list_id:
+            return {}
+        for se in program.get('seasons', []):
+            if component.get('title', '').startswith(se.get('titleRaw', '')):
+                items = (se.get('episodeList') or {}).get('items') or []
+                if items:
+                    return random.choice(items).get('episode', {})
+        return {}
+
+    def add_entry(title, episode=None, list_id=None, path=None):
+        entry = {'title': title, 'episode': episode or {}}
+        if list_id:
+            entry['list_id'] = list_id
+        elif path:
+            entry['path'] = path
+        seasons.append(entry)
+
+    def handle_component(title, component):
+        if component and component.get('tileContentType') == 'episode':
+            episode = get_episode_from_component(component)
+            add_entry(title, episode, list_id=component.get('listId'))
+
+    def find_episode_by_id(target_id):
+        for se in program.get('seasons', []):
+            for ep in se.get('episodeList', {}).get('items', []):
+                episode = ep.get('episode') or {}
+                if target_id == episode.get('id'):
+                    return episode
+        return {}
+
+    # Process all navigation-based entries
+    navigation_items = (program.get('navigation') or {}).get('items', []) or []
+
+    for item in navigation_items:
+        action = item.get('action', {})
+
+        if action.get('component'):
+            handle_component(item.get('title'), action['component'])
+            continue
+
+        if action.get('items'):
+            for subitem in action['items']:
+                comp = (subitem.get('action') or {}).get('component')
+                handle_component(subitem.get('title') or item.get('title'), comp)
+            continue
+
+        if action.get('videoUrl'):
+            episode = find_episode_by_id(action.get('episodeId'))
+            add_entry(item.get('title'), episode=episode, path=action['videoUrl'])
+        elif action.get('page'):
+            if action.get('page').get('episode'):
+                add_entry(item.get('title'), episode=action.get('page').get('episode'), path=action['link'])
+
+    # Prepend most relevant episode if no entries or more than one entry
+    if not seasons or len(seasons) > 1:
+        tile = program.get('mostRelevantEpisodeTile')
+        if tile:
+            episode = ((tile.get('tile') or {}).get('episode') or {})
+            path = (episode.get('watchAction') or {}).get('videoUrl')
+            entry = {'title': tile.get('title'), 'episode': episode, 'path': path}
+            seasons.insert(0, entry)  # Insert at the beginning
+
     return seasons
 
 
