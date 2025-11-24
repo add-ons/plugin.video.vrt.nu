@@ -2161,8 +2161,15 @@ def convert_seasons(api_data, program_name):
                 episode_tile = get_single_episode_data(season.get('path')).get('data').get('page')
 
             _, _, _, title_item = convert_episode(episode_tile)
-            title_item.label = '[B]{}:[/B] {}'.format(season.get('title'), title_item.label)
-            title_item.info_dict['title'] = '[B]{}:[/B] {}'.format(season.get('title'), title_item.info_dict.get('title'))
+            if len(api_data) > 1:
+                season_title = '[B]{}:[/B] {}'.format(season.get('title'), title_item.label)
+            elif title_item.info_dict['tvshowtitle'] != title_item.label:
+                season_title = '[B]{}:[/B] {}'.format(title_item.info_dict['tvshowtitle'], title_item.label)
+            else:
+                season_title = title_item.label
+
+            title_item.label = season_title
+            title_item.info_dict['title'] = season_title
             seasons.append(title_item)
 
         elif season.get('list_id'):
@@ -2262,10 +2269,19 @@ def get_seasons(program_name):
     if not seasons or len(seasons) > 1:
         tile = program.get('mostRelevantEpisodeTile')
         if tile:
-            episode = ((tile.get('tile') or {}).get('episode') or {})
-            path = (episode.get('watchAction') or {}).get('videoUrl')
-            entry = {'title': tile.get('title'), 'episode': episode, 'path': path}
-            seasons.insert(0, entry)  # Insert at the beginning
+            episode = (tile.get('tile', {}).get('episode', {}))
+            path = episode.get('watchAction', {}).get('videoUrl')
+
+            # Build entry
+            entry = {
+                'title': tile.get('title'),
+                'episode': episode,
+                'path': path,
+            }
+
+            # Only insert if path is not already present
+            if not any(s.get('path') == path for s in seasons):
+                seasons.insert(0, entry)
 
     return seasons
 
