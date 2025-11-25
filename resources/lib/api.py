@@ -1169,7 +1169,7 @@ def get_entities(list_id, page_size='', end_cursor=''):
     return api_req(graphql_query, operation_name, variables)
 
 
-def get_epg_page(page_id):
+def get_epg_page(page_id, page_size='', end_cursor=''):
     """Get a program guide page using GraphQL API"""
     graphql_query = """
         query Page(
@@ -1536,30 +1536,118 @@ def get_epg_page(page_id):
     operation_name = 'Page'
     variables = {
         'pageId': page_id,
+        'after': end_cursor,
+        'lazyItemCount': page_size,
     }
     return api_req(graphql_query, operation_name, variables)
 
 
-def get_epg_list(channel, date):
-    """Extract epg data from epg page"""
+def get_epg_list(channel, date, page=None):
+    """Generate EPG list from the EPG page. If page is None, return full list."""
+
+    page_size = get_setting_int('itemsperpage', default=50)
+    api_page_size = 50
+
+    # Base page (center block)
     page_id = f'/vrtmax/tv-gids/{channel}/{date}/'
-    data = get_epg_page(page_id)
-    tile_list = []
-    page = data.get('data').get('page')
-    if page:
-        if page.get('previous'):
-            tile_list.extend(page.get('previous').get('paginatedItems').get('edges'))
-        if page.get('current'):
-            tile_list.extend([page.get('current').get('tile')])
-        if page.get('next'):
-            tile_list.extend(page.get('next').get('paginatedItems').get('edges'))
-    return tile_list
+    base = get_epg_page(page_id, page_size=api_page_size, end_cursor='')
+
+    api_page = base.get('data', {}).get('page', {}) or {}
+    prev_page = api_page.get('previous', {}) or {}
+    next_page = api_page.get('next', {}) or {}
+    current = api_page.get('current') or {}
+    current_item = current.get('tile')
+
+    # Initial blocks available
+    prev_items = prev_page.get('paginatedItems', {}).get('edges') or []
+    next_items = next_page.get('paginatedItems', {}).get('edges') or []
+
+    prev_info = prev_page.get('paginatedItems', {}).get('pageInfo', {}) or {}
+    next_info = next_page.get('paginatedItems', {}).get('pageInfo', {}) or {}
+
+    prev_list_id = prev_page.get('listId')
+    next_list_id = next_page.get('listId')
+
+    # Count known items
+    def known_total():
+        return len(prev_items) + (1 if current_item else 0) + len(next_items)
+
+    # Load a 50-item API block
+    def load_more(list_id, page_info, collector):
+        has_more = page_info.get('hasNextPage', False)
+        cursor = page_info.get('endCursor')
+        if not list_id or not has_more:
+            return False, page_info
+
+        data = get_entities(list_id=list_id, page_size=api_page_size, end_cursor=cursor)
+        p = data.get('data', {}).get('list', {}).get('paginatedItems', {}) or {}
+        edges = p.get('edges') or []
+        collector.extend(edges)
+        info = p.get('pageInfo', {}) or {}
+        return info.get('hasNextPage', False), info
+
+    prev_has_more = prev_info.get('hasNextPage', False)
+    next_has_more = next_info.get('hasNextPage', False)
+
+    # full list mode
+    if page is None:
+        # load everything until both sides exhausted
+        while prev_has_more or next_has_more:
+            if prev_has_more:
+                prev_has_more, prev_info = load_more(prev_list_id, prev_info, prev_items)
+            if next_has_more:
+                next_has_more, next_info = load_more(next_list_id, next_info, next_items)
+
+        # merge everything
+        full = prev_items + ([current_item] if current_item else []) + next_items
+        return full, ''  # no next page
+
+    # paged mode
+    page = int(page)
+    offset = (page - 1) * page_size
+    end_index = offset + page_size
+
+    # fetch only what we need
+    while known_total() < end_index and (prev_has_more or next_has_more):
+        index_of_current = len(prev_items)
+        current_count = 1 if current_item else 0
+
+        if offset >= index_of_current + current_count:
+            # page lies after the current item
+            if next_has_more:
+                next_has_more, next_info = load_more(next_list_id, next_info, next_items)
+            elif prev_has_more:
+                prev_has_more, prev_info = load_more(prev_list_id, prev_info, prev_items)
+            else:
+                break
+        else:
+            # page lies before the current item
+            if prev_has_more:
+                prev_has_more, prev_info = load_more(prev_list_id, prev_info, prev_items)
+            elif next_has_more:
+                next_has_more, next_info = load_more(next_list_id, next_info, next_items)
+            else:
+                break
+
+    # merge
+    full = prev_items + ([current_item] if current_item else []) + next_items
+
+    # slice
+    page_slice = full[offset:end_index]
+
+    # determine next page
+    if len(full) > end_index:
+        next_page = str(page + 1)
+    else:
+        next_page = str(page + 1) if (next_has_more or prev_has_more) and page_slice else ''
+
+    return page_slice, next_page
 
 
-def get_epg_episodes(channel, date):
+def get_epg_episodes(channel, date, page):
     """Return Title items from epg data"""
-    tile_list = get_epg_list(channel, date)
-    episodes, _, _ = convert_episodes(tile_list, destination='tvguide', date=date, channel=channel)
+    tile_list, next_page = get_epg_list(channel, date, page=page)
+    episodes, _, _ = convert_episodes(tile_list, destination='tvguide', end_cursor=next_page, date=date, channel=channel)
     return episodes
 
 

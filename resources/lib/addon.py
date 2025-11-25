@@ -174,10 +174,11 @@ def featured(feature=None, end_cursor=''):
 @plugin.route('/tvguide/date')
 @plugin.route('/tvguide/date/<date>')
 @plugin.route('/tvguide/date/<date>/<channel>')
-def tvguide(date=None, channel=None):
+@plugin.route('/tvguide/date/<date>/<channel>/<end_cursor>')
+def tvguide(date=None, channel=None, end_cursor=None):
     """The TV guide menu and listings by date"""
     from tvguide import TVGuide
-    TVGuide().show_tvguide(date=date, channel=channel)
+    TVGuide().show_tvguide(date=date, channel=channel, end_cursor=end_cursor)
 
 
 @plugin.route('/tvguide/channel')
