@@ -37,7 +37,7 @@ CATEGORIES = [
 CHANNELS = [
     {
         'id': 'O8',
-        'name': 'een',
+        'name': 'vrt1',
         'label': 'VRT 1',
         'studio': 'Een',
         'live_stream': 'https://www.vrt.be/vrtnu/livestream/video/vrt1/',
@@ -54,7 +54,7 @@ CHANNELS = [
     },
     {
         'id': '1H',
-        'name': 'canvas',
+        'name': 'vrt-canvas',
         'label': 'VRT Canvas',
         'studio': 'Canvas',
         'live_stream': 'https://www.vrt.be/vrtmax/livestream/video/vrt-canvas/',

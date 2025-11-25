@@ -20,16 +20,10 @@ class TVGuide:
 
     VRT_TVGUIDE = 'https://www.vrt.be/bin/epg/schedule.%Y-%m-%d.json'
 
-    CHANNEL_MAP = {
-        'een': 'vrt1',
-        'canvas': 'vrt-canvas',
-        'ketnet': 'ketnet',
-    }
-
     def __init__(self):
         """Initializes TV-guide object"""
 
-    def show_tvguide(self, date=None, channel=None):
+    def show_tvguide(self, date=None, channel=None, end_cursor=None):
         """Offer a menu depending on the information provided"""
 
         if not date and not channel:
@@ -48,7 +42,7 @@ class TVGuide:
             show_listing(date_items, category=channel_name, content='files', selected=7)
 
         else:
-            episode_items = self.get_episode_items(date, channel)
+            episode_items = self.get_episode_items(date, channel, end_cursor)
             channel_name = find_entry(CHANNELS, 'name', channel).get('label')
             entry = find_entry(RELATIVE_DATES, 'id', date)
             date_name = localize(entry.get('msgctxt')) if entry else date
@@ -127,7 +121,7 @@ class TVGuide:
 
             if date:
                 label = chan.get('label')
-                path = url_for('tvguide', date=date, channel=chan.get('name'))
+                path = url_for('tvguide', date=date, channel=chan.get('name'), end_cursor='1')
                 plot = '[B]%s[/B]\n%s' % (datelong, localize(30302, **chan))
             else:
                 label = '[B]%s[/B]' % localize(30303, **chan)
@@ -148,11 +142,11 @@ class TVGuide:
             ))
         return channel_items
 
-    def get_episode_items(self, date, channel):
+    def get_episode_items(self, date, channel, end_cursor=None):
         """Show episodes for a given date and channel"""
         now = datetime.now(dateutil.tz.tzlocal())
         epg_date = self.parse(date, now)
-        episode_items = get_epg_episodes(date=epg_date.strftime('%Y-%m-%d'), channel=self.CHANNEL_MAP.get(channel))
+        episode_items = get_epg_episodes(date=epg_date.strftime('%Y-%m-%d'), channel=channel, page=end_cursor)
         return episode_items
 
     def get_epg_data(self):
@@ -173,7 +167,7 @@ class TVGuide:
                 epg_id = channel.get('epg_id')
                 epg_data.setdefault(epg_id, [])
 
-                data = get_epg_list(self.CHANNEL_MAP.get(channel.get('name')), epg_date.strftime('%Y-%m-%d'))
+                data, _ = get_epg_list(channel.get('name'), epg_date.strftime('%Y-%m-%d'))
 
                 previous_stop_dt = None
                 for item in data:
