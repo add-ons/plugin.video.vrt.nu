@@ -17,7 +17,7 @@ xbmcgui = __import__('xbmcgui')
 xbmcplugin = __import__('xbmcplugin')
 xbmcvfs = __import__('xbmcvfs')
 
-channels = ['een', 'canvas', 'ketnet']
+channels = ['vrt1', 'vrt-canvas', 'ketnet']
 
 
 class TestTVGuide(unittest.TestCase):

@@ -55,7 +55,7 @@ class TestSettings(unittest.TestCase):
         addon.settings['usemenucaching'] = True
         plugin.run(['plugin://plugin.video.vrt.nu/offline', '0', ''])
         plugin.run(['plugin://plugin.video.vrt.nu/offline', '0', ''])
-        plugin.run(['plugin://plugin.video.vrt.nu/tvguide/date/today/canvas', '0', ''])
+        plugin.run(['plugin://plugin.video.vrt.nu/tvguide/date/today/vrt-canvas', '0', ''])
 
     @staticmethod
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
