@@ -3,7 +3,6 @@
 [![Codecov status](https://img.shields.io/codecov/c/github/add-ons/plugin.video.vrt.nu/master)](https://codecov.io/gh/add-ons/plugin.video.vrt.nu/branch/master)
 [![License: GPLv3](https://img.shields.io/badge/License-GPLv3-yellow.svg)](https://opensource.org/licenses/GPL-3.0)
 [![Contributors](https://img.shields.io/github/contributors/add-ons/plugin.video.vrt.nu.svg)](https://github.com/add-ons/plugin.video.vrt.nu/graphs/contributors)
-[![Donate!](https://img.shields.io/static/v1.svg?label=&message=Donate!&color=lightgrey&logo=paypal)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6C58R2PNAWTNW&source=url)
 
 # VRT MAX Kodi add-on
 **plugin.video.vrt.nu** is a [Kodi](https://kodi.tv/) add-on for watching all live video streams *and* all video-on-demand
@@ -15,7 +14,7 @@ This Kodi add-on can be used to watch all video content from VRT MAX.
 
 - Track the programs you like
 - List all videos alphabetically by program, category, channel or feature
-- Watch live streams from VRT 1, Canvas, Ketnet, Ketnet Junior and Sporza
+- Watch live streams from VRT 1, VRT Canvas, Ketnet, Ketnet Junior and Sporza
 - Discover recently added or soon offline content
 - Browse the online TV guides or search VRT MAX
 
@@ -43,8 +42,7 @@ prompted.
 > For more information about the VRT MAX Kodi add-on, look at [our GitHub Wiki page](https://github.com/add-ons/plugin.video.vrt.nu/wiki).
 
 ## Reporting issues
-You can report issues at [our GitHub project](https://github.com/add-ons/plugin.video.vrt.nu) or
-leave a message at [our Facebook page](https://facebook.com/kodivrtnu/).
+You can report issues at [our GitHub issues page](https://github.com/add-ons/plugin.video.vrt.nu/issues)
 
 ## Screenshots
 <table>
@@ -495,6 +493,3 @@ leave a message at [our Facebook page](https://facebook.com/kodivrtnu/).
 
 ### v0.0.1 (2017-05-01)
 - Initial working release (@pietje666)
-
-## Donating
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6C58R2PNAWTNW&source=url)
