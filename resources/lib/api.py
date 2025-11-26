@@ -1913,7 +1913,7 @@ def convert_episode(episode_tile, destination=None):
         # Fix unplayable episodes
         if not is_playable:
             # Play episode from past 24h livestream cache
-            if now - timedelta(hours=LIVESTREAM_CACHE_HOURS) <= stop_dt <= now:
+            if now - timedelta(hours=LIVESTREAM_CACHE_HOURS) <= start_dt <= now:
                 is_playable = True
                 start_iso = start_dt.astimezone(dateutil.tz.gettz('Europe/Brussels')).isoformat()[:19]
                 stop_iso = stop_dt.astimezone(dateutil.tz.gettz('Europe/Brussels')).isoformat()[:19]
