@@ -138,7 +138,8 @@ class TestRouting(unittest.TestCase):
         addon.run(['plugin://plugin.video.vrt.nu/tvguide/channel/vrt-canvas', '0', ''])
         self.assertEqual(plugin.url_for(addon.tvguide_channel, channel='vrt-canvas'), 'plugin://plugin.video.vrt.nu/tvguide/channel/vrt-canvas')
         addon.run(['plugin://plugin.video.vrt.nu/tvguide/channel/vrt-canvas/today', '0', ''])
-        self.assertEqual(plugin.url_for(addon.tvguide_channel, channel='vrt-canvas', date='today'), 'plugin://plugin.video.vrt.nu/tvguide/channel/vrt-canvas/today')
+        self.assertEqual(plugin.url_for(addon.tvguide_channel, channel='vrt-canvas', date='today'),
+                         'plugin://plugin.video.vrt.nu/tvguide/channel/vrt-canvas/today')
 
     @unittest.skipUnless(xbmc_addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
