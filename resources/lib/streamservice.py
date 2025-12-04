@@ -58,8 +58,8 @@ class StreamService:
                 stream_id = episode_data.get('episode').get('watchAction').get('streamId')
             elif episode_data and episode_data.get('player'):
                 stream_id = next(
-                    (mode.get('streamId') 
-                     for mode in episode_data.get('player', {}).get('modes', []) 
+                    (mode.get('streamId')
+                     for mode in episode_data.get('player', {}).get('modes', [])
                      if mode.get('__typename') == 'VideoPlayerMode'),
                     None
                 )
