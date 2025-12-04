@@ -276,10 +276,11 @@ def get_stream_id_data(vrtmax_url):
             ... on IPage {
               ... on LivestreamPage {
                 player {
-                  watchAction {
-                    ... on LiveWatchAction {
+                  modes {
+                    ... on VideoPlayerMode {
                       streamId
                     }
+                    __typename
                   }
                 }
               }
