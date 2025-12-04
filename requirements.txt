@@ -1,4 +1,3 @@
-bs4
 coverage
 git+https://github.com/emilsvennesson/script.module.inputstreamhelper.git@master#egg=inputstreamhelper
 kodi-addon-checker
