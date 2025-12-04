@@ -57,7 +57,12 @@ class StreamService:
             if episode_data and episode_data.get('episode'):
                 stream_id = episode_data.get('episode').get('watchAction').get('streamId')
             elif episode_data and episode_data.get('player'):
-                stream_id = episode_data.get('player').get('watchAction').get('streamId')
+                stream_id = next(
+                    (mode.get('streamId') 
+                     for mode in episode_data.get('player', {}).get('modes', []) 
+                     if mode.get('__typename') == 'VideoPlayerMode'),
+                    None
+                )
                 is_live_stream = True
             api_data = ApiData(self._CLIENT, self._VUALTO_API_URL, stream_id, '', is_live_stream)
         return api_data
