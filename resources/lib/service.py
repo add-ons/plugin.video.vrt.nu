@@ -4,9 +4,8 @@
 
 from xbmc import Monitor
 from favorites import Favorites
-from kodiutils import container_refresh, log
+from kodiutils import container_refresh, get_setting_bool, has_credentials, log
 from playerinfo import PlayerInfo
-from resumepoints import ResumePoints
 from tokenresolver import TokenResolver
 
 
@@ -15,7 +14,6 @@ class VrtMonitor(Monitor, object):  # pylint: disable=useless-object-inheritance
 
     def __init__(self):
         """VRT Monitor initialisation"""
-        self._resumepoints = ResumePoints()
         self._playerinfo = None
         self._favorites = None
         self.init_watching_activity()
@@ -30,7 +28,8 @@ class VrtMonitor(Monitor, object):  # pylint: disable=useless-object-inheritance
     def init_watching_activity(self):
         """Only load components for watching activity when needed"""
 
-        if self._resumepoints.is_activated():
+        # Is resumepoints activated in the menu and do we have credentials
+        if get_setting_bool('usefavorites', default=True) and get_setting_bool('useresumepoints', default=True) and has_credentials():
             if not self._playerinfo:
                 self._playerinfo = PlayerInfo()
             if not self._favorites:
