@@ -189,7 +189,7 @@ class TVGuide:
                         episode = node.get('livestream').get('episode')
                     else:
                         episode = node.get('episode')
-                    duration = None
+                    duration = timedelta(0)
 
                     if node.get('progress'):
                         duration = timedelta(seconds=node.get('progress').get('durationInSeconds'))
