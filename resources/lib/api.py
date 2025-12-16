@@ -1316,6 +1316,8 @@ def get_epg_page(page_id, page_size='', end_cursor=''):
             description
             brand
             livestream {
+              title
+              subtitle
               startDateTime
               episode {
                 ...episode
@@ -1761,7 +1763,7 @@ def convert_episode(episode_tile, destination=None):
     is_playable = episode_tile.get('available', True)
     is_live = episode_tile.get('active', False)
     program_title = episode_tile.get('title')
-    episode_title = None
+    episode_title = episode_tile.get('subtitle')
 
     if episode_tile.get('livestream'):
         episode = episode_tile.get('livestream').get('episode')
@@ -1933,8 +1935,9 @@ def convert_episode(episode_tile, destination=None):
     # Label
     label = format_label(program_title, episode_title, program_type, start_dt, favorited,
                          is_playable=is_playable, is_live=is_live)
+
     title_item.label = label
-    title_item.info_dict['title'] = label
+    title_item.info_dict['tvshowtitle'] = label
     title_item.info_dict['mediatype'] = 'episode'
     title_item.info_dict['duration'] = duration.total_seconds()
     title_item.is_playable = is_playable
