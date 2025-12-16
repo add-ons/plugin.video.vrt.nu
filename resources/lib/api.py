@@ -1866,7 +1866,6 @@ def convert_episode(episode_tile, destination=None):
 
         # Info dict
         title_item.info_dict = {
-            'tvshowtitle': program_title,
             'aired': aired,
             'dateadded': dateadded,
             'episode': episode_no,
@@ -1937,7 +1936,8 @@ def convert_episode(episode_tile, destination=None):
                          is_playable=is_playable, is_live=is_live)
 
     title_item.label = label
-    title_item.info_dict['tvshowtitle'] = label
+    title_item.info_dict['title'] = label
+    title_item.info_dict['tvshowtitle'] = program_title
     title_item.info_dict['mediatype'] = 'episode'
     title_item.info_dict['duration'] = duration.total_seconds()
     title_item.is_playable = is_playable
