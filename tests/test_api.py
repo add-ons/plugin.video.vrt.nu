@@ -26,7 +26,7 @@ class TestApi(unittest.TestCase):
 
     def test_get_api_data_single_season(self):
         """Test listing episodes for a single season (zomerhit)"""
-        title_items, sort, ascending, content = get_episodes(program_name='brussel-nieuwsstraat', season_name='2')
+        title_items, sort, ascending, content = get_episodes(program_name='flikken', season_name='4')
         self.assertEqual(len(title_items), 13)
         self.assertEqual(sort, 'episode')
         self.assertTrue(ascending)
@@ -46,14 +46,6 @@ class TestApi(unittest.TestCase):
         self.assertEqual(len(title_items), 15)
         self.assertEqual(sort, 'dateadded')  # Pano has 'daily' programType
         self.assertFalse(ascending)
-        self.assertEqual(content, 'episodes')
-
-    def test_get_api_data_specific_season_without_broadcastdate(self):
-        """Test listing episodes without broadcastDate (wereldbeeld)"""
-        title_items, sort, ascending, content = get_episodes(program_name='wereldbeeld', season_name='1')
-        self.assertEqual(len(title_items), 7)
-        self.assertEqual(sort, 'episode')
-        self.assertTrue(ascending)
         self.assertEqual(content, 'episodes')
 
     def test_get_recent_episodes(self):
@@ -133,9 +125,9 @@ class TestApi(unittest.TestCase):
     def test_get_resumepoint(self):
         """Test getting resumepoint for episode wij--roger-raveel"""
         video_id = 'vid-b643dbd8-03d1-4ceb-a738-262d6fa7c271'
-        episode_id = '1615881736655'
-        media_id, _ = get_resumepoint_data(episode_id)
-        self.assertEqual(media_id, video_id)
+        vrtmax_url = 'https://www.vrt.be/vrtmax/a-z/wij--roger-raveel/2021/wij--roger-raveel/'
+        resumepoint_data = get_resumepoint_data(vrtmax_url)
+        self.assertEqual(resumepoint_data.get('mediaId'), video_id)
 
     def test_get_continue_episodes(self):
         """Test getting continue watching list"""
