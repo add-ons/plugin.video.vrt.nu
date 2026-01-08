@@ -51,15 +51,17 @@ class StreamService:
         elif video_url:
             from api import get_stream_data
             is_live_stream = False
-            stream_data = get_stream_data(video_url)
-            stream_id = next(
-                (mode.get('streamId')
-                 for mode in stream_data.get('data', {}).get('page', {}).get('player', {}).get('modes', [])
-                 if mode.get('__typename') == 'VideoPlayerMode'),
-                None
-            )
-            if stream_data.get('data', {}).get('page', {}).get('__typename') == 'LivestreamPage':
-                is_live_stream = True
+            stream_id = ''
+            episode_page = get_stream_data(video_url).get('data', {}).get('page', {})
+            if episode_page:
+                stream_id = next(
+                    (mode.get('streamId')
+                     for mode in episode_page.get('player', {}).get('modes', [])
+                     if mode.get('__typename') == 'VideoPlayerMode'),
+                    ''
+                )
+                if episode_page.get('__typename') == 'LivestreamPage':
+                    is_live_stream = True
             api_data = ApiData(self._CLIENT, self._VUALTO_API_URL, stream_id, '', is_live_stream)
         return api_data
 
