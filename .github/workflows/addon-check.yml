@@ -20,14 +20,14 @@ jobs:
     - uses: actions/checkout@v4
       with:
         path: ${{ github.repository }}
-    - name: Set up Python 3.8
+    - name: Set up Python 3.12
       uses: actions/setup-python@v5
       with:
-        python-version: 3.8
+        python-version: 3.12
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install git+https://github.com/xbmc/addon-check.git
+        pip install kodi-addon-checker
     - name: Remove unwanted files
       run: awk '/export-ignore/ { print $1 }' .gitattributes | xargs rm -rf --
       working-directory: ${{ github.repository }}
