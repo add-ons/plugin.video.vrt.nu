@@ -198,10 +198,13 @@ def resumepoints_is_activated():
 
 def get_resumepoint_data(episode_id):
     """Get resumepoint data from GraphQL API"""
-    data_json = get_single_episode_data(episode_id)
-    video_id = data_json.get('data').get('page').get('episode').get('watchAction').get('videoId')
-    resumepoint_title = data_json.get('data').get('page').get('episode').get('watchAction').get('resumePointTitle')
-    return video_id, resumepoint_title
+    data_json = get_stream_data(episode_id)
+    return next(
+        (mode.get('resumePointTemplate', {})
+         for mode in data_json.get('data', {}).get('page', {}).get('player', {}).get('modes', [])
+         if mode.get('__typename') == 'VideoPlayerMode'),
+        None
+    )
 
 
 def get_next_info(episode_id):
@@ -261,14 +264,14 @@ def get_next_info(episode_id):
             'current_episode': current_episode,
             'next_episode': next_episode,
             'play_info': {
-                'episode_id': next_ep.get('id'),
+                'episode_id': next_ep.get('shareAction').get('url'),
             }
         }
     return next_info
 
 
-def get_stream_id_data(vrtmax_url):
-    """Get stream_id from from GraphQL API"""
+def get_stream_data(vrtmax_url):
+    """Get stream data from from GraphQL API"""
     page_id = vrtmax_url.split('www.vrt.be')[1]
     graphql_query = """
          query StreamId($pageId: ID!) {
@@ -290,6 +293,10 @@ def get_stream_id_data(vrtmax_url):
                 modes {
                   ... on VideoPlayerMode {
                     streamId
+                    resumePointTemplate {
+                      mediaId
+                      mediaName
+                    }
                   }
                   __typename
                 }
@@ -2015,7 +2022,7 @@ def get_favorite_programs(end_cursor=''):
     """Get favorite programs"""
     import base64
     list_id = 'o%25|o%9|video-program%|video-program|b%0%'
-    list_id = '#{}'.format(base64.b64encode(list_id.encode('utf-8')).decode('utf-8'))
+    list_id = '${}'.format(base64.b64encode(list_id.encode('utf-8')).decode('utf-8'))
     programs = get_programs(list_id=list_id, destination='favorites_programs', end_cursor=end_cursor)
     return programs
 
