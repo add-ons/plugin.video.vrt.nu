@@ -3,7 +3,6 @@
 
 name: Kodi
 on:
-  # Run action when pushed to master, or for commits in a pull request.
   push:
     branches:
       - master
@@ -17,19 +16,23 @@ jobs:
     strategy:
       fail-fast: false
     steps:
-    - uses: actions/checkout@v4
-      with:
-        path: ${{ github.repository }}
-    - name: Set up Python 3.12
-      uses: actions/setup-python@v5
-      with:
-        python-version: 3.12
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install --user kodi-addon-checker
-    - name: Remove unwanted files
-      run: awk '/export-ignore/ { print $1 }' .gitattributes | xargs rm -rf --
-      working-directory: ${{ github.repository }}
-    - name: Run kodi-addon-checker
-      run: $HOME/.local/bin/kodi-addon-checker --branch=matrix ${{ github.repository }}/
+      - name: Extract repo name
+        id: repo
+        run: echo "name=${GITHUB_REPOSITORY##*/}" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v5
+        with:
+          path: ${{ steps.repo.outputs.name }}
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install --user kodi-addon-checker
+      - name: Remove unwanted files
+        run: awk '/export-ignore/ { print $1 }' .gitattributes | xargs rm -rf --
+        working-directory: ${{ steps.repo.outputs.name }}
+      - name: Run kodi-addon-checker
+        run: $HOME/.local/bin/kodi-addon-checker --branch=matrix ${{ steps.repo.outputs.name }}
+
