@@ -63,7 +63,8 @@ class StreamService:
                      if mode.get('__typename') == 'VideoPlayerMode'),
                     None
                 )
-                is_live_stream = True
+                if episode_data.get('__typename') == 'LivestreamPage':
+                    is_live_stream = True
             api_data = ApiData(self._CLIENT, self._VUALTO_API_URL, stream_id, '', is_live_stream)
         return api_data
 
