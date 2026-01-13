@@ -42,6 +42,9 @@ jobs:
     - name: TEST Search
       run: python -m unittest -v test_search.TestSearch.test_search_journaal
       if: always()
+    - name: TEST Seasons
+      run: python -m unittest -v test_api.TestApi.test_get_api_data_multiple_seasons
+      if: always()
     - name: TEST Suggest
       run: python -m unittest -v test_api.TestApi.test_get_programs_category
       if: always()
