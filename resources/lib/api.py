@@ -517,23 +517,6 @@ def get_seasons_data(program_name):
                     icon
                     action {
                       __typename
-                      ... on EpisodeWatchAction {
-                        avodUrl
-                        completed
-                        episodeId
-                        playlistUrl
-                        publicationId
-                        resumePoint
-                        resumePointProgress
-                        resumePointTitle
-                        resumePointTotal
-                        resumePointUpdated
-                        streamId
-                        videoId
-                        videoType
-                        videoUrl
-                        __typename
-                      }
                       ... on ShowComponentAction {
                         component {
                           __typename
