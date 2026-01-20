@@ -57,6 +57,9 @@ You can report issues at [our GitHub issues page](https://github.com/add-ons/plu
 </table>
 
 ## Releases
+### v2.5.50 (2026-01-20)
+- Fix season menu listings (@mediaminister)
+
 ### v2.5.49 (2026-01-14)
 - Fix season menu listings (@mediaminister)
 
