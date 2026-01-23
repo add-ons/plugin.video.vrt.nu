@@ -453,9 +453,7 @@ def get_seasons_data(program_name):
           ) {
           page(id: $pageId) {
             ... on EpisodePage {
-              episode {
-                ...episode
-              }
+              title
             }
             ... on ProgramPage {
               brand
@@ -559,9 +557,7 @@ def get_seasons_data(program_name):
                         }
                         page {
                           ...on EpisodePage {
-                            episode {
-                              ...episode
-                            }
+                            title
                           }
                           __typename
                         }
@@ -575,24 +571,6 @@ def get_seasons_data(program_name):
                       }
                     }
                   }
-                }
-                seasons {
-                  catalogMemberType
-                  id
-                  navigationTitle
-                  numEpisodesRaw
-                  numEpisodesShortValue
-                  numEpisodesValue
-                  objectId
-                  programId
-                  programName
-                  programTitle
-                  programType
-                  titleRaw
-                  titleShortValue
-                  titleValue
-
-
                 }
               }
             }
