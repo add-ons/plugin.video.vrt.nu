@@ -270,9 +270,8 @@ def get_next_info(episode_id):
     return next_info
 
 
-def get_stream_data(vrtmax_url):
+def get_stream_data(page_id):
     """Get stream data from from GraphQL API"""
-    page_id = vrtmax_url.split('www.vrt.be')[1]
     graphql_query = """
          query StreamId($pageId: ID!) {
           page(id: $pageId) {
@@ -1687,8 +1686,9 @@ def convert_episode(episode_tile, destination=None):
     # Basic tile properties
     is_playable = episode_tile.get('available', True)
     is_live = episode_tile.get('active', False)
-    program_title = episode_tile.get('title')
-    episode_title = episode_tile.get('subtitle')
+    program_title = episode_tile.get('subtitle') or ''
+    episode_title = episode_tile.get('title')
+    path = url_for('play_url', video_url=episode_tile.get('action', {}).get('link'))
 
     if episode_tile.get('livestream'):
         episode = episode_tile.get('livestream').get('episode')
@@ -1764,10 +1764,6 @@ def convert_episode(episode_tile, destination=None):
         # Favorite / Continue
         favorited = (episode.get('favoriteAction') or {}).get('favorite')
         is_continue = destination == 'resumepoints_continue'
-
-        # Mark mixed episode categories
-        if destination in ('recent', 'favorites_recent', 'resumepoints_continue', 'featured', 'search_query'):
-            program_type = 'mixed_episodes'
 
         # Context menu
         context_menu = get_context_menu(
@@ -1848,7 +1844,11 @@ def convert_episode(episode_tile, destination=None):
                 path = url_for('noop')
         # Play livestream
         elif is_live:
-            path = url_for('play_url', 'https://www.vrt.be' + episode_tile['action']['link'])
+            path = url_for('play_url', episode_tile['action']['link'])
+
+    # Mark mixed episode categories
+    if destination in ('recent', 'favorites_recent', 'resumepoints_continue', 'featured', 'search_query'):
+        program_type = 'mixed_episodes'
 
     # Final formatting
     plot = format_plot(plot, region, product_placement, mpaa, program_type, start_dt, stop_dt, offtime, permalink)
@@ -2320,7 +2320,7 @@ def api_req(graphql_query, operation_name, variables, client='WEB'):
             'Authorization': 'Bearer ' + access_token,
             'Content-Type': 'application/json',
             'x-vrt-client-name': client,
-            'x-vrt-client-version': '1.5.12',
+            'x-vrt-client-version': '1.5.15',
         }
         data_json = get_url_json(url=GRAPHQL_URL, cache=None, headers=headers, data=data)
         if data_json.get('errors'):
@@ -2686,9 +2686,6 @@ def get_episode_by_air_date(channel_name, start_date, end_date=None):
 
 def get_channels(channels=None, live=True):
     """Construct a list of channel ListItems, either for Live TV or the TV Guide listing"""
-    from tvguide import TVGuide
-    _tvguide = TVGuide()
-
     channel_items = []
     for channel in CHANNELS:
         if channels and channel.get('name') not in channels:
@@ -2718,9 +2715,6 @@ def get_channels(channels=None, live=True):
             elif channel.get('live_stream'):
                 path = url_for('play_url', video_url=channel.get('live_stream'))
             label = localize(30141, **channel)  # Channel live
-            playing_now = _tvguide.playing_now(channel.get('name'))
-            if playing_now:
-                label += ' [COLOR=yellow]| %s[/COLOR]' % playing_now
             # A single Live channel means it is the entry for channel's TV Show listing, so make it stand out
             if channels and len(channels) == 1:
                 label = '[B]%s[/B]' % label
@@ -2728,7 +2722,7 @@ def get_channels(channels=None, live=True):
             if channel.get('name') in ['een', 'canvas', 'ketnet']:
                 if get_setting_bool('showfanart', default=True):
                     art_dict['fanart'] = get_live_screenshot(channel.get('name', art_dict.get('fanart')))
-                plot = '%s\n\n%s' % (localize(30142, **channel), _tvguide.live_description(channel.get('name')))
+                plot = localize(30142, **channel)
             else:
                 plot = localize(30142, **channel)  # Watch live
             # NOTE: Playcount and resumetime are required to not have live streams as "Watched" and resumed

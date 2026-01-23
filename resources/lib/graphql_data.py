@@ -172,6 +172,11 @@ EPISODE_TILE = """
       componentType
       description
       available
+      action {
+        ... on LinkAction {
+          link
+        }
+      }
       chapterStart
       formattedDuration
       whatsonId
@@ -182,9 +187,5 @@ EPISODE_TILE = """
         __typename
       }
       __typename
-      episode {
-        ...episode
-      }
     }
-    %s
-""" % EPISODE
+"""
