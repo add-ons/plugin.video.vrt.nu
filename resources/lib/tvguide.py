@@ -126,7 +126,7 @@ class TVGuide:
             else:
                 label = '[B]%s[/B]' % localize(30303, **chan)
                 path = url_for('tvguide_channel', channel=chan.get('name'))
-                plot = '%s\n\n%s' % (localize(30302, **chan), self.live_description(chan.get('name')))
+                plot = localize(30302, **chan)
 
             context_menu = [(
                 localize(30413),  # Refresh menu
