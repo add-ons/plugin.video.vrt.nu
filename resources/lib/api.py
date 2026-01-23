@@ -319,9 +319,7 @@ def get_single_episode_data(episode_id):
           page(id: $id) {
             __typename
             ... on EpisodePage {
-              episode {
-                ...episode
-              }
+              title
             }
           }
         }
@@ -2263,13 +2261,12 @@ def get_seasons(program_name):
     if not seasons or len(seasons) > 1:
         tile = program.get('mostRelevantEpisodeTile')
         if tile:
-            episode = (tile.get('tile', {}).get('episode', {}))
-            path = episode.get('shareAction', {}).get('url', '')
+            path = tile.get('tile', {}).get('action', {}).get('link', '')
 
             # Build entry
             entry = {
                 'title': tile.get('title'),
-                'episode': episode,
+                'episode_tile': tile.get('tile', {}),
                 'path': path,
             }
 
