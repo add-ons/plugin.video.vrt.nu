@@ -915,6 +915,18 @@ def get_entities(list_id, page_size='', end_cursor=''):
               ...metaFragment
               __typename
             }
+            status {
+              accessibilityLabel
+              icon {
+                __typename
+              }
+              text {
+                small
+                default
+                __typename
+              }
+              __typename
+            }
             componentId
             __typename
           }
@@ -1207,23 +1219,11 @@ def get_epg_page(page_id, page_size='', end_cursor=''):
               __typename
             }
             whatsonId
-            episode {
-              ...episode
-            }
             __typename
           }
           ... on LivestreamTile {
             description
             brand
-            livestream {
-              title
-              subtitle
-              startDateTime
-              episode {
-                ...episode
-              }
-              __typename
-            }
             progress {
               durationInSeconds
               progressInSeconds
@@ -1434,8 +1434,7 @@ def get_epg_page(page_id, page_size='', end_cursor=''):
             __typename
           }
         }
-        %s
-    """ % EPISODE
+    """
     operation_name = 'Page'
     variables = {
         'pageId': page_id,
@@ -1451,7 +1450,8 @@ def get_epg_list(channel, date, page=None):
     page_size = get_setting_int('itemsperpage', default=50)
     api_page_size = 50
 
-    # Base page (center block)
+    # Base page
+    channel = find_entry(CHANNELS, 'name', channel).get('live_stream').split('/')[-2]
     page_id = f'/vrtmax/tv-gids/{channel}/{date}/'
     base = get_epg_page(page_id, page_size=api_page_size, end_cursor='')
 
@@ -1638,6 +1638,7 @@ def convert_programs(item_list, destination, end_cursor='', use_favorites=False,
 
 def convert_episode(episode_tile, destination=None):
     """Convert paginated episode item to TitleItem"""
+    import re
     import dateutil.parser
     from datetime import datetime, timedelta
     from base64 import b64decode
@@ -1664,7 +1665,28 @@ def convert_episode(episode_tile, destination=None):
     is_live = episode_tile.get('active', False)
     program_title = episode_tile.get('subtitle') or ''
     episode_title = episode_tile.get('title')
-    path = url_for('play_url', video_url=episode_tile.get('action', {}).get('link'))
+    if episode_tile.get('action'):
+        path = url_for('play_url', video_url=episode_tile.get('action', {}).get('link'))
+
+    # Season and episode numbers
+    season_no = episode_no = None
+    if episode_tile.get('primaryMeta'):
+        for item in episode_tile.get('primaryMeta', []):
+            value = item.get('longValue', '') or ''
+            match = re.search(r'\d+', value)
+            if not match:
+                continue
+
+            number = int(match.group())
+
+            if 'Seizoen' in value:
+                season_no = number
+            elif 'Aflevering' in value:
+                episode_no = number
+
+    if season_no and episode_no:
+        title_item.info_dict['episode'] = episode_no
+        title_item.info_dict['season'] = season_no
 
     if episode_tile.get('livestream'):
         episode = episode_tile.get('livestream').get('episode')
@@ -1791,7 +1813,9 @@ def convert_episode(episode_tile, destination=None):
             is_live = True
             is_playable = True
             channel = episode_tile.get('brand')
-            start_str = episode_tile.get('livestream').get('startDateTime')
+            start_time = episode_tile.get('status').get('text').get('small').split(' - ')[0]
+            hours, minutes = map(int, start_time.split(':'))
+            start_str = now.replace(hour=hours, minute=minutes, second=0, microsecond=0).isoformat()
         else:
             comp_id = episode_tile.get('componentId', '').lstrip('#')
             decoded = b64decode(comp_id.encode('utf-8')).decode('utf-8')
