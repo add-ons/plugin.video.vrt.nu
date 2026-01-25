@@ -1663,7 +1663,10 @@ def convert_episode(episode_tile, destination=None):
     # Basic tile properties
     is_playable = episode_tile.get('available', True)
     is_live = episode_tile.get('active', False)
-    program_title = episode_tile.get('subtitle') or ''
+    program_title = next(
+        (meta.get('value') for meta in episode_tile.get('primaryMeta', [])),
+        ''
+    )
     episode_title = episode_tile.get('title')
     if episode_tile.get('action'):
         path = url_for('play_url', video_url=episode_tile.get('action', {}).get('link'))
@@ -2179,7 +2182,7 @@ def convert_seasons(api_data, program_name):
             _, _, _, title_item = convert_episode(episode_tile)
             if len(api_data) > 1:
                 season_title = '[B]{}:[/B] {}'.format(season.get('title'), title_item.label)
-            elif title_item.info_dict['tvshowtitle'] != title_item.label:
+            elif title_item.info_dict['tvshowtitle'] and title_item.info_dict['tvshowtitle'] != title_item.label:
                 season_title = '[B]{}:[/B] {}'.format(title_item.info_dict['tvshowtitle'], title_item.label)
             else:
                 season_title = title_item.label
