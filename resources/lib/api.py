@@ -1664,10 +1664,11 @@ def convert_episode(episode_tile, destination=None):
     is_playable = episode_tile.get('available', True)
     is_live = episode_tile.get('active', False)
     program_title = next(
-        (meta.get('value') for meta in episode_tile.get('primaryMeta', [])),
+        (action.get('action').get('title') for action in episode_tile.get('actionItems', []) or []
+         if action.get('action').get('__typename') == 'FavoriteAction'),
         ''
     )
-    episode_title = episode_tile.get('title')
+    episode_title = episode_tile.get('description') or episode_tile.get('title')
     if episode_tile.get('action'):
         path = url_for('play_url', video_url=episode_tile.get('action', {}).get('link'))
 
