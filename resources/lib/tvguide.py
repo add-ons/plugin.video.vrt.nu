@@ -177,7 +177,9 @@ class TVGuide:
 
                     # Decode start datetime
                     if node.get('tileType') == 'livestream':
-                        start_str = node.get('livestream').get('startDateTime')
+                        start_time = node.get('status').get('text').get('small').split(' - ')[0]
+                        hours, minutes = map(int, start_time.split(':'))
+                        start_str = now.replace(hour=hours, minute=minutes, second=0, microsecond=0).isoformat()
                     else:
                         comp_id = node.get('componentId', '').lstrip('#')
                         decoded = b64decode(comp_id.encode('utf-8')).decode('utf-8')
