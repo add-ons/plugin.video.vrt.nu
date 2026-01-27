@@ -225,10 +225,6 @@ class TVGuide:
                         genre = (episode.get('analytics') or {}).get('categories')
                         date = (episode.get('analytics') or {}).get('airDate')
 
-                        watch_action = episode.get('watchAction', {})
-                        video_id = watch_action.get('videoId')
-                        publication_id = watch_action.get('publicationId')
-
                         program_type = program.get('programType')
                         season = episode.get('season', {})
                         if (

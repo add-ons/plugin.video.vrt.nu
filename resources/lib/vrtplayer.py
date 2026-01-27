@@ -243,11 +243,11 @@ class VRTPlayer:
     def play_episode_by_air_date(self, channel, start_date, end_date):
         """Play an episode of a program given the channel and the air date in iso format (2024-10-04T19:35:00)"""
         from datetime import datetime
-        from zoneinfo import ZoneInfo
+        import dateutil.tz
 
         # Convert to UTC
-        onair = datetime.fromisoformat(start_date).replace(tzinfo=ZoneInfo('Europe/Brussels'))
-        offair = datetime.fromisoformat(end_date).replace(tzinfo=ZoneInfo('Europe/Brussels'))
+        onair = datetime.fromisoformat(start_date).replace(tzinfo=dateutil.tz.gettz('Europe/Brussels'))
+        offair = datetime.fromisoformat(end_date).replace(tzinfo=dateutil.tz.gettz('Europe/Brussels'))
         channel = find_entry(CHANNELS, 'name', channel)
         start_date = onair.astimezone(ZoneInfo('UTC')).isoformat()[0:19]
         end_date = offair.astimezone(ZoneInfo('UTC')).isoformat()[0:19]
