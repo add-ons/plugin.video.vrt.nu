@@ -1691,6 +1691,7 @@ def convert_episode(episode_tile, destination=None):
     if season_no and episode_no:
         title_item.info_dict['episode'] = episode_no
         title_item.info_dict['season'] = season_no
+        program_type = 'series'
 
     if episode_tile.get('livestream'):
         episode = episode_tile.get('livestream').get('episode')
@@ -1813,6 +1814,7 @@ def convert_episode(episode_tile, destination=None):
     # EPG entries
     if episode_tile.get('indexMeta'):
         program_type = 'epg'
+        program_title = episode_tile.get('title')
         if episode_tile.get('tileType') == 'livestream':
             is_live = True
             is_playable = True
@@ -2579,112 +2581,6 @@ def localize_categories(categories, categories2):
             if key == 'name':
                 category[key] = localize_from_data(val, categories2)
     return sorted(categories, key=lambda x: x.get('name'))
-
-
-def get_episode_by_air_date(channel_name, start_date, end_date=None):
-    """Get an episode of a program given the channel and the air date in iso format (2024-10-04T19:35:00)"""
-    channel = find_entry(CHANNELS, 'name', channel_name)
-    if not channel:
-        return None
-
-    from datetime import datetime, timedelta
-    import dateutil.parser
-    import dateutil.tz
-    offairdate = None
-    try:
-        onairdate = dateutil.parser.parse(start_date, default=datetime.now(dateutil.tz.gettz('Europe/Brussels')))
-    except ValueError:
-        return None
-
-    if end_date:
-        try:
-            offairdate = dateutil.parser.parse(end_date, default=datetime.now(dateutil.tz.gettz('Europe/Brussels')))
-        except ValueError:
-            return None
-    video = None
-    now = datetime.now(dateutil.tz.gettz('Europe/Brussels'))
-    if onairdate.hour < 6:
-        schedule_date = onairdate - timedelta(days=1)
-    else:
-        schedule_date = onairdate
-    schedule_datestr = schedule_date.isoformat().split('T')[0]
-    url = 'https://www.vrt.be/bin/epg/schedule.{date}.json'.format(date=schedule_datestr)
-    schedule_json = get_url_json(url, fail={})
-    episodes = schedule_json.get(channel.get('id'), [])
-    if not episodes:
-        return None
-
-    # Guess the episode
-    episode_guess = None
-    if not offairdate:
-        mindate = min(abs(onairdate - dateutil.parser.parse(episode.get('startTime'))) for episode in episodes)
-        episode_guess = next((episode for episode in episodes if abs(onairdate - dateutil.parser.parse(episode.get('startTime'))) == mindate), None)
-    else:
-        duration = offairdate - onairdate
-        midairdate = onairdate + timedelta(seconds=duration.total_seconds() / 2)
-        mindate = min(abs(midairdate
-                          - (dateutil.parser.parse(episode.get('startTime'))
-                             + timedelta(seconds=(dateutil.parser.parse(episode.get('endTime'))
-                                                  - dateutil.parser.parse(episode.get('startTime'))).total_seconds() / 2))) for episode in episodes)
-        episode_guess = next((episode for episode in episodes
-                              if abs(midairdate
-                                     - (dateutil.parser.parse(episode.get('startTime'))
-                                        + timedelta(seconds=(dateutil.parser.parse(episode.get('endTime'))
-                                                             - dateutil.parser.parse(episode.get('startTime'))).total_seconds() / 2))) == mindate), None)
-    if episode_guess:
-        if episode_guess.get('episodeId'):
-            episode = get_single_episode_data(episode_guess.get('url')).get('data').get('page')
-            if episode.get('available'):
-                log(2, 'Guessed available episode {item}', item=episode_guess.get('url'))
-                _, _, _, video_item = convert_episode(episode)
-                video = {
-                    'listitem': video_item,
-                    'video_url': episode.get('episode').get('shareAction').get('url'),
-                }
-                if video:
-                    return video
-
-        # Airdate live2vod feature: use livestream cache of last 24 hours if no video was found
-        offairdate_guess = dateutil.parser.parse(episode_guess.get('endTime'))
-        if now - timedelta(hours=LIVESTREAM_CACHE_HOURS) <= dateutil.parser.parse(episode_guess.get('endTime')) <= now:
-            start_date = onairdate.astimezone(dateutil.tz.UTC).isoformat()[0:19]
-            end_date = offairdate_guess.astimezone(dateutil.tz.UTC).isoformat()[0:19]
-
-        # Offairdate defined
-        if offairdate and now - timedelta(hours=LIVESTREAM_CACHE_HOURS) <= offairdate <= now:
-            start_date = onairdate.astimezone(dateutil.tz.UTC).isoformat()[:19]
-            end_date = offairdate.astimezone(dateutil.tz.UTC).isoformat()[:19]
-
-        if start_date and end_date:
-            live2vod_title = '{} ({})'.format(episode_guess.get('title'), localize(30454))  # from livestream cache
-            log(2, live2vod_title)
-            video_item = TitleItem(
-                label=live2vod_title,
-                info_dict={
-                    'tvshowtitle': live2vod_title,
-                    'aired': start_date[:10],
-                    'year': int(start_date[:4]),
-                    'mediatype': 'episode',
-                },
-                art_dict={
-                    'thumb': episode_guess.get('image'),
-                    'poster': episode_guess.get('image'),
-                    'banner': episode_guess.get('image'),
-                    'fanart': episode_guess.get('image'),
-                },
-            )
-            video = {
-                'listitem': video_item,
-                'video_id': channel.get('live_stream_id'),
-                'start_date': start_date,
-                'end_date': end_date,
-            }
-            return video
-
-        video = {
-            'errorlabel': episode_guess.get('title')
-        }
-    return video
 
 
 def get_channels(channels=None, live=True):

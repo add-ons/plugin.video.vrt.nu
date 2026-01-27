@@ -2,8 +2,9 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Implements a VRTPlayer class"""
 
-from api import (get_categories, get_channels, get_continue_episodes, get_episode_by_air_date, get_featured, get_programs, get_episodes, get_favorite_programs,
+from api import (get_categories, get_channels, get_continue_episodes, get_featured, get_programs, get_episodes, get_favorite_programs,
                  get_recent_episodes, get_offline_programs, get_single_episode, get_latest_episode, get_youtube)
+from data import CHANNELS
 from helperobjects import TitleItem
 from kodiutils import (delete_cached_thumbnail, end_of_directory, get_addon_info,
                        get_setting, get_setting_bool, has_credentials,
@@ -190,7 +191,6 @@ class VRTPlayer:
                 channel_items.extend(get_programs(channel=channel))  # TV shows
             else:
                 channel_items = get_programs(channel=channel, end_cursor=end_cursor)
-            from data import CHANNELS
             channel_name = find_entry(CHANNELS, 'name', channel).get('label')
             show_listing(channel_items, category=channel_name, sort='unsorted', content='tvshows', cache=False)  # Channel
         else:
@@ -242,16 +242,20 @@ class VRTPlayer:
 
     def play_episode_by_air_date(self, channel, start_date, end_date):
         """Play an episode of a program given the channel and the air date in iso format (2024-10-04T19:35:00)"""
-        video = get_episode_by_air_date(channel, start_date, end_date)
-        if video and video.get('errorlabel'):
-            ok_dialog(message=localize(30986, title=video.get('errorlabel')))
-            end_of_directory()
-            return
-        if not video:
-            log_error('Play episode by air date failed, channel {channel}, start_date {start}', channel=channel, start=start_date)
-            ok_dialog(message=localize(30954))
-            end_of_directory()
-            return
+        from datetime import datetime
+        from zoneinfo import ZoneInfo
+
+        # Convert to UTC
+        onair = datetime.fromisoformat(start_date).replace(tzinfo=ZoneInfo('Europe/Brussels'))
+        offair = datetime.fromisoformat(end_date).replace(tzinfo=ZoneInfo('Europe/Brussels'))
+        channel = find_entry(CHANNELS, 'name', channel)
+        start_date = onair.astimezone(ZoneInfo('UTC')).isoformat()[0:19]
+        end_date = offair.astimezone(ZoneInfo('UTC')).isoformat()[0:19]
+        video = {
+            'video_id': channel.get('live_stream_id'),
+            'start_date': start_date,
+            'end_date': end_date,
+        }
         self.play(video)
 
     def play_episode_by_episode_id(self, episode_id):
