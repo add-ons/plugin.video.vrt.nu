@@ -11,7 +11,7 @@ from helperobjects import TitleItem
 from kodiutils import (colour, delete_cached_thumbnail, get_cache, get_setting_bool, get_setting_int, get_url_json, has_addon, has_credentials,
                        localize, localize_datelong, localize_from_data, log, log_error, update_cache, url_for)
 from utils import find_entry, parse_duration, reformat_image_url, shorten_link, url_to_program, youtube_to_plugin_url
-from graphql_data import EPISODE, EPISODE_TILE, PROGRAM_TILE
+from graphql_data import EPISODE_TILE, PROGRAM_TILE
 
 
 SCREENSHOT_URL = 'https://www.vrt.be/vrtnu-static/screenshots'
@@ -323,8 +323,7 @@ def get_single_episode_data(episode_id):
             }
           }
         }
-        %s
-    """ % EPISODE
+    """
     operation_name = 'OnePlayerData'
     variables = {
         'id': episode_id,
