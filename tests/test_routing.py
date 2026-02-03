@@ -236,17 +236,17 @@ class TestRouting(unittest.TestCase):
     def test_play_airdateepisode_route(self):
         """Play episode by air date method: /play/airdate/<channel>/<start_date>/<end_date>"""
         # Test Het Journaal
-        addon.run([lastweek.strftime('plugin://plugin.video.vrt.nu/play/airdate/een/%Y-%m-%dT19:00:00-%Y-%m-%dT19:45:00'), '0', ''])
+        addon.run([lastweek.strftime('plugin://plugin.video.vrt.nu/play/airdate/een/%Y-%m-%dT19:00:00/%Y-%m-%dT19:45:00'), '0', ''])
         self.assertEqual(plugin.url_for(addon.play_air_date,
                                         channel='een',
-                                        start_date=lastweek.strftime('%Y-%m-%dT19:00:00-%Y-%m-%dT19:45:00')),
-                         lastweek.strftime('plugin://plugin.video.vrt.nu/play/airdate/een/%Y-%m-%dT19:00:00-%Y-%m-%dT19:45:00'))
+                                        start_date=lastweek.strftime('%Y-%m-%dT19:00:00/%Y-%m-%dT19:45:00')),
+                         lastweek.strftime('plugin://plugin.video.vrt.nu/play/airdate/een/%Y-%m-%dT19:00:00/%Y-%m-%dT19:45:00'))
         # Test TerZake
-        addon.run([lastweek.strftime('plugin://plugin.video.vrt.nu/play/airdate/canvas/%Y-%m-%dT20:00:00-%Y-%m-%dT20:35:00'), '0', ''])
+        addon.run([lastweek.strftime('plugin://plugin.video.vrt.nu/play/airdate/canvas/%Y-%m-%dT20:00:00/%Y-%m-%dT20:35:00'), '0', ''])
         self.assertEqual(plugin.url_for(addon.play_air_date,
                                         channel='canvas',
-                                        start_date=lastweek.strftime('%Y-%m-%dT20:00:00-%Y-%m-%dT20:35:00')),
-                         lastweek.strftime('plugin://plugin.video.vrt.nu/play/airdate/canvas/%Y-%m-%dT20:00:00-%Y-%m-%dT20:35:00'))
+                                        start_date=lastweek.strftime('%Y-%m-%dT20:00:00/%Y-%m-%dT20:35:00')),
+                         lastweek.strftime('plugin://plugin.video.vrt.nu/play/airdate/canvas/%Y-%m-%dT20:00:00/%Y-%m-%dT20:35:00'))
         # Test Livestream cache for morning tv from 9h to 10h
         if now.hour < 10:
             mostrecent = now + timedelta(days=-1)

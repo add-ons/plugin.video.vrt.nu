@@ -17,7 +17,7 @@ xbmcgui = __import__('xbmcgui')
 xbmcplugin = __import__('xbmcplugin')
 xbmcvfs = __import__('xbmcvfs')
 
-channels = ['vrt1', 'vrt-canvas', 'ketnet']
+channels = ['een', 'canvas', 'ketnet']
 
 
 class TestTVGuide(unittest.TestCase):
@@ -38,7 +38,7 @@ class TestTVGuide(unittest.TestCase):
 
     def test_tvguide_channel_menu(self):
         """Test channel menu"""
-        channel_items = self._tvguide.get_channel_items(channel='vrt1')
+        channel_items = self._tvguide.get_channel_items(channel='een')
         self.assertTrue(channel_items)
         channel_item = random.choice(channel_items)
         print('- %s%s' % (kodi_to_ansi(channel_item.label), uri_to_path(channel_item.path)))
@@ -74,9 +74,9 @@ class TestTVGuide(unittest.TestCase):
 
     def test_tvguide_all(self):
         """Test episode menu"""
-        episode_items = self._tvguide.get_episode_items('yesterday', 'vrt1')
+        episode_items = self._tvguide.get_episode_items('yesterday', 'een')
         self.assertTrue(episode_items)
-        episode_items = self._tvguide.get_episode_items('today', 'vrt-canvas')
+        episode_items = self._tvguide.get_episode_items('today', 'canvas')
         self.assertTrue(episode_items)
         episode_items = self._tvguide.get_episode_items('tomorrow', 'ketnet')
         self.assertTrue(episode_items)
