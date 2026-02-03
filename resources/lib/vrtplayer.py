@@ -249,8 +249,8 @@ class VRTPlayer:
         onair = datetime.fromisoformat(start_date).replace(tzinfo=dateutil.tz.gettz('Europe/Brussels'))
         offair = datetime.fromisoformat(end_date).replace(tzinfo=dateutil.tz.gettz('Europe/Brussels'))
         channel = find_entry(CHANNELS, 'name', channel)
-        start_date = onair.astimezone(ZoneInfo('UTC')).isoformat()[0:19]
-        end_date = offair.astimezone(ZoneInfo('UTC')).isoformat()[0:19]
+        start_date = onair.astimezone(dateutil.tz.UTC).isoformat()[0:19]
+        end_date = offair.astimezone(dateutil.tz.UTC).isoformat()[0:19]
         video = {
             'video_id': channel.get('live_stream_id'),
             'start_date': start_date,

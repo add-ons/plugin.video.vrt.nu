@@ -1671,11 +1671,28 @@ def convert_episode(episode_tile, destination=None):
     if episode_tile.get('action'):
         path = url_for('play_url', video_url=episode_tile.get('action', {}).get('link'))
 
+    # Duration
+    progress = episode_tile.get('progress') or {}
+    status = episode_tile.get('status') or {}
+    text = (status.get('text') or {}).get('default', '')
+    seconds = progress.get('durationInSeconds')
+
+    if isinstance(seconds, (int, float)):
+        duration = timedelta(seconds=seconds)
+    else:
+        minutes = (
+            int(text.split()[0])
+            if text.split() and text.split()[0].isdigit()
+            else 0
+        )
+        duration = timedelta(minutes=minutes)
+
     # Season and episode numbers
     season_no = episode_no = None
+
     if episode_tile.get('primaryMeta'):
         for item in episode_tile.get('primaryMeta', []):
-            value = item.get('longValue', '') or ''
+            value = item.get('longValue', '') or item.get('value', '') or ''
             match = re.search(r'\d+', value)
             if not match:
                 continue
@@ -1691,6 +1708,24 @@ def convert_episode(episode_tile, destination=None):
         title_item.info_dict['episode'] = episode_no
         title_item.info_dict['season'] = season_no
         program_type = 'series'
+
+    # Aired
+    dutch_months = [
+        'januari', 'februari', 'maart', 'april', 'mei', 'juni',
+        'juli', 'augustus', 'september', 'oktober', 'november', 'december'
+    ]
+    aired = next(
+        (meta.get('shortValue') for meta in episode_tile.get('primaryMeta', []) or []
+         if any(month in (meta.get('longValue') or '') for month in dutch_months)),
+        None
+    )
+    if aired:
+        date_part = aired.split()[1]
+        fmt = '%d/%m/%Y' if date_part.count('/') == 2 else '%d/%m/%Y'
+        value = date_part if date_part.count('/') == 2 else f'{date_part}/{now.year}'
+        start_dt = datetime.strptime(value, fmt)
+        title_item.info_dict['aired'] = start_dt.strftime('%Y-%m-%d')
+        program_type = 'daily'
 
     if episode_tile.get('livestream'):
         episode = episode_tile.get('livestream').get('episode')
@@ -1829,12 +1864,6 @@ def convert_episode(episode_tile, destination=None):
             channel = find_entry(CHANNELS, 'id', channel_id).get('name')
 
         start_dt = datetime.fromisoformat(start_str.replace('Z', '+00:00'))
-
-        if not duration:
-            if episode_tile.get('progress'):
-                duration = timedelta(seconds=episode_tile.get('progress').get('durationInSeconds'))
-            else:
-                duration = timedelta(minutes=int(episode_tile['statusMeta'][0]['value'].split()[0]))
         stop_dt = start_dt + duration
 
         # Fix unplayable episodes
