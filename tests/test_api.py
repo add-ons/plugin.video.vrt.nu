@@ -44,8 +44,8 @@ class TestApi(unittest.TestCase):
         """Test listing episodes for a specific season (pano)"""
         title_items, sort, ascending, content = get_episodes(program_name='pano', season_name='2020')
         self.assertEqual(len(title_items), 15)
-        self.assertEqual(sort, 'dateadded')  # Pano has 'daily' programType
-        self.assertFalse(ascending)
+        self.assertEqual(sort, 'episode')  # Pano has 'series' programType
+        self.assertTrue(ascending)
         self.assertEqual(content, 'episodes')
 
     def test_get_recent_episodes(self):
@@ -100,7 +100,7 @@ class TestApi(unittest.TestCase):
     def test_episode_plot(self):
         """Test getting an episode plot (thuis)"""
         title_items, sort, ascending, content = get_episodes(program_name='thuis', season_name='28')
-        self.assertEqual(sort, 'dateadded')  # Thuis has 'daily' programType
+        self.assertEqual(sort, 'episode')  # Thuis has 'daily' programType
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')
         plot = title_items[0].info_dict['plot']

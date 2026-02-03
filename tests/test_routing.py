@@ -133,13 +133,13 @@ class TestRouting(unittest.TestCase):
         self.assertEqual(plugin.url_for(addon.tvguide), 'plugin://plugin.video.vrt.nu/tvguide/date')
         addon.run(['plugin://plugin.video.vrt.nu/tvguide/date/today', '0', ''])
         self.assertEqual(plugin.url_for(addon.tvguide, date='today'), 'plugin://plugin.video.vrt.nu/tvguide/date/today')
-        addon.run(['plugin://plugin.video.vrt.nu/tvguide/date/today/vrt-canvas', '0', ''])
-        self.assertEqual(plugin.url_for(addon.tvguide, date='today', channel='vrt-canvas'), 'plugin://plugin.video.vrt.nu/tvguide/date/today/vrt-canvas')
-        addon.run(['plugin://plugin.video.vrt.nu/tvguide/channel/vrt-canvas', '0', ''])
-        self.assertEqual(plugin.url_for(addon.tvguide_channel, channel='vrt-canvas'), 'plugin://plugin.video.vrt.nu/tvguide/channel/vrt-canvas')
-        addon.run(['plugin://plugin.video.vrt.nu/tvguide/channel/vrt-canvas/today', '0', ''])
-        self.assertEqual(plugin.url_for(addon.tvguide_channel, channel='vrt-canvas', date='today'),
-                         'plugin://plugin.video.vrt.nu/tvguide/channel/vrt-canvas/today')
+        addon.run(['plugin://plugin.video.vrt.nu/tvguide/date/today/canvas', '0', ''])
+        self.assertEqual(plugin.url_for(addon.tvguide, date='today', channel='canvas'), 'plugin://plugin.video.vrt.nu/tvguide/date/today/canvas')
+        addon.run(['plugin://plugin.video.vrt.nu/tvguide/channel/canvas', '0', ''])
+        self.assertEqual(plugin.url_for(addon.tvguide_channel, channel='canvas'), 'plugin://plugin.video.vrt.nu/tvguide/channel/canvas')
+        addon.run(['plugin://plugin.video.vrt.nu/tvguide/channel/canvas/today', '0', ''])
+        self.assertEqual(plugin.url_for(addon.tvguide_channel, channel='canvas', date='today'),
+                         'plugin://plugin.video.vrt.nu/tvguide/channel/canvas/today')
 
     @unittest.skipUnless(xbmc_addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
@@ -236,17 +236,17 @@ class TestRouting(unittest.TestCase):
     def test_play_airdateepisode_route(self):
         """Play episode by air date method: /play/airdate/<channel>/<start_date>/<end_date>"""
         # Test Het Journaal
-        addon.run([lastweek.strftime('plugin://plugin.video.vrt.nu/play/airdate/een/%Y-%m-%dT19:00:00'), '0', ''])
+        addon.run([lastweek.strftime('plugin://plugin.video.vrt.nu/play/airdate/een/%Y-%m-%dT19:00:00-%Y-%m-%dT19:45:00'), '0', ''])
         self.assertEqual(plugin.url_for(addon.play_air_date,
                                         channel='een',
-                                        start_date=lastweek.strftime('%Y-%m-%dT19:00:00')),
-                         lastweek.strftime('plugin://plugin.video.vrt.nu/play/airdate/een/%Y-%m-%dT19:00:00'))
+                                        start_date=lastweek.strftime('%Y-%m-%dT19:00:00-%Y-%m-%dT19:45:00')),
+                         lastweek.strftime('plugin://plugin.video.vrt.nu/play/airdate/een/%Y-%m-%dT19:00:00-%Y-%m-%dT19:45:00'))
         # Test TerZake
-        addon.run([lastweek.strftime('plugin://plugin.video.vrt.nu/play/airdate/canvas/%Y-%m-%dT20:00:00'), '0', ''])
+        addon.run([lastweek.strftime('plugin://plugin.video.vrt.nu/play/airdate/canvas/%Y-%m-%dT20:00:00-%Y-%m-%dT20:35:00'), '0', ''])
         self.assertEqual(plugin.url_for(addon.play_air_date,
                                         channel='canvas',
-                                        start_date=lastweek.strftime('%Y-%m-%dT20:00:00')),
-                         lastweek.strftime('plugin://plugin.video.vrt.nu/play/airdate/canvas/%Y-%m-%dT20:00:00'))
+                                        start_date=lastweek.strftime('%Y-%m-%dT20:00:00-%Y-%m-%dT20:35:00')),
+                         lastweek.strftime('plugin://plugin.video.vrt.nu/play/airdate/canvas/%Y-%m-%dT20:00:00-%Y-%m-%dT20:35:00'))
         # Test Livestream cache for morning tv from 9h to 10h
         if now.hour < 10:
             mostrecent = now + timedelta(days=-1)
