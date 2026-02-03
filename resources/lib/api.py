@@ -288,6 +288,7 @@ def get_stream_data(page_id):
               }
             }
             ... on EpisodePage {
+              title
               player {
                 modes {
                   ... on VideoPlayerMode {
@@ -331,9 +332,8 @@ def get_single_episode_data(episode_id):
     return api_req(graphql_query, operation_name, variables)
 
 
-def get_latest_episode_data(program_name):
-    """Get latest episode data from GraphQL API"""
-    latest_episode = None
+def get_program_data(program_name):
+    """Get program data from GraphQL API"""
     graphql_query = """
         query VideoProgramPage(
           $pageId: ID!,
@@ -351,8 +351,15 @@ def get_latest_episode_data(program_name):
                   title
                   action {
                     ... on LinkAction {
+                      __typename
                       internalTarget
                       link
+                    }
+                    ... on FavoriteAction {
+                      __typename
+                      title
+                      id
+                      favorite
                     }
                   }
                 }
@@ -416,26 +423,44 @@ def get_latest_episode_data(program_name):
     """ % EPISODE_TILE
     operation_name = 'VideoProgramPage'
     variables = {
-        'pageId': '/vrtmax/a-z/{}/'.format(program_name),
+        'pageId': f'/vrtmax/a-z/{program_name}/',
     }
-    data = api_req(graphql_query, operation_name, variables)
+    return api_req(graphql_query, operation_name, variables)
+
+
+def get_latest_episode_data(program_name):
+    """Get latest episode data from GraphQL API"""
+    import re
+    latest_episode = None
+    data = get_program_data(program_name)
     if data.get('data').get('page'):
         for action in data.get('data').get('page').get('header').get('actionItems'):
             if action.get('title') == 'Bekijk de recentste aflevering':
-                latest_episode = get_single_episode_data(action.get('action').get('link')).get('data').get('page')
-            else:
-                items = data.get('data').get('page').get('components')[0].get('items')[0].get('components')[0]
-                if not items.get('paginatedItems'):
-                    items = items.get('items')[0].get('components')[0]
-                edges = items.get('paginatedItems').get('edges')
-                highest_ep_no = 0
-                highest_ep = {}
-                for edge in edges:
-                    ep_no = int(edge.get('node').get('episode').get('episodeNumberRaw') or 0)
-                    if ep_no > highest_ep_no:
-                        highest_ep_no = ep_no
-                        highest_ep = edge.get('node')
-                latest_episode = highest_ep
+                latest_episode = get_stream_data(action.get('action').get('link')).get('data').get('page')
+                break
+            items = data.get('data').get('page').get('components')[0].get('items')[0].get('components')[0]
+            if not items.get('paginatedItems'):
+                items = items.get('items')[0].get('components')[0]
+            edges = items.get('paginatedItems').get('edges')
+            highest_ep_no = 0
+            highest_ep = {}
+            for edge in edges:
+                ep_no = next(
+                    (
+                        int(m.group())
+                        for meta in edge.get('node').get('primaryMeta') or []
+                        if (m := re.search(
+                            r'\b\d+\b',
+                            meta.get('longValue') or meta.get('value') or ''
+                        ))
+                        and 'Aflevering' in (meta.get('longValue') or meta.get('value') or '')
+                    ),
+                    0
+                )
+                if ep_no > highest_ep_no:
+                    highest_ep_no = ep_no
+                    highest_ep = edge.get('node')
+            latest_episode = highest_ep
     return latest_episode
 
 
@@ -679,13 +704,23 @@ def set_favorite(program_id, program_title, favorited=True):
 
 def is_favorite(program_name):
     """Wether a program a favorited"""
-    favorite = get_latest_episode_data(program_name).get('episode').get('favoriteAction').get('favorite')
+    data = get_program_data(program_name)
+    favorite = next(
+        (action.get('action').get('favorite') for action in data.get('data').get('page').get('header').get('actionItems', []) or []
+         if action.get('action').get('__typename') == 'FavoriteAction'),
+        ''
+    )
     return favorite
 
 
 def get_program_id(program_name):
     """Get the id of a program"""
-    program_id = get_latest_episode_data(program_name).get('episode').get('program').get('id')
+    data = get_program_data(program_name)
+    program_id = next(
+        (action.get('action').get('id').split('##')[0] for action in data.get('data').get('page').get('header').get('actionItems', []) or []
+         if action.get('action').get('__typename') == 'FavoriteAction'),
+        ''
+    )
     return program_id
 
 
@@ -1958,12 +1993,17 @@ def get_latest_episode(program_name):
     video = None
     latest_episode = get_latest_episode_data(program_name=program_name)
     if latest_episode:
-        _, _, _, title_item = convert_episode(latest_episode)
+        stream_id = next(
+            (mode.get('streamId')
+             for mode in latest_episode.get('player', {}).get('modes', [])
+             if mode.get('__typename') == 'VideoPlayerMode'),
+            ''
+        )
         video = {
-            'listitem': title_item,
-            'video_id': title_item.path.split('/')[5],
-            'publication_id': title_item.path.split('/')[6],
+            'video_id': stream_id.split('$')[1],
+            'publication_id': stream_id.split('$')[0],
         }
+
     return video
 
 

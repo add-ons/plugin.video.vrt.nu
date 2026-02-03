@@ -180,6 +180,13 @@ EPISODE_TILE = """
       chapterStart
       formattedDuration
       whatsonId
+      primaryMeta {
+        longValue
+        shortValue
+        type
+        value
+        __typename
+      }
       progress {
         completed
         progressInSeconds
