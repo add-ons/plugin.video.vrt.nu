@@ -209,62 +209,73 @@ def get_resumepoint_data(episode_id):
 
 def get_next_info(episode_id):
     """ Get up next data"""
-    import dateutil.parser
     next_info = {}
-    data_json = get_single_episode_data(episode_id)
-    current_ep = data_json.get('data').get('page').get('episode')
+    data_json = get_stream_data(episode_id)
+    current_ep = data_json.get('data').get('page')
+    current_ep_info = next((info for info in current_ep.get('components') if info.get('__typename') == 'MediaInfo'), None)
     # Only get add data when there is a next episode
-    if current_ep.get('nextUp').get('title') == 'Volgende aflevering':
-        next_ep = current_ep.get('nextUp').get('tile').get('episode')
+    if current_ep.get('player').get('playlist').get('next'):
+        edges = (
+            current_ep
+            .get('player', {})
+            .get('playlist', {})
+            .get('next', {})
+            .get('paginatedItems', {})
+            .get('edges', [])
+        )
+        next_ep = next((edge.get('node') for edge in edges), None)
 
         current_episode = {
             'episodeid': current_ep.get('id'),
-            'tvshowid': current_ep.get('program').get('id'),
+            'tvshowid': current_ep.get('program', {}).get('id') or '1234',
             'title': current_ep.get('title'),
             'art': {
-                'tvshow.poster': reformat_image_url(current_ep.get('program').get('posterImage').get('templateUrl')),
-                'thumb': reformat_image_url(current_ep.get('image').get('templateUrl')),
-                'tvshow.fanart': reformat_image_url(current_ep.get('program').get('image').get('templateUrl')),
-                'tvshow.landscape': reformat_image_url(current_ep.get('image').get('templateUrl')),
+                'tvshow.poster': None,
+                'thumb': current_ep.get('player').get('image').get('templateUrl'),
+                'tvshow.fanart': None,
+                'tvshow.landscape': current_ep.get('player').get('image').get('templateUrl'),
                 'tvshow.clearart': None,
                 'tvshow.clearlogo': None,
             },
-            'plot': current_ep.get('description'),
-            'showtitle': current_ep.get('program').get('title'),
+            'plot': current_ep_info.get('description'),
+            'showtitle': current_ep.get('player').get('subtitle'),
             'playcount': None,
-            'season': int(''.join(i for i in current_ep.get('season').get('titleRaw') if i.isdigit()) or 0),
-            'episode': int(current_ep.get('episodeNumberRaw') or 0),
+            'season': next((lv.split()[1] for meta in (current_ep_info.get('secondaryMeta') or [])
+                            if (lv := meta.get('longValue')) and 'Seizoen' in lv), 0),
+            'episode': next((lv.split()[1] for meta in (current_ep_info.get('secondaryMeta') or [])
+                             if (lv := meta.get('longValue')) and 'Aflevering' in lv), 0),
             'rating': None,
-            'firstaired': dateutil.parser.parse(current_ep.get('analytics').get('airDate')).strftime('%Y-%m-%d'),
-            'runtime': int(current_ep.get('durationSeconds')),
+            'firstaired': None,
+            'runtime': int(current_ep.get('player', {}).get('progress', {}).get('durationSeconds', 0)),
         }
-
         next_episode = {
             'episodeid': next_ep.get('id'),
-            'tvshowid': next_ep.get('program').get('id'),
+            'tvshowid': current_ep.get('program', {}).get('id'),
             'title': next_ep.get('title'),
             'art': {
-                'tvshow.poster': reformat_image_url(next_ep.get('program').get('posterImage').get('templateUrl')),
-                'thumb': reformat_image_url(next_ep.get('image').get('templateUrl')),
-                'tvshow.fanart': reformat_image_url(next_ep.get('program').get('image').get('templateUrl')),
-                'tvshow.landscape': reformat_image_url(next_ep.get('image').get('templateUrl')),
+                'tvshow.poster': None,
+                'thumb': next_ep.get('image').get('templateUrl'),
+                'tvshow.fanart': None,
+                'tvshow.landscape': next_ep.get('image').get('templateUrl'),
                 'tvshow.clearart': None,
                 'tvshow.clearlogo': None,
             },
             'plot': next_ep.get('description'),
-            'showtitle': next_ep.get('program').get('title'),
+            'showtitle': current_ep.get('player').get('subtitle'),
             'playcount': None,
-            'season': int(''.join(i for i in next_ep.get('season').get('titleRaw') if i.isdigit()) or 0),
-            'episode': int(next_ep.get('episodeNumberRaw') or 0),
+            'season': next((lv.split()[1] for meta in (next_ep.get('primaryMeta') or [])
+                            if (lv := meta.get('longValue')) and 'Seizoen' in lv), 0),
+            'episode': next((lv.split()[1] for meta in (next_ep.get('primaryMeta') or [])
+                             if (lv := meta.get('longValue')) and 'Aflevering' in lv), 0),
             'rating': None,
-            'firstaired': dateutil.parser.parse(next_ep.get('analytics').get('airDate')).strftime('%Y-%m-%d'),
-            'runtime': int(next_ep.get('durationSeconds')),
+            'firstaired': None,
+            'runtime': next_ep.get('status').get('durationSeconds', 0),
         }
         next_info = {
             'current_episode': current_episode,
             'next_episode': next_episode,
             'play_info': {
-                'episode_id': next_ep.get('shareAction').get('url'),
+                'episode_id': next_ep.get('action').get('link'),
             }
         }
     return next_info
@@ -289,7 +300,13 @@ def get_stream_data(page_id):
             }
             ... on EpisodePage {
               title
+              brand
               player {
+                title
+                subtitle
+                image {
+                  templateUrl
+                }
                 modes {
                   ... on VideoPlayerMode {
                     streamId
@@ -300,12 +317,116 @@ def get_stream_data(page_id):
                   }
                   __typename
                 }
+                playlist {
+                  autoPlay
+                  next {
+                    __typename
+                    ... on PaginatedTileList {
+                      paginatedItems(first: 1) {
+                        edges {
+                          node {
+                            __typename
+                            ... on EpisodeTile {
+                              ...episodeTileFragment
+                              __typename
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+              components {
+                ...mediaInfoFragment
               }
             }
           }
           __typename
         }
-    """
+        fragment mediaInfoFragment on MediaInfo {
+          __typename
+          objectId
+          title
+          maxAge
+          description
+          accessibilityTitle
+          actionItems {
+            ...actionItemFragment
+            __typename
+          }
+          image {
+            ...imageFragment
+            __typename
+          }
+          primaryMeta {
+            ...metaFragment
+            __typename
+          }
+          secondaryMeta {
+            ...metaFragment
+            __typename
+          }
+          tertiaryMeta {
+            ...metaFragment
+            __typename
+          }
+          quaternaryMeta {
+            label
+            ...metaFragment
+            __typename
+          }
+        }
+        fragment imageFragment on Image {
+          __typename
+          objectId
+          alt
+          focusPoint {
+            x
+            y
+            __typename
+          }
+          templateUrl
+        }
+        fragment metaFragment on MetaDataItem {
+          __typename
+          type
+          value
+          shortValue
+          longValue
+        }
+        fragment actionItemFragment on ActionItem {
+          __typename
+          objectId
+          accessibilityLabel
+          active
+          mode
+          title
+          themeOverride
+          action {
+            ... on LinkAction {
+              internalTarget
+              link
+              internalTarget
+              externalTarget
+              passUserIdentity
+              zone {
+                preferredZone
+                isExclusive
+                __typename
+              }
+              linkTokens {
+                __typename
+                placeholder
+                value
+              }
+              __typename
+            }
+            __typename
+          }
+        }
+        %s
+    """ % EPISODE_TILE
     operation_name = 'StreamId'
     variables = {
         'pageId': page_id
@@ -1670,7 +1791,7 @@ def convert_programs(item_list, destination, end_cursor='', use_favorites=False,
     return programs
 
 
-def convert_episode(episode_tile, destination=None):
+def convert_episode(episode_data, destination=None):
     """Convert paginated episode item to TitleItem"""
     import re
     import dateutil.parser
@@ -1695,20 +1816,30 @@ def convert_episode(episode_tile, destination=None):
     permalink = None
 
     # Basic tile properties
-    is_playable = episode_tile.get('available', True)
-    is_live = episode_tile.get('active', False)
+    is_playable = episode_data.get('available', True)
+    is_live = episode_data.get('active', False)
     program_title = next(
-        (action.get('action').get('title') for action in episode_tile.get('actionItems', []) or []
+        (action.get('action').get('title') for action in episode_data.get('actionItems', []) or []
          if action.get('action').get('__typename') == 'FavoriteAction'),
         ''
     )
-    episode_title = episode_tile.get('description') or episode_tile.get('title')
-    if episode_tile.get('action'):
-        path = url_for('play_url', video_url=episode_tile.get('action', {}).get('link'))
+    episode_title = episode_data.get('description') or episode_data.get('title')
+
+    # Path
+    if episode_data.get('action'):
+        path = url_for('play_url', video_url=episode_data.get('action', {}).get('link'))
+    if episode_data.get('player'):
+        stream_id = next(
+            (mode.get('streamId')
+             for mode in episode_data.get('player', {}).get('modes', [])
+             if mode.get('__typename') == 'VideoPlayerMode'),
+            ''
+        )
+        path = url_for('play_id', video_id=stream_id.split('$')[1], publication_id=stream_id.split('$')[0])
 
     # Duration
-    progress = episode_tile.get('progress') or {}
-    status = episode_tile.get('status') or {}
+    progress = episode_data.get('progress') or {}
+    status = episode_data.get('status') or {}
     text = (status.get('text') or {}).get('default', '')
     seconds = progress.get('durationInSeconds')
 
@@ -1725,8 +1856,8 @@ def convert_episode(episode_tile, destination=None):
     # Season and episode numbers
     season_no = episode_no = None
 
-    if episode_tile.get('primaryMeta'):
-        for item in episode_tile.get('primaryMeta', []):
+    if episode_data.get('primaryMeta'):
+        for item in episode_data.get('primaryMeta', []):
             value = item.get('longValue', '') or item.get('value', '') or ''
             match = re.search(r'\d+', value)
             if not match:
@@ -1750,7 +1881,7 @@ def convert_episode(episode_tile, destination=None):
         'juli', 'augustus', 'september', 'oktober', 'november', 'december'
     ]
     aired = next(
-        (meta.get('shortValue') for meta in episode_tile.get('primaryMeta', []) or []
+        (meta.get('shortValue') for meta in episode_data.get('primaryMeta', []) or []
          if any(month in (meta.get('longValue') or '') for month in dutch_months)),
         None
     )
@@ -1762,10 +1893,10 @@ def convert_episode(episode_tile, destination=None):
         title_item.info_dict['aired'] = start_dt.strftime('%Y-%m-%d')
         program_type = 'daily'
 
-    if episode_tile.get('livestream'):
-        episode = episode_tile.get('livestream').get('episode')
+    if episode_data.get('livestream'):
+        episode = episode_data.get('livestream').get('episode')
     else:
-        episode = episode_tile.get('episode')
+        episode = episode_data.get('episode')
     if episode:
         analytics = episode.get('analytics', {})
         program = episode.get('program', {})
@@ -1875,24 +2006,24 @@ def convert_episode(episode_tile, destination=None):
 
     else:
         # Fallback when no 'episode' key
-        if episode_tile.get('image'):
-            img = episode_tile['image'].get('templateUrl')
+        if episode_data.get('image'):
+            img = episode_data['image'].get('templateUrl')
             title_item.art_dict['thumb'] = img
             title_item.art_dict['fanart'] = img
 
     # EPG entries
-    if episode_tile.get('indexMeta'):
+    if episode_data.get('indexMeta'):
         program_type = 'epg'
-        program_title = episode_tile.get('title')
-        if episode_tile.get('tileType') == 'livestream':
+        program_title = episode_data.get('title')
+        if episode_data.get('tileType') == 'livestream':
             is_live = True
             is_playable = True
-            channel = episode_tile.get('brand')
-            start_time = episode_tile.get('status').get('text').get('small').split(' - ')[0]
+            channel = episode_data.get('brand')
+            start_time = episode_data.get('status').get('text').get('small').split(' - ')[0]
             hours, minutes = map(int, start_time.split(':'))
             start_str = now.replace(hour=hours, minute=minutes, second=0, microsecond=0).isoformat()
         else:
-            comp_id = episode_tile.get('componentId', '').lstrip('#')
+            comp_id = episode_data.get('componentId', '').lstrip('#')
             decoded = b64decode(comp_id.encode('utf-8')).decode('utf-8')
             epg_parts = decoded.split('#1')
             channel_id, start_str = epg_parts[1], epg_parts[2].split('|')[0]
@@ -1913,7 +2044,7 @@ def convert_episode(episode_tile, destination=None):
                 path = url_for('noop')
         # Play livestream
         elif is_live:
-            path = url_for('play_url', episode_tile['action']['link'])
+            path = url_for('play_url', episode_data['action']['link'])
 
     # Mark mixed episode categories
     if destination in ('recent', 'favorites_recent', 'resumepoints_continue', 'featured', 'search_query'):
@@ -1981,7 +2112,7 @@ def convert_episodes(item_list, destination, end_cursor='', use_favorites=False,
 def get_single_episode(episode_id):
     """Get single episode"""
     title_item = None
-    episode = get_single_episode_data(episode_id).get('data').get('page')
+    episode = get_stream_data(episode_id).get('data').get('page')
     if episode is not None:
         _, _, _, title_item = convert_episode(episode)
     return title_item
@@ -1993,17 +2124,12 @@ def get_latest_episode(program_name):
     video = None
     latest_episode = get_latest_episode_data(program_name=program_name)
     if latest_episode:
-        stream_id = next(
-            (mode.get('streamId')
-             for mode in latest_episode.get('player', {}).get('modes', [])
-             if mode.get('__typename') == 'VideoPlayerMode'),
-            ''
-        )
+        _, _, _, title_item = convert_episode(latest_episode)
         video = {
-            'video_id': stream_id.split('$')[1],
-            'publication_id': stream_id.split('$')[0],
+            'listitem': title_item,
+            'video_id': title_item.path.split('/')[5],
+            'publication_id': title_item.path.split('/')[6]
         }
-
     return video
 
 
@@ -2248,7 +2374,7 @@ def convert_seasons(api_data, program_name):
         if season.get('path'):
             episode_tile = season.get('episode_tile')
             if not episode_tile:
-                episode_tile = get_single_episode_data(season.get('path')).get('data', {}).get('page', {})
+                episode_tile = get_stream_data(season.get('path')).get('data', {}).get('page', {})
 
             _, _, _, title_item = convert_episode(episode_tile)
             if len(api_data) > 1:

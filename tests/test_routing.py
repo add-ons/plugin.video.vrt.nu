@@ -263,8 +263,9 @@ class TestRouting(unittest.TestCase):
     @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_play_upnext_route(self):
         """Play Up Next episode method: /play/upnext/<episode_id>"""
-        addon.run(['plugin://plugin.video.vrt.nu/play/upnext/1571140659165', '0', ''])
-        self.assertEqual(plugin.url_for(addon.play_upnext, episode_id='1571140659165'), 'plugin://plugin.video.vrt.nu/play/upnext/1571140659165')
+        addon.run(['plugin://plugin.video.vrt.nu/play/upnext//vrtmax/a-z/roomies/2/roomies-s2a2/', '0', ''])
+        self.assertEqual(plugin.url_for(addon.play_upnext, episode_id='/vrtmax/a-z/roomies/2/roomies-s2a2/'),
+                         'plugin://plugin.video.vrt.nu/play/upnext//vrtmax/a-z/roomies/2/roomies-s2a2/')
 
     def test_update_repos(self):
         """Update repositories: /update/repos"""
