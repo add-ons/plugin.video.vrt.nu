@@ -258,7 +258,7 @@ def play_latest(program_name):
     VRTPlayer().play_latest_episode(program_name=program_name)
 
 
-@plugin.route('/play/upnext/<episode_id>')
+@plugin.route('/play/upnext/<path:episode_id>')
 def play_upnext(episode_id):
     """The API interface to play the next episode of a program"""
     from vrtplayer import VRTPlayer

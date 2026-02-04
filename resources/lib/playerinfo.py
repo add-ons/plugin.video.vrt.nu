@@ -188,7 +188,7 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
         """Push episode info to Up Next service add-on"""
         if has_addon('service.upnext') and get_setting_bool('useupnext', default=True) and self.isPlaying():
             from base64 import b64encode
-            episode_id = 'https://' + self.path.split('https://')[1]
+            episode_id = '/vrtmax' + self.path.split('//vrtmax', 1)[1] if '//vrtmax' in self.path else None
             next_info = get_next_info(episode_id=episode_id)
             if next_info:
                 from json import dumps

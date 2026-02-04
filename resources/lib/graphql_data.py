@@ -167,6 +167,9 @@ PROGRAM_TILE = """
 EPISODE_TILE = """
     fragment episodeTileFragment on EpisodeTile {
       id
+      image {
+        templateUrl
+      }
       tileType
       title
       componentType
@@ -191,6 +194,18 @@ EPISODE_TILE = """
         completed
         progressInSeconds
         durationInSeconds
+        __typename
+      }
+      status {
+        accessibilityLabel
+        icon {
+          __typename
+        }
+        text {
+          small
+          default
+          __typename
+        }
         __typename
       }
       __typename
