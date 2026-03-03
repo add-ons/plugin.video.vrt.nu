@@ -2144,7 +2144,7 @@ def get_offline_programs(end_cursor='', use_favorites=False):
 def get_favorite_programs(end_cursor=''):
     """Get favorite programs"""
     import base64
-    list_id = 'o%25|o%9|video-program%|video-program|b%0%'
+    list_id = 'o%25|o%9||p%/mijn-lijst/%|video-program|b%1%'
     list_id = '${}'.format(base64.b64encode(list_id.encode('utf-8')).decode('utf-8'))
     programs = get_programs(list_id=list_id, destination='favorites_programs', end_cursor=end_cursor)
     return programs
