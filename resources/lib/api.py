@@ -666,6 +666,9 @@ def get_seasons_data(program_name):
                           ...on LazyTileList {
                             ...lazyTileListFragment
                           }
+                          ...on PaginatedTileList {
+                            ...paginatedTileListFragment
+                          }
                         }
                       }
                       ... on SubNavigationAction {
@@ -682,6 +685,9 @@ def get_seasons_data(program_name):
                                 }
                                 ...on LazyTileList {
                                   ...lazyTileListFragment
+                                }
+                                ...on PaginatedTileList {
+                                  ...paginatedTileListFragment
                                 }
                               }
                             }
@@ -752,6 +758,27 @@ def get_seasons_data(program_name):
               ...episodeTileFragment
             }
           }
+          paginatedItems(first: $lazyItemCount, after: $after, before: $before) {
+            __typename
+            edges {
+              __typename
+              cursor
+              node {
+                __typename
+                ...on EpisodeTile {
+                  ...episodeTileFragment
+                }
+              }
+            }
+          }
+        }
+        fragment paginatedTileListFragment on PaginatedTileList {
+          __typename
+          componentType
+          objectId
+          listId
+          tileContentType
+          tileVariant
           paginatedItems(first: $lazyItemCount, after: $after, before: $before) {
             __typename
             edges {
@@ -2317,6 +2344,7 @@ def get_recent_episodes(end_cursor='', use_favorites=False):
 def get_episodes(list_id=None, destination=None, end_cursor='', program_name=None, season_name=None, use_favorites=False,
                  feature=None, keywords=None, date=None, channel=None):
     """Get episodes"""
+    from base64 import b64decode
     sort = 'unsorted'
     ascending = True
     content = 'files'
@@ -2328,7 +2356,8 @@ def get_episodes(list_id=None, destination=None, end_cursor='', program_name=Non
             number_of_seasons = len(api_data)
             if number_of_seasons == 1 and api_data[0].get('list_id'):
                 destination = 'programs'
-                list_id = api_data[0].get('list_id')
+                list_id = b64decode(api_data[0].get('list_id')).decode('utf-8')
+                list_id = list_id.split('%|')[-2].split('|')[-1]
                 season_name = list_id.split('@')[-1]
             else:
                 seasons = convert_seasons(api_data, program_name)
@@ -2369,6 +2398,7 @@ def get_episodes(list_id=None, destination=None, end_cursor='', program_name=Non
 
 def convert_seasons(api_data, program_name):
     """Convert seasons"""
+    from base64 import b64decode
     seasons = []
     for season in api_data:
         if season.get('path'):
@@ -2392,7 +2422,8 @@ def convert_seasons(api_data, program_name):
             season_title = season.get('title')
 
             # season name
-            list_id = season.get('list_id')
+            list_id = b64decode(season.get('list_id')).decode('utf-8')
+            list_id = list_id.split('%|')[-2].split('|')[-1]
             if '.episodes-list.json' in list_id:
                 season_name = list_id.split('.episodes-list.json')[0].split('/')[-1]
             elif list_id.startswith('dynamic:/'):
