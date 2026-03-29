@@ -135,7 +135,7 @@ def format_plot(plot, region, product_placement, mpaa, program_type=None, start_
     # Only display when a video disappears if it is within the next 3 months
     # Show the remaining days/hours the episode is still available
     if offtime:
-        now = datetime.now(dateutil.tz.tzlocal())
+        now = datetime.now(dateutil.tz.gettz('Europe/Brussels'))
         remaining = offtime - now
         total_seconds = remaining.total_seconds()
 
@@ -1827,7 +1827,7 @@ def convert_episode(episode_data, destination=None):
     import dateutil.tz
 
     title_item = TitleItem(label=None, art_dict={}, info_dict={})
-    now = datetime.now(dateutil.tz.tzlocal())
+    now = datetime.now(dateutil.tz.gettz('Europe/Brussels'))
 
     # Defaults
     path = None
@@ -1866,8 +1866,8 @@ def convert_episode(episode_data, destination=None):
 
     # Duration
     progress = episode_data.get('progress') or {}
-    status = episode_data.get('status') or {}
-    text = (status.get('text') or {}).get('default', '')
+    status = next((item.get('value') for item in episode_data.get('statusMeta', [])), None)
+    text = status or episode_data.get('status', {}).get('text', {}).get('default', '')
     seconds = progress.get('durationInSeconds')
 
     if isinstance(seconds, (int, float)):
