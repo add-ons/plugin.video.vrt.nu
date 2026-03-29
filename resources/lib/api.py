@@ -1867,7 +1867,8 @@ def convert_episode(episode_data, destination=None):
     # Duration
     progress = episode_data.get('progress') or {}
     status = next((item.get('value') for item in episode_data.get('statusMeta', [])), None)
-    text = status or episode_data.get('status', {}).get('text', {}).get('default', '')
+    alt_status = ((episode_data.get('status') or {}).get('text') or {}).get('default', '')
+    text = status or alt_status
     seconds = progress.get('durationInSeconds')
 
     if isinstance(seconds, (int, float)):
