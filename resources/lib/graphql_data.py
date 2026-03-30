@@ -233,7 +233,7 @@ EPISODE_TILE = """
     }
     fragment componentTrackingDataFragment on IComponent {
       trackingData {
-        data        
+        data
         __typename
       }
       __typename

@@ -41,7 +41,7 @@ def delete_tokens():
 def follow(program_id, program_title):
     """The API interface to follow a program used by the context menu"""
     from api import set_favorite
-    set_favorite(program_id=program_id, program_title=unquote_plus(program_title))
+    set_favorite(program_id=program_id)
     notification(message=localize(30411, title=unquote_plus(program_title)))
     container_refresh()
 
@@ -50,7 +50,7 @@ def follow(program_id, program_title):
 def unfollow(program_id, program_title):
     """The API interface to unfollow a program used by the context menu"""
     from api import set_favorite
-    set_favorite(program_id=program_id, program_title=unquote_plus(program_title), favorited=False)
+    set_favorite(program_id=program_id, favorited=False)
     notification(message=localize(30412, title=unquote_plus(program_title)))
     container_refresh()
 

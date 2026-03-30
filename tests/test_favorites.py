@@ -42,21 +42,18 @@ class TestFavorites(unittest.TestCase):
     def test_follow_unfollow(self):
         """Test following and unfollowing programs"""
         programs = [
-            {'program_title': 'Winteruur', 'program_name': 'winteruur'},
-            {'program_title': 'Thuis', 'program_name': 'thuis'},
-            {'program_title': '#LikeMe', 'program_name': '-likeme'},
+            {'program_name': 'winteruur'},
+            {'program_name': 'thuis'},
+            {'program_name': '-likeme'},
         ]
         for program_item in programs:
-            program_title = program_item.get('program_title')
             program_id = get_program_id(program_item.get('program_name'))
 
-            set_favorite(program_id=program_id, program_title=program_title)
+            set_favorite(program_id=program_id)
             self.assertTrue(is_favorite(program_item.get('program_name')))
-
-            set_favorite(program_id=program_id, program_title=program_title, favorited=False)
+            set_favorite(program_id=program_id, favorited=False)
             self.assertFalse(is_favorite(program_item.get('program_name')))
-
-            set_favorite(program_id=program_id, program_title=program_title)
+            set_favorite(program_id=program_id)
             self.assertTrue(is_favorite(program_item.get('program_name')))
 
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
