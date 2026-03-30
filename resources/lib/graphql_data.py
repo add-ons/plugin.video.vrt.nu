@@ -166,6 +166,11 @@ PROGRAM_TILE = """
 
 EPISODE_TILE = """
     fragment episodeTileFragment on EpisodeTile {
+      ... on IComponent {
+        ...componentTrackingDataFragment
+        __typename
+      }
+      accessibilityTitle
       id
       image {
         templateUrl
@@ -183,12 +188,20 @@ EPISODE_TILE = """
       chapterStart
       formattedDuration
       whatsonId
+      indexMeta {
+        ...metaData
+      }
+      labelMeta {
+        ...metaData
+      }
       primaryMeta {
-        longValue
-        shortValue
-        type
-        value
-        __typename
+        ...metaData
+      }
+      secondaryMeta {
+        ...metaData
+      }
+      tertiaryMeta {
+        ...metaData
       }
       progress {
         completed
@@ -206,6 +219,21 @@ EPISODE_TILE = """
           default
           __typename
         }
+        __typename
+      }
+      __typename
+    }
+    fragment metaData on MetaDataItem {
+      longValue
+      shortValue
+      type
+      value
+      label
+      __typename
+    }
+    fragment componentTrackingDataFragment on IComponent {
+      trackingData {
+        data        
         __typename
       }
       __typename
