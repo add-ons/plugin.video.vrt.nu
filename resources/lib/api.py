@@ -817,34 +817,49 @@ def get_seasons_data(program_name):
     return api_req(graphql_query, operation_name, variables)
 
 
-def set_favorite(program_id, program_title, favorited=True):
+def set_favorite(program_id, favorited=True):
     """Set favorite(add/remove to/from my list)"""
     graphql_query = """
-        mutation setFavoriteActionItem($input: FavoriteActionInput!) {
-          setFavoriteActionItem(input: $input) {
+        mutation setFavorite($input: FavoriteActionInput!) {
+          setFavorite(input: $input) {
             __typename
-            objectId
-            accessibilityLabel
-            action {
-              ... on FavoriteAction {
+            actionItem {
+              __typename
+              objectId
+              accessibilityLabel
+              action {
+                ... on FavoriteAction {
+                  __typename
+                  id
+                  favorite
+                }
                 __typename
-                id
-                favorite
+              }
+              active
+              title
+            }
+            nudge {
+              ... on Toast {
+                __typename
+                objectId
+                description
+                image {
+                  __typename
+                  objectId
+                  alt
+                  templateUrl
+                }
               }
               __typename
             }
-            active
-            mode
-            title
           }
         }
     """
-    operation_name = 'setFavoriteActionItem'
+    operation_name = 'setFavorite'
     variables = {
         'input': {
             'favorite': favorited,
-            'id': program_id,
-            'title': program_title,
+            'id': f'o%FavoriteAction|{program_id}|video-program|btn|b%0%',
         },
     }
     return api_req(graphql_query, operation_name, variables)
@@ -865,7 +880,7 @@ def get_program_id(program_name):
     """Get the id of a program"""
     data = get_program_data(program_name)
     program_id = next(
-        (action.get('action').get('id').split('##')[0] for action in data.get('data').get('page').get('header').get('actionItems', []) or []
+        (action.get('action').get('id').split('|')[1] for action in data.get('data').get('page').get('header').get('actionItems', []) or []
          if action.get('action').get('__typename') == 'FavoriteAction'),
         ''
     )
@@ -905,7 +920,6 @@ def set_resumepoint(video_id, title, position, total):
 def delete_continue(episode_id):
     """Delete continue episode using GraphQL API"""
     import base64
-    from json import dumps
     graphql_query = """
         mutation listDelete($input: ListDeleteActionInput!) {
           setListDeleteActionItem(input: $input) {
@@ -928,16 +942,14 @@ def delete_continue(episode_id):
           }
         }
     """
-    list_name = {
-        'listId': 'dynamic:/vrtnu.model.json@resume-list-video',
-        'listType': 'verderkijken',
-    }
-    encoded_list_name = base64.b64encode(dumps(list_name).encode('utf-8'))
+    list_id = 'o%35|p%/|resume-list-video|1|o%37|resume-list-video%|%'
+    encoded_list_id = base64.b64encode(list_id.encode('utf-8')).decode('utf-8')
+    list_name = f'o%ListDeleteAction|${encoded_list_id}|live/vrtmax/verder?contentType=video%'
     operation_name = 'listDelete'
     variables = {
         'input': {
             'id': episode_id,
-            'listName': encoded_list_name.decode('utf-8'),
+            'listName': list_name,
         },
     }
     return api_req(graphql_query, operation_name, variables)
@@ -2180,7 +2192,9 @@ def get_latest_episode(program_name):
 
 def get_offline_programs(end_cursor='', use_favorites=False):
     """Get laatste kans/soon offline programs"""
-    list_id = 'dynamic:/vrtnu.model.json@par_list_1624607593_copy_1408213323'
+    import base64
+    list_id = 'o%35|p%/|par_list_1624607593_copy_1408213323|1|o%37|par_list_1624607593_copy_1408213323%|%'
+    list_id = '${}'.format(base64.b64encode(list_id.encode('utf-8')).decode('utf-8'))
     destination = 'favorites_offline' if use_favorites else 'offline'
     programs = get_programs(list_id=list_id, destination=destination, end_cursor=end_cursor, use_favorites=use_favorites)
     return programs
