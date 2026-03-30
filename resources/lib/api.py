@@ -1824,6 +1824,7 @@ def convert_episode(episode_data, destination=None):
     import dateutil.parser
     from datetime import datetime, timedelta
     from base64 import b64decode
+    from json import loads
     import dateutil.tz
 
     title_item = TitleItem(label=None, art_dict={}, info_dict={})
@@ -1845,12 +1846,29 @@ def convert_episode(episode_data, destination=None):
     # Basic tile properties
     is_playable = episode_data.get('available', True)
     is_live = episode_data.get('active', False)
-    program_title = next(
-        (action.get('action').get('title') for action in episode_data.get('actionItems', []) or []
-         if action.get('action').get('__typename') == 'FavoriteAction'),
-        ''
-    )
-    episode_title = episode_data.get('description') or episode_data.get('title')
+
+    # Episode and program title
+
+    episode_title = episode_data.get('description')
+
+    if not episode_title:
+        actions = episode_data.get('actionItems') or []
+        for action in actions:
+            action_data = action.get('action') or {}
+            if action_data.get('__typename') in {'FavoriteAction', 'ListDeleteAction'}:
+                episode_title = action_data.get('title', '')
+                break
+
+    if not episode_title and destination != 'tvguide':
+        episode_title = episode_data.get('title')
+
+    title = episode_data.get('title')
+
+    if episode_title != title:
+        program_title = title
+    else:
+        meta = loads(episode_data.get('trackingData', {}).get('data', '{}'))
+        program_title = meta.get('$leti')
 
     # Path
     if episode_data.get('action'):
@@ -2042,7 +2060,6 @@ def convert_episode(episode_data, destination=None):
     # EPG entries
     if episode_data.get('indexMeta'):
         program_type = 'epg'
-        program_title = episode_data.get('title')
         if episode_data.get('tileType') == 'livestream':
             is_live = True
             is_playable = True
