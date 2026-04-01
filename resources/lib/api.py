@@ -2375,6 +2375,7 @@ def get_recent_episodes(end_cursor='', use_favorites=False):
 
 def get_episodes(list_id=None, destination=None, end_cursor='', program_name=None, season_name=None, use_favorites=False,
                  feature=None, keywords=None, date=None, channel=None):
+    from base64 import b64decode
     """Get episodes"""
     from base64 import b64decode
     sort = 'unsorted'
@@ -2395,15 +2396,10 @@ def get_episodes(list_id=None, destination=None, end_cursor='', program_name=Non
                 seasons = convert_seasons(api_data, program_name)
                 return seasons, sort, ascending, content
 
-        # reconstruct list_id from program_name and season_name
-        if program_name and season_name:
-            destination = 'programs'
-            if season_name.startswith('parsys'):
-                list_id = 'static:/vrtnu/a-z/{}.model.json@{}'.format(program_name, season_name)
-            elif season_name.startswith('dynamic_'):
-                list_id = 'dynamic:/vrtnu/a-z/{}.model.json@{}'.format(program_name, season_name.split('dynamic_')[1])
-            else:
-                list_id = 'static:/vrtnu/a-z/{}/{}.episodes-list.json'.format(program_name, season_name)
+        # season_name is now base64 encoded in a weird format:
+        # o%35|p%/a-z/the-it-crowd/|parsys_container_episodes-list_1|1|o%37|parsys_container_episodes-list_1%|%
+        # it can be passed along as-is to get_entities
+        list_id = season_name
 
     # kodi paging
     kodi_page_size = get_setting_int('itemsperpage', default=50)
