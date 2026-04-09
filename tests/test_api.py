@@ -3,6 +3,8 @@
 """Unit tests for Api functionality"""
 
 import unittest
+from base64 import b64encode
+
 from api import (delete_continue, finish_continue, get_continue_episodes, get_episodes, get_favorite_programs, get_latest_episode,
                  get_next_info, get_online_categories, get_offline_programs, get_programs, get_recent_episodes,
                  get_resumepoint_data, get_search, get_single_episode, set_resumepoint, valid_categories)
@@ -25,8 +27,11 @@ class TestApi(unittest.TestCase):
     """TestCase class"""
 
     def test_get_api_data_single_season(self):
-        """Test listing episodes for a single season (zomerhit)"""
-        title_items, sort, ascending, content = get_episodes(program_name='flikken', season_name='4')
+        """Test listing episodes for a single season (flikken)"""
+        season_name = '4'
+        list_id = f'o%35|o%2|o%2|p%/a-z/flikken/|container%|banner%|{season_name}|b%1|n%1%'
+        list_id = f'${b64encode(list_id.encode("utf-8")).decode("utf-8")}'
+        title_items, sort, ascending, content = get_episodes(program_name='flikken', list_id=list_id)
         self.assertEqual(len(title_items), 13)
         self.assertEqual(sort, 'episode')
         self.assertTrue(ascending)
@@ -42,7 +47,10 @@ class TestApi(unittest.TestCase):
 
     def test_get_api_data_specific_season(self):
         """Test listing episodes for a specific season (pano)"""
-        title_items, sort, ascending, content = get_episodes(program_name='pano', season_name='2020')
+        season_name = '2020'
+        list_id = f'o%35|o%2|o%2|p%/a-z/pano/|container%|banner%|{season_name}|b%1|n%1%'
+        list_id = f'${b64encode(list_id.encode("utf-8")).decode("utf-8")}'
+        title_items, sort, ascending, content = get_episodes(program_name='pano', list_id=list_id)
         self.assertEqual(len(title_items), 15)
         self.assertEqual(sort, 'episode')  # Pano has 'series' programType
         self.assertTrue(ascending)
@@ -99,7 +107,10 @@ class TestApi(unittest.TestCase):
 
     def test_episode_plot(self):
         """Test getting an episode plot (thuis)"""
-        title_items, sort, ascending, content = get_episodes(program_name='thuis', season_name='28')
+        season_name = '28'
+        list_id = f'o%35|o%2|o%2|p%/a-z/thuis/|container%|banner%|{season_name}|b%1|n%1%'
+        list_id = f'${b64encode(list_id.encode("utf-8")).decode("utf-8")}'
+        title_items, sort, ascending, content = get_episodes(program_name='thuis', list_id=list_id)
         self.assertEqual(sort, 'episode')  # Thuis has 'daily' programType
         self.assertFalse(ascending)
         self.assertEqual(content, 'episodes')

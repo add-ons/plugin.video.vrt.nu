@@ -5,6 +5,8 @@
 from datetime import datetime
 import random
 import unittest
+
+from base64 import b64encode
 import dateutil.tz
 from api import get_categories, get_categories_data, get_episodes, get_featured, get_programs
 from vrtplayer import VRTPlayer
@@ -29,8 +31,9 @@ class TestVRTPlayer(unittest.TestCase):
     def test_show_videos_single_episode_shows_videos(self):
         """Test listing single episode for a given program (wij--roger-raveel)"""
         program_name = 'wij--roger-raveel'
-        season_name = '2021'
-        episode_items, sort, ascending, content = get_episodes(program_name=program_name, season_name=season_name)
+        list_id = 'o%35|o%2|o%2|p%/a-z/wij--roger-raveel/|container%|episodes-list%|2021|b%0|n%1%'
+        list_id = f'${b64encode(list_id.encode("utf-8")).decode("utf-8")}'
+        episode_items, sort, ascending, content = get_episodes(program_name=program_name, list_id=list_id)
         self.assertTrue(episode_items, msg=program_name)
         self.assertEqual(sort, 'label')
         self.assertTrue(ascending)
@@ -44,7 +47,9 @@ class TestVRTPlayer(unittest.TestCase):
         """Test listing single season for a given program (het-weer)"""
         program_name = 'het-weer'
         season_name = now.strftime('%Y')
-        episode_items, sort, ascending, content = get_episodes(program_name=program_name, season_name=season_name)
+        list_id = f'o%35|o%2|o%2|p%/a-z/het-weer/|container%|banner%|{season_name}|b%0|n%1%'
+        list_id = f'${b64encode(list_id.encode("utf-8")).decode("utf-8")}'
+        episode_items, sort, ascending, content = get_episodes(program_name=program_name, list_id=list_id)
         self.assertTrue(episode_items, msg=program_name)
         self.assertEqual(sort, 'dateadded')
         self.assertFalse(ascending)
