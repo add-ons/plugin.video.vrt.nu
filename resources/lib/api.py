@@ -919,7 +919,7 @@ def set_resumepoint(video_id, title, position, total):
 
 def delete_continue(episode_id):
     """Delete continue episode using GraphQL API"""
-    import base64
+    from base64 import b64encode
     graphql_query = """
         mutation listDelete($input: ListDeleteActionInput!) {
           setListDeleteActionItem(input: $input) {
@@ -943,7 +943,7 @@ def delete_continue(episode_id):
         }
     """
     list_id = 'o%35|p%/|resume-list-video|1|o%37|resume-list-video%|%'
-    encoded_list_id = base64.b64encode(list_id.encode('utf-8')).decode('utf-8')
+    encoded_list_id = b64encode(list_id.encode('utf-8')).decode('utf-8')
     list_name = f'o%ListDeleteAction|${encoded_list_id}|live/vrtmax/verder?contentType=video%'
     operation_name = 'listDelete'
     variables = {
@@ -2192,9 +2192,9 @@ def get_latest_episode(program_name):
 
 def get_offline_programs(end_cursor='', use_favorites=False):
     """Get laatste kans/soon offline programs"""
-    import base64
-    list_id = 'o%35|p%/|par_list_1624607593_copy_1408213323|1|o%37|par_list_1624607593_copy_1408213323%|%'
-    list_id = '${}'.format(base64.b64encode(list_id.encode('utf-8')).decode('utf-8'))
+    from base64 import b64encode
+    list_id = 'o%35|p%/|list_1624607593_copy_1408213323|b%0|n%1%'
+    list_id = f'${b64encode(list_id.encode("utf-8")).decode("utf-8")}'
     destination = 'favorites_offline' if use_favorites else 'offline'
     programs = get_programs(list_id=list_id, destination=destination, end_cursor=end_cursor, use_favorites=use_favorites)
     return programs
@@ -2202,9 +2202,9 @@ def get_offline_programs(end_cursor='', use_favorites=False):
 
 def get_favorite_programs(end_cursor=''):
     """Get favorite programs"""
-    import base64
+    from base64 import b64encode
     list_id = 'o%25|o%9||p%/mijn-lijst/%|video-program|b%1%'
-    list_id = '${}'.format(base64.b64encode(list_id.encode('utf-8')).decode('utf-8'))
+    list_id = f'${b64encode(list_id.encode("utf-8")).decode("utf-8")}'
     programs = get_programs(list_id=list_id, destination='favorites_programs', end_cursor=end_cursor)
     return programs
 
@@ -2359,7 +2359,9 @@ def get_programs(list_id=None, destination=None, end_cursor='', category=None, c
 
 def get_continue_episodes(end_cursor=''):
     """Get continue episodes"""
-    list_id = 'dynamic:/vrtnu.model.json@resume-list-video'
+    from base64 import b64encode
+    list_id = 'o%35|p%/|list_1744022689|b%0%'
+    list_id = f'${b64encode(list_id.encode("utf-8")).decode("utf-8")}'
     destination = 'resumepoints_continue'
     episodes, sort, ascending, content = get_episodes(list_id=list_id, destination=destination, end_cursor=end_cursor)
     return episodes, sort, ascending, content
@@ -2367,43 +2369,31 @@ def get_continue_episodes(end_cursor=''):
 
 def get_recent_episodes(end_cursor='', use_favorites=False):
     """Get recent episodes"""
-    list_id = 'static:/vrtnu/kijk.model.json@par_list_copy_copy_copy'
+    from base64 import b64encode
+    # static:/vrtnu/kijk.model.json@par_list_copy_copy_copy
+    list_id = 'o%35|p%/|par_list_copy_copy_copy|b%0|n%1%'
+    list_id = f'${b64encode(list_id.encode("utf-8")).decode("utf-8")}'
     destination = 'favorites_recent' if use_favorites else 'recent'
     episodes, sort, ascending, content = get_episodes(list_id=list_id, destination=destination, end_cursor=end_cursor)
     return episodes, sort, ascending, content
 
 
-def get_episodes(list_id=None, destination=None, end_cursor='', program_name=None, season_name=None, use_favorites=False,
+def get_episodes(list_id=None, destination=None, end_cursor='', program_name=None, use_favorites=False,
                  feature=None, keywords=None, date=None, channel=None):
     """Get episodes"""
-    from base64 import b64decode
     sort = 'unsorted'
     ascending = True
     content = 'files'
 
     if not list_id:
-        if season_name is None:
-            # Check for multiple seasons
-            api_data = get_seasons(program_name)
-            number_of_seasons = len(api_data)
-            if number_of_seasons == 1 and api_data[0].get('list_id'):
-                destination = 'programs'
-                list_id = b64decode(api_data[0].get('list_id')).decode('utf-8')
-                list_id = list_id.split('%|')[-2].split('|')[-1]
-                season_name = list_id.split('@')[-1]
-            else:
-                seasons = convert_seasons(api_data, program_name)
-                return seasons, sort, ascending, content
-
-        # reconstruct list_id from program_name and season_name
-        if program_name and season_name:
-            destination = 'programs'
-            if season_name.startswith('parsys'):
-                list_id = 'static:/vrtnu/a-z/{}.model.json@{}'.format(program_name, season_name)
-            elif season_name.startswith('dynamic_'):
-                list_id = 'dynamic:/vrtnu/a-z/{}.model.json@{}'.format(program_name, season_name.split('dynamic_')[1])
-            else:
-                list_id = 'static:/vrtnu/a-z/{}/{}.episodes-list.json'.format(program_name, season_name)
+        # Check for multiple seasons
+        api_data = get_seasons(program_name)
+        seasons = convert_seasons(api_data, program_name)
+        if len(seasons) == 1:
+            program_name = seasons[0].path.split('/')[-2]
+            list_id = seasons[0].path.split('/')[-1]
+        else:
+            return seasons, sort, ascending, content
 
     # kodi paging
     kodi_page_size = get_setting_int('itemsperpage', default=50)
@@ -2423,14 +2413,13 @@ def get_episodes(list_id=None, destination=None, end_cursor='', program_name=Non
         end_cursor = page_info.get('endCursor')
 
     episodes, sort, ascending = convert_episodes(item_list, destination=destination, end_cursor=end_cursor, use_favorites=use_favorites,
-                                                 program_name=program_name, season_name=season_name, feature=feature, keywords=keywords,
+                                                 program_name=program_name, list_id=list_id, feature=feature, keywords=keywords,
                                                  date=date, channel=channel)
     return episodes, sort, ascending, 'episodes'
 
 
 def convert_seasons(api_data, program_name):
     """Convert seasons"""
-    from base64 import b64decode
     seasons = []
     for season in api_data:
         if season.get('path'):
@@ -2452,18 +2441,7 @@ def convert_seasons(api_data, program_name):
 
         elif season.get('list_id'):
             season_title = season.get('title')
-
-            # season name
-            list_id = b64decode(season.get('list_id')).decode('utf-8')
-            list_id = list_id.split('%|')[-2].split('|')[-1]
-            if '.episodes-list.json' in list_id:
-                season_name = list_id.split('.episodes-list.json')[0].split('/')[-1]
-            elif list_id.startswith('dynamic:/'):
-                season_name = 'dynamic_' + list_id.split('@')[-1]
-            else:
-                season_name = list_id.split('@')[-1]
-
-            path = url_for('programs', program_name=program_name, season_name=season_name)
+            path = url_for('programs', program_name=program_name, list_id=season.get('list_id'))
             seasons.append(
                 TitleItem(
                     label=season_title,
