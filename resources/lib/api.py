@@ -2370,8 +2370,7 @@ def get_continue_episodes(end_cursor=''):
 def get_recent_episodes(end_cursor='', use_favorites=False):
     """Get recent episodes"""
     from base64 import b64encode
-    # static:/vrtnu/kijk.model.json@par_list_copy_copy_copy
-    list_id = 'o%35|p%/|par_list_copy_copy_copy|b%0|n%1%'
+    list_id = 'o%35|p%/kijk/|list_copy_copy_copy|b%0|n%1%'
     list_id = f'${b64encode(list_id.encode("utf-8")).decode("utf-8")}'
     destination = 'favorites_recent' if use_favorites else 'recent'
     episodes, sort, ascending, content = get_episodes(list_id=list_id, destination=destination, end_cursor=end_cursor)
