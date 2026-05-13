@@ -2,6 +2,7 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Integration tests for Routing functionality"""
 
+from base64 import b64encode
 from datetime import datetime, timedelta
 import unittest
 import dateutil.tz
@@ -52,11 +53,18 @@ class TestRouting(unittest.TestCase):
         """Episodes menu: /programs/<program>"""
         addon.run(['plugin://plugin.video.vrt.nu/programs/thuis', '0', ''])
         self.assertEqual(plugin.url_for(addon.programs, program_name='thuis'), 'plugin://plugin.video.vrt.nu/programs/thuis')
-        addon.run(['plugin://plugin.video.vrt.nu/programs/pano/2019', '0', ''])
-        self.assertEqual(plugin.url_for(addon.programs, program_name='pano', season_name='2019'), 'plugin://plugin.video.vrt.nu/programs/pano/2019')
-        addon.run(['plugin://plugin.video.vrt.nu/programs/de-smurfen0/2021/1655824964821', '0', ''])
-        self.assertEqual(plugin.url_for(addon.programs, program_name='de-smurfen0', season_name='2021', end_cursor='1655824964821'),
-                         'plugin://plugin.video.vrt.nu/programs/de-smurfen0/2021/1655824964821')
+
+        list_id = 'o%35|o%2|o%2|p%/a-z/pano/|container%|banner%|2019|b%1|n%1%'
+        list_id = f'${b64encode(list_id.encode("utf-8")).decode("utf-8")}'
+        addon.run([f'plugin://plugin.video.vrt.nu/programs/pano/{list_id}', '0', ''])
+        self.assertEqual(plugin.url_for(addon.programs, program_name='pano', list_id=list_id),
+                         f'plugin://plugin.video.vrt.nu/programs/pano/{list_id}')
+
+        list_id = 'o%35|o%2|o%2|p%/a-z/de-smurfen0/|container%|episodes-list%|2021|b%0|n%1%'
+        list_id = f'${b64encode(list_id.encode("utf-8")).decode("utf-8")}'
+        addon.run([f'plugin://plugin.video.vrt.nu/programs/de-smurfen0/{list_id}/1655824964821', '0', ''])
+        self.assertEqual(plugin.url_for(addon.programs, program_name='de-smurfen0', list_id=list_id, end_cursor='1655824964821'),
+                         f'plugin://plugin.video.vrt.nu/programs/de-smurfen0/{list_id}/1655824964821')
 
     def test_categories_menu(self):
         """Categories menu: /categories"""
@@ -83,21 +91,21 @@ class TestRouting(unittest.TestCase):
     @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_featured_tvshow_menu(self):
         """Featured programs menu: /featured/<cfeatured>"""
-        addon.run(['plugin://plugin.video.vrt.nu/featured/program_static_proto_vrtnu.model.json@par_list_789470835_copy_', '0', ''])
+        tvshow_list_id = '$byUzNXxwJS98bGlzdHxiJTB8biUxJQ=='
+        addon.run([f'plugin://plugin.video.vrt.nu/featured/program_{tvshow_list_id}', '0', ''])
         self.assertEqual(plugin.url_for(addon.featured,
-                                        feature='program_static_proto_vrtnu.model.json@par_list_789470835_copy_'),
-                         'plugin://plugin.video.vrt.nu/featured/program_static_proto_vrtnu.model.json@par_list_789470835_copy_')
+                                        feature=f'program_{tvshow_list_id}'),
+                         f'plugin://plugin.video.vrt.nu/featured/program_{tvshow_list_id}')
 
     @unittest.skipUnless(xbmc_addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_featured_episode_menu(self):
         """Featured episodes menu: /featured/<cfeatured>"""
-        # static_list = 'par_list_909924161_copy__1445708769'
-        static_list = 'par_list_2072608980'
-        addon.run(['plugin://plugin.video.vrt.nu/featured/episode_static_proto_vrtnu.model.json@{}'.format(static_list), '0', ''])
+        episode_list_id = '$byUzNXxwJS98bGlzdF8yMDcyNjA4OTgwfGIlMHxuJTEl'
+        addon.run([f'plugin://plugin.video.vrt.nu/featured/episode_{episode_list_id}', '0', ''])
         self.assertEqual(plugin.url_for(addon.featured,
-                                        feature='episode_static_proto_vrtnu.model.json@{}'.format(static_list)),
-                         'plugin://plugin.video.vrt.nu/featured/episode_static_proto_vrtnu.model.json@{}'.format(static_list))
+                                        feature=f'episode_{episode_list_id}'),
+                         f'plugin://plugin.video.vrt.nu/featured/episode_{episode_list_id}')
 
     @unittest.skipUnless(xbmc_addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
