@@ -135,31 +135,6 @@ PROGRAM_TILE = """
         templateUrl
       }
       title
-      program {
-        title
-        id
-        link
-        programType
-        description
-        shortDescription
-        subtitle
-        announcementType
-        announcementValue
-        whatsonId
-        image {
-          alt
-          templateUrl
-        }
-        posterImage {
-          alt
-          templateUrl
-        }
-        favoriteAction {
-          favorite
-          id
-          title
-        }
-      }
     }
 """
 

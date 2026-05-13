@@ -2,8 +2,6 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Implements VRT MAX GraphQL API functionality"""
 
-import random
-
 from urllib.parse import quote, quote_plus, unquote
 
 from data import CHANNELS
@@ -588,209 +586,315 @@ def get_latest_episode_data(program_name):
 def get_seasons_data(program_name):
     """Get seasons data from GraphQL API"""
     graphql_query = """
-        query program(
-          $pageId: ID!,
-          $lazyItemCount: Int = 500,
-          $before: ID
+        query ProgramPage(
+          $pageId: ID!
+          $lazyItemCount: Int = 500
           $after: ID
-          ) {
+          $before: ID
+          $includeActionItems: Boolean = false
+        ) {
           page(id: $pageId) {
-            ... on EpisodePage {
-              title
-            }
             ... on ProgramPage {
-              brand
-              program {
-                brand
-                brandLogos {
-                  type
-                  mono
-                  primary
-                }
-                catalogMemberType
-                title
-                description
-                shortDescription
-                subtitle
-                id
-                link
-                permalink
-                objectId
-                programType
-                image {
-                  alt
-                  templateUrl
-                }
-                posterImage {
-                  alt
-                  templateUrl
-                }
-                favoriteAction {
-                  favorite
-                  id
-                  title
-                }
-                richDescription {
-                  html
-                  text
-                }
-                richShortDescription {
-                  html
-                  text
-                }
-                mostRelevantEpisodeTile {
+              ...programPageFragment
+              menu {
+                ...tabMenuFragment
+                __typename
+              }
+              components {
+                __typename
+                ... on IComponent {
+                  ...componentTrackingDataFragment
                   __typename
-                  title
-                  id
-                  tile {
-                    __typename
-                    ...on EpisodeTile {
-                      ...episodeTileFragment
-                    }
-                  }
                 }
-                navigation {
+                ...containerNavigationComponentsFragment
+                ... on ContainerNavigation {
                   __typename
+                  objectId
+                  accessibilityTitle
+                  navigationType
                   items {
-                    __typename
+                    objectId
                     title
-                    icon
-                    action {
-                      __typename
-                      ... on ShowComponentAction {
-                        component {
-                          __typename
-                          ...on StaticTileList {
-                            ...staticTileListFragment
-                          }
-                          ...on LazyTileList {
-                            ...lazyTileListFragment
-                          }
-                          ...on PaginatedTileList {
-                            ...paginatedTileListFragment
-                          }
-                        }
-                      }
-                      ... on SubNavigationAction {
-                        items {
-                          __typename
-                          title
-                          action {
-                            __typename
-                            ... on ShowComponentAction {
-                              component {
-                                __typename
-                                ...on StaticTileList {
-                                  ...staticTileListFragment
-                                }
-                                ...on LazyTileList {
-                                  ...lazyTileListFragment
-                                }
-                                ...on PaginatedTileList {
-                                  ...paginatedTileListFragment
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
-                      ... on LinkAction {
-                        displayLink
-                        externalTarget
-                        internalTarget
-                        link
-                        linkTokens {
-                          __typename
-                          placeholder
-                          value
-                        }
-                        page {
-                          ...on EpisodePage {
-                            title
-                          }
-                          __typename
-                        }
-                        passUserIdentity
-                        zone {
-                          preferredZone
-                          isExclusive
-                          __typename
-                        }
+                    active
+                    components {
+                      ...containerNavigationComponentsFragment
+                      ... on ContainerNavigation {
                         __typename
+                        objectId
+                        accessibilityTitle
+                        navigationType
+                        items {
+                          objectId
+                          title
+                          components {
+                            ...containerNavigationComponentsFragment
+                            __typename
+                          }
+                          __typename
+                        }
                       }
+                      __typename
                     }
+                    __typename
                   }
                 }
               }
+              __typename
             }
+            ... on PodcastProgramPage {
+              ...programPageFragment
+              menu {
+                ...tabMenuFragment
+                __typename
+              }
+              __typename
+            }
+            ... on RadioProgramPage {
+              ...programPageFragment
+              menu {
+                ...tabMenuFragment
+                __typename
+              }
+              __typename
+            }
+            ...errorFragment
+            __typename
           }
         }
-        fragment staticTileListFragment on StaticTileList {
-          __typename
-          componentType
+        fragment programPageFragment on IPage {
           objectId
-          listId
-          tileContentType
-          tileVariant
+          permalink
+          header {
+            ...pageHeaderFragment
+            __typename
+          }
+          popUp: nudge {
+            ...popupFragment
+            __typename
+          }
+          toast: nudge {
+            ...toastFragment
+            __typename
+          }
+          seo {
+            ...seoFragment
+            __typename
+          }
+          socialSharing {
+            ...socialSharingFragment
+            __typename
+          }
+          trackingData {
+            ...trackingDataFragment
+            __typename
+          }
+          ldjson
+          ...errorFragment
+          __typename
+        }
+        fragment tabMenuFragment on ContainerNavigation {
+          __typename
+          objectId
+          accessibilityTitle
+          navigationType
           items {
-            ...on EpisodeTile {
-              ...episodeTileFragment
+            __typename
+            objectId
+            title
+            active
+            components {
+              ... on ContainerNavigation {
+                __typename
+                objectId
+                accessibilityTitle
+                navigationType
+                items {
+                  objectId
+                  title
+                  components {
+                    ...containerNavigationComponentsFragment
+                    __typename
+                  }
+                  __typename
+                }
+              }
+              ...containerNavigationComponentsFragment
+              __typename
             }
           }
         }
-        fragment lazyTileListFragment on LazyTileList {
+        fragment containerNavigationComponentsFragment on Component {
+          ... on IComponent {
+            __typename
+            ...componentTrackingDataFragment
+          }
+          ... on Banner {
+            ...bannerFragment
+            __typename
+          }
+          ... on PaginatedTileList {
+            ...paginatedTileListFragment
+            __typename
+          }
+          ... on StaticTileList {
+            ...staticTileListFragment
+            __typename
+          }
+          ... on LazyTileList {
+            objectId
+            title
+            listId
+            __typename
+          }
+          ... on Text {
+            ...textFragment
+            __typename
+          }
+          ... on TagsList {
+            objectId
+            title
+            tags {
+              name
+              title
+              category
+              __typename
+            }
+            __typename
+          }
+          ... on PresentersList {
+            objectId
+            title
+            presenters {
+              title
+              type
+              __typename
+            }
+            __typename
+          }
           __typename
-          componentType
+        }
+        fragment bannerFragment on Banner {
+          __typename
+          objectId
+          accessibilityTitle
+          brand
+          countdown {
+            date
+            __typename
+          }
+          richDescription {
+            __typename
+            text
+          }
+          image {
+            objectId
+            templateUrl
+            alt
+            focusPoint {
+              x
+              y
+              __typename
+            }
+            __typename
+          }
           title
-          listId
-          tileContentType
-          tileVariant
+          compactLayout
+          textTheme
+          backgroundColor
+          style
           action {
+            ...actionFragment
             __typename
           }
           actionItems {
             ...actionItemFragment
             __typename
           }
-          items {
+          titleArt {
+            objectId
+            templateUrl
             __typename
-            ...on EpisodeTile {
-              ...episodeTileFragment
-            }
           }
-          paginatedItems(first: $lazyItemCount, after: $after, before: $before) {
+          labelMeta {
             __typename
-            edges {
-              __typename
-              cursor
-              node {
+            type
+            value
+          }
+          preview {
+            video {
+              objectId
+              modes {
                 __typename
-                ...on EpisodeTile {
-                  ...episodeTileFragment
-                }
+                streamId
               }
+              __typename
             }
+            __typename
+          }
+          ... on IComponent {
+            ...componentTrackingDataFragment
+            __typename
           }
         }
-        fragment paginatedTileListFragment on PaginatedTileList {
+        fragment actionFragment on Action {
           __typename
-          componentType
-          objectId
-          listId
-          tileContentType
-          tileVariant
-          paginatedItems(first: $lazyItemCount, after: $after, before: $before) {
+          ... on FavoriteAction {
+            id
+            favorite
+            title
             __typename
-            edges {
+          }
+          ... on ListDeleteAction {
+            listName
+            id
+            listId
+            title
+            __typename
+          }
+          ... on ListTileDeletedAction {
+            listName
+            id
+            listId
+            __typename
+          }
+          ... on LinkAction {
+            internalTarget
+            link
+            internalTarget
+            externalTarget
+            page {
               __typename
-              cursor
-              node {
+              ... on ProfilePage {
+                flow
                 __typename
-                ...on EpisodeTile {
-                  ...episodeTileFragment
-                }
               }
             }
+            passUserIdentity
+            zone {
+              preferredZone
+              isExclusive
+              __typename
+            }
+            linkTokens {
+              __typename
+              placeholder
+              value
+            }
+            __typename
+          }
+          ... on ShareAction {
+            title
+            url
+            __typename
+          }
+          ... on SwitchTabAction {
+            referencedTabId
+            link
+            __typename
+          }
+          ... on FinishAction {
+            id
+            __typename
           }
         }
         fragment actionItemFragment on ActionItem {
@@ -802,15 +906,680 @@ def get_seasons_data(program_name):
           title
           themeOverride
           action {
+            ...actionFragment
             __typename
           }
           icons {
+            ...iconFragment
             __typename
           }
         }
-        %s
-    """ % EPISODE_TILE
-    operation_name = 'program'
+        fragment iconFragment on Icon {
+          __typename
+          accessibilityLabel
+          position
+          type
+          ... on DesignSystemIcon {
+            value {
+              __typename
+              color
+              name
+            }
+            activeValue {
+              __typename
+              color
+              name
+            }
+            __typename
+          }
+          ... on ImageIcon {
+            value {
+              __typename
+              srcSet {
+                src
+                format
+                __typename
+              }
+            }
+            activeValue {
+              __typename
+              srcSet {
+                src
+                format
+                __typename
+              }
+            }
+            __typename
+          }
+        }
+        fragment componentTrackingDataFragment on IComponent {
+          trackingData {
+            data
+            perTrigger {
+              trigger
+              data
+              template {
+                id
+                __typename
+              }
+              __typename
+            }
+            __typename
+          }
+          __typename
+        }
+        fragment paginatedTileListFragment on PaginatedTileList {
+          __typename
+          objectId
+          listId
+          action {
+            ... on LinkAction {
+              __typename
+              externalTarget
+              link
+            }
+            ... on SwitchTabAction {
+              __typename
+              link
+              referencedTabId
+            }
+            __typename
+          }
+          banner {
+            actionItems {
+              ...actionItemFragment
+              __typename
+            }
+            backgroundColor
+            compactLayout
+            description
+            image {
+              ...imageFragment
+              __typename
+            }
+            titleArt {
+              ...imageFragment
+              __typename
+            }
+            textTheme
+            title
+            __typename
+          }
+          bannerSize
+          displayType
+          maxAge
+          tileVariant
+          paginatedItems(first: $lazyItemCount, after: $after, before: $before) {
+            __typename
+            edges {
+              __typename
+              cursor
+              node {
+                __typename
+                ...tileFragment
+                ... on ComponentTile {
+                  component {
+                    ... on Spotlight {
+                      __typename
+                      objectId
+                      title
+                      introAction {
+                        ...tileFragment
+                        __typename
+                      }
+                      spotlight {
+                        ...tileFragment
+                        __typename
+                      }
+                      actionItems {
+                        ...actionItemFragment
+                        __typename
+                      }
+                      extra {
+                        ... on PaginatedTileList {
+                          ...basicPaginatedTileListFragment
+                          __typename
+                        }
+                        ... on SpotlightNudge {
+                          __typename
+                          nudgeObjectId: objectId
+                          nudgeTitle: title
+                          nudgeDescription: description
+                          button {
+                            ...actionItemFragment
+                            __typename
+                          }
+                          nudgeTrackingData: trackingData {
+                            ...trackingDataFragment
+                            __typename
+                          }
+                        }
+                        __typename
+                      }
+                      brand
+                      trackingData {
+                        ...trackingDataFragment
+                        __typename
+                      }
+                    }
+                    __typename
+                  }
+                  __typename
+                }
+              }
+            }
+            pageInfo {
+              __typename
+              endCursor
+              hasNextPage
+              hasPreviousPage
+              startCursor
+            }
+          }
+          tileContentType
+          title
+          description
+          ... on IComponent {
+            ...componentTrackingDataFragment
+            __typename
+          }
+        }
+        fragment basicPaginatedTileListFragment on PaginatedTileList {
+          __typename
+          objectId
+          listId
+          bannerSize
+          description
+          displayType
+          maxAge
+          tileVariant
+          tileContentType
+          title
+          paginatedItems(first: $lazyItemCount, after: $after, before: $before) {
+            __typename
+            edges {
+              __typename
+              cursor
+              node {
+                __typename
+                ...tileFragment
+              }
+            }
+            pageInfo {
+              __typename
+              endCursor
+              hasNextPage
+              hasPreviousPage
+              startCursor
+            }
+          }
+          ... on IComponent {
+            ...componentTrackingDataFragment
+            __typename
+          }
+        }
+        fragment tileFragment on Tile {
+          ... on IIdentifiable {
+            __typename
+            objectId
+          }
+          ... on IComponent {
+            ...componentTrackingDataFragment
+            __typename
+          }
+          ... on ITile {
+            title
+            active
+            accessibilityTitle
+            componentId
+            tileType
+            action {
+              __typename
+              ... on LinkAction {
+                internalTarget
+                link
+                internalTarget
+                externalTarget
+                __typename
+              }
+            }
+            actionItems @include(if: $includeActionItems) {
+              ...actionItemFragment
+              __typename
+            }
+            image {
+              ...imageFragment
+              __typename
+            }
+            primaryMeta {
+              ...metaFragment
+              __typename
+            }
+            secondaryMeta {
+              ...metaFragment
+              __typename
+            }
+            indexMeta {
+              __typename
+              type
+              value
+            }
+            status {
+              accessibilityLabel
+              icon {
+                ...iconFragment
+                __typename
+              }
+              text {
+                small
+                default
+                __typename
+              }
+              __typename
+            }
+            labelMeta {
+              __typename
+              type
+              value
+            }
+            __typename
+          }
+          ... on ContentTile {
+            brand
+            brandLogos {
+              ...brandLogosFragment
+              __typename
+            }
+            __typename
+          }
+          ... on BannerTile {
+            backgroundColor
+            brand
+            brandLogos {
+              ...brandLogosFragment
+              __typename
+            }
+            compactLayout
+            description
+            actionItems {
+              ...actionItemFragment
+              __typename
+            }
+            preview {
+              __typename
+              video {
+                objectId
+                modes {
+                  __typename
+                  streamId
+                }
+                __typename
+              }
+            }
+            textTheme
+            titleArt {
+              objectId
+              templateUrl
+              __typename
+            }
+            __typename
+          }
+          ... on EpisodeTile {
+            description
+            available
+            chapterStart
+            progress {
+              completed
+              progressInSeconds
+              durationInSeconds
+              __typename
+            }
+            __typename
+          }
+          ... on PodcastEpisodeTile {
+            available
+            description
+            progress {
+              completed
+              progressInSeconds
+              durationInSeconds
+              __typename
+            }
+            __typename
+          }
+          ... on AudioLivestreamTile {
+            brand
+            brandsLogos {
+              brand
+              brandTitle
+              logos {
+                ...brandLogosFragment
+                __typename
+              }
+              __typename
+            }
+            description
+            actionItems {
+              ...actionItemFragment
+              __typename
+            }
+            progress {
+              durationInSeconds
+              progressInSeconds
+              __typename
+            }
+            tertiaryMeta {
+              ...metaFragment
+              __typename
+            }
+            __typename
+          }
+          ... on LivestreamTile {
+            description
+            progress {
+              durationInSeconds
+              progressInSeconds
+              __typename
+            }
+            __typename
+          }
+          ... on ButtonTile {
+            mode
+            icons {
+              ...iconFragment
+              __typename
+            }
+            __typename
+          }
+          ... on RadioEpisodeTile {
+            available
+            description
+            progress {
+              completed
+              progressInSeconds
+              durationInSeconds
+              __typename
+            }
+            __typename
+          }
+          ... on RadioFragmentTile {
+            progress {
+              completed
+              progressInSeconds
+              durationInSeconds
+              __typename
+            }
+            __typename
+          }
+          ... on SongTile {
+            startDate
+            formattedStartDate
+            endDate
+            description
+            __typename
+          }
+          __typename
+        }
+        fragment brandLogosFragment on Logo {
+          colorOnColor
+          height
+          mono
+          primary
+          type
+          width
+          __typename
+        }
+        fragment imageFragment on Image {
+          __typename
+          objectId
+          alt
+          focusPoint {
+            x
+            y
+            __typename
+          }
+          templateUrl
+        }
+        fragment metaFragment on MetaDataItem {
+          __typename
+          type
+          value
+          shortValue
+          longValue
+          icons {
+            ...iconFragment
+            __typename
+          }
+        }
+        fragment trackingDataFragment on PageTrackingData {
+          data
+          perTrigger {
+            trigger
+            data
+            template {
+              id
+              __typename
+            }
+            __typename
+          }
+          __typename
+        }
+        fragment staticTileListFragment on StaticTileList {
+          __typename
+          objectId
+          listId
+          title
+          description
+          tileContentType
+          displayType
+          maxAge
+          tileVariant
+          action {
+            ... on LinkAction {
+              __typename
+              externalTarget
+              link
+            }
+            ... on SwitchTabAction {
+              __typename
+              link
+              referencedTabId
+            }
+            __typename
+          }
+          banner {
+            actionItems {
+              ...actionItemFragment
+              __typename
+            }
+            description
+            image {
+              ...imageFragment
+              __typename
+            }
+            compactLayout
+            backgroundColor
+            textTheme
+            title
+            titleArt {
+              objectId
+              templateUrl
+              __typename
+            }
+            __typename
+          }
+          bannerSize
+          items {
+            ...tileFragment
+            __typename
+          }
+          ... on IComponent {
+            ...componentTrackingDataFragment
+            __typename
+          }
+        }
+        fragment textFragment on Text {
+          __typename
+          objectId
+          html
+        }
+        fragment pageHeaderFragment on PageHeader {
+          objectId
+          accessibilityTitle
+          brandsLogos {
+            brandTitle
+            __typename
+          }
+          presenters {
+            title
+            __typename
+          }
+          title
+          titleArt {
+            objectId
+            templateUrl
+            __typename
+          }
+          richDescription {
+            __typename
+            html
+          }
+          actionItems {
+            ...actionItemFragment
+            __typename
+          }
+          primaryMeta {
+            type
+            value
+            shortValue
+            __typename
+          }
+          secondaryMeta {
+            type
+            value
+            shortValue
+            longValue
+            __typename
+          }
+          tertiaryMeta {
+            type
+            value
+            shortValue
+            __typename
+          }
+          image {
+            __typename
+            objectId
+            focusPoint {
+              x
+              y
+              __typename
+            }
+            templateUrl
+          }
+          __typename
+        }
+        fragment seoFragment on SeoProperties {
+          __typename
+          title
+          description
+        }
+        fragment socialSharingFragment on SocialSharingProperties {
+          __typename
+          title
+          description
+          image {
+            __typename
+            objectId
+            templateUrl
+          }
+        }
+        fragment popupFragment on PopUp {
+          __typename
+          brand
+          brandsLogos {
+            ...brandLogo
+            __typename
+          }
+          buttons {
+            ...actionItemFragment
+            __typename
+          }
+          description
+          image {
+            ...imageFragment
+            __typename
+          }
+          objectId
+          size
+          status {
+            text {
+              default
+              small
+              __typename
+            }
+            icon {
+              ...iconFragment
+              __typename
+            }
+            __typename
+          }
+          title
+          videoStreamId
+          trackingData {
+            ...trackingDataFragment
+            __typename
+          }
+        }
+        fragment brandLogo on BrandLogo {
+          brand
+          brandTitle
+          logos {
+            type
+            primary
+            colorOnColor
+            __typename
+          }
+          __typename
+        }
+        fragment toastFragment on Toast {
+          __typename
+          description
+          image {
+            ...imageFragment
+            __typename
+          }
+          objectId
+          title
+        }
+        fragment errorFragment on ErrorPage {
+          errorComponents: components {
+            ...noContentFragment
+            __typename
+          }
+          __typename
+        }
+        fragment noContentFragment on NoContent {
+          __typename
+          objectId
+          title
+          text
+          backgroundImage {
+            ...imageFragment
+            __typename
+          }
+          mainImage {
+            ...imageFragment
+            __typename
+          }
+          noContentType
+          actionItems {
+            ...actionItemFragment
+            __typename
+          }
+        }
+    """
+    operation_name = 'ProgramPage'
     variables = {
         'pageId': '/vrtmax/a-z/{}/'.format(program_name),
     }
@@ -1763,22 +2532,20 @@ def convert_programs(item_list, destination, end_cursor='', use_favorites=False,
         episode_title = None
         ontime = None
         path = url_for('programs', program_name=program_name)
-        plot = program.get('program').get('shortDescription') or program.get('program').get('description')
-        plotoutline = program.get('subtitle')
+        plot = program.get('description')
+        plotoutline = None
 
         # Art
         fanart = ''
-        poster_img = program.get('program').get('posterImage')
-        if poster_img:
-            fanart = reformat_image_url(poster_img.get('templateUrl'))
-        poster = fanart
         thumb = ''
+        poster = ''
         thumb_img = program.get('image')
         if thumb_img:
             thumb = reformat_image_url(thumb_img.get('templateUrl'))
 
         # Check favorite
-        favorited = program.get('program').get('favoriteAction').get('favorite')
+        # favorited = program.get('program').get('favoriteAction').get('favorite')
+        favorited = False
 
         # Filter favorites for favorites menu
         if use_favorites and favorited is False:
@@ -2389,8 +3156,10 @@ def get_episodes(list_id=None, destination=None, end_cursor='', program_name=Non
         api_data = get_seasons(program_name)
         seasons = convert_seasons(api_data, program_name)
         if len(seasons) == 1:
-            program_name = seasons[0].path.split('/')[-2]
-            list_id = seasons[0].path.split('/')[-1]
+            log(2, 'Single season with path {path}', path=seasons[0].path)
+            if seasons[0].path.startswith('plugin://plugin.video.vrt.nu/programs/'):
+                program_name = seasons[0].path.split('/')[-2]
+                list_id = seasons[0].path.split('/')[-1]
         else:
             return seasons, sort, ascending, content
 
@@ -2425,7 +3194,6 @@ def convert_seasons(api_data, program_name):
             episode_tile = season.get('episode_tile')
             if not episode_tile:
                 episode_tile = get_stream_data(season.get('path')).get('data', {}).get('page', {})
-
             _, _, _, title_item = convert_episode(episode_tile)
             if len(api_data) > 1:
                 season_title = '[B]{}:[/B] {}'.format(season.get('title'), title_item.label)
@@ -2458,85 +3226,92 @@ def convert_seasons(api_data, program_name):
 def get_seasons(program_name):
     """Fetch seasons for a program, return list of dicts with title, episode, and either path or list_id."""
     data = get_seasons_data(program_name)
-    program = (data.get('data') or {}).get('page', {}).get('program', {})
+    page = (data.get('data') or {}).get('page', {})
+    menu = page.get('menu', {})
+
     seasons = []
 
-    def get_episode_from_component(component):
-        if not component or component.get('tileContentType') != 'episode':
-            return {}
-        items = component.get('items')
-        if items:
-            return random.choice(items).get('episode', {})
-        list_id = component.get('listId')
-        if not list_id:
-            return {}
-        for se in program.get('seasons', []):
-            if component.get('title', '').startswith(se.get('titleRaw', '')):
-                items = (se.get('episodeList') or {}).get('items') or []
-                if items:
-                    return random.choice(items).get('episode', {})
-        return {}
+    for nav_item in menu.get('items', []):
+        nav_title = nav_item.get('title')
+        for comp in nav_item.get('components', []):
+            typename = comp.get('__typename')
+            if typename == 'ContainerNavigation':
+                for inner in comp.get('items', []):
+                    components = inner.get('components', [])
+                    list_id = next(
+                        (c.get('listId') for c in components if c.get('listId')),
+                        None,
+                    )
+                    episode_tile = next(
+                        (
+                            edge.get('node', {})
+                            for c in components
+                            for edge in c.get('paginatedItems', {}).get('edges', [])
+                            if edge.get('node', {}).get('__typename') == 'EpisodeTile'
+                        ),
+                        None,
+                    )
+                    entry = {
+                        'title': inner.get('title'),
+                        'list_id': list_id,
+                    }
+                    if episode_tile:
+                        entry['episode_tile'] = episode_tile
 
-    def add_entry(title, episode=None, list_id=None, path=None):
-        entry = {'title': title, 'episode': episode or {}}
-        if list_id:
-            entry['list_id'] = list_id
-        elif path:
-            entry['path'] = path
-        seasons.append(entry)
+                    seasons.append(entry)
+                continue
 
-    def handle_component(title, component):
-        if component and component.get('tileContentType') == 'episode':
-            episode = get_episode_from_component(component)
-            add_entry(title, episode, list_id=component.get('listId'))
+            if typename != 'PaginatedTileList':
+                continue
 
-    def find_episode_by_id(target_id):
-        for se in program.get('seasons', []):
-            for ep in se.get('episodeList', {}).get('items', []):
-                episode = ep.get('episode') or {}
-                if target_id == episode.get('id'):
-                    return episode
-        return {}
+            content_type = comp.get('tileContentType')
+            if content_type not in ('episode', 'program'):
+                continue
 
-    # Process all navigation-based entries
-    navigation_items = (program.get('navigation') or {}).get('items', []) or []
+            edges = comp.get('paginatedItems', {}).get('edges', [])
+            episode_tile = next(
+                (
+                    edge.get('node', {})
+                    for edge in edges
+                    if edge.get('node', {}).get('__typename') == 'EpisodeTile'
+                ),
+                None,
+            )
 
-    for item in navigation_items:
-        action = item.get('action', {})
+            entry = {
+                'title': nav_title,
+                'list_id': comp.get('listId'),
+            }
 
-        if action.get('component'):
-            handle_component(item.get('title'), action['component'])
-            continue
+            if len(edges) == 1 and content_type == 'episode':
+                action = edges[0].get('node', {}).get('action', {})
+                if action.get('__typename') == 'LinkAction':
+                    entry = {
+                        'title': nav_title,
+                        'path': action.get('link'),
+                    }
+            if episode_tile:
+                entry['episode_tile'] = episode_tile
 
-        if action.get('items'):
-            for subitem in action['items']:
-                comp = (subitem.get('action') or {}).get('component')
-                handle_component(subitem.get('title') or item.get('title'), comp)
-            continue
-
-        if action.get('videoUrl'):
-            episode = find_episode_by_id(action.get('episodeId'))
-            add_entry(item.get('title'), episode=episode, path=action['videoUrl'])
-        elif action.get('page'):
-            if action.get('page').get('episode'):
-                add_entry(item.get('title'), episode=action.get('page').get('episode'), path=action['link'])
+            seasons.append(entry)
 
     # Prepend most relevant episode if no entries or more than one entry
     if not seasons or len(seasons) > 1:
-        tile = program.get('mostRelevantEpisodeTile')
-        if tile:
-            path = tile.get('tile', {}).get('action', {}).get('link', '')
+        header = page.get('header', {})
+        for item in header.get('actionItems', []):
+            action = item.get('action', {})
+            if action.get('__typename') != 'LinkAction':
+                continue
 
-            # Build entry
-            entry = {
-                'title': tile.get('title'),
-                'episode_tile': tile.get('tile', {}),
-                'path': path,
-            }
+            path = action.get('link')
 
-            # Only insert if path is not already present
             if not any(s.get('path') == path for s in seasons):
-                seasons.insert(0, entry)
+                seasons.insert(0, {
+                    'title': item.get('title'),
+                    'path': path,
+                })
+
+            break
 
     return seasons
 
