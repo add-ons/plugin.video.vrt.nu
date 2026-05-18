@@ -119,7 +119,7 @@ class TestApi(unittest.TestCase):
 
     def test_upnext(self):
         """Test getting next episode (de-ideale-wereld)"""
-        episode_id = '/vrtmax/a-z/de-ideale-wereld/2025-vj/de-ideale-wereld-d20250430-a31/'
+        episode_id = '/vrtmax/a-z/de-ideale-wereld/2026-vj/de-ideale-wereld-d20260430-a40/'
         next_episode = get_next_info(episode_id).get('next_episode')
         self.assertTrue(next_episode)
         print(next_episode)
