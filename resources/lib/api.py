@@ -196,10 +196,12 @@ def resumepoints_is_activated():
 
 def get_resumepoint_data(episode_id):
     """Get resumepoint data from GraphQL API"""
+    if not episode_id:
+        return None
     data_json = get_stream_data(episode_id)
     return next(
         (mode.get('resumePointTemplate', {})
-         for mode in data_json.get('data', {}).get('page', {}).get('player', {}).get('modes', [])
+         for mode in (data_json.get('data', {}).get('page') or {}).get('player', {}).get('modes', [])
          if mode.get('__typename') == 'VideoPlayerMode'),
         None
     )
@@ -304,6 +306,11 @@ def get_stream_data(page_id):
                 subtitle
                 image {
                   templateUrl
+                }
+                progress {
+                  durationInSeconds
+                  progressInSeconds
+                  completed
                 }
                 modes {
                   ... on VideoPlayerMode {

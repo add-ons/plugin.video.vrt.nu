@@ -72,8 +72,8 @@ class PlayerInfo(Player, object):  # pylint: disable=useless-object-inheritance
                 return
 
         # Get resumepoint data
-        episode_id = '/' + self.path.split('//')[1]
-        resumepoint_data = get_resumepoint_data(episode_id=episode_id)
+        episode_id = '/vrtmax' + self.path.split('//vrtmax', 1)[1] if '//vrtmax' in self.path else None
+        resumepoint_data = get_resumepoint_data(episode_id=episode_id) or {}
         self.video_id = resumepoint_data.get('mediaId')
         self.resumepoint_title = resumepoint_data.get('mediaName')
 
