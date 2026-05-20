@@ -224,60 +224,60 @@ def get_next_info(episode_id):
             .get('edges', [])
         )
         next_ep = next((edge.get('node') for edge in edges), None)
-
-        current_episode = {
-            'episodeid': current_ep.get('id'),
-            'tvshowid': current_ep.get('program', {}).get('id') or '1234',
-            'title': current_ep.get('title'),
-            'art': {
-                'tvshow.poster': None,
-                'thumb': current_ep.get('player').get('image').get('templateUrl'),
-                'tvshow.fanart': None,
-                'tvshow.landscape': current_ep.get('player').get('image').get('templateUrl'),
-                'tvshow.clearart': None,
-                'tvshow.clearlogo': None,
-            },
-            'plot': current_ep_info.get('description'),
-            'showtitle': current_ep.get('player').get('subtitle'),
-            'playcount': None,
-            'season': next((lv.split()[1] for meta in (current_ep_info.get('secondaryMeta') or [])
-                            if (lv := meta.get('longValue')) and 'Seizoen' in lv), 0),
-            'episode': next((lv.split()[1] for meta in (current_ep_info.get('secondaryMeta') or [])
-                             if (lv := meta.get('longValue')) and 'Aflevering' in lv), 0),
-            'rating': None,
-            'firstaired': None,
-            'runtime': int(current_ep.get('player', {}).get('progress', {}).get('durationSeconds', 0)),
-        }
-        next_episode = {
-            'episodeid': next_ep.get('id'),
-            'tvshowid': current_ep.get('program', {}).get('id'),
-            'title': next_ep.get('title'),
-            'art': {
-                'tvshow.poster': None,
-                'thumb': next_ep.get('image').get('templateUrl'),
-                'tvshow.fanart': None,
-                'tvshow.landscape': next_ep.get('image').get('templateUrl'),
-                'tvshow.clearart': None,
-                'tvshow.clearlogo': None,
-            },
-            'plot': next_ep.get('description'),
-            'showtitle': current_ep.get('player').get('subtitle'),
-            'playcount': None,
-            'season': next((lv.split()[1] for meta in (next_ep.get('primaryMeta') or [])
-                            if (lv := meta.get('longValue')) and 'Seizoen' in lv), 0),
-            'episode': next((lv.split()[1] for meta in (next_ep.get('primaryMeta') or [])
-                             if (lv := meta.get('longValue')) and 'Aflevering' in lv), 0),
-            'rating': None,
-            'firstaired': None,
-            'runtime': next_ep.get('status').get('durationSeconds', 0),
-        }
-        next_info = {
-            'current_episode': current_episode,
-            'next_episode': next_episode,
-            'play_info': {
-                'episode_id': next_ep.get('action').get('link'),
+        if next_ep:
+            current_episode = {
+                'episodeid': current_ep.get('id'),
+                'tvshowid': current_ep.get('program', {}).get('id') or '1234',
+                'title': current_ep.get('title'),
+                'art': {
+                    'tvshow.poster': None,
+                    'thumb': current_ep.get('player').get('image').get('templateUrl'),
+                    'tvshow.fanart': None,
+                    'tvshow.landscape': current_ep.get('player').get('image').get('templateUrl'),
+                    'tvshow.clearart': None,
+                    'tvshow.clearlogo': None,
+                },
+                'plot': current_ep_info.get('description'),
+                'showtitle': current_ep.get('player').get('subtitle'),
+                'playcount': None,
+                'season': next((lv.split()[1] for meta in (current_ep_info.get('secondaryMeta') or [])
+                                if (lv := meta.get('longValue')) and 'Seizoen' in lv), 0),
+                'episode': next((lv.split()[1] for meta in (current_ep_info.get('secondaryMeta') or [])
+                                 if (lv := meta.get('longValue')) and 'Aflevering' in lv), 0),
+                'rating': None,
+                'firstaired': None,
+                'runtime': int(current_ep.get('player', {}).get('progress', {}).get('durationSeconds', 0)),
             }
-        }
+            next_episode = {
+                'episodeid': next_ep.get('id'),
+                'tvshowid': current_ep.get('program', {}).get('id'),
+                'title': next_ep.get('title'),
+                'art': {
+                    'tvshow.poster': None,
+                    'thumb': next_ep.get('image').get('templateUrl'),
+                    'tvshow.fanart': None,
+                    'tvshow.landscape': next_ep.get('image').get('templateUrl'),
+                    'tvshow.clearart': None,
+                    'tvshow.clearlogo': None,
+                },
+                'plot': next_ep.get('description'),
+                'showtitle': current_ep.get('player').get('subtitle'),
+                'playcount': None,
+                'season': next((lv.split()[1] for meta in (next_ep.get('primaryMeta') or [])
+                                if (lv := meta.get('longValue')) and 'Seizoen' in lv), 0),
+                'episode': next((lv.split()[1] for meta in (next_ep.get('primaryMeta') or [])
+                                 if (lv := meta.get('longValue')) and 'Aflevering' in lv), 0),
+                'rating': None,
+                'firstaired': None,
+                'runtime': next_ep.get('status').get('durationSeconds', 0),
+            }
+            next_info = {
+                'current_episode': current_episode,
+                'next_episode': next_episode,
+                'play_info': {
+                    'episode_id': next_ep.get('action').get('link'),
+                }
+            }
     return next_info
 
 
@@ -2684,6 +2684,21 @@ def convert_episode(episode_data, destination=None):
             else 0
         )
         duration = timedelta(minutes=minutes)
+
+    # Resumepoints
+    position = progress.get('progressInSeconds', 0)
+    total = progress.get('durationInSeconds', 0)
+    prop_dict = {}
+    playcount = -1
+
+    if resumepoints_is_activated() and position and total:
+        if RESUMEPOINTS_MARGIN < position < total - RESUMEPOINTS_MARGIN:
+            prop_dict.update({'resumetime': position, 'totaltime': total})
+        if position > total - RESUMEPOINTS_MARGIN:
+            playcount = 1
+
+    title_item.info_dict['playcount'] = playcount
+    title_item.prop_dict = prop_dict
 
     # Season and episode numbers
     season_no = episode_no = None
