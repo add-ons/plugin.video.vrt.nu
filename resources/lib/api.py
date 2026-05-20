@@ -2531,6 +2531,8 @@ def convert_programs(item_list, destination, end_cursor='', use_favorites=False,
 
     for item in item_list:
         program = item.get('node')
+        preview = program.get('preview')
+        heading = preview.get('heading')
 
         program_name = url_to_program(program.get('link'))
         program_id = program.get('id')
@@ -2543,14 +2545,21 @@ def convert_programs(item_list, destination, end_cursor='', use_favorites=False,
         plotoutline = None
 
         # Art
-        fanart = ''
         thumb = ''
         poster = ''
-        thumb_img = program.get('image')
-        if thumb_img:
-            thumb = reformat_image_url(thumb_img.get('templateUrl'))
+        banner = ''
+        fanart = ''
+        poster_img = program.get('image')
+        if poster_img:
+            poster = reformat_image_url(poster_img.get('templateUrl'))
+        banner_img = heading.get('titleArt')
+        if banner_img:
+            banner = reformat_image_url(banner_img.get('templateUrl'))
+        fanart_img = heading.get('image')
+        if fanart_img:
+            fanart = reformat_image_url(fanart_img.get('templateUrl'))
 
-        # Check favorite
+        # FIXME: Check favorite
         # favorited = program.get('program').get('favoriteAction').get('favorite')
         favorited = False
 
@@ -2571,7 +2580,7 @@ def convert_programs(item_list, destination, end_cursor='', use_favorites=False,
                 art_dict={
                     'thumb': thumb,
                     'poster': poster,
-                    'banner': fanart,
+                    'banner': banner,
                     'fanart': fanart,
                 },
                 info_dict={
