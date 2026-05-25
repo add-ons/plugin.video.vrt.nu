@@ -43,18 +43,19 @@ def get_context_menu(program_name, program_id, program_title, program_type, favo
     context_menu = []
 
     # Follow/unfollow
-    follow_suffix = localize(30410) if program_type != 'oneoff' else ''  # program
-    encoded_program_title = quote_plus(program_title)  # We need to ensure forward slashes are quoted
-    if favorited:
-        context_menu.append((
-            localize(30412, title=follow_suffix),  # Unfollow
-            'RunPlugin(%s)' % url_for('unfollow', program_id=program_id, program_title=encoded_program_title)
-        ))
-    else:
-        context_menu.append((
-            localize(30411, title=follow_suffix),  # Follow
-            'RunPlugin(%s)' % url_for('follow', program_id=program_id, program_title=encoded_program_title)
-        ))
+    if program_id:
+        follow_suffix = localize(30410) if program_type != 'oneoff' else ''  # program
+        encoded_program_title = quote_plus(program_title)  # We need to ensure forward slashes are quoted
+        if favorited:
+            context_menu.append((
+                localize(30412, title=follow_suffix),  # Unfollow
+                'RunPlugin(%s)' % url_for('unfollow', program_id=program_id, program_title=encoded_program_title)
+            ))
+        else:
+            context_menu.append((
+                localize(30411, title=follow_suffix),  # Follow
+                'RunPlugin(%s)' % url_for('follow', program_id=program_id, program_title=encoded_program_title)
+            ))
 
     # Go to program
     if program_type != 'oneoff':
@@ -2535,7 +2536,6 @@ def convert_programs(item_list, destination, end_cursor='', use_favorites=False,
         heading = preview.get('heading')
 
         program_name = url_to_program(program.get('link'))
-        program_id = program.get('id')
         program_type = program.get('programType')
         program_title = program.get('title')
         episode_title = None
@@ -2559,9 +2559,17 @@ def convert_programs(item_list, destination, end_cursor='', use_favorites=False,
         if fanart_img:
             fanart = reformat_image_url(fanart_img.get('templateUrl'))
 
-        # FIXME: Check favorite
-        # favorited = program.get('program').get('favoriteAction').get('favorite')
-        favorited = False
+        # Check favorite
+        favorite_action = next(
+            (item.get('action') for item in program.get('actionItems', []) if item.get('action', {}).get('__typename', {}) == 'FavoriteAction'), {})
+        if favorite_action:
+            favorited = favorite_action.get('favorite')
+            program_id = favorite_action.get('id').split('|')[1]
+        else:
+            listdelete_action = next(
+                (item.get('action') for item in program.get('actionItems', []) if item.get('action', {}).get('__typename', {}) == 'ListDeleteAction'), {})
+            favorited = bool(listdelete_action)
+            program_id = listdelete_action.get('id')
 
         # Filter favorites for favorites menu
         if use_favorites and favorited is False:
