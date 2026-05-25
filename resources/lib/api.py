@@ -3194,11 +3194,11 @@ def get_episodes(list_id=None, destination=None, end_cursor='', program_name=Non
         # Check for multiple seasons
         api_data = get_seasons(program_name)
         seasons = convert_seasons(api_data, program_name)
-        if len(seasons) == 1:
-            log(2, 'Single season with path {path}', path=seasons[0].path)
-            if seasons[0].path.startswith('plugin://plugin.video.vrt.nu/programs/'):
-                program_name = seasons[0].path.split('/')[-2]
-                list_id = seasons[0].path.split('/')[-1]
+        if len(seasons) == 1 and seasons[0].path.startswith('plugin://plugin.video.vrt.nu/programs/'):
+            path = seasons[0].path
+            log(2, 'Single season with path {path}', path=path)
+            program_name = path.split('/')[-2]
+            list_id = path.split('/')[-1]
         else:
             return seasons, sort, ascending, content
 
