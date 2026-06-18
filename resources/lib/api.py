@@ -1966,10 +1966,6 @@ def get_entities(list_id, page_size='', end_cursor=''):
             }
             __typename
           }
-          ... on ClientDrivenAction {
-            __typename
-            clientDrivenActionType
-          }
           ... on ShareAction {
             title
             url
@@ -2247,10 +2243,6 @@ def get_epg_page(page_id, page_size='', end_cursor=''):
               value
             }
             __typename
-          }
-          ... on ClientDrivenAction {
-            __typename
-            clientDrivenActionType
           }
           ... on ShareAction {
             title
