@@ -3029,7 +3029,11 @@ def get_featured(feature=None, end_cursor=''):
             node = edge.get('node')
             content_type = node.get('tileContentType')
             if content_type in ('program', 'episode'):
-                title = node.get('title').strip() or node.get('header').get('description')
+                title = (
+                    (node.get('title') or '').strip()
+                    or (node.get('banner', {}).get('title') or '').strip()
+                    or (node.get('header', {}).get('description') or '').strip()
+                )
                 feature_id = node.get('listId').replace(':/', '_proto_')
                 featured.append(
                     TitleItem(
@@ -3406,12 +3410,18 @@ def get_featured_data():
                           }
                         }
                       }
+                      banner {
+                        title
+                      }
                       tileContentType
                       title
                       __typename
                     }
                     ... on StaticTileList {
                       __typename
+                      banner {
+                        title
+                      }
                       listId
                       title
                       componentType
