@@ -50,7 +50,7 @@ jobs:
       if: always()
     # FIXME: Add a better test for testing EPG
     - name: TEST TV guide
-      run: python -m unittest -v test_tvguide.TestTVGuide.test_livetv_description
+      run: python -m unittest -v test_tvguide.TestTVGuide.test_tvguide_episode_menu
       if: always()
     - name: TEST Categories
       run: python -m unittest -v test_api.TestApi.test_get_categories
