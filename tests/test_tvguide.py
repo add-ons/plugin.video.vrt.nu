@@ -63,15 +63,6 @@ class TestTVGuide(unittest.TestCase):
         episode_items = self._tvguide.get_episode_items(date, channel)
         self.assertEqual(episode_items, [])
 
-    def test_livetv_description(self):
-        """Test Live TV description"""
-        description = self._tvguide.live_description('een')
-        print('=== VRT 1 ===\n' + kodi_to_ansi(description))
-        description = self._tvguide.live_description('canvas')
-        print('=== Canvas ===\n' + kodi_to_ansi(description))
-        description = self._tvguide.live_description('ketnet')
-        print('=== Ketnet ===\n' + kodi_to_ansi(description))
-
     def test_tvguide_all(self):
         """Test episode menu"""
         episode_items = self._tvguide.get_episode_items('yesterday', 'een')

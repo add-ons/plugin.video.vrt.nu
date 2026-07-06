@@ -10,15 +10,12 @@ import dateutil.tz
 from api import get_epg_episodes, get_epg_list
 from data import CHANNELS, RELATIVE_DATES
 from helperobjects import TitleItem
-from kodiutils import (colour, get_cached_url_json, has_addon, localize,
-                       localize_datelong, show_listing, themecolour, ttl, url_for)
+from kodiutils import has_addon, localize, localize_datelong, show_listing, themecolour, url_for
 from utils import find_entry, parse_duration
 
 
 class TVGuide:
     """This implements a VRT TV-guide that offers Kodi menus and TV guide info"""
-
-    VRT_TVGUIDE = 'https://www.vrt.be/bin/epg/schedule.%Y-%m-%d.json'
 
     def __init__(self):
         """Initializes TV-guide object"""
@@ -253,82 +250,6 @@ class TVGuide:
                     })
 
         return epg_data
-
-    def playing_now(self, channel):
-        """Return the EPG information for what is playing now"""
-        now = datetime.now(dateutil.tz.tzlocal())
-        epg = now
-        # Daily EPG information shows information from 6AM until 6AM
-        if epg.hour < 6:
-            epg += timedelta(days=-1)
-
-        entry = find_entry(CHANNELS, 'name', channel)
-        if not entry:
-            return ''
-
-        epg_url = epg.strftime(self.VRT_TVGUIDE)
-        schedule = get_cached_url_json(url=epg_url, cache='schedule.today.json', ttl=ttl('indirect'), fail={})
-        episodes = iter(schedule.get(entry.get('id'), []))
-
-        while True:
-            try:
-                episode = next(episodes)
-            except StopIteration:
-                break
-            start_date = dateutil.parser.parse(episode.get('startTime'))
-            end_date = dateutil.parser.parse(episode.get('endTime'))
-            if start_date <= now <= end_date:  # Now playing
-                return episode.get('title')
-        return ''
-
-    @staticmethod
-    def episode_description(episode):
-        """Return a formatted description for an episode"""
-        return '{start} - {end}\n» {title}'.format(**episode)
-
-    def live_description(self, channel):
-        """Return the EPG information for current and next live program"""
-        now = datetime.now(dateutil.tz.tzlocal())
-        epg = now
-        # Daily EPG information shows information from 6AM until 6AM
-        if epg.hour < 6:
-            epg += timedelta(days=-1)
-
-        entry = find_entry(CHANNELS, 'name', channel)
-        if not entry:
-            return ''
-
-        epg_url = epg.strftime(self.VRT_TVGUIDE)
-        schedule = get_cached_url_json(url=epg_url, cache='schedule.today.json', ttl=ttl('indirect'), fail={})
-        episodes = iter(schedule.get(entry.get('id'), []))
-
-        description = ''
-        episode = None
-        while True:
-            try:
-                episode = next(episodes)
-            except StopIteration:
-                break
-            start_date = dateutil.parser.parse(episode.get('startTime'))
-            end_date = dateutil.parser.parse(episode.get('endTime'))
-            if start_date <= now <= end_date:  # Now playing
-                description = '[COLOR={highlighted}][B]%s[/B] %s[/COLOR]\n' % (localize(30421), self.episode_description(episode))
-                try:
-                    description += '[B]%s[/B] %s' % (localize(30422), self.episode_description(next(episodes)))
-                except StopIteration:
-                    break
-                break
-            if now < start_date:  # Nothing playing now, but this may be next
-                description = '[B]%s[/B] %s\n' % (localize(30422), self.episode_description(episode))
-                try:
-                    description += '[B]%s[/B] %s' % (localize(30422), self.episode_description(next(episodes)))
-                except StopIteration:
-                    break
-                break
-        if episode and not description:
-            # Add a final 'No transmission' program
-            description = '[COLOR={highlighted}][B]%s[/B] %s - 06:00\n» %s[/COLOR]' % (localize(30421), episode.get('end'), localize(30423))
-        return colour(description)
 
     @staticmethod
     def parse(date, now):
