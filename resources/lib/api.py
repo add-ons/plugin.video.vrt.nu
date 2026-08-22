@@ -10,6 +10,7 @@ from kodiutils import (colour, delete_cached_thumbnail, get_cache, get_setting_b
                        localize, localize_datelong, localize_from_data, log, log_error, update_cache, url_for)
 from utils import find_entry, parse_duration, reformat_image_url, shorten_link, url_to_program, youtube_to_plugin_url
 from graphql_data import EPISODE_TILE, PROGRAM_TILE
+from datetime import datetime, timedelta, timezone
 
 
 SCREENSHOT_URL = 'https://www.vrt.be/vrtnu-static/screenshots'
@@ -2881,10 +2882,14 @@ def convert_episode(episode_data, destination=None):
             comp_id = episode_data.get('componentId', '').lstrip('#')
             decoded = b64decode(comp_id.encode('utf-8')).decode('utf-8')
             epg_parts = decoded.split('#1')
-            channel_id, start_str = epg_parts[1], epg_parts[2].split('|')[0]
+            # channel_id, start_str = epg_parts[1], epg_parts[2].split('|')[0]
+            channel_id, start_ts = epg_parts[2].lstrip("0"), epg_parts[4].lstrip("3")
             channel = find_entry(CHANNELS, 'id', channel_id).get('name')
+            start_str = datetime.fromtimestamp(int(start_ts)/1000).isoformat()
 
         start_dt = datetime.fromisoformat(start_str.replace('Z', '+00:00'))
+        if start_dt.tzinfo is None:
+            start_dt = start_dt.replace(tzinfo=timezone.utc)
         stop_dt = start_dt + duration
 
         # Fix unplayable episodes
@@ -3029,11 +3034,7 @@ def get_featured(feature=None, end_cursor=''):
             node = edge.get('node')
             content_type = node.get('tileContentType')
             if content_type in ('program', 'episode'):
-                title = (
-                    (node.get('title') or '').strip()
-                    or (node.get('banner', {}).get('title') or '').strip()
-                    or (node.get('header', {}).get('description') or '').strip()
-                )
+                title = node.get('title').strip() or node.get('header').get('description')
                 feature_id = node.get('listId').replace(':/', '_proto_')
                 featured.append(
                     TitleItem(
@@ -3410,18 +3411,12 @@ def get_featured_data():
                           }
                         }
                       }
-                      banner {
-                        title
-                      }
                       tileContentType
                       title
                       __typename
                     }
                     ... on StaticTileList {
                       __typename
-                      banner {
-                        title
-                      }
                       listId
                       title
                       componentType

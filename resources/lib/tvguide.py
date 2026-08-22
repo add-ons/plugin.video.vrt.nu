@@ -10,12 +10,15 @@ import dateutil.tz
 from api import get_epg_episodes, get_epg_list
 from data import CHANNELS, RELATIVE_DATES
 from helperobjects import TitleItem
-from kodiutils import has_addon, localize, localize_datelong, show_listing, themecolour, url_for
+from kodiutils import (colour, get_cached_url_json, has_addon, localize,
+                       localize_datelong, show_listing, themecolour, ttl, url_for)
 from utils import find_entry, parse_duration
 
 
 class TVGuide:
     """This implements a VRT TV-guide that offers Kodi menus and TV guide info"""
+
+    VRT_TVGUIDE = 'https://www.vrt.be/bin/epg/schedule.%Y-%m-%d.json'
 
     def __init__(self):
         """Initializes TV-guide object"""
@@ -180,20 +183,23 @@ class TVGuide:
                     else:
                         comp_id = node.get('componentId', '').lstrip('#')
                         decoded = b64decode(comp_id.encode('utf-8')).decode('utf-8')
-                        start_str = decoded.split('#1')[2].split('|')[0]
+                        start_ts = decoded.split('#1')[4].lstrip("3")
+                        start_str = datetime.fromtimestamp(int(start_ts)/1000).isoformat()
 
                     start_dt = datetime.fromisoformat(start_str.replace('Z', '+00:00'))
 
                     if node.get('livestream'):
                         episode = node.get('livestream').get('episode')
                     else:
-                        episode = node.get('episode')
+                        episode = node
                     duration = timedelta(0)
 
                     if node.get('progress'):
                         duration = timedelta(seconds=node.get('progress').get('durationInSeconds'))
-                    elif episode and (dur_raw := episode.get('durationRaw')):
-                        duration = parse_duration(dur_raw)
+                    elif episode and (dur_raw := episode.get('formattedDuration')):
+                        value, unit = dur_raw.split()
+                        iso = f"PT{value}{ {'min':'M','minutes':'M','sec':'S','seconds':'S','hour':'H','hours':'H'}[unit] }"
+                        duration = parse_duration(iso)
 
                     if duration == timedelta(0) and node.get('statusMeta'):
                         minutes_str = node['statusMeta'][0].get('value', '').split()[0]
@@ -214,23 +220,26 @@ class TVGuide:
 
                     # Fill EPG entry
                     if episode:
-                        program = episode.get('program', {})
-                        title = program.get('title')
+                        # program = episode.get('program', {})
+                        title = episode.get('title')
                         description = episode.get('description')
                         subtitle = episode.get('subtitle')
                         image = ((episode.get('image') or {}).get('templateUrl') or '').split('?')[0]
                         genre = (episode.get('analytics') or {}).get('categories')
                         date = (episode.get('analytics') or {}).get('airDate')
-
-                        program_type = program.get('programType')
-                        season = episode.get('season', {})
-                        if (
-                            program_type == 'series'
-                            and (title_raw := season.get('titleRaw', '')).isnumeric()
-                            and isinstance(ep_no := episode.get('episodeNumberRaw'), int)
-                        ):
-                            se_no = int(title_raw)
-                            ep_code = f'S{se_no:02d}E{ep_no:02d}'
+                        meta = episode.get("primaryMeta") or []
+                        season_nr = None
+                        episode_nr = None
+                        for item in meta:
+                            sv = item.get("shortValue") or ""
+                            if sv.startswith("S") and sv[1:].isdigit():
+                                season_nr = sv[1:]
+                            elif sv.startswith("Afl.") and sv[4:].isdigit():
+                                episode_nr = sv[4:]
+                        if season_nr and episode_nr:
+                            epcode = f"S{season_nr}E{episode_nr}"
+                        else:
+                            epcode = None
                     else:
                         title = node.get('title')
                         description = subtitle = genre = date = None
@@ -250,6 +259,82 @@ class TVGuide:
                     })
 
         return epg_data
+
+    def playing_now(self, channel):
+        """Return the EPG information for what is playing now"""
+        now = datetime.now(dateutil.tz.tzlocal())
+        epg = now
+        # Daily EPG information shows information from 6AM until 6AM
+        if epg.hour < 6:
+            epg += timedelta(days=-1)
+
+        entry = find_entry(CHANNELS, 'name', channel)
+        if not entry:
+            return ''
+
+        epg_url = epg.strftime(self.VRT_TVGUIDE)
+        schedule = get_cached_url_json(url=epg_url, cache='schedule.today.json', ttl=ttl('indirect'), fail={})
+        episodes = iter(schedule.get(entry.get('id'), []))
+
+        while True:
+            try:
+                episode = next(episodes)
+            except StopIteration:
+                break
+            start_date = dateutil.parser.parse(episode.get('startTime'))
+            end_date = dateutil.parser.parse(episode.get('endTime'))
+            if start_date <= now <= end_date:  # Now playing
+                return episode.get('title')
+        return ''
+
+    @staticmethod
+    def episode_description(episode):
+        """Return a formatted description for an episode"""
+        return '{start} - {end}\n» {title}'.format(**episode)
+
+    def live_description(self, channel):
+        """Return the EPG information for current and next live program"""
+        now = datetime.now(dateutil.tz.tzlocal())
+        epg = now
+        # Daily EPG information shows information from 6AM until 6AM
+        if epg.hour < 6:
+            epg += timedelta(days=-1)
+
+        entry = find_entry(CHANNELS, 'name', channel)
+        if not entry:
+            return ''
+
+        epg_url = epg.strftime(self.VRT_TVGUIDE)
+        schedule = get_cached_url_json(url=epg_url, cache='schedule.today.json', ttl=ttl('indirect'), fail={})
+        episodes = iter(schedule.get(entry.get('id'), []))
+
+        description = ''
+        episode = None
+        while True:
+            try:
+                episode = next(episodes)
+            except StopIteration:
+                break
+            start_date = dateutil.parser.parse(episode.get('startTime'))
+            end_date = dateutil.parser.parse(episode.get('endTime'))
+            if start_date <= now <= end_date:  # Now playing
+                description = '[COLOR={highlighted}][B]%s[/B] %s[/COLOR]\n' % (localize(30421), self.episode_description(episode))
+                try:
+                    description += '[B]%s[/B] %s' % (localize(30422), self.episode_description(next(episodes)))
+                except StopIteration:
+                    break
+                break
+            if now < start_date:  # Nothing playing now, but this may be next
+                description = '[B]%s[/B] %s\n' % (localize(30422), self.episode_description(episode))
+                try:
+                    description += '[B]%s[/B] %s' % (localize(30422), self.episode_description(next(episodes)))
+                except StopIteration:
+                    break
+                break
+        if episode and not description:
+            # Add a final 'No transmission' program
+            description = '[COLOR={highlighted}][B]%s[/B] %s - 06:00\n» %s[/COLOR]' % (localize(30421), episode.get('end'), localize(30423))
+        return colour(description)
 
     @staticmethod
     def parse(date, now):
