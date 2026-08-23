@@ -29,7 +29,7 @@ class TestApi(unittest.TestCase):
     def test_get_api_data_single_season(self):
         """Test listing episodes for a single season (flikken)"""
         season_name = '4'
-        list_id = f'o%35|o%2|o%2|p%/a-z/flikken/|container%|banner%|{season_name}|b%1|n%1%'
+        list_id = f'o%35|o%2|o%47|o%2|o%47|p%/a-z/flikken/|container|b%1%|banner|%|banner|b%1%|{season_name}|%|{season_name}|b%1|n%1%'
         list_id = f'${b64encode(list_id.encode("utf-8")).decode("utf-8")}'
         title_items, sort, ascending, content = get_episodes(program_name='flikken', list_id=list_id)
         self.assertEqual(len(title_items), 13)
@@ -48,7 +48,7 @@ class TestApi(unittest.TestCase):
     def test_get_api_data_specific_season(self):
         """Test listing episodes for a specific season (pano)"""
         season_name = '2020'
-        list_id = f'o%35|o%2|o%2|p%/a-z/pano/|container%|banner%|{season_name}|b%1|n%1%'
+        list_id = f'o%35|o%2|o%47|o%2|o%47|p%/a-z/pano/|container|b%1%|banner|%|banner|b%1%|{season_name}|%|{season_name}|b%1|n%1%'
         list_id = f'${b64encode(list_id.encode("utf-8")).decode("utf-8")}'
         title_items, sort, ascending, content = get_episodes(program_name='pano', list_id=list_id)
         self.assertEqual(len(title_items), 15)
