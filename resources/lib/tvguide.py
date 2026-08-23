@@ -181,7 +181,7 @@ class TVGuide:
                         comp_id = node.get('componentId', '').lstrip('#')
                         decoded = b64decode(comp_id.encode('utf-8')).decode('utf-8')
                         start_ts = decoded.split('#1')[4].lstrip("3")
-                        start_str = datetime.fromtimestamp(int(start_ts)/1000).isoformat()
+                        start_str = datetime.fromtimestamp(int(start_ts) / 1000).isoformat()
 
                     start_dt = datetime.fromisoformat(start_str.replace('Z', '+00:00'))
 
@@ -195,7 +195,12 @@ class TVGuide:
                         duration = timedelta(seconds=node.get('progress').get('durationInSeconds'))
                     elif episode and (dur_raw := episode.get('durationRaw')):
                         value, unit = dur_raw.split()
-                        iso = f"PT{value}{ {'min':'M','minutes':'M','sec':'S','seconds':'S','hour':'H','hours':'H'}[unit] }"
+                        duration_units = {
+                            'min': 'M', 'minutes': 'M',
+                            'sec': 'S', 'seconds': 'S',
+                            'hour': 'H', 'hours': 'H',
+                        }
+                        iso = f"PT{value}{duration_units[unit]}"
                         duration = parse_duration(iso)
 
                     if duration == timedelta(0) and node.get('statusMeta'):
@@ -234,9 +239,9 @@ class TVGuide:
                             elif sv.startswith("Afl.") and sv[4:].isdigit():
                                 episode_nr = sv[4:]
                         if season_nr and episode_nr:
-                            epcode = f"S{season_nr}E{episode_nr}"
+                            ep_code = f"S{season_nr}E{episode_nr}"
                         else:
-                            epcode = None
+                            ep_code = None
                     else:
                         title = node.get('title')
                         description = subtitle = genre = date = None

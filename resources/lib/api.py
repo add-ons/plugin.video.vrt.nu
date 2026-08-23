@@ -2,6 +2,7 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Implements VRT MAX GraphQL API functionality"""
 
+from datetime import datetime, timedelta, timezone
 from urllib.parse import quote, quote_plus, unquote
 
 from data import CHANNELS
@@ -10,7 +11,6 @@ from kodiutils import (colour, delete_cached_thumbnail, get_cache, get_setting_b
                        localize, localize_datelong, localize_from_data, log, log_error, update_cache, url_for)
 from utils import find_entry, parse_duration, reformat_image_url, shorten_link, url_to_program, youtube_to_plugin_url
 from graphql_data import EPISODE_TILE, PROGRAM_TILE
-from datetime import datetime, timedelta, timezone
 
 
 SCREENSHOT_URL = 'https://www.vrt.be/vrtnu-static/screenshots'
@@ -119,7 +119,6 @@ def format_label(program_title, episode_title, program_type, start_dt=None, favo
 
 def format_plot(plot, region, product_placement, mpaa, program_type=None, start_dt=None, stop_dt=None, offtime=None, permalink=None):
     """Format plot"""
-    from datetime import datetime
     import dateutil.tz
 
     # Add additional metadata to plot
@@ -2618,7 +2617,6 @@ def convert_episode(episode_data, destination=None):
     """Convert paginated episode item to TitleItem"""
     import re
     import dateutil.parser
-    from datetime import datetime, timedelta
     from base64 import b64decode
     from json import loads
     import dateutil.tz
@@ -2885,7 +2883,7 @@ def convert_episode(episode_data, destination=None):
             # channel_id, start_str = epg_parts[1], epg_parts[2].split('|')[0]
             channel_id, start_ts = epg_parts[2].lstrip("0"), epg_parts[4].lstrip("3")
             channel = find_entry(CHANNELS, 'id', channel_id).get('name')
-            start_str = datetime.fromtimestamp(int(start_ts)/1000).isoformat()
+            start_str = datetime.fromtimestamp(int(start_ts) / 1000).isoformat()
 
         start_dt = datetime.fromisoformat(start_str.replace('Z', '+00:00'))
         if start_dt.tzinfo is None:
