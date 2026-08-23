@@ -180,20 +180,23 @@ class TVGuide:
                     else:
                         comp_id = node.get('componentId', '').lstrip('#')
                         decoded = b64decode(comp_id.encode('utf-8')).decode('utf-8')
-                        start_str = decoded.split('#1')[2].split('|')[0]
+                        start_ts = decoded.split('#1')[4].lstrip("3")
+                        start_str = datetime.fromtimestamp(int(start_ts)/1000).isoformat()
 
                     start_dt = datetime.fromisoformat(start_str.replace('Z', '+00:00'))
 
                     if node.get('livestream'):
                         episode = node.get('livestream').get('episode')
                     else:
-                        episode = node.get('episode')
+                        episode = node
                     duration = timedelta(0)
 
                     if node.get('progress'):
                         duration = timedelta(seconds=node.get('progress').get('durationInSeconds'))
                     elif episode and (dur_raw := episode.get('durationRaw')):
-                        duration = parse_duration(dur_raw)
+                        value, unit = dur_raw.split()
+                        iso = f"PT{value}{ {'min':'M','minutes':'M','sec':'S','seconds':'S','hour':'H','hours':'H'}[unit] }"
+                        duration = parse_duration(iso)
 
                     if duration == timedelta(0) and node.get('statusMeta'):
                         minutes_str = node['statusMeta'][0].get('value', '').split()[0]
@@ -214,23 +217,26 @@ class TVGuide:
 
                     # Fill EPG entry
                     if episode:
-                        program = episode.get('program', {})
-                        title = program.get('title')
+                        # program = episode.get('program', {})
+                        title = episode.get('title')
                         description = episode.get('description')
                         subtitle = episode.get('subtitle')
                         image = ((episode.get('image') or {}).get('templateUrl') or '').split('?')[0]
                         genre = (episode.get('analytics') or {}).get('categories')
                         date = (episode.get('analytics') or {}).get('airDate')
-
-                        program_type = program.get('programType')
-                        season = episode.get('season', {})
-                        if (
-                            program_type == 'series'
-                            and (title_raw := season.get('titleRaw', '')).isnumeric()
-                            and isinstance(ep_no := episode.get('episodeNumberRaw'), int)
-                        ):
-                            se_no = int(title_raw)
-                            ep_code = f'S{se_no:02d}E{ep_no:02d}'
+                        meta = episode.get("primaryMeta") or []
+                        season_nr = None
+                        episode_nr = None
+                        for item in meta:
+                            sv = item.get("shortValue") or ""
+                            if sv.startswith("S") and sv[1:].isdigit():
+                                season_nr = sv[1:]
+                            elif sv.startswith("Afl.") and sv[4:].isdigit():
+                                episode_nr = sv[4:]
+                        if season_nr and episode_nr:
+                            epcode = f"S{season_nr}E{episode_nr}"
+                        else:
+                            epcode = None
                     else:
                         title = node.get('title')
                         description = subtitle = genre = date = None
