@@ -49,11 +49,11 @@ class TestFavorites(unittest.TestCase):
         for program_item in programs:
             program_id = get_program_id(program_item.get('program_name'))
 
-            set_favorite(program_id=program_id)
+            set_favorite(entity_id=program_id)
             self.assertTrue(is_favorite(program_item.get('program_name')))
-            set_favorite(program_id=program_id, favorited=False)
+            set_favorite(entity_id=program_id, favorited=False)
             self.assertFalse(is_favorite(program_item.get('program_name')))
-            set_favorite(program_id=program_id)
+            set_favorite(entity_id=program_id)
             self.assertTrue(is_favorite(program_item.get('program_name')))
 
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')

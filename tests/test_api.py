@@ -5,7 +5,7 @@
 import unittest
 from base64 import b64encode
 
-from api import (delete_continue, finish_continue, get_continue_episodes, get_episodes, get_favorite_programs, get_latest_episode,
+from api import (delete_from_list, finish_continue, get_continue_episodes, get_episodes, get_favorite_programs, get_latest_episode,
                  get_next_info, get_online_categories, get_offline_programs, get_programs, get_recent_episodes,
                  get_resumepoint_data, get_search, get_single_episode, set_resumepoint, valid_categories)
 from data import CATEGORIES
@@ -162,10 +162,16 @@ class TestApi(unittest.TestCase):
         data = finish_continue(episode_id)
         self.assertEqual(data.get('data').get('setFinishActionItem').get('title'), 'Afgespeeld')
 
-    def test_delete_continue(self):
+    def test_list_delete(self):
         """Test delete continue watching for episode wij--roger-raveel"""
         episode_id = '1615881736655'
-        data = delete_continue(episode_id)
+        list_name = (
+            'o%ListDeleteAction|'
+            '$byUyNXxvJTl8dmlkZW8tZXBpc29kZXxwJS9taWpuLWxpanN0Lz9lbnRpdHlU'
+            'eXBlPXZpZGVvLWVwaXNvZGUlfHZpZGVvLWVwaXNvZGV8YiUwJQ==|'
+            'live/vrtmax/favorites%'
+        )
+        data = delete_from_list(episode_id, list_name)
         self.assertEqual(data.get('data').get('setListDeleteActionItem').get('title'), 'Verwijderd')
 
     def test_get_categories(self):
