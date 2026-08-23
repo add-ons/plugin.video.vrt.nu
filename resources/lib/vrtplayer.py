@@ -2,7 +2,7 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Implements a VRTPlayer class"""
 
-from api import (get_categories, get_channels, get_continue_episodes, get_featured, get_programs, get_episodes, get_favorite_programs,
+from api import (get_categories, get_channels, get_continue_episodes, get_featured, get_programs, get_episodes, get_favorite_episodes, get_favorite_programs,
                  get_recent_episodes, get_offline_programs, get_single_episode, get_latest_episode, get_youtube)
 from data import CHANNELS
 from helperobjects import TitleItem
@@ -28,7 +28,7 @@ class VRTPlayer:
         # Only add 'My favorites' when it has been activated
         if self.favorites_is_activated():
             main_items.append(TitleItem(
-                label=localize(30010),  # My favorites
+                label=localize(30010),  # My list
                 path=url_for('favorites_menu'),
                 art_dict={'thumb': 'DefaultFavourites.png'},
                 info_dict={'plot': localize(30011)},
@@ -116,16 +116,12 @@ class VRTPlayer:
         favorites_items = [
             TitleItem(label=localize(30040),  # My programs
                       path=url_for('favorites_programs'),
-                      art_dict={'thumb': 'DefaultMovieTitle.png'},
+                      art_dict={'thumb': 'DefaultTVShows.png'},
                       info_dict={'plot': localize(30041)}),
-            TitleItem(label=localize(30048),  # My recent items
-                      path=url_for('favorites_recent'),
-                      art_dict={'thumb': 'DefaultRecentlyAddedEpisodes.png'},
-                      info_dict={'plot': localize(30049)}),
-            TitleItem(label=localize(30050),  # My soon offline
-                      path=url_for('favorites_offline'),
-                      art_dict={'thumb': 'DefaultYear.png'},
-                      info_dict={'plot': localize(30051)}),
+            TitleItem(label=localize(30042),  # My episodes
+                      path=url_for('favorites_episodes'),
+                      art_dict={'thumb': 'DefaultVideoPlaylists.png'},
+                      info_dict={'plot': localize(30043)}),
         ]
 
         # Only add 'Continue watching' when it has been activated
@@ -140,10 +136,10 @@ class VRTPlayer:
 
         if get_setting_bool('addmymovies', default=True):
             favorites_items.append(
-                TitleItem(label=localize(30042),  # My movies
+                TitleItem(label=localize(30048),  # My movies
                           path=url_for('categories', category='films'),
                           art_dict={'thumb': 'DefaultAddonVideo.png'},
-                          info_dict={'plot': localize(30043)})
+                          info_dict={'plot': localize(30049)})
             )
 
         if get_setting_bool('addmydocu', default=True):
@@ -168,6 +164,11 @@ class VRTPlayer:
         """The VRT MAX add-on 'All programs' listing menu"""
         tvshow_items = get_favorite_programs(end_cursor=end_cursor)
         show_listing(tvshow_items, category=30440, sort='label', content='tvshows')  # A-Z
+
+    def show_favorites_episodes_menu(self, end_cursor=''):
+        """The VRT MAX add-on 'All programs' listing menu"""
+        episodes, sort, ascending, content = get_favorite_episodes(end_cursor=end_cursor)
+        show_listing(episodes, category=30440, sort=sort, ascending=ascending, content=content)  # A-Z
 
     def show_category_menu(self, category=None, end_cursor=''):
         """The VRT MAX add-on 'Categories' listing menu"""

@@ -37,21 +37,25 @@ def delete_tokens():
     TokenResolver().delete_tokens()
 
 
-@plugin.route('/follow/<program_id>/<program_title>')
-def follow(program_id, program_title):
+@plugin.route('/follow/<entity_id>/<entity_title>')
+def follow(entity_id, entity_title):
     """The API interface to follow a program used by the context menu"""
+    from base64 import b64decode
     from api import set_favorite
-    set_favorite(program_id=program_id)
-    notification(message=localize(30411, title=unquote_plus(program_title)))
+    entity_id = b64decode(entity_id.encode('utf-8')).decode('utf-8')
+    set_favorite(entity_id=entity_id)
+    notification(message=localize(30411, title=unquote_plus(entity_title)))
     container_refresh()
 
 
-@plugin.route('/unfollow/<program_id>/<program_title>')
-def unfollow(program_id, program_title):
+@plugin.route('/unfollow/<entity_id>/<entity_title>')
+def unfollow(entity_id, entity_title):
     """The API interface to unfollow a program used by the context menu"""
+    from base64 import b64decode
     from api import set_favorite
-    set_favorite(program_id=program_id, favorited=False)
-    notification(message=localize(30412, title=unquote_plus(program_title)))
+    entity_id = b64decode(entity_id.encode('utf-8')).decode('utf-8')
+    set_favorite(entity_id=entity_id, favorited=False)
+    notification(message=localize(30412, title=unquote_plus(entity_title)))
     container_refresh()
 
 
@@ -70,20 +74,12 @@ def favorites_programs(end_cursor=''):
     VRTPlayer().show_favorites_tvshow_menu(end_cursor=end_cursor)
 
 
-@plugin.route('/favorites/recent')
-@plugin.route('/favorites/recent/<end_cursor>')
-def favorites_recent(end_cursor=''):
-    """The favorites recent listing"""
+@plugin.route('/favorites/episodes')
+@plugin.route('/favorites/episodes/<end_cursor>')
+def favorites_episodes(end_cursor=''):
+    """The favorites 'My episodes' listing"""
     from vrtplayer import VRTPlayer
-    VRTPlayer().show_recent_menu(end_cursor=end_cursor, use_favorites=True)
-
-
-@plugin.route('/favorites/offline')
-@plugin.route('/favorites/offline/<end_cursor>')
-def favorites_offline(end_cursor=''):
-    """The favorites offline listing"""
-    from vrtplayer import VRTPlayer
-    VRTPlayer().show_offline_menu(end_cursor=end_cursor, use_favorites=True)
+    VRTPlayer().show_favorites_episodes_menu(end_cursor=end_cursor)
 
 
 @plugin.route('/resumepoints/continue')
@@ -94,11 +90,13 @@ def resumepoints_continue(end_cursor=''):
     VRTPlayer().show_continue_menu(end_cursor=end_cursor)
 
 
-@plugin.route('/resumepoints/continue/delete/<episode_id>')
-def resumepoints_continue_delete(episode_id):
-    """The API interface to delete episodes from continue watching listing"""
-    from api import delete_continue
-    delete_continue(episode_id)
+@plugin.route('/list/delete/<episode_id>/<list_name>')
+def list_delete(episode_id, list_name):
+    """The API interface to delete episodes from a list"""
+    from base64 import b64decode
+    list_name = b64decode(list_name.encode('utf-8')).decode('utf-8')
+    from api import delete_from_list
+    delete_from_list(episode_id, list_name)
     container_refresh()
 
 

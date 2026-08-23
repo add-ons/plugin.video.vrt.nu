@@ -177,6 +177,34 @@ EPISODE_TILE = """
       }
       tileType
       title
+      preview {
+        heading {
+          ... on Banner {
+            title
+            image {
+              templateUrl
+              __typename
+            }
+            titleArt {
+              templateUrl
+              __typename
+            }
+            description
+            richDescription {
+              html
+              text
+            }
+            tertiaryMeta {
+              ...metaFragment
+              __typename
+            }
+          }
+          __typename
+        }
+        video {
+          __typename
+        }
+      }
       componentType
       description
       available

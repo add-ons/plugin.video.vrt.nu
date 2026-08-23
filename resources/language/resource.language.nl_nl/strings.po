@@ -17,8 +17,8 @@ msgstr ""
 
 ### MAIN MENU
 msgctxt "#30010"
-msgid "My favorites"
-msgstr "Mijn favorieten"
+msgid "My list"
+msgstr "Mijn lijst"
 
 msgctxt "#30011"
 msgid "Browse only the programs you follow"
@@ -111,16 +111,16 @@ msgid "My programs"
 msgstr "Mijn programma's"
 
 msgctxt "#30041"
-msgid "Alphabetically sorted list of My TV programs"
-msgstr "Alle tv-programma's die je volgt in alfabetische volgorde"
+msgid "All tv shows you follow"
+msgstr "Alle tv-programma's die je volgt"
 
 msgctxt "#30042"
-msgid "Movies"
-msgstr "Films"
+msgid "My playlist"
+msgstr "Mijn afspeellijst"
 
 msgctxt "#30043"
-msgid "All movies available on VRT MAX"
-msgstr "Alle films beschikbaar op VRT MAX"
+msgid "All episodes you follow"
+msgstr "Alle afleveringen van tv-programma's die je volgt"
 
 msgctxt "#30044"
 msgid "Documentaries"
@@ -139,12 +139,12 @@ msgid "All music on VRT MAX"
 msgstr "Alle muziek op VRT MAX"
 
 msgctxt "#30048"
-msgid "Most recent"
-msgstr "Meest recent"
+msgid "Movies"
+msgstr "Films"
 
 msgctxt "#30049"
-msgid "Recently published episodes of My TV programs"
-msgstr "Recent gepubliceerde afleveringen van tv-programma's die je volgt"
+msgid "All movies available on VRT MAX"
+msgstr "Alle films beschikbaar op VRT MAX"
 
 msgctxt "#30050"
 msgid "Soon offline"
