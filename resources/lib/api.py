@@ -2652,7 +2652,7 @@ def convert_episode(episode, destination=None):
     episode_title = heading.get('description')
 
     # Actions
-    actions = episode.get('actionItems', [])
+    actions = episode.get('actionItems') or []
 
     # Check favorite
     favorite_action = next(
@@ -2799,7 +2799,7 @@ def convert_episode(episode, destination=None):
             channel = episode.get('brand')
             start_time = episode.get('status').get('text').get('small').split(' - ')[0]
             hours, minutes = map(int, start_time.split(':'))
-            start_str = now.replace(hour=hours, minute=minutes, second=0, microsecond=0).isoformat()
+            start_str = now.replace(hour=hours, minute=minutes, second=0, microsecond=0).replace(tzinfo=None).isoformat()
         else:
             comp_id = episode.get('componentId', '').lstrip('#')
             decoded = b64decode(comp_id.encode('utf-8')).decode('utf-8')
