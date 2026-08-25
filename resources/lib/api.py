@@ -2652,7 +2652,7 @@ def convert_episode(episode, destination=None):
     episode_title = heading.get('description')
 
     # Actions
-    actions = episode.get('actionItems', [])
+    actions = episode.get('actionItems') or []
 
     # Check favorite
     favorite_action = next(
@@ -2810,8 +2810,9 @@ def convert_episode(episode, destination=None):
             start_str = datetime.fromtimestamp(int(start_ts) / 1000).isoformat()
 
         start_dt = datetime.fromisoformat(start_str.replace('Z', '+00:00'))
+        tz_be = timezone(timedelta(hours=2))
         if start_dt.tzinfo is None:
-            start_dt = start_dt.replace(tzinfo=timezone.utc)
+            start_dt = start_dt.replace(tzinfo=tz_be)
         stop_dt = start_dt + duration
 
         # Fix unplayable episodes
