@@ -2,7 +2,7 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Implements VRT MAX GraphQL API functionality"""
 
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from urllib.parse import quote, quote_plus, unquote
 
 from data import CHANNELS
@@ -2623,7 +2623,7 @@ def convert_episode(episode, destination=None):
     heading = preview.get('heading', {})
 
     title_item = TitleItem(label=None, art_dict={}, info_dict={})
-    now = datetime.now(dateutil.tz.gettz('Europe/Brussels'))
+    now = datetime.now(dateutil.tz.UTC)
 
     # Defaults
     path = None
@@ -2652,7 +2652,7 @@ def convert_episode(episode, destination=None):
     episode_title = heading.get('description')
 
     # Actions
-    actions = episode.get('actionItems', [])
+    actions = actions = episode.get('actionItems') or []
 
     # Check favorite
     favorite_action = next(
@@ -2799,19 +2799,15 @@ def convert_episode(episode, destination=None):
             channel = episode.get('brand')
             start_time = episode.get('status').get('text').get('small').split(' - ')[0]
             hours, minutes = map(int, start_time.split(':'))
-            start_str = now.replace(hour=hours, minute=minutes, second=0, microsecond=0).isoformat()
+            start_ts = now.replace(hour=hours, minute=minutes, second=0, microsecond=0).timestamp()
         else:
             comp_id = episode.get('componentId', '').lstrip('#')
             decoded = b64decode(comp_id.encode('utf-8')).decode('utf-8')
-            epg_parts = decoded.split('#1')
-            # channel_id, start_str = epg_parts[1], epg_parts[2].split('|')[0]
-            channel_id, start_ts = epg_parts[2].lstrip("0"), epg_parts[4].lstrip("3")
+            epg_parts = decoded.split('#10')
+            channel_id, start_ts = epg_parts[1], int(epg_parts[2].split('#13')[1]) / 1000
             channel = find_entry(CHANNELS, 'id', channel_id).get('name')
-            start_str = datetime.fromtimestamp(int(start_ts) / 1000).isoformat()
 
-        start_dt = datetime.fromisoformat(start_str.replace('Z', '+00:00'))
-        if start_dt.tzinfo is None:
-            start_dt = start_dt.replace(tzinfo=timezone.utc)
+        start_dt = datetime.fromtimestamp(start_ts, tz=dateutil.tz.UTC)
         stop_dt = start_dt + duration
 
         # Fix unplayable episodes
