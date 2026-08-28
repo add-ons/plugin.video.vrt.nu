@@ -2680,12 +2680,6 @@ def convert_episode(episode, destination=None):
 
     title = episode.get('title')
 
-    if episode_title != title:
-        program_title = title
-    else:
-        meta = loads(episode.get('trackingData', {}).get('data', '{}'))
-        program_title = meta.get('$leti')
-
     # Path
     if episode.get('action'):
         path = url_for('play_url', video_url=episode.get('action', {}).get('link'))
@@ -2746,6 +2740,19 @@ def convert_episode(episode, destination=None):
                 season_no = number
             elif 'Aflevering' in value:
                 episode_no = number
+
+    if not season_no:
+        raw = episode.get('trackingData', {}).get('data', {})
+        if isinstance(raw, str):
+            meta = loads(raw)
+        else:
+            meta = raw
+        tapu = meta.get('$tapu', '')
+        parts = tapu.split("/")
+        log(0,f'tapu is {tapu}, parts is {parts}')
+        value = parts[4] if len(parts) > 4 else ""
+        m = re.search(r'(\d+)', value)
+        season_no = int(m.group(1)) if m else None
 
     if season_no and episode_no:
         title_item.info_dict['episode'] = episode_no
