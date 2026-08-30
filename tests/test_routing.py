@@ -41,11 +41,10 @@ class TestRouting(unittest.TestCase):
         """Favorites menu: /favorites"""
         addon.run(['plugin://plugin.video.vrt.nu/favorites', '0', ''])
         addon.run(['plugin://plugin.video.vrt.nu/favorites/programs', '0', ''])
-        addon.run(['plugin://plugin.video.vrt.nu/favorites/recent', '0', ''])
-        addon.run(['plugin://plugin.video.vrt.nu/favorites/offline', '0', ''])
+        addon.run(['plugin://plugin.video.vrt.nu/favorites/episodes', '0', ''])
         addon.run(['plugin://plugin.video.vrt.nu/resumepoints/continue', '0', ''])
-        # addon.run(['plugin://plugin.video.vrt.nu/favorites/docu', '0', ''])
-        # addon.run(['plugin://plugin.video.vrt.nu/favorites/music', '0', ''])
+        addon.run(['plugin://plugin.video.vrt.nu/categories/docu', '0', ''])
+        addon.run(['plugin://plugin.video.vrt.nu/categories/muziek', '0', ''])
 
     @unittest.skipUnless(xbmc_addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
