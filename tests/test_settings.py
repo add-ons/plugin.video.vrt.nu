@@ -67,8 +67,8 @@ class TestSettings(unittest.TestCase):
         addon.settings['useresumepoints'] = True
         plugin.run(['plugin://plugin.video.vrt.nu/', '0', ''])
         plugin.run(['plugin://plugin.video.vrt.nu/favorites', '0', ''])
-        plugin.run(['plugin://plugin.video.vrt.nu/favorites/recent', '0', ''])
-        plugin.run(['plugin://plugin.video.vrt.nu/favorites/offline', '0', ''])
+        plugin.run(['plugin://plugin.video.vrt.nu/favorites/programs', '0', ''])
+        plugin.run(['plugin://plugin.video.vrt.nu/favorites/episodes', '0', ''])
 
     @staticmethod
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
