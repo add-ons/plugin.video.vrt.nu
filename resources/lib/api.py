@@ -2036,6 +2036,10 @@ def get_entities(list_id, page_size='', end_cursor=''):
           value
           shortValue
           longValue
+          icons {
+            ...iconFragment
+            __typename
+          }
         }
         %s
         %s
