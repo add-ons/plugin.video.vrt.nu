@@ -550,6 +550,55 @@ def get_program_data(program_name):
             }
           }
         }
+        fragment metaFragment on MetaDataItem {
+          __typename
+          type
+          value
+          shortValue
+          longValue
+          icons {
+            ...iconFragment
+            __typename
+          }
+        }
+        fragment iconFragment on Icon {
+          __typename
+          accessibilityLabel
+          position
+          type
+          ... on DesignSystemIcon {
+            value {
+              __typename
+              color
+              name
+            }
+            activeValue {
+              __typename
+              color
+              name
+            }
+            __typename
+          }
+          ... on ImageIcon {
+            value {
+              __typename
+              srcSet {
+                src
+                format
+                __typename
+              }
+            }
+            activeValue {
+              __typename
+              srcSet {
+                src
+                format
+                __typename
+              }
+            }
+            __typename
+          }
+        }
         %s
     """ % EPISODE_TILE
     operation_name = 'VideoProgramPage'
