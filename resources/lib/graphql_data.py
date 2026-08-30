@@ -195,7 +195,7 @@ EPISODE_TILE = """
               text
             }
             tertiaryMeta {
-              ...metaFragment
+              ...metaData
               __typename
             }
           }
@@ -252,12 +252,53 @@ EPISODE_TILE = """
       __typename
     }
     fragment metaData on MetaDataItem {
-      longValue
-      shortValue
+      __typename
       type
       value
-      label
+      shortValue
+      longValue
+      icons {
+        ...iconFragment
+        __typename
+      }
+    }
+    fragment iconFragment on Icon {
       __typename
+      accessibilityLabel
+      position
+      type
+      ... on DesignSystemIcon {
+        value {
+          __typename
+          color
+          name
+        }
+        activeValue {
+          __typename
+          color
+          name
+        }
+        __typename
+      }
+      ... on ImageIcon {
+        value {
+          __typename
+          srcSet {
+            src
+            format
+            __typename
+          }
+        }
+        activeValue {
+          __typename
+          srcSet {
+            src
+            format
+            __typename
+          }
+        }
+        __typename
+      }
     }
     fragment componentTrackingDataFragment on IComponent {
       trackingData {
