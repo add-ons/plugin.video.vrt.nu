@@ -2623,7 +2623,7 @@ def convert_episode(episode, destination=None):
     heading = preview.get('heading', {})
 
     title_item = TitleItem(label=None, art_dict={}, info_dict={})
-    now = datetime.now(dateutil.tz.UTC)
+    now = datetime.now(dateutil.tz.gettz('Europe/Brussels'))
 
     # Defaults
     path = None

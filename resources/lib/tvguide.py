@@ -150,9 +150,9 @@ class TVGuide:
         """Return EPG data"""
         from base64 import b64decode
 
-        now = datetime.now(dateutil.tz.UTC)
-        epg_data = {}
         tz_brussels = dateutil.tz.gettz('Europe/Brussels')
+        now = datetime.now(tz_brussels)
+        epg_data = {}
 
         epg_dates = [now + timedelta(days=i) for i in range(-7, 8)]
         for epg_date in epg_dates:
