@@ -43,7 +43,7 @@ class TestTVGuide(unittest.TestCase):
         channel_item = random.choice(channel_items)
         print('- %s%s' % (kodi_to_ansi(channel_item.label), uri_to_path(channel_item.path)))
 
-        date = (datetime.now(dateutil.tz.tzlocal()) + timedelta(days=-7)).strftime('%Y-%m-%d')
+        date = (datetime.now(dateutil.tz.gettz('Europe/Brussels')) + timedelta(days=-7)).strftime('%Y-%m-%d')
         channel_items = self._tvguide.get_channel_items(date=date)
         self.assertTrue(channel_items)
         channel_item = random.choice(channel_items)
@@ -51,14 +51,14 @@ class TestTVGuide(unittest.TestCase):
 
     def test_tvguide_episode_menu(self):
         """Test episode menu"""
-        date = (datetime.now(dateutil.tz.tzlocal()) + timedelta(days=-7)).strftime('%Y-%m-%d')
+        date = (datetime.now(dateutil.tz.gettz('Europe/Brussels')) + timedelta(days=-7)).strftime('%Y-%m-%d')
         channel = random.choice(channels)
         episode_items = self._tvguide.get_episode_items(date, channel)
         self.assertTrue(episode_items)
 
     def test_tvguide_invalid_episode_menu(self):
         """Test episode menu"""
-        date = (datetime.now(dateutil.tz.tzlocal()) + timedelta(days=-40)).strftime('%Y-%m-%d')
+        date = (datetime.now(dateutil.tz.gettz('Europe/Brussels')) + timedelta(days=-40)).strftime('%Y-%m-%d')
         channel = random.choice(channels)
         episode_items = self._tvguide.get_episode_items(date, channel)
         self.assertEqual(episode_items, [])
@@ -80,8 +80,8 @@ class TestTVGuide(unittest.TestCase):
 
     def test_parse(self):
         """Test parsing date"""
-        now = datetime.now(dateutil.tz.tzlocal())
-        date = self._tvguide.parse('2019-05-11', now)
+        now = datetime.now(dateutil.tz.gettz('Europe/Brussels'))
+        date = self._tvguide.parse('2026-08-30', now)
         print(date)
 
 
