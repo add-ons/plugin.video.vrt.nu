@@ -2680,6 +2680,13 @@ def convert_episode(episode, destination=None):
 
     title = episode.get('title')
 
+    # Program Title in EPG
+    if episode_title != title:
+        program_title = title
+    else:
+        meta = loads(episode.get('trackingData', {}).get('data', '{}'))
+        program_title = meta.get('$leti')
+
     # Path
     if episode.get('action'):
         path = url_for('play_url', video_url=episode.get('action', {}).get('link'))
