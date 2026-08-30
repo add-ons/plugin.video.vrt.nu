@@ -2756,7 +2756,7 @@ def convert_episode(episode, destination=None):
             meta = raw
         tapu = meta.get('$tapu', '')
         parts = tapu.split("/")
-        log(0,f'tapu is {tapu}, parts is {parts}')
+        log(0, f'tapu is {tapu}, parts is {parts}')
         value = parts[4] if len(parts) > 4 else ""
         m = re.search(r'(\d+)', value)
         season_no = int(m.group(1)) if m else None
@@ -2915,7 +2915,7 @@ def get_latest_episode(program_name):
     """Get the latest episode of a program"""
     latest_episode = {}
     video = None
-    latest_episode = get_latest_episode(program_name=program_name)
+    latest_episode = get_latest_episode_data(program_name=program_name)
     if latest_episode:
         _, _, _, title_item = convert_episode(latest_episode)
         video = {
