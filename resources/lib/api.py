@@ -2866,7 +2866,8 @@ def convert_episode(episode, destination=None):
             channel = episode.get('brand')
             start_time = episode.get('status').get('text').get('small').split(' - ')[0]
             hours, minutes = map(int, start_time.split(':'))
-            start_ts = now.replace(hour=hours, minute=minutes, second=0, microsecond=0).timestamp()
+            dt = now.replace(hour=hours, minute=minutes, second=0, microsecond=0)
+            start_ts = dt.replace(tzinfo=None).timestamp()
         else:
             comp_id = episode.get('componentId', '').lstrip('#')
             decoded = b64decode(comp_id.encode('utf-8')).decode('utf-8')
