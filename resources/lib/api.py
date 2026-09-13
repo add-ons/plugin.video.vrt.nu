@@ -2754,7 +2754,9 @@ def convert_episode(episode, destination=None):
 
     # Duration
     progress = episode.get('progress') or {}
-    status = next((item.get('value') for item in episode.get('statusMeta', [])), None)
+    status_meta = episode.get("statusMeta") or []
+    status = next((item.get("value") for item in status_meta), None)
+    # status = next((item.get('value') for item in episode.get('statusMeta', [])), None) gives error if statusMeta is None
     alt_status = ((episode.get('status') or {}).get('text') or {}).get('default', '')
     text = status or alt_status
     seconds = progress.get('durationInSeconds')
@@ -2809,7 +2811,7 @@ def convert_episode(episode, destination=None):
             meta = raw
         tapu = meta.get('$tapu', '')
         parts = tapu.split("/")
-        log(0, f'tapu is {tapu}, parts is {parts}')
+        log(2, f'tapu is {tapu}, parts is {parts}')
         value = parts[4] if len(parts) > 4 else ""
         m = re.search(r'(\d+)', value)
         season_no = int(m.group(1)) if m else None
@@ -2866,7 +2868,8 @@ def convert_episode(episode, destination=None):
             channel = episode.get('brand')
             start_time = episode.get('status').get('text').get('small').split(' - ')[0]
             hours, minutes = map(int, start_time.split(':'))
-            start_ts = now.replace(hour=hours, minute=minutes, second=0, microsecond=0).timestamp()
+            dt = now.replace(hour=hours, minute=minutes, second=0, microsecond=0)
+            start_ts = dt.replace(tzinfo=None).timestamp()
         else:
             comp_id = episode.get('componentId', '').lstrip('#')
             decoded = b64decode(comp_id.encode('utf-8')).decode('utf-8')
