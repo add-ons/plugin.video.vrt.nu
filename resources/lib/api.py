@@ -251,7 +251,7 @@ def get_next_info(episode_id):
                                  if (lv := meta.get('longValue')) and 'Aflevering' in lv), 0),
                 'rating': None,
                 'firstaired': None,
-                'runtime': int(current_ep.get('player', {}).get('progress', {}).get('durationSeconds', 0)),
+                'runtime': int((current_ep.get('player', {}).get('progress') or {}).get('durationInSeconds', 0)),
             }
             next_episode = {
                 'episodeid': next_ep.get('id'),
@@ -2892,7 +2892,7 @@ def convert_episode(episode, destination=None):
             path = url_for('play_url', episode['action']['link'])
 
     # Mark mixed episode categories
-    if destination in ('recent', 'favorites_episodes', 'resumepoints_continue', 'featured', 'search_query'):
+    if destination in ('recent', 'favorites_recent', 'favorites_episodes', 'resumepoints_continue', 'featured', 'search_query'):
         program_type = 'mixed_episodes'
 
     # Final formatting
