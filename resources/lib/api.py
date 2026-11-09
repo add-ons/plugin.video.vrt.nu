@@ -251,7 +251,7 @@ def get_next_info(episode_id):
                                  if (lv := meta.get('longValue')) and 'Aflevering' in lv), 0),
                 'rating': None,
                 'firstaired': None,
-                'runtime': int(current_ep.get('player', {}).get('progress', {}).get('durationSeconds', 0)),
+                'runtime': int((current_ep.get('player', {}).get('progress') or {}).get('durationInSeconds', 0)),
             }
             next_episode = {
                 'episodeid': next_ep.get('id'),
@@ -2895,7 +2895,7 @@ def convert_episode(episode, destination=None):
             path = url_for('play_url', episode['action']['link'])
 
     # Mark mixed episode categories
-    if destination in ('recent', 'favorites_episodes', 'resumepoints_continue', 'featured', 'search_query'):
+    if destination in ('recent', 'favorites_recent', 'favorites_episodes', 'resumepoints_continue', 'featured', 'search_query'):
         program_type = 'mixed_episodes'
 
     # Final formatting
@@ -2995,7 +2995,7 @@ def get_offline_programs(end_cursor='', use_favorites=False):
 def get_favorite_programs(end_cursor=''):
     """Get favorite programs"""
     from base64 import b64encode
-    list_id = 'o%25|o%9||p%/mijn-lijst/%|video-program|b%1%'
+    list_id = 'o%25|o%9|video-program|o%504|%%|video-program|b%0%'
     list_id = f'${b64encode(list_id.encode("utf-8")).decode("utf-8")}'
     programs = get_programs(list_id=list_id, destination='favorites_programs', end_cursor=end_cursor)
     return programs
@@ -3057,55 +3057,63 @@ def get_featured(feature=None, end_cursor=''):
 
 def get_search(keywords, end_cursor=''):
     """Get search items"""
-    import base64
-    from json import dumps
-    query_string = None
-    destination = None
-
-    entity_types = ['video-program', 'video-episode']
-    programs = []
-    episodes = []
     items = []
-
-    for entity_type in entity_types:
-        facets = []
-        if keywords:
-            destination = 'search_query'
-            query_string = keywords
-        facets.append({
-            'name': 'entitytype',
-            'values': [entity_type],
-        })
-        if entity_type == 'video-program':
-            result_type = 'watch'
-        else:
-            result_type = entity_type
-        search_dict = {
-            'facets': facets,
-            'resultType': result_type,
-        }
-        if query_string:
-            search_dict['q'] = query_string
-
-        list_id = 'o%14|{}|{}%'.format(dumps(search_dict), result_type)
-        list_id = '${}'.format(base64.b64encode(list_id.encode('utf-8')).decode('utf-8'))
-
-        if entity_type == 'video-program' and not end_cursor:
-            programs = get_programs(keywords=keywords, end_cursor=end_cursor)
-            items.extend(programs)
-        elif entity_type == 'video-episode':
-            episodes, _, _, _, = get_episodes(list_id=list_id, destination=destination, end_cursor=end_cursor, keywords=keywords)
-            items.extend(episodes)
+    if not end_cursor:
+        items.extend(get_programs(keywords=keywords))
+    list_id = get_search_list_id(keywords=keywords, content_type='episode')
+    if list_id:
+        episodes, _, _, _, = get_episodes(list_id=list_id, destination='search_query', end_cursor=end_cursor, keywords=keywords)
+        items.extend(episodes)
     return items
+
+
+def get_search_list_id(keywords=None, facets=None, content_type='program'):
+    """Get the list id of a search page."""
+    from json import dumps
+    query = []
+    if keywords:
+        query.append('q={}'.format(quote(keywords, safe='')))
+    if facets:
+        query.append('facets={}'.format(quote(dumps(facets, separators=(',', ':')), safe='')))
+    page_id = '/vrtmax/zoeken/?{}'.format('&'.join(query)) if query else '/vrtmax/zoeken/'
+    graphql_query = """
+        query SearchPage($pageId: ID!) {
+          page(id: $pageId) {
+            ... on SearchResultPage {
+              components {
+                ... on PaginatedTileList {
+                  listId
+                  tileContentType
+                }
+                ... on ContainerNavigation {
+                  items {
+                    components {
+                      ... on PaginatedTileList {
+                        listId
+                        tileContentType
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+    """
+    data_json = api_req(graphql_query, 'SearchPage', {'pageId': page_id})
+    components = ((data_json.get('data') or {}).get('page') or {}).get('components') or []
+    for component in components:
+        nested = [comp for item in component.get('items') or [] for comp in item.get('components') or []]
+        for comp in [component] + nested:
+            if comp.get('tileContentType') == content_type:
+                return comp.get('listId')
+    return None
 
 
 def get_programs(list_id=None, destination=None, end_cursor='', category=None, channel=None, keywords=None, feature=None, use_favorites=False):
     """Get programs"""
 
     if not list_id:
-        import base64
-        from json import dumps
-        query_string = None
         facets = []
         if category:
             facet_name = 'genre'
@@ -3125,20 +3133,9 @@ def get_programs(list_id=None, destination=None, end_cursor='', category=None, c
             })
         elif keywords:
             destination = 'search_query'
-            query_string = keywords
-        facets.append({
-            'name': 'entitytype',
-            'values': ['video-program'],
-        })
-        search_dict = {
-            'facets': facets,
-            'resultType': 'watch',
-        }
-        if query_string:
-            search_dict['q'] = query_string
-
-        list_id = 'o%14|{}|{}%'.format(dumps(search_dict), 'watch')
-        list_id = '${}'.format(base64.b64encode(list_id.encode('utf-8')).decode('utf-8'))
+        list_id = get_search_list_id(keywords=keywords, facets=facets, content_type='program')
+        if not list_id:
+            return []
 
     # kodi paging
     kodi_page_size = get_setting_int('itemsperpage', default=50)

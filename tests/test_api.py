@@ -108,11 +108,11 @@ class TestApi(unittest.TestCase):
     def test_episode_plot(self):
         """Test getting an episode plot (thuis)"""
         season_name = '28'
-        list_id = f'o%35|o%2|o%2|p%/a-z/thuis/|container%|banner%|{season_name}|b%1|n%1%'
+        list_id = f'o%35|o%2|o%47|o%2|o%47|t%VideoProgramPage%/a-z/thuis/|container%|banner%|banner%|{season_name}%|{season_name}|b%1|%'
         list_id = f'${b64encode(list_id.encode("utf-8")).decode("utf-8")}'
-        title_items, sort, ascending, content = get_episodes(program_name='thuis', list_id=list_id)
-        self.assertEqual(sort, 'episode')  # Thuis has 'daily' programType
-        self.assertFalse(ascending)
+        title_items, sort, ascending, content = get_episodes(program_name='thuis', list_id=list_id, destination='programs')
+        self.assertEqual(sort, 'episode')
+        self.assertTrue(ascending)
         self.assertEqual(content, 'episodes')
         plot = title_items[0].info_dict['plot']
         print(kodi_to_ansi(plot))
