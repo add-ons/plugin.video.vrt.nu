@@ -217,7 +217,7 @@ class TVGuide:
                     start_iso = epg_start_dt.astimezone(tz_brussels).isoformat()
                     stop_iso = stop_dt.astimezone(tz_brussels).isoformat()
 
-                    if node.get('available'):
+                    if node.get('action'):
                         stream = url_for('play_url', node.get('action').get('link'))
 
                     # Fill EPG entry

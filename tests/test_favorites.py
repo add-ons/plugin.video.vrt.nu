@@ -34,7 +34,7 @@ class TestFavorites(unittest.TestCase):
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_get_offline_programs(self):
         """Test items, sort and order"""
-        programs = get_offline_programs(use_favorites=True)
+        programs = get_offline_programs()
         self.assertTrue(programs)
 
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
