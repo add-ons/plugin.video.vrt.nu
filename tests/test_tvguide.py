@@ -60,7 +60,7 @@ class TestTVGuide(unittest.TestCase):
             self.assertIn('/tvguide/date/today/', channel_item.path)
 
     def test_convert_episode_aired_dutch_date(self):
-        """Parse Dutch aired metadata without using datetime.strptime (broken on Android Kodi)"""
+        """Parse Dutch aired metadata without using datetime.strptime (broken on some Kodi builds)"""
         from unittest import mock
         import api as api_module
 
@@ -89,7 +89,7 @@ class TestTVGuide(unittest.TestCase):
         real_datetime = api_module.datetime
 
         class BrokenDateTime:  # pylint: disable=too-few-public-methods
-            """datetime stand-in reproducing Android Kodi strptime TypeError"""
+            """datetime stand-in reproducing broken strptime TypeError on some Kodi builds"""
 
             strptime = None
 
