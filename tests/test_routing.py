@@ -140,13 +140,27 @@ class TestRouting(unittest.TestCase):
         self.assertEqual(plugin.url_for(addon.tvguide), 'plugin://plugin.video.vrt.nu/tvguide/date')
         addon.run(['plugin://plugin.video.vrt.nu/tvguide/date/today', '0', ''])
         self.assertEqual(plugin.url_for(addon.tvguide, date='today'), 'plugin://plugin.video.vrt.nu/tvguide/date/today')
-        addon.run(['plugin://plugin.video.vrt.nu/tvguide/date/today/canvas', '0', ''])
-        self.assertEqual(plugin.url_for(addon.tvguide, date='today', channel='canvas'), 'plugin://plugin.video.vrt.nu/tvguide/date/today/canvas')
+        self.assertEqual(plugin.url_for(addon.tvguide, date='today', channel='canvas'),
+                         'plugin://plugin.video.vrt.nu/tvguide/date/today/canvas')
+        # Channel listing after selecting a date always opens page 1 (end_cursor)
+        self.assertEqual(plugin.url_for(addon.tvguide, date='today', channel='een', end_cursor='1'),
+                         'plugin://plugin.video.vrt.nu/tvguide/date/today/een/1')
         addon.run(['plugin://plugin.video.vrt.nu/tvguide/channel/canvas', '0', ''])
         self.assertEqual(plugin.url_for(addon.tvguide_channel, channel='canvas'), 'plugin://plugin.video.vrt.nu/tvguide/channel/canvas')
         addon.run(['plugin://plugin.video.vrt.nu/tvguide/channel/canvas/today', '0', ''])
         self.assertEqual(plugin.url_for(addon.tvguide_channel, channel='canvas', date='today'),
                          'plugin://plugin.video.vrt.nu/tvguide/channel/canvas/today')
+
+    @unittest.skipUnless(xbmc_addon.settings.get('username'), 'Skipping as VRT username is missing.')
+    @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
+    def test_tvguide_today_episodes_deep_click(self):
+        """Deeper click: /tvguide/date/today/<channel>/<end_cursor> (Vandaag -> channel)"""
+        addon.run(['plugin://plugin.video.vrt.nu/tvguide/date/today/een/1', '0', ''])
+        self.assertEqual(plugin.url_for(addon.tvguide, date='today', channel='een', end_cursor='1'),
+                         'plugin://plugin.video.vrt.nu/tvguide/date/today/een/1')
+        addon.run(['plugin://plugin.video.vrt.nu/tvguide/date/today/canvas/1', '0', ''])
+        self.assertEqual(plugin.url_for(addon.tvguide, date='today', channel='canvas', end_cursor='1'),
+                         'plugin://plugin.video.vrt.nu/tvguide/date/today/canvas/1')
 
     @unittest.skipUnless(xbmc_addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(xbmc_addon.settings.get('password'), 'Skipping as VRT password is missing.')
