@@ -2822,8 +2822,8 @@ def convert_episode(episode, destination=None):
         program_type = 'series'
 
     # Aired
-    # NOTE: Avoid datetime.strptime() — on some Kodi platforms (notably Android)
-    # it raises TypeError: 'NoneType' object is not callable.
+    # NOTE: Avoid datetime.strptime() — on some Kodi/embedded Python builds
+    # (e.g. LibreELEC) it raises TypeError: 'NoneType' object is not callable.
     dutch_months = [
         'januari', 'februari', 'maart', 'april', 'mei', 'juni',
         'juli', 'augustus', 'september', 'oktober', 'november', 'december'
