@@ -196,19 +196,16 @@ class TestTVGuide(unittest.TestCase):
         self.assertNotIn('20:00', title_item.label)
         self.assertIn('19:00 - 19:45', title_item.info_dict.get('plot', ''))
 
-    def test_convert_episode_componentid_unix_ts_to_brussels(self):
-        """Non-live EPG entries decode absolute unix ms and show Brussels local time"""
+    def _journaal_component_episode(self, start_ms=1794852000000):
+        """Build a non-live EPG episode whose componentId encodes the given unix ms"""
         from base64 import b64encode
 
-        # 2026-11-16 19:00:00 CET == 18:00:00 UTC
-        start_ms = 1794852000000
         decoded = (
             'o%26|episode|o#30#0n#34#0n#30#0o#1349#10O8#10d#13{start_ms}#10#10#13#3|epg|'
             '||||episode||||o%31|scheduleNext|O8|2026-11-16|'
         ).format(start_ms=start_ms)
         component_id = '#' + b64encode(decoded.encode('utf-8')).decode('utf-8')
-
-        episode = {
+        return {
             'title': 'VRT NWS journaal',
             'available': True,
             'active': False,
@@ -231,8 +228,26 @@ class TestTVGuide(unittest.TestCase):
             'statusMeta': [{'value': '45 min'}],
             'primaryMeta': [],
         }
-        _, _, _, title_item = convert_episode(episode, destination='tvguide')
+
+    def test_convert_episode_componentid_unix_ts_to_brussels(self):
+        """Non-live EPG entries decode absolute unix ms and show Brussels local time"""
+        # 2026-11-16 19:00:00 CET == 18:00:00 UTC
+        _, _, _, title_item = convert_episode(self._journaal_component_episode(), destination='tvguide')
         self.assertTrue(title_item.label.startswith('19:00'), title_item.label)
+
+    def test_convert_episode_componentid_without_zoneinfo(self):
+        """Missing Europe/Brussels zoneinfo must not fall back to UTC labels (TV screenshot bug)"""
+        from unittest import mock
+        import utils
+
+        # Reproduce device behavior: gettz('Europe/Brussels') → None, host TZ=UTC.
+        # Old code then showed 18:00 for the 19:00 Journaal and made live (wall-clock)
+        # appear out of order vs neighbouring rows.
+        with mock.patch('dateutil.tz.gettz', return_value=None):
+            utils._BRUSSELS_TZ = None  # pylint: disable=protected-access
+            _, _, _, title_item = convert_episode(self._journaal_component_episode(), destination='tvguide')
+        self.assertTrue(title_item.label.startswith('19:00'), title_item.label)
+        self.assertNotIn('18:00', title_item.label)
 
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')

@@ -48,6 +48,31 @@ def parse_duration(s: str) -> timedelta:
                      seconds=parts['seconds'])
 
 
+# POSIX TZ for Belgium. Used when zoneinfo/zone.tab is missing (common on
+# Android/LibreELEC Kodi builds). Without this, dateutil.tz.gettz('Europe/Brussels')
+# returns None and EPG labels fall back to the host timezone (UTC → 1h early in CET).
+_BRUSSELS_TZ_POSIX = 'CET-1CEST,M3.5.0/2,M10.5.0/3'
+_BRUSSELS_TZ = None
+
+
+def brussels_tz():
+    """Return Europe/Brussels tzinfo, with a POSIX fallback if zoneinfo is unavailable."""
+    global _BRUSSELS_TZ  # pylint: disable=global-statement
+    if _BRUSSELS_TZ is not None:
+        return _BRUSSELS_TZ
+    import dateutil.tz
+    tz = dateutil.tz.gettz('Europe/Brussels')
+    if tz is None:
+        tz = dateutil.tz.tzstr(_BRUSSELS_TZ_POSIX)
+    _BRUSSELS_TZ = tz
+    return _BRUSSELS_TZ
+
+
+def to_brussels(dt):
+    """Convert a datetime to Europe/Brussels."""
+    return dt.astimezone(brussels_tz())
+
+
 def capitalize(string):
     """Ensure the first character is uppercase"""
     string = string.strip()

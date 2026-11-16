@@ -11,7 +11,7 @@ from api import get_epg_episodes, get_epg_list
 from data import CHANNELS, RELATIVE_DATES
 from helperobjects import TitleItem
 from kodiutils import has_addon, localize, localize_datelong, show_listing, themecolour, url_for
-from utils import find_entry, parse_duration
+from utils import brussels_tz, find_entry, parse_duration, to_brussels
 
 
 class TVGuide:
@@ -150,7 +150,7 @@ class TVGuide:
         """Return EPG data"""
         from base64 import b64decode
 
-        tz_brussels = dateutil.tz.gettz('Europe/Brussels')
+        tz_brussels = brussels_tz()
         now = datetime.now(tz_brussels)
         epg_data = {}
 
@@ -214,9 +214,9 @@ class TVGuide:
                     epg_start_dt = previous_stop_dt or start_dt
                     previous_stop_dt = stop_dt
 
-                    # Common conversion
-                    start_iso = epg_start_dt.astimezone(tz_brussels).isoformat()
-                    stop_iso = stop_dt.astimezone(tz_brussels).isoformat()
+                    # Common conversion (always Brussels, even without zoneinfo)
+                    start_iso = to_brussels(epg_start_dt).isoformat()
+                    stop_iso = to_brussels(stop_dt).isoformat()
 
                     if node.get('action'):
                         stream = url_for('play_url', node.get('action').get('link'))

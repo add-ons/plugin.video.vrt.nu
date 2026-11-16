@@ -3,12 +3,36 @@
 # GNU General Public License v3.0 (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 """Tests for StaticHelper functionality"""
 
+from datetime import datetime
 import unittest
+from unittest import mock
+
+import dateutil.tz
 import utils
 
 
 class TestUtils(unittest.TestCase):
     """TestCase class"""
+
+    def tearDown(self):
+        """Reset cached Brussels tz between tests"""
+        utils._BRUSSELS_TZ = None  # pylint: disable=protected-access
+
+    def test_brussels_tz_fallback_without_zoneinfo(self):
+        """When zoneinfo is missing, fall back to POSIX CET/CEST rules"""
+        # 2026-11-16 18:00 UTC == 19:00 CET
+        utc_dt = datetime(2026, 11, 16, 18, 0, tzinfo=dateutil.tz.UTC)
+        with mock.patch('dateutil.tz.gettz', return_value=None):
+            utils._BRUSSELS_TZ = None  # pylint: disable=protected-access
+            local = utils.to_brussels(utc_dt)
+        self.assertEqual(local.strftime('%H:%M'), '19:00')
+
+        # 2026-07-01 12:00 UTC == 14:00 CEST
+        summer_utc = datetime(2026, 7, 1, 12, 0, tzinfo=dateutil.tz.UTC)
+        with mock.patch('dateutil.tz.gettz', return_value=None):
+            utils._BRUSSELS_TZ = None  # pylint: disable=protected-access
+            local = utils.to_brussels(summer_utc)
+        self.assertEqual(local.strftime('%H:%M'), '14:00')
 
     def test_capitalize(self):
         """Test capitalizing string"""
