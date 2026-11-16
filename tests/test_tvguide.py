@@ -164,6 +164,76 @@ class TestTVGuide(unittest.TestCase):
         _, _, _, title_item = convert_episode(episode, destination='tvguide')
         self.assertIsNone(title_item.info_dict.get('aired'))
 
+    def test_convert_episode_livestream_keeps_brussels_wall_clock(self):
+        """Livestream EPG HH:MM is Brussels local and must not shift with host TZ"""
+        # Regression: replace(tzinfo=None).timestamp() treated Brussels HH:MM as the
+        # host timezone, shifting CET/CEST labels by one hour when TZ=UTC.
+        episode = {
+            'title': 'VRT NWS journaal',
+            'available': True,
+            'active': True,
+            'tileType': 'livestream',
+            'brand': 'een',
+            'preview': {
+                'heading': {
+                    'title': 'VRT NWS journaal',
+                    'description': 'VRT NWS journaal 19u',
+                    'tertiaryMeta': [],
+                }
+            },
+            'status': {'text': {'small': '19:00 - 19:45', 'default': '19:00 - 19:45'}},
+            'progress': {'durationInSeconds': 2700},
+            'indexMeta': [{'type': 'default', 'value': '19:00u'}],
+            'action': {'link': 'https://www.vrt.be/vrtmax/livestream/video/vrt1/'},
+            'actionItems': [],
+            'trackingData': {'data': '{}'},
+            'image': None,
+            'statusMeta': [],
+            'primaryMeta': [],
+        }
+        _, _, _, title_item = convert_episode(episode, destination='tvguide')
+        self.assertIn('19:00', title_item.label)
+        self.assertNotIn('20:00', title_item.label)
+        self.assertIn('19:00 - 19:45', title_item.info_dict.get('plot', ''))
+
+    def test_convert_episode_componentid_unix_ts_to_brussels(self):
+        """Non-live EPG entries decode absolute unix ms and show Brussels local time"""
+        from base64 import b64encode
+
+        # 2026-11-16 19:00:00 CET == 18:00:00 UTC
+        start_ms = 1794852000000
+        decoded = (
+            'o%26|episode|o#30#0n#34#0n#30#0o#1349#10O8#10d#13{start_ms}#10#10#13#3|epg|'
+            '||||episode||||o%31|scheduleNext|O8|2026-11-16|'
+        ).format(start_ms=start_ms)
+        component_id = '#' + b64encode(decoded.encode('utf-8')).decode('utf-8')
+
+        episode = {
+            'title': 'VRT NWS journaal',
+            'available': True,
+            'active': False,
+            'tileType': 'episode',
+            'preview': {
+                'heading': {
+                    'title': 'VRT NWS journaal',
+                    'description': 'VRT NWS journaal 19u',
+                    'tertiaryMeta': [],
+                }
+            },
+            'componentId': component_id,
+            'status': {'text': {'small': '45 min', 'default': '45 minuten'}},
+            'progress': {'durationInSeconds': 2700},
+            'indexMeta': [{'type': 'default', 'value': '19:00u'}],
+            'action': {'link': 'https://www.vrt.be/vrtmax/a-z/journaal/'},
+            'actionItems': [],
+            'trackingData': {'data': '{}'},
+            'image': None,
+            'statusMeta': [{'value': '45 min'}],
+            'primaryMeta': [],
+        }
+        _, _, _, title_item = convert_episode(episode, destination='tvguide')
+        self.assertTrue(title_item.label.startswith('19:00'), title_item.label)
+
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_tvguide_episode_menu(self):

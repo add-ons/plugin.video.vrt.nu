@@ -2873,18 +2873,20 @@ def convert_episode(episode, destination=None):
             is_live = True
             is_playable = True
             channel = episode.get('brand')
+            # status.text.small is a Brussels wall-clock range, e.g. "19:00 - 19:45".
+            # Keep tzinfo so .timestamp()/display do not depend on the host timezone
+            # (stripping tzinfo caused a 1-hour CET/CEST offset on UTC systems).
             start_time = episode.get('status').get('text').get('small').split(' - ')[0]
             hours, minutes = map(int, start_time.split(':'))
-            dt = now.replace(hour=hours, minute=minutes, second=0, microsecond=0)
-            start_ts = dt.replace(tzinfo=None).timestamp()
+            start_dt = now.replace(hour=hours, minute=minutes, second=0, microsecond=0)
         else:
             comp_id = episode.get('componentId', '').lstrip('#')
             decoded = b64decode(comp_id.encode('utf-8')).decode('utf-8')
             epg_parts = decoded.split('#10')
             channel_id, start_ts = epg_parts[1], int(epg_parts[2].split('#13')[1]) / 1000
             channel = find_entry(CHANNELS, 'id', channel_id).get('name')
+            start_dt = datetime.fromtimestamp(start_ts, tz=dateutil.tz.UTC)
 
-        start_dt = datetime.fromtimestamp(start_ts, tz=dateutil.tz.UTC)
         stop_dt = start_dt + duration
 
         # Fix unplayable episodes

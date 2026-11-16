@@ -174,16 +174,17 @@ class TVGuide:
 
                     # Decode start datetime
                     if node.get('tileType') == 'livestream':
+                        # status.text.small is Brussels local time; keep tzinfo so the
+                        # result does not depend on the host/OS timezone.
                         start_time = node.get('status').get('text').get('small').split(' - ')[0]
                         hours, minutes = map(int, start_time.split(':'))
-                        start_ts = now.replace(hour=hours, minute=minutes, second=0, microsecond=0).timestamp()
+                        start_dt = now.replace(hour=hours, minute=minutes, second=0, microsecond=0)
                     else:
                         comp_id = node.get('componentId', '').lstrip('#')
                         decoded = b64decode(comp_id.encode('utf-8')).decode('utf-8')
                         epg_parts = decoded.split('#10')
                         start_ts = int(epg_parts[2].split('#13')[1]) / 1000
-
-                    start_dt = datetime.fromtimestamp(start_ts, tz=dateutil.tz.UTC)
+                        start_dt = datetime.fromtimestamp(start_ts, tz=dateutil.tz.UTC)
 
                     if node.get('livestream'):
                         episode = node.get('livestream').get('episode')
