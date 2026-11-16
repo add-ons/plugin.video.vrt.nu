@@ -5,7 +5,6 @@
 
 from datetime import datetime
 import unittest
-from unittest import mock
 
 import dateutil.tz
 import utils
@@ -18,21 +17,23 @@ class TestUtils(unittest.TestCase):
         """Reset cached Brussels tz between tests"""
         utils._BRUSSELS_TZ = None  # pylint: disable=protected-access
 
-    def test_brussels_tz_fallback_without_zoneinfo(self):
-        """When zoneinfo is missing, fall back to POSIX CET/CEST rules"""
+    def test_brussels_tz_posix_cet_cest(self):
+        """Built-in POSIX rules convert UTC to Brussels CET/CEST without zoneinfo"""
         # 2026-11-16 18:00 UTC == 19:00 CET
         utc_dt = datetime(2026, 11, 16, 18, 0, tzinfo=dateutil.tz.UTC)
-        with mock.patch('dateutil.tz.gettz', return_value=None):
-            utils._BRUSSELS_TZ = None  # pylint: disable=protected-access
-            local = utils.to_brussels(utc_dt)
-        self.assertEqual(local.strftime('%H:%M'), '19:00')
+        self.assertEqual(utils.to_brussels(utc_dt).strftime('%H:%M'), '19:00')
 
         # 2026-07-01 12:00 UTC == 14:00 CEST
         summer_utc = datetime(2026, 7, 1, 12, 0, tzinfo=dateutil.tz.UTC)
-        with mock.patch('dateutil.tz.gettz', return_value=None):
-            utils._BRUSSELS_TZ = None  # pylint: disable=protected-access
-            local = utils.to_brussels(summer_utc)
-        self.assertEqual(local.strftime('%H:%M'), '14:00')
+        self.assertEqual(utils.to_brussels(summer_utc).strftime('%H:%M'), '14:00')
+
+    def test_apply_epg_index_clock_overrides_utc_label(self):
+        """indexMeta '19:00u' realigns a UTC-based start_dt to Brussels 19:00"""
+        # Simulate unix ms decoded as UTC wall time (the screenshot bug)
+        start_dt = datetime(2026, 11, 16, 18, 0, tzinfo=dateutil.tz.UTC)
+        fixed = utils.apply_epg_index_clock(start_dt, [{'type': 'default', 'value': '19:00u'}])
+        self.assertEqual(utils.to_brussels(fixed).strftime('%H:%M'), '19:00')
+        self.assertIsNone(utils.epg_index_clock([{'value': 'n/a'}]))
 
     def test_capitalize(self):
         """Test capitalizing string"""

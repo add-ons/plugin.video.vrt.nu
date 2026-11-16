@@ -11,7 +11,7 @@ from api import get_epg_episodes, get_epg_list
 from data import CHANNELS, RELATIVE_DATES
 from helperobjects import TitleItem
 from kodiutils import has_addon, localize, localize_datelong, show_listing, themecolour, url_for
-from utils import brussels_tz, find_entry, parse_duration, to_brussels
+from utils import apply_epg_index_clock, brussels_tz, find_entry, parse_duration, to_brussels
 
 
 class TVGuide:
@@ -185,6 +185,7 @@ class TVGuide:
                         epg_parts = decoded.split('#10')
                         start_ts = int(epg_parts[2].split('#13')[1]) / 1000
                         start_dt = datetime.fromtimestamp(start_ts, tz=dateutil.tz.UTC)
+                        start_dt = apply_epg_index_clock(start_dt, node.get('indexMeta'))
 
                     if node.get('livestream'):
                         episode = node.get('livestream').get('episode')

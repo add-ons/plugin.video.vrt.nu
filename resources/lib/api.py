@@ -9,7 +9,8 @@ from data import CHANNELS
 from helperobjects import TitleItem
 from kodiutils import (colour, delete_cached_thumbnail, get_cache, get_setting_bool, get_setting_int, get_url_json, has_addon, has_credentials,
                        localize, localize_datelong, localize_from_data, log, log_error, update_cache, url_for)
-from utils import brussels_tz, find_entry, reformat_image_url, shorten_link, to_brussels, url_to_program, youtube_to_plugin_url
+from utils import (apply_epg_index_clock, brussels_tz, find_entry, reformat_image_url, shorten_link,
+                   to_brussels, url_to_program, youtube_to_plugin_url)
 from graphql_data import EPISODE_TILE, PROGRAM_TILE
 
 
@@ -2883,6 +2884,9 @@ def convert_episode(episode, destination=None):
             channel_id, start_ts = epg_parts[1], int(epg_parts[2].split('#13')[1]) / 1000
             channel = find_entry(CHANNELS, 'id', channel_id).get('name')
             start_dt = datetime.fromtimestamp(start_ts, tz=dateutil.tz.UTC)
+            # Prefer VRT's own Brussels clock from indexMeta (e.g. '19:00u') so the
+            # listing matches the guide even when device zoneinfo is missing/wrong.
+            start_dt = apply_epg_index_clock(start_dt, episode.get('indexMeta'))
 
         stop_dt = start_dt + duration
 

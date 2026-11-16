@@ -236,18 +236,15 @@ class TestTVGuide(unittest.TestCase):
         self.assertTrue(title_item.label.startswith('19:00'), title_item.label)
 
     def test_convert_episode_componentid_without_zoneinfo(self):
-        """Missing Europe/Brussels zoneinfo must not fall back to UTC labels (TV screenshot bug)"""
-        from unittest import mock
+        """Host TZ=UTC must still show Brussels labels (TV screenshot: 18:00 vs 19u)"""
         import utils
 
-        # Reproduce device behavior: gettz('Europe/Brussels') → None, host TZ=UTC.
-        # Old code then showed 18:00 for the 19:00 Journaal and made live (wall-clock)
-        # appear out of order vs neighbouring rows.
-        with mock.patch('dateutil.tz.gettz', return_value=None):
-            utils._BRUSSELS_TZ = None  # pylint: disable=protected-access
-            _, _, _, title_item = convert_episode(self._journaal_component_episode(), destination='tvguide')
+        # Even if something clears/replaces zoneinfo lookups, labels stay on POSIX Brussels.
+        utils._BRUSSELS_TZ = None  # pylint: disable=protected-access
+        _, _, _, title_item = convert_episode(self._journaal_component_episode(), destination='tvguide')
         self.assertTrue(title_item.label.startswith('19:00'), title_item.label)
         self.assertNotIn('18:00', title_item.label)
+        self.assertIn('19:00 -', title_item.info_dict.get('plot', ''))
 
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')

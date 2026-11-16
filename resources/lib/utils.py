@@ -48,29 +48,58 @@ def parse_duration(s: str) -> timedelta:
                      seconds=parts['seconds'])
 
 
-# POSIX TZ for Belgium. Used when zoneinfo/zone.tab is missing (common on
-# Android/LibreELEC Kodi builds). Without this, dateutil.tz.gettz('Europe/Brussels')
-# returns None and EPG labels fall back to the host timezone (UTC → 1h early in CET).
+# POSIX TZ for Belgium (CET/CEST). Always used instead of zoneinfo so EPG labels
+# do not depend on the device having /usr/share/zoneinfo/Europe/Brussels.
+# On many Kodi/Android builds gettz('Europe/Brussels') is None (or unusable) and
+# astimezone() then falls back to the host timezone — UTC → 1h early in winter.
 _BRUSSELS_TZ_POSIX = 'CET-1CEST,M3.5.0/2,M10.5.0/3'
 _BRUSSELS_TZ = None
 
 
 def brussels_tz():
-    """Return Europe/Brussels tzinfo, with a POSIX fallback if zoneinfo is unavailable."""
+    """Return Europe/Brussels tzinfo using built-in POSIX CET/CEST rules."""
     global _BRUSSELS_TZ  # pylint: disable=global-statement
     if _BRUSSELS_TZ is not None:
         return _BRUSSELS_TZ
     import dateutil.tz
-    tz = dateutil.tz.gettz('Europe/Brussels')
-    if tz is None:
-        tz = dateutil.tz.tzstr(_BRUSSELS_TZ_POSIX)
-    _BRUSSELS_TZ = tz
+    _BRUSSELS_TZ = dateutil.tz.tzstr(_BRUSSELS_TZ_POSIX)
     return _BRUSSELS_TZ
 
 
 def to_brussels(dt):
     """Convert a datetime to Europe/Brussels."""
     return dt.astimezone(brussels_tz())
+
+
+def epg_index_clock(index_meta):
+    """Parse VRT EPG indexMeta clock text like '19:00u' into (hour, minute).
+
+    Returns None if no usable clock is present.
+    """
+    for meta in index_meta or []:
+        value = (meta.get('value') or '').strip()
+        if len(value) >= 5 and value.endswith('u') and ':' in value[:-1]:
+            try:
+                hours, minutes = map(int, value[:-1].split(':', 1))
+            except ValueError:
+                continue
+            if 0 <= hours <= 23 and 0 <= minutes <= 59:
+                return hours, minutes
+    return None
+
+
+def apply_epg_index_clock(start_dt, index_meta):
+    """Realign start_dt to the Brussels wall-clock from indexMeta when present.
+
+    VRT already ships the guide time as 'HH:MMu'; prefer that over relying solely
+    on unix-ms → local conversion for what the user sees in the listing.
+    """
+    clock = epg_index_clock(index_meta)
+    if not clock or start_dt is None:
+        return start_dt
+    hours, minutes = clock
+    local = to_brussels(start_dt)
+    return local.replace(hour=hours, minute=minutes, second=0, microsecond=0)
 
 
 def capitalize(string):
