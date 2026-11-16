@@ -2822,6 +2822,8 @@ def convert_episode(episode, destination=None):
         program_type = 'series'
 
     # Aired
+    # NOTE: Avoid datetime.strptime() — on some Kodi/embedded Python builds
+    # (e.g. LibreELEC) it raises TypeError: 'NoneType' object is not callable.
     dutch_months = [
         'januari', 'februari', 'maart', 'april', 'mei', 'juni',
         'juli', 'augustus', 'september', 'oktober', 'november', 'december'
@@ -2832,12 +2834,17 @@ def convert_episode(episode, destination=None):
         None
     )
     if aired:
-        date_part = aired.split()[1]
-        fmt = '%d/%m/%Y' if date_part.count('/') == 2 else '%d/%m/%Y'
-        value = date_part if date_part.count('/') == 2 else f'{date_part}/{now.year}'
-        start_dt = datetime.strptime(value, fmt)
-        title_item.info_dict['aired'] = start_dt.strftime('%Y-%m-%d')
-        program_type = 'daily'
+        parts = aired.split()
+        date_part = parts[1] if len(parts) > 1 else parts[0]
+        # shortValue is typically "zo 15/11" or "zo 15/11/2026"
+        if date_part.count('/') == 1:
+            date_part = f'{date_part}/{now.year}'
+        try:
+            start_dt = dateutil.parser.parse(date_part, dayfirst=True)
+            title_item.info_dict['aired'] = start_dt.strftime('%Y-%m-%d')
+            program_type = 'daily'
+        except (ValueError, TypeError, OverflowError):
+            log(2, "Failed to parse aired date from '{aired}'", aired=aired)
 
     # Art
     thumb = ''
