@@ -11,7 +11,7 @@ from kodiutils import (delete_cached_thumbnail, end_of_directory, get_addon_info
                        has_inputstream_adaptive, localize, kodi_version_major, log_error,
                        ok_dialog, play, set_setting, show_listing, url_for,
                        wait_for_resumepoints)
-from utils import find_entry
+from utils import brussels_tz, find_entry
 
 
 class VRTPlayer:
@@ -246,9 +246,9 @@ class VRTPlayer:
         from datetime import datetime
         import dateutil.tz
 
-        # Convert to UTC
-        onair = datetime.fromisoformat(start_date).replace(tzinfo=dateutil.tz.gettz('Europe/Brussels'))
-        offair = datetime.fromisoformat(end_date).replace(tzinfo=dateutil.tz.gettz('Europe/Brussels'))
+        # Convert Brussels wall-clock air times to UTC
+        onair = datetime.fromisoformat(start_date).replace(tzinfo=brussels_tz())
+        offair = datetime.fromisoformat(end_date).replace(tzinfo=brussels_tz())
         channel = find_entry(CHANNELS, 'name', channel)
         if not channel:
             return

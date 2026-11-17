@@ -11,7 +11,7 @@ from api import get_epg_episodes, get_epg_list
 from data import CHANNELS, RELATIVE_DATES
 from helperobjects import TitleItem
 from kodiutils import has_addon, localize, localize_datelong, show_listing, themecolour, url_for
-from utils import find_entry, parse_duration
+from utils import apply_epg_index_clock, brussels_tz, find_entry, parse_duration, to_brussels
 
 
 class TVGuide:
@@ -49,7 +49,9 @@ class TVGuide:
     def get_date_items(channel=None):
         """Offer a menu to select the TV-guide date"""
 
-        epg = datetime.now(dateutil.tz.tzlocal())
+        # Use Brussels, not host/OS local: on LibreELEC the OS is often UTC while
+        # the guide day (and 6AM roll) must follow Belgian wall-clock.
+        epg = datetime.now(brussels_tz())
         # Daily EPG information shows information from 6AM until 6AM
         if epg.hour < 6:
             epg += timedelta(days=-1)
@@ -94,7 +96,7 @@ class TVGuide:
     def get_channel_items(self, date=None, channel=None):
         """Offer a menu to select the channel"""
         if date:
-            now = datetime.now(dateutil.tz.tzlocal())
+            now = datetime.now(brussels_tz())
             epg = self.parse(date, now)
             datelong = localize_datelong(epg)
 
@@ -141,7 +143,7 @@ class TVGuide:
 
     def get_episode_items(self, date, channel, end_cursor=None):
         """Show episodes for a given date and channel"""
-        now = datetime.now(dateutil.tz.tzlocal())
+        now = datetime.now(brussels_tz())
         epg_date = self.parse(date, now)
         episode_items = get_epg_episodes(date=epg_date.strftime('%Y-%m-%d'), channel=channel, page=end_cursor)
         return episode_items
@@ -150,7 +152,7 @@ class TVGuide:
         """Return EPG data"""
         from base64 import b64decode
 
-        tz_brussels = dateutil.tz.gettz('Europe/Brussels')
+        tz_brussels = brussels_tz()
         now = datetime.now(tz_brussels)
         epg_data = {}
 
@@ -174,16 +176,18 @@ class TVGuide:
 
                     # Decode start datetime
                     if node.get('tileType') == 'livestream':
+                        # status.text.small is Brussels local time; keep tzinfo so the
+                        # result does not depend on the host/OS timezone.
                         start_time = node.get('status').get('text').get('small').split(' - ')[0]
                         hours, minutes = map(int, start_time.split(':'))
-                        start_ts = now.replace(hour=hours, minute=minutes, second=0, microsecond=0).timestamp()
+                        start_dt = now.replace(hour=hours, minute=minutes, second=0, microsecond=0)
                     else:
                         comp_id = node.get('componentId', '').lstrip('#')
                         decoded = b64decode(comp_id.encode('utf-8')).decode('utf-8')
                         epg_parts = decoded.split('#10')
                         start_ts = int(epg_parts[2].split('#13')[1]) / 1000
-
-                    start_dt = datetime.fromtimestamp(start_ts, tz=dateutil.tz.UTC)
+                        start_dt = datetime.fromtimestamp(start_ts, tz=dateutil.tz.UTC)
+                        start_dt = apply_epg_index_clock(start_dt, node.get('indexMeta'))
 
                     if node.get('livestream'):
                         episode = node.get('livestream').get('episode')
@@ -213,9 +217,9 @@ class TVGuide:
                     epg_start_dt = previous_stop_dt or start_dt
                     previous_stop_dt = stop_dt
 
-                    # Common conversion
-                    start_iso = epg_start_dt.astimezone(tz_brussels).isoformat()
-                    stop_iso = stop_dt.astimezone(tz_brussels).isoformat()
+                    # Common conversion (always Brussels, even without zoneinfo)
+                    start_iso = to_brussels(epg_start_dt).isoformat()
+                    stop_iso = to_brussels(stop_dt).isoformat()
 
                     if node.get('action'):
                         stream = url_for('play_url', node.get('action').get('link'))

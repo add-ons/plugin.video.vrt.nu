@@ -9,7 +9,8 @@ from data import CHANNELS
 from helperobjects import TitleItem
 from kodiutils import (colour, delete_cached_thumbnail, get_cache, get_setting_bool, get_setting_int, get_url_json, has_addon, has_credentials,
                        localize, localize_datelong, localize_from_data, log, log_error, update_cache, url_for)
-from utils import find_entry, reformat_image_url, shorten_link, url_to_program, youtube_to_plugin_url
+from utils import (apply_epg_index_clock, brussels_tz, find_entry, reformat_image_url, shorten_link,
+                   to_brussels, url_to_program, youtube_to_plugin_url)
 from graphql_data import EPISODE_TILE, PROGRAM_TILE
 
 
@@ -86,16 +87,15 @@ def get_context_menu(actions):
 
 def format_label(program_title, episode_title, program_type, start_dt=None, favorited=False, item_type='episode', is_playable=True, is_live=False):
     """Format label"""
-    import dateutil.tz
     if item_type == 'program' or program_type == 'oneoff':
         label = program_title
     elif program_type == 'mixed_episodes':
         label = '[B]{}[/B] - {}'.format(program_title, episode_title)
     elif program_type == 'daily':
-        label = '{} - {}'.format(start_dt.astimezone(dateutil.tz.gettz('Europe/Brussels')).strftime('%d/%m'), episode_title)
+        label = '{} - {}'.format(to_brussels(start_dt).strftime('%d/%m'), episode_title)
     elif program_type == 'epg':
         parts = [
-            start_dt.astimezone(dateutil.tz.gettz('Europe/Brussels')).strftime("%H:%M"),
+            to_brussels(start_dt).strftime("%H:%M"),
             '[B]{}[/B]'.format(program_title) if program_title else None,
             episode_title
         ]
@@ -123,22 +123,20 @@ def format_label(program_title, episode_title, program_type, start_dt=None, favo
 
 def format_plot(plot, geoblocked, product_placement, mpaa, program_type=None, start_dt=None, stop_dt=None, offtime=None, permalink=None):
     """Format plot"""
-    import dateutil.tz
-
     # Add additional metadata to plot
     plot_meta = ''
     plot_date = ''
 
     if program_type == 'epg' and start_dt and stop_dt:
-        start_str = start_dt.astimezone(dateutil.tz.gettz('Europe/Brussels')).strftime("%H:%M")
-        stop_str = stop_dt.astimezone(dateutil.tz.gettz('Europe/Brussels')).strftime("%H:%M")
-        local_start = start_dt.astimezone(dateutil.tz.gettz('Europe/Brussels'))
+        local_start = to_brussels(start_dt)
+        start_str = local_start.strftime("%H:%M")
+        stop_str = to_brussels(stop_dt).strftime("%H:%M")
         plot_date += f'[B]{localize_datelong(local_start)}[/B]\n{start_str} - {stop_str}'
 
     # Only display when a video disappears if it is within the next 3 months
     # Show the remaining days/hours the episode is still available
     if offtime:
-        now = datetime.now(dateutil.tz.gettz('Europe/Brussels'))
+        now = datetime.now(brussels_tz())
         remaining = offtime - now
         total_seconds = remaining.total_seconds()
 
@@ -2676,7 +2674,7 @@ def convert_episode(episode, destination=None):
     heading = preview.get('heading', {})
 
     title_item = TitleItem(label=None, art_dict={}, info_dict={})
-    now = datetime.now(dateutil.tz.gettz('Europe/Brussels'))
+    now = datetime.now(brussels_tz())
 
     # Defaults
     path = None
@@ -2873,18 +2871,23 @@ def convert_episode(episode, destination=None):
             is_live = True
             is_playable = True
             channel = episode.get('brand')
+            # status.text.small is a Brussels wall-clock range, e.g. "19:00 - 19:45".
+            # Keep tzinfo so .timestamp()/display do not depend on the host timezone
+            # (stripping tzinfo caused a 1-hour CET/CEST offset on UTC systems).
             start_time = episode.get('status').get('text').get('small').split(' - ')[0]
             hours, minutes = map(int, start_time.split(':'))
-            dt = now.replace(hour=hours, minute=minutes, second=0, microsecond=0)
-            start_ts = dt.replace(tzinfo=None).timestamp()
+            start_dt = now.replace(hour=hours, minute=minutes, second=0, microsecond=0)
         else:
             comp_id = episode.get('componentId', '').lstrip('#')
             decoded = b64decode(comp_id.encode('utf-8')).decode('utf-8')
             epg_parts = decoded.split('#10')
             channel_id, start_ts = epg_parts[1], int(epg_parts[2].split('#13')[1]) / 1000
             channel = find_entry(CHANNELS, 'id', channel_id).get('name')
+            start_dt = datetime.fromtimestamp(start_ts, tz=dateutil.tz.UTC)
+            # Prefer VRT's own Brussels clock from indexMeta (e.g. '19:00u') so the
+            # listing matches the guide even when device zoneinfo is missing/wrong.
+            start_dt = apply_epg_index_clock(start_dt, episode.get('indexMeta'))
 
-        start_dt = datetime.fromtimestamp(start_ts, tz=dateutil.tz.UTC)
         stop_dt = start_dt + duration
 
         # Fix unplayable episodes
@@ -2892,8 +2895,8 @@ def convert_episode(episode, destination=None):
             # Play episode from past 24h livestream cache
             if now - timedelta(hours=LIVESTREAM_CACHE_HOURS) <= start_dt <= now:
                 is_playable = True
-                start_iso = start_dt.astimezone(dateutil.tz.gettz('Europe/Brussels')).isoformat()[:19]
-                stop_iso = stop_dt.astimezone(dateutil.tz.gettz('Europe/Brussels')).isoformat()[:19]
+                start_iso = to_brussels(start_dt).isoformat()[:19]
+                stop_iso = to_brussels(stop_dt).isoformat()[:19]
                 path = url_for('play_air_date', channel, start_iso, stop_iso)
             else:
                 path = url_for('noop')

@@ -164,6 +164,88 @@ class TestTVGuide(unittest.TestCase):
         _, _, _, title_item = convert_episode(episode, destination='tvguide')
         self.assertIsNone(title_item.info_dict.get('aired'))
 
+    def test_convert_episode_livestream_keeps_brussels_wall_clock(self):
+        """Livestream EPG HH:MM is Brussels local and must not shift with host TZ"""
+        # Regression: replace(tzinfo=None).timestamp() treated Brussels HH:MM as the
+        # host timezone, shifting CET/CEST labels by one hour when TZ=UTC.
+        episode = {
+            'title': 'VRT NWS journaal',
+            'available': True,
+            'active': True,
+            'tileType': 'livestream',
+            'brand': 'een',
+            'preview': {
+                'heading': {
+                    'title': 'VRT NWS journaal',
+                    'description': 'VRT NWS journaal 19u',
+                    'tertiaryMeta': [],
+                }
+            },
+            'status': {'text': {'small': '19:00 - 19:45', 'default': '19:00 - 19:45'}},
+            'progress': {'durationInSeconds': 2700},
+            'indexMeta': [{'type': 'default', 'value': '19:00u'}],
+            'action': {'link': 'https://www.vrt.be/vrtmax/livestream/video/vrt1/'},
+            'actionItems': [],
+            'trackingData': {'data': '{}'},
+            'image': None,
+            'statusMeta': [],
+            'primaryMeta': [],
+        }
+        _, _, _, title_item = convert_episode(episode, destination='tvguide')
+        self.assertIn('19:00', title_item.label)
+        self.assertNotIn('20:00', title_item.label)
+        self.assertIn('19:00 - 19:45', title_item.info_dict.get('plot', ''))
+
+    def _journaal_component_episode(self, start_ms=1794852000000):
+        """Build a non-live EPG episode whose componentId encodes the given unix ms"""
+        from base64 import b64encode
+
+        decoded = (
+            'o%26|episode|o#30#0n#34#0n#30#0o#1349#10O8#10d#13{start_ms}#10#10#13#3|epg|'
+            '||||episode||||o%31|scheduleNext|O8|2026-11-16|'
+        ).format(start_ms=start_ms)
+        component_id = '#' + b64encode(decoded.encode('utf-8')).decode('utf-8')
+        return {
+            'title': 'VRT NWS journaal',
+            'available': True,
+            'active': False,
+            'tileType': 'episode',
+            'preview': {
+                'heading': {
+                    'title': 'VRT NWS journaal',
+                    'description': 'VRT NWS journaal 19u',
+                    'tertiaryMeta': [],
+                }
+            },
+            'componentId': component_id,
+            'status': {'text': {'small': '45 min', 'default': '45 minuten'}},
+            'progress': {'durationInSeconds': 2700},
+            'indexMeta': [{'type': 'default', 'value': '19:00u'}],
+            'action': {'link': 'https://www.vrt.be/vrtmax/a-z/journaal/'},
+            'actionItems': [],
+            'trackingData': {'data': '{}'},
+            'image': None,
+            'statusMeta': [{'value': '45 min'}],
+            'primaryMeta': [],
+        }
+
+    def test_convert_episode_componentid_unix_ts_to_brussels(self):
+        """Non-live EPG entries decode absolute unix ms and show Brussels local time"""
+        # 2026-11-16 19:00:00 CET == 18:00:00 UTC
+        _, _, _, title_item = convert_episode(self._journaal_component_episode(), destination='tvguide')
+        self.assertTrue(title_item.label.startswith('19:00'), title_item.label)
+
+    def test_convert_episode_componentid_without_zoneinfo(self):
+        """Host TZ=UTC must still show Brussels labels (TV screenshot: 18:00 vs 19u)"""
+        import utils
+
+        # Even if something clears/replaces zoneinfo lookups, labels stay on POSIX Brussels.
+        utils._BRUSSELS_TZ = None  # pylint: disable=protected-access
+        _, _, _, title_item = convert_episode(self._journaal_component_episode(), destination='tvguide')
+        self.assertTrue(title_item.label.startswith('19:00'), title_item.label)
+        self.assertNotIn('18:00', title_item.label)
+        self.assertIn('19:00 -', title_item.info_dict.get('plot', ''))
+
     @unittest.skipUnless(addon.settings.get('username'), 'Skipping as VRT username is missing.')
     @unittest.skipUnless(addon.settings.get('password'), 'Skipping as VRT password is missing.')
     def test_tvguide_episode_menu(self):
@@ -211,9 +293,47 @@ class TestTVGuide(unittest.TestCase):
 
     def test_parse(self):
         """Test parsing date"""
-        now = datetime.now(dateutil.tz.gettz('Europe/Brussels'))
+        from utils import brussels_tz
+        now = datetime.now(brussels_tz())
         date = self._tvguide.parse('2026-08-30', now)
         print(date)
+
+    def test_parse_today_follows_brussels_dawn_not_utc(self):
+        """At 05:30 UTC / 06:30 CET, 'today' must use the Brussels 6AM guide day"""
+        from utils import brussels_tz
+
+        # Instant where UTC is still before 6AM but Brussels is after — tzlocal on a
+        # UTC LibreELEC box would roll the guide day back incorrectly.
+        instant_utc = datetime(2026, 11, 17, 5, 30, tzinfo=dateutil.tz.UTC)
+        bru_now = instant_utc.astimezone(brussels_tz())
+        self.assertEqual(bru_now.strftime('%H:%M'), '06:30')
+
+        wrong = self._tvguide.parse('today', instant_utc)  # hour 5 < 6
+        right = self._tvguide.parse('today', bru_now)      # hour 6 >= 6
+        self.assertEqual(wrong.strftime('%Y-%m-%d'), '2026-11-16')
+        self.assertEqual(right.strftime('%Y-%m-%d'), '2026-11-17')
+
+    def test_get_date_items_anchors_on_brussels_tz(self):
+        """get_date_items must call datetime.now(brussels_tz()), not tzlocal()"""
+        from unittest import mock
+        from utils import brussels_tz
+
+        instant_utc = datetime(2026, 11, 17, 5, 30, tzinfo=dateutil.tz.UTC)
+
+        with mock.patch('tvguide.datetime') as mock_datetime:
+            mock_datetime.now.side_effect = (
+                lambda tz=None: instant_utc.astimezone(tz) if tz is not None
+                else instant_utc.replace(tzinfo=None)
+            )
+            items = TVGuide.get_date_items()
+
+        self.assertEqual(len(items), 15)
+        # datetime.now must have been invoked with Brussels tz
+        args, _kwargs = mock_datetime.now.call_args
+        self.assertEqual(args[0].tzname(instant_utc), brussels_tz().tzname(instant_utc))
+        # Highlighted "today" path uses permalink id when offset==0
+        today_paths = [i.path for i in items if '/today' in i.path or i.path.endswith('/today')]
+        self.assertTrue(any('today' in p for p in [i.path for i in items]))
 
 
 if __name__ == '__main__':
