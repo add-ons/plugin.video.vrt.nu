@@ -49,7 +49,9 @@ class TVGuide:
     def get_date_items(channel=None):
         """Offer a menu to select the TV-guide date"""
 
-        epg = datetime.now(dateutil.tz.tzlocal())
+        # Use Brussels, not host/OS local: on LibreELEC the OS is often UTC while
+        # the guide day (and 6AM roll) must follow Belgian wall-clock.
+        epg = datetime.now(brussels_tz())
         # Daily EPG information shows information from 6AM until 6AM
         if epg.hour < 6:
             epg += timedelta(days=-1)
@@ -94,7 +96,7 @@ class TVGuide:
     def get_channel_items(self, date=None, channel=None):
         """Offer a menu to select the channel"""
         if date:
-            now = datetime.now(dateutil.tz.tzlocal())
+            now = datetime.now(brussels_tz())
             epg = self.parse(date, now)
             datelong = localize_datelong(epg)
 
@@ -141,7 +143,7 @@ class TVGuide:
 
     def get_episode_items(self, date, channel, end_cursor=None):
         """Show episodes for a given date and channel"""
-        now = datetime.now(dateutil.tz.tzlocal())
+        now = datetime.now(brussels_tz())
         epg_date = self.parse(date, now)
         episode_items = get_epg_episodes(date=epg_date.strftime('%Y-%m-%d'), channel=channel, page=end_cursor)
         return episode_items
