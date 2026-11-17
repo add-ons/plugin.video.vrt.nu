@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.vrt.nu" name="VRT MAX" version="2.5.51+matrix.1" provider-name="Martijn Moreel, dagwieers, mediaminister">
+<addon id="plugin.video.vrt.nu" name="VRT MAX" version="2.5.52+matrix.1" provider-name="Martijn Moreel, dagwieers, mediaminister">
   <requires>
     <import addon="resource.images.studios.white" version="0.0.30"/>
     <import addon="script.module.dateutil" version="2.8.2"/>
